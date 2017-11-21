@@ -101,15 +101,18 @@ IAM.prototype.getPolicy = function(gaxOpts, callback) {
   }
 
   var reqOpts = {
-    resource: this.id
+    resource: this.id,
   };
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'getIamPolicy',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, callback);
+  this.request(
+    {
+      client: 'subscriberClient',
+      method: 'getIamPolicy',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    callback
+  );
 };
 
 /**
@@ -166,15 +169,18 @@ IAM.prototype.setPolicy = function(policy, gaxOpts, callback) {
 
   var reqOpts = {
     resource: this.id,
-    policy
+    policy,
   };
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'setIamPolicy',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, callback);
+  this.request(
+    {
+      client: 'subscriberClient',
+      method: 'setIamPolicy',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    callback
+  );
 };
 
 /**
@@ -246,28 +252,31 @@ IAM.prototype.testPermissions = function(permissions, gaxOpts, callback) {
 
   var reqOpts = {
     resource: this.id,
-    permissions: arrify(permissions)
+    permissions: arrify(permissions),
   };
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'testIamPermissions',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, function(err, resp) {
-    if (err) {
-      callback(err, null, resp);
-      return;
+  this.request(
+    {
+      client: 'subscriberClient',
+      method: 'testIamPermissions',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    function(err, resp) {
+      if (err) {
+        callback(err, null, resp);
+        return;
+      }
+
+      var availablePermissions = arrify(resp.permissions);
+      var permissionHash = permissions.reduce(function(acc, permission) {
+        acc[permission] = availablePermissions.indexOf(permission) > -1;
+        return acc;
+      }, {});
+
+      callback(null, permissionHash, resp);
     }
-
-    var availablePermissions = arrify(resp.permissions);
-    var permissionHash = permissions.reduce(function(acc, permission) {
-      acc[permission] = availablePermissions.indexOf(permission) > -1;
-      return acc;
-    }, {});
-
-    callback(null, permissionHash, resp);
-  });
+  );
 };
 
 /*! Developer Documentation

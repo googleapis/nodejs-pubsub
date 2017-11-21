@@ -23,8 +23,6 @@
  * The only allowed edits are to method and file documentation. A 3-way
  * merge preserves those additions if the generated source changes.
  */
-/* TODO: introduce line-wrapping so that it never exceeds the limit. */
-/* jscs: disable maximumLineLength */
 'use strict';
 
 var configData = require('./subscriber_client_config');
@@ -39,17 +37,19 @@ var CODE_GEN_NAME_VERSION = 'gapic/0.1.0';
 
 var PAGE_DESCRIPTORS = {
   listSubscriptions: new gax.PageDescriptor(
-      'pageToken',
-      'nextPageToken',
-      'subscriptions'),
+    'pageToken',
+    'nextPageToken',
+    'subscriptions'
+  ),
   listSnapshots: new gax.PageDescriptor(
-      'pageToken',
-      'nextPageToken',
-      'snapshots')
+    'pageToken',
+    'nextPageToken',
+    'snapshots'
+  ),
 };
 
 var STREAM_DESCRIPTORS = {
-  streamingPull: new gax.StreamDescriptor(gax.StreamType.BIDI_STREAMING)
+  streamingPull: new gax.StreamDescriptor(gax.StreamType.BIDI_STREAMING),
 };
 
 /**
@@ -58,7 +58,7 @@ var STREAM_DESCRIPTORS = {
  */
 var ALL_SCOPES = [
   'https://www.googleapis.com/auth/cloud-platform',
-  'https://www.googleapis.com/auth/pubsub'
+  'https://www.googleapis.com/auth/pubsub',
 ];
 
 /**
@@ -78,15 +78,16 @@ var ALL_SCOPES = [
  * @class
  */
 function SubscriberClient(gaxGrpc, grpcClients, opts) {
-  opts = extend({
-    servicePath: SERVICE_ADDRESS,
-    port: DEFAULT_SERVICE_PORT,
-    clientConfig: {}
-  }, opts);
+  opts = extend(
+    {
+      servicePath: SERVICE_ADDRESS,
+      port: DEFAULT_SERVICE_PORT,
+      clientConfig: {},
+    },
+    opts
+  );
 
-  var googleApiClient = [
-    'gl-node/' + process.versions.node
-  ];
+  var googleApiClient = ['gl-node/' + process.versions.node];
   if (opts.libName && opts.libVersion) {
     googleApiClient.push(opts.libName + '/' + opts.libVersion);
   }
@@ -97,21 +98,23 @@ function SubscriberClient(gaxGrpc, grpcClients, opts) {
   );
 
   var defaults = gaxGrpc.constructSettings(
-      'google.pubsub.v1.Subscriber',
-      configData,
-      opts.clientConfig,
-      {'x-goog-api-client': googleApiClient.join(' ')});
+    'google.pubsub.v1.Subscriber',
+    configData,
+    opts.clientConfig,
+    {'x-goog-api-client': googleApiClient.join(' ')}
+  );
 
   var self = this;
 
   this.auth = gaxGrpc.auth;
   var iamPolicyStub = gaxGrpc.createStub(
-      grpcClients.google.iam.v1.IAMPolicy,
-      opts);
+    grpcClients.google.iam.v1.IAMPolicy,
+    opts
+  );
   var iamPolicyStubMethods = [
     'setIamPolicy',
     'getIamPolicy',
-    'testIamPermissions'
+    'testIamPermissions',
   ];
   iamPolicyStubMethods.forEach(function(methodName) {
     self['_' + methodName] = gax.createApiCall(
@@ -122,12 +125,14 @@ function SubscriberClient(gaxGrpc, grpcClients, opts) {
         };
       }),
       defaults[methodName],
-      PAGE_DESCRIPTORS[methodName] || STREAM_DESCRIPTORS[methodName]);
+      PAGE_DESCRIPTORS[methodName] || STREAM_DESCRIPTORS[methodName]
+    );
   });
 
   var subscriberStub = gaxGrpc.createStub(
-      grpcClients.google.pubsub.v1.Subscriber,
-      opts);
+    grpcClients.google.pubsub.v1.Subscriber,
+    opts
+  );
   var subscriberStubMethods = [
     'createSubscription',
     'getSubscription',
@@ -142,7 +147,7 @@ function SubscriberClient(gaxGrpc, grpcClients, opts) {
     'listSnapshots',
     'createSnapshot',
     'deleteSnapshot',
-    'seek'
+    'seek',
   ];
   subscriberStubMethods.forEach(function(methodName) {
     self['_' + methodName] = gax.createApiCall(
@@ -153,23 +158,26 @@ function SubscriberClient(gaxGrpc, grpcClients, opts) {
         };
       }),
       defaults[methodName],
-      PAGE_DESCRIPTORS[methodName] || STREAM_DESCRIPTORS[methodName]);
+      PAGE_DESCRIPTORS[methodName] || STREAM_DESCRIPTORS[methodName]
+    );
   });
 }
 
 // Path templates
 
-var PROJECT_PATH_TEMPLATE = new gax.PathTemplate(
-    'projects/{project}');
+var PROJECT_PATH_TEMPLATE = new gax.PathTemplate('projects/{project}');
 
 var SNAPSHOT_PATH_TEMPLATE = new gax.PathTemplate(
-    'projects/{project}/snapshots/{snapshot}');
+  'projects/{project}/snapshots/{snapshot}'
+);
 
 var SUBSCRIPTION_PATH_TEMPLATE = new gax.PathTemplate(
-    'projects/{project}/subscriptions/{subscription}');
+  'projects/{project}/subscriptions/{subscription}'
+);
 
 var TOPIC_PATH_TEMPLATE = new gax.PathTemplate(
-    'projects/{project}/topics/{topic}');
+  'projects/{project}/topics/{topic}'
+);
 
 /**
  * Returns a fully-qualified project resource name string.
@@ -178,7 +186,7 @@ var TOPIC_PATH_TEMPLATE = new gax.PathTemplate(
  */
 SubscriberClient.prototype.projectPath = function(project) {
   return PROJECT_PATH_TEMPLATE.render({
-    project: project
+    project: project,
   });
 };
 
@@ -201,7 +209,7 @@ SubscriberClient.prototype.matchProjectFromProjectName = function(projectName) {
 SubscriberClient.prototype.snapshotPath = function(project, snapshot) {
   return SNAPSHOT_PATH_TEMPLATE.render({
     project: project,
-    snapshot: snapshot
+    snapshot: snapshot,
   });
 };
 
@@ -211,7 +219,9 @@ SubscriberClient.prototype.snapshotPath = function(project, snapshot) {
  *   A fully-qualified path representing a snapshot resources.
  * @returns {String} - A string representing the project.
  */
-SubscriberClient.prototype.matchProjectFromSnapshotName = function(snapshotName) {
+SubscriberClient.prototype.matchProjectFromSnapshotName = function(
+  snapshotName
+) {
   return SNAPSHOT_PATH_TEMPLATE.match(snapshotName).project;
 };
 
@@ -221,7 +231,9 @@ SubscriberClient.prototype.matchProjectFromSnapshotName = function(snapshotName)
  *   A fully-qualified path representing a snapshot resources.
  * @returns {String} - A string representing the snapshot.
  */
-SubscriberClient.prototype.matchSnapshotFromSnapshotName = function(snapshotName) {
+SubscriberClient.prototype.matchSnapshotFromSnapshotName = function(
+  snapshotName
+) {
   return SNAPSHOT_PATH_TEMPLATE.match(snapshotName).snapshot;
 };
 
@@ -234,7 +246,7 @@ SubscriberClient.prototype.matchSnapshotFromSnapshotName = function(snapshotName
 SubscriberClient.prototype.subscriptionPath = function(project, subscription) {
   return SUBSCRIPTION_PATH_TEMPLATE.render({
     project: project,
-    subscription: subscription
+    subscription: subscription,
   });
 };
 
@@ -244,7 +256,9 @@ SubscriberClient.prototype.subscriptionPath = function(project, subscription) {
  *   A fully-qualified path representing a subscription resources.
  * @returns {String} - A string representing the project.
  */
-SubscriberClient.prototype.matchProjectFromSubscriptionName = function(subscriptionName) {
+SubscriberClient.prototype.matchProjectFromSubscriptionName = function(
+  subscriptionName
+) {
   return SUBSCRIPTION_PATH_TEMPLATE.match(subscriptionName).project;
 };
 
@@ -254,7 +268,9 @@ SubscriberClient.prototype.matchProjectFromSubscriptionName = function(subscript
  *   A fully-qualified path representing a subscription resources.
  * @returns {String} - A string representing the subscription.
  */
-SubscriberClient.prototype.matchSubscriptionFromSubscriptionName = function(subscriptionName) {
+SubscriberClient.prototype.matchSubscriptionFromSubscriptionName = function(
+  subscriptionName
+) {
   return SUBSCRIPTION_PATH_TEMPLATE.match(subscriptionName).subscription;
 };
 
@@ -267,7 +283,7 @@ SubscriberClient.prototype.matchSubscriptionFromSubscriptionName = function(subs
 SubscriberClient.prototype.topicPath = function(project, topic) {
   return TOPIC_PATH_TEMPLATE.render({
     project: project,
-    topic: topic
+    topic: topic,
   });
 };
 
@@ -395,7 +411,11 @@ SubscriberClient.prototype.getProjectId = function(callback) {
  *     console.error(err);
  * });
  */
-SubscriberClient.prototype.createSubscription = function(request, options, callback) {
+SubscriberClient.prototype.createSubscription = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -437,7 +457,11 @@ SubscriberClient.prototype.createSubscription = function(request, options, callb
  *     console.error(err);
  * });
  */
-SubscriberClient.prototype.getSubscription = function(request, options, callback) {
+SubscriberClient.prototype.getSubscription = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -491,7 +515,11 @@ SubscriberClient.prototype.getSubscription = function(request, options, callback
  *     console.error(err);
  * });
  */
-SubscriberClient.prototype.updateSubscription = function(request, options, callback) {
+SubscriberClient.prototype.updateSubscription = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -577,7 +605,11 @@ SubscriberClient.prototype.updateSubscription = function(request, options, callb
  *         console.error(err);
  *     });
  */
-SubscriberClient.prototype.listSubscriptions = function(request, options, callback) {
+SubscriberClient.prototype.listSubscriptions = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -629,12 +661,19 @@ SubscriberClient.prototype.listSubscriptions = function(request, options, callba
  *     console.error(err);
  * });
  */
-SubscriberClient.prototype.listSubscriptionsStream = function(request, options) {
+SubscriberClient.prototype.listSubscriptionsStream = function(
+  request,
+  options
+) {
   if (options === undefined) {
     options = {};
   }
 
-  return PAGE_DESCRIPTORS.listSubscriptions.createStream(this._listSubscriptions, request, options);
+  return PAGE_DESCRIPTORS.listSubscriptions.createStream(
+    this._listSubscriptions,
+    request,
+    options
+  );
 };
 
 /**
@@ -665,7 +704,11 @@ SubscriberClient.prototype.listSubscriptionsStream = function(request, options) 
  *     console.error(err);
  * });
  */
-SubscriberClient.prototype.deleteSubscription = function(request, options, callback) {
+SubscriberClient.prototype.deleteSubscription = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -722,7 +765,11 @@ SubscriberClient.prototype.deleteSubscription = function(request, options, callb
  *     console.error(err);
  * });
  */
-SubscriberClient.prototype.modifyAckDeadline = function(request, options, callback) {
+SubscriberClient.prototype.modifyAckDeadline = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -935,7 +982,11 @@ SubscriberClient.prototype.streamingPull = function(options) {
  *     console.error(err);
  * });
  */
-SubscriberClient.prototype.modifyPushConfig = function(request, options, callback) {
+SubscriberClient.prototype.modifyPushConfig = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -1021,7 +1072,11 @@ SubscriberClient.prototype.modifyPushConfig = function(request, options, callbac
  *         console.error(err);
  *     });
  */
-SubscriberClient.prototype.listSnapshots = function(request, options, callback) {
+SubscriberClient.prototype.listSnapshots = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -1078,7 +1133,11 @@ SubscriberClient.prototype.listSnapshotsStream = function(request, options) {
     options = {};
   }
 
-  return PAGE_DESCRIPTORS.listSnapshots.createStream(this._listSnapshots, request, options);
+  return PAGE_DESCRIPTORS.listSnapshots.createStream(
+    this._listSnapshots,
+    request,
+    options
+  );
 };
 
 /**
@@ -1138,7 +1197,11 @@ SubscriberClient.prototype.listSnapshotsStream = function(request, options) {
  *     console.error(err);
  * });
  */
-SubscriberClient.prototype.createSnapshot = function(request, options, callback) {
+SubscriberClient.prototype.createSnapshot = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -1177,7 +1240,11 @@ SubscriberClient.prototype.createSnapshot = function(request, options, callback)
  *     console.error(err);
  * });
  */
-SubscriberClient.prototype.deleteSnapshot = function(request, options, callback) {
+SubscriberClient.prototype.deleteSnapshot = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -1393,7 +1460,11 @@ SubscriberClient.prototype.getIamPolicy = function(request, options, callback) {
  *     console.error(err);
  * });
  */
-SubscriberClient.prototype.testIamPermissions = function(request, options, callback) {
+SubscriberClient.prototype.testIamPermissions = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -1410,24 +1481,23 @@ function SubscriberClientBuilder(gaxGrpc) {
     return new SubscriberClientBuilder(gaxGrpc);
   }
 
-  var iamPolicyClient = gaxGrpc.load([{
-    root: require('google-proto-files')('..'),
-    file: 'google/iam/v1/iam_policy.proto'
-  }]);
+  var iamPolicyClient = gaxGrpc.load([
+    {
+      root: require('google-proto-files')('..'),
+      file: 'google/iam/v1/iam_policy.proto',
+    },
+  ]);
   extend(this, iamPolicyClient.google.iam.v1);
 
-  var subscriberClient = gaxGrpc.load([{
-    root: require('google-proto-files')('..'),
-    file: 'google/pubsub/v1/pubsub.proto'
-  }]);
+  var subscriberClient = gaxGrpc.load([
+    {
+      root: require('google-proto-files')('..'),
+      file: 'google/pubsub/v1/pubsub.proto',
+    },
+  ]);
   extend(this, subscriberClient.google.pubsub.v1);
 
-  var grpcClients = extend(
-    true,
-    {},
-    iamPolicyClient,
-    subscriberClient
-  );
+  var grpcClients = extend(true, {}, iamPolicyClient, subscriberClient);
 
   /**
    * Build a new instance of {@link SubscriberClient}.

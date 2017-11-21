@@ -28,7 +28,7 @@ var FAKE_FREE_MEM = 168222720;
 var fakeOs = {
   freemem: function() {
     return FAKE_FREE_MEM;
-  }
+  },
 };
 
 var promisified = false;
@@ -40,7 +40,7 @@ var fakeUtil = extend({}, common.util, {
 
     promisified = true;
     assert.deepEqual(options.exclude, ['snapshot']);
-  }
+  },
 });
 
 function FakeConnectionPool() {
@@ -72,19 +72,19 @@ describe('Subscription', function() {
 
   var PUBSUB = {
     projectId: PROJECT_ID,
-    request: fakeUtil.noop
+    request: fakeUtil.noop,
   };
 
   before(function() {
     Subscription = proxyquire('../src/subscription.js', {
       '@google-cloud/common': {
-        util: fakeUtil
+        util: fakeUtil,
       },
       os: fakeOs,
       './connection-pool.js': FakeConnectionPool,
       './histogram.js': FakeHistogram,
       './iam.js': FakeIAM,
-      './snapshot.js': FakeSnapshot
+      './snapshot.js': FakeSnapshot,
     });
   });
 
@@ -141,8 +141,8 @@ describe('Subscription', function() {
         maxConnections: 2,
         flowControl: {
           maxBytes: 5,
-          maxMessages: 10
-        }
+          maxMessages: 10,
+        },
       };
 
       var subscription = new Subscription(PUBSUB, SUB_NAME, options);
@@ -151,7 +151,7 @@ describe('Subscription', function() {
 
       assert.deepEqual(subscription.flowControl, {
         maxBytes: options.flowControl.maxBytes,
-        maxMessages: options.flowControl.maxMessages
+        maxMessages: options.flowControl.maxMessages,
       });
     });
 
@@ -164,7 +164,7 @@ describe('Subscription', function() {
 
       assert.deepEqual(subscription.flowControl, {
         maxBytes: FAKE_FREE_MEM * 0.2,
-        maxMessages: Infinity
+        maxMessages: Infinity,
       });
     });
 
@@ -190,7 +190,7 @@ describe('Subscription', function() {
       };
 
       var subscription = new Subscription(PUBSUB, SUB_NAME, {
-        topic: TOPIC_NAME
+        topic: TOPIC_NAME,
       });
 
       subscription.create(done);
@@ -221,7 +221,7 @@ describe('Subscription', function() {
 
   describe('formatMetadata_', function() {
     it('should make a copy of the metadata', function() {
-      var metadata = { a: 'a' };
+      var metadata = {a: 'a'};
       var formatted = Subscription.formatMetadata_(metadata);
 
       assert.deepEqual(metadata, formatted);
@@ -232,7 +232,7 @@ describe('Subscription', function() {
       var threeDaysInSeconds = 3 * 24 * 60 * 60;
 
       var metadata = {
-        messageRetentionDuration: threeDaysInSeconds
+        messageRetentionDuration: threeDaysInSeconds,
       };
 
       var formatted = Subscription.formatMetadata_(metadata);
@@ -250,7 +250,7 @@ describe('Subscription', function() {
       var pushEndpoint = 'http://noop.com/push';
 
       var metadata = {
-        pushEndpoint: pushEndpoint
+        pushEndpoint: pushEndpoint,
       };
 
       var formatted = Subscription.formatMetadata_(metadata);
@@ -276,7 +276,7 @@ describe('Subscription', function() {
     var MESSAGE = {
       ackId: 'abc',
       received: 12345,
-      connectionId: 'def'
+      connectionId: 'def',
     };
 
     beforeEach(function() {
@@ -362,7 +362,7 @@ describe('Subscription', function() {
             setImmediate(done);
 
             return Promise.resolve();
-          }
+          },
         };
 
         fakeUtil.promisify = function(fn) {
@@ -379,7 +379,7 @@ describe('Subscription', function() {
         var fakePromisified = {
           call: function() {
             return Promise.reject(fakeError);
-          }
+          },
         };
 
         fakeUtil.promisify = function() {
@@ -410,9 +410,9 @@ describe('Subscription', function() {
         var fakeConnectionId = 'abc';
         var fakeConnection = {
           write: function(data) {
-            assert.deepEqual(data, { ackIds: fakeAckIds });
+            assert.deepEqual(data, {ackIds: fakeAckIds});
             done();
-          }
+          },
         };
 
         pool.acquire = function(connectionId, callback) {
@@ -443,8 +443,8 @@ describe('Subscription', function() {
   describe('breakLease_', function() {
     var MESSAGE = {
       ackId: 'abc',
-      data: new Buffer('hello'),
-      length: 5
+      data: Buffer.from('hello'),
+      length: 5,
     };
 
     beforeEach(function() {
@@ -465,8 +465,8 @@ describe('Subscription', function() {
     it('should noop for unknown messages', function() {
       var message = {
         ackId: 'def',
-        data: new Buffer('world'),
-        length: 5
+        data: Buffer.from('world'),
+        length: 5,
       };
 
       subscription.breakLease_(message);
@@ -479,7 +479,7 @@ describe('Subscription', function() {
       it('should resume receiving messages if paused', function(done) {
         subscription.connectionPool = {
           isPaused: true,
-          resume: done
+          resume: done,
         };
 
         subscription.hasMaxMessages_ = function() {
@@ -494,7 +494,7 @@ describe('Subscription', function() {
           isPaused: false,
           resume: function() {
             throw new Error('Should not be called.');
-          }
+          },
         };
 
         subscription.hasMaxMessages_ = function() {
@@ -509,7 +509,7 @@ describe('Subscription', function() {
           isPaused: true,
           resume: function() {
             throw new Error('Should not be called.');
-          }
+          },
         };
 
         subscription.hasMaxMessages_ = function() {
@@ -555,14 +555,14 @@ describe('Subscription', function() {
     it('should dump the inventory', function() {
       subscription.inventory_ = {
         lease: [0, 1, 2],
-        bytes: 123
+        bytes: 123,
       };
 
       subscription.close();
 
       assert.deepEqual(subscription.inventory_, {
         lease: [],
-        bytes: 0
+        bytes: 0,
       });
     });
 
@@ -607,7 +607,7 @@ describe('Subscription', function() {
         subscription.connectionPool = {
           close: function(callback) {
             setImmediate(callback); // the done fn
-          }
+          },
         };
       });
 
@@ -644,7 +644,7 @@ describe('Subscription', function() {
     beforeEach(function() {
       subscription.snapshot = function(name) {
         return {
-          name: name
+          name: name,
         };
       };
     });
@@ -661,7 +661,7 @@ describe('Subscription', function() {
         assert.strictEqual(config.method, 'createSnapshot');
         assert.deepEqual(config.reqOpts, {
           name: SNAPSHOT_NAME,
-          subscription: subscription.name
+          subscription: subscription.name,
         });
         done();
       };
@@ -723,7 +723,7 @@ describe('Subscription', function() {
       subscription.request = function(config) {
         assert.strictEqual(config.client, 'subscriberClient');
         assert.strictEqual(config.method, 'deleteSubscription');
-        assert.deepEqual(config.reqOpts, { subscription: subscription.name });
+        assert.deepEqual(config.reqOpts, {subscription: subscription.name});
         done();
       };
 
@@ -850,7 +850,7 @@ describe('Subscription', function() {
 
     it('should return false if a not found error occurs', function(done) {
       subscription.getMetadata = function(callback) {
-        callback({ code: 5 });
+        callback({code: 5});
       };
 
       subscription.exists(function(err, exists) {
@@ -861,7 +861,7 @@ describe('Subscription', function() {
     });
 
     it('should pass back any other type of error', function(done) {
-      var error = { code: 4 };
+      var error = {code: 4};
 
       subscription.getMetadata = function(callback) {
         callback(error);
@@ -905,7 +905,7 @@ describe('Subscription', function() {
     });
 
     it('should send any pending acks', function() {
-      var fakeAckIds = subscription.inventory_.ack = ['abc', 'def'];
+      var fakeAckIds = (subscription.inventory_.ack = ['abc', 'def']);
 
       subscription.acknowledge_ = function(ackIds) {
         assert.strictEqual(ackIds, fakeAckIds);
@@ -918,7 +918,7 @@ describe('Subscription', function() {
     });
 
     it('should send any pending nacks', function() {
-      var fakeAckIds = subscription.inventory_.nack = ['ghi', 'jkl'];
+      var fakeAckIds = (subscription.inventory_.nack = ['ghi', 'jkl']);
 
       subscription.modifyAckDeadline_ = function(ackIds, deadline) {
         assert.strictEqual(ackIds, fakeAckIds);
@@ -940,7 +940,7 @@ describe('Subscription', function() {
     it('should delete the autoCreate option', function(done) {
       var options = {
         autoCreate: true,
-        a: 'a'
+        a: 'a',
       };
 
       subscription.getMetadata = function(gaxOpts) {
@@ -984,7 +984,7 @@ describe('Subscription', function() {
 
     describe('error', function() {
       it('should pass back errors when not auto-creating', function(done) {
-        var error = { code: 4 };
+        var error = {code: 4};
         var apiResponse = {};
 
         subscription.getMetadata = function(gaxOpts, callback) {
@@ -1000,7 +1000,7 @@ describe('Subscription', function() {
       });
 
       it('should pass back 404 errors if autoCreate is false', function(done) {
-        var error = { code: 5 };
+        var error = {code: 5};
         var apiResponse = {};
 
         subscription.getMetadata = function(gaxOpts, callback) {
@@ -1016,7 +1016,7 @@ describe('Subscription', function() {
       });
 
       it('should pass back 404 errors if create doesnt exist', function(done) {
-        var error = { code: 5 };
+        var error = {code: 5};
         var apiResponse = {};
 
         subscription.getMetadata = function(gaxOpts, callback) {
@@ -1034,11 +1034,11 @@ describe('Subscription', function() {
       });
 
       it('should create the sub if 404 + autoCreate is true', function(done) {
-        var error = { code: 5 };
+        var error = {code: 5};
         var apiResponse = {};
 
         var fakeOptions = {
-          autoCreate: true
+          autoCreate: true,
         };
 
         subscription.getMetadata = function(gaxOpts, callback) {
@@ -1060,7 +1060,7 @@ describe('Subscription', function() {
       subscription.request = function(config) {
         assert.strictEqual(config.client, 'subscriberClient');
         assert.strictEqual(config.method, 'getSubscription');
-        assert.deepEqual(config.reqOpts, { subscription: subscription.name });
+        assert.deepEqual(config.reqOpts, {subscription: subscription.name});
         done();
       };
 
@@ -1119,7 +1119,7 @@ describe('Subscription', function() {
       subscription.connectionPool = {
         isConnected: function() {
           return false;
-        }
+        },
       };
 
       assert.strictEqual(subscription.isConnected_(), false);
@@ -1129,7 +1129,7 @@ describe('Subscription', function() {
       subscription.connectionPool = {
         isConnected: function() {
           return true;
-        }
+        },
       };
 
       assert.strictEqual(subscription.isConnected_(), true);
@@ -1166,8 +1166,8 @@ describe('Subscription', function() {
     var MESSAGE = {
       ackId: 'abc',
       connectionId: 'def',
-      data: new Buffer('hello'),
-      length: 5
+      data: Buffer.from('hello'),
+      length: 5,
     };
 
     beforeEach(function() {
@@ -1302,7 +1302,7 @@ describe('Subscription', function() {
             setImmediate(done);
 
             return Promise.resolve();
-          }
+          },
         };
 
         fakeUtil.promisify = function(fn) {
@@ -1319,7 +1319,7 @@ describe('Subscription', function() {
         var fakePromisified = {
           call: function() {
             return Promise.reject(fakeError);
-          }
+          },
         };
 
         fakeUtil.promisify = function() {
@@ -1354,7 +1354,7 @@ describe('Subscription', function() {
             assert.strictEqual(data.modifyDeadlineAckIds, fakeAckIds);
             assert.deepEqual(data.modifyDeadlineSeconds, expectedDeadlines);
             done();
-          }
+          },
         };
 
         pool.acquire = function(connectionId, callback) {
@@ -1392,7 +1392,7 @@ describe('Subscription', function() {
         assert.strictEqual(config.method, 'modifyPushConfig');
         assert.deepEqual(config.reqOpts, {
           subscription: subscription.name,
-          pushConfig: fakeConfig
+          pushConfig: fakeConfig,
         });
         callback(); // the done fn
       };
@@ -1415,7 +1415,7 @@ describe('Subscription', function() {
   describe('nack_', function() {
     var MESSAGE = {
       ackId: 'abc',
-      connectionId: 'def'
+      connectionId: 'def',
     };
 
     beforeEach(function() {
@@ -1506,7 +1506,7 @@ describe('Subscription', function() {
     });
 
     it('should pause the pool if sub is at max messages', function(done) {
-      var message = { nack: fakeUtil.noop };
+      var message = {nack: fakeUtil.noop};
       var leasedMessage = {};
 
       subscription.leaseMessage_ = function() {
@@ -1524,7 +1524,7 @@ describe('Subscription', function() {
     });
 
     it('should not re-pause the pool', function(done) {
-      var message = { nack: fakeUtil.noop };
+      var message = {nack: fakeUtil.noop};
       var leasedMessage = {};
 
       subscription.leaseMessage_ = function() {
@@ -1547,7 +1547,7 @@ describe('Subscription', function() {
     });
 
     it('should nack messages if over limit', function(done) {
-      var message = { nack: done };
+      var message = {nack: done};
       var leasedMessage = {};
 
       subscription.leaseMessage_ = function() {
@@ -1683,7 +1683,7 @@ describe('Subscription', function() {
         assert.strictEqual(config.method, 'seek');
         assert.deepEqual(config.reqOpts, {
           subscription: subscription.name,
-          snapshot: FAKE_FULL_SNAPSHOT_NAME
+          snapshot: FAKE_FULL_SNAPSHOT_NAME,
         });
         callback(); // the done fn
       };
@@ -1775,7 +1775,7 @@ describe('Subscription', function() {
     });
 
     it('should set a timeout to call renewLeases_', function(done) {
-      var ackDeadline = subscription.ackDeadline = 1000;
+      var ackDeadline = (subscription.ackDeadline = 1000);
 
       global.Math.random = function() {
         return fakeRandom;
@@ -1829,7 +1829,7 @@ describe('Subscription', function() {
 
   describe('setMetadata', function() {
     var METADATA = {
-      pushEndpoint: 'http://noop.com/push'
+      pushEndpoint: 'http://noop.com/push',
     };
 
     beforeEach(function() {
@@ -1841,13 +1841,16 @@ describe('Subscription', function() {
     it('should make the correct request', function(done) {
       var formattedMetadata = {
         pushConfig: {
-          pushEndpoint: METADATA.pushEndpoint
-        }
+          pushEndpoint: METADATA.pushEndpoint,
+        },
       };
 
-      var expectedBody = extend({
-        name: SUB_FULL_NAME
-      }, formattedMetadata);
+      var expectedBody = extend(
+        {
+          name: SUB_FULL_NAME,
+        },
+        formattedMetadata
+      );
 
       Subscription.formatMetadata_ = function(metadata) {
         assert.strictEqual(metadata, METADATA);
@@ -1858,7 +1861,7 @@ describe('Subscription', function() {
         assert.strictEqual(config.client, 'subscriberClient');
         assert.strictEqual(config.method, 'updateSubscription');
         assert.deepEqual(config.reqOpts.subscription, expectedBody);
-        assert.deepEqual(config.reqOpts.updateMask, { paths: ['push_config'] });
+        assert.deepEqual(config.reqOpts.updateMask, {paths: ['push_config']});
         callback(); // the done fn
       };
 
