@@ -119,7 +119,7 @@ IAM.prototype.getPolicy = function(gaxOpts, callback) {
  *
  * @param {object} policy - The [policy](https://cloud.google.com/pubsub/docs/reference/rest/Shared.Types/Policy).
  * @param {array=} policy.bindings - Bindings associate members with roles.
- * @param {object[]=} policy.rules - Rules to be applied to the policy.
+ * @param {Array<object>=} policy.rules - Rules to be applied to the policy.
  * @param {string=} policy.etag - Etags are used to perform a read-modify-write.
  * @param {object=} gaxOptions - Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
