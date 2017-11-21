@@ -6,18 +6,16 @@
   "author": "Google Inc.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GoogleCloudPlatform/nodejs-docs-samples.git"
+    "url": "https://github.com/googleapis/nodejs-pubsub.git"
   },
   "engines": {
     "node": ">=4.3.2"
   },
   "scripts": {
-    "lint": "samples lint",
-    "pretest": "npm run lint",
     "test": "samples test run --cmd ava -- -T 30s --verbose system-test/*.test.js"
   },
   "dependencies": {
-    "@google-cloud/pubsub": "0.14.5",
+    "@google-cloud/pubsub": "0.16.0",
     "yargs": "10.0.3"
   },
   "devDependencies": {
@@ -25,26 +23,5 @@
     "ava": "0.22.0",
     "proxyquire": "1.8.0",
     "sinon": "4.0.1"
-  },
-  "cloud-repo-tools": {
-    "requiresKeyFile": true,
-    "requiresProjectId": true,
-    "product": "pubsub",
-    "samples": [
-      {
-        "id": "topics",
-        "name": "Topics",
-        "file": "topics.js",
-        "docs_link": "https://cloud.google.com/pubsub/publisher",
-        "usage": "node topics.js --help"
-      },
-      {
-        "id": "subscriptions",
-        "name": "Subscriptions",
-        "file": "subscriptions.js",
-        "docs_link": "https://cloud.google.com/pubsub/subscriber",
-        "usage": "node subscriptions.js --help"
-      }
-    ]
   }
 }

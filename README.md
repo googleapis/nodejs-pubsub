@@ -1,100 +1,129 @@
-# @google-cloud/pubsub ([Beta][versioning])
-> Cloud Pub/Sub Client Library for Node.js
+<img src="https://avatars2.githubusercontent.com/u/2810941?v=3&s=96" alt="Google Cloud Platform logo" title="Google Cloud Platform" align="right" height="96" width="96"/>
 
-*Looking for more Google APIs than just Pub/Sub? You might want to check out [`google-cloud`][google-cloud].*
+# [Google Cloud Pub/Sub: Node.js Client](https://github.com/googleapis/nodejs-pubsub)
 
-- [API Documentation][gcloud-pubsub-docs]
-- [Official Documentation][cloud-pubsub-docs]
+[![release level](https://img.shields.io/badge/release%20level-beta-yellow.svg?style&#x3D;flat)](https://cloud.google.com/terms/launch-stages)
+[![CircleCI](https://img.shields.io/circleci/project/github/googleapis/nodejs-pubsub.svg?style=flat)](https://circleci.com/gh/googleapis/nodejs-pubsub)
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/github/googleapis/nodejs-pubsub?branch=master&svg=true)](https://ci.appveyor.com/project/googleapis/nodejs-pubsub)
+[![codecov](https://img.shields.io/codecov/c/github/googleapis/nodejs-pubsub/master.svg?style=flat)](https://codecov.io/gh/googleapis/nodejs-pubsub)
+
+> Node.js idiomatic client for [Cloud Pub/Sub][product-docs].
+
+[Cloud Pub/Sub](https://cloud.google.com/pubsub/docs) is a fully-managed real-time messaging service that allows you to send and receive messages between independent applications.
 
 
-```sh
-$ npm install --save @google-cloud/pubsub
-```
-```js
-var pubsub = require('@google-cloud/pubsub')({
-  projectId: 'grape-spaceship-123',
-  keyFilename: '/path/to/keyfile.json'
+* [Cloud Pub/Sub Node.js Client API Reference][client-docs]
+* [github.com/googleapis/nodejs-pubsub](https://github.com/googleapis/nodejs-pubsub)
+* [Cloud Pub/Sub Documentation][product-docs]
+
+Read more about the client libraries for Cloud APIs, including the older
+Google APIs Client Libraries, in [Client Libraries Explained][explained].
+
+[explained]: https://cloud.google.com/apis/docs/client-libraries-explained
+
+**Table of contents:**
+
+* [Quickstart](#quickstart)
+  * [Before you begin](#before-you-begin)
+  * [Installing the client library](#installing-the-client-library)
+  * [Using the client library](#using-the-client-library)
+* [Samples](#samples)
+* [Versioning](#versioning)
+* [Contributing](#contributing)
+* [License](#license)
+
+## Quickstart
+
+### Before you begin
+
+1.  Select or create a Cloud Platform project.
+
+    [Go to the projects page][projects]
+
+1.  Enable billing for your project.
+
+    [Enable billing][billing]
+
+1.  Enable the Google Cloud Pub/Sub API.
+
+    [Enable the API][enable_api]
+
+1.  [Set up authentication with a service account][auth] so you can access the
+    API from your local workstation.
+
+[projects]: https://console.cloud.google.com/project
+[billing]: https://support.google.com/cloud/answer/6293499#enable-billing
+[enable_api]: https://console.cloud.google.com/flows/enableapi?apiid=pubsub.googleapis.com
+[auth]: https://cloud.google.com/docs/authentication/getting-started
+
+### Installing the client library
+
+    npm install --save @google-cloud/pubsub
+
+### Using the client library
+
+```javascript
+// Imports the Google Cloud client library
+const PubSub = require('@google-cloud/pubsub');
+
+// Your Google Cloud Platform project ID
+const projectId = 'YOUR_PROJECT_ID';
+
+// Instantiates a client
+const pubsubClient = PubSub({
+  projectId: projectId
 });
 
-// Reference a topic that has been previously created.
-var topic = pubsub.topic('my-topic');
+// The name for the new topic
+const topicName = 'my-new-topic';
 
-// Publish a message to the topic.
-var publisher = topic.publisher();
-var message = new Buffer('New message!');
-
-publisher.publish(message, function(err, messageId) {});
-
-// Subscribe to the topic.
-topic.createSubscription('subscription-name', function(err, subscription) {
-  // Register listeners to start pulling for messages.
-  function onError(err) {}
-  function onMessage(message) {}
-  subscription.on('error', onError);
-  subscription.on('message', onMessage);
-
-  // Remove listeners to stop pulling for messages.
-  subscription.removeListener('message', onMessage);
-  subscription.removeListener('error', onError);
-});
-
-// Promises are also supported by omitting callbacks.
-publisher.publish(message).then(function(data) {
-  var messageIds = data[0];
-});
-
-// It's also possible to integrate with third-party Promise libraries.
-var pubsub = require('@google-cloud/pubsub')({
-  promise: require('bluebird')
-});
-```
-
-
-## Authentication
-
-It's incredibly easy to get authenticated and start using Google's APIs. You can set your credentials on a global basis as well as on a per-API basis. See each individual API section below to see how you can auth on a per-API-basis. This is useful if you want to use different accounts for different Cloud services.
-
-### On Google Cloud Platform
-
-If you are running this client on Google Cloud Platform, we handle authentication for you with no configuration. You just need to make sure that when you [set up the GCE instance][gce-how-to], you add the correct scopes for the APIs you want to access.
-
-``` js
-var pubsub = require('@google-cloud/pubsub')();
-// ...you're good to go!
-```
-
-### Elsewhere
-
-If you are not running this client on Google Cloud Platform, you need a Google Developers service account. To create a service account:
-
-1. Visit the [Google Developers Console][dev-console].
-2. Create a new project or click on an existing project.
-3. Navigate to  **APIs & auth** > **APIs section** and turn on the following APIs (you may need to enable billing in order to use these services):
-  * Google Cloud Pub/Sub API
-4. Navigate to **APIs & auth** >  **Credentials** and then:
-  * If you want to use a new service account key, click on **Create credentials** and select **Service account key**. After the account key is created, you will be prompted to download the JSON key file that the library uses to authenticate your requests.
-  * If you want to generate a new service account key for an existing service account, click on **Generate new JSON key** and download the JSON key file.
-
-``` js
-var projectId = process.env.GCLOUD_PROJECT; // E.g. 'grape-spaceship-123'
-
-var pubsub = require('@google-cloud/pubsub')({
-  projectId: projectId,
-
-  // The path to your key file:
-  keyFilename: '/path/to/keyfile.json'
-
-  // Or the contents of the key file:
-  credentials: require('./path/to/keyfile.json')
-});
-
-// ...you're good to go!
+// Creates the new topic
+pubsubClient.createTopic(topicName)
+  .then((results) => {
+    const topic = results[0];
+    console.log(`Topic ${topic.name} created.`);
+  })
+  .catch((err) => {
+    console.error('ERROR:', err);
+  });
 ```
 
+## Samples
 
-[versioning]: https://github.com/GoogleCloudPlatform/google-cloud-node#versioning
-[google-cloud]: https://github.com/GoogleCloudPlatform/google-cloud-node/
-[gce-how-to]: https://cloud.google.com/compute/docs/authentication#using
-[dev-console]: https://console.developers.google.com/project
-[gcloud-pubsub-docs]: https://googlecloudplatform.github.io/google-cloud-node/#/docs/pubsub
-[cloud-pubsub-docs]: https://cloud.google.com/pubsub/docs
+Samples are in the [`samples/`](https://github.com/googleapis/nodejs-pubsub/tree/master/samples) directory. The samples' `README.md`
+has instructions for running the samples.
+
+| Sample                      | Source Code                       | Try it |
+| --------------------------- | --------------------------------- | ------ |
+| Subscriptions | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/subscriptions.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/subscriptions.js,samples/README.md) |
+| Topics | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/topics.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/topics.js,samples/README.md) |
+
+The [Cloud Pub/Sub Node.js Client API Reference][client-docs] documentation
+also contains samples.
+
+## Versioning
+
+This library follows [Semantic Versioning](http://semver.org/).
+
+This library is considered to be in **beta**. This means it is expected to be
+mostly stable while we work toward a general availability release; however,
+complete stability is not guaranteed. We will address issues and requests
+against beta libraries with a high priority.
+
+More Information: [Google Cloud Platform Launch Stages][launch_stages]
+
+[launch_stages]: https://cloud.google.com/terms/launch-stages
+
+## Contributing
+
+Contributions welcome! See the [Contributing Guide](https://github.com/googleapis/nodejs-pubsub/blob/master/.github/CONTRIBUTING.md).
+
+## License
+
+Apache Version 2.0
+
+See [LICENSE](https://github.com/googleapis/nodejs-pubsub/blob/master/LICENSE)
+
+[client-docs]: https://googlecloudplatform.github.io/google-cloud-node/#/docs/pubsub/latest/pubsub
+[product-docs]: https://cloud.google.com/pubsub/docs
+[shell_img]: http://gstatic.com/cloudssh/images/open-btn.png
