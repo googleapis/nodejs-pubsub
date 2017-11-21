@@ -47,6 +47,7 @@
     "mkamioner <mkamioner@gmail.com>"
   ],
   "scripts": {
+    "docs": "repo-tools exec -- jsdoc -c .jsdoc.js",
     "publish-module": "node ../../scripts/publish.js pubsub",
     "test": "mocha test/*.js",
     "system-test": "mocha system-test/*.js --no-timeouts --bail",
@@ -67,6 +68,8 @@
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^2.1.3",
     "async": "^2.1.4",
+    "ink-docstrap": "^1.3.2",
+    "jsdoc": "^3.5.5",
     "mocha": "^3.0.1",
     "proxyquire": "^1.7.10"
   }
