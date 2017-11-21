@@ -21,8 +21,7 @@ var async = require('async');
 var Subscription = require('../src/subscription.js');
 var uuid = require('uuid');
 
-var env = require('../../../system-test/env.js');
-var pubsub = require('../')(env);
+var pubsub = require('../');
 
 describe('pubsub', function() {
   var TOPIC_NAMES = [
