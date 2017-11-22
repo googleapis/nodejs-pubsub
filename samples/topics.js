@@ -154,7 +154,7 @@ function publishOrderedMessage(topicName, data) {
 
   // Publishes the message
   return publisher.publish(dataBuffer, attributes).then(results => {
-    const messageId = results[0];
+    const messageId = results;
 
     // Update the counter value
     setPublishCounterValue(parseInt(attributes.counterId, 10) + 1);

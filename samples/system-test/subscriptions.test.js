@@ -161,7 +161,7 @@ test.serial(`should listen for messages`, async t => {
     `${cmd} listen-messages ${subscriptionNameOne}`,
     cwd
   );
-  t.true(output.includes(`Received message ${messageIds[0]}:`));
+  t.true(output.includes(`Received message ${messageIds}:`));
 });
 
 test.serial(`should listen for ordered messages`, async t => {
@@ -178,7 +178,7 @@ test.serial(`should listen for ordered messages`, async t => {
   await subscriptions.listenForOrderedMessages(subscriptionNameThree, timeout);
   t.is(console.log.callCount, 0);
 
-  [result] = await publisherTwo.publish(expectedBuffer, {counterId: '1'});
+  result = await publisherTwo.publish(expectedBuffer, {counterId: '1'});
   publishedMessageIds.push(result);
   await subscriptions.listenForOrderedMessages(subscriptionNameThree, timeout);
   t.is(console.log.callCount, 1);
