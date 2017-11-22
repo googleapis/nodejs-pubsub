@@ -23,8 +23,6 @@
  * The only allowed edits are to method and file documentation. A 3-way
  * merge preserves those additions if the generated source changes.
  */
-/* TODO: introduce line-wrapping so that it never exceeds the limit. */
-/* jscs: disable maximumLineLength */
 'use strict';
 
 var configData = require('./publisher_client_config');
@@ -38,14 +36,12 @@ var DEFAULT_SERVICE_PORT = 443;
 var CODE_GEN_NAME_VERSION = 'gapic/0.1.0';
 
 var PAGE_DESCRIPTORS = {
-  listTopics: new gax.PageDescriptor(
-      'pageToken',
-      'nextPageToken',
-      'topics'),
+  listTopics: new gax.PageDescriptor('pageToken', 'nextPageToken', 'topics'),
   listTopicSubscriptions: new gax.PageDescriptor(
-      'pageToken',
-      'nextPageToken',
-      'subscriptions')
+    'pageToken',
+    'nextPageToken',
+    'subscriptions'
+  ),
 };
 
 /**
@@ -54,7 +50,7 @@ var PAGE_DESCRIPTORS = {
  */
 var ALL_SCOPES = [
   'https://www.googleapis.com/auth/cloud-platform',
-  'https://www.googleapis.com/auth/pubsub'
+  'https://www.googleapis.com/auth/pubsub',
 ];
 
 /**
@@ -74,15 +70,16 @@ var ALL_SCOPES = [
  * @class
  */
 function PublisherClient(gaxGrpc, grpcClients, opts) {
-  opts = extend({
-    servicePath: SERVICE_ADDRESS,
-    port: DEFAULT_SERVICE_PORT,
-    clientConfig: {}
-  }, opts);
+  opts = extend(
+    {
+      servicePath: SERVICE_ADDRESS,
+      port: DEFAULT_SERVICE_PORT,
+      clientConfig: {},
+    },
+    opts
+  );
 
-  var googleApiClient = [
-    'gl-node/' + process.versions.node
-  ];
+  var googleApiClient = ['gl-node/' + process.versions.node];
   if (opts.libName && opts.libVersion) {
     googleApiClient.push(opts.libName + '/' + opts.libVersion);
   }
@@ -95,29 +92,30 @@ function PublisherClient(gaxGrpc, grpcClients, opts) {
   var bundleDescriptors = {
     publish: new gax.BundleDescriptor(
       'messages',
-      [
-        'topic'
-      ],
+      ['topic'],
       'messageIds',
-      gax.createByteLengthFunction(grpcClients.google.pubsub.v1.PubsubMessage))
+      gax.createByteLengthFunction(grpcClients.google.pubsub.v1.PubsubMessage)
+    ),
   };
 
   var defaults = gaxGrpc.constructSettings(
-      'google.pubsub.v1.Publisher',
-      configData,
-      opts.clientConfig,
-      {'x-goog-api-client': googleApiClient.join(' ')});
+    'google.pubsub.v1.Publisher',
+    configData,
+    opts.clientConfig,
+    {'x-goog-api-client': googleApiClient.join(' ')}
+  );
 
   var self = this;
 
   this.auth = gaxGrpc.auth;
   var iamPolicyStub = gaxGrpc.createStub(
-      grpcClients.google.iam.v1.IAMPolicy,
-      opts);
+    grpcClients.google.iam.v1.IAMPolicy,
+    opts
+  );
   var iamPolicyStubMethods = [
     'setIamPolicy',
     'getIamPolicy',
-    'testIamPermissions'
+    'testIamPermissions',
   ];
   iamPolicyStubMethods.forEach(function(methodName) {
     self['_' + methodName] = gax.createApiCall(
@@ -128,19 +126,21 @@ function PublisherClient(gaxGrpc, grpcClients, opts) {
         };
       }),
       defaults[methodName],
-      PAGE_DESCRIPTORS[methodName] || bundleDescriptors[methodName]);
+      PAGE_DESCRIPTORS[methodName] || bundleDescriptors[methodName]
+    );
   });
 
   var publisherStub = gaxGrpc.createStub(
-      grpcClients.google.pubsub.v1.Publisher,
-      opts);
+    grpcClients.google.pubsub.v1.Publisher,
+    opts
+  );
   var publisherStubMethods = [
     'createTopic',
     'publish',
     'getTopic',
     'listTopics',
     'listTopicSubscriptions',
-    'deleteTopic'
+    'deleteTopic',
   ];
   publisherStubMethods.forEach(function(methodName) {
     self['_' + methodName] = gax.createApiCall(
@@ -151,17 +151,18 @@ function PublisherClient(gaxGrpc, grpcClients, opts) {
         };
       }),
       defaults[methodName],
-      PAGE_DESCRIPTORS[methodName] || bundleDescriptors[methodName]);
+      PAGE_DESCRIPTORS[methodName] || bundleDescriptors[methodName]
+    );
   });
 }
 
 // Path templates
 
-var PROJECT_PATH_TEMPLATE = new gax.PathTemplate(
-    'projects/{project}');
+var PROJECT_PATH_TEMPLATE = new gax.PathTemplate('projects/{project}');
 
 var TOPIC_PATH_TEMPLATE = new gax.PathTemplate(
-    'projects/{project}/topics/{topic}');
+  'projects/{project}/topics/{topic}'
+);
 
 /**
  * Returns a fully-qualified project resource name string.
@@ -170,7 +171,7 @@ var TOPIC_PATH_TEMPLATE = new gax.PathTemplate(
  */
 PublisherClient.prototype.projectPath = function(project) {
   return PROJECT_PATH_TEMPLATE.render({
-    project: project
+    project: project,
   });
 };
 
@@ -193,7 +194,7 @@ PublisherClient.prototype.matchProjectFromProjectName = function(projectName) {
 PublisherClient.prototype.topicPath = function(project, topic) {
   return TOPIC_PATH_TEMPLATE.render({
     project: project,
-    topic: topic
+    topic: topic,
   });
 };
 
@@ -504,7 +505,11 @@ PublisherClient.prototype.listTopicsStream = function(request, options) {
     options = {};
   }
 
-  return PAGE_DESCRIPTORS.listTopics.createStream(this._listTopics, request, options);
+  return PAGE_DESCRIPTORS.listTopics.createStream(
+    this._listTopics,
+    request,
+    options
+  );
 };
 
 /**
@@ -581,7 +586,11 @@ PublisherClient.prototype.listTopicsStream = function(request, options) {
  *         console.error(err);
  *     });
  */
-PublisherClient.prototype.listTopicSubscriptions = function(request, options, callback) {
+PublisherClient.prototype.listTopicSubscriptions = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -633,12 +642,19 @@ PublisherClient.prototype.listTopicSubscriptions = function(request, options, ca
  *     console.error(err);
  * });
  */
-PublisherClient.prototype.listTopicSubscriptionsStream = function(request, options) {
+PublisherClient.prototype.listTopicSubscriptionsStream = function(
+  request,
+  options
+) {
   if (options === undefined) {
     options = {};
   }
 
-  return PAGE_DESCRIPTORS.listTopicSubscriptions.createStream(this._listTopicSubscriptions, request, options);
+  return PAGE_DESCRIPTORS.listTopicSubscriptions.createStream(
+    this._listTopicSubscriptions,
+    request,
+    options
+  );
 };
 
 /**
@@ -825,7 +841,11 @@ PublisherClient.prototype.getIamPolicy = function(request, options, callback) {
  *     console.error(err);
  * });
  */
-PublisherClient.prototype.testIamPermissions = function(request, options, callback) {
+PublisherClient.prototype.testIamPermissions = function(
+  request,
+  options,
+  callback
+) {
   if (options instanceof Function && callback === undefined) {
     callback = options;
     options = {};
@@ -842,24 +862,23 @@ function PublisherClientBuilder(gaxGrpc) {
     return new PublisherClientBuilder(gaxGrpc);
   }
 
-  var iamPolicyClient = gaxGrpc.load([{
-    root: require('google-proto-files')('..'),
-    file: 'google/iam/v1/iam_policy.proto'
-  }]);
+  var iamPolicyClient = gaxGrpc.load([
+    {
+      root: require('google-proto-files')('..'),
+      file: 'google/iam/v1/iam_policy.proto',
+    },
+  ]);
   extend(this, iamPolicyClient.google.iam.v1);
 
-  var publisherClient = gaxGrpc.load([{
-    root: require('google-proto-files')('..'),
-    file: 'google/pubsub/v1/pubsub.proto'
-  }]);
+  var publisherClient = gaxGrpc.load([
+    {
+      root: require('google-proto-files')('..'),
+      file: 'google/pubsub/v1/pubsub.proto',
+    },
+  ]);
   extend(this, publisherClient.google.pubsub.v1);
 
-  var grpcClients = extend(
-    true,
-    {},
-    iamPolicyClient,
-    publisherClient
-  );
+  var grpcClients = extend(true, {}, iamPolicyClient, publisherClient);
 
   /**
    * Build a new instance of {@link PublisherClient}.

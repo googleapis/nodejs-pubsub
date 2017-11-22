@@ -27,7 +27,7 @@ var fakeUtil = extend({}, common.util, {
     if (Class.name === 'Snapshot') {
       promisified = true;
     }
-  }
+  },
 });
 
 describe('Snapshot', function() {
@@ -38,7 +38,7 @@ describe('Snapshot', function() {
   var PROJECT_ID = 'grape-spaceship-123';
 
   var PUBSUB = {
-    projectId: PROJECT_ID
+    projectId: PROJECT_ID,
   };
 
   var SUBSCRIPTION = {
@@ -46,14 +46,14 @@ describe('Snapshot', function() {
     projectId: PROJECT_ID,
     api: {},
     createSnapshot: function() {},
-    seek: function() {}
+    seek: function() {},
   };
 
   before(function() {
     Snapshot = proxyquire('../src/snapshot.js', {
       '@google-cloud/common': {
-        util: fakeUtil
-      }
+        util: fakeUtil,
+      },
     });
   });
 
@@ -169,7 +169,7 @@ describe('Snapshot', function() {
       snapshot.parent.request = function(config, callback) {
         assert.strictEqual(config.client, 'subscriberClient');
         assert.strictEqual(config.method, 'deleteSnapshot');
-        assert.deepEqual(config.reqOpts, { snapshot: snapshot.name });
+        assert.deepEqual(config.reqOpts, {snapshot: snapshot.name});
         callback(); // the done fn
       };
 

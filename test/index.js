@@ -48,9 +48,9 @@ var fakeUtil = extend({}, util, {
       'request',
       'snapshot',
       'subscription',
-      'topic'
+      'topic',
     ]);
-  }
+  },
 });
 
 function FakeSnapshot() {
@@ -73,14 +73,14 @@ var fakePaginator = {
     assert.deepEqual(methods, [
       'getSnapshots',
       'getSubscriptions',
-      'getTopics'
+      'getTopics',
     ]);
 
     extended = true;
   },
   streamify: function(methodName) {
     return methodName;
-  }
+  },
 };
 
 var googleAutoAuthOverride;
@@ -99,21 +99,21 @@ var GAX_CONFIG_SUBSCRIBER_OVERRIDE = {};
 var GAX_CONFIG = {
   Publisher: {
     interfaces: {
-      'google.pubsub.v1.Publisher': GAX_CONFIG_PUBLISHER_OVERRIDE
-    }
+      'google.pubsub.v1.Publisher': GAX_CONFIG_PUBLISHER_OVERRIDE,
+    },
   },
   Subscriber: {
     interfaces: {
-      'google.pubsub.v1.Subscriber': GAX_CONFIG_SUBSCRIBER_OVERRIDE
-    }
-  }
+      'google.pubsub.v1.Subscriber': GAX_CONFIG_SUBSCRIBER_OVERRIDE,
+    },
+  },
 };
 
 describe('PubSub', function() {
   var PubSub;
   var PROJECT_ID = 'test-project';
   var pubsub;
-  var OPTIONS = { projectId: PROJECT_ID };
+  var OPTIONS = {projectId: PROJECT_ID};
 
   var PUBSUB_EMULATOR_HOST = process.env.PUBSUB_EMULATOR_HOST;
 
@@ -122,7 +122,7 @@ describe('PubSub', function() {
     PubSub = proxyquire('../', {
       '@google-cloud/common': {
         paginator: fakePaginator,
-        util: fakeUtil
+        util: fakeUtil,
       },
       'google-auto-auth': fakeGoogleAutoAuth,
       grpc: fakeGrpc,
@@ -131,7 +131,7 @@ describe('PubSub', function() {
       './topic.js': FakeTopic,
       './v1': fakeV1,
       './v1/publisher_client_config.json': GAX_CONFIG.Publisher,
-      './v1/subscriber_client_config.json': GAX_CONFIG.Subscriber
+      './v1/subscriber_client_config.json': GAX_CONFIG.Subscriber,
     });
   });
 
@@ -167,7 +167,7 @@ describe('PubSub', function() {
     it('should normalize the arguments', function() {
       var normalizeArguments = fakeUtil.normalizeArguments;
       var normalizeArgumentsCalled = false;
-      var fakeOptions = { projectId: PROJECT_ID };
+      var fakeOptions = {projectId: PROJECT_ID};
       var fakeContext = {};
 
       fakeUtil.normalizeArguments = function(context, options) {
@@ -204,16 +204,22 @@ describe('PubSub', function() {
       var fakeGoogleAutoAuthInstance = {};
       var options = {
         a: 'b',
-        c: 'd'
+        c: 'd',
       };
 
       googleAutoAuthOverride = function(options_) {
-        assert.deepEqual(options_, extend({
-          scopes: v1.ALL_SCOPES,
-          'grpc.max_receive_message_length': 20000001,
-          libName: 'gccl',
-          libVersion: PKG.version
-        }, options));
+        assert.deepEqual(
+          options_,
+          extend(
+            {
+              scopes: v1.ALL_SCOPES,
+              'grpc.max_receive_message_length': 20000001,
+              libName: 'gccl',
+              libVersion: PKG.version,
+            },
+            options
+          )
+        );
         return fakeGoogleAutoAuthInstance;
       };
 
@@ -222,12 +228,18 @@ describe('PubSub', function() {
     });
 
     it('should localize the options provided', function() {
-      assert.deepEqual(pubsub.options, extend({
-        scopes: v1.ALL_SCOPES,
-        'grpc.max_receive_message_length': 20000001,
-        libName: 'gccl',
-        libVersion: PKG.version
-      }, OPTIONS));
+      assert.deepEqual(
+        pubsub.options,
+        extend(
+          {
+            scopes: v1.ALL_SCOPES,
+            'grpc.max_receive_message_length': 20000001,
+            libName: 'gccl',
+            libVersion: PKG.version,
+          },
+          OPTIONS
+        )
+      );
     });
 
     it('should set the projectId', function() {
@@ -244,20 +256,19 @@ describe('PubSub', function() {
     });
   });
 
-
   describe('createSubscription', function() {
     var TOPIC_NAME = 'topic';
     var TOPIC = extend(new FakeTopic(), {
-      name: 'projects/' + PROJECT_ID + '/topics/' + TOPIC_NAME
+      name: 'projects/' + PROJECT_ID + '/topics/' + TOPIC_NAME,
     });
 
     var SUB_NAME = 'subscription';
     var SUBSCRIPTION = {
-      name: 'projects/' + PROJECT_ID + '/subscriptions/' + SUB_NAME
+      name: 'projects/' + PROJECT_ID + '/subscriptions/' + SUB_NAME,
     };
 
     var apiResponse = {
-      name: 'subscription-name'
+      name: 'subscription-name',
     };
 
     beforeEach(function() {
@@ -295,7 +306,7 @@ describe('PubSub', function() {
     });
 
     it('should create a Subscription', function(done) {
-      var opts = { a: 'b', c: 'd' };
+      var opts = {a: 'b', c: 'd'};
 
       pubsub.request = util.noop;
 
@@ -323,18 +334,18 @@ describe('PubSub', function() {
 
     it('should send correct request', function(done) {
       var options = {
-        gaxOpts: {}
+        gaxOpts: {},
       };
 
       pubsub.topic = function(topicName) {
         return {
-          name: topicName
+          name: topicName,
         };
       };
 
       pubsub.subscription = function(subName) {
         return {
-          name: subName
+          name: subName,
         };
       };
 
@@ -356,20 +367,23 @@ describe('PubSub', function() {
         pushEndpoint: 'https://domain/push',
       };
 
-      var expectedBody = extend({
-        topic: TOPIC.name,
-        name: SUB_NAME
-      }, options);
+      var expectedBody = extend(
+        {
+          topic: TOPIC.name,
+          name: SUB_NAME,
+        },
+        options
+      );
 
       pubsub.topic = function() {
         return {
-          name: TOPIC_NAME
+          name: TOPIC_NAME,
         };
       };
 
       pubsub.subscription = function() {
         return {
-          name: SUB_NAME
+          name: SUB_NAME,
         };
       };
 
@@ -384,23 +398,23 @@ describe('PubSub', function() {
 
     it('should discard flow control options', function(done) {
       var options = {
-        flowControl: {}
+        flowControl: {},
       };
 
       var expectedBody = {
         topic: TOPIC.name,
-        name: SUB_NAME
+        name: SUB_NAME,
       };
 
       pubsub.topic = function() {
         return {
-          name: TOPIC_NAME
+          name: TOPIC_NAME,
         };
       };
 
       pubsub.subscription = function() {
         return {
-          name: SUB_NAME
+          name: SUB_NAME,
         };
       };
 
@@ -416,7 +430,7 @@ describe('PubSub', function() {
     it('should format the metadata', function(done) {
       var fakeMetadata = {};
       var formatted = {
-        a: 'a'
+        a: 'a',
       };
 
       Subscription.formatMetadata_ = function(metadata) {
@@ -434,7 +448,7 @@ describe('PubSub', function() {
 
     describe('error', function() {
       var error = new Error('Error.');
-      var apiResponse = { name: SUB_NAME };
+      var apiResponse = {name: SUB_NAME};
 
       beforeEach(function() {
         pubsub.request = function(config, callback) {
@@ -443,14 +457,14 @@ describe('PubSub', function() {
       });
 
       it('should re-use existing subscription', function(done) {
-        var apiResponse = { code: 6 };
+        var apiResponse = {code: 6};
 
         pubsub.subscription = function() {
           return SUBSCRIPTION;
         };
 
         pubsub.request = function(config, callback) {
-          callback({ code: 6 }, apiResponse);
+          callback({code: 6}, apiResponse);
         };
 
         pubsub.createSubscription(TOPIC_NAME, SUB_NAME, function(err, sub) {
@@ -477,7 +491,7 @@ describe('PubSub', function() {
     });
 
     describe('success', function() {
-      var apiResponse = { name: SUB_NAME };
+      var apiResponse = {name: SUB_NAME};
 
       beforeEach(function() {
         pubsub.request = function(config, callback) {
@@ -518,14 +532,14 @@ describe('PubSub', function() {
         assert.strictEqual(name, topicName);
 
         return {
-          name: formattedName
+          name: formattedName,
         };
       };
 
       pubsub.request = function(config) {
         assert.strictEqual(config.client, 'publisherClient');
         assert.strictEqual(config.method, 'createTopic');
-        assert.deepEqual(config.reqOpts, { name: formattedName });
+        assert.deepEqual(config.reqOpts, {name: formattedName});
         assert.deepEqual(config.gaxOpts, gaxOpts);
         done();
       };
@@ -664,7 +678,7 @@ describe('PubSub', function() {
 
   describe('getSnapshots', function() {
     var SNAPSHOT_NAME = 'fake-snapshot';
-    var apiResponse = { snapshots: [{ name: SNAPSHOT_NAME }]};
+    var apiResponse = {snapshots: [{name: SNAPSHOT_NAME}]};
 
     beforeEach(function() {
       pubsub.request = function(config, callback) {
@@ -685,18 +699,21 @@ describe('PubSub', function() {
         a: 'b',
         c: 'd',
         gaxOpts: {
-          e: 'f'
+          e: 'f',
         },
-        autoPaginate: false
+        autoPaginate: false,
       };
 
       var expectedOptions = extend({}, options, {
-        project: 'projects/' + pubsub.projectId
+        project: 'projects/' + pubsub.projectId,
       });
 
-      var expectedGaxOpts = extend({
-        autoPaginate: options.autoPaginate
-      }, options.gaxOpts);
+      var expectedGaxOpts = extend(
+        {
+          autoPaginate: options.autoPaginate,
+        },
+        options.gaxOpts
+      );
 
       delete expectedOptions.gaxOpts;
       delete expectedOptions.autoPaginate;
@@ -749,7 +766,7 @@ describe('PubSub', function() {
   });
 
   describe('getSubscriptions', function() {
-    var apiResponse = { subscriptions: [{ name: 'fake-subscription' }] };
+    var apiResponse = {subscriptions: [{name: 'fake-subscription'}]};
 
     beforeEach(function() {
       pubsub.request = function(config, callback) {
@@ -768,21 +785,24 @@ describe('PubSub', function() {
     it('should pass the correct arguments to the API', function(done) {
       var options = {
         gaxOpts: {
-          a: 'b'
+          a: 'b',
         },
-        autoPaginate: false
+        autoPaginate: false,
       };
 
-      var expectedGaxOpts = extend({
-        autoPaginate: options.autoPaginate
-      }, options.gaxOpts);
+      var expectedGaxOpts = extend(
+        {
+          autoPaginate: options.autoPaginate,
+        },
+        options.gaxOpts
+      );
 
       var project = 'projects/' + pubsub.projectId;
 
       pubsub.request = function(config) {
         assert.strictEqual(config.client, 'subscriberClient');
         assert.strictEqual(config.method, 'listSubscriptions');
-        assert.deepEqual(config.reqOpts, { project: project });
+        assert.deepEqual(config.reqOpts, {project: project});
         assert.deepEqual(config.gaxOpts, expectedGaxOpts);
         done();
       };
@@ -791,7 +811,7 @@ describe('PubSub', function() {
     });
 
     it('should pass options to API request', function(done) {
-      var opts = { pageSize: 10, pageToken: 'abc' };
+      var opts = {pageSize: 10, pageToken: 'abc'};
 
       pubsub.request = function(config) {
         var reqOpts = config.reqOpts;
@@ -837,7 +857,7 @@ describe('PubSub', function() {
         var topic = new FakeTopic();
 
         var opts = {
-          topic: topic
+          topic: topic,
         };
 
         topic.getSubscriptions = function(options, callback) {
@@ -850,14 +870,14 @@ describe('PubSub', function() {
 
       it('should create a topic instance from a name', function(done) {
         var opts = {
-          topic: TOPIC_NAME
+          topic: TOPIC_NAME,
         };
 
         var fakeTopic = {
           getSubscriptions: function(options, callback) {
             assert.strictEqual(options, opts);
             callback(); // the done fn
-          }
+          },
         };
 
         pubsub.topic = function(name) {
@@ -872,7 +892,7 @@ describe('PubSub', function() {
 
   describe('getTopics', function() {
     var topicName = 'fake-topic';
-    var apiResponse = { topics: [{ name: topicName }]};
+    var apiResponse = {topics: [{name: topicName}]};
 
     beforeEach(function() {
       pubsub.request = function(config, callback) {
@@ -893,18 +913,21 @@ describe('PubSub', function() {
         a: 'b',
         c: 'd',
         gaxOpts: {
-          e: 'f'
+          e: 'f',
         },
-        autoPaginate: false
+        autoPaginate: false,
       };
 
       var expectedOptions = extend({}, options, {
-        project: 'projects/' + pubsub.projectId
+        project: 'projects/' + pubsub.projectId,
       });
 
-      var expectedGaxOpts = extend({
-        autoPaginate: options.autoPaginate
-      }, options.gaxOpts);
+      var expectedGaxOpts = extend(
+        {
+          autoPaginate: options.autoPaginate,
+        },
+        options.gaxOpts
+      );
 
       delete expectedOptions.gaxOpts;
       delete expectedOptions.autoPaginate;
@@ -960,8 +983,8 @@ describe('PubSub', function() {
     var CONFIG = {
       client: 'fakeClient',
       method: 'fakeMethod',
-      reqOpts: { a: 'a' },
-      gaxOpts: {}
+      reqOpts: {a: 'a'},
+      gaxOpts: {},
     };
 
     beforeEach(function() {
@@ -970,15 +993,15 @@ describe('PubSub', function() {
       pubsub.auth = {
         getProjectId: function(callback) {
           callback(null, PROJECT_ID);
-        }
+        },
       };
 
       pubsub.api = {
         fakeClient: {
           fakeMethod: function(reqOpts, gaxOpts, callback) {
             callback(); // in most cases, the done fn
-          }
-        }
+          },
+        },
       };
 
       fakeUtil.replaceProjectIdToken = function(reqOpts) {
@@ -1023,7 +1046,7 @@ describe('PubSub', function() {
         fakeMethod: function(reqOpts, gaxOpts, callback) {
           assert.strictEqual(pubsub.api.fakeClient, fakeClientInstance);
           callback(); // the done function
-        }
+        },
       };
 
       v1Override = function(options) {
@@ -1033,7 +1056,7 @@ describe('PubSub', function() {
           fakeClient: function(options) {
             assert.strictEqual(options, pubsub.options);
             return fakeClientInstance;
-          }
+          },
         };
       };
 

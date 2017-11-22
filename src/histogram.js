@@ -61,7 +61,7 @@ Histogram.prototype.add = function(value) {
 Histogram.prototype.percentile = function(percent) {
   percent = Math.min(percent, 100);
 
-  var target = this.length - (this.length * (percent / 100));
+  var target = this.length - this.length * (percent / 100);
   var keys = Array.from(this.data.keys());
   var key;
 

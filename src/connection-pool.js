@@ -49,7 +49,7 @@ var RETRY_CODES = [
   10, // aborted
   13, // internal error
   14, // unavailable
-  15 // dataloss
+  15, // dataloss
 ];
 
 /**
@@ -79,7 +79,7 @@ function ConnectionPool(subscription) {
 
   this.settings = {
     maxConnections: subscription.maxConnections || 5,
-    ackDeadline: subscription.ackDeadline || 10000
+    ackDeadline: subscription.ackDeadline || 10000,
   };
 
   this.queue = [];
@@ -87,11 +87,14 @@ function ConnectionPool(subscription) {
   // grpc related fields we need since we're bypassing gax
   this.metadata_ = new grpc.Metadata();
 
-  this.metadata_.add('x-goog-api-client', [
-    'gl-node/' + process.versions.node,
-    'gccl/' + PKG.version,
-    'grpc/' + require('grpc/package.json').version
-  ].join(' '));
+  this.metadata_.add(
+    'x-goog-api-client',
+    [
+      'gl-node/' + process.versions.node,
+      'gccl/' + PKG.version,
+      'grpc/' + require('grpc/package.json').version,
+    ].join(' ')
+  );
 
   events.EventEmitter.call(this);
   this.open();
@@ -175,9 +178,13 @@ ConnectionPool.prototype.close = function(callback) {
   this.failedConnectionAttempts = 0;
   this.noConnectionsTime = 0;
 
-  each(connections, function(connection, onEndCallback) {
-    connection.end(onEndCallback);
-  }, callback);
+  each(
+    connections,
+    function(connection, onEndCallback) {
+      connection.end(onEndCallback);
+    },
+    callback
+  );
 };
 
 /**
@@ -211,8 +218,10 @@ ConnectionPool.prototype.createConnection = function() {
       .on('status', onConnectionStatus)
       .write({
         subscription: common.util.replaceProjectIdToken(
-          self.subscription.name, self.projectId),
-        streamAckDeadlineSeconds: self.settings.ackDeadline / 1000
+          self.subscription.name,
+          self.projectId
+        ),
+        streamAckDeadlineSeconds: self.settings.ackDeadline / 1000,
       });
 
     self.connections.set(id, connection);
@@ -307,7 +316,7 @@ ConnectionPool.prototype.createMessage = function(connectionId, resp) {
     },
     nack: function() {
       self.subscription.nack_(this);
-    }
+    },
   };
 };
 
@@ -401,7 +410,7 @@ ConnectionPool.prototype.getClient = function(callback) {
     self.client = new Subscriber(address, credentials, {
       'grpc.keepalive_time_ms': MAX_TIMEOUT,
       'grpc.max_receive_message_length': 20000001,
-      'grpc.primary_user_agent': common.util.getUserAgentFromPackageJson(PKG)
+      'grpc.primary_user_agent': common.util.getUserAgentFromPackageJson(PKG),
     });
 
     callback(null, self.client);
@@ -503,8 +512,9 @@ ConnectionPool.prototype.queueConnection = function() {
   var delay = 0;
 
   if (this.failedConnectionAttempts > 0) {
-    delay = (Math.pow(2, this.failedConnectionAttempts) * 1000) +
-      (Math.floor(Math.random() * 1000));
+    delay =
+      Math.pow(2, this.failedConnectionAttempts) * 1000 +
+      Math.floor(Math.random() * 1000);
   }
 
   var timeoutHandle = setTimeout(createConnection, delay);
@@ -545,8 +555,8 @@ ConnectionPool.prototype.shouldReconnect = function(status) {
     return false;
   }
 
-  var exceededRetryLimit = this.noConnectionsTime &&
-    Date.now() - this.noConnectionsTime > MAX_TIMEOUT;
+  var exceededRetryLimit =
+    this.noConnectionsTime && Date.now() - this.noConnectionsTime > MAX_TIMEOUT;
 
   if (exceededRetryLimit) {
     return false;

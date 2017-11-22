@@ -34,7 +34,7 @@ var fakeGrpc = extend({}, grpc);
 
 function fakeGaxGrpc() {
   return {
-    grpc: fakeGrpc
+    grpc: fakeGrpc,
   };
 }
 
@@ -83,9 +83,9 @@ describe('ConnectionPool', function() {
     projectId: PROJECT_ID,
     auth: {
       projectId: PROJECT_ID,
-      getAuthClient: fakeUtil.noop
+      getAuthClient: fakeUtil.noop,
     },
-    options: FAKE_PUBSUB_OPTIONS
+    options: FAKE_PUBSUB_OPTIONS,
   };
 
   var SUB_NAME = 'test-subscription';
@@ -93,19 +93,19 @@ describe('ConnectionPool', function() {
     projectId: PROJECT_ID,
     name: SUB_NAME,
     pubsub: PUBSUB,
-    request: fakeUtil.noop
+    request: fakeUtil.noop,
   };
 
   before(function() {
     ConnectionPool = proxyquire('../src/connection-pool.js', {
       '@google-cloud/common': {
-        util: fakeUtil
+        util: fakeUtil,
       },
       'google-gax': {
-        grpc: fakeGaxGrpc
+        grpc: fakeGaxGrpc,
       },
       uuid: fakeUuid,
-      './v1': fakeV1
+      './v1': fakeV1,
     });
   });
 
@@ -152,15 +152,15 @@ describe('ConnectionPool', function() {
         [
           'gl-node/' + process.versions.node,
           'gccl/' + PKG.version,
-          'grpc/' + require('grpc/package.json').version
-        ].join(' ')
+          'grpc/' + require('grpc/package.json').version,
+        ].join(' '),
       ]);
     });
 
     it('should respect user specified settings', function() {
       var options = {
         maxConnections: 10,
-        ackDeadline: 100
+        ackDeadline: 100,
       };
 
       var subscription = extend({}, SUBSCRIPTION, options);
@@ -251,9 +251,9 @@ describe('ConnectionPool', function() {
     });
   });
 
-  describe('close',function() {
+  describe('close', function() {
     it('should close the client', function(done) {
-      pool.client = { close: done };
+      pool.client = {close: done};
       pool.close();
     });
 
@@ -358,7 +358,7 @@ describe('ConnectionPool', function() {
       fakeChannel = {
         getConnectivityState: function() {
           return 2;
-        }
+        },
       };
 
       fakeClient = {
@@ -367,7 +367,7 @@ describe('ConnectionPool', function() {
         },
         getChannel: function() {
           return fakeChannel;
-        }
+        },
       };
 
       pool.getClient = function(callback) {
@@ -484,7 +484,7 @@ describe('ConnectionPool', function() {
         fakeConnection.write = function(reqOpts) {
           assert.deepEqual(reqOpts, {
             subscription: TOKENIZED_SUB_NAME,
-            streamAckDeadlineSeconds: pool.settings.ackDeadline / 1000
+            streamAckDeadlineSeconds: pool.settings.ackDeadline / 1000,
           });
         };
 
@@ -523,7 +523,7 @@ describe('ConnectionPool', function() {
         });
 
         it('should cancel any error events', function(done) {
-          var fakeError = { code: 4 };
+          var fakeError = {code: 4};
 
           pool.on('error', done); // should not fire
           pool.createConnection();
@@ -535,13 +535,7 @@ describe('ConnectionPool', function() {
         });
 
         it('should close and delete the connection', function(done) {
-          var endCalled = false;
-
           pool.createConnection();
-
-          fakeConnection.end = function() {
-            endCalled = true;
-          };
 
           pool.connections.delete = function(id) {
             assert.strictEqual(id, fakeId);
@@ -632,7 +626,7 @@ describe('ConnectionPool', function() {
         it('should emit error if no pending conn. are found', function(done) {
           var error = {
             code: 4,
-            details: 'Deadline Exceeded'
+            details: 'Deadline Exceeded',
           };
 
           pool.shouldReconnect = function() {
@@ -670,7 +664,7 @@ describe('ConnectionPool', function() {
           });
 
           pool.createConnection();
-          fakeConnection.emit('data', { receivedMessages: [fakeResp] });
+          fakeConnection.emit('data', {receivedMessages: [fakeResp]});
         });
       });
     });
@@ -685,19 +679,19 @@ describe('ConnectionPool', function() {
 
     var PT = {
       seconds: 6838383,
-      nanos: 20323838
+      nanos: 20323838,
     };
 
     var RESP = {
       ackId: 'def',
       message: {
         messageId: 'ghi',
-        data: new Buffer('hello'),
+        data: Buffer.from('hello'),
         attributes: {
-          a: 'a'
+          a: 'a',
         },
-        publishTime: PT
-      }
+        publishTime: PT,
+      },
     };
 
     before(function() {
@@ -721,7 +715,8 @@ describe('ConnectionPool', function() {
 
     it('should capture the message data', function() {
       var expectedPublishTime = new Date(
-        parseInt(PT.seconds, 10) * 1000 + parseInt(PT.nanos, 10) / 1e6);
+        parseInt(PT.seconds, 10) * 1000 + parseInt(PT.nanos, 10) / 1e6
+      );
 
       assert.strictEqual(message.ackId, RESP.ackId);
       assert.strictEqual(message.id, RESP.message.messageId);
@@ -770,7 +765,7 @@ describe('ConnectionPool', function() {
     var fakeClient = {
       getChannel: function() {
         return fakeChannel;
-      }
+      },
     };
 
     before(function() {
@@ -926,13 +921,13 @@ describe('ConnectionPool', function() {
 
       v1Override = function() {
         return {
-          Subscriber: FakeSubscriber
+          Subscriber: FakeSubscriber,
         };
       };
     });
 
     it('should return the cached client when available', function(done) {
-      var fakeClient = pool.client = new FakeSubscriber();
+      var fakeClient = (pool.client = new FakeSubscriber());
 
       pool.getClient(function(err, client) {
         assert.ifError(err);
@@ -970,7 +965,7 @@ describe('ConnectionPool', function() {
         setImmediate(done);
 
         return {
-          Subscriber: FakeSubscriber
+          Subscriber: FakeSubscriber,
         };
       };
 
@@ -996,7 +991,7 @@ describe('ConnectionPool', function() {
         assert.deepEqual(client.options, {
           'grpc.keepalive_time_ms': 300000,
           'grpc.max_receive_message_length': 20000001,
-          'grpc.primary_user_agent': fakeUserAgent
+          'grpc.primary_user_agent': fakeUserAgent,
         });
 
         done();
@@ -1037,7 +1032,7 @@ describe('ConnectionPool', function() {
         createInsecure: fakeUtil.noop,
         createSsl: fakeUtil.noop,
         createFromGoogleCredential: fakeUtil.noop,
-        combineChannelCredentials: fakeUtil.noop
+        combineChannelCredentials: fakeUtil.noop,
       };
     });
 
@@ -1079,9 +1074,8 @@ describe('ConnectionPool', function() {
           assert.strictEqual(sslCreds, fakeSslCreds);
           assert.strictEqual(googCreds, fakeGoogCreds);
           return fakeCombinedCreds;
-        }
+        },
       };
-
 
       pool.getCredentials(function(err, creds) {
         assert.ifError(err);
@@ -1121,7 +1115,7 @@ describe('ConnectionPool', function() {
 
   describe('isConnected', function() {
     it('should return true when at least one stream is connected', function() {
-      var connections = pool.connections = new Map();
+      var connections = (pool.connections = new Map());
 
       connections.set('a', new FakeConnection());
       connections.set('b', new FakeConnection());
@@ -1136,7 +1130,7 @@ describe('ConnectionPool', function() {
     });
 
     it('should return false when there is no connection', function() {
-      var connections = pool.connections = new Map();
+      var connections = (pool.connections = new Map());
 
       connections.set('a', new FakeConnection());
       connections.set('b', new FakeConnection());
@@ -1347,31 +1341,31 @@ describe('ConnectionPool', function() {
     });
 
     it('should return true for retryable errors', function() {
-      assert(pool.shouldReconnect({ code: 0 })); // OK
-      assert(pool.shouldReconnect({ code: 1 })); // Canceled
-      assert(pool.shouldReconnect({ code: 2 })); // Unknown
-      assert(pool.shouldReconnect({ code: 4 })); // DeadlineExceeded
-      assert(pool.shouldReconnect({ code: 8 })); // ResourceExhausted
-      assert(pool.shouldReconnect({ code: 10 })); // Aborted
-      assert(pool.shouldReconnect({ code: 13 })); // Internal
-      assert(pool.shouldReconnect({ code: 14 })); // Unavailable
-      assert(pool.shouldReconnect({ code: 15 })); // Dataloss
+      assert(pool.shouldReconnect({code: 0})); // OK
+      assert(pool.shouldReconnect({code: 1})); // Canceled
+      assert(pool.shouldReconnect({code: 2})); // Unknown
+      assert(pool.shouldReconnect({code: 4})); // DeadlineExceeded
+      assert(pool.shouldReconnect({code: 8})); // ResourceExhausted
+      assert(pool.shouldReconnect({code: 10})); // Aborted
+      assert(pool.shouldReconnect({code: 13})); // Internal
+      assert(pool.shouldReconnect({code: 14})); // Unavailable
+      assert(pool.shouldReconnect({code: 15})); // Dataloss
     });
 
     it('should return false for non-retryable errors', function() {
-      assert(!pool.shouldReconnect({ code: 3 })); // InvalidArgument
-      assert(!pool.shouldReconnect({ code: 5 })); // NotFound
-      assert(!pool.shouldReconnect({ code: 6 })); // AlreadyExists
-      assert(!pool.shouldReconnect({ code: 7 })); // PermissionDenied
-      assert(!pool.shouldReconnect({ code: 9 })); // FailedPrecondition
-      assert(!pool.shouldReconnect({ code: 11 })); // OutOfRange
-      assert(!pool.shouldReconnect({ code: 12 })); // Unimplemented
-      assert(!pool.shouldReconnect({ code: 16 })); // Unauthenticated
+      assert(!pool.shouldReconnect({code: 3})); // InvalidArgument
+      assert(!pool.shouldReconnect({code: 5})); // NotFound
+      assert(!pool.shouldReconnect({code: 6})); // AlreadyExists
+      assert(!pool.shouldReconnect({code: 7})); // PermissionDenied
+      assert(!pool.shouldReconnect({code: 9})); // FailedPrecondition
+      assert(!pool.shouldReconnect({code: 11})); // OutOfRange
+      assert(!pool.shouldReconnect({code: 12})); // Unimplemented
+      assert(!pool.shouldReconnect({code: 16})); // Unauthenticated
     });
 
     it('should not retry if no connection can be made', function() {
       var fakeStatus = {
-        code: 4
+        code: 4,
       };
 
       pool.noConnectionsTime = Date.now() - 300001;
@@ -1381,7 +1375,7 @@ describe('ConnectionPool', function() {
 
     it('should return true if all conditions are met', function() {
       var fakeStatus = {
-        code: 4
+        code: 4,
       };
 
       pool.noConnectionsTime = 0;
