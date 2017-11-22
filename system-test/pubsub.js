@@ -21,7 +21,8 @@ var async = require('async');
 var Subscription = require('../src/subscription.js');
 var uuid = require('uuid');
 
-var pubsub = require('../');
+var PubSub = require('../');
+var pubsub = PubSub();
 
 describe('pubsub', function() {
   var TOPIC_NAMES = [
