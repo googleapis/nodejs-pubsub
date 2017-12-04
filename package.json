@@ -47,7 +47,7 @@
     "mkamioner <mkamioner@gmail.com>"
   ],
   "scripts": {
-    "system-test": "repo-tools test run --cmd mocha -- system-test/*.js --no-timeouts",
+    "system-test": "mocha system-test/*.js --no-timeouts --bail",
     "cover": "nyc --reporter=lcov mocha --require intelli-espower-loader test/*.js && nyc report",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
     "test-no-cover": "repo-tools test run --cmd mocha -- test/*.js --no-timeouts",
@@ -56,7 +56,6 @@
     "prettier": "repo-tools exec -- prettier --write src/*.js src/*/*.js samples/*.js samples/*/*.js test/*.js test/*/*.js system-test/*.js system-test/*/*.js",
     "docs": "repo-tools exec -- jsdoc -c .jsdoc.js",
     "publish-module": "node ../../scripts/publish.js pubsub",
-    "system-test": "mocha system-test/*.js --no-timeouts --bail",
     "generate-scaffolding": "repo-tools generate all && repo-tools generate lib_samples_readme -l samples/ --config ../.cloud-repo-tools.json"
   },
   "dependencies": {
@@ -65,7 +64,7 @@
     "async-each": "^1.0.1",
     "extend": "^3.0.1",
     "google-auto-auth": "^0.7.1",
-    "google-gax": "^0.13.0",
+    "google-gax": "^0.14.2",
     "google-proto-files": "^0.13.1",
     "grpc": "^1.7.2",
     "is": "^3.0.1",

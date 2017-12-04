@@ -360,7 +360,7 @@ ConnectionPool.prototype.getAndEmitChannelState = function() {
  * @param {object} callback.client - The Subscriber client.
  */
 ConnectionPool.prototype.getClient = function(callback) {
-  return this.pubsub.getClient_({client: 'SubscriberClient'}, callback);
+  return this.pubsub.getClient_({client: 'subscriberClient'}, callback);
 };
 
 /**

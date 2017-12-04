@@ -77,7 +77,6 @@ function PubSub(options) {
 
   this.options = extend(
     {
-      scopes: v1.ALL_SCOPES,
       'grpc.keepalive_time_ms': 300000,
       'grpc.max_receive_message_length': 20000001,
       libName: 'gccl',
@@ -687,8 +686,17 @@ PubSub.prototype.getClient_ = function(config, callback) {
 
   if (!gaxClient) {
     // Lazily instantiate client.
-
-    gaxClient = new v1[config.client](this.options);
+    if (config.client === 'publisherClient') {
+      gaxClient = new v1.PublisherClient(this.options);
+    }
+    else if (config.client == 'subscriberClient') {
+      gaxClient = new v1.SubscriberClient(this.options);
+    }
+    else {
+      throw new Error("Client is unknown: " + config.client);
+    }
+    var scopes = gaxClient.constructor.scopes;
+    extend(this.options, { scopes });
     this.api[config.client] = gaxClient;
   }
 
