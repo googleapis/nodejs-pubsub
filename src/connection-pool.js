@@ -396,9 +396,8 @@ ConnectionPool.prototype.getClient = function(callback) {
       return;
     }
 
-    var Subscriber = v1(pubsub.options).Subscriber;
-    var address = v1.SERVICE_ADDRESS;
-
+    var subscriberClient = new v1.SubscriberClient(pubsub.options);
+    var address = subscriberClient.constructor.servicePath;
     if (pubsub.isEmulator) {
       address = pubsub.options.servicePath;
 
@@ -407,7 +406,7 @@ ConnectionPool.prototype.getClient = function(callback) {
       }
     }
 
-    self.client = new Subscriber(address, credentials, {
+    self.client = new subscriberClient.Subscriber(address, credentials, {
       'grpc.keepalive_time_ms': MAX_TIMEOUT,
       'grpc.max_receive_message_length': 20000001,
       'grpc.primary_user_agent': common.util.getUserAgentFromPackageJson(PKG),
