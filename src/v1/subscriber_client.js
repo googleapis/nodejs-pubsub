@@ -189,9 +189,6 @@ class SubscriberClient {
       opts
     );
 
-    // FIXME: editing generated code
-    this.Subscriber = protos.google.pubsub.v1.Subscriber;
-
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
     var subscriberStubMethods = [
@@ -224,6 +221,14 @@ class SubscriberClient {
         this._descriptors.page[methodName] || this._descriptors.stream[methodName]
       );
     }
+
+    // FIXME: editing generated code
+    this.waitForReady = function(deadline, callback) {
+      return subscriberStub.then(
+        stub => stub.waitForReady(deadline, callback),
+        callback
+      );
+    };
   }
 
   /**
