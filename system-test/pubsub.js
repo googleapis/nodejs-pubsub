@@ -242,37 +242,26 @@ describe('pubsub', function() {
   });
 
   describe('Subscription', function() {
-    require('fs').appendFileSync("/tmp/log.txt", "0");
     var TOPIC_NAME = generateTopicName();
-    require('fs').appendFileSync("/tmp/log.txt", "a");
     var topic = pubsub.topic(TOPIC_NAME);
-    require('fs').appendFileSync("/tmp/log.txt", "b");
     var publisher = topic.publisher();
-    require('fs').appendFileSync("/tmp/log.txt", "c");
 
     var SUB_NAMES = [generateSubName(), generateSubName()];
-    require('fs').appendFileSync("/tmp/log.txt", "d");
 
     var SUBSCRIPTIONS = [
       topic.subscription(SUB_NAMES[0], {ackDeadline: 30000}),
       topic.subscription(SUB_NAMES[1], {ackDeadline: 60000}),
     ];
-    require('fs').appendFileSync("/tmp/log.txt", "e");
 
     before(function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "1");
       topic.create(function(err) {
-        require('fs').appendFileSync("/tmp/log.txt", "2");
         assert.ifError(err);
 
         function createSubscription(subscription, callback) {
-          require('fs').appendFileSync("/tmp/log.txt", "3");
           subscription.create(callback);
-          require('fs').appendFileSync("/tmp/log.txt", "4");
         }
 
         async.each(SUBSCRIPTIONS, createSubscription, function(err) {
-          require('fs').appendFileSync("/tmp/log.txt", "5");
           if (err) {
             done(err);
             return;
@@ -281,7 +270,6 @@ describe('pubsub', function() {
           async.times(
             10,
             function(_, next) {
-              require('fs').appendFileSync("/tmp/log.txt", "6");
               publisher.publish(Buffer.from('hello'), next);
             },
             function(err) {
@@ -314,7 +302,6 @@ describe('pubsub', function() {
     });
 
     it('should list all subscriptions registered to the topic', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 1");
       topic.getSubscriptions(function(err, subs) {
         assert.ifError(err);
         assert.equal(subs.length, SUBSCRIPTIONS.length);
@@ -324,7 +311,6 @@ describe('pubsub', function() {
     });
 
     it('should list all topic subscriptions as a stream', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 2");
       var subscriptionsEmitted = [];
 
       topic
@@ -340,7 +326,6 @@ describe('pubsub', function() {
     });
 
     it('should list all subscriptions regardless of topic', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 3");
       pubsub.getSubscriptions(function(err, subscriptions) {
         assert.ifError(err);
         assert(subscriptions instanceof Array);
@@ -349,7 +334,6 @@ describe('pubsub', function() {
     });
 
     it('should list all subscriptions as a stream', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 4");
       var subscriptionEmitted = false;
 
       pubsub
@@ -365,7 +349,6 @@ describe('pubsub', function() {
     });
 
     it('should allow creation and deletion of a subscription', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 5");
       var subName = generateSubName();
       topic.createSubscription(subName, function(err, sub) {
         assert.ifError(err);
@@ -375,14 +358,12 @@ describe('pubsub', function() {
     });
 
     it('should honor the autoCreate option', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 6");
       var sub = topic.subscription(generateSubName());
 
       sub.get({autoCreate: true}, done);
     });
 
     it('should confirm if a sub exists', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 7");
       var sub = topic.subscription(SUB_NAMES[0]);
 
       sub.exists(function(err, exists) {
@@ -393,7 +374,6 @@ describe('pubsub', function() {
     });
 
     it('should confirm if a sub does not exist', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 8");
       var sub = topic.subscription('should-not-exist');
 
       sub.exists(function(err, exists) {
@@ -404,7 +384,6 @@ describe('pubsub', function() {
     });
 
     it('should create a subscription with message retention', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 9");
       var subName = generateSubName();
       var threeDaysInSeconds = 3 * 24 * 60 * 60;
 
@@ -436,7 +415,6 @@ describe('pubsub', function() {
     });
 
     it('should set metadata for a subscription', function() {
-      require('fs').appendFileSync("/tmp/log.txt", "test 10");
       var subscription = topic.subscription(generateSubName());
       var threeDaysInSeconds = 3 * 24 * 60 * 60;
 
@@ -466,12 +444,10 @@ describe('pubsub', function() {
     });
 
     it('should re-use an existing subscription', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 11");
       pubsub.createSubscription(topic, SUB_NAMES[0], done);
     });
 
     it('should error when using a non-existent subscription', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 12");
       var subscription = topic.subscription(generateSubName(), {
         maxConnections: 1,
       });
@@ -487,7 +463,6 @@ describe('pubsub', function() {
     });
 
     it('should receive the published messages', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 13");
       var messageCount = 0;
       var subscription = topic.subscription(SUB_NAMES[1]);
 
@@ -503,7 +478,6 @@ describe('pubsub', function() {
     });
 
     it('should ack the message', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 14");
       var subscription = topic.subscription(SUB_NAMES[1]);
 
       subscription.on('error', done);
@@ -519,7 +493,6 @@ describe('pubsub', function() {
     });
 
     it('should nack the message', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 15");
       var subscription = topic.subscription(SUB_NAMES[1]);
 
       subscription.on('error', done);
@@ -535,7 +508,6 @@ describe('pubsub', function() {
     });
 
     it('should respect flow control limits', function(done) {
-      require('fs').appendFileSync("/tmp/log.txt", "test 17");
       var maxMessages = 3;
       var messageCount = 0;
 
