@@ -24,13 +24,9 @@ var arrify = require('arrify');
 var common = require('@google-cloud/common');
 var each = require('async-each');
 var events = require('events');
-var grpc = require('google-gax').grpc().grpc;
 var is = require('is');
 var util = require('util');
 var uuid = require('uuid');
-
-var PKG = require('../package.json');
-var v1 = require('./v1');
 
 var CHANNEL_READY_EVENT = 'channel.ready';
 var CHANNEL_ERROR_EVENT = 'channel.error';
@@ -66,6 +62,7 @@ var RETRY_CODES = [
  */
 function ConnectionPool(subscription) {
   this.subscription = subscription;
+  this.pubsub = subscription.pubsub;
   this.projectId = subscription.projectId;
 
   this.connections = new Map();
@@ -83,18 +80,6 @@ function ConnectionPool(subscription) {
   };
 
   this.queue = [];
-
-  // grpc related fields we need since we're bypassing gax
-  this.metadata_ = new grpc.Metadata();
-
-  this.metadata_.add(
-    'x-goog-api-client',
-    [
-      'gl-node/' + process.versions.node,
-      'gccl/' + PKG.version,
-      'grpc/' + require('grpc/package.json').version,
-    ].join(' ')
-  );
 
   events.EventEmitter.call(this);
   this.open();
@@ -201,7 +186,7 @@ ConnectionPool.prototype.createConnection = function() {
     }
 
     var id = uuid.v4();
-    var connection = client.streamingPull(self.metadata_);
+    var connection = client.streamingPull();
     var errorImmediateHandle;
 
     if (self.isPaused) {
@@ -339,17 +324,6 @@ ConnectionPool.prototype.getAndEmitChannelState = function() {
       return;
     }
 
-    var READY_STATE = 2;
-
-    var channel = client.getChannel();
-    var connectivityState = channel.getConnectivityState(false);
-
-    if (connectivityState === READY_STATE) {
-      self.isGettingChannelState = false;
-      self.emit(CHANNEL_READY_EVENT);
-      return;
-    }
-
     var elapsedTimeWithoutConnection = 0;
     var now = Date.now();
     var deadline;
@@ -382,71 +356,7 @@ ConnectionPool.prototype.getAndEmitChannelState = function() {
  * @param {object} callback.client - The Subscriber client.
  */
 ConnectionPool.prototype.getClient = function(callback) {
-  if (this.client) {
-    callback(null, this.client);
-    return;
-  }
-
-  var self = this;
-  var pubsub = this.subscription.pubsub;
-
-  this.getCredentials(function(err, credentials) {
-    if (err) {
-      callback(err);
-      return;
-    }
-
-    var Subscriber = v1(pubsub.options).Subscriber;
-    var address = v1.SERVICE_ADDRESS;
-
-    if (pubsub.isEmulator) {
-      address = pubsub.options.servicePath;
-
-      if (pubsub.options.port) {
-        address += ':' + pubsub.options.port;
-      }
-    }
-
-    self.client = new Subscriber(address, credentials, {
-      'grpc.keepalive_time_ms': MAX_TIMEOUT,
-      'grpc.max_receive_message_length': 20000001,
-      'grpc.primary_user_agent': common.util.getUserAgentFromPackageJson(PKG),
-    });
-
-    callback(null, self.client);
-  });
-};
-
-/**
- * Get/create client credentials.
- *
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error occurred while getting the client.
- * @param {object} callback.credentials - The client credentials.
- */
-ConnectionPool.prototype.getCredentials = function(callback) {
-  var self = this;
-  var pubsub = this.subscription.pubsub;
-
-  if (pubsub.isEmulator) {
-    setImmediate(callback, null, grpc.credentials.createInsecure());
-    return;
-  }
-
-  pubsub.auth.getAuthClient(function(err, authClient) {
-    if (err) {
-      callback(err);
-      return;
-    }
-
-    var credentials = grpc.credentials.combineChannelCredentials(
-      grpc.credentials.createSsl(),
-      grpc.credentials.createFromGoogleCredential(authClient)
-    );
-
-    self.projectId = pubsub.auth.projectId;
-    callback(null, credentials);
-  });
+  return this.pubsub.getClient_({client: 'SubscriberClient'}, callback);
 };
 
 /**

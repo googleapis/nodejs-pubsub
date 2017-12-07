@@ -84,7 +84,7 @@ describe('IAM', function() {
   describe('getPolicy', function() {
     it('should make the correct API request', function(done) {
       iam.request = function(config, callback) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'getIamPolicy');
         assert.strictEqual(config.reqOpts.resource, iam.id);
 
@@ -117,7 +117,7 @@ describe('IAM', function() {
 
     it('should make the correct API request', function(done) {
       iam.request = function(config, callback) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'setIamPolicy');
         assert.strictEqual(config.reqOpts.resource, iam.id);
         assert.strictEqual(config.reqOpts.policy, policy);
@@ -151,7 +151,7 @@ describe('IAM', function() {
       var permissions = 'storage.bucket.list';
 
       iam.request = function(config) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'testIamPermissions');
         assert.strictEqual(config.reqOpts.resource, iam.id);
         assert.deepEqual(config.reqOpts.permissions, [permissions]);

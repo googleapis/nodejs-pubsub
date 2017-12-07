@@ -77,7 +77,7 @@ function PubSub(options) {
 
   this.options = extend(
     {
-      scopes: v1.ALL_SCOPES,
+      'grpc.keepalive_time_ms': 300000,
       'grpc.max_receive_message_length': 20000001,
       libName: 'gccl',
       libVersion: PKG.version,
@@ -189,7 +189,7 @@ PubSub.prototype.createSubscription = function(topic, name, options, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'createSubscription',
       reqOpts: reqOpts,
       gaxOpts: options.gaxOpts,
@@ -249,7 +249,7 @@ PubSub.prototype.createTopic = function(name, gaxOpts, callback) {
 
   this.request(
     {
-      client: 'publisherClient',
+      client: 'PublisherClient',
       method: 'createTopic',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -352,7 +352,7 @@ PubSub.prototype.getSnapshots = function(options, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'listSnapshots',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -479,7 +479,7 @@ PubSub.prototype.getSubscriptions = function(options, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'listSubscriptions',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -598,7 +598,7 @@ PubSub.prototype.getTopics = function(options, callback) {
 
   this.request(
     {
-      client: 'publisherClient',
+      client: 'PublisherClient',
       method: 'listTopics',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -649,7 +649,7 @@ PubSub.prototype.getTopics = function(options, callback) {
 PubSub.prototype.getTopicsStream = common.paginator.streamify('getTopics');
 
 /**
- * Funnel all API requests through this method, to be sure we have a project ID.
+ * Get the PubSub client object.
  *
  * @private
  *
@@ -659,7 +659,7 @@ PubSub.prototype.getTopicsStream = common.paginator.streamify('getTopics');
  * @param {object} config.reqOpts - Request options.
  * @param {function=} callback - The callback function.
  */
-PubSub.prototype.request = function(config, callback) {
+PubSub.prototype.getClient_ = function(config, callback) {
   var self = this;
 
   if (global.GCLOUD_SANDBOX_ENV) {
@@ -677,7 +677,7 @@ PubSub.prototype.request = function(config, callback) {
       }
 
       self.projectId = projectId;
-      self.request(config, callback);
+      self.getClient_(config, callback);
     });
     return;
   }
@@ -686,14 +686,59 @@ PubSub.prototype.request = function(config, callback) {
 
   if (!gaxClient) {
     // Lazily instantiate client.
-    gaxClient = v1(this.options)[config.client](this.options);
+    if (config.client === 'PublisherClient') {
+      gaxClient = new v1.PublisherClient(this.options);
+    } else if (config.client === 'SubscriberClient') {
+      gaxClient = new v1.SubscriberClient(this.options);
+    } else {
+      let err = new Error('Client is unknown: ' + config.client);
+      callback(err);
+    }
+
+    // Determine what scopes are needed.
+    // It is the union of the scopes on all three clients.
+    let clientClasses = [v1.SubscriberClient, v1.PublisherClient];
+
+    let allScopes = {};
+    for (let clientClass of clientClasses) {
+      for (let scope of clientClass.scopes) {
+        allScopes[scope] = true;
+      }
+    }
+
+    var scopes = Object.keys(allScopes);
+    this.options.scopes = scopes;
     this.api[config.client] = gaxClient;
   }
 
-  var reqOpts = extend(true, {}, config.reqOpts);
-  reqOpts = common.util.replaceProjectIdToken(reqOpts, this.projectId);
+  callback(null, gaxClient);
+};
 
-  gaxClient[config.method](reqOpts, config.gaxOpts, callback);
+/**
+ * Funnel all API requests through this method, to be sure we have a project ID.
+ *
+ * @private
+ *
+ * @param {object} config - Configuration object.
+ * @param {object} config.gaxOpts - GAX options.
+ * @param {function} config.method - The gax method to call.
+ * @param {object} config.reqOpts - Request options.
+ * @param {function=} callback - The callback function.
+ */
+PubSub.prototype.request = function(config, callback) {
+  var self = this;
+
+  this.getClient_(config, function(err, client) {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    var reqOpts = extend(true, {}, config.reqOpts);
+    reqOpts = common.util.replaceProjectIdToken(reqOpts, self.projectId);
+
+    client[config.method](reqOpts, config.gaxOpts, callback);
+  });
 };
 
 /**

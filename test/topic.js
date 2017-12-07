@@ -180,7 +180,7 @@ describe('Topic', function() {
   describe('delete', function() {
     it('should make the proper request', function(done) {
       topic.request = function(config, callback) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'deleteTopic');
         assert.deepEqual(config.reqOpts, {topic: topic.name});
         callback(); // the done fn
@@ -355,7 +355,7 @@ describe('Topic', function() {
   describe('getMetadata', function() {
     it('should make the proper request', function(done) {
       topic.request = function(config) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'getTopic');
         assert.deepEqual(config.reqOpts, {topic: topic.name});
         done();
@@ -435,7 +435,7 @@ describe('Topic', function() {
       delete expectedOptions.autoPaginate;
 
       topic.request = function(config) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'listTopicSubscriptions');
         assert.deepEqual(config.reqOpts, expectedOptions);
         assert.deepEqual(config.gaxOpts, expectedGaxOpts);
