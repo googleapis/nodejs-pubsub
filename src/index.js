@@ -189,7 +189,7 @@ PubSub.prototype.createSubscription = function(topic, name, options, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'createSubscription',
       reqOpts: reqOpts,
       gaxOpts: options.gaxOpts,
@@ -249,7 +249,7 @@ PubSub.prototype.createTopic = function(name, gaxOpts, callback) {
 
   this.request(
     {
-      client: 'publisherClient',
+      client: 'PublisherClient',
       method: 'createTopic',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -352,7 +352,7 @@ PubSub.prototype.getSnapshots = function(options, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'listSnapshots',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -479,7 +479,7 @@ PubSub.prototype.getSubscriptions = function(options, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'listSubscriptions',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -598,7 +598,7 @@ PubSub.prototype.getTopics = function(options, callback) {
 
   this.request(
     {
-      client: 'publisherClient',
+      client: 'PublisherClient',
       method: 'listTopics',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -686,17 +686,32 @@ PubSub.prototype.getClient_ = function(config, callback) {
 
   if (!gaxClient) {
     // Lazily instantiate client.
-    if (config.client === 'publisherClient') {
+    if (config.client === 'PublisherClient') {
       gaxClient = new v1.PublisherClient(this.options);
     }
-    else if (config.client == 'subscriberClient') {
+    else if (config.client == 'SubscriberClient') {
       gaxClient = new v1.SubscriberClient(this.options);
     }
     else {
       throw new Error("Client is unknown: " + config.client);
     }
-    var scopes = gaxClient.constructor.scopes;
-    extend(this.options, { scopes });
+
+    // Determine what scopes are needed.
+    // It is the union of the scopes on all three clients.
+    let clientClasses = [
+      v1.SubscriberClient,
+      v1.PublisherClient
+    ];
+
+    let allScopes = {};
+    for (let clientClass of clientClasses) {
+      for (let scope of clientClass.scopes) {
+        allScopes[scope] = true;
+      }
+    }
+
+    var scopes = Object.keys(allScopes);
+    this.options.scopes = scopes;
     this.api[config.client] = gaxClient;
   }
 

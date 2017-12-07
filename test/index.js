@@ -88,11 +88,6 @@ function fakeGoogleAutoAuth() {
   return (googleAutoAuthOverride || util.noop).apply(null, arguments);
 }
 
-var v1Override;
-function fakeV1() {
-  return (v1Override || util.noop).apply(null, arguments);
-}
-
 var GAX_CONFIG_PUBLISHER_OVERRIDE = {};
 var GAX_CONFIG_SUBSCRIBER_OVERRIDE = {};
 
@@ -129,7 +124,6 @@ describe('PubSub', function() {
       './snapshot.js': FakeSnapshot,
       './subscription.js': Subscription,
       './topic.js': FakeTopic,
-      './v1': fakeV1,
       './v1/publisher_client_config.json': GAX_CONFIG.Publisher,
       './v1/subscriber_client_config.json': GAX_CONFIG.Subscriber,
     });
@@ -142,7 +136,6 @@ describe('PubSub', function() {
   });
 
   beforeEach(function() {
-    v1Override = null;
     googleAutoAuthOverride = null;
     SubscriptionOverride = null;
     pubsub = new PubSub(OPTIONS);
@@ -212,8 +205,8 @@ describe('PubSub', function() {
           options_,
           extend(
             {
-              scopes: v1.ALL_SCOPES,
               'grpc.max_receive_message_length': 20000001,
+              'grpc.keepalive_time_ms': 300000,
               libName: 'gccl',
               libVersion: PKG.version,
             },
@@ -232,8 +225,8 @@ describe('PubSub', function() {
         pubsub.options,
         extend(
           {
-            scopes: v1.ALL_SCOPES,
             'grpc.max_receive_message_length': 20000001,
+            'grpc.keepalive_time_ms': 300000,
             libName: 'gccl',
             libVersion: PKG.version,
           },
@@ -350,7 +343,7 @@ describe('PubSub', function() {
       };
 
       pubsub.request = function(config) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'createSubscription');
         assert.strictEqual(config.reqOpts.topic, TOPIC.name);
         assert.strictEqual(config.reqOpts.name, SUB_NAME);
@@ -537,7 +530,7 @@ describe('PubSub', function() {
       };
 
       pubsub.request = function(config) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'createTopic');
         assert.deepEqual(config.reqOpts, {name: formattedName});
         assert.deepEqual(config.gaxOpts, gaxOpts);
@@ -719,7 +712,7 @@ describe('PubSub', function() {
       delete expectedOptions.autoPaginate;
 
       pubsub.request = function(config) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'listSnapshots');
         assert.deepEqual(config.reqOpts, expectedOptions);
         assert.deepEqual(config.gaxOpts, expectedGaxOpts);
@@ -800,7 +793,7 @@ describe('PubSub', function() {
       var project = 'projects/' + pubsub.projectId;
 
       pubsub.request = function(config) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'listSubscriptions');
         assert.deepEqual(config.reqOpts, {project: project});
         assert.deepEqual(config.gaxOpts, expectedGaxOpts);
@@ -933,7 +926,7 @@ describe('PubSub', function() {
       delete expectedOptions.autoPaginate;
 
       pubsub.request = function(config) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'listTopics');
         assert.deepEqual(config.reqOpts, expectedOptions);
         assert.deepEqual(config.gaxOpts, expectedGaxOpts);
@@ -981,7 +974,7 @@ describe('PubSub', function() {
 
   describe('request', function() {
     var CONFIG = {
-      client: 'fakeClient',
+      client: 'PublisherClient',
       method: 'fakeMethod',
       reqOpts: {a: 'a'},
       gaxOpts: {},
@@ -996,17 +989,11 @@ describe('PubSub', function() {
         },
       };
 
-      pubsub.api = {
-        fakeClient: {
-          fakeMethod: function(reqOpts, gaxOpts, callback) {
-            callback(); // in most cases, the done fn
-          },
-        },
-      };
-
       fakeUtil.replaceProjectIdToken = function(reqOpts) {
         return reqOpts;
       };
+
+      pubsub.config = CONFIG;
     });
 
     it('should get the project id', function(done) {
@@ -1041,29 +1028,6 @@ describe('PubSub', function() {
       pubsub.request(CONFIG, assert.ifError);
     });
 
-    it('should instantiate the client lazily', function(done) {
-      var fakeClientInstance = {
-        fakeMethod: function(reqOpts, gaxOpts, callback) {
-          assert.strictEqual(pubsub.api.fakeClient, fakeClientInstance);
-          callback(); // the done function
-        },
-      };
-
-      v1Override = function(options) {
-        assert.strictEqual(options, pubsub.options);
-
-        return {
-          fakeClient: function(options) {
-            assert.strictEqual(options, pubsub.options);
-            return fakeClientInstance;
-          },
-        };
-      };
-
-      delete pubsub.api.fakeClient;
-      pubsub.request(CONFIG, done);
-    });
-
     it('should do nothing if sandbox env var is set', function(done) {
       global.GCLOUD_SANDBOX_ENV = true;
       pubsub.request(CONFIG, done); // should not fire done
@@ -1076,6 +1040,24 @@ describe('PubSub', function() {
         pubsub.isEmulator = true;
         pubsub.auth.getProjectId = function() {
           throw new Error('getProjectId should not be called.');
+        };
+        var fakeClient = {
+          streamingPull: function() {
+            return fakeConnection;
+          },
+          getChannel: function() {
+            return fakeChannel;
+          },
+          waitForReady: function() {
+          }
+        };
+
+        fakeClient[CONFIG.method] = function(opts, gaxOpts, callback) {
+          callback();
+        };
+        pubsub.config = CONFIG;
+        pubsub.getClient_ = function(config, callback) {
+          callback(null, fakeClient);
         };
       });
 

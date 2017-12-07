@@ -167,7 +167,7 @@ describe('Snapshot', function() {
   describe('delete', function() {
     it('should make the correct request', function(done) {
       snapshot.parent.request = function(config, callback) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'deleteSnapshot');
         assert.deepEqual(config.reqOpts, {snapshot: snapshot.name});
         callback(); // the done fn

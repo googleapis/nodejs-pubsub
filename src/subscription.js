@@ -318,7 +318,7 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
 
   if (!this.isConnected_()) {
     promise = common.util.promisify(this.request).call(this, {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'acknowledge',
       reqOpts: {
         subscription: this.name,
@@ -482,7 +482,7 @@ Subscription.prototype.createSnapshot = function(name, gaxOpts, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'createSnapshot',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -538,7 +538,7 @@ Subscription.prototype.delete = function(gaxOpts, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'deleteSubscription',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -718,7 +718,7 @@ Subscription.prototype.getMetadata = function(gaxOpts, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'getSubscription',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -834,7 +834,7 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
 
   if (!this.isConnected_()) {
     promise = common.util.promisify(this.request).call(this, {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'modifyAckDeadline',
       reqOpts: {
         subscription: self.name,
@@ -914,7 +914,7 @@ Subscription.prototype.modifyPushConfig = function(config, gaxOpts, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'modifyPushConfig',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -1052,7 +1052,7 @@ Subscription.prototype.seek = function(snapshot, gaxOpts, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'seek',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -1139,7 +1139,7 @@ Subscription.prototype.setMetadata = function(metadata, gaxOpts, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'updateSubscription',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,

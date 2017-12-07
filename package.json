@@ -47,7 +47,7 @@
     "mkamioner <mkamioner@gmail.com>"
   ],
   "scripts": {
-    "system-test": "mocha system-test/*.js --no-timeouts --bail",
+    "system-test": "repo-tools test run --cmd mocha -- system-test/*.js --no-timeouts",
     "cover": "nyc --reporter=lcov mocha --require intelli-espower-loader test/*.js && nyc report",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
     "test-no-cover": "repo-tools test run --cmd mocha -- test/*.js --no-timeouts",

@@ -190,7 +190,7 @@ Publisher.prototype.publish_ = function() {
 
   this.topic.request(
     {
-      client: 'publisherClient',
+      client: 'PublisherClient',
       method: 'publish',
       reqOpts: reqOpts,
     },

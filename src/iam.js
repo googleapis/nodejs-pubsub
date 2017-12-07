@@ -106,7 +106,7 @@ IAM.prototype.getPolicy = function(gaxOpts, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'getIamPolicy',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -174,7 +174,7 @@ IAM.prototype.setPolicy = function(policy, gaxOpts, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'setIamPolicy',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -257,7 +257,7 @@ IAM.prototype.testPermissions = function(permissions, gaxOpts, callback) {
 
   this.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'testIamPermissions',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,

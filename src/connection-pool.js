@@ -190,7 +190,7 @@ ConnectionPool.prototype.createConnection = function() {
     }
 
     var id = uuid.v4();
-    var connection = client.streamingPull(self.metadata_);
+    var connection = client.streamingPull();
     var errorImmediateHandle;
 
     if (self.isPaused) {
@@ -360,7 +360,7 @@ ConnectionPool.prototype.getAndEmitChannelState = function() {
  * @param {object} callback.client - The Subscriber client.
  */
 ConnectionPool.prototype.getClient = function(callback) {
-  return this.pubsub.getClient_({client: 'subscriberClient'}, callback);
+  return this.pubsub.getClient_({client: 'SubscriberClient'}, callback);
 };
 
 /**

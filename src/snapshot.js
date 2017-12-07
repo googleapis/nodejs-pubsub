@@ -197,7 +197,7 @@ Snapshot.prototype.delete = function(callback) {
 
   this.parent.request(
     {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'deleteSnapshot',
       reqOpts: reqOpts,
     },

@@ -38,11 +38,6 @@ function fakeGaxGrpc() {
   };
 }
 
-var v1Override;
-function fakeV1(options) {
-  return (v1Override || v1)(options);
-}
-
 function FakeConnection() {
   this.isConnected = false;
   this.isPaused = false;
@@ -75,6 +70,9 @@ FakeConnection.prototype.cancel = function() {
 describe('ConnectionPool', function() {
   var ConnectionPool;
   var pool;
+  var fakeConnection;
+  var fakeChannel;
+  var fakeClient;
 
   var FAKE_PUBSUB_OPTIONS = {};
   var PROJECT_ID = 'grapce-spacheship-123';
@@ -105,13 +103,34 @@ describe('ConnectionPool', function() {
         grpc: fakeGaxGrpc,
       },
       uuid: fakeUuid,
-      './v1': fakeV1,
     });
   });
 
   beforeEach(function() {
+    fakeConnection = new FakeConnection();
+
+    fakeChannel = {
+      getConnectivityState: function() {
+        return 2;
+      },
+    };
+
+    fakeClient = {
+      streamingPull: function() {
+        return fakeConnection;
+      },
+      getChannel: function() {
+        return fakeChannel;
+      },
+      waitForReady: function() {
+      }
+    };
+
     SUBSCRIPTION.request = fakeUtil.noop;
     PUBSUB.auth.getAuthClient = fakeUtil.noop;
+    PUBSUB.getClient_ = function(config, callback) {
+      callback(null, fakeClient);
+    };
 
     pool = new ConnectionPool(SUBSCRIPTION);
     pool.queue.forEach(clearTimeout);
@@ -143,18 +162,6 @@ describe('ConnectionPool', function() {
       assert.deepEqual(pool.queue, []);
 
       ConnectionPool.prototype.open = open;
-    });
-
-    it('should create grpc metadata', function() {
-      assert(pool.metadata_ instanceof grpc.Metadata);
-
-      assert.deepEqual(pool.metadata_.get('x-goog-api-client'), [
-        [
-          'gl-node/' + process.versions.node,
-          'gccl/' + PKG.version,
-          'grpc/' + require('grpc/package.json').version,
-        ].join(' '),
-      ]);
     });
 
     it('should respect user specified settings', function() {
@@ -348,9 +355,9 @@ describe('ConnectionPool', function() {
   });
 
   describe('createConnection', function() {
-    var fakeClient;
     var fakeConnection;
     var fakeChannel;
+    var fakeClient;
 
     beforeEach(function() {
       fakeConnection = new FakeConnection();
@@ -367,8 +374,10 @@ describe('ConnectionPool', function() {
         },
         getChannel: function() {
           return fakeChannel;
-        },
+        }
       };
+
+      fakeClient.waitForReady = fakeUtil.noop;
 
       pool.getClient = function(callback) {
         callback(null, fakeClient);
@@ -784,6 +793,10 @@ describe('ConnectionPool', function() {
         callback(null, fakeClient);
       };
 
+      PUBSUB.getClient_ = function(config, callback) {
+        callback(null, fakeClient);
+      };
+
       fakeTimestamp = dateNow.call(global.Date);
       pool.noConnectionsTime = 0;
 
@@ -830,6 +843,9 @@ describe('ConnectionPool', function() {
     });
 
     it('should emit the ready event if the channel is ready', function(done) {
+      fakeClient.waitForReady = function(deadline, callback) {
+        callback();
+      };
       fakeChannelState = channelReadyState;
 
       fakeChannel.getConnectivityState = function(shouldConnect) {
@@ -843,6 +859,7 @@ describe('ConnectionPool', function() {
       });
 
       pool.getAndEmitChannelState();
+      fakeClient.waitForReady = fakeUtil.noop;
     });
 
     it('should wait for the channel to be ready', function(done) {
@@ -910,43 +927,35 @@ describe('ConnectionPool', function() {
       this.closed = false;
     }
 
+    FakeSubscriber.prototype.streamingPull = function() {
+      return fakeConnection;
+    };
+
+    FakeSubscriber.prototype.getChannel = function() {
+      return fakeChannel;
+    };
+
     FakeSubscriber.prototype.close = function() {
       this.closed = true;
     };
 
-    beforeEach(function() {
-      pool.getCredentials = function(callback) {
-        callback(null, fakeCreds);
-      };
+    var fakeClient = new FakeSubscriber("fake-address", fakeCreds, {});
 
-      v1Override = function() {
-        return {
-          Subscriber: FakeSubscriber,
-        };
+    beforeEach(function() {
+      PUBSUB.getClient_ = function(config, callback) {
+        callback(null, fakeClient);
       };
     });
 
     it('should return the cached client when available', function(done) {
-      var fakeClient = (pool.client = new FakeSubscriber());
+      pool.getClient(function(err1, client1) {
+        assert.ifError(err1);
 
-      pool.getClient(function(err, client) {
-        assert.ifError(err);
-        assert.strictEqual(client, fakeClient);
-        done();
-      });
-    });
-
-    it('should return any auth errors', function(done) {
-      var error = new Error('err');
-
-      pool.getCredentials = function(callback) {
-        callback(error);
-      };
-
-      pool.getClient(function(err, client) {
-        assert.strictEqual(err, error);
-        assert.strictEqual(client, undefined);
-        done();
+        pool.getClient(function(err2, client2) {
+          assert.ifError(err2);
+          assert.strictEqual(client1, client2);
+          done();
+        });
       });
     });
 
@@ -955,159 +964,6 @@ describe('ConnectionPool', function() {
         assert.ifError(err);
         assert(client instanceof FakeSubscriber);
         assert.strictEqual(client.creds, fakeCreds);
-        done();
-      });
-    });
-
-    it('should pass the pubsub options into the gax fn', function(done) {
-      v1Override = function(options) {
-        assert.strictEqual(options, FAKE_PUBSUB_OPTIONS);
-        setImmediate(done);
-
-        return {
-          Subscriber: FakeSubscriber,
-        };
-      };
-
-      pool.getClient(assert.ifError);
-    });
-
-    it('should pass in the correct the args to the Subscriber', function(done) {
-      var fakeAddress = 'a.b.c';
-      fakeV1.SERVICE_ADDRESS = fakeAddress;
-
-      var fakeUserAgent = 'a-b-c';
-      fakeUtil.getUserAgentFromPackageJson = function(packageJson) {
-        assert.deepEqual(packageJson, PKG);
-        return fakeUserAgent;
-      };
-
-      pool.getClient(function(err, client) {
-        assert.ifError(err);
-        assert(client instanceof FakeSubscriber);
-        assert.strictEqual(client.address, fakeAddress);
-        assert.strictEqual(client.creds, fakeCreds);
-
-        assert.deepEqual(client.options, {
-          'grpc.keepalive_time_ms': 300000,
-          'grpc.max_receive_message_length': 20000001,
-          'grpc.primary_user_agent': fakeUserAgent,
-        });
-
-        done();
-      });
-    });
-
-    it('should respect the emulator service address', function(done) {
-      fakeV1.SERVICE_ADDRESS = 'should.not.use';
-
-      PUBSUB.isEmulator = true;
-      PUBSUB.options.servicePath = 'should.use';
-
-      pool.getClient(function(err, client) {
-        assert.ifError(err);
-        assert.strictEqual(client.address, 'should.use');
-        done();
-      });
-    });
-
-    it('should respect the emulator service port', function(done) {
-      fakeV1.SERVICE_ADDRESS = 'should.not.use';
-
-      PUBSUB.isEmulator = true;
-      PUBSUB.options.servicePath = 'should.use';
-      PUBSUB.options.port = 9999;
-
-      pool.getClient(function(err, client) {
-        assert.ifError(err);
-        assert.strictEqual(client.address, 'should.use:9999');
-        done();
-      });
-    });
-  });
-
-  describe('getCredentials', function() {
-    beforeEach(function() {
-      fakeGrpc.credentials = {
-        createInsecure: fakeUtil.noop,
-        createSsl: fakeUtil.noop,
-        createFromGoogleCredential: fakeUtil.noop,
-        combineChannelCredentials: fakeUtil.noop,
-      };
-    });
-
-    it('should return insecure creds for emulator usage', function(done) {
-      var fakeCreds = {};
-      fakeGrpc.credentials.createInsecure = function() {
-        return fakeCreds;
-      };
-
-      PUBSUB.isEmulator = true;
-
-      pool.getCredentials(function(err, creds) {
-        assert.ifError(err);
-        assert.strictEqual(creds, fakeCreds);
-        done();
-      });
-    });
-
-    it('should get grpc creds', function(done) {
-      var fakeAuthClient = {};
-      var fakeSslCreds = {};
-      var fakeGoogCreds = {};
-      var fakeCombinedCreds = {};
-
-      PUBSUB.isEmulator = false;
-      PUBSUB.auth.getAuthClient = function(callback) {
-        callback(null, fakeAuthClient);
-      };
-
-      fakeGrpc.credentials = {
-        createSsl: function() {
-          return fakeSslCreds;
-        },
-        createFromGoogleCredential: function(authClient) {
-          assert.strictEqual(authClient, fakeAuthClient);
-          return fakeGoogCreds;
-        },
-        combineChannelCredentials: function(sslCreds, googCreds) {
-          assert.strictEqual(sslCreds, fakeSslCreds);
-          assert.strictEqual(googCreds, fakeGoogCreds);
-          return fakeCombinedCreds;
-        },
-      };
-
-      pool.getCredentials(function(err, creds) {
-        assert.ifError(err);
-        assert.strictEqual(creds, fakeCombinedCreds);
-        done();
-      });
-    });
-
-    it('should return getAuthClient errors', function(done) {
-      var error = new Error('err');
-
-      PUBSUB.auth.getAuthClient = function(callback) {
-        callback(error);
-      };
-
-      pool.getCredentials(function(err) {
-        assert.strictEqual(err, error);
-        done();
-      });
-    });
-
-    it('should cache the project ID', function(done) {
-      PUBSUB.auth.getAuthClient = function(callback) {
-        PUBSUB.auth.projectId = PROJECT_ID;
-        callback(null, {});
-      };
-
-      delete pool.projectId;
-
-      pool.getCredentials(function(err) {
-        assert.ifError(err);
-        assert.strictEqual(pool.projectId, PROJECT_ID);
         done();
       });
     });
