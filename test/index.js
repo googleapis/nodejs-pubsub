@@ -976,7 +976,7 @@ describe('PubSub', function() {
       client: 'PublisherClient',
       method: 'fakeMethod',
       reqOpts: {a: 'a'},
-      gaxOpts: {},
+      gaxOpts: {b: 'b'},
     };
 
     beforeEach(function() {
@@ -995,26 +995,38 @@ describe('PubSub', function() {
       pubsub.config = CONFIG;
     });
 
-    it('should get the project id', function(done) {
-      pubsub.auth.getProjectId = function(callback) {
-        assert.strictEqual(typeof callback, 'function');
+    it('should call getClient_ with the correct config', function(done) {
+      pubsub.getClient_ = function(config) {
+        assert.strictEqual(config, CONFIG);
         done();
       };
 
       pubsub.request(CONFIG, assert.ifError);
     });
 
-    it('should return auth errors to the callback', function(done) {
-      var error = new Error('err');
-
-      pubsub.auth.getProjectId = function(callback) {
-        callback(error);
+    it('should return error from getClient_', function(done) {
+      var expectedError = new Error('some error');
+      pubsub.getClient_ = function(config, callback) {
+        callback(expectedError);
       };
 
       pubsub.request(CONFIG, function(err) {
-        assert.strictEqual(err, error);
+        assert.strictEqual(expectedError, err);
         done();
       });
+    });
+
+    it('should call client method with correct options', function(done) {
+      var fakeClient = {};
+      fakeClient.fakeMethod = function(reqOpts, gaxOpts) {
+        assert.deepEqual(CONFIG.reqOpts, reqOpts);
+        assert.deepEqual(CONFIG.gaxOpts, gaxOpts);
+        done();
+      };
+      pubsub.getClient_ = function(config, callback) {
+        callback(null, fakeClient);
+      };
+      pubsub.request(CONFIG, assert.ifError);
     });
 
     it('should replace the project id token on reqOpts', function(done) {
@@ -1025,13 +1037,6 @@ describe('PubSub', function() {
       };
 
       pubsub.request(CONFIG, assert.ifError);
-    });
-
-    it('should do nothing if sandbox env var is set', function(done) {
-      global.GCLOUD_SANDBOX_ENV = true;
-      pubsub.request(CONFIG, done); // should not fire done
-      global.GCLOUD_SANDBOX_ENV = false;
-      done();
     });
 
     describe('on emulator', function() {
@@ -1068,11 +1073,21 @@ describe('PubSub', function() {
   describe('getClient_', function() {
     var CONFIG = {
       client: 'SubscriberClient',
-      reqOpts: {},
-      gaxOpts: {},
     };
 
     beforeEach(function() {
+      delete pubsub.projectId;
+
+      pubsub.auth = {
+        getProjectId: function(callback) {
+          callback(null, PROJECT_ID);
+        },
+      };
+
+      fakeUtil.replaceProjectIdToken = function(reqOpts) {
+        return reqOpts;
+      };
+
       pubsub.config = CONFIG;
     });
 
@@ -1084,6 +1099,42 @@ describe('PubSub', function() {
           assert.strictEqual(client1, client2);
           done();
         });
+      });
+    });
+
+    it('should get the project id', function(done) {
+      pubsub.auth.getProjectId = function(callback) {
+        assert.strictEqual(typeof callback, 'function');
+        done();
+      };
+
+      pubsub.getClient_(CONFIG, assert.ifError);
+    });
+
+    it('should return auth errors to the callback', function(done) {
+      var error = new Error('err');
+
+      pubsub.auth.getProjectId = function(callback) {
+        callback(error);
+      };
+
+      pubsub.getClient_(CONFIG, function(err) {
+        assert.strictEqual(err, error);
+        done();
+      });
+    });
+
+    it('should do nothing if sandbox env var is set', function(done) {
+      global.GCLOUD_SANDBOX_ENV = true;
+      pubsub.getClient_(CONFIG, done); // should not fire done
+      global.GCLOUD_SANDBOX_ENV = false;
+      done();
+    });
+
+    it('should populates scopes', function(done) {
+      pubsub.getClient_(CONFIG, function() {
+        assert(pubsub.options.scopes.length > 0);
+        done();
       });
     });
   });
@@ -1112,43 +1163,13 @@ describe('PubSub', function() {
       pubsub.config = CONFIG;
     });
 
-    it('should get the project id', function(done) {
-      pubsub.auth.getProjectId = function(callback) {
-        assert.strictEqual(typeof callback, 'function');
-        done();
-      };
-
-      pubsub.request(CONFIG, assert.ifError);
-    });
-
-    it('should return auth errors to the callback', function(done) {
-      var error = new Error('err');
-
-      pubsub.auth.getProjectId = function(callback) {
-        callback(error);
-      };
-
-      pubsub.request(CONFIG, function(err) {
-        assert.strictEqual(err, error);
-        done();
-      });
-    });
-
     it('should replace the project id token on reqOpts', function(done) {
       fakeUtil.replaceProjectIdToken = function(reqOpts, projectId) {
         assert.deepEqual(reqOpts, CONFIG.reqOpts);
         assert.strictEqual(projectId, PROJECT_ID);
         done();
       };
-
       pubsub.request(CONFIG, assert.ifError);
-    });
-
-    it('should do nothing if sandbox env var is set', function(done) {
-      global.GCLOUD_SANDBOX_ENV = true;
-      pubsub.request(CONFIG, done); // should not fire done
-      global.GCLOUD_SANDBOX_ENV = false;
-      done();
     });
   });
 
