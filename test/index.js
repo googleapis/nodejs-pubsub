@@ -1065,6 +1065,102 @@ describe('PubSub', function() {
     });
   });
 
+  describe('request', function() {
+    var CONFIG = {
+      client: 'SubscriberClient',
+      method: 'fakeMethod',
+      reqOpts: {a: 'a'},
+      gaxOpts: {},
+    };
+
+    beforeEach(function() {
+      delete pubsub.projectId;
+
+      pubsub.auth = {
+        getProjectId: function(callback) {
+          callback(null, PROJECT_ID);
+        },
+      };
+
+      fakeUtil.replaceProjectIdToken = function(reqOpts) {
+        return reqOpts;
+      };
+
+      pubsub.config = CONFIG;
+    });
+
+    it('should cache the client', function(done) {
+      pubsub.getClient_(CONFIG, function(err, client1) {
+        assert.strictEqual(null, err);
+        pubsub.getClient_(CONFIG, function(err, client2) {
+          assert.strictEqual(null, err);
+          assert.strictEqual(client1, client2);
+          done();
+        });
+      });
+    });
+
+    it('should get the project id', function(done) {
+      pubsub.auth.getProjectId = function(callback) {
+        assert.strictEqual(typeof callback, 'function');
+        done();
+      };
+
+      pubsub.request(CONFIG, assert.ifError);
+    });
+
+    it('should return auth errors to the callback', function(done) {
+      var error = new Error('err');
+
+      pubsub.auth.getProjectId = function(callback) {
+        callback(error);
+      };
+
+      pubsub.request(CONFIG, function(err) {
+        assert.strictEqual(err, error);
+        done();
+      });
+    });
+
+    it('should replace the project id token on reqOpts', function(done) {
+      fakeUtil.replaceProjectIdToken = function(reqOpts, projectId) {
+        assert.deepEqual(reqOpts, CONFIG.reqOpts);
+        assert.strictEqual(projectId, PROJECT_ID);
+        done();
+      };
+
+      pubsub.request(CONFIG, assert.ifError);
+    });
+
+    it('should do nothing if sandbox env var is set', function(done) {
+      global.GCLOUD_SANDBOX_ENV = true;
+      pubsub.request(CONFIG, done); // should not fire done
+      global.GCLOUD_SANDBOX_ENV = false;
+      done();
+    });
+  });
+
+  describe('request', function() {
+    var CONFIG = {
+      client: 'UnknownClient',
+      method: 'fakeMethod',
+      reqOpts: {a: 'a'},
+      gaxOpts: {},
+    };
+
+    beforeEach(function() {
+      pubsub.config = CONFIG;
+    });
+
+    it('should refuse to create unknown client', function(done) {
+      pubsub.request(CONFIG, function(err, client) {
+        assert(err instanceof Error);
+        assert.strictEqual(undefined, client);
+        done();
+      });
+    });
+  });
+
   describe('snapshot', function() {
     it('should throw if a name is not provided', function() {
       assert.throws(function() {

@@ -27,13 +27,6 @@ var util = require('util');
 
 var fakeUtil = extend({}, common.util);
 var fakeUuid = extend({}, uuid);
-var fakeGrpc = extend({}, grpc);
-
-function fakeGaxGrpc() {
-  return {
-    grpc: fakeGrpc,
-  };
-}
 
 function FakeConnection() {
   this.isConnected = false;
@@ -95,9 +88,6 @@ describe('ConnectionPool', function() {
     ConnectionPool = proxyquire('../src/connection-pool.js', {
       '@google-cloud/common': {
         util: fakeUtil,
-      },
-      'google-gax': {
-        grpc: fakeGaxGrpc,
       },
       uuid: fakeUuid,
     });

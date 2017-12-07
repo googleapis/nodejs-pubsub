@@ -691,7 +691,8 @@ PubSub.prototype.getClient_ = function(config, callback) {
     } else if (config.client === 'SubscriberClient') {
       gaxClient = new v1.SubscriberClient(this.options);
     } else {
-      throw new Error('Client is unknown: ' + config.client);
+      let err = new Error('Client is unknown: ' + config.client);
+      callback(err);
     }
 
     // Determine what scopes are needed.
