@@ -1065,6 +1065,29 @@ describe('PubSub', function() {
     });
   });
 
+  describe('getClient_', function() {
+    var CONFIG = {
+      client: 'SubscriberClient',
+      reqOpts: {},
+      gaxOpts: {},
+    };
+
+    beforeEach(function() {
+      pubsub.config = CONFIG;
+    });
+
+    it('should cache the client', function(done) {
+      pubsub.getClient_(CONFIG, function(err, client1) {
+        assert.strictEqual(null, err);
+        pubsub.getClient_(CONFIG, function(err, client2) {
+          assert.strictEqual(null, err);
+          assert.strictEqual(client1, client2);
+          done();
+        });
+      });
+    });
+  });
+
   describe('request', function() {
     var CONFIG = {
       client: 'SubscriberClient',
@@ -1087,17 +1110,6 @@ describe('PubSub', function() {
       };
 
       pubsub.config = CONFIG;
-    });
-
-    it('should cache the client', function(done) {
-      pubsub.getClient_(CONFIG, function(err, client1) {
-        assert.strictEqual(null, err);
-        pubsub.getClient_(CONFIG, function(err, client2) {
-          assert.strictEqual(null, err);
-          assert.strictEqual(client1, client2);
-          done();
-        });
-      });
     });
 
     it('should get the project id', function(done) {

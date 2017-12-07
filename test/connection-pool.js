@@ -20,7 +20,6 @@ var assert = require('assert');
 var common = require('@google-cloud/common');
 var events = require('events');
 var extend = require('extend');
-var grpc = require('grpc');
 var proxyquire = require('proxyquire');
 var uuid = require('uuid');
 var util = require('util');
