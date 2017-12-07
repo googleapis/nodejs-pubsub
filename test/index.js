@@ -24,7 +24,6 @@ var proxyquire = require('proxyquire');
 var util = require('@google-cloud/common').util;
 
 var PKG = require('../package.json');
-var v1 = require('../src/v1/index.js');
 
 var fakeGrpc = extend({}, grpc);
 
@@ -1042,14 +1041,7 @@ describe('PubSub', function() {
           throw new Error('getProjectId should not be called.');
         };
         var fakeClient = {
-          streamingPull: function() {
-            return fakeConnection;
-          },
-          getChannel: function() {
-            return fakeChannel;
-          },
-          waitForReady: function() {
-          }
+          waitForReady: function() {},
         };
 
         fakeClient[CONFIG.method] = function(opts, gaxOpts, callback) {

@@ -105,9 +105,7 @@ class SubscriberClient {
     // identifiers to uniquely identify resources within the API.
     // Create useful helper objects for these.
     this._pathTemplates = {
-      projectPathTemplate: new gax.PathTemplate(
-        'projects/{project}'
-      ),
+      projectPathTemplate: new gax.PathTemplate('projects/{project}'),
       snapshotPathTemplate: new gax.PathTemplate(
         'projects/{project}/snapshots/{snapshot}'
       ),
@@ -178,7 +176,8 @@ class SubscriberClient {
             }
         ),
         defaults[methodName],
-        this._descriptors.page[methodName] || this._descriptors.stream[methodName]
+        this._descriptors.page[methodName] ||
+          this._descriptors.stream[methodName]
       );
     }
 
@@ -218,11 +217,12 @@ class SubscriberClient {
             }
         ),
         defaults[methodName],
-        this._descriptors.page[methodName] || this._descriptors.stream[methodName]
+        this._descriptors.page[methodName] ||
+          this._descriptors.stream[methodName]
       );
     }
 
-    // FIXME: editing generated code
+    // note: editing generated code
     this.waitForReady = function(deadline, callback) {
       return subscriberStub.then(
         stub => stub.waitForReady(deadline, callback),
@@ -640,7 +640,7 @@ class SubscriberClient {
       request,
       options
     );
-  };
+  }
 
   /**
    * Deletes an existing subscription. All messages retained in the subscription
@@ -1121,7 +1121,7 @@ class SubscriberClient {
       request,
       options
     );
-  };
+  }
 
   /**
    * Creates a snapshot from the requested subscription.
@@ -1604,9 +1604,7 @@ class SubscriberClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromProjectName(projectName) {
-    return this._pathTemplates.projectPathTemplate
-      .match(projectName)
-      .project;
+    return this._pathTemplates.projectPathTemplate.match(projectName).project;
   }
 
   /**
@@ -1617,9 +1615,7 @@ class SubscriberClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromSnapshotName(snapshotName) {
-    return this._pathTemplates.snapshotPathTemplate
-      .match(snapshotName)
-      .project;
+    return this._pathTemplates.snapshotPathTemplate.match(snapshotName).project;
   }
 
   /**
@@ -1630,8 +1626,7 @@ class SubscriberClient {
    * @returns {String} - A string representing the snapshot.
    */
   matchSnapshotFromSnapshotName(snapshotName) {
-    return this._pathTemplates.snapshotPathTemplate
-      .match(snapshotName)
+    return this._pathTemplates.snapshotPathTemplate.match(snapshotName)
       .snapshot;
   }
 
@@ -1643,8 +1638,7 @@ class SubscriberClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromSubscriptionName(subscriptionName) {
-    return this._pathTemplates.subscriptionPathTemplate
-      .match(subscriptionName)
+    return this._pathTemplates.subscriptionPathTemplate.match(subscriptionName)
       .project;
   }
 
@@ -1656,8 +1650,7 @@ class SubscriberClient {
    * @returns {String} - A string representing the subscription.
    */
   matchSubscriptionFromSubscriptionName(subscriptionName) {
-    return this._pathTemplates.subscriptionPathTemplate
-      .match(subscriptionName)
+    return this._pathTemplates.subscriptionPathTemplate.match(subscriptionName)
       .subscription;
   }
 
@@ -1669,9 +1662,7 @@ class SubscriberClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromTopicName(topicName) {
-    return this._pathTemplates.topicPathTemplate
-      .match(topicName)
-      .project;
+    return this._pathTemplates.topicPathTemplate.match(topicName).project;
   }
 
   /**
@@ -1682,11 +1673,8 @@ class SubscriberClient {
    * @returns {String} - A string representing the topic.
    */
   matchTopicFromTopicName(topicName) {
-    return this._pathTemplates.topicPathTemplate
-      .match(topicName)
-      .topic;
+    return this._pathTemplates.topicPathTemplate.match(topicName).topic;
   }
 }
-
 
 module.exports = SubscriberClient;

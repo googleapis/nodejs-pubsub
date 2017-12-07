@@ -24,13 +24,9 @@ var arrify = require('arrify');
 var common = require('@google-cloud/common');
 var each = require('async-each');
 var events = require('events');
-var grpc = require('google-gax').grpc().grpc;
 var is = require('is');
 var util = require('util');
 var uuid = require('uuid');
-
-var PKG = require('../package.json');
-var v1 = require('./v1');
 
 var CHANNEL_READY_EVENT = 'channel.ready';
 var CHANNEL_ERROR_EVENT = 'channel.error';

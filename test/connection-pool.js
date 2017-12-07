@@ -25,9 +25,6 @@ var proxyquire = require('proxyquire');
 var uuid = require('uuid');
 var util = require('util');
 
-var PKG = require('../package.json');
-var v1 = require('../src/v1');
-
 var fakeUtil = extend({}, common.util);
 var fakeUuid = extend({}, uuid);
 var fakeGrpc = extend({}, grpc);
@@ -122,8 +119,7 @@ describe('ConnectionPool', function() {
       getChannel: function() {
         return fakeChannel;
       },
-      waitForReady: function() {
-      }
+      waitForReady: function() {},
     };
 
     SUBSCRIPTION.request = fakeUtil.noop;
@@ -374,7 +370,7 @@ describe('ConnectionPool', function() {
         },
         getChannel: function() {
           return fakeChannel;
-        }
+        },
       };
 
       fakeClient.waitForReady = fakeUtil.noop;
@@ -939,7 +935,7 @@ describe('ConnectionPool', function() {
       this.closed = true;
     };
 
-    var fakeClient = new FakeSubscriber("fake-address", fakeCreds, {});
+    var fakeClient = new FakeSubscriber('fake-address', fakeCreds, {});
 
     beforeEach(function() {
       PUBSUB.getClient_ = function(config, callback) {

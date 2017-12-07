@@ -688,20 +688,15 @@ PubSub.prototype.getClient_ = function(config, callback) {
     // Lazily instantiate client.
     if (config.client === 'PublisherClient') {
       gaxClient = new v1.PublisherClient(this.options);
-    }
-    else if (config.client == 'SubscriberClient') {
+    } else if (config.client === 'SubscriberClient') {
       gaxClient = new v1.SubscriberClient(this.options);
-    }
-    else {
-      throw new Error("Client is unknown: " + config.client);
+    } else {
+      throw new Error('Client is unknown: ' + config.client);
     }
 
     // Determine what scopes are needed.
     // It is the union of the scopes on all three clients.
-    let clientClasses = [
-      v1.SubscriberClient,
-      v1.PublisherClient
-    ];
+    let clientClasses = [v1.SubscriberClient, v1.PublisherClient];
 
     let allScopes = {};
     for (let clientClass of clientClasses) {
