@@ -75,12 +75,24 @@ function PubSub(options) {
     return new PubSub(options);
   }
 
+  // Determine what scopes are needed.
+  // It is the union of the scopes on both clients.
+  const clientClasses = [v1.SubscriberClient, v1.PublisherClient];
+  const allScopes = {};
+
+  for (let clientClass of clientClasses) {
+    for (let scope of clientClass.scopes) {
+      allScopes[scope] = true;
+    }
+  }
+
   this.options = extend(
     {
       'grpc.keepalive_time_ms': 300000,
       'grpc.max_receive_message_length': 20000001,
       libName: 'gccl',
       libVersion: PKG.version,
+      scopes: Object.keys(allScopes),
     },
     options
   );
@@ -662,10 +674,6 @@ PubSub.prototype.getTopicsStream = common.paginator.streamify('getTopics');
 PubSub.prototype.getClient_ = function(config, callback) {
   var self = this;
 
-  if (global.GCLOUD_SANDBOX_ENV) {
-    return;
-  }
-
   var hasProjectId =
     this.projectId && this.projectId !== PROJECT_ID_PLACEHOLDER;
 
@@ -686,28 +694,7 @@ PubSub.prototype.getClient_ = function(config, callback) {
 
   if (!gaxClient) {
     // Lazily instantiate client.
-    if (config.client === 'PublisherClient') {
-      gaxClient = new v1.PublisherClient(this.options);
-    } else if (config.client === 'SubscriberClient') {
-      gaxClient = new v1.SubscriberClient(this.options);
-    } else {
-      let err = new Error('Client is unknown: ' + config.client);
-      callback(err);
-    }
-
-    // Determine what scopes are needed.
-    // It is the union of the scopes on all three clients.
-    let clientClasses = [v1.SubscriberClient, v1.PublisherClient];
-
-    let allScopes = {};
-    for (let clientClass of clientClasses) {
-      for (let scope of clientClass.scopes) {
-        allScopes[scope] = true;
-      }
-    }
-
-    var scopes = Object.keys(allScopes);
-    this.options.scopes = scopes;
+    gaxClient = new v1[config.client](this.options);
     this.api[config.client] = gaxClient;
   }
 
