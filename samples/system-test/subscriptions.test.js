@@ -30,15 +30,9 @@ const subscriptionNameThree = `nodejs-docs-samples-test-sub-${uuid.v4()}`;
 const subscriptionNameFour = `nodejs-docs-samples-test-sub-${uuid.v4()}`;
 const projectId = process.env.GCLOUD_PROJECT;
 const fullTopicNameOne = `projects/${projectId}/topics/${topicNameOne}`;
-const fullSubscriptionNameOne = `projects/${projectId}/subscriptions/${
-  subscriptionNameOne
-}`;
-const fullSubscriptionNameTwo = `projects/${projectId}/subscriptions/${
-  subscriptionNameTwo
-}`;
-const fullSubscriptionNameFour = `projects/${projectId}/subscriptions/${
-  subscriptionNameFour
-}`;
+const fullSubscriptionNameOne = `projects/${projectId}/subscriptions/${subscriptionNameOne}`;
+const fullSubscriptionNameTwo = `projects/${projectId}/subscriptions/${subscriptionNameTwo}`;
+const fullSubscriptionNameFour = `projects/${projectId}/subscriptions/${subscriptionNameFour}`;
 const cmd = `node subscriptions.js`;
 
 test.before(tools.checkCredentials);
@@ -285,9 +279,7 @@ test.serial(`should create a subscription with flow control`, async t => {
   );
   t.is(
     output,
-    `Subscription ${
-      fullSubscriptionNameFour
-    } created with a maximum of 5 unprocessed messages.`
+    `Subscription ${fullSubscriptionNameFour} created with a maximum of 5 unprocessed messages.`
   );
   await tools
     .tryTest(async assert => {

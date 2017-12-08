@@ -165,9 +165,9 @@ test.serial(`should publish with specific batch settings`, async t => {
     .createSubscription(subscriptionNameThree);
   const startTime = Date.now();
   await tools.runAsync(
-    `${cmd} publish-batch ${topicNameOne} "${expectedMessage.data}" -w ${
-      expectedWait
-    }`,
+    `${cmd} publish-batch ${topicNameOne} "${
+      expectedMessage.data
+    }" -w ${expectedWait}`,
     cwd
   );
   const receivedMessage = await _pullOneMessage(subscription);
