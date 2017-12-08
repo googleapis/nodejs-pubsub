@@ -107,9 +107,9 @@ function createFlowControlledSubscription(
       const subscription = results[0];
 
       console.log(
-        `Subscription ${subscription.name} created with a maximum of ${
-          maxInProgress
-        } unprocessed messages.`
+        `Subscription ${
+          subscription.name
+        } created with a maximum of ${maxInProgress} unprocessed messages.`
       );
 
       return subscription;

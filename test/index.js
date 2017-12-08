@@ -97,7 +97,7 @@ function defineOverridableClient(clientName) {
   Object.defineProperty(v1Override, clientName, {
     get: function() {
       return v1ClientOverrides[clientName] || DefaultClient;
-    }
+    },
   });
 }
 
@@ -1063,7 +1063,7 @@ describe('PubSub', function() {
 
     beforeEach(function() {
       pubsub.auth = {
-        getProjectId: util.noop
+        getProjectId: util.noop,
       };
 
       v1ClientOverrides.FakeClient = FAKE_CLIENT_INSTANCE;
@@ -1177,7 +1177,7 @@ describe('PubSub', function() {
     };
 
     var FAKE_CLIENT_INSTANCE = {
-      [CONFIG.method]: util.noop
+      [CONFIG.method]: util.noop,
     };
 
     beforeEach(function() {
@@ -1241,7 +1241,7 @@ describe('PubSub', function() {
           assert.strictEqual(reqOpts, replacedReqOpts);
           assert.strictEqual(gaxOpts, CONFIG.gaxOpts);
           callback(); // done()
-        }
+        },
       };
 
       pubsub.getClient_ = function(config, callback) {
