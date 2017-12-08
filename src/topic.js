@@ -226,7 +226,7 @@ Topic.prototype.delete = function(gaxOpts, callback) {
 
   this.request(
     {
-      client: 'publisherClient',
+      client: 'PublisherClient',
       method: 'deleteTopic',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -352,7 +352,7 @@ Topic.prototype.getMetadata = function(gaxOpts, callback) {
 
   this.request(
     {
-      client: 'publisherClient',
+      client: 'PublisherClient',
       method: 'getTopic',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,
@@ -433,7 +433,7 @@ Topic.prototype.getSubscriptions = function(options, callback) {
 
   this.request(
     {
-      client: 'publisherClient',
+      client: 'PublisherClient',
       method: 'listTopicSubscriptions',
       reqOpts: reqOpts,
       gaxOpts: gaxOpts,

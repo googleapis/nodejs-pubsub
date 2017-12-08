@@ -354,7 +354,7 @@ describe('Subscription', function() {
         var fakePromisified = {
           call: function(context, config) {
             assert.strictEqual(context, subscription);
-            assert.strictEqual(config.client, 'subscriberClient');
+            assert.strictEqual(config.client, 'SubscriberClient');
             assert.strictEqual(config.method, 'acknowledge');
             assert.strictEqual(config.reqOpts.subscription, subscription.name);
             assert.strictEqual(config.reqOpts.ackIds, fakeAckIds);
@@ -657,7 +657,7 @@ describe('Subscription', function() {
 
     it('should make the correct request', function(done) {
       subscription.request = function(config) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'createSnapshot');
         assert.deepEqual(config.reqOpts, {
           name: SNAPSHOT_NAME,
@@ -721,7 +721,7 @@ describe('Subscription', function() {
   describe('delete', function() {
     it('should make the correct request', function(done) {
       subscription.request = function(config) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'deleteSubscription');
         assert.deepEqual(config.reqOpts, {subscription: subscription.name});
         done();
@@ -1058,7 +1058,7 @@ describe('Subscription', function() {
   describe('getMetadata', function() {
     it('should make the correct request', function(done) {
       subscription.request = function(config) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'getSubscription');
         assert.deepEqual(config.reqOpts, {subscription: subscription.name});
         done();
@@ -1293,7 +1293,7 @@ describe('Subscription', function() {
         var fakePromisified = {
           call: function(context, config) {
             assert.strictEqual(context, subscription);
-            assert.strictEqual(config.client, 'subscriberClient');
+            assert.strictEqual(config.client, 'SubscriberClient');
             assert.strictEqual(config.method, 'modifyAckDeadline');
             assert.strictEqual(config.reqOpts.subscription, subscription.name);
             assert.strictEqual(config.reqOpts.ackDeadlineSeconds, fakeDeadline);
@@ -1388,7 +1388,7 @@ describe('Subscription', function() {
 
     it('should make the correct request', function(done) {
       subscription.request = function(config, callback) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'modifyPushConfig');
         assert.deepEqual(config.reqOpts, {
           subscription: subscription.name,
@@ -1679,7 +1679,7 @@ describe('Subscription', function() {
       };
 
       subscription.request = function(config, callback) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'seek');
         assert.deepEqual(config.reqOpts, {
           subscription: subscription.name,
@@ -1858,7 +1858,7 @@ describe('Subscription', function() {
       };
 
       subscription.request = function(config, callback) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'updateSubscription');
         assert.deepEqual(config.reqOpts.subscription, expectedBody);
         assert.deepEqual(config.reqOpts.updateMask, {paths: ['push_config']});

@@ -56,7 +56,6 @@
     "prettier": "repo-tools exec -- prettier --write src/*.js src/*/*.js samples/*.js samples/*/*.js test/*.js test/*/*.js system-test/*.js system-test/*/*.js",
     "docs": "repo-tools exec -- jsdoc -c .jsdoc.js",
     "publish-module": "node ../../scripts/publish.js pubsub",
-    "system-test": "mocha system-test/*.js --no-timeouts --bail",
     "generate-scaffolding": "repo-tools generate all && repo-tools generate lib_samples_readme -l samples/ --config ../.cloud-repo-tools.json"
   },
   "dependencies": {
@@ -65,11 +64,13 @@
     "async-each": "^1.0.1",
     "extend": "^3.0.1",
     "google-auto-auth": "^0.7.1",
-    "google-gax": "^0.13.0",
+    "google-gax": "^0.14.2",
     "google-proto-files": "^0.13.1",
     "grpc": "^1.7.2",
     "is": "^3.0.1",
+    "lodash.merge": "^4.6.0",
     "lodash.snakecase": "^4.1.1",
+    "protobufjs": "^6.8.1",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
@@ -86,7 +87,7 @@
     "mocha": "^3.5.3",
     "nyc": "^11.3.0",
     "power-assert": "^1.4.4",
-    "prettier": "^1.8.2",
+    "prettier": "^1.9.1",
     "proxyquire": "^1.7.10"
   }
 }

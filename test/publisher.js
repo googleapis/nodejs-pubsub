@@ -257,7 +257,7 @@ describe('Publisher', function() {
       var FAKE_MESSAGE = {};
 
       TOPIC.request = function(config) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'publish');
         assert.deepEqual(config.reqOpts, {
           topic: TOPIC_NAME,

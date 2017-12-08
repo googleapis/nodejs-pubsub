@@ -24,7 +24,6 @@ var proxyquire = require('proxyquire');
 var util = require('@google-cloud/common').util;
 
 var PKG = require('../package.json');
-var v1 = require('../src/v1/index.js');
 
 var fakeGrpc = extend({}, grpc);
 
@@ -88,26 +87,23 @@ function fakeGoogleAutoAuth() {
   return (googleAutoAuthOverride || util.noop).apply(null, arguments);
 }
 
-var v1Override;
-function fakeV1() {
-  return (v1Override || util.noop).apply(null, arguments);
+var v1Override = {};
+var v1ClientOverrides = {};
+
+function defineOverridableClient(clientName) {
+  function DefaultClient() {}
+  DefaultClient.scopes = [];
+
+  Object.defineProperty(v1Override, clientName, {
+    get: function() {
+      return v1ClientOverrides[clientName] || DefaultClient;
+    },
+  });
 }
 
-var GAX_CONFIG_PUBLISHER_OVERRIDE = {};
-var GAX_CONFIG_SUBSCRIBER_OVERRIDE = {};
-
-var GAX_CONFIG = {
-  Publisher: {
-    interfaces: {
-      'google.pubsub.v1.Publisher': GAX_CONFIG_PUBLISHER_OVERRIDE,
-    },
-  },
-  Subscriber: {
-    interfaces: {
-      'google.pubsub.v1.Subscriber': GAX_CONFIG_SUBSCRIBER_OVERRIDE,
-    },
-  },
-};
+defineOverridableClient('FakeClient');
+defineOverridableClient('PublisherClient');
+defineOverridableClient('SubscriberClient');
 
 describe('PubSub', function() {
   var PubSub;
@@ -129,9 +125,7 @@ describe('PubSub', function() {
       './snapshot.js': FakeSnapshot,
       './subscription.js': Subscription,
       './topic.js': FakeTopic,
-      './v1': fakeV1,
-      './v1/publisher_client_config.json': GAX_CONFIG.Publisher,
-      './v1/subscriber_client_config.json': GAX_CONFIG.Subscriber,
+      './v1': v1Override,
     });
   });
 
@@ -142,7 +136,7 @@ describe('PubSub', function() {
   });
 
   beforeEach(function() {
-    v1Override = null;
+    v1ClientOverrides = {};
     googleAutoAuthOverride = null;
     SubscriptionOverride = null;
     pubsub = new PubSub(OPTIONS);
@@ -183,6 +177,17 @@ describe('PubSub', function() {
       fakeUtil.normalizeArguments = normalizeArguments;
     });
 
+    it('should combine all required scopes', function() {
+      v1ClientOverrides.SubscriberClient = {};
+      v1ClientOverrides.SubscriberClient.scopes = ['a', 'b', 'c'];
+
+      v1ClientOverrides.PublisherClient = {};
+      v1ClientOverrides.PublisherClient.scopes = ['b', 'c', 'd', 'e'];
+
+      var pubsub = new PubSub({});
+      assert.deepEqual(pubsub.options.scopes, ['a', 'b', 'c', 'd', 'e']);
+    });
+
     it('should attempt to determine the service path and port', function() {
       var determineBaseUrl_ = PubSub.prototype.determineBaseUrl_;
       var called = false;
@@ -212,10 +217,11 @@ describe('PubSub', function() {
           options_,
           extend(
             {
-              scopes: v1.ALL_SCOPES,
               'grpc.max_receive_message_length': 20000001,
+              'grpc.keepalive_time_ms': 300000,
               libName: 'gccl',
               libVersion: PKG.version,
+              scopes: [],
             },
             options
           )
@@ -232,10 +238,11 @@ describe('PubSub', function() {
         pubsub.options,
         extend(
           {
-            scopes: v1.ALL_SCOPES,
             'grpc.max_receive_message_length': 20000001,
+            'grpc.keepalive_time_ms': 300000,
             libName: 'gccl',
             libVersion: PKG.version,
+            scopes: [],
           },
           OPTIONS
         )
@@ -350,7 +357,7 @@ describe('PubSub', function() {
       };
 
       pubsub.request = function(config) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'createSubscription');
         assert.strictEqual(config.reqOpts.topic, TOPIC.name);
         assert.strictEqual(config.reqOpts.name, SUB_NAME);
@@ -537,7 +544,7 @@ describe('PubSub', function() {
       };
 
       pubsub.request = function(config) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'createTopic');
         assert.deepEqual(config.reqOpts, {name: formattedName});
         assert.deepEqual(config.gaxOpts, gaxOpts);
@@ -719,7 +726,7 @@ describe('PubSub', function() {
       delete expectedOptions.autoPaginate;
 
       pubsub.request = function(config) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'listSnapshots');
         assert.deepEqual(config.reqOpts, expectedOptions);
         assert.deepEqual(config.gaxOpts, expectedGaxOpts);
@@ -800,7 +807,7 @@ describe('PubSub', function() {
       var project = 'projects/' + pubsub.projectId;
 
       pubsub.request = function(config) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'listSubscriptions');
         assert.deepEqual(config.reqOpts, {project: project});
         assert.deepEqual(config.gaxOpts, expectedGaxOpts);
@@ -933,7 +940,7 @@ describe('PubSub', function() {
       delete expectedOptions.autoPaginate;
 
       pubsub.request = function(config) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'listTopics');
         assert.deepEqual(config.reqOpts, expectedOptions);
         assert.deepEqual(config.gaxOpts, expectedGaxOpts);
@@ -981,10 +988,10 @@ describe('PubSub', function() {
 
   describe('request', function() {
     var CONFIG = {
-      client: 'fakeClient',
+      client: 'PublisherClient',
       method: 'fakeMethod',
       reqOpts: {a: 'a'},
-      gaxOpts: {},
+      gaxOpts: {b: 'b'},
     };
 
     beforeEach(function() {
@@ -996,32 +1003,206 @@ describe('PubSub', function() {
         },
       };
 
-      pubsub.api = {
-        fakeClient: {
-          fakeMethod: function(reqOpts, gaxOpts, callback) {
-            callback(); // in most cases, the done fn
-          },
-        },
-      };
-
       fakeUtil.replaceProjectIdToken = function(reqOpts) {
         return reqOpts;
       };
+
+      pubsub.config = CONFIG;
     });
 
-    it('should get the project id', function(done) {
-      pubsub.auth.getProjectId = function(callback) {
-        assert.strictEqual(typeof callback, 'function');
+    it('should call getClient_ with the correct config', function(done) {
+      pubsub.getClient_ = function(config) {
+        assert.strictEqual(config, CONFIG);
         done();
       };
 
       pubsub.request(CONFIG, assert.ifError);
     });
 
-    it('should return auth errors to the callback', function(done) {
-      var error = new Error('err');
+    it('should return error from getClient_', function(done) {
+      var expectedError = new Error('some error');
+      pubsub.getClient_ = function(config, callback) {
+        callback(expectedError);
+      };
 
-      pubsub.auth.getProjectId = function(callback) {
+      pubsub.request(CONFIG, function(err) {
+        assert.strictEqual(expectedError, err);
+        done();
+      });
+    });
+
+    it('should call client method with correct options', function(done) {
+      var fakeClient = {};
+      fakeClient.fakeMethod = function(reqOpts, gaxOpts) {
+        assert.deepEqual(CONFIG.reqOpts, reqOpts);
+        assert.deepEqual(CONFIG.gaxOpts, gaxOpts);
+        done();
+      };
+      pubsub.getClient_ = function(config, callback) {
+        callback(null, fakeClient);
+      };
+      pubsub.request(CONFIG, assert.ifError);
+    });
+
+    it('should replace the project id token on reqOpts', function(done) {
+      fakeUtil.replaceProjectIdToken = function(reqOpts, projectId) {
+        assert.deepEqual(reqOpts, CONFIG.reqOpts);
+        assert.strictEqual(projectId, PROJECT_ID);
+        done();
+      };
+
+      pubsub.request(CONFIG, assert.ifError);
+    });
+  });
+
+  describe('getClient_', function() {
+    var FAKE_CLIENT_INSTANCE = util.noop;
+    var CONFIG = {
+      client: 'FakeClient',
+    };
+
+    beforeEach(function() {
+      pubsub.auth = {
+        getProjectId: util.noop,
+      };
+
+      v1ClientOverrides.FakeClient = FAKE_CLIENT_INSTANCE;
+    });
+
+    describe('project ID', function() {
+      beforeEach(function() {
+        delete pubsub.projectId;
+        pubsub.isEmulator = false;
+      });
+
+      it('should get and cache the project ID', function(done) {
+        pubsub.auth.getProjectId = function(callback) {
+          assert.strictEqual(typeof callback, 'function');
+          callback(null, PROJECT_ID);
+        };
+
+        pubsub.getClient_(CONFIG, function(err) {
+          assert.ifError(err);
+          assert.strictEqual(pubsub.projectId, PROJECT_ID);
+          done();
+        });
+      });
+
+      it('should get the project ID if placeholder', function(done) {
+        pubsub.projectId = '{{projectId}}';
+
+        pubsub.auth.getProjectId = function() {
+          done();
+        };
+
+        pubsub.getClient_(CONFIG, assert.ifError);
+      });
+
+      it('should return errors to the callback', function(done) {
+        var error = new Error('err');
+
+        pubsub.auth.getProjectId = function(callback) {
+          callback(error);
+        };
+
+        pubsub.getClient_(CONFIG, function(err) {
+          assert.strictEqual(err, error);
+          done();
+        });
+      });
+
+      it('should not get the project ID if already known', function() {
+        pubsub.projectId = PROJECT_ID;
+
+        pubsub.auth.getProjectId = function() {
+          throw new Error('getProjectId should not be called.');
+        };
+
+        pubsub.getClient_(CONFIG, assert.ifError);
+      });
+
+      it('should not get the project ID if inside emulator', function() {
+        pubsub.isEmulator = true;
+
+        pubsub.auth.getProjectId = function() {
+          throw new Error('getProjectId should not be called.');
+        };
+
+        pubsub.getClient_(CONFIG, assert.ifError);
+      });
+    });
+
+    it('should cache the client', function(done) {
+      delete pubsub.api.fakeClient;
+
+      var numTimesFakeClientInstantiated = 0;
+
+      v1ClientOverrides.FakeClient = function() {
+        numTimesFakeClientInstantiated++;
+        return FAKE_CLIENT_INSTANCE;
+      };
+
+      pubsub.getClient_(CONFIG, function(err) {
+        assert.ifError(err);
+        assert.strictEqual(pubsub.api.FakeClient, FAKE_CLIENT_INSTANCE);
+
+        pubsub.getClient_(CONFIG, function(err) {
+          assert.ifError(err);
+          assert.strictEqual(numTimesFakeClientInstantiated, 1);
+          done();
+        });
+      });
+    });
+
+    it('should return the correct client', function(done) {
+      v1ClientOverrides.FakeClient = function(options) {
+        assert.strictEqual(options, pubsub.options);
+        return FAKE_CLIENT_INSTANCE;
+      };
+
+      pubsub.getClient_(CONFIG, function(err, client) {
+        assert.ifError(err);
+        assert.strictEqual(client, FAKE_CLIENT_INSTANCE);
+        done();
+      });
+    });
+  });
+
+  describe('request', function() {
+    var CONFIG = {
+      client: 'SubscriberClient',
+      method: 'fakeMethod',
+      reqOpts: {a: 'a'},
+      gaxOpts: {},
+    };
+
+    var FAKE_CLIENT_INSTANCE = {
+      [CONFIG.method]: util.noop,
+    };
+
+    beforeEach(function() {
+      fakeUtil.replaceProjectIdToken = function(reqOpts) {
+        return reqOpts;
+      };
+
+      pubsub.getClient_ = function(config, callback) {
+        callback(null, FAKE_CLIENT_INSTANCE);
+      };
+    });
+
+    it('should get the client', function(done) {
+      pubsub.getClient_ = function(config) {
+        assert.strictEqual(config, CONFIG);
+        done();
+      };
+
+      pubsub.request(CONFIG, assert.ifError);
+    });
+
+    it('should return error from getting the client', function(done) {
+      var error = new Error('Error.');
+
+      pubsub.getClient_ = function(config, callback) {
         callback(error);
       };
 
@@ -1041,53 +1222,33 @@ describe('PubSub', function() {
       pubsub.request(CONFIG, assert.ifError);
     });
 
-    it('should instantiate the client lazily', function(done) {
-      var fakeClientInstance = {
+    it('should call the client method correctly', function(done) {
+      var CONFIG = {
+        client: 'FakeClient',
+        method: 'fakeMethod',
+        reqOpts: {a: 'a'},
+        gaxOpts: {},
+      };
+
+      var replacedReqOpts = {};
+
+      fakeUtil.replaceProjectIdToken = function() {
+        return replacedReqOpts;
+      };
+
+      var fakeClient = {
         fakeMethod: function(reqOpts, gaxOpts, callback) {
-          assert.strictEqual(pubsub.api.fakeClient, fakeClientInstance);
-          callback(); // the done function
+          assert.strictEqual(reqOpts, replacedReqOpts);
+          assert.strictEqual(gaxOpts, CONFIG.gaxOpts);
+          callback(); // done()
         },
       };
 
-      v1Override = function(options) {
-        assert.strictEqual(options, pubsub.options);
-
-        return {
-          fakeClient: function(options) {
-            assert.strictEqual(options, pubsub.options);
-            return fakeClientInstance;
-          },
-        };
+      pubsub.getClient_ = function(config, callback) {
+        callback(null, fakeClient);
       };
 
-      delete pubsub.api.fakeClient;
       pubsub.request(CONFIG, done);
-    });
-
-    it('should do nothing if sandbox env var is set', function(done) {
-      global.GCLOUD_SANDBOX_ENV = true;
-      pubsub.request(CONFIG, done); // should not fire done
-      global.GCLOUD_SANDBOX_ENV = false;
-      done();
-    });
-
-    describe('on emulator', function() {
-      beforeEach(function() {
-        pubsub.isEmulator = true;
-        pubsub.auth.getProjectId = function() {
-          throw new Error('getProjectId should not be called.');
-        };
-      });
-
-      it('should not get the projectId if null', function(done) {
-        pubsub.projectId = null;
-        pubsub.request(CONFIG, done);
-      });
-
-      it('should not get the projectId if placeholder', function(done) {
-        pubsub.projectId = '{{projectId}}';
-        pubsub.request(CONFIG, done);
-      });
     });
   });
 
