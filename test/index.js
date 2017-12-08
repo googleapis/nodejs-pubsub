@@ -178,11 +178,11 @@ describe('PubSub', function() {
     });
 
     it('should combine all required scopes', function() {
-      v1ClientOverrides.SubscriberClient = util.noop;
+      v1ClientOverrides.SubscriberClient = {};
       v1ClientOverrides.SubscriberClient.scopes = ['a', 'b', 'c'];
 
-      v1ClientOverrides.PublisherClient = util.noop;
-      v1ClientOverrides.PublisherClient.scopes = ['a', 'b', 'c', 'd', 'e'];
+      v1ClientOverrides.PublisherClient = {};
+      v1ClientOverrides.PublisherClient.scopes = ['b', 'c', 'd', 'e'];
 
       var pubsub = new PubSub({});
       assert.deepEqual(pubsub.options.scopes, ['a', 'b', 'c', 'd', 'e']);
