@@ -75,12 +75,27 @@ function PubSub(options) {
     return new PubSub(options);
   }
 
-  this.options = extend({
-    scopes: v1.ALL_SCOPES,
-    'grpc.max_receive_message_length': 20000001,
-    libName: 'gccl',
-    libVersion: PKG.version
-  }, options);
+  // Determine what scopes are needed.
+  // It is the union of the scopes on both clients.
+  const clientClasses = [v1.SubscriberClient, v1.PublisherClient];
+  const allScopes = {};
+
+  for (let clientClass of clientClasses) {
+    for (let scope of clientClass.scopes) {
+      allScopes[scope] = true;
+    }
+  }
+
+  this.options = extend(
+    {
+      'grpc.keepalive_time_ms': 300000,
+      'grpc.max_receive_message_length': 20000001,
+      libName: 'gccl',
+      libVersion: PKG.version,
+      scopes: Object.keys(allScopes),
+    },
+    options
+  );
 
   this.isEmulator = false;
   this.determineBaseUrl_();
@@ -178,26 +193,29 @@ PubSub.prototype.createSubscription = function(topic, name, options, callback) {
 
   var reqOpts = extend(metadata, {
     topic: topic.name,
-    name: subscription.name
+    name: subscription.name,
   });
 
   delete reqOpts.gaxOpts;
   delete reqOpts.flowControl;
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'createSubscription',
-    reqOpts: reqOpts,
-    gaxOpts: options.gaxOpts
-  }, function(err, resp) {
-    if (err && err.code !== 6) {
-      callback(err, null, resp);
-      return;
-    }
+  this.request(
+    {
+      client: 'SubscriberClient',
+      method: 'createSubscription',
+      reqOpts: reqOpts,
+      gaxOpts: options.gaxOpts,
+    },
+    function(err, resp) {
+      if (err && err.code !== 6) {
+        callback(err, null, resp);
+        return;
+      }
 
-    subscription.metadata = resp;
-    callback(null, subscription, resp);
-  });
+      subscription.metadata = resp;
+      callback(null, subscription, resp);
+    }
+  );
 };
 
 /**
@@ -233,7 +251,7 @@ PubSub.prototype.createTopic = function(name, gaxOpts, callback) {
   var topic = this.topic(name);
 
   var reqOpts = {
-    name: topic.name
+    name: topic.name,
   };
 
   if (is.fn(gaxOpts)) {
@@ -241,20 +259,23 @@ PubSub.prototype.createTopic = function(name, gaxOpts, callback) {
     gaxOpts = {};
   }
 
-  this.request({
-    client: 'publisherClient',
-    method: 'createTopic',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, function(err, resp) {
-    if (err) {
-      callback(err, null, resp);
-      return;
-    }
+  this.request(
+    {
+      client: 'PublisherClient',
+      method: 'createTopic',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    function(err, resp) {
+      if (err) {
+        callback(err, null, resp);
+        return;
+      }
 
-    topic.metadata = resp;
-    callback(null, topic, resp);
-  });
+      topic.metadata = resp;
+      callback(null, topic, resp);
+    }
+  );
 };
 
 /**
@@ -324,35 +345,44 @@ PubSub.prototype.getSnapshots = function(options, callback) {
     options = {};
   }
 
-  var reqOpts = extend({
-    project: 'projects/' + this.projectId
-  }, options);
+  var reqOpts = extend(
+    {
+      project: 'projects/' + this.projectId,
+    },
+    options
+  );
 
   delete reqOpts.gaxOpts;
   delete reqOpts.autoPaginate;
 
-  var gaxOpts = extend({
-    autoPaginate: options.autoPaginate
-  }, options.gaxOpts);
+  var gaxOpts = extend(
+    {
+      autoPaginate: options.autoPaginate,
+    },
+    options.gaxOpts
+  );
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'listSnapshots',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, function() {
-    var snapshots = arguments[1];
+  this.request(
+    {
+      client: 'SubscriberClient',
+      method: 'listSnapshots',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    function() {
+      var snapshots = arguments[1];
 
-    if (snapshots) {
-      arguments[1] = snapshots.map(function(snapshot) {
-        var snapshotInstance = self.snapshot(snapshot.name);
-        snapshotInstance.metadata = snapshot;
-        return snapshotInstance;
-      });
+      if (snapshots) {
+        arguments[1] = snapshots.map(function(snapshot) {
+          var snapshotInstance = self.snapshot(snapshot.name);
+          snapshotInstance.metadata = snapshot;
+          return snapshotInstance;
+        });
+      }
+
+      callback.apply(null, arguments);
     }
-
-    callback.apply(null, arguments);
-  });
+  );
 };
 
 /**
@@ -382,8 +412,9 @@ PubSub.prototype.getSnapshots = function(options, callback) {
  *     this.end();
  *   });
  */
-PubSub.prototype.getSnapshotsStream =
-  common.paginator.streamify('getSnapshots');
+PubSub.prototype.getSnapshotsStream = common.paginator.streamify(
+  'getSnapshots'
+);
 
 /**
  * Get a list of the subscriptions registered to all of your project's topics.
@@ -445,35 +476,40 @@ PubSub.prototype.getSubscriptions = function(options, callback) {
     return topic.getSubscriptions(options, callback);
   }
 
-
   var reqOpts = extend({}, options);
 
   reqOpts.project = 'projects/' + this.projectId;
   delete reqOpts.gaxOpts;
   delete reqOpts.autoPaginate;
 
-  var gaxOpts = extend({
-    autoPaginate: options.autoPaginate
-  }, options.gaxOpts);
+  var gaxOpts = extend(
+    {
+      autoPaginate: options.autoPaginate,
+    },
+    options.gaxOpts
+  );
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'listSubscriptions',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, function() {
-    var subscriptions = arguments[1];
+  this.request(
+    {
+      client: 'SubscriberClient',
+      method: 'listSubscriptions',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    function() {
+      var subscriptions = arguments[1];
 
-    if (subscriptions) {
-      arguments[1] = subscriptions.map(function(sub) {
-        var subscriptionInstance = self.subscription(sub.name);
-        subscriptionInstance.metadata = sub;
-        return subscriptionInstance;
-      });
+      if (subscriptions) {
+        arguments[1] = subscriptions.map(function(sub) {
+          var subscriptionInstance = self.subscription(sub.name);
+          subscriptionInstance.metadata = sub;
+          return subscriptionInstance;
+        });
+      }
+
+      callback.apply(null, arguments);
     }
-
-    callback.apply(null, arguments);
-  });
+  );
 };
 
 /**
@@ -503,8 +539,9 @@ PubSub.prototype.getSubscriptions = function(options, callback) {
  *     this.end();
  *   });
  */
-PubSub.prototype.getSubscriptionsStream =
-  common.paginator.streamify('getSubscriptions');
+PubSub.prototype.getSubscriptionsStream = common.paginator.streamify(
+  'getSubscriptions'
+);
 
 /**
  * Get a list of the topics registered to your project. You may optionally
@@ -554,35 +591,44 @@ PubSub.prototype.getTopics = function(options, callback) {
     options = {};
   }
 
-  var reqOpts = extend({
-    project: 'projects/' + this.projectId
-  }, options);
+  var reqOpts = extend(
+    {
+      project: 'projects/' + this.projectId,
+    },
+    options
+  );
 
   delete reqOpts.gaxOpts;
   delete reqOpts.autoPaginate;
 
-  var gaxOpts = extend({
-    autoPaginate: options.autoPaginate
-  }, options.gaxOpts);
+  var gaxOpts = extend(
+    {
+      autoPaginate: options.autoPaginate,
+    },
+    options.gaxOpts
+  );
 
-  this.request({
-    client: 'publisherClient',
-    method: 'listTopics',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, function() {
-    var topics = arguments[1];
+  this.request(
+    {
+      client: 'PublisherClient',
+      method: 'listTopics',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    function() {
+      var topics = arguments[1];
 
-    if (topics) {
-      arguments[1] = topics.map(function(topic) {
-        var topicInstance = self.topic(topic.name);
-        topicInstance.metadata = topic;
-        return topicInstance;
-      });
+      if (topics) {
+        arguments[1] = topics.map(function(topic) {
+          var topicInstance = self.topic(topic.name);
+          topicInstance.metadata = topic;
+          return topicInstance;
+        });
+      }
+
+      callback.apply(null, arguments);
     }
-
-    callback.apply(null, arguments);
-  });
+  );
 };
 
 /**
@@ -615,6 +661,47 @@ PubSub.prototype.getTopics = function(options, callback) {
 PubSub.prototype.getTopicsStream = common.paginator.streamify('getTopics');
 
 /**
+ * Get the PubSub client object.
+ *
+ * @private
+ *
+ * @param {object} config - Configuration object.
+ * @param {object} config.gaxOpts - GAX options.
+ * @param {function} config.method - The gax method to call.
+ * @param {object} config.reqOpts - Request options.
+ * @param {function=} callback - The callback function.
+ */
+PubSub.prototype.getClient_ = function(config, callback) {
+  var self = this;
+
+  var hasProjectId =
+    this.projectId && this.projectId !== PROJECT_ID_PLACEHOLDER;
+
+  if (!hasProjectId && !this.isEmulator) {
+    this.auth.getProjectId(function(err, projectId) {
+      if (err) {
+        callback(err);
+        return;
+      }
+
+      self.projectId = projectId;
+      self.getClient_(config, callback);
+    });
+    return;
+  }
+
+  var gaxClient = this.api[config.client];
+
+  if (!gaxClient) {
+    // Lazily instantiate client.
+    gaxClient = new v1[config.client](this.options);
+    this.api[config.client] = gaxClient;
+  }
+
+  callback(null, gaxClient);
+};
+
+/**
  * Funnel all API requests through this method, to be sure we have a project ID.
  *
  * @private
@@ -628,38 +715,17 @@ PubSub.prototype.getTopicsStream = common.paginator.streamify('getTopics');
 PubSub.prototype.request = function(config, callback) {
   var self = this;
 
-  if (global.GCLOUD_SANDBOX_ENV) {
-    return;
-  }
+  this.getClient_(config, function(err, client) {
+    if (err) {
+      callback(err);
+      return;
+    }
 
-  var hasProjectId = this.projectId &&
-    this.projectId !== PROJECT_ID_PLACEHOLDER;
+    var reqOpts = extend(true, {}, config.reqOpts);
+    reqOpts = common.util.replaceProjectIdToken(reqOpts, self.projectId);
 
-  if (!hasProjectId && !this.isEmulator) {
-    this.auth.getProjectId(function(err, projectId) {
-      if (err) {
-        callback(err);
-        return;
-      }
-
-      self.projectId = projectId;
-      self.request(config, callback);
-    });
-    return;
-  }
-
-  var gaxClient = this.api[config.client];
-
-  if (!gaxClient) {
-    // Lazily instantiate client.
-    gaxClient = v1(this.options)[config.client](this.options);
-    this.api[config.client] = gaxClient;
-  }
-
-  var reqOpts = extend(true, {}, config.reqOpts);
-  reqOpts = common.util.replaceProjectIdToken(reqOpts, this.projectId);
-
-  gaxClient[config.method](reqOpts, config.gaxOpts, callback);
+    client[config.method](reqOpts, config.gaxOpts, callback);
+  });
 };
 
 /**
@@ -751,7 +817,7 @@ PubSub.prototype.topic = function(name, options) {
 common.paginator.extend(PubSub, [
   'getSnapshots',
   'getSubscriptions',
-  'getTopics'
+  'getTopics',
 ]);
 
 /*! Developer Documentation
@@ -760,12 +826,7 @@ common.paginator.extend(PubSub, [
  * that a callback is omitted.
  */
 common.util.promisifyAll(PubSub, {
-  exclude: [
-    'request',
-    'snapshot',
-    'subscription',
-    'topic'
-  ]
+  exclude: ['request', 'snapshot', 'subscription', 'topic'],
 });
 
 module.exports = PubSub;

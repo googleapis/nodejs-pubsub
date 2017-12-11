@@ -29,11 +29,8 @@ var fakeUtil = extend({}, util, {
     }
 
     promisified = true;
-    assert.deepEqual(options.exclude, [
-      'publisher',
-      'subscription'
-    ]);
-  }
+    assert.deepEqual(options.exclude, ['publisher', 'subscription']);
+  },
 });
 
 function FakeIAM() {
@@ -56,7 +53,7 @@ var fakePaginator = {
   },
   streamify: function(methodName) {
     return methodName;
-  }
+  },
 };
 
 describe('Topic', function() {
@@ -70,17 +67,17 @@ describe('Topic', function() {
   var PUBSUB = {
     projectId: PROJECT_ID,
     createTopic: util.noop,
-    request: util.noop
+    request: util.noop,
   };
 
   before(function() {
     Topic = proxyquire('../src/topic.js', {
       '@google-cloud/common': {
         paginator: fakePaginator,
-        util: fakeUtil
+        util: fakeUtil,
       },
       './iam.js': FakeIAM,
-      './publisher.js': FakePublisher
+      './publisher.js': FakePublisher,
     });
   });
 
@@ -167,7 +164,7 @@ describe('Topic', function() {
   describe('createSubscription', function() {
     it('should call the parent createSubscription method', function(done) {
       var NAME = 'sub-name';
-      var OPTIONS = { a: 'a' };
+      var OPTIONS = {a: 'a'};
 
       PUBSUB.createSubscription = function(topic_, name, options, callback) {
         assert.strictEqual(topic_, topic);
@@ -183,9 +180,9 @@ describe('Topic', function() {
   describe('delete', function() {
     it('should make the proper request', function(done) {
       topic.request = function(config, callback) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'deleteTopic');
-        assert.deepEqual(config.reqOpts, { topic: topic.name });
+        assert.deepEqual(config.reqOpts, {topic: topic.name});
         callback(); // the done fn
       };
 
@@ -218,7 +215,7 @@ describe('Topic', function() {
     it('should delete the autoCreate option', function(done) {
       var options = {
         autoCreate: true,
-        a: 'a'
+        a: 'a',
       };
 
       topic.getMetadata = function(gaxOpts) {
@@ -262,7 +259,7 @@ describe('Topic', function() {
 
     describe('error', function() {
       it('should pass back errors when not auto-creating', function(done) {
-        var error = { code: 4 };
+        var error = {code: 4};
         var apiResponse = {};
 
         topic.getMetadata = function(gaxOpts, callback) {
@@ -278,7 +275,7 @@ describe('Topic', function() {
       });
 
       it('should pass back 404 errors if autoCreate is false', function(done) {
-        var error = { code: 5 };
+        var error = {code: 5};
         var apiResponse = {};
 
         topic.getMetadata = function(gaxOpts, callback) {
@@ -294,11 +291,11 @@ describe('Topic', function() {
       });
 
       it('should create the topic if 404 + autoCreate is true', function(done) {
-        var error = { code: 5 };
+        var error = {code: 5};
         var apiResponse = {};
 
         var fakeOptions = {
-          autoCreate: true
+          autoCreate: true,
         };
 
         topic.getMetadata = function(gaxOpts, callback) {
@@ -330,7 +327,7 @@ describe('Topic', function() {
 
     it('should return false if a not found error occurs', function(done) {
       topic.getMetadata = function(callback) {
-        callback({ code: 5 });
+        callback({code: 5});
       };
 
       topic.exists(function(err, exists) {
@@ -341,7 +338,7 @@ describe('Topic', function() {
     });
 
     it('should pass back any other type of error', function(done) {
-      var error = { code: 4 };
+      var error = {code: 4};
 
       topic.getMetadata = function(callback) {
         callback(error);
@@ -358,9 +355,9 @@ describe('Topic', function() {
   describe('getMetadata', function() {
     it('should make the proper request', function(done) {
       topic.request = function(config) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'getTopic');
-        assert.deepEqual(config.reqOpts, { topic: topic.name });
+        assert.deepEqual(config.reqOpts, {topic: topic.name});
         done();
       };
 
@@ -415,24 +412,30 @@ describe('Topic', function() {
         a: 'a',
         b: 'b',
         gaxOpts: {
-          e: 'f'
+          e: 'f',
         },
-        autoPaginate: false
+        autoPaginate: false,
       };
 
-      var expectedOptions = extend({
-        topic: topic.name
-      }, options);
+      var expectedOptions = extend(
+        {
+          topic: topic.name,
+        },
+        options
+      );
 
-      var expectedGaxOpts = extend({
-        autoPaginate: options.autoPaginate
-      }, options.gaxOpts);
+      var expectedGaxOpts = extend(
+        {
+          autoPaginate: options.autoPaginate,
+        },
+        options.gaxOpts
+      );
 
       delete expectedOptions.gaxOpts;
       delete expectedOptions.autoPaginate;
 
       topic.request = function(config) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'listTopicSubscriptions');
         assert.deepEqual(config.reqOpts, expectedOptions);
         assert.deepEqual(config.gaxOpts, expectedGaxOpts);
@@ -444,8 +447,8 @@ describe('Topic', function() {
 
     it('should accept only a callback', function(done) {
       topic.request = function(config) {
-        assert.deepEqual(config.reqOpts, { topic: topic.name });
-        assert.deepEqual(config.gaxOpts, { autoPaginate: undefined });
+        assert.deepEqual(config.reqOpts, {topic: topic.name});
+        assert.deepEqual(config.gaxOpts, {autoPaginate: undefined});
         done();
       };
 
@@ -457,7 +460,7 @@ describe('Topic', function() {
 
       topic.subscription = function(name) {
         return {
-          name: name
+          name: name,
         };
       };
 
@@ -468,9 +471,9 @@ describe('Topic', function() {
       topic.getSubscriptions(function(err, subscriptions) {
         assert.ifError(err);
         assert.deepEqual(subscriptions, [
-          { name: 'a' },
-          { name: 'b' },
-          { name: 'c' }
+          {name: 'a'},
+          {name: 'b'},
+          {name: 'c'},
         ]);
         done();
       });

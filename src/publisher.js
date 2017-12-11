@@ -53,13 +53,17 @@ var is = require('is');
  * var publisher = topic.publisher();
  */
 function Publisher(topic, options) {
-  options = extend(true, {
-    batching: {
-      maxBytes: Math.pow(1024, 2) * 5,
-      maxMessages: 1000,
-      maxMilliseconds: 1000
-    }
-  }, options);
+  options = extend(
+    true,
+    {
+      batching: {
+        maxBytes: Math.pow(1024, 2) * 5,
+        maxMessages: 1000,
+        maxMilliseconds: 1000,
+      },
+    },
+    options
+  );
 
   this.topic = topic;
 
@@ -71,15 +75,15 @@ function Publisher(topic, options) {
   this.inventory_ = {
     callbacks: [],
     queued: [],
-    bytes: 0
+    bytes: 0,
   };
 
   this.settings = {
     batching: {
       maxBytes: Math.min(options.batching.maxBytes, Math.pow(1024, 2) * 9),
       maxMessages: Math.min(options.batching.maxMessages, 1000),
-      maxMilliseconds: options.batching.maxMilliseconds
-    }
+      maxMilliseconds: options.batching.maxMilliseconds,
+    },
   };
 
   this.timeoutHandle_ = null;
@@ -99,7 +103,7 @@ function Publisher(topic, options) {
  * @param {string} callback.messageId - The id for the message.
  *
  * @example
- * var data = new Buffer('Hello, world!');
+ * var data = Buffer.from('Hello, world!');
  *
  * var callback = function(err, messageId) {
  *   if (err) {
@@ -138,7 +142,7 @@ Publisher.prototype.publish = function(data, attrs, callback) {
 
   // if this message puts us over the maxBytes option, then let's ship
   // what we have and add it to the next batch
-  if ((this.inventory_.bytes + data.length) > opts.maxBytes) {
+  if (this.inventory_.bytes + data.length > opts.maxBytes) {
     this.publish_();
   }
 
@@ -157,7 +161,9 @@ Publisher.prototype.publish = function(data, attrs, callback) {
   // otherwise let's set a timeout to send the next batch
   if (!this.timeoutHandle_) {
     this.timeoutHandle_ = setTimeout(
-      this.publish_.bind(this), opts.maxMilliseconds);
+      this.publish_.bind(this),
+      opts.maxMilliseconds
+    );
   }
 };
 
@@ -179,23 +185,26 @@ Publisher.prototype.publish_ = function() {
 
   var reqOpts = {
     topic: this.topic.name,
-    messages: messages
+    messages: messages,
   };
 
-  this.topic.request({
-    client: 'publisherClient',
-    method: 'publish',
-    reqOpts: reqOpts
-  }, function(err, resp) {
-    var messageIds = arrify(resp && resp.messageIds);
+  this.topic.request(
+    {
+      client: 'PublisherClient',
+      method: 'publish',
+      reqOpts: reqOpts,
+    },
+    function(err, resp) {
+      var messageIds = arrify(resp && resp.messageIds);
 
-    each(callbacks, function(callback, next) {
-      var messageId = messageIds[callbacks.indexOf(callback)];
+      each(callbacks, function(callback, next) {
+        var messageId = messageIds[callbacks.indexOf(callback)];
 
-      callback(err, messageId);
-      next();
-    });
-  });
+        callback(err, messageId);
+        next();
+      });
+    }
+  );
 };
 
 /**
@@ -210,7 +219,7 @@ Publisher.prototype.publish_ = function() {
 Publisher.prototype.queue_ = function(data, attrs, callback) {
   this.inventory_.queued.push({
     data: data,
-    attributes: attrs
+    attributes: attrs,
   });
 
   this.inventory_.bytes += data.length;
@@ -223,7 +232,7 @@ Publisher.prototype.queue_ = function(data, attrs, callback) {
  * that a callback is omitted.
  */
 common.util.promisifyAll(Publisher, {
-  singular: true
+  singular: true,
 });
 
 module.exports = Publisher;

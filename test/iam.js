@@ -27,7 +27,7 @@ var fakeUtil = extend({}, util, {
     if (Class.name === 'IAM') {
       promisified = true;
     }
-  }
+  },
 });
 
 describe('IAM', function() {
@@ -36,15 +36,15 @@ describe('IAM', function() {
 
   var PUBSUB = {
     options: {},
-    request: util.noop
+    request: util.noop,
   };
   var ID = 'id';
 
   before(function() {
     IAM = proxyquire('../src/iam.js', {
       '@google-cloud/common': {
-        util: fakeUtil
-      }
+        util: fakeUtil,
+      },
     });
   });
 
@@ -64,8 +64,8 @@ describe('IAM', function() {
           bind: function(context) {
             assert.strictEqual(context, fakePubsub);
             return fakeRequest;
-          }
-        }
+          },
+        },
       };
       var iam = new IAM(fakePubsub, ID);
 
@@ -84,7 +84,7 @@ describe('IAM', function() {
   describe('getPolicy', function() {
     it('should make the correct API request', function(done) {
       iam.request = function(config, callback) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'getIamPolicy');
         assert.strictEqual(config.reqOpts.resource, iam.id);
 
@@ -107,7 +107,7 @@ describe('IAM', function() {
   });
 
   describe('setPolicy', function() {
-    var policy = { etag: 'ACAB' };
+    var policy = {etag: 'ACAB'};
 
     it('should throw an error if a policy is not supplied', function() {
       assert.throws(function() {
@@ -117,7 +117,7 @@ describe('IAM', function() {
 
     it('should make the correct API request', function(done) {
       iam.request = function(config, callback) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'setIamPolicy');
         assert.strictEqual(config.reqOpts.resource, iam.id);
         assert.strictEqual(config.reqOpts.policy, policy);
@@ -151,7 +151,7 @@ describe('IAM', function() {
       var permissions = 'storage.bucket.list';
 
       iam.request = function(config) {
-        assert.strictEqual(config.client, 'subscriberClient');
+        assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'testIamPermissions');
         assert.strictEqual(config.reqOpts.resource, iam.id);
         assert.deepEqual(config.reqOpts.permissions, [permissions]);
@@ -192,12 +192,9 @@ describe('IAM', function() {
     });
 
     it('should pass back a hash of permissions the user has', function(done) {
-      var permissions = [
-        'storage.bucket.list',
-        'storage.bucket.consume'
-      ];
+      var permissions = ['storage.bucket.list', 'storage.bucket.consume'];
       var apiResponse = {
-        permissions: ['storage.bucket.consume']
+        permissions: ['storage.bucket.consume'],
       };
 
       iam.request = function(config, callback) {
@@ -208,7 +205,7 @@ describe('IAM', function() {
         assert.ifError(err);
         assert.deepEqual(permissions, {
           'storage.bucket.list': false,
-          'storage.bucket.consume': true
+          'storage.bucket.consume': true,
         });
         assert.strictEqual(apiResp, apiResponse);
 

@@ -190,16 +190,19 @@ Snapshot.formatName_ = function(projectId, name) {
  */
 Snapshot.prototype.delete = function(callback) {
   var reqOpts = {
-    snapshot: this.name
+    snapshot: this.name,
   };
 
   callback = callback || common.util.noop;
 
-  this.parent.request({
-    client: 'subscriberClient',
-    method: 'deleteSnapshot',
-    reqOpts: reqOpts
-  }, callback);
+  this.parent.request(
+    {
+      client: 'SubscriberClient',
+      method: 'deleteSnapshot',
+      reqOpts: reqOpts,
+    },
+    callback
+  );
 };
 
 /*! Developer Documentation

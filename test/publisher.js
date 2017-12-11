@@ -25,10 +25,10 @@ var promisified = false;
 var fakeUtil = extend({}, common.util, {
   promisifyAll: function(Class, options) {
     if (Class.name === 'Publisher') {
-      assert.deepEqual(options, { singular: true });
+      assert.deepEqual(options, {singular: true});
       promisified = true;
     }
-  }
+  },
 });
 
 describe('Publisher', function() {
@@ -39,14 +39,14 @@ describe('Publisher', function() {
   var TOPIC_NAME = 'test-topic';
   var TOPIC = {
     name: TOPIC_NAME,
-    request: fakeUtil.noop
+    request: fakeUtil.noop,
   };
 
   before(function() {
     Publisher = proxyquire('../src/publisher.js', {
       '@google-cloud/common': {
-        util: fakeUtil
-      }
+        util: fakeUtil,
+      },
     });
   });
 
@@ -69,7 +69,7 @@ describe('Publisher', function() {
       assert.deepEqual(publisher.inventory_, {
         callbacks: [],
         queued: [],
-        bytes: 0
+        bytes: 0,
       });
     });
 
@@ -78,7 +78,7 @@ describe('Publisher', function() {
         assert.deepEqual(publisher.settings.batching, {
           maxBytes: Math.pow(1024, 2) * 5,
           maxMessages: 1000,
-          maxMilliseconds: 1000
+          maxMilliseconds: 1000,
         });
       });
 
@@ -86,12 +86,12 @@ describe('Publisher', function() {
         var options = {
           maxBytes: 10,
           maxMessages: 11,
-          maxMilliseconds: 12
+          maxMilliseconds: 12,
         };
         var optionsCopy = extend({}, options);
 
         var publisher = new Publisher(TOPIC, {
-          batching: options
+          batching: options,
         });
 
         assert.deepEqual(publisher.settings.batching, options);
@@ -102,7 +102,7 @@ describe('Publisher', function() {
         var expected = Math.pow(1024, 2) * 9;
 
         var publisher = new Publisher(TOPIC, {
-          batching: { maxBytes: expected + 1024 }
+          batching: {maxBytes: expected + 1024},
         });
 
         assert.strictEqual(publisher.settings.batching.maxBytes, expected);
@@ -110,7 +110,7 @@ describe('Publisher', function() {
 
       it('should cap maxMessages', function() {
         var publisher = new Publisher(TOPIC, {
-          batching: { maxMessages: 2000 }
+          batching: {maxMessages: 2000},
         });
 
         assert.strictEqual(publisher.settings.batching.maxMessages, 1000);
@@ -119,8 +119,8 @@ describe('Publisher', function() {
   });
 
   describe('publish', function() {
-    var DATA = new Buffer('hello');
-    var ATTRS = { a: 'a' };
+    var DATA = Buffer.from('hello');
+    var ATTRS = {a: 'a'};
 
     var globalSetTimeout;
 
@@ -257,11 +257,11 @@ describe('Publisher', function() {
       var FAKE_MESSAGE = {};
 
       TOPIC.request = function(config) {
-        assert.strictEqual(config.client, 'publisherClient');
+        assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'publish');
         assert.deepEqual(config.reqOpts, {
           topic: TOPIC_NAME,
-          messages: [FAKE_MESSAGE]
+          messages: [FAKE_MESSAGE],
         });
         done();
       };
@@ -291,11 +291,11 @@ describe('Publisher', function() {
           assert.strictEqual(messageId, undefined);
           assert.strictEqual(callbackCalls, 2);
           done();
-        }
+        },
       ];
 
       TOPIC.request = function(config, callback) {
-        callback(error, { messageIds: FAKE_IDS });
+        callback(error, {messageIds: FAKE_IDS});
       };
 
       publisher.publish_();
@@ -303,16 +303,18 @@ describe('Publisher', function() {
   });
 
   describe('queue_', function() {
-    var DATA = new Buffer('hello');
-    var ATTRS = { a: 'a' };
+    var DATA = Buffer.from('hello');
+    var ATTRS = {a: 'a'};
 
     it('should add the data and attrs to the inventory', function() {
       publisher.queue_(DATA, ATTRS, fakeUtil.noop);
 
-      assert.deepEqual(publisher.inventory_.queued, [{
-        data: DATA,
-        attributes: ATTRS
-      }]);
+      assert.deepEqual(publisher.inventory_.queued, [
+        {
+          data: DATA,
+          attributes: ATTRS,
+        },
+      ]);
     });
 
     it('should update the inventory size', function() {

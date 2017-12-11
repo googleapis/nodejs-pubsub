@@ -172,13 +172,16 @@ function Subscription(pubsub, name, options) {
     lease: [],
     ack: [],
     nack: [],
-    bytes: 0
+    bytes: 0,
   };
 
-  this.flowControl = extend({
-    maxBytes: os.freemem() * 0.2,
-    maxMessages: Infinity
-  }, options.flowControl);
+  this.flowControl = extend(
+    {
+      maxBytes: os.freemem() * 0.2,
+      maxMessages: Infinity,
+    },
+    options.flowControl
+  );
 
   this.flushTimeoutHandle_ = null;
   this.leaseTimeoutHandle_ = null;
@@ -246,7 +249,7 @@ Subscription.formatMetadata_ = function(metadata) {
 
     formatted.messageRetentionDuration = {
       seconds: metadata.messageRetentionDuration,
-      nanos: 0
+      nanos: 0,
     };
   }
 
@@ -254,7 +257,7 @@ Subscription.formatMetadata_ = function(metadata) {
     delete formatted.pushEndpoint;
 
     formatted.pushConfig = {
-      pushEndpoint: metadata.pushEndpoint
+      pushEndpoint: metadata.pushEndpoint,
     };
   }
 
@@ -315,12 +318,12 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
 
   if (!this.isConnected_()) {
     promise = common.util.promisify(this.request).call(this, {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'acknowledge',
       reqOpts: {
         subscription: this.name,
-        ackIds
-      }
+        ackIds,
+      },
     });
   } else {
     promise = new Promise(function(resolve, reject) {
@@ -330,7 +333,7 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
           return;
         }
 
-        connection.write({ ackIds }, resolve);
+        connection.write({ackIds}, resolve);
       });
     });
   }
@@ -474,23 +477,26 @@ Subscription.prototype.createSnapshot = function(name, gaxOpts, callback) {
 
   var reqOpts = {
     name: snapshot.name,
-    subscription: this.name
+    subscription: this.name,
   };
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'createSnapshot',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, function(err, resp) {
-    if (err) {
-      callback(err, null, resp);
-      return;
-    }
+  this.request(
+    {
+      client: 'SubscriberClient',
+      method: 'createSnapshot',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    function(err, resp) {
+      if (err) {
+        callback(err, null, resp);
+        return;
+      }
 
-    snapshot.metadata = resp;
-    callback(null, snapshot, resp);
-  });
+      snapshot.metadata = resp;
+      callback(null, snapshot, resp);
+    }
+  );
 };
 
 /**
@@ -527,22 +533,25 @@ Subscription.prototype.delete = function(gaxOpts, callback) {
   callback = callback || common.util.noop;
 
   var reqOpts = {
-    subscription: this.name
+    subscription: this.name,
   };
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'deleteSubscription',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, function(err, resp) {
-    if (!err) {
-      self.removeAllListeners();
-      self.close();
-    }
+  this.request(
+    {
+      client: 'SubscriberClient',
+      method: 'deleteSubscription',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    function(err, resp) {
+      if (!err) {
+        self.removeAllListeners();
+        self.close();
+      }
 
-    callback(err, resp);
-  });
+      callback(err, resp);
+    }
+  );
 };
 
 /**
@@ -704,21 +713,24 @@ Subscription.prototype.getMetadata = function(gaxOpts, callback) {
   }
 
   var reqOpts = {
-    subscription: this.name
+    subscription: this.name,
   };
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'getSubscription',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, function(err, apiResponse) {
-    if (!err) {
-      self.metadata = apiResponse;
-    }
+  this.request(
+    {
+      client: 'SubscriberClient',
+      method: 'getSubscription',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    function(err, apiResponse) {
+      if (!err) {
+        self.metadata = apiResponse;
+      }
 
-    callback(err, apiResponse);
-  });
+      callback(err, apiResponse);
+    }
+  );
 };
 
 /**
@@ -741,8 +753,10 @@ Subscription.prototype.isConnected_ = function() {
  * @return {boolean}
  */
 Subscription.prototype.hasMaxMessages_ = function() {
-  return this.inventory_.lease.length >= this.flowControl.maxMessages ||
-    this.inventory_.bytes >= this.flowControl.maxBytes;
+  return (
+    this.inventory_.lease.length >= this.flowControl.maxMessages ||
+    this.inventory_.bytes >= this.flowControl.maxBytes
+  );
 };
 
 /**
@@ -756,7 +770,10 @@ Subscription.prototype.hasMaxMessages_ = function() {
  */
 Subscription.prototype.leaseMessage_ = function(message) {
   this.modifyAckDeadline_(
-    message.ackId, this.ackDeadline / 1000, message.connectionId);
+    message.ackId,
+    this.ackDeadline / 1000,
+    message.connectionId
+  );
 
   this.inventory_.lease.push(message.ackId);
   this.inventory_.bytes += message.length;
@@ -817,13 +834,13 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
 
   if (!this.isConnected_()) {
     promise = common.util.promisify(this.request).call(this, {
-      client: 'subscriberClient',
+      client: 'SubscriberClient',
       method: 'modifyAckDeadline',
       reqOpts: {
         subscription: self.name,
         ackDeadlineSeconds: deadline,
-        ackIds
-      }
+        ackIds,
+      },
     });
   } else {
     promise = new Promise(function(resolve, reject) {
@@ -833,10 +850,13 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
           return;
         }
 
-        connection.write({
-          modifyDeadlineAckIds: ackIds,
-          modifyDeadlineSeconds: Array(ackIds.length).fill(deadline)
-        }, resolve);
+        connection.write(
+          {
+            modifyDeadlineAckIds: ackIds,
+            modifyDeadlineSeconds: Array(ackIds.length).fill(deadline),
+          },
+          resolve
+        );
       });
     });
   }
@@ -889,15 +909,18 @@ Subscription.prototype.modifyPushConfig = function(config, gaxOpts, callback) {
 
   var reqOpts = {
     subscription: this.name,
-    pushConfig: config
+    pushConfig: config,
   };
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'modifyPushConfig',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, callback);
+  this.request(
+    {
+      client: 'SubscriberClient',
+      method: 'modifyPushConfig',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    callback
+  );
 };
 
 /**
@@ -928,7 +951,7 @@ Subscription.prototype.nack_ = function(message) {
  */
 Subscription.prototype.openConnection_ = function() {
   var self = this;
-  var pool = this.connectionPool = new ConnectionPool(this);
+  var pool = (this.connectionPool = new ConnectionPool(this));
 
   this.isOpen = true;
 
@@ -1016,7 +1039,7 @@ Subscription.prototype.seek = function(snapshot, gaxOpts, callback) {
   }
 
   var reqOpts = {
-    subscription: this.name
+    subscription: this.name,
   };
 
   if (is.string(snapshot)) {
@@ -1027,12 +1050,15 @@ Subscription.prototype.seek = function(snapshot, gaxOpts, callback) {
     throw new Error('Either a snapshot name or Date is needed to seek to.');
   }
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'seek',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, callback);
+  this.request(
+    {
+      client: 'SubscriberClient',
+      method: 'seek',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    callback
+  );
 };
 
 /**
@@ -1056,7 +1082,7 @@ Subscription.prototype.setFlushTimeout_ = function() {
  * @private
  */
 Subscription.prototype.setLeaseTimeout_ = function() {
-  if (this.leaseTimeoutHandle_  || !this.isOpen) {
+  if (this.leaseTimeoutHandle_ || !this.isOpen) {
     return;
   }
 
@@ -1107,16 +1133,19 @@ Subscription.prototype.setMetadata = function(metadata, gaxOpts, callback) {
   var reqOpts = {
     subscription: subscription,
     updateMask: {
-      paths: fields
-    }
+      paths: fields,
+    },
   };
 
-  this.request({
-    client: 'subscriberClient',
-    method: 'updateSubscription',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, callback);
+  this.request(
+    {
+      client: 'SubscriberClient',
+      method: 'updateSubscription',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    callback
+  );
 };
 
 /**
@@ -1141,7 +1170,7 @@ Subscription.prototype.snapshot = function(name) {
  * that a callback is omitted.
  */
 common.util.promisifyAll(Subscription, {
-  exclude: ['snapshot']
+  exclude: ['snapshot'],
 });
 
 module.exports = Subscription;

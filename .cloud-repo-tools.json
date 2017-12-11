@@ -1,0 +1,23 @@
+{
+  "requiresKeyFile": true,
+  "requiresProjectId": true,
+  "product": "pubsub",
+  "client_reference_url": "https://googlecloudplatform.github.io/google-cloud-node/#/docs/pubsub/latest/pubsub",
+  "release_quality": "beta",
+  "samples": [
+    {
+      "id": "subscriptions",
+      "name": "Subscriptions",
+      "file": "subscriptions.js",
+      "docs_link": "https://googlecloudplatform.github.io/google-cloud-node/#/docs/pubsub/latest/pubsub/subscription",
+      "usage": "node subscriptions.js --help"
+    },
+    {
+      "id": "topics",
+      "name": "Topics",
+      "file": "topics.js",
+      "docs_link": "https://googlecloudplatform.github.io/google-cloud-node/#/docs/pubsub/latest/pubsub/topic",
+      "usage": "node topics.js --help"
+    }
+  ]
+}

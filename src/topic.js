@@ -221,15 +221,18 @@ Topic.prototype.delete = function(gaxOpts, callback) {
   callback = callback || common.util.noop;
 
   var reqOpts = {
-    topic: this.name
+    topic: this.name,
   };
 
-  this.request({
-    client: 'publisherClient',
-    method: 'deleteTopic',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, callback);
+  this.request(
+    {
+      client: 'PublisherClient',
+      method: 'deleteTopic',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    callback
+  );
 };
 
 /**
@@ -344,21 +347,24 @@ Topic.prototype.getMetadata = function(gaxOpts, callback) {
   }
 
   var reqOpts = {
-    topic: this.name
+    topic: this.name,
   };
 
-  this.request({
-    client: 'publisherClient',
-    method: 'getTopic',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, function(err, apiResponse) {
-    if (!err) {
-      self.metadata = apiResponse;
-    }
+  this.request(
+    {
+      client: 'PublisherClient',
+      method: 'getTopic',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    function(err, apiResponse) {
+      if (!err) {
+        self.metadata = apiResponse;
+      }
 
-    callback(err, apiResponse);
-  });
+      callback(err, apiResponse);
+    }
+  );
 };
 
 /**
@@ -408,34 +414,43 @@ Topic.prototype.getSubscriptions = function(options, callback) {
     options = {};
   }
 
-  var reqOpts = extend({
-    topic: this.name
-  }, options);
+  var reqOpts = extend(
+    {
+      topic: this.name,
+    },
+    options
+  );
 
   delete reqOpts.gaxOpts;
   delete reqOpts.autoPaginate;
 
-  var gaxOpts = extend({
-    autoPaginate: options.autoPaginate
-  }, options.gaxOpts);
+  var gaxOpts = extend(
+    {
+      autoPaginate: options.autoPaginate,
+    },
+    options.gaxOpts
+  );
 
-  this.request({
-    client: 'publisherClient',
-    method: 'listTopicSubscriptions',
-    reqOpts: reqOpts,
-    gaxOpts: gaxOpts
-  }, function() {
-    var subscriptions = arguments[1];
+  this.request(
+    {
+      client: 'PublisherClient',
+      method: 'listTopicSubscriptions',
+      reqOpts: reqOpts,
+      gaxOpts: gaxOpts,
+    },
+    function() {
+      var subscriptions = arguments[1];
 
-    if (subscriptions) {
-      arguments[1] = subscriptions.map(function(sub) {
-        // ListTopicSubscriptions only returns sub names
-        return self.subscription(sub);
-      });
+      if (subscriptions) {
+        arguments[1] = subscriptions.map(function(sub) {
+          // ListTopicSubscriptions only returns sub names
+          return self.subscription(sub);
+        });
+      }
+
+      callback.apply(null, arguments);
     }
-
-    callback.apply(null, arguments);
-  });
+  );
 };
 
 /**
@@ -465,8 +480,9 @@ Topic.prototype.getSubscriptions = function(options, callback) {
  *     this.end();
  *   });
  */
-Topic.prototype.getSubscriptionsStream =
-  common.paginator.streamify('getSubscriptions');
+Topic.prototype.getSubscriptionsStream = common.paginator.streamify(
+  'getSubscriptions'
+);
 
 /**
  * Creates a Publisher object that allows you to publish messages to this topic.
@@ -483,7 +499,7 @@ Topic.prototype.getSubscriptionsStream =
  * @example
  * var publisher = topic.publisher();
  *
- * publisher.publish(new Buffer('Hello, world!'), function(err, messageId) {
+ * publisher.publish(Buffer.from('Hello, world!'), function(err, messageId) {
  *   if (err) {
  *     // Error handling omitted.
  *   }
@@ -539,9 +555,7 @@ Topic.prototype.subscription = function(name, options) {
  *
  * These methods can be agto-paginated.
  */
-common.paginator.extend(Topic, [
-  'getSubscriptions'
-]);
+common.paginator.extend(Topic, ['getSubscriptions']);
 
 /*! Developer Documentation
  *
@@ -549,10 +563,7 @@ common.paginator.extend(Topic, [
  * that a callback is omitted.
  */
 common.util.promisifyAll(Topic, {
-  exclude: [
-    'publisher',
-    'subscription'
-  ]
+  exclude: ['publisher', 'subscription'],
 });
 
 module.exports = Topic;
