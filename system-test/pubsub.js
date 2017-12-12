@@ -111,10 +111,10 @@ describe('pubsub', function() {
             return;
           }
 
-          var recieviedTopics = topics.map(getTopicName);
+          var receivedTopics = topics.map(getTopicName);
 
           for (let topic of expectedTopics) {
-            if (recieviedTopics.indexOf(topic) === -1) {
+            if (receivedTopics.indexOf(topic) === -1) {
               err = new Error(`Topic ${topic} not found.`);
               break;
             }
