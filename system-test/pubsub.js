@@ -51,6 +51,10 @@ describe('pubsub', function() {
     return 'test-topic-' + uuid.v4();
   }
 
+  function getTopicName(topic) {
+    return topic.name.split('/').pop();
+  }
+
   function publishPop(message, options, callback) {
     if (!callback) {
       callback = options;
@@ -93,6 +97,8 @@ describe('pubsub', function() {
   }
 
   function waitForTopics(done) {
+    var expectedTopics = TOPICS.map(getTopicName);
+
     async.retry(
       {
         times: 6,
@@ -100,8 +106,18 @@ describe('pubsub', function() {
       },
       function(callback) {
         pubsub.getTopics(function(err, topics) {
-          if (!err && !topics.length) {
-            err = new Error('No topics found.');
+          if (err) {
+            callback(err);
+            return;
+          }
+
+          var recieviedTopics = topics.map(getTopicName);
+
+          for (let topic of expectedTopics) {
+            if (recieviedTopics.indexOf(topic) === -1) {
+              err = new Error(`Topic ${topic} not found.`);
+              break;
+            }
           }
 
           callback(err, topics);
