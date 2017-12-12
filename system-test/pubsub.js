@@ -92,6 +92,25 @@ describe('pubsub', function() {
     );
   }
 
+  function waitForTopics(done) {
+    async.retry(
+      {
+        times: 6,
+        interval: 10000,
+      },
+      function(callback) {
+        pubsub.getTopics(function(err, topics) {
+          if (!err && !topics.length) {
+            err = new Error('No topics found.');
+          }
+
+          callback(err, topics);
+        });
+      },
+      done
+    );
+  }
+
   before(function(done) {
     // create all needed topics
     async.each(
@@ -105,7 +124,7 @@ describe('pubsub', function() {
           return;
         }
 
-        setTimeout(done, 5000);
+        waitForTopics(done);
       }
     );
   });
