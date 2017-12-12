@@ -51,6 +51,10 @@ describe('pubsub', function() {
     return 'test-topic-' + uuid.v4();
   }
 
+  function getTopicName(topic) {
+    return topic.name.split('/').pop();
+  }
+
   function publishPop(message, options, callback) {
     if (!callback) {
       callback = options;
@@ -92,6 +96,37 @@ describe('pubsub', function() {
     );
   }
 
+  function waitForTopics(done) {
+    var expectedTopics = TOPICS.map(getTopicName);
+
+    async.retry(
+      {
+        times: 6,
+        interval: 10000,
+      },
+      function(callback) {
+        pubsub.getTopics(function(err, topics) {
+          if (err) {
+            callback(err);
+            return;
+          }
+
+          var receivedTopics = topics.map(getTopicName);
+
+          for (let topic of expectedTopics) {
+            if (receivedTopics.indexOf(topic) === -1) {
+              err = new Error(`Topic ${topic} not found.`);
+              break;
+            }
+          }
+
+          callback(err, topics);
+        });
+      },
+      done
+    );
+  }
+
   before(function(done) {
     // create all needed topics
     async.each(
@@ -105,7 +140,7 @@ describe('pubsub', function() {
           return;
         }
 
-        setTimeout(done, 5000);
+        waitForTopics(done);
       }
     );
   });
