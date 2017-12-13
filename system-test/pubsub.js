@@ -37,7 +37,7 @@ describe('pubsub', function() {
     pubsub.topic(TOPIC_NAMES[2]),
   ];
 
-  var TOPIC_FULL_NAMES = [TOPICS[0].name, TOPICS[1].name, TOPICS[2].name];
+  var TOPIC_FULL_NAMES = TOPICS.map(getTopicName);
 
   function generateSnapshotName() {
     return 'test-snapshot-' + uuid.v4();
@@ -96,37 +96,6 @@ describe('pubsub', function() {
     );
   }
 
-  function waitForTopics(done) {
-    var expectedTopics = TOPICS.map(getTopicName);
-
-    async.retry(
-      {
-        times: 6,
-        interval: 10000,
-      },
-      function(callback) {
-        pubsub.getTopics(function(err, topics) {
-          if (err) {
-            callback(err);
-            return;
-          }
-
-          var receivedTopics = topics.map(getTopicName);
-
-          for (let topic of expectedTopics) {
-            if (receivedTopics.indexOf(topic) === -1) {
-              err = new Error(`Topic ${topic} not found.`);
-              break;
-            }
-          }
-
-          callback(err, topics);
-        });
-      },
-      done
-    );
-  }
-
   before(function(done) {
     // create all needed topics
     async.each(
@@ -134,14 +103,7 @@ describe('pubsub', function() {
       function(topic, cb) {
         topic.create(cb);
       },
-      function(err) {
-        if (err) {
-          done(err);
-          return;
-        }
-
-        waitForTopics(done);
-      }
+      done
     );
   });
 
@@ -162,7 +124,8 @@ describe('pubsub', function() {
         assert.ifError(err);
 
         var results = topics.filter(function(topic) {
-          return TOPIC_FULL_NAMES.indexOf(topic.name) !== -1;
+          var name = getTopicName(topic);
+          return TOPIC_FULL_NAMES.indexOf(name) !== -1;
         });
 
         // get all topics in list of known names
@@ -182,7 +145,8 @@ describe('pubsub', function() {
         })
         .on('end', function() {
           var results = topicsEmitted.filter(function(topic) {
-            return TOPIC_FULL_NAMES.indexOf(topic.name) !== -1;
+            var name = getTopicName(topic);
+            return TOPIC_FULL_NAMES.indexOf(name) !== -1;
           });
 
           assert.equal(results.length, TOPIC_NAMES.length);
