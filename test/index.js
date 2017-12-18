@@ -111,7 +111,7 @@ describe('PubSub', function() {
   var pubsub;
   var OPTIONS = {
     projectId: PROJECT_ID,
-    promise: {}
+    promise: {},
   };
 
   var PUBSUB_EMULATOR_HOST = process.env.PUBSUB_EMULATOR_HOST;
