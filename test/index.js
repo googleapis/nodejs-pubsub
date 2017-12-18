@@ -109,7 +109,10 @@ describe('PubSub', function() {
   var PubSub;
   var PROJECT_ID = 'test-project';
   var pubsub;
-  var OPTIONS = {projectId: PROJECT_ID};
+  var OPTIONS = {
+    projectId: PROJECT_ID,
+    promise: {}
+  };
 
   var PUBSUB_EMULATOR_HOST = process.env.PUBSUB_EMULATOR_HOST;
 
@@ -260,6 +263,10 @@ describe('PubSub', function() {
 
     it('should set isEmulator to false by default', function() {
       assert.strictEqual(pubsub.isEmulator, false);
+    });
+
+    it('should localize a Promise override', function() {
+      assert.strictEqual(pubsub.Promise, OPTIONS.promise);
     });
   });
 

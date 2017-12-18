@@ -36,6 +36,7 @@ describe('IAM', function() {
 
   var PUBSUB = {
     options: {},
+    Promise: {},
     request: util.noop,
   };
   var ID = 'id';
@@ -53,6 +54,10 @@ describe('IAM', function() {
   });
 
   describe('initialization', function() {
+    it('should localize pubsub.Promise', function() {
+      assert.strictEqual(iam.Promise, PUBSUB.Promise);
+    });
+
     it('should localize pubsub', function() {
       assert.strictEqual(iam.pubsub, PUBSUB);
     });

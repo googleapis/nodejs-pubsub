@@ -63,6 +63,10 @@ var is = require('is');
  * // subscription.iam
  */
 function IAM(pubsub, id) {
+  if (pubsub.Promise) {
+    this.Promise = pubsub.Promise;
+  }
+
   this.pubsub = pubsub;
   this.request = pubsub.request.bind(pubsub);
   this.id = id;

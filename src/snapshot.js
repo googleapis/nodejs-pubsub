@@ -89,6 +89,10 @@ var is = require('is');
  * });
  */
 function Snapshot(parent, name) {
+  if (parent.Promise) {
+    this.Promise = parent.Promise;
+  }
+
   this.parent = parent;
   this.name = Snapshot.formatName_(parent.projectId, name);
 
