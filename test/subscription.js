@@ -72,6 +72,7 @@ describe('Subscription', function() {
 
   var PUBSUB = {
     projectId: PROJECT_ID,
+    Promise: {},
     request: fakeUtil.noop,
   };
 
@@ -96,6 +97,10 @@ describe('Subscription', function() {
   describe('initialization', function() {
     it('should promisify all the things', function() {
       assert(promisified);
+    });
+
+    it('should localize pubsub.Promise', function() {
+      assert.strictEqual(subscription.Promise, PUBSUB.Promise);
     });
 
     it('should localize the pubsub object', function() {

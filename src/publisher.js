@@ -53,6 +53,10 @@ var is = require('is');
  * var publisher = topic.publisher();
  */
 function Publisher(topic, options) {
+  if (topic.Promise) {
+    this.Promise = topic.Promise;
+  }
+
   options = extend(
     true,
     {

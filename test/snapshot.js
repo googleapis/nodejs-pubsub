@@ -42,8 +42,9 @@ describe('Snapshot', function() {
   };
 
   var SUBSCRIPTION = {
-    pubsub: PUBSUB,
+    Promise: {},
     projectId: PROJECT_ID,
+    pubsub: PUBSUB,
     api: {},
     createSnapshot: function() {},
     seek: function() {},
@@ -79,6 +80,10 @@ describe('Snapshot', function() {
 
     it('should promisify all the things', function() {
       assert(promisified);
+    });
+
+    it('should localize parent.Promise', function() {
+      assert.strictEqual(snapshot.Promise, SUBSCRIPTION.Promise);
     });
 
     it('should localize the parent', function() {

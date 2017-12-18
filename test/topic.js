@@ -65,6 +65,7 @@ describe('Topic', function() {
   var TOPIC_UNFORMATTED_NAME = TOPIC_NAME.split('/').pop();
 
   var PUBSUB = {
+    Promise: {},
     projectId: PROJECT_ID,
     createTopic: util.noop,
     request: util.noop,
@@ -97,6 +98,10 @@ describe('Topic', function() {
 
     it('should promisify all the things', function() {
       assert(promisified);
+    });
+
+    it('should localize pubsub.Promise', function() {
+      assert.strictEqual(topic.Promise, PUBSUB.Promise);
     });
 
     it('should format the name', function() {

@@ -155,6 +155,10 @@ var Snapshot = require('./snapshot.js');
  * subscription.removeListener('message', onMessage);
  */
 function Subscription(pubsub, name, options) {
+  if (pubsub.Promise) {
+    this.Promise = pubsub.Promise;
+  }
+
   options = options || {};
 
   this.pubsub = pubsub;

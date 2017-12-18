@@ -51,6 +51,10 @@ var Publisher = require('./publisher.js');
  * var topic = pubsub.topic('my-topic');
  */
 function Topic(pubsub, name) {
+  if (pubsub.Promise) {
+    this.Promise = pubsub.Promise;
+  }
+
   this.name = Topic.formatName_(pubsub.projectId, name);
   this.parent = this.pubsub = pubsub;
   this.request = pubsub.request.bind(pubsub);

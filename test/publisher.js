@@ -39,6 +39,7 @@ describe('Publisher', function() {
   var TOPIC_NAME = 'test-topic';
   var TOPIC = {
     name: TOPIC_NAME,
+    Promise: {},
     request: fakeUtil.noop,
   };
 
@@ -59,6 +60,10 @@ describe('Publisher', function() {
   describe('initialization', function() {
     it('should promisify all the things', function() {
       assert(promisified);
+    });
+
+    it('should localize topic.Promise', function() {
+      assert.strictEqual(publisher.Promise, TOPIC.Promise);
     });
 
     it('should localize the topic object', function() {

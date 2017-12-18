@@ -103,6 +103,10 @@ function PubSub(options) {
   this.api = {};
   this.auth = googleAuth(this.options);
   this.projectId = this.options.projectId || PROJECT_ID_PLACEHOLDER;
+
+  if (this.options.promise) {
+    this.Promise = this.options.promise;
+  }
 }
 
 /**
