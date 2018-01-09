@@ -284,7 +284,7 @@ ConnectionPool.prototype.createMessage = function(connectionId, resp) {
   var milliseconds = parseInt(pt.nanos, 10) / 1e6;
   var originalDataLength = resp.message.data.length;
 
-  return {
+  var message = {
     connectionId: connectionId,
     ackId: resp.ackId,
     id: resp.message.messageId,
@@ -295,14 +295,15 @@ ConnectionPool.prototype.createMessage = function(connectionId, resp) {
     // using get here to prevent user from overwriting data
     get length() {
       return originalDataLength;
-    },
-    ack: function() {
-      self.subscription.ack_(this);
-    },
-    nack: function() {
-      self.subscription.nack_(this);
-    },
+    }
   };
+  message.ack = function() {
+    self.subscription.ack_(message);
+  };
+  message.nack = function() {
+    self.subscription.nack_(message);
+  };
+  return message;
 };
 
 /**
