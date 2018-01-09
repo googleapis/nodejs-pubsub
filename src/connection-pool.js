@@ -295,7 +295,7 @@ ConnectionPool.prototype.createMessage = function(connectionId, resp) {
     // using get here to prevent user from overwriting data
     get length() {
       return originalDataLength;
-    }
+    },
   };
   message.ack = function() {
     self.subscription.ack_(message);

@@ -751,7 +751,8 @@ describe('ConnectionPool', function() {
         assert.strictEqual(message_, message);
         done();
       };
-      let { ack } = message;
+      // eslint-disable-next-line node/no-unsupported-features
+      let {ack} = message;
       ack();
     });
 
@@ -760,8 +761,8 @@ describe('ConnectionPool', function() {
         assert.strictEqual(message_, message);
         done();
       };
-
-      let { nack } = message;
+      // eslint-disable-next-line node/no-unsupported-features
+      let {nack} = message;
       nack();
     });
   });
