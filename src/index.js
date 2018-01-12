@@ -93,9 +93,10 @@ var PROJECT_ID_PLACEHOLDER = '{{projectId}}';
  */
 function PubSub(options) {
   if (!(this instanceof PubSub)) {
-    options = common.util.normalizeArguments(this, options);
     return new PubSub(options);
   }
+
+  options = common.util.normalizeArguments(this, options);
 
   // Determine what scopes are needed.
   // It is the union of the scopes on both clients.
