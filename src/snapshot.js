@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*!
- * @module pubsub/snapshot
- */
-
 'use strict';
 
 var common = require('@google-cloud/common');
@@ -28,31 +24,30 @@ var is = require('is');
  *
  * Snapshots are sometimes retrieved when using various methods:
  *
- * - {module:pubsub#getSnapshots}
- * - {module:pubsub#getSnapshotsStream}
- * - {module:pubsub#snapshot}
+ * - {@link PubSub#getSnapshots}
+ * - {@link PubSub#getSnapshotsStream}
+ * - {@link PubSub#snapshot}
  *
  * Snapshots may be created with:
  *
- * - {module:pubsub/subscription#createSnapshot}
+ * - {@link Subscription#createSnapshot}
  *
  * You can use snapshots to seek a subscription to a specific point in time.
  *
- * - {module:pubsub/subscription#seek}
+ * - {@link Subscription#seek}
  *
- * @alias module:pubsub/snapshot
- * @constructor
+ * @class
  *
  * @example
  * //-
- * // From {module:pubsub#getSnapshots}:
+ * // From {@link PubSub#getSnapshots}:
  * //-
  * pubsub.getSnapshots(function(err, snapshots) {
  *   // `snapshots` is an array of Snapshot objects.
  * });
  *
  * //-
- * // From {module:pubsub#getSnapshotsStream}:
+ * // From {@link PubSub#getSnapshotsStream}:
  * //-
  * pubsub.getSnapshotsStream()
  *   .on('error', console.error)
@@ -61,7 +56,7 @@ var is = require('is');
  *   });
  *
  * //-
- * // From {module:pubsub#snapshot}:
+ * // From {@link PubSub#snapshot}:
  * //-
  * var snapshot = pubsub.snapshot('my-snapshot');
  * // snapshot is a Snapshot object.
@@ -101,14 +96,15 @@ function Snapshot(parent, name) {
      * Create a snapshot with the given name.
      *
      * **This is only available if you accessed this object through
-     * {module:pubsub/subscription#snapshot}.**
+     * {@link Subscription#snapshot}.**
      *
-     * @param {string} name - Name of the snapshot.
-     * @param {function=} callback - The callback function.
-     * @param {?error} callback.err - An error from the API call, may be null.
-     * @param {module:pubsub/snapshot} callback.snapshot - The newly created
+     * @method Snapshot#create
+     * @param {string} name Name of the snapshot.
+     * @param {function} [callback] The callback function.
+     * @param {?error} callback.err An error from the API call, may be null.
+     * @param {Snapshot} callback.snapshot The newly created
      *     snapshot.
-     * @param {object} callback.apiResponse - The full API response from the
+     * @param {object} callback.apiResponse The full API response from the
      *     service.
      *
      * @example
@@ -139,11 +135,12 @@ function Snapshot(parent, name) {
      * Seeks an existing subscription to the snapshot.
      *
      * **This is only available if you accessed this object through
-     * {module:pubsub/subscription#snapshot}.**
+     * {@link Subscription#snapshot}.**
      *
-     * @param {function} callback - The callback function.
-     * @param {?error} callback.err - An error from the API call, may be null.
-     * @param {object} callback.apiResponse - The full API response from the
+     * @method Snapshot#seek
+     * @param {function} callback The callback function.
+     * @param {?error} callback.err An error from the API call, may be null.
+     * @param {object} callback.apiResponse The full API response from the
      *     service.
      *
      * @example
@@ -163,7 +160,7 @@ function Snapshot(parent, name) {
   }
 }
 
-/**
+/*@
  * Format the name of a snapshot. A snapshot's full name is in the format of
  * projects/{projectId}/snapshots/{snapshotName}
  *
@@ -176,10 +173,10 @@ Snapshot.formatName_ = function(projectId, name) {
 /**
  * Delete the snapshot.
  *
- * @param {function=} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this
+ * @param {function} [callback] The callback function.
+ * @param {?error} callback.err An error returned while making this
  *     request.
- * @param {object} callback.apiResponse - The full API response from the
+ * @param {object} callback.apiResponse The full API response from the
  *     service.
  *
  * @example

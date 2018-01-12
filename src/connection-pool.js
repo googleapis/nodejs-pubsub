@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*!
- * @module pubsub/connectionPool
- */
-
 'use strict';
 
 var arrify = require('arrify');
@@ -31,11 +27,15 @@ var uuid = require('uuid');
 var CHANNEL_READY_EVENT = 'channel.ready';
 var CHANNEL_ERROR_EVENT = 'channel.error';
 
-// if we can't establish a connection within 5 minutes, we need to back off
-// and emit an error to the user.
+/*!
+ * if we can't establish a connection within 5 minutes, we need to back off
+ * and emit an error to the user.
+ */
 var MAX_TIMEOUT = 300000;
 
-// codes to retry streams
+/*!
+ * codes to retry streams
+ */
 var RETRY_CODES = [
   0, // ok
   1, // canceled
@@ -48,16 +48,16 @@ var RETRY_CODES = [
   15, // dataloss
 ];
 
-/**
+/*!
  * ConnectionPool is used to manage the stream connections created via
  * StreamingPull rpc.
  *
- * @param {module:pubsub/subscription} subscription - The subscription to create
+ * @private
+ * @param {Subscription} subscription The subscription to create
  *     connections for.
- * @param {object=} options - Pool options.
- * @param {number} options.maxConnections - Number of connections to create.
- *     Default: 5.
- * @param {number} options.ackDeadline - The ack deadline to send when
+ * @param {object} [options] Pool options.
+ * @param {number} [options.maxConnections=5] Number of connections to create.
+ * @param {number} [options.ackDeadline] The ack deadline to send when
  *     creating a connection.
  */
 function ConnectionPool(subscription) {
@@ -87,16 +87,17 @@ function ConnectionPool(subscription) {
 
 util.inherits(ConnectionPool, events.EventEmitter);
 
-/**
+/*!
  * Acquires a connection from the pool. Optionally you can specify an id for a
  * specific connection, but if it is no longer available it will return the
  * first available connection.
  *
- * @param {string=} id - The id of the connection to retrieve.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error returned while acquiring a
+ * @private
+ * @param {string} [id] The id of the connection to retrieve.
+ * @param {function} callback The callback function.
+ * @param {?error} callback.err An error returned while acquiring a
  *     connection.
- * @param {stream} callback.connection - A duplex stream.
+ * @param {stream} callback.connection A duplex stream.
  */
 ConnectionPool.prototype.acquire = function(id, callback) {
   var self = this;
@@ -133,12 +134,13 @@ ConnectionPool.prototype.acquire = function(id, callback) {
   }
 };
 
-/**
+/*!
  * Ends each connection in the pool and closes the pool, preventing new
  * connections from being created.
  *
- * @param {function} callback - The callback function.
- * @param {?error} callback.error - An error returned while closing the pool.
+ * @private
+ * @param {function} callback The callback function.
+ * @param {?error} callback.error An error returned while closing the pool.
  */
 ConnectionPool.prototype.close = function(callback) {
   var connections = Array.from(this.connections.values());
@@ -172,9 +174,11 @@ ConnectionPool.prototype.close = function(callback) {
   );
 };
 
-/**
+/*!
  * Creates a connection. This is async but instead of providing a callback
  * a `connected` event will fire once the connection is ready.
+ *
+ * @private
  */
 ConnectionPool.prototype.createConnection = function() {
   var self = this;
@@ -272,10 +276,10 @@ ConnectionPool.prototype.createConnection = function() {
 /**
  * Creates a message object for the user.
  *
- * @param {string} connectionId - The connection id that the message was
+ * @param {string} connectionId The connection id that the message was
  *     received on.
- * @param {object} resp - The message response data from StreamingPull.
- * @return {object} message - The message object.
+ * @param {object} resp The message response data from StreamingPull.
+ * @return {object} message The message object.
  */
 ConnectionPool.prototype.createMessage = function(connectionId, resp) {
   var self = this;
@@ -305,9 +309,10 @@ ConnectionPool.prototype.createMessage = function(connectionId, resp) {
   };
 };
 
-/**
+/*!
  * Gets the channels connectivity state and emits channel events accordingly.
  *
+ * @private
  * @fires CHANNEL_ERROR_EVENT
  * @fires CHANNEL_READY_EVENT
  */
@@ -347,21 +352,24 @@ ConnectionPool.prototype.getAndEmitChannelState = function() {
   });
 };
 
-/**
+/*!
  * Gets the Subscriber client. We need to bypass GAX until they allow deadlines
  * to be optional.
  *
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error occurred while getting the client.
- * @param {object} callback.client - The Subscriber client.
+ * @private
+ * @param {function} callback The callback function.
+ * @param {?error} callback.err An error occurred while getting the client.
+ * @param {object} callback.client The Subscriber client.
  */
 ConnectionPool.prototype.getClient = function(callback) {
   return this.pubsub.getClient_({client: 'SubscriberClient'}, callback);
 };
 
-/**
+/*!
  * Check to see if at least one stream in the pool is connected.
- * @return {boolean}
+ *
+ * @private
+ * @returns {boolean}
  */
 ConnectionPool.prototype.isConnected = function() {
   var interator = this.connections.values();
@@ -378,8 +386,10 @@ ConnectionPool.prototype.isConnected = function() {
   return false;
 };
 
-/**
+/*!
  * Creates specified number of connections and puts pool in open state.
+ *
+ * @private
  */
 ConnectionPool.prototype.open = function() {
   var self = this;
@@ -402,8 +412,10 @@ ConnectionPool.prototype.open = function() {
   });
 };
 
-/**
+/*!
  * Pauses each of the connections, causing `message` events to stop firing.
+ *
+ * @private
  */
 ConnectionPool.prototype.pause = function() {
   this.isPaused = true;
@@ -413,9 +425,11 @@ ConnectionPool.prototype.pause = function() {
   });
 };
 
-/**
+/*!
  * Queues a connection to be created. If any previous connections have failed,
  * it will apply a back off based on the number of failures.
+ *
+ * @private
  */
 ConnectionPool.prototype.queueConnection = function() {
   var self = this;
@@ -436,8 +450,10 @@ ConnectionPool.prototype.queueConnection = function() {
   }
 };
 
-/**
+/*!
  * Calls resume on each connection, allowing `message` events to fire off again.
+ *
+ * @private
  */
 ConnectionPool.prototype.resume = function() {
   this.isPaused = false;
@@ -447,11 +463,12 @@ ConnectionPool.prototype.resume = function() {
   });
 };
 
-/**
+/*!
  * Inspects a status object to determine whether or not we should try and
  * reconnect.
  *
- * @param {object} status - The gRPC status object.
+ * @private
+ * @param {object} status The gRPC status object.
  * @return {boolean}
  */
 ConnectionPool.prototype.shouldReconnect = function(status) {

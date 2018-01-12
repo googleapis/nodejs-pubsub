@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*!
- * @module pubsub/publisher
- */
-
 'use strict';
 
 var arrify = require('arrify');
@@ -26,31 +22,29 @@ var each = require('async-each');
 var extend = require('extend');
 var is = require('is');
 
-/*! Developer Documentation.
- *
- * @param {module:pubsub/topic} topic - The topic associated with this
- *     publisher.
- */
 /**
  * A Publisher object allows you to publish messages to a specific topic.
  *
- * @constructor
- * @alias module:pubsub/publisher
+ * @class
  *
- * @resource [Topics: publish API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/publish}
+ * @see [Topics: publish API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/publish}
  *
- * @param {object=} options - Configuration object.
- * @param {object} options.batching - Batching settings.
- * @param {number} options.batching.maxBytes - The maximum number of bytes to
+ * @param {Topic} topic The topic associated with this publisher.
+ * @param {object} [options] Configuration object.
+ * @param {object} [options.batching] Batching settings.
+ * @param {number} [options.batching.maxBytes] The maximum number of bytes to
  *     buffer before sending a payload.
- * @param {number} options.batching.maxMessages - The maximum number of messages
+ * @param {number} [options.batching.maxMessages] The maximum number of messages
  *     to buffer before sending a payload.
- * @param {number} options.batching.maxMilliseconds - The maximum duration to
+ * @param {number} [options.batching.maxMilliseconds] The maximum duration to
  *     wait before sending a payload.
  *
  * @example
- * var topic = pubsub.topic('my-topic');
- * var publisher = topic.publisher();
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const publisher = topic.publisher();
  */
 function Publisher(topic, options) {
   if (topic.Promise) {
@@ -69,6 +63,12 @@ function Publisher(topic, options) {
     options
   );
 
+  /**
+   * The topic of this publisher.
+   *
+   * @name Publisher#topic
+   * @type {Topic} topic
+   */
   this.topic = topic;
 
   // this object keeps track of all messages scheduled to be published
@@ -94,22 +94,35 @@ function Publisher(topic, options) {
 }
 
 /**
+ * @typedef {array} PublisherPublishResponse
+ * @property {string} 0 The id for the message.
+ */
+/**
+ * @callback PublisherPublishCallback
+ * @param {?Error} err Request error, if any.
+ * @param {string} messageId The id for the message.
+ */
+/**
  * Publish the provided message.
  *
  * @throws {TypeError} If data is not a Buffer object.
  *
- * @param {buffer} data - The message data. This must come in the form of a
+ * @param {buffer} data The message data. This must come in the form of a
  *     Buffer object.
- * @param {object=} attributes - Optional attributes for this message.
- * @param {function=} callback - The callback function. If omitted a Promise
- *     will be returned.
- * @param {?error} callback.error - An error returned while making this request.
- * @param {string} callback.messageId - The id for the message.
+ * @param {object} [attributes] Optional attributes for this message.
+ * @param {PublisherPublishCallback} [callback] Callback function.
+ * @returns {Promise<PublisherPublishResponse>}
  *
  * @example
- * var data = Buffer.from('Hello, world!');
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
  *
- * var callback = function(err, messageId) {
+ * const topic = pubsub.topic('my-topic');
+ * const publisher = topic.publisher();
+ *
+ * const data = Buffer.from('Hello, world!');
+ *
+ * const callback = function(err, messageId) {
  *   if (err) {
  *     // Error handling omitted.
  *   }
@@ -121,7 +134,7 @@ function Publisher(topic, options) {
  * // Optionally you can provide an object containing attributes for the
  * // message.
  * //-
- * var attributes = {
+ * const attributes = {
  *   key: 'value'
  * };
  *
@@ -216,9 +229,9 @@ Publisher.prototype.publish_ = function() {
  *
  * @private
  *
- * @param {buffer} data - The message data.
- * @param {object} attributes - The message attributes.
- * @param {function} callback - The callback function.
+ * @param {buffer} data The message data.
+ * @param {object} attributes The message attributes.
+ * @param {function} callback The callback function.
  */
 Publisher.prototype.queue_ = function(data, attrs, callback) {
   this.inventory_.queued.push({

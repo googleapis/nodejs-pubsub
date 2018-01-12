@@ -41,10 +41,11 @@
     "Jun Mukai <jun.mukai@gmail.com>",
     "Justin King <jcking@mtu.edu>",
     "Matthew Arbesfeld <arbesfeld@gmail.com>",
-    "Mo Kamioner <mkamioner@gmail.com>",
     "Song Wang <songwang@google.com>",
     "Stephen Sawchuk <sawchuk@gmail.com>",
-    "Tim Swast <swast@google.com>"
+    "Tim Swast <swast@google.com>",
+    "greenkeeper[bot] <greenkeeper[bot]@users.noreply.github.com>",
+    "mkamioner <mkamioner@gmail.com>"
   ],
   "scripts": {
     "system-test": "repo-tools test run --cmd mocha -- system-test/*.js --no-timeouts",
