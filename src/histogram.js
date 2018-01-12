@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-/*!
- * @module pubsub/histogram
- */
-
 'use strict';
 
 var MIN_VALUE = 10000;
 var MAX_VALUE = 600000;
 
-/**
+/*!
  * The Histogram class is used to capture the lifespan of messages within the
  * the client. These durations are then used to calculate the 99th percentile
  * of ack deadlines for future messages.
+ *
+ * @private
+ * @class
  */
 function Histogram() {
   this.data = new Map();
   this.length = 0;
 }
 
-/**
+/*!
  * Adds a value to the histogram.
  *
+ * @private
  * @param {numnber} value - The value in milliseconds.
  */
 Histogram.prototype.add = function(value) {
@@ -52,10 +52,11 @@ Histogram.prototype.add = function(value) {
   this.length += 1;
 };
 
-/**
+/*!
  * Retrieves the nth percentile of recorded values.
  *
- * @param {number} percent - The requested percentage.
+ * @private
+ * @param {number} percent The requested percentage.
  * @return {number}
  */
 Histogram.prototype.percentile = function(percent) {
