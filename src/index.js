@@ -201,17 +201,6 @@ function PubSub(options) {
  *
  * pubsub.createSubscription(topic, name, callback);
  *
- * @example <caption>Customize the subscription.</caption>
- * const PubSub = require('@google-cloud/pubsub');
- * const pubsub = new PubSub();
- *
- * const topic = 'messageCenter';
- * const name = 'newMessages';
- *
- * pubsub.createSubscription(topic, name, {
- *   ackDeadline: 90000 // 90 seconds
- * }, callback);
- *
  * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
  * pubsub.createSubscription(topic, name).then(function(data) {
  *   const subscription = data[0];
