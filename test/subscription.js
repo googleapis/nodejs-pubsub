@@ -595,6 +595,11 @@ describe('Subscription', function() {
 
       subscription.close(done);
     });
+
+    it('should return a promise if no callback is provided', function(done) {
+      var promise = subscription.close();
+      promise.then(done);
+    });
   });
 
   describe('closeConnection_', function() {
