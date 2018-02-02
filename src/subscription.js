@@ -664,7 +664,7 @@ Subscription.prototype.flushQueues_ = function() {
  * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
  * @param {boolean} [gaxOpts.autoCreate=false] Automatically create the
- *     subscription does not already exist.
+ *     subscription if it does not already exist.
  * @param {GetSubscriptionCallback} [callback] Callback function.
  * @returns {Promise<GetSubscriptionResponse>}
  *
