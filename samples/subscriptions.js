@@ -139,7 +139,7 @@ function createFlowControlledSubscription(
   // Note that flow control configurations are not persistent
   subscription
     .get({
-      autoCreate: true
+      autoCreate: true,
     })
     .then(results => {
       const subscription = results[0];
