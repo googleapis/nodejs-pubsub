@@ -52,7 +52,7 @@ var Snapshot = require('./snapshot.js');
  * @class
  *
  * @param {PubSub} pubsub PubSub object.
- * @param {string} [name] The name of the subscription.
+ * @param {string} name The name of the subscription.
  * @param {object} [options] See a
  *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions)
  * @param {object} [options.flowControl] Flow control configurations for
