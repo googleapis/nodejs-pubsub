@@ -389,9 +389,14 @@ Subscription.prototype.close = function(callback) {
   clearTimeout(this.leaseTimeoutHandle_);
   this.leaseTimeoutHandle_ = null;
 
-  this.flushQueues_().then(function() {
-    self.closeConnection_(callback);
-  });
+  var flushPromise = this.flushQueues_();
+  if (callback) {
+    flushPromise.then(function() {
+      self.closeConnection_(callback);
+    });
+  } else {
+    return flushPromise;
+  }
 };
 
 /*!
