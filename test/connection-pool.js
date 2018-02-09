@@ -745,26 +745,6 @@ describe('ConnectionPool', function() {
 
       message.nack();
     });
-
-    it('should create an ack method that supports destructuring', function(done) {
-      SUBSCRIPTION.ack_ = function(message_) {
-        assert.strictEqual(message_, message);
-        done();
-      };
-      // eslint-disable-next-line node/no-unsupported-features
-      let {ack} = message;
-      ack();
-    });
-
-    it('should create a nack method that supports destructuring', function(done) {
-      SUBSCRIPTION.nack_ = function(message_) {
-        assert.strictEqual(message_, message);
-        done();
-      };
-      // eslint-disable-next-line node/no-unsupported-features
-      let {nack} = message;
-      nack();
-    });
   });
 
   describe('getAndEmitChannelState', function() {
