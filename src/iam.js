@@ -24,11 +24,6 @@ var arrify = require('arrify');
 var common = require('@google-cloud/common');
 var is = require('is');
 
-/*! Developer Documentation
- *
- * @param {module:pubsub} pubsub - PubSub Object.
- * @param {string} id - The name of the topic or subscription.
- */
 /**
  * [IAM (Identity and Access Management)](https://cloud.google.com/pubsub/access_control)
  * allows you to set permissions on invidual resources and offers a wider range
@@ -49,17 +44,22 @@ var is = require('is');
  * SLA or deprecation policy, and may be subject to backward-incompatible
  * changes.*
  *
- * @constructor
- * @alias module:pubsub/iam
+ * @constructor Iam
+ * @mixin
+ * @param {PubSub} pubsub PubSub Object.
+ * @param {string} id The name of the topic or subscription.
  *
- * @resource [Access Control Overview]{@link https://cloud.google.com/pubsub/access_control}
- * @resource [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
+ * @see [Access Control Overview]{@link https://cloud.google.com/pubsub/access_control}
+ * @see [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
  *
  * @example
- * var topic = pubsub.topic('my-topic');
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
  * // topic.iam
  *
- * var subscription = pubsub.subscription('my-subscription');
+ * const subscription = pubsub.subscription('my-subscription');
  * // subscription.iam
  */
 function IAM(pubsub, id) {
@@ -73,19 +73,34 @@ function IAM(pubsub, id) {
 }
 
 /**
+ * @typedef {array} GetPolicyResponse
+ * @property {object} 0 The policy.
+ * @property {object} 1 The full API response.
+ */
+/**
+ * @callback GetPolicyCallback
+ * @param {?Error} err Request error, if any.
+ * @param {object} acl The policy.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Get the IAM policy
  *
- * @param {object=} gaxOptions - Request configuration options, outlined
+ * @param {object} [gaxOptions] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this request.
- * @param {object} callback.policy - The [policy](https://cloud.google.com/pubsub/docs/reference/rest/Shared.Types/Policy).
- * @param {object} callback.apiResponse - The full API response.
+ * @param {GetPolicyCallback} [callback] Callback function.
+ * @returns {Promise<GetPolicyResponse>}
  *
- * @resource [Topics: getIamPolicy API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/getIamPolicy}
- * @resource [Subscriptions: getIamPolicy API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/getIamPolicy}
+ * @see [Topics: getIamPolicy API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/getIamPolicy}
+ * @see [Subscriptions: getIamPolicy API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/getIamPolicy}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const subscription = topic.subscription('my-subscription');
+ *
  * topic.iam.getPolicy(function(err, policy, apiResponse) {});
  *
  * subscription.iam.getPolicy(function(err, policy, apiResponse) {});
@@ -120,26 +135,41 @@ IAM.prototype.getPolicy = function(gaxOpts, callback) {
 };
 
 /**
+ * @typedef {array} SetPolicyResponse
+ * @property {object} 0 The policy.
+ * @property {object} 1 The full API response.
+ */
+/**
+ * @callback SetPolicyCallback
+ * @param {?Error} err Request error, if any.
+ * @param {object} acl The policy.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Set the IAM policy
  *
  * @throws {Error} If no policy is provided.
  *
- * @param {object} policy - The [policy](https://cloud.google.com/pubsub/docs/reference/rest/Shared.Types/Policy).
- * @param {array=} policy.bindings - Bindings associate members with roles.
- * @param {Array<object>=} policy.rules - Rules to be applied to the policy.
- * @param {string=} policy.etag - Etags are used to perform a read-modify-write.
- * @param {object=} gaxOptions - Request configuration options, outlined
+ * @param {object} policy The [policy](https://cloud.google.com/pubsub/docs/reference/rest/Shared.Types/Policy).
+ * @param {array} [policy.bindings] Bindings associate members with roles.
+ * @param {Array<object>} [policy.rules] Rules to be applied to the policy.
+ * @param {string} [policy.etag] Etags are used to perform a read-modify-write.
+ * @param {object} [gaxOptions] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this request.
- * @param {object} callback.policy - The updated policy.
- * @param {object} callback.apiResponse - The full API response.
+ * @param {SetPolicyCallback} callback Callback function.
+ * @returns {Promise<SetPolicyResponse>}
  *
- * @resource [Topics: setIamPolicy API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/setIamPolicy}
- * @resource [Subscriptions: setIamPolicy API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/setIamPolicy}
- * @resource [Policy]{@link https://cloud.google.com/pubsub/docs/reference/rest/Shared.Types/Policy}
+ * @see [Topics: setIamPolicy API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/setIamPolicy}
+ * @see [Subscriptions: setIamPolicy API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/setIamPolicy}
+ * @see [Policy]{@link https://cloud.google.com/pubsub/docs/reference/rest/Shared.Types/Policy}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const subscription = topic.subscription('my-subscription');
+ *
  * var myPolicy = {
  *   bindings: [
  *     {
@@ -188,30 +218,44 @@ IAM.prototype.setPolicy = function(policy, gaxOpts, callback) {
 };
 
 /**
+ * @typedef {array} TestIamPermissionsResponse
+ * @property {object[]} 0 A subset of permissions that the caller is allowed.
+ * @property {object} 1 The full API response.
+ */
+/**
+ * @callback TestIamPermissionsCallback
+ * @param {?Error} err Request error, if any.
+ * @param {object[]} permissions A subset of permissions that the caller is allowed.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Test a set of permissions for a resource.
  *
  * Permissions with wildcards such as `*` or `storage.*` are not allowed.
  *
  * @throws {Error} If permissions are not provided.
  *
- * @param {string|string[]} permissions - The permission(s) to test for.
- * @param {object=} gaxOptions - Request configuration options, outlined
+ * @param {string|string[]} permissions The permission(s) to test for.
+ * @param {object} [gaxOptions] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this request.
- * @param {array} callback.permissions - A subset of permissions that the caller
- *     is allowed
- * @param {object} callback.apiResponse - The full API response.
+ * @param {TestIamPermissionsCallback} [callback] Callback function.
+ * @returns {Promise<TestIamPermissionsResponse>}
  *
- * @resource [Topics: testIamPermissions API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/testIamPermissions}
- * @resource [Subscriptions: testIamPermissions API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/testIamPermissions}
- * @resource [Permissions Reference]{@link https://cloud.google.com/pubsub/access_control#permissions}
+ * @see [Topics: testIamPermissions API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/testIamPermissions}
+ * @see [Subscriptions: testIamPermissions API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/testIamPermissions}
+ * @see [Permissions Reference]{@link https://cloud.google.com/pubsub/access_control#permissions}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const subscription = topic.subscription('my-subscription');
+ *
  * //-
  * // Test a single permission.
  * //-
- * var test = 'pubsub.topics.update';
+ * const test = 'pubsub.topics.update';
  *
  * topic.iam.testPermissions(test, function(err, permissions, apiResponse) {
  *   console.log(permissions);
@@ -223,7 +267,7 @@ IAM.prototype.setPolicy = function(policy, gaxOpts, callback) {
  * //-
  * // Test several permissions at once.
  * //-
- * var tests = [
+ * const tests = [
  *   'pubsub.subscriptions.consume',
  *   'pubsub.subscriptions.update'
  * ];
@@ -240,8 +284,8 @@ IAM.prototype.setPolicy = function(policy, gaxOpts, callback) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * topic.iam.testPermissions(test).then(function(data) {
- *   var permissions = data[0];
- *   var apiResponse = data[1];
+ *   const permissions = data[0];
+ *   const apiResponse = data[1];
  * });
  */
 IAM.prototype.testPermissions = function(permissions, gaxOpts, callback) {

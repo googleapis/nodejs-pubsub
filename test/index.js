@@ -139,6 +139,10 @@ describe('PubSub', function() {
   });
 
   beforeEach(function() {
+    fakeUtil.normalizeArguments = function(context, options) {
+      return options;
+    };
+
     v1ClientOverrides = {};
     googleAutoAuthOverride = null;
     SubscriptionOverride = null;
@@ -161,23 +165,21 @@ describe('PubSub', function() {
       assert(promisified);
     });
 
+    it('should return an instance', function() {
+      assert(PubSub() instanceof PubSub);
+    });
+
     it('should normalize the arguments', function() {
-      var normalizeArguments = fakeUtil.normalizeArguments;
       var normalizeArgumentsCalled = false;
-      var fakeOptions = {projectId: PROJECT_ID};
-      var fakeContext = {};
 
       fakeUtil.normalizeArguments = function(context, options) {
         normalizeArgumentsCalled = true;
-        assert.strictEqual(context, fakeContext);
-        assert.strictEqual(options, fakeOptions);
+        assert.strictEqual(options, OPTIONS);
         return options;
       };
 
-      PubSub.call(fakeContext, fakeOptions);
-      assert(normalizeArgumentsCalled);
-
-      fakeUtil.normalizeArguments = normalizeArguments;
+      new PubSub(OPTIONS);
+      assert.strictEqual(normalizeArgumentsCalled, true);
     });
 
     it('should combine all required scopes', function() {

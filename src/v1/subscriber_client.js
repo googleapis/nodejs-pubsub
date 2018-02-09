@@ -1,10 +1,10 @@
-// Copyright 2017, Google LLC All rights reserved.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//     https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -466,8 +466,15 @@ class SubscriberClient {
    *   // optional auth parameters.
    * });
    *
-   * var subscription = {};
-   * var updateMask = {};
+   * var ackDeadlineSeconds = 42;
+   * var subscription = {
+   *   ackDeadlineSeconds: ackDeadlineSeconds,
+   * };
+   * var pathsElement = 'ack_deadline_seconds';
+   * var paths = [pathsElement];
+   * var updateMask = {
+   *   paths: paths,
+   * };
    * var request = {
    *   subscription: subscription,
    *   updateMask: updateMask,
@@ -1235,8 +1242,18 @@ class SubscriberClient {
    *   // optional auth parameters.
    * });
    *
-   * var snapshot = {};
-   * var updateMask = {};
+   * var seconds = 123456;
+   * var expireTime = {
+   *   seconds: seconds,
+   * };
+   * var snapshot = {
+   *   expireTime: expireTime,
+   * };
+   * var pathsElement = 'expire_time';
+   * var paths = [pathsElement];
+   * var updateMask = {
+   *   paths: paths,
+   * };
    * var request = {
    *   snapshot: snapshot,
    *   updateMask: updateMask,

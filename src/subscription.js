@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*!
- * @module pubsub/subscription
- */
-
 'use strict';
 
 var arrify = require('arrify');
@@ -29,80 +25,61 @@ var os = require('os');
 var snakeCase = require('lodash.snakecase');
 var util = require('util');
 
-/**
- * @type {module:pubsub/connectionPool}
- * @private
- */
 var ConnectionPool = require('./connection-pool.js');
-
-/**
- * @type {module:pubsub/histogram}
- * @private
- */
 var Histogram = require('./histogram.js');
-
-/**
- * @type {module:pubsub/iam}
- * @private
- */
 var IAM = require('./iam.js');
-
-/**
- * @type {module:pubsub/snapshot}
- * @private
- */
 var Snapshot = require('./snapshot.js');
 
-/*! Developer Documentation
- * @param {module:pubsub} pubsub - PubSub object.
- * @param {string=} name - The name of the subscription.
- */
 /**
  * A Subscription object will give you access to your Cloud Pub/Sub
  * subscription.
  *
  * Subscriptions are sometimes retrieved when using various methods:
  *
- * - {module:pubsub#getSubscriptions}
- * - {module:pubsub/topic#getSubscriptions}
- * - {module:pubsub/topic#createSubscription}
+ * - {@link Pubsub#getSubscriptions}
+ * - {@link Topic#getSubscriptions}
+ * - {@link Topic#createSubscription}
  *
  * Subscription objects may be created directly with:
  *
- * - {module:pubsub/topic#subscription}
+ * - {@link Topic#subscription}
  *
  * All Subscription objects are instances of an
  * [EventEmitter](http://nodejs.org/api/events.html). The subscription will pull
  * for messages automatically as long as there is at least one listener assigned
  * for the `message` event.
  *
- * @alias module:pubsub/subscription
- * @constructor
+ * @class
  *
- * @param {object=} options - See a
+ * @param {PubSub} pubsub PubSub object.
+ * @param {string} name The name of the subscription.
+ * @param {object} [options] See a
  *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions)
- * @param {object} options.flowControl - Flow control configurations for
+ * @param {object} [options.flowControl] Flow control configurations for
  *     receiving messages. Note that these options do not persist across
  *     subscription instances.
- * @param {number} options.flowControl.maxBytes - The maximum number of bytes
+ * @param {number} [options.flowControl.maxBytes] The maximum number of bytes
  *     in un-acked messages to allow before the subscription pauses incoming
  *     messages. Defaults to 20% of free memory.
- * @param {number} options.flowControl.maxMessages - The maximum number of
+ * @param {number} [options.flowControl.maxMessages] The maximum number of
  *     un-acked messages to allow before the subscription pauses incoming
  *     messages. Default: Infinity.
- * @param {number} options.maxConnections - Use this to limit the number of
+ * @param {number} [options.maxConnections] Use this to limit the number of
  *     connections to be used when sending and receiving messages. Default: 5.
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
  * //-
- * // From {module:pubsub#getSubscriptions}:
+ * // From {@link PubSub#getSubscriptions}:
  * //-
  * pubsub.getSubscriptions(function(err, subscriptions) {
  *   // `subscriptions` is an array of Subscription objects.
  * });
  *
  * //-
- * // From {module:pubsub/topic#getSubscriptions}:
+ * // From {@link Topic#getSubscriptions}:
  * //-
  * var topic = pubsub.topic('my-topic');
  * topic.getSubscriptions(function(err, subscriptions) {
@@ -110,7 +87,7 @@ var Snapshot = require('./snapshot.js');
  * });
  *
  * //-
- * // From {module:pubsub/topic#createSubscription}:
+ * // From {@link Topic#createSubscription}:
  * //-
  * var topic = pubsub.topic('my-topic');
  * topic.createSubscription('new-subscription', function(err, subscription) {
@@ -118,7 +95,7 @@ var Snapshot = require('./snapshot.js');
  * });
  *
  * //-
- * // From {module:pubsub/topic#subscription}:
+ * // From {@link Topic#subscription}:
  * //-
  * var topic = pubsub.topic('my-topic');
  * var subscription = topic.subscription('my-subscription');
@@ -212,10 +189,11 @@ function Subscription(pubsub, name, options) {
    * any SLA or deprecation policy, and may be subject to backward-incompatible
    * changes.*
    *
-   * @mixes module:pubsub/iam
+   * @name Subscription#iam
+   * @mixes IAM
    *
-   * @resource [Access Control Overview]{@link https://cloud.google.com/pubsub/access_control}
-   * @resource [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
+   * @see [Access Control Overview]{@link https://cloud.google.com/pubsub/access_control}
+   * @see [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
    *
    * @example
    * //-
@@ -240,7 +218,7 @@ function Subscription(pubsub, name, options) {
 
 util.inherits(Subscription, events.EventEmitter);
 
-/**
+/*!
  * Formats Subscription metadata.
  *
  * @private
@@ -268,7 +246,7 @@ Subscription.formatMetadata_ = function(metadata) {
   return formatted;
 };
 
-/**
+/*!
  * Format the name of a subscription. A subscription's full name is in the
  * format of projects/{projectId}/subscriptions/{subName}.
  *
@@ -283,14 +261,14 @@ Subscription.formatName_ = function(projectId, name) {
   return 'projects/' + projectId + '/subscriptions/' + name;
 };
 
-/**
+/*!
  * Acks the provided message. If the connection pool is absent, it will be
  * placed in an internal queue and sent out after 1 second or if the pool is
  * re-opened before the timeout hits.
  *
  * @private
  *
- * @param {object} message - The message object.
+ * @param {object} message The message object.
  */
 Subscription.prototype.ack_ = function(message) {
   this.breakLease_(message);
@@ -305,13 +283,13 @@ Subscription.prototype.ack_ = function(message) {
   this.setFlushTimeout_();
 };
 
-/**
+/*!
  * Sends an acknowledge request for the provided ack ids.
  *
  * @private
  *
- * @param {string|string[]} ackIds - The ack IDs to acknowledge.
- * @param {string=} connId - Connection ID to send request on.
+ * @param {string|string[]} ackIds The ack IDs to acknowledge.
+ * @param {string} [connId] Connection ID to send request on.
  * @return {Promise}
  */
 Subscription.prototype.acknowledge_ = function(ackIds, connId) {
@@ -347,7 +325,7 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
   });
 };
 
-/**
+/*!
  * Breaks the lease on a message. Essentially this means we no longer treat the
  * message as being un-acked and count it towards the flow control limits.
  *
@@ -356,7 +334,7 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
  *
  * @private
  *
- * @param {object} message - The message object.
+ * @param {object} message The message object.
  */
 Subscription.prototype.breakLease_ = function(message) {
   var messageIndex = this.inventory_.lease.indexOf(message.ackId);
@@ -384,8 +362,8 @@ Subscription.prototype.breakLease_ = function(message) {
  * Closes the subscription, once this is called you will no longer receive
  * message events unless you add a new message listener.
  *
- * @param {function=} callback - The callback function.
- * @param {?error} callback.err - An error returned while closing the
+ * @param {function} [callback] The callback function.
+ * @param {?error} callback.err An error returned while closing the
  *     Subscription.
  *
  * @example
@@ -416,13 +394,13 @@ Subscription.prototype.close = function(callback) {
   });
 };
 
-/**
+/*!
  * Closes the connection pool.
  *
  * @private
  *
- * @param {function=} callback - The callback function.
- * @param {?error} err - An error returned from this request.
+ * @param {function} [callback] The callback function.
+ * @param {?error} err An error returned from this request.
  */
 Subscription.prototype.closeConnection_ = function(callback) {
   this.isOpen = false;
@@ -436,20 +414,33 @@ Subscription.prototype.closeConnection_ = function(callback) {
 };
 
 /**
+ * @typedef {array} CreateSnapshotResponse
+ * @property {Snapshot} 0 The new {@link Snapshot}.
+ * @property {object} 1 The full API response.
+ */
+/**
+ * @callback CreateSnapshotCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Snapshot} snapshot The new {@link Snapshot}.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Create a snapshot with the given name.
  *
- * @param {string} name - Name of the snapshot.
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {string} name Name of the snapshot.
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function=} callback - The callback function.
- * @param {?error} callback.err - An error from the API call, may be null.
- * @param {module:pubsub/snapshot} callback.snapshot - The newly created
- *     snapshot.
- * @param {object} callback.apiResponse - The full API response from the
- *     service.
+ * @param {CreateSnapshotCallback} [callback] Callback function.
+ * @returns {Promise<CreateSnapshotResponse>}
  *
  * @example
- * var callback = function(err, snapshot, apiResponse) {
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const subscription = topic.subscription('my-subscription');
+ *
+ * const callback = function(err, snapshot, apiResponse) {
  *   if (!err) {
  *     // The snapshot was created successfully.
  *   }
@@ -461,8 +452,8 @@ Subscription.prototype.closeConnection_ = function(callback) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * subscription.createSnapshot('my-snapshot').then(function(data) {
- *   var snapshot = data[0];
- *   var apiResponse = data[1];
+ *   const snapshot = data[0];
+ *   const apiResponse = data[1];
  * });
  */
 Subscription.prototype.createSnapshot = function(name, gaxOpts, callback) {
@@ -507,23 +498,29 @@ Subscription.prototype.createSnapshot = function(name, gaxOpts, callback) {
  * Delete the subscription. Pull requests from the current subscription will be
  * errored once unsubscription is complete.
  *
- * @resource [Subscriptions: delete API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/delete}
+ * @see [Subscriptions: delete API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/delete}
  *
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function=} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this
+ * @param {function} [callback] The callback function.
+ * @param {?error} callback.err An error returned while making this
  *     request.
- * @param {object} callback.apiResponse - Raw API response.
+ * @param {object} callback.apiResponse Raw API response.
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const subscription = topic.subscription('my-subscription');
+ *
  * subscription.delete(function(err, apiResponse) {});
  *
  * //-
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * subscription.delete().then(function(data) {
- *   var apiResponse = data[0];
+ *   const apiResponse = data[0];
  * });
  */
 Subscription.prototype.delete = function(gaxOpts, callback) {
@@ -559,14 +556,27 @@ Subscription.prototype.delete = function(gaxOpts, callback) {
 };
 
 /**
+ * @typedef {array} SubscriptionExistsResponse
+ * @property {boolean} 0 Whether the subscription exists
+ */
+/**
+ * @callback SubscriptionExistsCallback
+ * @param {?Error} err Request error, if any.
+ * @param {boolean} exists Whether the subscription exists.
+ */
+/**
  * Check if a subscription exists.
  *
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this
- *     request.
- * @param {boolean} callback.exists - Whether the subscription exists or not.
+ * @param {SubscriptionExistsCallback} [callback] Callback function.
+ * @returns {Promise<SubscriptionExistsResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const subscription = topic.subscription('my-subscription');
+ *
  * subscription.exists(function(err, exists) {});
  *
  * //-
@@ -592,7 +602,7 @@ Subscription.prototype.exists = function(callback) {
   });
 };
 
-/**
+/*!
  * Flushes internal queues. These can build up if a user attempts to ack/nack
  * while there is no connection pool (e.g. after they called close).
  *
@@ -638,14 +648,33 @@ Subscription.prototype.flushQueues_ = function() {
 };
 
 /**
+ * @typedef {array} GetSubscriptionResponse
+ * @property {Subscription} 0 The {@link Subscription}.
+ * @property {object} 1 The full API response.
+ */
+/**
+ * @callback GetSubscriptionCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Subscription} subscription The {@link Subscription}.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Get a subscription if it exists.
  *
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {boolean} gaxOpts.autoCreate - Automatically create the subscription
- *     does not already exist. Default: false.
+ * @param {boolean} [gaxOpts.autoCreate=false] Automatically create the
+ *     subscription if it does not already exist.
+ * @param {GetSubscriptionCallback} [callback] Callback function.
+ * @returns {Promise<GetSubscriptionResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const subscription = topic.subscription('my-subscription');
+ *
  * subscription.get(function(err, subscription, apiResponse) {
  *   // The `subscription` data has been populated.
  * });
@@ -654,8 +683,8 @@ Subscription.prototype.flushQueues_ = function() {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * subscription.get().then(function(data) {
- *   var subscription = data[0];
- *   var apiResponse = data[1];
+ *   const subscription = data[0];
+ *   const apiResponse = data[1];
  * });
  */
 Subscription.prototype.get = function(gaxOpts, callback) {
@@ -685,16 +714,29 @@ Subscription.prototype.get = function(gaxOpts, callback) {
 };
 
 /**
+ * @typedef {array} GetSubscriptionMetadataResponse
+ * @property {object} 0 The full API response.
+ */
+/**
+ * @callback GetSubscriptionMetadataCallback
+ * @param {?Error} err Request error, if any.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Fetches the subscriptions metadata.
  *
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this
- *     request.
- * @param {object} callback.apiResponse - Raw API response.
+ * @param {GetSubscriptionMetadataCallback} [callback] Callback function.
+ * @returns {Promise<GetSubscriptionMetadataResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const subscription = topic.subscription('my-subscription');
+ *
  * subscription.getMetadata(function(err, apiResponse) {
  *   if (err) {
  *     // Error handling omitted.
@@ -737,7 +779,7 @@ Subscription.prototype.getMetadata = function(gaxOpts, callback) {
   );
 };
 
-/**
+/*!
  * Checks to see if we currently have a streaming connection.
  *
  * @private
@@ -748,7 +790,7 @@ Subscription.prototype.isConnected_ = function() {
   return !!(this.connectionPool && this.connectionPool.isConnected());
 };
 
-/**
+/*!
  * Checks to see if this Subscription has hit any of the flow control
  * thresholds.
  *
@@ -763,14 +805,14 @@ Subscription.prototype.hasMaxMessages_ = function() {
   );
 };
 
-/**
+/*!
  * Leases a message. This will add the message to our inventory list and then
  * modifiy the ack deadline for the user if they exceed the specified ack
  * deadline.
  *
  * @private
  *
- * @param {object} message - The message object.
+ * @param {object} message The message object.
  */
 Subscription.prototype.leaseMessage_ = function(message) {
   this.modifyAckDeadline_(
@@ -786,7 +828,7 @@ Subscription.prototype.leaseMessage_ = function(message) {
   return message;
 };
 
-/**
+/*!
  * Begin listening for events on the subscription. This method keeps track of
  * how many message listeners are assigned, and then removed, making sure
  * polling is handled automatically.
@@ -820,14 +862,14 @@ Subscription.prototype.listenForEvents_ = function() {
   });
 };
 
-/**
+/*!
  * Sends a modifyAckDeadline request for the provided ack ids.
  *
  * @private
  *
- * @param {string|string[]} ackIds - The ack IDs to acknowledge.
- * @param {number} deadline - The dealine in seconds.
- * @param {string=} connId - Connection ID to send request on.
+ * @param {string|string[]} ackIds The ack IDs to acknowledge.
+ * @param {number} deadline The dealine in seconds.
+ * @param {string=} connId Connection ID to send request on.
  * @return {Promise}
  */
 Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
@@ -871,20 +913,33 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
 };
 
 /**
+ * @typedef {array} ModifyPushConfigResponse
+ * @property {object} 0 The full API response.
+ */
+/**
+ * @callback ModifyPushConfigCallback
+ * @param {?Error} err Request error, if any.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Modify the push config for the subscription.
  *
- * @param {object} config - The push config.
- * @param {string} config.pushEndpoint - A URL locating the endpoint to which
+ * @param {object} config The push config.
+ * @param {string} config.pushEndpoint A URL locating the endpoint to which
  *     messages should be published.
- * @param {object} config.attributes - [PushConfig attributes](https://cloud.google.com/pubsub/docs/reference/rpc/google.pubsub.v1#google.pubsub.v1.PushConfig).
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {object} config.attributes [PushConfig attributes](https://cloud.google.com/pubsub/docs/reference/rpc/google.pubsub.v1#google.pubsub.v1.PushConfig).
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error from the API call.
- * @param {object} callback.apiResponse - The full API response from the
- *     service.
+ * @param {ModifyPushConfigCallback} [callback] Callback function.
+ * @returns {Promise<ModifyPushConfigResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const subscription = topic.subscription('my-subscription');
+ *
  * var pushConfig = {
  *   pushEndpoint: 'https://mydomain.com/push',
  *   attributes: {
@@ -927,7 +982,7 @@ Subscription.prototype.modifyPushConfig = function(config, gaxOpts, callback) {
   );
 };
 
-/**
+/*!
  * Nacks the provided message. If the connection pool is absent, it will be
  * placed in an internal queue and sent out after 1 second or if the pool is
  * re-opened before the timeout hits.
@@ -948,7 +1003,7 @@ Subscription.prototype.nack_ = function(message) {
   this.setFlushTimeout_();
 };
 
-/**
+/*!
  * Opens the ConnectionPool.
  *
  * @private
@@ -981,7 +1036,7 @@ Subscription.prototype.openConnection_ = function() {
   });
 };
 
-/**
+/*!
  * Modifies the ack deadline on messages that have yet to be acked. We update
  * the ack deadline to the 99th percentile of known ack times.
  *
@@ -1008,16 +1063,23 @@ Subscription.prototype.renewLeases_ = function() {
 };
 
 /**
+ * @typedef {array} SeekResponse
+ * @property {object} 0 The full API response.
+ */
+/**
+ * @callback SeekCallback
+ * @param {?Error} err Request error, if any.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Seeks an existing subscription to a point in time or a given snapshot.
  *
- * @param {string|date} snapshot - The point to seek to. This will accept the
+ * @param {string|date} snapshot The point to seek to. This will accept the
  *     name of the snapshot or a Date object.
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error from the API call, may be null.
- * @param {object} callback.apiResponse - The full API response from the
- *     service.
+ * @param {SeekCallback} [callback] Callback function.
+ * @returns {Promise<SeekResponse>}
  *
  * @example
  * var callback = function(err, resp) {
@@ -1065,7 +1127,7 @@ Subscription.prototype.seek = function(snapshot, gaxOpts, callback) {
   );
 };
 
-/**
+/*!
  * Sets a timeout to flush any acks/nacks that have been made since the pool has
  * closed.
  *
@@ -1079,7 +1141,7 @@ Subscription.prototype.setFlushTimeout_ = function() {
   this.flushTimeoutHandle_ = setTimeout(this.flushQueues_.bind(this), 1000);
 };
 
-/**
+/*!
  * Sets a timeout to modify the ack deadlines for any unacked/unnacked messages,
  * renewing their lease.
  *
@@ -1095,15 +1157,22 @@ Subscription.prototype.setLeaseTimeout_ = function() {
 };
 
 /**
+ * @typedef {array} SetSubscriptionMetadataResponse
+ * @property {object} 0 The full API response.
+ */
+/**
+ * @callback SetSubscriptionMetadataCallback
+ * @param {?Error} err Request error, if any.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Update the subscription object.
  *
- * @param {object} metadata - The subscription metadata.
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {object} metadata The subscription metadata.
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function=} callback - The callback function.
- * @param {?error} callback.err - An error from the API call.
- * @param {object} callback.apiResponse - The full API response from the
- *     service.
+ * @param {SetSubscriptionMetadataCallback} [callback] Callback function.
+ * @returns {Promise<SetSubscriptionMetadataResponse>}
  *
  * @example
  * var metadata = {
@@ -1153,13 +1222,13 @@ Subscription.prototype.setMetadata = function(metadata, gaxOpts, callback) {
 };
 
 /**
- * Create a Snapshot object. See {module:pubsub/subscription#createSnapshot} to
+ * Create a Snapshot object. See {@link Subscription#createSnapshot} to
  * create a snapshot.
  *
  * @throws {Error} If a name is not provided.
  *
- * @param {string} name - The name of the snapshot.
- * @return {module:pubsub/snapshot}
+ * @param {string} name The name of the snapshot.
+ * @returns {Snapshot}
  *
  * @example
  * var snapshot = subscription.snapshot('my-snapshot');

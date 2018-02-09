@@ -14,48 +14,50 @@
  * limitations under the License.
  */
 
-/*!
- * @module pubsub/topic
- */
-
 'use strict';
 
 var common = require('@google-cloud/common');
 var extend = require('extend');
 var is = require('is');
 
-/**
- * @type {module:pubsub/iam}
- * @private
- */
 var IAM = require('./iam.js');
-
-/**
- * @type {module:pubsub/publisher}
- * @private
- */
 var Publisher = require('./publisher.js');
 
-/*! Developer Documentation
- *
- * @param {module:pubsub} pubsub - PubSub object.
- * @param {string} name - Name of the topic.
- */
 /**
  * A Topic object allows you to interact with a Cloud Pub/Sub topic.
  *
- * @constructor
- * @alias module:pubsub/topic
+ * @class
+ * @param {PubSub} pubsub PubSub object.
+ * @param {string} name Name of the topic.
  *
  * @example
- * var topic = pubsub.topic('my-topic');
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
  */
 function Topic(pubsub, name) {
   if (pubsub.Promise) {
     this.Promise = pubsub.Promise;
   }
 
+  /**
+   * The fully qualified name of this topic.
+   * @name Topic#name
+   * @type {string}
+   */
   this.name = Topic.formatName_(pubsub.projectId, name);
+
+  /**
+   * The parent {@link PubSub} instance of this topic instance.
+   * @name Topic#pubsub
+   * @type {PubSub}
+   */
+  /**
+   * The parent {@link PubSub} instance of this topic instance.
+   * @name Topic#parent
+   * @type {PubSub}
+   */
   this.parent = this.pubsub = pubsub;
   this.request = pubsub.request.bind(pubsub);
 
@@ -72,12 +74,18 @@ function Topic(pubsub, name) {
    * any SLA or deprecation policy, and may be subject to backward-incompatible
    * changes.*
    *
-   * @mixes module:pubsub/iam
+   * @name Topic#iam
+   * @mixes IAM
    *
-   * @resource [Access Control Overview]{@link https://cloud.google.com/pubsub/access_control}
-   * @resource [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
+   * @see [Access Control Overview]{@link https://cloud.google.com/pubsub/access_control}
+   * @see [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
    *
    * @example
+   * const PubSub = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * const topic = pubsub.topic('my-topic');
+   *
    * //-
    * // Get the IAM policy for your topic.
    * //-
@@ -89,8 +97,8 @@ function Topic(pubsub, name) {
    * // If the callback is omitted, we'll return a Promise.
    * //-
    * topic.iam.getPolicy().then(function(data) {
-   *   var policy = data[0];
-   *   var apiResponse = data[1];
+   *   const policy = data[0];
+   *   const apiResponse = data[1];
    * });
    */
   this.iam = new IAM(pubsub, this.name);
@@ -115,14 +123,17 @@ Topic.formatName_ = function(projectId, name) {
 /**
  * Create a topic.
  *
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function=} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this request.
- * @param {module:pubsub/topic} callback.topic - The topic.
- * @param {object} callback.apiResponse - The full API response.
+ * @param {CreateTopicCallback} [callback] Callback function.
+ * @returns {Promise<CreateTopicResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ *
  * topic.create(function(err, topic, apiResponse) {
  *   if (!err) {
  *     // The topic was created successfully.
@@ -133,8 +144,8 @@ Topic.formatName_ = function(projectId, name) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * topic.create().then(function(data) {
- *   var topic = data[0];
- *   var apiResponse = data[1];
+ *   const topic = data[0];
+ *   const apiResponse = data[1];
  * });
  */
 Topic.prototype.create = function(gaxOpts, callback) {
@@ -144,38 +155,22 @@ Topic.prototype.create = function(gaxOpts, callback) {
 /**
  * Create a subscription to this topic.
  *
- * @resource [Subscriptions: create API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/create}
+ * @see [Subscriptions: create API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/create}
  *
  * @throws {Error} If subscription name is omitted.
  *
- * @param {string=} name - The name of the subscription.
- * @param {object=} options - See a
- *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions)
- * @param {object} options.flowControl - Flow control configurations for
- *     receiving messages.
- * @param {number} options.flowControl.maxBytes - The maximum number of bytes
- *     in un-acked messages to allow before the subscription pauses incoming
- *     messages. Defaults to 20% of free memory.
- * @param {number} options.flowControl.maxMessages - The maximum number of
- *     un-acked messages to allow before the subscription pauses incoming
- *     messages. Default: Infinity.
- * @param {object} options.gaxOpts - Request configuration options, outlined
- *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {number|date} options.messageRetentionDuration - Set this to override
- *     the default duration of 7 days. This value is expected in seconds.
- *     Acceptable values are in the range of 10 minutes and 7 days.
- * @param {string} options.pushEndpoint - A URL to a custom endpoint that
- *     messages should be pushed to.
- * @param {boolean} options.retainAckedMessages - If set, acked messages are
- *     retained in the subscription's backlog for 7 days (unless overriden by
- *     `options.messageRetentionDuration`). Default: `false`
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this request.
- * @param {module:pubsub/subscription} callback.subscription - The subscription.
- * @param {object} callback.apiResponse - The full API response.
+ * @param {string} name The name of the subscription.
+ * @param {CreateSubscriptionRequest} [options] See a
+ *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
+ * @param {CreateSubscriptionCallback} [callback] Callback function.
+ * @returns {Promise<CreateSubscriptionResponse>}
  *
  * @example
- * var callback = function(err, subscription, apiResponse) {};
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const callback = function(err, subscription, apiResponse) {};
  *
  * // Without specifying any options.
  * topic.createSubscription('newMessages', callback);
@@ -189,8 +184,8 @@ Topic.prototype.create = function(gaxOpts, callback) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * topic.createSubscription('newMessages').then(function(data) {
- *   var subscription = data[0];
- *   var apiResponse = data[1];
+ *   const subscription = data[0];
+ *   const apiResponse = data[1];
  * });
  */
 Topic.prototype.createSubscription = function(name, options, callback) {
@@ -200,20 +195,28 @@ Topic.prototype.createSubscription = function(name, options, callback) {
 /**
  * Delete the topic. This will not delete subscriptions to this topic.
  *
- * @resource [Topics: delete API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/delete}
+ * @see [Topics: delete API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/delete}
  *
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function=} callback - The callback function.
+ * @param {function} [callback] The callback function.
+ * @param {?error} callback.err An error returned while making this
+ *     request.
+ * @param {object} callback.apiResponse Raw API response.
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ *
  * topic.delete(function(err, apiResponse) {});
  *
  * //-
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * topic.delete().then(function(data) {
- *   var apiResponse = data[0];
+ *   const apiResponse = data[0];
  * });
  */
 Topic.prototype.delete = function(gaxOpts, callback) {
@@ -240,21 +243,33 @@ Topic.prototype.delete = function(gaxOpts, callback) {
 };
 
 /**
+ * @typedef {array} TopicExistsResponse
+ * @property {boolean} 0 Whether the topic exists
+ */
+/**
+ * @callback TopicExistsCallback
+ * @param {?Error} err Request error, if any.
+ * @param {boolean} exists Whether the topic exists.
+ */
+/**
  * Check if a topic exists.
  *
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this
- *     request.
- * @param {boolean} callback.exists - Whether the topic exists or not.
+ * @param {TopicExistsCallback} [callback] Callback function.
+ * @returns {Promise<TopicExistsResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ *
  * topic.exists(function(err, exists) {});
  *
  * //-
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * topic.exists().then(function(data) {
- *   var exists = data[0];
+ *   const exists = data[0];
  * });
  */
 Topic.prototype.exists = function(callback) {
@@ -274,14 +289,32 @@ Topic.prototype.exists = function(callback) {
 };
 
 /**
+ * @typedef {array} GetTopicResponse
+ * @property {Topic} 0 The {@link Topic}.
+ * @property {object} 1 The full API response.
+ */
+/**
+ * @callback GetTopicCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Topic} topic The {@link Topic}.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Get a topic if it exists.
  *
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {boolean} gaxOpts.autoCreate - Automatically create the topic does not
- *     already exist. Default: false.
+ * @param {boolean} [gaxOpts.autoCreate=false] Automatically create the topic
+ *     does not already exist.
+ * @param {GetTopicCallback} [callback] Callback function.
+ * @returns {Promise<GetTopicResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ *
  * topic.get(function(err, topic, apiResponse) {
  *   // The `topic` data has been populated.
  * });
@@ -290,8 +323,8 @@ Topic.prototype.exists = function(callback) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * topic.get().then(function(data) {
- *   var topic = data[0];
- *   var apiResponse = data[1];
+ *   const topic = data[0];
+ *   const apiResponse = data[1];
  * });
  */
 Topic.prototype.get = function(gaxOpts, callback) {
@@ -321,25 +354,37 @@ Topic.prototype.get = function(gaxOpts, callback) {
 };
 
 /**
+ * @typedef {array} GetTopicMetadataResponse
+ * @property {object} 0 The full API response.
+ */
+/**
+ * @callback GetTopicMetadataCallback
+ * @param {?Error} err Request error, if any.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Get the official representation of this topic from the API.
  *
- * @resource [Topics: get API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/get}
+ * @see [Topics: get API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/get}
  *
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this
- *     request.
- * @param {object} callback.apiResponse - The full API response.
+ * @param {GetTopicMetadataCallback} [callback] Callback function.
+ * @returns {Promise<GetTopicMetadataResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ *
  * topic.getMetadata(function(err, apiResponse) {});
  *
  * //-
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * topic.getMetadata().then(function(data) {
- *   var apiResponse = data[0];
+ *   const apiResponse = data[0];
  * });
  */
 Topic.prototype.getMetadata = function(gaxOpts, callback) {
@@ -378,22 +423,18 @@ Topic.prototype.getMetadata = function(gaxOpts, callback) {
  * Your provided callback will be invoked with an error object if an API error
  * occurred or an array of {module:pubsub/subscription} objects.
  *
- * @resource [Subscriptions: list API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics.subscriptions/list}
+ * @see [Subscriptions: list API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics.subscriptions/list}
  *
- * @param {object=} options - Configuration object.
- * @param {boolean} options.autoPaginate - Have pagination handled
- *     automatically. Default: true.
- * @param {object} options.gaxOpts - Request configuration options, outlined
- *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {number} options.pageSize - Maximum number of results to return.
- * @param {string} options.pageToken - Page token.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this
- *     request.
- * @param {module:pubsub/subscription[]} callback.subscriptions - List of
- *     subscriptions.
+ * @param {GetSubscriptionsRequest} [query] Query object for listing subscriptions.
+ * @param {GetSubscriptionsCallback} [callback] Callback function.
+ * @returns {Promise<GetSubscriptionsResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ *
  * topic.getSubscriptions(function(err, subscriptions) {
  *   // subscriptions is an array of `Subscription` objects.
  * });
@@ -407,7 +448,7 @@ Topic.prototype.getMetadata = function(gaxOpts, callback) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * topic.getSubscriptions().then(function(data) {
- *   var subscriptions = data[0];
+ *   const subscriptions = data[0];
  * });
  */
 Topic.prototype.getSubscriptions = function(options, callback) {
@@ -461,11 +502,17 @@ Topic.prototype.getSubscriptions = function(options, callback) {
  * Get a list of the {module:pubsub/subscription} objects registered to this
  * topic as a readable object stream.
  *
- * @param {object=} query - Configuration object. See
- *     {module:pubsub/topic#getSubscriptions} for a complete list of options.
- * @return {stream}
+ * @method PubSub#getSubscriptionsStream
+ * @param {GetSubscriptionsRequest} [options] Configuration object. See
+ *     {@link PubSub#getSubscriptions} for a complete list of options.
+ * @returns {ReadableStream} A readable stream of {@link Subscription} instances.
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ *
  * topic.getSubscriptionsStream()
  *   .on('error', console.error)
  *   .on('data', function(subscription) {
@@ -491,17 +538,21 @@ Topic.prototype.getSubscriptionsStream = common.paginator.streamify(
 /**
  * Creates a Publisher object that allows you to publish messages to this topic.
  *
- * @param {object=} options - Configuration object.
- * @param {object} options.batching - Batching settings.
- * @param {number} options.batching.maxBytes - The maximum number of bytes to
+ * @param {object} [options] Configuration object.
+ * @param {object} [options.batching] Batching settings.
+ * @param {number} [options.batching.maxBytes] The maximum number of bytes to
  *     buffer before sending a payload.
- * @param {number} options.batching.maxMessages - The maximum number of messages
+ * @param {number} [options.batching.maxMessages] The maximum number of messages
  *     to buffer before sending a payload.
- * @param {number} options.batching.maxMilliseconds - The maximum duration to
+ * @param {number} [options.batching.maxMilliseconds] The maximum duration to
  *     wait before sending a payload.
  *
  * @example
- * var publisher = topic.publisher();
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const publisher = topic.publisher();
  *
  * publisher.publish(Buffer.from('Hello, world!'), function(err, messageId) {
  *   if (err) {
@@ -520,23 +571,27 @@ Topic.prototype.publisher = function(options) {
  *
  * @throws {Error} If subscription name is omitted.
  *
- * @param {string} name - Name of the subscription.
- * @param {object=} options - Configuration object.
- * @param {object} options.flowControl - Flow control configurations for
+ * @param {string} name Name of the subscription.
+ * @param {object} [options] Configuration object.
+ * @param {object} [options.flowControl] Flow control configurations for
  *     receiving messages. Note that these options do not persist across
  *     subscription instances.
- * @param {number} options.flowControl.maxBytes - The maximum number of bytes
+ * @param {number} [options.flowControl.maxBytes] The maximum number of bytes
  *     in un-acked messages to allow before the subscription pauses incoming
  *     messages. Defaults to 20% of free memory.
- * @param {number} options.flowControl.maxMessages - The maximum number of
- *     un-acked messages to allow before the subscription pauses incoming
- *     messages. Default: Infinity.
- * @param {number} options.maxConnections - Use this to limit the number of
- *     connections to be used when sending and receiving messages. Default: 5.
- * @return {module:pubsub/subscription}
+ * @param {number} [options.flowControl.maxMessages=Infinity] The maximum number
+ *     of un-acked messages to allow before the subscription pauses incoming
+ *     messages.
+ * @param {number} [options.maxConnections=5] Use this to limit the number of
+ *     connections to be used when sending and receiving messages.
+ * @return {Subscription}
  *
  * @example
- * var subscription = topic.subscription('my-subscription');
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
+ * const subscription = topic.subscription('my-subscription');
  *
  * // Register a listener for `message` events.
  * subscription.on('message', function(message) {

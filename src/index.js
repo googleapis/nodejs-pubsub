@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*!
- * @module pubsub
- */
-
 'use strict';
 
 var common = require('@google-cloud/common');
@@ -29,22 +25,8 @@ var is = require('is');
 var PKG = require('../package.json');
 var v1 = require('./v1');
 
-/**
- * @type {module:pubsub/snapshot}
- * @private
- */
 var Snapshot = require('./snapshot.js');
-
-/**
- * @type {module:pubsub/subscription}
- * @private
- */
 var Subscription = require('./subscription.js');
-
-/**
- * @type {module:pubsub/topic}
- * @private
- */
 var Topic = require('./topic.js');
 
 /**
@@ -54,26 +36,67 @@ var Topic = require('./topic.js');
 var PROJECT_ID_PLACEHOLDER = '{{projectId}}';
 
 /**
+ * @typedef {object} ClientConfig
+ * @property {string} [projectId] The project ID from the Google Developer's
+ *     Console, e.g. 'grape-spaceship-123'. We will also check the environment
+ *     variable `GCLOUD_PROJECT` for your project ID. If your app is running in
+ *     an environment which supports {@link https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application Application Default Credentials},
+ *     your project ID will be detected automatically.
+ * @property {string} [keyFilename] Full path to the a .json, .pem, or .p12 key
+ *     downloaded from the Google Developers Console. If you provide a path to a
+ *     JSON file, the `projectId` option above is not necessary. NOTE: .pem and
+ *     .p12 require you to specify the `email` option as well.
+ * @property {string} [apiEndpoint] The `apiEndpoint` from options will set the
+ *     host. If not set, the `PUBSUB_EMULATOR_HOST` environment variable from
+ *     the gcloud SDK is honored, otherwise the actual API endpoint will be
+ *     used.
+ * @property {string} [email] Account email address. Required when using a .pem
+ *     or .p12 keyFilename.
+ * @property {object} [credentials] Credentials object.
+ * @property {string} [credentials.client_email]
+ * @property {string} [credentials.private_key]
+ * @property {boolean} [autoRetry=true] Automatically retry requests if the
+ *     response is related to rate limits or certain intermittent server errors.
+ *     We will exponentially backoff subsequent requests by default.
+ * @property {number} [maxRetries=3] Maximum number of automatic retries
+ *     attempted before returning the error.
+ * @property {Constructor} [promise] Custom promise module to use instead of
+ *     native Promises.
+ */
+
+/**
  * [Cloud Pub/Sub](https://developers.google.com/pubsub/overview) is a
  * reliable, many-to-many, asynchronous messaging service from Cloud
  * Platform.
  *
- * The `apiEndpoint` from options will set the host. If not set, the
- * `PUBSUB_EMULATOR_HOST` environment variable from the gcloud SDK is
- * honored, otherwise the actual API endpoint will be used.
+ * @class
  *
- * @constructor
- * @alias module:pubsub
+ * @see [Cloud Pub/Sub overview]{@link https://developers.google.com/pubsub/overview}
  *
- * @resource [Cloud Pub/Sub overview]{@link https://developers.google.com/pubsub/overview}
+ * @param {ClientConfig} [options] Configuration options.
  *
- * @param {object} options - [Configuration object](#/docs).
+ * @example <caption>Import the client library</caption>
+ * const PubSub = require('@google-cloud/pubsub');
+ *
+ * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
+ * const pubsub = new PubSub();
+ *
+ * @example <caption>Create a client with <a href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit credentials</a>:</caption>
+ * const pubsub = new PubSub({
+ *   projectId: 'your-project-id',
+ *   keyFilename: '/path/to/keyfile.json'
+ * });
+ *
+ * @example <caption>include:samples/quickstart.js</caption>
+ * region_tag:pubsub_quickstart
+ * Full quickstart example:
  */
 function PubSub(options) {
   if (!(this instanceof PubSub)) {
-    options = common.util.normalizeArguments(this, options);
     return new PubSub(options);
   }
+
+  options = common.util.normalizeArguments(this, options);
 
   // Determine what scopes are needed.
   // It is the union of the scopes on both clients.
@@ -97,6 +120,10 @@ function PubSub(options) {
     options
   );
 
+  /**
+   * @name PubSub#isEmulator
+   * @type {boolean}
+   */
   this.isEmulator = false;
   this.determineBaseUrl_();
 
@@ -110,66 +137,74 @@ function PubSub(options) {
 }
 
 /**
+ * Options for creating a subscription.
+ *
+ * See a [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
+ *
+ * @typedef {object} CreateSubscriptionRequest
+ * @property {object} [flowControl] Flow control configurations for
+ *     receiving messages. Note that these options do not persist across
+ *     subscription instances.
+ * @property {number} [flowControl.maxBytes] The maximum number of bytes
+ *     in un-acked messages to allow before the subscription pauses incoming
+ *     messages. Defaults to 20% of free memory.
+ * @property {number} [flowControl.maxMessages=Infinity] The maximum number
+ *     of un-acked messages to allow before the subscription pauses incoming
+ *     messages.
+ * @property {object} [gaxOpts] Request configuration options, outlined
+ *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+ * @property {number|date} [messageRetentionDuration] Set this to override
+ *     the default duration of 7 days. This value is expected in seconds.
+ *     Acceptable values are in the range of 10 minutes and 7 days.
+ * @property {string} [pushEndpoint] A URL to a custom endpoint that
+ *     messages should be pushed to.
+ * @property {boolean} [retainAckedMessages=false] If set, acked messages
+ *     are retained in the subscription's backlog for the length of time
+ *     specified by `options.messageRetentionDuration`.
+ */
+/**
+ * @typedef {array} CreateSubscriptionResponse
+ * @property {Subscription} 0 The new {@link Subscription}.
+ * @property {object} 1 The full API response.
+ */
+/**
+ * @callback CreateSubscriptionCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Subscription} subscription The new {@link Subscription}.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Create a subscription to a topic.
  *
- * @resource [Subscriptions: create API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/create}
+ * @see [Subscriptions: create API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/create}
+ * @see {@link Topic#createSubscription}
  *
  * @throws {Error} If a Topic instance or topic name is not provided.
  * @throws {Error} If a subscription name is not provided.
  *
- * @param {module:pubsub/topic|string} topic - The Topic to create a
+ * @param {Topic|string} topic The Topic to create a
  *     subscription to.
- * @param {string=} name - The name of the subscription.
- * @param {object=} options - See a
- *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions)
- * @param {object} options.flowControl - Flow control configurations for
- *     receiving messages. Note that these options do not persist across
- *     subscription instances.
- * @param {number} options.flowControl.maxBytes - The maximum number of bytes
- *     in un-acked messages to allow before the subscription pauses incoming
- *     messages. Defaults to 20% of free memory.
- * @param {number} options.flowControl.maxMessages - The maximum number of
- *     un-acked messages to allow before the subscription pauses incoming
- *     messages. Default: Infinity.
- * @param {object} options.gaxOpts - Request configuration options, outlined
- *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {number|date} options.messageRetentionDuration - Set this to override
- *     the default duration of 7 days. This value is expected in seconds.
- *     Acceptable values are in the range of 10 minutes and 7 days.
- * @param {string} options.pushEndpoint - A URL to a custom endpoint that
- *     messages should be pushed to.
- * @param {boolean} options.retainAckedMessages - If set, acked messages are
- *     retained in the subscription's backlog for the length of time specified
- *     by `options.messageRetentionDuration`. Default: `false`
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error returned while making this request
- * @param {module:pubsub/subscription} callback.subscription - The subscription.
- * @param {object} callback.apiResponse - The full API response.
+ * @param {string} name The name of the subscription.
+ * @param {CreateSubscriptionRequest} [options] See a
+ *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
+ * @param {CreateSubscriptionCallback} [callback] Callback function.
+ * @returns {Promise<CreateSubscriptionResponse>}
  *
- * @example
- * //-
- * // Subscribe to a topic. (Also see {module:pubsub/topic#createSubscription}).
- * //-
- * var topic = 'messageCenter';
- * var name = 'newMessages';
+ * @example <caption>Subscribe to a topic.</caption>
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
  *
- * var callback = function(err, subscription, apiResponse) {};
+ * const topic = 'messageCenter';
+ * const name = 'newMessages';
+ *
+ * const callback = function(err, subscription, apiResponse) {};
  *
  * pubsub.createSubscription(topic, name, callback);
  *
- * //-
- * // Customize the subscription.
- * //-
- * pubsub.createSubscription(topic, name, {
- *   ackDeadline: 90000 // 90 seconds
- * }, callback);
- *
- * //-
- * // If the callback is omitted, we'll return a Promise.
- * //-
+ * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
  * pubsub.createSubscription(topic, name).then(function(data) {
- *   var subscription = data[0];
- *   var apiResponse = data[1];
+ *   const subscription = data[0];
+ *   const apiResponse = data[1];
  * });
  */
 PubSub.prototype.createSubscription = function(topic, name, options, callback) {
@@ -223,20 +258,31 @@ PubSub.prototype.createSubscription = function(topic, name, options, callback) {
 };
 
 /**
+ * @typedef {array} CreateTopicResponse
+ * @property {Topic} 0 The new {@link Topic}.
+ * @property {object} 1 The full API response.
+ */
+/**
+ * @callback CreateTopicCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Topic} topic The new {@link Topic}.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Create a topic with the given name.
  *
- * @resource [Topics: create API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/create}
+ * @see [Topics: create API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/create}
  *
- * @param {string} name - Name of the topic.
- * @param {object=} gaxOpts - Request configuration options, outlined
+ * @param {string} name Name of the topic.
+ * @param {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {function=} callback - The callback function.
- * @param {?error} callback.err - An error from the API call, may be null.
- * @param {module:pubsub/topic} callback.topic - The newly created topic.
- * @param {object} callback.apiResponse - The full API response from the
- *     service.
+ * @param {CreateTopicCallback} [callback] Callback function.
+ * @returns {Promise<CreateTopicResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
  * pubsub.createTopic('my-new-topic', function(err, topic, apiResponse) {
  *   if (!err) {
  *     // The topic was created successfully.
@@ -247,8 +293,8 @@ PubSub.prototype.createSubscription = function(topic, name, options, callback) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * pubsub.createTopic('my-new-topic').then(function(data) {
- *   var topic = data[0];
- *   var apiResponse = data[1];
+ *   const topic = data[0];
+ *   const apiResponse = data[1];
  * });
  */
 PubSub.prototype.createTopic = function(name, gaxOpts, callback) {
@@ -313,21 +359,38 @@ PubSub.prototype.determineBaseUrl_ = function() {
 };
 
 /**
+ * Query object for listing snapshots.
+ *
+ * @typedef {object} GetSnapshotsRequest
+ * @property {boolean} [autoPaginate=true] Have pagination handled
+ *     automatically.
+ * @property {object} [options.gaxOpts] Request configuration options, outlined
+ *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+ * @property {number} [options.pageSize] Maximum number of results to return.
+ * @property {string} [options.pageToken] Page token.
+ */
+/**
+ * @typedef {array} GetSnapshotsResponse
+ * @property {Snapshot[]} 0 Array of {@link Snapshot} instances.
+ * @property {object} 1 The full API response.
+ */
+/**
+ * @callback GetSnapshotsCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Snapshot[]} snapshots Array of {@link Snapshot} instances.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Get a list of snapshots.
  *
- * @param {object=} options - Configuration object.
- * @param {boolean} options.autoPaginate - Have pagination handled
- *     automatically. Default: true.
- * @param {object} options.gaxOpts - Request configuration options, outlined
- *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {number} options.pageSize - Maximum number of results to return.
- * @param {string} options.pageToken - Page token.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error from the API call, may be null.
- * @param {module:pubsub/snapshot[]} callback.snapshots - The list of snapshots
- *     in your project.
+ * @param {GetSnapshotsRequest} [query] Query object for listing snapshots.
+ * @param {GetSnapshotsCallback} [callback] Callback function.
+ * @returns {Promise<GetSnapshotsResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
  * pubsub.getSnapshots(function(err, snapshots) {
  *   if (!err) {
  *     // snapshots is an array of Snapshot objects.
@@ -338,7 +401,7 @@ PubSub.prototype.determineBaseUrl_ = function() {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * pubsub.getSnapshots().then(function(data) {
- *   var snapshots = data[0];
+ *   const snapshots = data[0];
  * });
  */
 PubSub.prototype.getSnapshots = function(options, callback) {
@@ -390,14 +453,17 @@ PubSub.prototype.getSnapshots = function(options, callback) {
 };
 
 /**
- * Get a list of the {module:pubsub/snapshot} objects as a readable object
- * stream.
+ * Get a list of the {@link Snapshot} objects as a readable object stream.
  *
- * @param {object=} options - Configuration object. See
- *     {module:pubsub#getSnapshots} for a complete list of options.
- * @return {stream}
+ * @method PubSub#getSnapshotsStream
+ * @param {GetSnapshotsRequest} [options] Configuration object. See
+ *     {@link PubSub#getSnapshots} for a complete list of options.
+ * @returns {ReadableStream} A readable stream of {@link Snapshot} instances.
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
  * pubsub.getSnapshotsStream()
  *   .on('error', console.error)
  *   .on('data', function(snapshot) {
@@ -421,34 +487,49 @@ PubSub.prototype.getSnapshotsStream = common.paginator.streamify(
 );
 
 /**
+ * Query object for listing subscriptions.
+ *
+ * @typedef {object} GetSubscriptionsRequest
+ * @property {boolean} [autoPaginate=true] Have pagination handled
+ *     automatically.
+ * @property {object} [options.gaxOpts] Request configuration options, outlined
+ *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+ * @property {number} [options.pageSize] Maximum number of results to return.
+ * @property {string} [options.pageToken] Page token.
+ * @param {string|Topic} options.topic - The name of the topic to
+ *     list subscriptions from.
+ */
+/**
+ * @typedef {array} GetSubscriptionsResponse
+ * @property {Subscription[]} 0 Array of {@link Subscription} instances.
+ * @property {object} 1 The full API response.
+ */
+/**
+ * @callback GetSubscriptionsCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Subscription[]} subscriptions Array of {@link Subscription} instances.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Get a list of the subscriptions registered to all of your project's topics.
  * You may optionally provide a query object as the first argument to customize
  * the response.
  *
  * Your provided callback will be invoked with an error object if an API error
- * occurred or an array of {module:pubsub/subscription} objects.
+ * occurred or an array of {@link Subscription} objects.
  *
- * To get subscriptions for a topic, see {module:pubsub/topic}.
+ * To get subscriptions for a topic, see {@link Topic}.
  *
- * @resource [Subscriptions: list API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/list}
+ * @see [Subscriptions: list API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/list}
  *
- * @param {object=} options - Configuration object.
- * @param {boolean} options.autoPaginate - Have pagination handled
- *     automatically. Default: true.
- * @param {object} options.gaxOpts - Request configuration options, outlined
- *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {number} options.pageSize - Maximum number of results to return.
- * @param {string} options.pageToken - Page token.
- * @param {string|module:pubsub/topic} options.topic - The name of the topic to
- *     list subscriptions from.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error from the API call, may be null.
- * @param {module:pubsub/subscription[]} callback.subscriptions - The list of
- *     subscriptions in your project.
- * @param {object} callback.apiResponse - The full API response from the
- *     service.
+ * @param {GetSubscriptionsRequest} [query] Query object for listing subscriptions.
+ * @param {GetSubscriptionsCallback} [callback] Callback function.
+ * @returns {Promise<GetSubscriptionsResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
  * pubsub.getSubscriptions(function(err, subscriptions) {
  *   if (!err) {
  *     // subscriptions is an array of Subscription objects.
@@ -459,7 +540,7 @@ PubSub.prototype.getSnapshotsStream = common.paginator.streamify(
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * pubsub.getSubscriptions().then(function(data) {
- *   var subscriptions = data[0];
+ *   const subscriptions = data[0];
  * });
  */
 PubSub.prototype.getSubscriptions = function(options, callback) {
@@ -517,14 +598,18 @@ PubSub.prototype.getSubscriptions = function(options, callback) {
 };
 
 /**
- * Get a list of the {module:pubsub/subscription} objects registered to all of
+ * Get a list of the {@link Subscription} objects registered to all of
  * your project's topics as a readable object stream.
  *
- * @param {object=} options - Configuration object. See
- *     {module:pubsub#getSubscriptions} for a complete list of options.
- * @return {stream}
+ * @method PubSub#getSubscriptionsStream
+ * @param {GetSubscriptionsRequest} [options] Configuration object. See
+ *     {@link PubSub#getSubscriptions} for a complete list of options.
+ * @returns {ReadableStream} A readable stream of {@link Subscription} instances.
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
  * pubsub.getSubscriptionsStream()
  *   .on('error', console.error)
  *   .on('data', function(subscription) {
@@ -548,25 +633,41 @@ PubSub.prototype.getSubscriptionsStream = common.paginator.streamify(
 );
 
 /**
+ * Query object for listing topics.
+ *
+ * @typedef {object} GetTopicsRequest
+ * @property {boolean} [autoPaginate=true] Have pagination handled
+ *     automatically.
+ * @property {object} [options.gaxOpts] Request configuration options, outlined
+ *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+ * @property {number} [options.pageSize] Maximum number of results to return.
+ * @property {string} [options.pageToken] Page token.
+ */
+/**
+ * @typedef {array} GetTopicsResponse
+ * @property {Topic[]} 0 Array of {@link Topic} instances.
+ * @property {object} 1 The full API response.
+ */
+/**
+ * @callback GetTopicsCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Topic[]} topics Array of {@link Topic} instances.
+ * @param {object} apiResponse The full API response.
+ */
+/**
  * Get a list of the topics registered to your project. You may optionally
  * provide a query object as the first argument to customize the response.
  *
- * @resource [Topics: list API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/list}
+ * @see [Topics: list API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/list}
  *
- * @param {object=} query - Query object.
- * @param {boolean} query.autoPaginate - Have pagination handled
- *     automatically. Default: true.
- * @param {object} query.gaxOpts - Request configuration options, outlined
- *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
- * @param {number} query.pageSize - Max number of results to return.
- * @param {string} query.pageToken - Page token.
- * @param {function} callback - The callback function.
- * @param {?error} callback.err - An error from the API call, may be null.
- * @param {module:pubsub/topic[]} callback.topics - The list of topics returned.
- * @param {object} callback.apiResponse - The full API response from the
- *     service.
+ * @param {GetTopicsRequest} [query] Query object for listing topics.
+ * @param {GetTopicsCallback} [callback] Callback function.
+ * @returns {Promise<GetTopicsResponse>}
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
  * pubsub.getTopics(function(err, topics) {
  *   if (!err) {
  *     // topics is an array of Topic objects.
@@ -584,7 +685,7 @@ PubSub.prototype.getSubscriptionsStream = common.paginator.streamify(
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * pubsub.getTopics().then(function(data) {
- *   var topics = data[0];
+ *   const topics = data[0];
  * });
  */
 PubSub.prototype.getTopics = function(options, callback) {
@@ -639,11 +740,15 @@ PubSub.prototype.getTopics = function(options, callback) {
  * Get a list of the {module:pubsub/topic} objects registered to your project as
  * a readable object stream.
  *
- * @param {object=} query - Configuration object. See
- *     {module:pubsub#getTopics} for a complete list of options.
- * @return {stream}
+ * @method PubSub#getTopicsStream
+ * @param {GetTopicsRequest} [options] Configuration object. See
+ *     {@link PubSub#getTopics} for a complete list of options.
+ * @returns {ReadableStream} A readable stream of {@link Topic} instances.
  *
  * @example
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
  * pubsub.getTopicsStream()
  *   .on('error', console.error)
  *   .on('data', function(topic) {
@@ -669,11 +774,11 @@ PubSub.prototype.getTopicsStream = common.paginator.streamify('getTopics');
  *
  * @private
  *
- * @param {object} config - Configuration object.
- * @param {object} config.gaxOpts - GAX options.
- * @param {function} config.method - The gax method to call.
- * @param {object} config.reqOpts - Request options.
- * @param {function=} callback - The callback function.
+ * @param {object} config Configuration object.
+ * @param {object} config.gaxOpts GAX options.
+ * @param {function} config.method The gax method to call.
+ * @param {object} config.reqOpts Request options.
+ * @param {function} [callback] The callback function.
  */
 PubSub.prototype.getClient_ = function(config, callback) {
   var self = this;
@@ -710,11 +815,11 @@ PubSub.prototype.getClient_ = function(config, callback) {
  *
  * @private
  *
- * @param {object} config - Configuration object.
- * @param {object} config.gaxOpts - GAX options.
- * @param {function} config.method - The gax method to call.
- * @param {object} config.reqOpts - Request options.
- * @param {function=} callback - The callback function.
+ * @param {object} config Configuration object.
+ * @param {object} config.gaxOpts GAX options.
+ * @param {function} config.method The gax method to call.
+ * @param {object} config.reqOpts Request options.
+ * @param {function} [callback] The callback function.
  */
 PubSub.prototype.request = function(config, callback) {
   var self = this;
@@ -733,16 +838,19 @@ PubSub.prototype.request = function(config, callback) {
 };
 
 /**
- * Create a Snapshot object. See {module:pubsub/subscription#createSnapshot} to
+ * Create a Snapshot object. See {@link Subscription#createSnapshot} to
  * create a snapshot.
  *
  * @throws {Error} If a name is not provided.
  *
- * @param {string} name - The name of the snapshot.
- * @return {module:pubsub/snapshot}
+ * @param {string} name The name of the snapshot.
+ * @returns {Snapshot} A {@link Snapshot} instance.
  *
  * @example
- * var snapshot = pubsub.snapshot('my-snapshot');
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const snapshot = pubsub.snapshot('my-snapshot');
  */
 PubSub.prototype.snapshot = function(name) {
   if (!is.string(name)) {
@@ -754,7 +862,7 @@ PubSub.prototype.snapshot = function(name) {
 
 /**
  * Create a Subscription object. This command by itself will not run any API
- * requests. You will receive a {module:pubsub/subscription} object,
+ * requests. You will receive a {@link Subscription} object,
  * which will allow you to interact with a subscription.
  *
  * @throws {Error} If subscription name is omitted.
@@ -772,10 +880,13 @@ PubSub.prototype.snapshot = function(name) {
  *     messages. Default: Infinity.
  * @param {number} options.maxConnections - Use this to limit the number of
  *     connections to be used when sending and receiving messages. Default: 5.
- * @return {module:pubsub/subscription}
+ * @returns {Subscription} A {@link Subscription} instance.
  *
  * @example
- * var subscription = pubsub.subscription('my-subscription');
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const subscription = pubsub.subscription('my-subscription');
  *
  * // Register a listener for `message` events.
  * subscription.on('message', function(message) {
@@ -796,15 +907,18 @@ PubSub.prototype.subscription = function(name, options) {
 };
 
 /**
- * Create a Topic object. See {module:pubsub#createTopic} to create a topic.
+ * Create a Topic object. See {@link PubSub#createTopic} to create a topic.
  *
  * @throws {Error} If a name is not provided.
  *
- * @param {string} name - The name of the topic.
- * @return {module:pubsub/topic}
+ * @param {string} name The name of the topic.
+ * @returns {Topic} A {@link Topic} instance.
  *
  * @example
- * var topic = pubsub.topic('my-topic');
+ * const PubSub = require('@google-cloud/pubsub');
+ * const pubsub = new PubSub();
+ *
+ * const topic = pubsub.topic('my-topic');
  */
 PubSub.prototype.topic = function(name, options) {
   if (!name) {
@@ -833,5 +947,56 @@ common.util.promisifyAll(PubSub, {
   exclude: ['request', 'snapshot', 'subscription', 'topic'],
 });
 
+/**
+ * The default export of the `@google-cloud/pubsub` package is the
+ * {@link PubSub} class.
+ *
+ * See {@link PubSub} and {@link ClientConfig} for client methods and
+ * configuration options.
+ *
+ * @module {PubSub} @google-cloud/pubsub
+ * @alias nodejs-pubsub
+ *
+ * @example <caption>Install the client library with <a href="https://www.npmjs.com/">npm</a>:</caption>
+ * npm install --save @google-cloud/pubsub
+ *
+ * @example <caption>Import the client library</caption>
+ * const PubSub = require('@google-cloud/pubsub');
+ *
+ * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
+ * const pubsub = new PubSub();
+ *
+ * @example <caption>Create a client with <a href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit credentials</a>:</caption>
+ * const pubsub = new PubSub({
+ *   projectId: 'your-project-id',
+ *   keyFilename: '/path/to/keyfile.json'
+ * });
+ *
+ * @example <caption>include:samples/quickstart.js</caption>
+ * region_tag:pubsub_quickstart
+ * Full quickstart example:
+ */
 module.exports = PubSub;
+
+/**
+ * @name PubSub.v1
+ * @see v1.PublisherClient
+ * @see v1.SubscriberClient
+ * @type {object}
+ * @property {constructor} PublisherClient
+ *     Reference to {@link v1.PublisherClient}.
+ * @property {constructor} SubscriberClient
+ *     Reference to {@link v1.SubscriberClient}.
+ */
+
+/**
+ * @name module:@google-cloud/pubsub.v1
+ * @see v1.PublisherClient
+ * @see v1.SubscriberClient
+ * @type {object}
+ * @property {constructor} PublisherClient
+ *     Reference to {@link v1.PublisherClient}.
+ * @property {constructor} SubscriberClient
+ *     Reference to {@link v1.SubscriberClient}.
+ */
 module.exports.v1 = v1;
