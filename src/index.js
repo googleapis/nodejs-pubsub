@@ -184,7 +184,7 @@ function PubSub(options) {
  *
  * @param {Topic|string} topic The Topic to create a
  *     subscription to.
- * @param {string} [name] The name of the subscription.
+ * @param {string} name The name of the subscription.
  * @param {CreateSubscriptionRequest} [options] See a
  *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
  * @param {CreateSubscriptionCallback} [callback] Callback function.
