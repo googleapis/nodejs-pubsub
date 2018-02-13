@@ -17,6 +17,7 @@
 'use strict';
 
 var arrify = require('arrify');
+var chunk = require('lodash.chunk');
 var common = require('@google-cloud/common');
 var events = require('events');
 var extend = require('extend');
@@ -29,6 +30,15 @@ var ConnectionPool = require('./connection-pool.js');
 var Histogram = require('./histogram.js');
 var IAM = require('./iam.js');
 var Snapshot = require('./snapshot.js');
+
+/**
+ * @type {number} - The maximum number of ackIds to be sent in acknowledge/modifyAckDeadline
+ *     requests. There is an API limit of 524288 bytes (512KiB) per acknowledge/modifyAckDeadline
+ *     request. ackIds have a maximum size of 164 bytes, so 524288/164 ~= 3197. Accounting for some
+ *     overhead, a maximum of 3000 ackIds per request should be safe.
+ * @private
+ */
+var MAX_ACK_IDS_PER_REQUEST = 3000;
 
 /**
  * A Subscription object will give you access to your Cloud Pub/Sub
@@ -294,33 +304,41 @@ Subscription.prototype.ack_ = function(message) {
  */
 Subscription.prototype.acknowledge_ = function(ackIds, connId) {
   var self = this;
-  var promise;
 
   ackIds = arrify(ackIds);
 
-  if (!this.isConnected_()) {
-    promise = common.util.promisify(this.request).call(this, {
-      client: 'SubscriberClient',
-      method: 'acknowledge',
-      reqOpts: {
-        subscription: this.name,
-        ackIds,
-      },
-    });
-  } else {
-    promise = new Promise(function(resolve, reject) {
+  var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
+    ackIdChunk
+  ) {
+    if (!self.isConnected_()) {
+      return common.util.promisify(self.request).call(self, {
+        client: 'SubscriberClient',
+        method: 'acknowledge',
+        reqOpts: {
+          subscription: self.name,
+          ackIds: ackIdChunk,
+        },
+      });
+    }
+
+    return new Promise(function(resolve, reject) {
       self.connectionPool.acquire(connId, function(err, connection) {
         if (err) {
           reject(err);
           return;
         }
 
-        connection.write({ackIds}, resolve);
+        connection.write(
+          {
+            ackIds: ackIdChunk,
+          },
+          resolve
+        );
       });
     });
-  }
+  });
 
-  return promise.catch(function(err) {
+  return Promise.all(promises).catch(function(err) {
     self.emit('error', err);
   });
 };
@@ -874,22 +892,25 @@ Subscription.prototype.listenForEvents_ = function() {
  */
 Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
   var self = this;
-  var promise;
 
   ackIds = arrify(ackIds);
 
-  if (!this.isConnected_()) {
-    promise = common.util.promisify(this.request).call(this, {
-      client: 'SubscriberClient',
-      method: 'modifyAckDeadline',
-      reqOpts: {
-        subscription: self.name,
-        ackDeadlineSeconds: deadline,
-        ackIds,
-      },
-    });
-  } else {
-    promise = new Promise(function(resolve, reject) {
+  var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
+    ackIdChunk
+  ) {
+    if (!self.isConnected_()) {
+      return common.util.promisify(self.request).call(self, {
+        client: 'SubscriberClient',
+        method: 'modifyAckDeadline',
+        reqOpts: {
+          subscription: self.name,
+          ackDeadlineSeconds: deadline,
+          ackIds: ackIdChunk,
+        },
+      });
+    }
+
+    return new Promise(function(resolve, reject) {
       self.connectionPool.acquire(connId, function(err, connection) {
         if (err) {
           reject(err);
@@ -898,16 +919,16 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
 
         connection.write(
           {
-            modifyDeadlineAckIds: ackIds,
-            modifyDeadlineSeconds: Array(ackIds.length).fill(deadline),
+            modifyDeadlineAckIds: ackIdChunk,
+            modifyDeadlineSeconds: Array(ackIdChunk.length).fill(deadline),
           },
           resolve
         );
       });
     });
-  }
+  });
 
-  return promise.catch(function(err) {
+  return Promise.all(promises).catch(function(err) {
     self.emit('error', err);
   });
 };
