@@ -348,6 +348,14 @@ describe('Subscription', function() {
   describe('acknowledge_', function() {
     var fakeAckIds = ['a', 'b', 'c'];
 
+    var batchSize = 3000;
+    var tooManyFakeAckIds = Array(batchSize * 2.5)
+      .fill('a')
+      .map(function(x, i) {
+        return x + i;
+      });
+    var expectedCalls = Math.ceil(tooManyFakeAckIds.length / batchSize);
+
     describe('without streaming connection', function() {
       beforeEach(function() {
         subscription.isConnected_ = function() {
@@ -362,7 +370,7 @@ describe('Subscription', function() {
             assert.strictEqual(config.client, 'SubscriberClient');
             assert.strictEqual(config.method, 'acknowledge');
             assert.strictEqual(config.reqOpts.subscription, subscription.name);
-            assert.strictEqual(config.reqOpts.ackIds, fakeAckIds);
+            assert.deepEqual(config.reqOpts.ackIds, fakeAckIds);
 
             setImmediate(done);
 
@@ -377,6 +385,36 @@ describe('Subscription', function() {
 
         subscription.on('error', done);
         subscription.acknowledge_(fakeAckIds);
+      });
+
+      it('should batch requests if there are too many ackIds', function(done) {
+        var receivedCalls = 0;
+
+        var fakePromisified = {
+          call: function(context, config) {
+            var offset = receivedCalls * batchSize;
+            var expectedAckIds = tooManyFakeAckIds.slice(
+              offset,
+              offset + batchSize
+            );
+
+            assert.deepEqual(config.reqOpts.ackIds, expectedAckIds);
+
+            receivedCalls += 1;
+            if (receivedCalls === expectedCalls) {
+              setImmediate(done);
+            }
+
+            return Promise.resolve();
+          },
+        };
+
+        fakeUtil.promisify = function() {
+          return fakePromisified;
+        };
+
+        subscription.on('error', done);
+        subscription.acknowledge_(tooManyFakeAckIds);
       });
 
       it('should emit any request errors', function(done) {
@@ -426,6 +464,34 @@ describe('Subscription', function() {
         };
 
         subscription.acknowledge_(fakeAckIds, fakeConnectionId);
+      });
+
+      it('should batch requests if there are too many ackIds', function(done) {
+        var receivedCalls = 0;
+
+        var fakeConnectionId = 'abc';
+        var fakeConnection = {
+          write: function(data) {
+            var offset = receivedCalls * batchSize;
+            var expectedAckIds = tooManyFakeAckIds.slice(
+              offset,
+              offset + batchSize
+            );
+
+            assert.deepEqual(data, {ackIds: expectedAckIds});
+
+            receivedCalls += 1;
+            if (receivedCalls === expectedCalls) {
+              done();
+            }
+          },
+        };
+
+        pool.acquire = function(connectionId, callback) {
+          callback(null, fakeConnection);
+        };
+
+        subscription.acknowledge_(tooManyFakeAckIds, fakeConnectionId);
       });
 
       it('should emit an error when unable to get a conn', function(done) {
@@ -1287,6 +1353,14 @@ describe('Subscription', function() {
     var fakeAckIds = ['a', 'b', 'c'];
     var fakeDeadline = 123;
 
+    var batchSize = 3000;
+    var tooManyFakeAckIds = Array(batchSize * 2.5)
+      .fill('a')
+      .map(function(x, i) {
+        return x + i;
+      });
+    var expectedCalls = Math.ceil(tooManyFakeAckIds.length / batchSize);
+
     describe('without streaming connection', function() {
       beforeEach(function() {
         subscription.isConnected_ = function() {
@@ -1302,7 +1376,7 @@ describe('Subscription', function() {
             assert.strictEqual(config.method, 'modifyAckDeadline');
             assert.strictEqual(config.reqOpts.subscription, subscription.name);
             assert.strictEqual(config.reqOpts.ackDeadlineSeconds, fakeDeadline);
-            assert.strictEqual(config.reqOpts.ackIds, fakeAckIds);
+            assert.deepEqual(config.reqOpts.ackIds, fakeAckIds);
 
             setImmediate(done);
 
@@ -1317,6 +1391,37 @@ describe('Subscription', function() {
 
         subscription.on('error', done);
         subscription.modifyAckDeadline_(fakeAckIds, fakeDeadline);
+      });
+
+      it('should batch requests if there are too many ackIds', function(done) {
+        var receivedCalls = 0;
+
+        var fakePromisified = {
+          call: function(context, config) {
+            var offset = receivedCalls * batchSize;
+            var expectedAckIds = tooManyFakeAckIds.slice(
+              offset,
+              offset + batchSize
+            );
+
+            assert.strictEqual(config.reqOpts.ackDeadlineSeconds, fakeDeadline);
+            assert.deepEqual(config.reqOpts.ackIds, expectedAckIds);
+
+            receivedCalls += 1;
+            if (receivedCalls === expectedCalls) {
+              setImmediate(done);
+            }
+
+            return Promise.resolve();
+          },
+        };
+
+        fakeUtil.promisify = function() {
+          return fakePromisified;
+        };
+
+        subscription.on('error', done);
+        subscription.modifyAckDeadline_(tooManyFakeAckIds, fakeDeadline);
       });
 
       it('should emit any request errors', function(done) {
@@ -1356,7 +1461,7 @@ describe('Subscription', function() {
         var fakeConnId = 'abc';
         var fakeConnection = {
           write: function(data) {
-            assert.strictEqual(data.modifyDeadlineAckIds, fakeAckIds);
+            assert.deepEqual(data.modifyDeadlineAckIds, fakeAckIds);
             assert.deepEqual(data.modifyDeadlineSeconds, expectedDeadlines);
             done();
           },
@@ -1368,6 +1473,42 @@ describe('Subscription', function() {
         };
 
         subscription.modifyAckDeadline_(fakeAckIds, fakeDeadline, fakeConnId);
+      });
+
+      it('should batch requests if there are too many ackIds', function(done) {
+        var receivedCalls = 0;
+
+        var fakeConnId = 'abc';
+        var fakeConnection = {
+          write: function(data) {
+            var offset = receivedCalls * batchSize;
+            var expectedAckIds = tooManyFakeAckIds.slice(
+              offset,
+              offset + batchSize
+            );
+            var expectedDeadlines = Array(expectedAckIds.length).fill(
+              fakeDeadline
+            );
+
+            assert.deepEqual(data.modifyDeadlineAckIds, expectedAckIds);
+            assert.deepEqual(data.modifyDeadlineSeconds, expectedDeadlines);
+
+            receivedCalls += 1;
+            if (receivedCalls === expectedCalls) {
+              done();
+            }
+          },
+        };
+
+        pool.acquire = function(connectionId, callback) {
+          callback(null, fakeConnection);
+        };
+
+        subscription.modifyAckDeadline_(
+          tooManyFakeAckIds,
+          fakeDeadline,
+          fakeConnId
+        );
       });
 
       it('should emit an error when unable to get a conn', function(done) {

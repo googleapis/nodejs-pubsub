@@ -69,6 +69,7 @@
     "google-proto-files": "^0.15.0",
     "grpc": "^1.8.4",
     "is": "^3.0.1",
+    "lodash.chunk": "^4.2.0",
     "lodash.merge": "^4.6.0",
     "lodash.snakecase": "^4.1.1",
     "protobufjs": "^6.8.1",
