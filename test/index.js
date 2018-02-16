@@ -19,13 +19,19 @@
 var arrify = require('arrify');
 var assert = require('assert');
 var extend = require('extend');
-var grpc = require('grpc');
 var proxyquire = require('proxyquire');
 var util = require('@google-cloud/common').util;
 
 var PKG = require('../package.json');
 
-var fakeGrpc = extend({}, grpc);
+var fakeGrpc = {};
+var fakeGoogleGax = {
+  grpc: function() {
+    return {
+      grpc: fakeGrpc,
+    };
+  },
+};
 
 var SubscriptionCached = require('../src/subscription.js');
 var SubscriptionOverride;
@@ -124,7 +130,7 @@ describe('PubSub', function() {
         util: fakeUtil,
       },
       'google-auto-auth': fakeGoogleAutoAuth,
-      grpc: fakeGrpc,
+      'google-gax': fakeGoogleGax,
       './snapshot.js': FakeSnapshot,
       './subscription.js': Subscription,
       './topic.js': FakeTopic,
@@ -143,6 +149,9 @@ describe('PubSub', function() {
       return options;
     };
 
+    fakeGrpc.credentials = {
+      createInsecure: util.noop,
+    };
     v1ClientOverrides = {};
     googleAutoAuthOverride = null;
     SubscriptionOverride = null;
@@ -639,8 +648,10 @@ describe('PubSub', function() {
       var testingUrl = 'localhost:8085';
 
       var fakeCreds = {};
-      fakeGrpc.credentials.createInsecure = function() {
-        return fakeCreds;
+      fakeGrpc.credentials = {
+        createInsecure: function() {
+          return fakeCreds;
+        },
       };
 
       setHost(defaultBaseUrl_);
