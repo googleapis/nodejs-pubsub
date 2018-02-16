@@ -19,7 +19,7 @@
 var common = require('@google-cloud/common');
 var extend = require('extend');
 var googleAuth = require('google-auto-auth');
-var grpc = require('grpc');
+var grpc = require('google-gax').grpc().grpc;
 var is = require('is');
 
 var PKG = require('../package.json');
