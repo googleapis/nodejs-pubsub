@@ -63,7 +63,6 @@ var RETRY_CODES = [
 function ConnectionPool(subscription) {
   this.subscription = subscription;
   this.pubsub = subscription.pubsub;
-  this.projectId = subscription.projectId;
 
   this.connections = new Map();
 
@@ -208,7 +207,7 @@ ConnectionPool.prototype.createConnection = function() {
       .write({
         subscription: common.util.replaceProjectIdToken(
           self.subscription.name,
-          self.projectId
+          self.pubsub.projectId
         ),
         streamAckDeadlineSeconds: self.settings.ackDeadline / 1000,
       });
