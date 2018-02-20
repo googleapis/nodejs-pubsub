@@ -67,9 +67,7 @@ describe('ConnectionPool', function() {
   var PROJECT_ID = 'grapce-spacheship-123';
 
   var PUBSUB = {
-    projectId: PROJECT_ID,
     auth: {
-      projectId: PROJECT_ID,
       getAuthClient: fakeUtil.noop,
     },
     options: FAKE_PUBSUB_OPTIONS,
@@ -77,7 +75,6 @@ describe('ConnectionPool', function() {
 
   var SUB_NAME = 'test-subscription';
   var SUBSCRIPTION = {
-    projectId: PROJECT_ID,
     name: SUB_NAME,
     pubsub: PUBSUB,
     request: fakeUtil.noop,
@@ -136,6 +133,7 @@ describe('ConnectionPool', function() {
       var pool = new ConnectionPool(SUBSCRIPTION);
 
       assert.strictEqual(pool.subscription, SUBSCRIPTION);
+      assert.strictEqual(pool.pubsub, SUBSCRIPTION.pubsub);
       assert(pool.connections instanceof Map);
       assert.strictEqual(pool.isPaused, false);
       assert.strictEqual(pool.isOpen, false);
@@ -365,6 +363,10 @@ describe('ConnectionPool', function() {
       fakeClient.waitForReady = fakeUtil.noop;
 
       pool.getClient = function(callback) {
+        pool.pubsub = {
+          projectId: PROJECT_ID,
+        };
+
         callback(null, fakeClient);
       };
     });
