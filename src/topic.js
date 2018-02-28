@@ -177,7 +177,7 @@ Topic.prototype.create = function(gaxOpts, callback) {
  *
  * // With options.
  * topic.createSubscription('newMessages', {
- *   ackDeadline: 90000 // 90 seconds
+ *   ackDeadlineSeconds: 90
  * }, callback);
  *
  * //-
