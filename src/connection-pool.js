@@ -18,9 +18,11 @@
 
 var arrify = require('arrify');
 var common = require('@google-cloud/common');
+var duplexify = require('duplexify');
 var each = require('async-each');
 var events = require('events');
 var is = require('is');
+var through = require('through2');
 var util = require('util');
 var uuid = require('uuid');
 
@@ -142,13 +144,10 @@ ConnectionPool.prototype.acquire = function(id, callback) {
  * @param {?error} callback.error An error returned while closing the pool.
  */
 ConnectionPool.prototype.close = function(callback) {
+  var self = this;
   var connections = Array.from(this.connections.values());
 
   callback = callback || common.util.noop;
-
-  if (this.client) {
-    this.client.close();
-  }
 
   this.connections.clear();
   this.queue.forEach(clearTimeout);
@@ -167,9 +166,20 @@ ConnectionPool.prototype.close = function(callback) {
   each(
     connections,
     function(connection, onEndCallback) {
-      connection.end(onEndCallback);
+      connection.pause();
+      connection.end(function(err) {
+        connection.cancel();
+        onEndCallback(err);
+      });
     },
-    callback
+    function(err) {
+      if (self.client) {
+        self.client.close();
+        self.client = null;
+      }
+
+      callback(err);
+    }
   );
 };
 
@@ -188,9 +198,20 @@ ConnectionPool.prototype.createConnection = function() {
       return;
     }
 
+    var requestStream = client.streamingPull();
+
+    var readStream = requestStream.pipe(through.obj(function(chunk, enc, next) {
+      chunk.receivedMessages.forEach(function(message) {
+        readStream.push(message);
+      });
+      next();
+    }));
+
+    var connection = duplexify(requestStream, readStream, {objectMode: true});
     var id = uuid.v4();
-    var connection = client.streamingPull();
     var errorImmediateHandle;
+
+    connection.cancel = requestStream.cancel.bind(requestStream);
 
     if (self.isPaused) {
       connection.pause();
@@ -200,10 +221,12 @@ ConnectionPool.prototype.createConnection = function() {
       .once(CHANNEL_ERROR_EVENT, onChannelError)
       .once(CHANNEL_READY_EVENT, onChannelReady);
 
+    requestStream
+      .on('status', onConnectionStatus);
+
     connection
       .on('error', onConnectionError)
       .on('data', onConnectionData)
-      .on('status', onConnectionStatus)
       .write({
         subscription: common.util.replaceProjectIdToken(
           self.subscription.name,
@@ -217,7 +240,7 @@ ConnectionPool.prototype.createConnection = function() {
     function onChannelError() {
       self.removeListener(CHANNEL_READY_EVENT, onChannelReady);
 
-      connection.cancel();
+      requestStream.cancel();
     }
 
     function onChannelReady() {
@@ -241,10 +264,8 @@ ConnectionPool.prototype.createConnection = function() {
       errorImmediateHandle = setImmediate(self.emit.bind(self), 'error', err);
     }
 
-    function onConnectionData(data) {
-      arrify(data.receivedMessages).forEach(function(message) {
-        self.emit('message', self.createMessage(id, message));
-      });
+    function onConnectionData(message) {
+      self.emit('message', self.createMessage(id, message));
     }
 
     function onConnectionStatus(status) {

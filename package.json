@@ -63,6 +63,8 @@
     "@google-cloud/common": "^0.16.1",
     "arrify": "^1.0.0",
     "async-each": "^1.0.1",
+    "delay": "^2.0.0",
+    "duplexify": "^3.5.4",
     "extend": "^3.0.1",
     "google-auto-auth": "^0.9.0",
     "google-gax": "^0.15.0",
@@ -72,6 +74,7 @@
     "lodash.merge": "^4.6.0",
     "lodash.snakecase": "^4.1.1",
     "protobufjs": "^6.8.1",
+    "through2": "^2.0.3",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
