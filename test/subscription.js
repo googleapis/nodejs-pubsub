@@ -982,7 +982,7 @@ describe('Subscription', function() {
       var fakeHandle = {
         cancel: function() {
           canceled = true;
-        }
+        },
       };
 
       subscription.flushTimeoutHandle_ = fakeHandle;

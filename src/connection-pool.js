@@ -197,12 +197,14 @@ ConnectionPool.prototype.createConnection = function() {
 
     var requestStream = client.streamingPull();
 
-    var readStream = requestStream.pipe(through.obj(function(chunk, enc, next) {
-      chunk.receivedMessages.forEach(function(message) {
-        readStream.push(message);
-      });
-      next();
-    }));
+    var readStream = requestStream.pipe(
+      through.obj(function(chunk, enc, next) {
+        chunk.receivedMessages.forEach(function(message) {
+          readStream.push(message);
+        });
+        next();
+      })
+    );
 
     var connection = duplexify(requestStream, readStream, {objectMode: true});
     var id = uuid.v4();
@@ -218,8 +220,7 @@ ConnectionPool.prototype.createConnection = function() {
       .once(CHANNEL_ERROR_EVENT, onChannelError)
       .once(CHANNEL_READY_EVENT, onChannelReady);
 
-    requestStream
-      .on('status', onConnectionStatus);
+    requestStream.on('status', onConnectionStatus);
 
     connection
       .on('error', onConnectionError)

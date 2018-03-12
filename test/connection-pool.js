@@ -529,7 +529,7 @@ describe('ConnectionPool', function() {
         var fakeDuplex = new FakeConnection();
         var pipedMessages = [];
         var fakeResp = {
-          receivedMessages: [{}, {}, {}, {}, null]
+          receivedMessages: [{}, {}, {}, {}, null],
         };
 
         duplexifyOverride = function(writable, readable, options) {
@@ -541,7 +541,7 @@ describe('ConnectionPool', function() {
               assert.strictEqual(pipedMessages.length, 4);
               pipedMessages.forEach(function(message, i) {
                 assert.strictEqual(message, fakeResp.receivedMessages[i]);
-              })
+              });
               done();
             })
             .write(fakeResp);
@@ -559,7 +559,7 @@ describe('ConnectionPool', function() {
           bind: function(context) {
             assert.strictEqual(context, fakeConnection);
             return fakeCancel;
-          }
+          },
         };
 
         pool.createConnection();

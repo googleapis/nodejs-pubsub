@@ -287,8 +287,7 @@ Subscription.prototype.ack_ = function(message) {
   this.histogram.add(Date.now() - message.received);
 
   if (this.isConnected_()) {
-    this.acknowledge_(message.ackId, message.connectionId)
-      .then(breakLease);
+    this.acknowledge_(message.ackId, message.connectionId).then(breakLease);
     return;
   }
 
@@ -1021,8 +1020,9 @@ Subscription.prototype.nack_ = function(message) {
   var breakLease = this.breakLease_.bind(this, message);
 
   if (this.isConnected_()) {
-    this.modifyAckDeadline_(message.ackId, 0, message.connectionId)
-      .then(breakLease);
+    this.modifyAckDeadline_(message.ackId, 0, message.connectionId).then(
+      breakLease
+    );
     return;
   }
 
