@@ -532,7 +532,7 @@ describe('ConnectionPool', function() {
           receivedMessages: [{}, {}, {}, {}, null],
         };
 
-        duplexifyOverride = function(writable, readable, options) {
+        duplexifyOverride = function(writable, readable) {
           readable
             .on('data', function(message) {
               pipedMessages.push(message);

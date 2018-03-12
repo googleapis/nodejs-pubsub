@@ -16,7 +16,6 @@
 
 'use strict';
 
-var arrify = require('arrify');
 var common = require('@google-cloud/common');
 var duplexify = require('duplexify');
 var each = require('async-each');
