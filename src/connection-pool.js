@@ -166,11 +166,8 @@ ConnectionPool.prototype.close = function(callback) {
   each(
     connections,
     function(connection, onEndCallback) {
-      connection.pause();
-      connection.end(function(err) {
-        connection.cancel();
-        onEndCallback(err);
-      });
+      connection.cancel();
+      connection.end(onEndCallback);
     },
     function(err) {
       if (self.client) {

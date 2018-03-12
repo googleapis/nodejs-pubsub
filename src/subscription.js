@@ -1158,13 +1158,15 @@ Subscription.prototype.seek = function(snapshot, gaxOpts, callback) {
 Subscription.prototype.setFlushTimeout_ = function() {
   if (!this.flushTimeoutHandle_) {
     var timeout = delay(1000);
-    var promise = timeout.then(this.flushQueues_.bind(this));
+    var promise = timeout
+      .then(this.flushQueues_.bind(this))
+      .catch(common.util.noop);
 
     promise.cancel = timeout.cancel.bind(timeout);
     this.flushTimeoutHandle_ = promise;
   }
 
-  return this.flushTimeoutHandle_.catch(common.util.noop);
+  return this.flushTimeoutHandle_;
 };
 
 /*!
