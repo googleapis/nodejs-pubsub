@@ -37,7 +37,7 @@ var is = require('is');
  * @param {number} [options.batching.maxMessages] The maximum number of messages
  *     to buffer before sending a payload.
  * @param {number} [options.batching.maxMilliseconds] The maximum duration to
- *     wait before sending a payload.
+ *     wait before sending a payload. Defaults to 100 milliseconds.
  *
  * @example
  * const PubSub = require('@google-cloud/pubsub');
@@ -57,7 +57,7 @@ function Publisher(topic, options) {
       batching: {
         maxBytes: Math.pow(1024, 2) * 5,
         maxMessages: 1000,
-        maxMilliseconds: 1000,
+        maxMilliseconds: 100,
       },
     },
     options
