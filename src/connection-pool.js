@@ -219,7 +219,9 @@ ConnectionPool.prototype.createConnection = function() {
       .once(CHANNEL_ERROR_EVENT, onChannelError)
       .once(CHANNEL_READY_EVENT, onChannelReady);
 
-    requestStream.on('status', onConnectionStatus);
+    requestStream.on('status', function(status) {
+      setImmediate(() => onConnectionStatus(status));
+    });
 
     connection
       .on('error', onConnectionError)

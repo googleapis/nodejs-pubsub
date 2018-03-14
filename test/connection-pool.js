@@ -587,8 +587,20 @@ describe('ConnectionPool', function() {
       });
 
       describe('status events', function() {
+        var _setImmediate = global.setImmediate;
+
+        before(function() {
+          global.setImmediate = function(cb) {
+            cb();
+          };
+        });
+
         beforeEach(function() {
           pool.connections.set('a', new FakeConnection());
+        });
+
+        after(function() {
+          global.setImmediate = _setImmediate;
         });
 
         it('should cancel any error events', function(done) {
