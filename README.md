@@ -127,4 +127,4 @@ See [LICENSE](https://github.com/googleapis/nodejs-pubsub/blob/master/LICENSE)
 
 [client-docs]: https://googlecloudplatform.github.io/google-cloud-node/#/docs/pubsub/latest/pubsub
 [product-docs]: https://cloud.google.com/pubsub/docs
-[shell_img]: http://gstatic.com/cloudssh/images/open-btn.png
+[shell_img]: //gstatic.com/cloudssh/images/open-btn.png

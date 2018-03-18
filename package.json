@@ -32,6 +32,9 @@
     "Ace Nassri <anassri@google.com>",
     "Alexander Fenster <fenster@google.com>",
     "Ali Ijaz Sheikh <ofrobots@google.com>",
+    "Antono Vasiljev <antono.vasiljev@gmail.com>",
+    "Chet Husk <baronfel@users.noreply.github.com>",
+    "Christoph Tavan <dev@tavan.de>",
     "Dave Gramlich <callmehiphop@gmail.com>",
     "David Fox <djfox14@gmail.com>",
     "Dennis <me@dennis.is>",
@@ -78,7 +81,7 @@
     "uuid": "^3.1.0"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "^2.1.3",
+    "@google-cloud/nodejs-repo-tools": "^2.2.3",
     "async": "^2.6.0",
     "codecov": "^3.0.0",
     "eslint": "^4.11.0",
