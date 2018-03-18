@@ -41,8 +41,12 @@ util.inherits(FakeConnection, events.EventEmitter);
 
 FakeConnection.prototype.write = function() {};
 
-FakeConnection.prototype.end = function() {
+FakeConnection.prototype.end = function(callback) {
   this.ended = true;
+
+  if (callback) {
+    callback(null);
+  }
 };
 
 FakeConnection.prototype.pause = function() {
@@ -319,17 +323,19 @@ describe('ConnectionPool', function() {
       }
     });
 
-    it('should call cancel on all active connections', function() {
+    it('should call cancel on all active connections', function(done) {
       var a = new FakeConnection();
       var b = new FakeConnection();
 
       pool.connections.set('a', a);
       pool.connections.set('b', b);
 
-      pool.close();
-
-      assert.strictEqual(a.canceled, true);
-      assert.strictEqual(b.canceled, true);
+      pool.close(function(err) {
+        assert.ifError(err);
+        assert.strictEqual(a.canceled, true);
+        assert.strictEqual(b.canceled, true);
+        done();
+      });
     });
 
     it('should call end on all active connections', function() {
@@ -587,20 +593,8 @@ describe('ConnectionPool', function() {
       });
 
       describe('status events', function() {
-        var _setImmediate = global.setImmediate;
-
-        before(function() {
-          global.setImmediate = function(cb) {
-            cb();
-          };
-        });
-
         beforeEach(function() {
           pool.connections.set('a', new FakeConnection());
-        });
-
-        after(function() {
-          global.setImmediate = _setImmediate;
         });
 
         it('should cancel any error events', function(done) {
@@ -609,8 +603,8 @@ describe('ConnectionPool', function() {
           pool.on('error', done); // should not fire
           pool.createConnection();
 
-          fakeDuplex.emit('error', fakeError);
           fakeConnection.emit('status', fakeError);
+          fakeDuplex.emit('error', fakeError);
 
           done();
         });

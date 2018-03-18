@@ -451,7 +451,7 @@ describe('pubsub', function() {
         maxConnections: 1,
       });
 
-      subscription.once('error', function(err) {
+      subscription.on('error', function(err) {
         assert.strictEqual(err.code, 5);
         subscription.close(done);
       });

@@ -165,8 +165,10 @@ ConnectionPool.prototype.close = function(callback) {
   each(
     connections,
     function(connection, onEndCallback) {
-      connection.cancel();
-      connection.end(onEndCallback);
+      connection.end(function(err) {
+        connection.cancel();
+        onEndCallback(err);
+      });
     },
     function(err) {
       if (self.client) {
@@ -207,7 +209,7 @@ ConnectionPool.prototype.createConnection = function() {
 
     var connection = duplexify(requestStream, readStream, {objectMode: true});
     var id = uuid.v4();
-    var errorImmediateHandle;
+    var lastStatus;
 
     connection.cancel = requestStream.cancel.bind(requestStream);
 
@@ -219,9 +221,7 @@ ConnectionPool.prototype.createConnection = function() {
       .once(CHANNEL_ERROR_EVENT, onChannelError)
       .once(CHANNEL_READY_EVENT, onChannelReady);
 
-    requestStream.on('status', function(status) {
-      setImmediate(() => onConnectionStatus(status));
-    });
+    requestStream.on('status', onConnectionStatus);
 
     connection
       .on('error', onConnectionError)
@@ -260,7 +260,9 @@ ConnectionPool.prototype.createConnection = function() {
     // to the `status` event where we can check if the connection should be
     // re-opened or if we should send the error to the user
     function onConnectionError(err) {
-      errorImmediateHandle = setImmediate(self.emit.bind(self), 'error', err);
+      if (!lastStatus || err.code !== lastStatus.code) {
+        self.emit('error', err);
+      }
     }
 
     function onConnectionData(message) {
@@ -268,7 +270,7 @@ ConnectionPool.prototype.createConnection = function() {
     }
 
     function onConnectionStatus(status) {
-      clearImmediate(errorImmediateHandle);
+      lastStatus = status;
 
       connection.end();
       self.connections.delete(id);
