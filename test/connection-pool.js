@@ -18,6 +18,7 @@
 
 var assert = require('assert');
 var common = require('@google-cloud/common');
+var duplexify = require('duplexify');
 var events = require('events');
 var extend = require('extend');
 var proxyquire = require('proxyquire');
@@ -40,12 +41,20 @@ util.inherits(FakeConnection, events.EventEmitter);
 
 FakeConnection.prototype.write = function() {};
 
-FakeConnection.prototype.end = function() {
+FakeConnection.prototype.end = function(callback) {
   this.ended = true;
+
+  if (callback) {
+    callback(null);
+  }
 };
 
 FakeConnection.prototype.pause = function() {
   this.isPaused = true;
+};
+
+FakeConnection.prototype.pipe = function(stream) {
+  return stream;
 };
 
 FakeConnection.prototype.resume = function() {
@@ -55,6 +64,13 @@ FakeConnection.prototype.resume = function() {
 FakeConnection.prototype.cancel = function() {
   this.canceled = true;
 };
+
+var duplexifyOverride = null;
+
+function fakeDuplexify() {
+  var args = [].slice.call(arguments);
+  return (duplexifyOverride || duplexify).apply(null, args);
+}
 
 describe('ConnectionPool', function() {
   var ConnectionPool;
@@ -85,12 +101,14 @@ describe('ConnectionPool', function() {
       '@google-cloud/common': {
         util: fakeUtil,
       },
+      duplexify: fakeDuplexify,
       uuid: fakeUuid,
     });
   });
 
   beforeEach(function() {
     fakeConnection = new FakeConnection();
+    duplexifyOverride = null;
 
     fakeChannel = {
       getConnectivityState: function() {
@@ -149,7 +167,7 @@ describe('ConnectionPool', function() {
 
     it('should respect user specified settings', function() {
       var options = {
-        maxConnections: 10,
+        maxConnections: 2,
         ackDeadline: 100,
       };
 
@@ -242,36 +260,6 @@ describe('ConnectionPool', function() {
   });
 
   describe('close', function() {
-    it('should close the client', function(done) {
-      pool.client = {close: done};
-      pool.close();
-    });
-
-    it('should set isOpen to false', function() {
-      pool.close();
-      assert.strictEqual(pool.isOpen, false);
-    });
-
-    it('should set isGettingChannelState to false', function() {
-      pool.isGettingChannelState = true;
-      pool.close();
-
-      assert.strictEqual(pool.isGettingChannelState, false);
-    });
-
-    it('should call end on all active connections', function() {
-      var a = new FakeConnection();
-      var b = new FakeConnection();
-
-      pool.connections.set('a', a);
-      pool.connections.set('b', b);
-
-      pool.close();
-
-      assert.strictEqual(a.ended, true);
-      assert.strictEqual(b.ended, true);
-    });
-
     it('should clear the connections map', function(done) {
       pool.connections.clear = done;
       pool.close();
@@ -294,6 +282,18 @@ describe('ConnectionPool', function() {
       assert.strictEqual(pool.queue.length, 0);
 
       global.clearTimeout = _clearTimeout;
+    });
+
+    it('should set isOpen to false', function() {
+      pool.close();
+      assert.strictEqual(pool.isOpen, false);
+    });
+
+    it('should set isGettingChannelState to false', function() {
+      pool.isGettingChannelState = true;
+      pool.close();
+
+      assert.strictEqual(pool.isGettingChannelState, false);
     });
 
     it('should reset internally used props', function() {
@@ -323,6 +323,39 @@ describe('ConnectionPool', function() {
       }
     });
 
+    it('should call cancel on all active connections', function(done) {
+      var a = new FakeConnection();
+      var b = new FakeConnection();
+
+      pool.connections.set('a', a);
+      pool.connections.set('b', b);
+
+      pool.close(function(err) {
+        assert.ifError(err);
+        assert.strictEqual(a.canceled, true);
+        assert.strictEqual(b.canceled, true);
+        done();
+      });
+    });
+
+    it('should call end on all active connections', function() {
+      var a = new FakeConnection();
+      var b = new FakeConnection();
+
+      pool.connections.set('a', a);
+      pool.connections.set('b', b);
+
+      pool.close();
+
+      assert.strictEqual(a.ended, true);
+      assert.strictEqual(b.ended, true);
+    });
+
+    it('should close the client', function(done) {
+      pool.client = {close: done};
+      pool.close();
+    });
+
     it('should exec a callback when finished closing', function(done) {
       pool.close(done);
     });
@@ -341,6 +374,7 @@ describe('ConnectionPool', function() {
     var fakeConnection;
     var fakeChannel;
     var fakeClient;
+    var fakeDuplex;
 
     beforeEach(function() {
       fakeConnection = new FakeConnection();
@@ -369,16 +403,12 @@ describe('ConnectionPool', function() {
 
         callback(null, fakeClient);
       };
-    });
 
-    it('should make the correct request', function(done) {
-      fakeClient.streamingPull = function(metadata) {
-        assert.strictEqual(metadata, pool.metadata_);
-        setImmediate(done);
-        return fakeConnection;
+      fakeDuplex = new FakeConnection();
+
+      duplexifyOverride = function() {
+        return fakeDuplex;
       };
-
-      pool.createConnection();
     });
 
     it('should emit any errors that occur when getting client', function(done) {
@@ -430,7 +460,7 @@ describe('ConnectionPool', function() {
           pool.createConnection();
           pool.emit(channelReadyEvent);
 
-          assert.strictEqual(fakeConnection.isConnected, true);
+          assert.strictEqual(fakeDuplex.isConnected, true);
         });
 
         it('should reset internally used properties', function() {
@@ -446,7 +476,7 @@ describe('ConnectionPool', function() {
 
         it('should emit a connected event', function(done) {
           pool.on('connected', function(connection) {
-            assert.strictEqual(connection, fakeConnection);
+            assert.strictEqual(connection, fakeDuplex);
             done();
           });
 
@@ -471,13 +501,21 @@ describe('ConnectionPool', function() {
       });
 
       it('should create a connection', function(done) {
+        var fakeDuplex = new FakeConnection();
+
+        duplexifyOverride = function(writable, readable, options) {
+          assert.strictEqual(writable, fakeConnection);
+          assert.deepEqual(options, {objectMode: true});
+          return fakeDuplex;
+        };
+
         fakeUtil.replaceProjectIdToken = function(subName, projectId) {
           assert.strictEqual(subName, SUB_NAME);
           assert.strictEqual(projectId, PROJECT_ID);
           return TOKENIZED_SUB_NAME;
         };
 
-        fakeConnection.write = function(reqOpts) {
+        fakeDuplex.write = function(reqOpts) {
           assert.deepEqual(reqOpts, {
             subscription: TOKENIZED_SUB_NAME,
             streamAckDeadlineSeconds: pool.settings.ackDeadline / 1000,
@@ -486,15 +524,56 @@ describe('ConnectionPool', function() {
 
         pool.connections.set = function(id, connection) {
           assert.strictEqual(id, fakeId);
-          assert.strictEqual(connection, fakeConnection);
+          assert.strictEqual(connection, fakeDuplex);
           done();
         };
 
         pool.createConnection();
       });
 
+      it('should unpack the recieved messages', function(done) {
+        var fakeDuplex = new FakeConnection();
+        var pipedMessages = [];
+        var fakeResp = {
+          receivedMessages: [{}, {}, {}, {}, null],
+        };
+
+        duplexifyOverride = function(writable, readable) {
+          readable
+            .on('data', function(message) {
+              pipedMessages.push(message);
+            })
+            .on('end', function() {
+              assert.strictEqual(pipedMessages.length, 4);
+              pipedMessages.forEach(function(message, i) {
+                assert.strictEqual(message, fakeResp.receivedMessages[i]);
+              });
+              done();
+            })
+            .write(fakeResp);
+
+          return fakeDuplex;
+        };
+
+        pool.createConnection();
+      });
+
+      it('should proxy the cancel method', function() {
+        var fakeCancel = function() {};
+
+        fakeConnection.cancel = {
+          bind: function(context) {
+            assert.strictEqual(context, fakeConnection);
+            return fakeCancel;
+          },
+        };
+
+        pool.createConnection();
+        assert.strictEqual(fakeDuplex.cancel, fakeCancel);
+      });
+
       it('should pause the connection if the pool is paused', function(done) {
-        fakeConnection.pause = done;
+        fakeDuplex.pause = done;
         pool.isPaused = true;
         pool.createConnection();
       });
@@ -509,7 +588,7 @@ describe('ConnectionPool', function() {
           });
 
           pool.createConnection();
-          fakeConnection.emit('error', error);
+          fakeDuplex.emit('error', error);
         });
       });
 
@@ -524,8 +603,8 @@ describe('ConnectionPool', function() {
           pool.on('error', done); // should not fire
           pool.createConnection();
 
-          fakeConnection.emit('error', fakeError);
           fakeConnection.emit('status', fakeError);
+          fakeDuplex.emit('error', fakeError);
 
           done();
         });
@@ -543,7 +622,7 @@ describe('ConnectionPool', function() {
 
         it('should increment the failed connection counter', function() {
           pool.failedConnectionAttempts = 0;
-          fakeConnection.isConnected = false;
+          fakeDuplex.isConnected = false;
 
           pool.createConnection();
           fakeConnection.emit('status', {});
@@ -553,7 +632,7 @@ describe('ConnectionPool', function() {
 
         it('should not incr. the failed connection counter', function() {
           pool.failedConnectionAttempts = 0;
-          fakeConnection.isConnected = true;
+          fakeDuplex.isConnected = true;
 
           pool.createConnection();
           fakeConnection.emit('status', {});
@@ -660,7 +739,7 @@ describe('ConnectionPool', function() {
           });
 
           pool.createConnection();
-          fakeConnection.emit('data', {receivedMessages: [fakeResp]});
+          fakeDuplex.emit('data', fakeResp);
         });
       });
     });
