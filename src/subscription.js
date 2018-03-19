@@ -19,6 +19,7 @@
 var arrify = require('arrify');
 var chunk = require('lodash.chunk');
 var common = require('@google-cloud/common');
+var delay = require('delay');
 var events = require('events');
 var extend = require('extend');
 var is = require('is');
@@ -281,16 +282,17 @@ Subscription.formatName_ = function(projectId, name) {
  * @param {object} message The message object.
  */
 Subscription.prototype.ack_ = function(message) {
-  this.breakLease_(message);
+  var breakLease = this.breakLease_.bind(this, message);
+
   this.histogram.add(Date.now() - message.received);
 
   if (this.isConnected_()) {
-    this.acknowledge_(message.ackId, message.connectionId);
+    this.acknowledge_(message.ackId, message.connectionId).then(breakLease);
     return;
   }
 
   this.inventory_.ack.push(message.ackId);
-  this.setFlushTimeout_();
+  this.setFlushTimeout_().then(breakLease);
 };
 
 /*!
@@ -634,8 +636,10 @@ Subscription.prototype.exists = function(callback) {
 Subscription.prototype.flushQueues_ = function() {
   var self = this;
 
-  clearTimeout(this.flushTimeoutHandle_);
-  this.flushTimeoutHandle_ = null;
+  if (this.flushTimeoutHandle_) {
+    this.flushTimeoutHandle_.cancel();
+    this.flushTimeoutHandle_ = null;
+  }
 
   var acks = this.inventory_.ack;
   var nacks = this.inventory_.nack;
@@ -1013,15 +1017,17 @@ Subscription.prototype.modifyPushConfig = function(config, gaxOpts, callback) {
  * @param {object} message - The message object.
  */
 Subscription.prototype.nack_ = function(message) {
-  this.breakLease_(message);
+  var breakLease = this.breakLease_.bind(this, message);
 
   if (this.isConnected_()) {
-    this.modifyAckDeadline_(message.ackId, 0, message.connectionId);
+    this.modifyAckDeadline_(message.ackId, 0, message.connectionId).then(
+      breakLease
+    );
     return;
   }
 
   this.inventory_.nack.push(message.ackId);
-  this.setFlushTimeout_();
+  this.setFlushTimeout_().then(breakLease);
 };
 
 /*!
@@ -1040,16 +1046,11 @@ Subscription.prototype.openConnection_ = function() {
   });
 
   pool.on('message', function(message) {
-    if (!self.hasMaxMessages_()) {
-      self.emit('message', self.leaseMessage_(message));
-      return;
-    }
+    self.emit('message', self.leaseMessage_(message));
 
-    if (!pool.isPaused) {
+    if (!pool.isPaused && self.hasMaxMessages_()) {
       pool.pause();
     }
-
-    message.nack();
   });
 
   pool.once('connected', function() {
@@ -1155,11 +1156,17 @@ Subscription.prototype.seek = function(snapshot, gaxOpts, callback) {
  * @private
  */
 Subscription.prototype.setFlushTimeout_ = function() {
-  if (this.flushTimeoutHandle_) {
-    return;
+  if (!this.flushTimeoutHandle_) {
+    var timeout = delay(1000);
+    var promise = timeout
+      .then(this.flushQueues_.bind(this))
+      .catch(common.util.noop);
+
+    promise.cancel = timeout.cancel.bind(timeout);
+    this.flushTimeoutHandle_ = promise;
   }
 
-  this.flushTimeoutHandle_ = setTimeout(this.flushQueues_.bind(this), 1000);
+  return this.flushTimeoutHandle_;
 };
 
 /*!

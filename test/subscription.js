@@ -18,6 +18,7 @@
 
 var assert = require('assert');
 var common = require('@google-cloud/common');
+var delay = require('delay');
 var events = require('events');
 var extend = require('extend');
 var is = require('is');
@@ -62,6 +63,12 @@ function FakeSnapshot() {
   this.calledWith_ = [].slice.call(arguments);
 }
 
+var delayOverride = null;
+
+function fakeDelay(timeout) {
+  return (delayOverride || delay)(timeout);
+}
+
 describe('Subscription', function() {
   var Subscription;
   var subscription;
@@ -81,6 +88,7 @@ describe('Subscription', function() {
       '@google-cloud/common': {
         util: fakeUtil,
       },
+      delay: fakeDelay,
       os: fakeOs,
       './connection-pool.js': FakeConnectionPool,
       './histogram.js': FakeHistogram,
@@ -285,19 +293,14 @@ describe('Subscription', function() {
     };
 
     beforeEach(function() {
-      subscription.setFlushTimeout_ = fakeUtil.noop;
       subscription.breakLease_ = fakeUtil.noop;
       subscription.histogram.add = fakeUtil.noop;
-      subscription.acknowledge_ = fakeUtil.noop;
-    });
-
-    it('should break the lease on the message', function(done) {
-      subscription.breakLease_ = function(message) {
-        assert.strictEqual(message, MESSAGE);
-        done();
+      subscription.acknowledge_ = function() {
+        return Promise.resolve();
       };
-
-      subscription.ack_(MESSAGE);
+      subscription.setFlushTimeout_ = function() {
+        return Promise.resolve();
+      };
     });
 
     it('should add the time it took to ack to the histogram', function(done) {
@@ -317,31 +320,58 @@ describe('Subscription', function() {
       subscription.ack_(MESSAGE);
     });
 
-    it('should acknowledge if there is a connection', function(done) {
-      subscription.isConnected_ = function() {
-        return true;
-      };
+    describe('with connection', function() {
+      beforeEach(function() {
+        subscription.isConnected_ = function() {
+          return true;
+        };
+      });
 
-      subscription.acknowledge_ = function(ackId, connectionId) {
-        assert.strictEqual(ackId, MESSAGE.ackId);
-        assert.strictEqual(connectionId, MESSAGE.connectionId);
-        done();
-      };
+      it('should acknowledge if there is a connection', function(done) {
+        subscription.acknowledge_ = function(ackId, connectionId) {
+          assert.strictEqual(ackId, MESSAGE.ackId);
+          assert.strictEqual(connectionId, MESSAGE.connectionId);
+          setImmediate(done);
+          return Promise.resolve();
+        };
 
-      subscription.ack_(MESSAGE);
+        subscription.ack_(MESSAGE);
+      });
+
+      it('should break the lease on the message', function(done) {
+        subscription.breakLease_ = function(message) {
+          assert.strictEqual(message, MESSAGE);
+          done();
+        };
+
+        subscription.ack_(MESSAGE);
+      });
     });
 
-    it('should queue the message to be acked if no connection', function(done) {
-      subscription.isConnected_ = function() {
-        return false;
-      };
+    describe('without connection', function() {
+      beforeEach(function() {
+        subscription.isConnected_ = function() {
+          return false;
+        };
+      });
 
-      subscription.setFlushTimeout_ = function() {
-        assert(subscription.inventory_.ack.indexOf(MESSAGE.ackId) > -1);
-        done();
-      };
+      it('should queue the message to be acked if no connection', function(done) {
+        subscription.setFlushTimeout_ = function() {
+          assert(subscription.inventory_.ack.indexOf(MESSAGE.ackId) > -1);
+          done();
+        };
 
-      subscription.ack_(MESSAGE);
+        subscription.ack_(MESSAGE);
+      });
+
+      it('should break the lease on the message', function(done) {
+        subscription.breakLease_ = function(message) {
+          assert.strictEqual(message, MESSAGE);
+          done();
+        };
+
+        subscription.ack_(MESSAGE);
+      });
     });
   });
 
@@ -948,23 +978,18 @@ describe('Subscription', function() {
 
   describe('flushQueues_', function() {
     it('should cancel any pending flushes', function() {
-      var fakeHandle = 'abc';
-      var cleared = false;
-
-      var _clearTimeout = global.clearTimeout;
-
-      global.clearTimeout = function(handle) {
-        assert.strictEqual(handle, fakeHandle);
-        cleared = true;
+      var canceled = false;
+      var fakeHandle = {
+        cancel: function() {
+          canceled = true;
+        },
       };
 
       subscription.flushTimeoutHandle_ = fakeHandle;
       subscription.flushQueues_();
 
       assert.strictEqual(subscription.flushTimeoutHandle_, null);
-      assert.strictEqual(cleared, true);
-
-      global.clearTimeout = _clearTimeout;
+      assert.strictEqual(canceled, true);
     });
 
     it('should do nothing if theres nothing to ack/nack', function() {
@@ -1565,45 +1590,69 @@ describe('Subscription', function() {
     };
 
     beforeEach(function() {
-      subscription.setFlushTimeout_ = fakeUtil.noop;
       subscription.breakLease_ = fakeUtil.noop;
-    });
-
-    it('should break the lease on the message', function(done) {
-      subscription.breakLease_ = function(message) {
-        assert.strictEqual(message, MESSAGE);
-        done();
+      subscription.modifyAckDeadline_ = function() {
+        return Promise.resolve();
       };
-
-      subscription.nack_(MESSAGE);
-    });
-
-    it('should nack if there is a connection', function(done) {
-      subscription.isConnected_ = function() {
-        return true;
-      };
-
-      subscription.modifyAckDeadline_ = function(ackId, deadline, connId) {
-        assert.strictEqual(ackId, MESSAGE.ackId);
-        assert.strictEqual(deadline, 0);
-        assert.strictEqual(connId, MESSAGE.connectionId);
-        done();
-      };
-
-      subscription.nack_(MESSAGE);
-    });
-
-    it('should queue the message to be nacked if no conn', function(done) {
-      subscription.isConnected_ = function() {
-        return false;
-      };
-
       subscription.setFlushTimeout_ = function() {
-        assert(subscription.inventory_.nack.indexOf(MESSAGE.ackId) > -1);
-        done();
+        return Promise.resolve();
       };
+    });
 
-      subscription.nack_(MESSAGE);
+    describe('with connection', function() {
+      beforeEach(function() {
+        subscription.isConnected_ = function() {
+          return true;
+        };
+      });
+
+      it('should nack if there is a connection', function(done) {
+        subscription.modifyAckDeadline_ = function(ackId, deadline, connId) {
+          assert.strictEqual(ackId, MESSAGE.ackId);
+          assert.strictEqual(deadline, 0);
+          assert.strictEqual(connId, MESSAGE.connectionId);
+          setImmediate(done);
+          return Promise.resolve();
+        };
+
+        subscription.nack_(MESSAGE);
+      });
+
+      it('should break the lease on the message', function(done) {
+        subscription.breakLease_ = function(message) {
+          assert.strictEqual(message, MESSAGE);
+          done();
+        };
+
+        subscription.nack_(MESSAGE);
+      });
+    });
+
+    describe('without connection', function() {
+      beforeEach(function() {
+        subscription.isConnected_ = function() {
+          return false;
+        };
+      });
+
+      it('should queue the message to be nacked if no conn', function(done) {
+        subscription.setFlushTimeout_ = function() {
+          assert(subscription.inventory_.nack.indexOf(MESSAGE.ackId) > -1);
+          setImmediate(done);
+          return Promise.resolve();
+        };
+
+        subscription.nack_(MESSAGE);
+      });
+
+      it('should break the lease on the message', function(done) {
+        subscription.breakLease_ = function(message) {
+          assert.strictEqual(message, MESSAGE);
+          done();
+        };
+
+        subscription.nack_(MESSAGE);
+      });
     });
   });
 
@@ -1690,23 +1739,6 @@ describe('Subscription', function() {
 
       subscription.connectionPool.emit('message', message);
       done();
-    });
-
-    it('should nack messages if over limit', function(done) {
-      var message = {nack: done};
-      var leasedMessage = {};
-
-      subscription.leaseMessage_ = function() {
-        return leasedMessage;
-      };
-
-      subscription.hasMaxMessages_ = function() {
-        return true;
-      };
-
-      subscription.openConnection_();
-      subscription.connectionPool.isPaused = true;
-      subscription.connectionPool.emit('message', message);
     });
 
     it('should flush the queue when connected', function(done) {
@@ -1861,41 +1893,49 @@ describe('Subscription', function() {
   });
 
   describe('setFlushTimeout_', function() {
-    var fakeTimeoutHandle = 1234;
-    var globalSetTimeout;
+    it('should set a flush timeout', function(done) {
+      var flushed = false;
 
-    before(function() {
-      globalSetTimeout = global.setTimeout;
-    });
-
-    after(function() {
-      global.setTimeout = globalSetTimeout;
-    });
-
-    it('should set a timeout to call flushQueues', function(done) {
-      subscription.flushQueues_ = done;
-
-      global.setTimeout = function(callback, duration) {
-        assert.strictEqual(duration, 1000);
-        setImmediate(callback); // the done fn
-        return fakeTimeoutHandle;
-      };
-
-      subscription.setFlushTimeout_();
-      assert.strictEqual(subscription.flushTimeoutHandle_, fakeTimeoutHandle);
-    });
-
-    it('should not set a timeout if one already exists', function() {
       subscription.flushQueues_ = function() {
-        throw new Error('Should not be called.');
+        flushed = true;
       };
 
-      global.setTimeout = function() {
-        throw new Error('Should not be called.');
+      var delayPromise = delay(0);
+      var fakeBoundDelay = function() {};
+
+      delayPromise.cancel.bind = function(context) {
+        assert.strictEqual(context, delayPromise);
+        return fakeBoundDelay;
       };
 
-      subscription.flushTimeoutHandle_ = fakeTimeoutHandle;
-      subscription.setFlushTimeout_();
+      delayOverride = function(timeout) {
+        assert.strictEqual(timeout, 1000);
+        return delayPromise;
+      };
+
+      var promise = subscription.setFlushTimeout_();
+
+      promise.then(function() {
+        assert.strictEqual(subscription.flushTimeoutHandle_, promise);
+        assert.strictEqual(promise.cancel, fakeBoundDelay);
+        assert.strictEqual(flushed, true);
+        done();
+      });
+    });
+
+    it('should swallow cancel errors', function() {
+      var promise = subscription.setFlushTimeout_();
+      promise.cancel();
+      return promise;
+    });
+
+    it('should return the cached timeout', function() {
+      var fakeHandle = {};
+
+      subscription.flushTimeoutHandle_ = fakeHandle;
+
+      var promise = subscription.setFlushTimeout_();
+      assert.strictEqual(fakeHandle, promise);
     });
   });
 
