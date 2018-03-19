@@ -124,6 +124,10 @@ describe('Subscription', function() {
       assert(subscription.histogram instanceof FakeHistogram);
     });
 
+    it('should create a latency histogram', function() {
+      assert(subscription.latency_ instanceof FakeHistogram);
+    });
+
     it('should format the sub name', function() {
       var formattedName = 'a/b/c/d';
       var formatName = Subscription.formatName_;
@@ -439,28 +443,19 @@ describe('Subscription', function() {
     });
 
     describe('with streaming connection', function() {
-      var pool;
-
       beforeEach(function() {
         subscription.isConnected_ = function() {
           return true;
         };
-
-        pool = subscription.connectionPool = {};
       });
 
       it('should send the correct request', function(done) {
         var fakeConnectionId = 'abc';
-        var fakeConnection = {
-          write: function(data) {
-            assert.deepEqual(data, {ackIds: fakeAckIds});
-            done();
-          },
-        };
 
-        pool.acquire = function(connectionId, callback) {
+        subscription.writeTo_ = function(connectionId, data) {
           assert.strictEqual(connectionId, fakeConnectionId);
-          callback(null, fakeConnection);
+          assert.deepEqual(data, {ackIds: fakeAckIds});
+          done();
         };
 
         subscription.acknowledge_(fakeAckIds, fakeConnectionId);
@@ -468,27 +463,22 @@ describe('Subscription', function() {
 
       it('should batch requests if there are too many ackIds', function(done) {
         var receivedCalls = 0;
-
         var fakeConnectionId = 'abc';
-        var fakeConnection = {
-          write: function(data) {
-            var offset = receivedCalls * batchSize;
-            var expectedAckIds = tooManyFakeAckIds.slice(
-              offset,
-              offset + batchSize
-            );
 
-            assert.deepEqual(data, {ackIds: expectedAckIds});
+        subscription.writeTo_ = function(connectionId, data) {
+          assert.strictEqual(connectionId, fakeConnectionId);
 
-            receivedCalls += 1;
-            if (receivedCalls === expectedCalls) {
-              done();
-            }
-          },
-        };
+          var offset = receivedCalls * batchSize;
+          var expectedAckIds = tooManyFakeAckIds.slice(
+            offset,
+            offset + batchSize
+          );
 
-        pool.acquire = function(connectionId, callback) {
-          callback(null, fakeConnection);
+          assert.deepEqual(data, {ackIds: expectedAckIds});
+
+          if (++receivedCalls === expectedCalls) {
+            done();
+          }
         };
 
         subscription.acknowledge_(tooManyFakeAckIds, fakeConnectionId);
@@ -497,8 +487,8 @@ describe('Subscription', function() {
       it('should emit an error when unable to get a conn', function(done) {
         var error = new Error('err');
 
-        pool.acquire = function(connectionId, callback) {
-          callback(error);
+        subscription.writeTo_ = function() {
+          return Promise.reject(error);
         };
 
         subscription.on('error', function(err) {
@@ -1446,30 +1436,21 @@ describe('Subscription', function() {
     });
 
     describe('with streaming connection', function() {
-      var pool;
-
       beforeEach(function() {
         subscription.isConnected_ = function() {
           return true;
         };
-
-        pool = subscription.connectionPool = {};
       });
 
       it('should send the correct request', function(done) {
         var expectedDeadlines = Array(fakeAckIds.length).fill(fakeDeadline);
         var fakeConnId = 'abc';
-        var fakeConnection = {
-          write: function(data) {
-            assert.deepEqual(data.modifyDeadlineAckIds, fakeAckIds);
-            assert.deepEqual(data.modifyDeadlineSeconds, expectedDeadlines);
-            done();
-          },
-        };
 
-        pool.acquire = function(connectionId, callback) {
+        subscription.writeTo_ = function(connectionId, data) {
           assert.strictEqual(connectionId, fakeConnId);
-          callback(null, fakeConnection);
+          assert.deepEqual(data.modifyDeadlineAckIds, fakeAckIds);
+          assert.deepEqual(data.modifyDeadlineSeconds, expectedDeadlines);
+          done();
         };
 
         subscription.modifyAckDeadline_(fakeAckIds, fakeDeadline, fakeConnId);
@@ -1477,31 +1458,26 @@ describe('Subscription', function() {
 
       it('should batch requests if there are too many ackIds', function(done) {
         var receivedCalls = 0;
-
         var fakeConnId = 'abc';
-        var fakeConnection = {
-          write: function(data) {
-            var offset = receivedCalls * batchSize;
-            var expectedAckIds = tooManyFakeAckIds.slice(
-              offset,
-              offset + batchSize
-            );
-            var expectedDeadlines = Array(expectedAckIds.length).fill(
-              fakeDeadline
-            );
 
-            assert.deepEqual(data.modifyDeadlineAckIds, expectedAckIds);
-            assert.deepEqual(data.modifyDeadlineSeconds, expectedDeadlines);
+        subscription.writeTo_ = function(connectionId, data) {
+          assert.strictEqual(connectionId, fakeConnId);
 
-            receivedCalls += 1;
-            if (receivedCalls === expectedCalls) {
-              done();
-            }
-          },
-        };
+          var offset = receivedCalls * batchSize;
+          var expectedAckIds = tooManyFakeAckIds.slice(
+            offset,
+            offset + batchSize
+          );
+          var expectedDeadlines = Array(expectedAckIds.length).fill(
+            fakeDeadline
+          );
 
-        pool.acquire = function(connectionId, callback) {
-          callback(null, fakeConnection);
+          assert.deepEqual(data.modifyDeadlineAckIds, expectedAckIds);
+          assert.deepEqual(data.modifyDeadlineSeconds, expectedDeadlines);
+
+          if (++receivedCalls === expectedCalls) {
+            done();
+          }
         };
 
         subscription.modifyAckDeadline_(
@@ -1513,10 +1489,9 @@ describe('Subscription', function() {
 
       it('should emit an error when unable to get a conn', function(done) {
         var error = new Error('err');
-        var fakeConnId = 'abc';
 
-        pool.acquire = function(connectionId, callback) {
-          callback(error);
+        subscription.writeTo_ = function() {
+          return Promise.reject(error);
         };
 
         subscription.on('error', function(err) {
@@ -1524,7 +1499,7 @@ describe('Subscription', function() {
           done();
         });
 
-        subscription.modifyAckDeadline_(fakeAckIds, fakeDeadline, fakeConnId);
+        subscription.modifyAckDeadline_(fakeAckIds, fakeDeadline);
       });
     });
   });
@@ -1913,6 +1888,11 @@ describe('Subscription', function() {
 
     beforeEach(function() {
       subscription.isOpen = true;
+      subscription.latency_ = {
+        percentile: function() {
+          return 0;
+        },
+      };
     });
 
     after(function() {
@@ -1936,6 +1916,28 @@ describe('Subscription', function() {
       subscription.renewLeases_ = done;
       subscription.setLeaseTimeout_();
       assert.strictEqual(subscription.leaseTimeoutHandle_, fakeTimeoutHandle);
+    });
+
+    it('should subtract the estimated latency', function(done) {
+      var latency = 1;
+
+      subscription.latency_.percentile = function(percentile) {
+        assert.strictEqual(percentile, 99);
+        return latency;
+      };
+
+      var ackDeadline = (subscription.ackDeadline = 1000);
+
+      global.Math.random = function() {
+        return fakeRandom;
+      };
+
+      global.setTimeout = function(callback, duration) {
+        assert.strictEqual(duration, fakeRandom * ackDeadline * 0.9 - latency);
+        done();
+      };
+
+      subscription.setLeaseTimeout_();
     });
 
     it('should not set a timeout if one already exists', function() {
@@ -2037,6 +2039,92 @@ describe('Subscription', function() {
       };
 
       subscription.snapshot(SNAPSHOT_NAME);
+    });
+  });
+
+  describe('writeTo_', function() {
+    var CONNECTION_ID = 'abc';
+    var CONNECTION = {};
+
+    beforeEach(function() {
+      subscription.connectionPool = {
+        acquire: function(connId, cb) {
+          cb(null, CONNECTION);
+        },
+      };
+    });
+
+    it('should return a promise', function() {
+      subscription.connectionPool.acquire = function() {};
+
+      var returnValue = subscription.writeTo_();
+      assert(returnValue instanceof Promise);
+    });
+
+    it('should reject the promise if unable to acquire stream', function() {
+      var fakeError = new Error('err');
+
+      subscription.connectionPool.acquire = function(connId, cb) {
+        assert.strictEqual(connId, CONNECTION_ID);
+        cb(fakeError);
+      };
+
+      return subscription.writeTo_(CONNECTION_ID, {}).then(
+        function() {
+          throw new Error('Should not resolve.');
+        },
+        function(err) {
+          assert.strictEqual(err, fakeError);
+        }
+      );
+    });
+
+    it('should write to the stream', function(done) {
+      var fakeData = {a: 'b'};
+
+      CONNECTION.write = function(data) {
+        assert.strictEqual(data, fakeData);
+        done();
+      };
+
+      subscription.writeTo_(CONNECTION_ID, fakeData);
+    });
+
+    it('should reject the promise if unable to write the data', function() {
+      var fakeError = new Error('err');
+
+      CONNECTION.write = function(data, cb) {
+        cb(fakeError);
+      };
+
+      return subscription.writeTo_(CONNECTION_ID, {}).then(
+        function() {
+          throw new Error('Should not have resolved.');
+        },
+        function(err) {
+          assert.strictEqual(err, fakeError);
+        }
+      );
+    });
+
+    it('should capture the write latency when successful', function() {
+      var fakeLatency = 500;
+      var capturedLatency;
+
+      CONNECTION.write = function(data, cb) {
+        setTimeout(cb, 500, null);
+      };
+
+      subscription.latency_.add = function(value) {
+        capturedLatency = value;
+      };
+
+      return subscription.writeTo_(CONNECTION_ID, {}).then(function() {
+        var upper = fakeLatency + 50;
+        var lower = fakeLatency - 50;
+
+        assert(capturedLatency > lower && capturedLatency < upper);
+      });
     });
   });
 });

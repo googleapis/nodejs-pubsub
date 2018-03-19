@@ -31,6 +31,18 @@ describe('Histogram', function() {
   });
 
   describe('initialization', function() {
+    it('should set default min/max values', function() {
+      assert.strictEqual(histogram.options.min, 10000);
+      assert.strictEqual(histogram.options.max, 600000);
+    });
+
+    it('should accept user defined min/max values', function() {
+      histogram = new Histogram({min: 5, max: 10});
+
+      assert.strictEqual(histogram.options.min, 5);
+      assert.strictEqual(histogram.options.max, 10);
+    });
+
     it('should create a data map', function() {
       assert(histogram.data instanceof Map);
     });

@@ -27,10 +27,13 @@ var extend = require('extend');
  * @class
  */
 function Histogram(options) {
-  this.options = extend({
-    min: 10000,
-    max: 600000
-  }, options);
+  this.options = extend(
+    {
+      min: 10000,
+      max: 600000,
+    },
+    options
+  );
 
   this.data = new Map();
   this.length = 0;
