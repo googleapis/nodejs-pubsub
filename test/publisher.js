@@ -83,7 +83,7 @@ describe('Publisher', function() {
         assert.deepEqual(publisher.settings.batching, {
           maxBytes: Math.pow(1024, 2) * 5,
           maxMessages: 1000,
-          maxMilliseconds: 1000,
+          maxMilliseconds: 100,
         });
       });
 
