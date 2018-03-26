@@ -171,7 +171,7 @@ function Subscription(pubsub, name, options) {
   this.flowControl = extend(
     {
       maxBytes: os.freemem() * 0.2,
-      maxMessages: Infinity,
+      maxMessages: 100,
     },
     options.flowControl
   );
