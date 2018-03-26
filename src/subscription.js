@@ -74,7 +74,7 @@ var MAX_ACK_IDS_PER_REQUEST = 3000;
  *     messages. Defaults to 20% of free memory.
  * @param {number} [options.flowControl.maxMessages] The maximum number of
  *     un-acked messages to allow before the subscription pauses incoming
- *     messages. Default: Infinity.
+ *     messages. Default: 100.
  * @param {number} [options.maxConnections] Use this to limit the number of
  *     connections to be used when sending and receiving messages. Default: 5.
  *
