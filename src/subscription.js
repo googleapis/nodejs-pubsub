@@ -60,6 +60,10 @@ var MAX_ACK_IDS_PER_REQUEST = 3000;
  * for messages automatically as long as there is at least one listener assigned
  * for the `message` event.
  *
+ * By default Subscription objects allow you to process 100 messages at the same
+ * time. You can fine tune this value by adjusting the
+ * `options.flowControl.maxMessages` option.
+ *
  * @class
  *
  * @param {PubSub} pubsub PubSub object.
