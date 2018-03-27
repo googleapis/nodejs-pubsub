@@ -1263,13 +1263,13 @@ Subscription.prototype.writeTo_ = function(connId, data) {
         return;
       }
 
+      // we can ignore any errors that come from this since they'll be
+      // re-emitted later
       connection.write(data, function(err) {
-        if (err) {
-          reject(err);
-          return;
+        if (!err) {
+          self.latency_.add(Date.now() - startTime);
         }
 
-        self.latency_.add(Date.now() - startTime);
         resolve();
       });
     });
