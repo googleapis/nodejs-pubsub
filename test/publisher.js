@@ -120,6 +120,15 @@ describe('Publisher', function() {
 
         assert.strictEqual(publisher.settings.batching.maxMessages, 1000);
       });
+
+      it('should capture gaxOptions', function() {
+        var fakeGaxOpts = {a: 'a'};
+        var publisher = new Publisher(TOPIC, {
+          gaxOpts: fakeGaxOpts
+        });
+
+        assert.deepEqual(publisher.settings.gaxOpts, fakeGaxOpts);
+      });
     });
   });
 
@@ -260,6 +269,7 @@ describe('Publisher', function() {
 
     it('should make the correct request', function(done) {
       var FAKE_MESSAGE = {};
+      var FAKE_GAX_OPTS = {a: 'b'};
 
       TOPIC.request = function(config) {
         assert.strictEqual(config.client, 'PublisherClient');
@@ -268,10 +278,12 @@ describe('Publisher', function() {
           topic: TOPIC_NAME,
           messages: [FAKE_MESSAGE],
         });
+        assert.strictEqual(config.gaxOpts, FAKE_GAX_OPTS);
         done();
       };
 
       publisher.inventory_.queued.push(FAKE_MESSAGE);
+      publisher.settings.gaxOpts = FAKE_GAX_OPTS;
       publisher.publish_();
     });
 
