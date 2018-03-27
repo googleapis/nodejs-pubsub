@@ -124,7 +124,7 @@ describe('Publisher', function() {
       it('should capture gaxOptions', function() {
         var fakeGaxOpts = {a: 'a'};
         var publisher = new Publisher(TOPIC, {
-          gaxOpts: fakeGaxOpts
+          gaxOpts: fakeGaxOpts,
         });
 
         assert.deepEqual(publisher.settings.gaxOpts, fakeGaxOpts);
