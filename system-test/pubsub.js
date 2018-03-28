@@ -531,6 +531,58 @@ describe('pubsub', function() {
     });
   });
 
+  describe('Subscription', () => {
+    let topic;
+    let subscription;
+
+    beforeEach(() => {
+      topic = pubsub.topic(generateTopicName());
+      subscription = topic.subscription(generateSubName());
+
+      return topic
+        .create()
+        .then(() => subscription.create());
+    });
+
+    afterEach(() => {
+      subscription.close();
+
+      return Promise.all([
+        topic.delete(),
+        subscription.delete(),
+      ]);
+    });
+
+    it('should not redeliver message until subscription is closed', done => {
+      subscription.on('error', done);
+
+      let messageHandlerCalls = 0;
+      subscription.on('message', () => {
+        ++messageHandlerCalls;
+
+        const date = new Date();
+        const dateStr = `${date.getHours()}:${date.getMinutes()}:` +
+          `${date.getSeconds()}`;
+        console.log(`${messageHandlerCalls} call at: ${dateStr}`);
+      });;
+
+      topic
+        .publisher()
+        .publish(Buffer.from(uuid()))
+        .catch(done);
+
+      setTimeout(() => {
+        try {
+          assert.equal(messageHandlerCalls, 1,
+            'Should call message handler only once');
+          done();
+        } catch (error) {
+          done(error);
+        }
+      }, 120000);
+    });
+  });
+
   describe('IAM', function() {
     it('should get a policy', function(done) {
       var topic = pubsub.topic(TOPIC_NAMES[0]);
