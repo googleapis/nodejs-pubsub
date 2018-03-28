@@ -181,7 +181,7 @@ describe('Subscription', function() {
 
       assert.deepEqual(subscription.flowControl, {
         maxBytes: FAKE_FREE_MEM * 0.2,
-        maxMessages: Infinity,
+        maxMessages: 100,
       });
     });
 
