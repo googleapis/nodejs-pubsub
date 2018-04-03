@@ -148,7 +148,7 @@ function publishMessageWithCustomAttributes(topicName, data) {
   // Add two custom attributes, origin and username, to the message
   const customAttributes = {
     origin: 'nodejs-sample',
-    username: 'gcp'
+    username: 'gcp',
   };
 
   pubsub
