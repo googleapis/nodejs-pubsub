@@ -141,8 +141,10 @@ test.serial(`should publish a message with custom attributes`, async t => {
   );
   const receivedMessage = await _pullOneMessage(subscription);
   t.is(receivedMessage.data.toString(), expectedMessage.data);
-  t.deepEqual(receivedMessage.attributes, { origin: 'nodejs-sample',
-    username: 'gcp' });
+  t.deepEqual(receivedMessage.attributes, {
+    origin: 'nodejs-sample',
+    username: 'gcp',
+  });
 });
 
 test.serial(`should publish ordered messages`, async t => {
