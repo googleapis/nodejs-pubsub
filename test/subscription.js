@@ -181,7 +181,7 @@ describe('Subscription', function() {
 
       assert.deepEqual(subscription.flowControl, {
         maxBytes: FAKE_FREE_MEM * 0.2,
-        maxMessages: Infinity,
+        maxMessages: 100,
       });
     });
 
@@ -2130,29 +2130,12 @@ describe('Subscription', function() {
       subscription.writeTo_(CONNECTION_ID, fakeData);
     });
 
-    it('should reject the promise if unable to write the data', function() {
-      var fakeError = new Error('err');
-
-      CONNECTION.write = function(data, cb) {
-        cb(fakeError);
-      };
-
-      return subscription.writeTo_(CONNECTION_ID, {}).then(
-        function() {
-          throw new Error('Should not have resolved.');
-        },
-        function(err) {
-          assert.strictEqual(err, fakeError);
-        }
-      );
-    });
-
     it('should capture the write latency when successful', function() {
       var fakeLatency = 500;
       var capturedLatency;
 
       CONNECTION.write = function(data, cb) {
-        setTimeout(cb, 500, null);
+        setTimeout(cb, fakeLatency, null);
       };
 
       subscription.latency_.add = function(value) {

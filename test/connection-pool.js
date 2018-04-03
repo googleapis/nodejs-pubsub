@@ -620,14 +620,17 @@ describe('ConnectionPool', function() {
           fakeConnection.emit('status', {});
         });
 
-        it('should increment the failed connection counter', function() {
+        it('should increment the failed connection counter', function(done) {
           pool.failedConnectionAttempts = 0;
           fakeDuplex.isConnected = false;
 
           pool.createConnection();
           fakeConnection.emit('status', {});
 
-          assert.strictEqual(pool.failedConnectionAttempts, 1);
+          setImmediate(function() {
+            assert.strictEqual(pool.failedConnectionAttempts, 1);
+            done();
+          });
         });
 
         it('should not incr. the failed connection counter', function() {
@@ -640,7 +643,7 @@ describe('ConnectionPool', function() {
           assert.strictEqual(pool.failedConnectionAttempts, 0);
         });
 
-        it('should capture the date when no connections are found', function() {
+        it('should capture the date when no conns are found', function(done) {
           var dateNow = global.Date.now;
 
           var fakeDate = Date.now();
@@ -656,8 +659,11 @@ describe('ConnectionPool', function() {
           pool.createConnection();
           fakeConnection.emit('status', {});
 
-          assert.strictEqual(pool.noConnectionsTime, fakeDate);
-          global.Date.now = dateNow;
+          setImmediate(function() {
+            assert.strictEqual(pool.noConnectionsTime, fakeDate);
+            global.Date.now = dateNow;
+            done();
+          });
         });
 
         it('should not capture the date when already set', function() {
