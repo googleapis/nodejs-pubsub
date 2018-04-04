@@ -64,6 +64,11 @@ var MAX_ACK_IDS_PER_REQUEST = 3000;
  * time. You can fine tune this value by adjusting the
  * `options.flowControl.maxMessages` option.
  *
+ * Subscription objects handle ack management, by automatically extending the
+ * ack deadline while the message is being processed, to then issue the ack or
+ * nack of such message when the processing is done. **Note:** message
+ * redelivery is still possible.
+ *
  * @class
  *
  * @param {PubSub} pubsub PubSub object.
