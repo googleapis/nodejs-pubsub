@@ -60,6 +60,15 @@ var MAX_ACK_IDS_PER_REQUEST = 3000;
  * for messages automatically as long as there is at least one listener assigned
  * for the `message` event.
  *
+ * By default Subscription objects allow you to process 100 messages at the same
+ * time. You can fine tune this value by adjusting the
+ * `options.flowControl.maxMessages` option.
+ *
+ * Subscription objects handle ack management, by automatically extending the
+ * ack deadline while the message is being processed, to then issue the ack or
+ * nack of such message when the processing is done. **Note:** message
+ * redelivery is still possible.
+ *
  * @class
  *
  * @param {PubSub} pubsub PubSub object.
@@ -74,7 +83,7 @@ var MAX_ACK_IDS_PER_REQUEST = 3000;
  *     messages. Defaults to 20% of free memory.
  * @param {number} [options.flowControl.maxMessages] The maximum number of
  *     un-acked messages to allow before the subscription pauses incoming
- *     messages. Default: Infinity.
+ *     messages. Default: 100.
  * @param {number} [options.maxConnections] Use this to limit the number of
  *     connections to be used when sending and receiving messages. Default: 5.
  *
@@ -153,6 +162,7 @@ function Subscription(pubsub, name, options) {
   this.projectId = pubsub.projectId;
   this.request = pubsub.request.bind(pubsub);
   this.histogram = new Histogram();
+  this.latency_ = new Histogram({min: 0});
 
   this.name = Subscription.formatName_(pubsub.projectId, name);
 
@@ -170,7 +180,7 @@ function Subscription(pubsub, name, options) {
   this.flowControl = extend(
     {
       maxBytes: os.freemem() * 0.2,
-      maxMessages: Infinity,
+      maxMessages: 100,
     },
     options.flowControl
   );
@@ -312,31 +322,17 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
   var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
     ackIdChunk
   ) {
-    if (!self.isConnected_()) {
-      return common.util.promisify(self.request).call(self, {
-        client: 'SubscriberClient',
-        method: 'acknowledge',
-        reqOpts: {
-          subscription: self.name,
-          ackIds: ackIdChunk,
-        },
-      });
+    if (self.isConnected_()) {
+      return self.writeTo_(connId, {ackIds: ackIdChunk});
     }
 
-    return new Promise(function(resolve, reject) {
-      self.connectionPool.acquire(connId, function(err, connection) {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        connection.write(
-          {
-            ackIds: ackIdChunk,
-          },
-          resolve
-        );
-      });
+    return common.util.promisify(self.request).call(self, {
+      client: 'SubscriberClient',
+      method: 'acknowledge',
+      reqOpts: {
+        subscription: self.name,
+        ackIds: ackIdChunk,
+      },
     });
   });
 
@@ -902,33 +898,21 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
   var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
     ackIdChunk
   ) {
-    if (!self.isConnected_()) {
-      return common.util.promisify(self.request).call(self, {
-        client: 'SubscriberClient',
-        method: 'modifyAckDeadline',
-        reqOpts: {
-          subscription: self.name,
-          ackDeadlineSeconds: deadline,
-          ackIds: ackIdChunk,
-        },
+    if (self.isConnected_()) {
+      return self.writeTo_(connId, {
+        modifyDeadlineAckIds: ackIdChunk,
+        modifyDeadlineSeconds: Array(ackIdChunk.length).fill(deadline),
       });
     }
 
-    return new Promise(function(resolve, reject) {
-      self.connectionPool.acquire(connId, function(err, connection) {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        connection.write(
-          {
-            modifyDeadlineAckIds: ackIdChunk,
-            modifyDeadlineSeconds: Array(ackIdChunk.length).fill(deadline),
-          },
-          resolve
-        );
-      });
+    return common.util.promisify(self.request).call(self, {
+      client: 'SubscriberClient',
+      method: 'modifyAckDeadline',
+      reqOpts: {
+        subscription: self.name,
+        ackDeadlineSeconds: deadline,
+        ackIds: ackIdChunk,
+      },
     });
   });
 
@@ -1180,7 +1164,9 @@ Subscription.prototype.setLeaseTimeout_ = function() {
     return;
   }
 
-  var timeout = Math.random() * this.ackDeadline * 0.9;
+  var latency = this.latency_.percentile(99);
+  var timeout = Math.random() * this.ackDeadline * 0.9 - latency;
+
   this.leaseTimeoutHandle_ = setTimeout(this.renewLeases_.bind(this), timeout);
 };
 
@@ -1263,6 +1249,40 @@ Subscription.prototype.setMetadata = function(metadata, gaxOpts, callback) {
  */
 Subscription.prototype.snapshot = function(name) {
   return this.pubsub.snapshot.call(this, name);
+};
+
+/**
+ * Writes to specified duplex stream. This is useful for capturing write
+ * latencies that can later be used to adjust the auto lease timeout.
+ *
+ * @private
+ *
+ * @param {string} connId The ID of the connection to write to.
+ * @param {object} data The data to be written to the stream.
+ * @returns {Promise}
+ */
+Subscription.prototype.writeTo_ = function(connId, data) {
+  var self = this;
+  var startTime = Date.now();
+
+  return new Promise(function(resolve, reject) {
+    self.connectionPool.acquire(connId, function(err, connection) {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      // we can ignore any errors that come from this since they'll be
+      // re-emitted later
+      connection.write(data, function(err) {
+        if (!err) {
+          self.latency_.add(Date.now() - startTime);
+        }
+
+        resolve();
+      });
+    });
+  });
 };
 
 /*! Developer Documentation

@@ -16,8 +16,7 @@
 
 'use strict';
 
-var MIN_VALUE = 10000;
-var MAX_VALUE = 600000;
+var extend = require('extend');
 
 /*!
  * The Histogram class is used to capture the lifespan of messages within the
@@ -27,7 +26,15 @@ var MAX_VALUE = 600000;
  * @private
  * @class
  */
-function Histogram() {
+function Histogram(options) {
+  this.options = extend(
+    {
+      min: 10000,
+      max: 600000,
+    },
+    options
+  );
+
   this.data = new Map();
   this.length = 0;
 }
@@ -39,8 +46,8 @@ function Histogram() {
  * @param {numnber} value - The value in milliseconds.
  */
 Histogram.prototype.add = function(value) {
-  value = Math.max(value, MIN_VALUE);
-  value = Math.min(value, MAX_VALUE);
+  value = Math.max(value, this.options.min);
+  value = Math.min(value, this.options.max);
   value = Math.ceil(value / 1000) * 1000;
 
   if (!this.data.has(value)) {
@@ -75,7 +82,7 @@ Histogram.prototype.percentile = function(percent) {
     }
   }
 
-  return MIN_VALUE;
+  return this.options.min;
 };
 
 module.exports = Histogram;
