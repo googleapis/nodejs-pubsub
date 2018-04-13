@@ -119,6 +119,41 @@ function publishMessage(topicName, data) {
     .topic(topicName)
     .publisher()
     .publish(dataBuffer)
+    .then(messageId => {
+      console.log(`Message ${messageId} published.`);
+    })
+    .catch(err => {
+      console.error('ERROR:', err);
+    });
+  // [END pubsub_publish_message]
+}
+
+function publishMessageWithCustomAttributes(topicName, data) {
+  // [START pubsub_publish_message_custom_attributes]
+  // Imports the Google Cloud client library
+  const PubSub = require(`@google-cloud/pubsub`);
+
+  // Creates a client
+  const pubsub = new PubSub();
+
+  /**
+   * TODO(developer): Uncomment the following lines to run the sample.
+   */
+  // const topicName = 'your-topic';
+  // const data = JSON.stringify({ foo: 'bar' });
+
+  // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
+  const dataBuffer = Buffer.from(data);
+  // Add two custom attributes, origin and username, to the message
+  const customAttributes = {
+    origin: 'nodejs-sample',
+    username: 'gcp',
+  };
+
+  pubsub
+    .topic(topicName)
+    .publisher()
+    .publish(dataBuffer, customAttributes)
     .then(results => {
       const messageId = results[0];
       console.log(`Message ${messageId} published.`);
@@ -126,7 +161,7 @@ function publishMessage(topicName, data) {
     .catch(err => {
       console.error('ERROR:', err);
     });
-  // [END pubsub_publish_message]
+  // [END pubsub_publish_message_custom_attributes]
 }
 
 function publishBatchedMessages(topicName, data, maxMessages, maxWaitTime) {
@@ -348,6 +383,14 @@ const cli = require(`yargs`)
     }
   )
   .command(
+    `publish-attributes <topicName> <message>`,
+    `Publishes a message with custom attributes to a Topic`,
+    {},
+    opts => {
+      publishMessageWithCustomAttributes(opts.topicName, opts.message);
+    }
+  )
+  .command(
     `publish-batch <topicName> <message>`,
     `Publishes messages to a topic using custom batching settings.`,
     {
@@ -407,6 +450,7 @@ const cli = require(`yargs`)
   .example(`node $0 delete my-topic`)
   .example(`node $0 publish my-topic "Hello, world!"`)
   .example(`node $0 publish my-topic '{"data":"Hello, world!"}'`)
+  .example(`node $0 publish-attributes my-topic "Hello, world!"`)
   .example(`node $0 publish-ordered my-topic "Hello, world!"`)
   .example(`node $0 publish-batch my-topic "Hello, world!" -w 1000`)
   .example(`node $0 get-policy greetings`)

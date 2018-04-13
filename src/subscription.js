@@ -60,6 +60,15 @@ var MAX_ACK_IDS_PER_REQUEST = 3000;
  * for messages automatically as long as there is at least one listener assigned
  * for the `message` event.
  *
+ * By default Subscription objects allow you to process 100 messages at the same
+ * time. You can fine tune this value by adjusting the
+ * `options.flowControl.maxMessages` option.
+ *
+ * Subscription objects handle ack management, by automatically extending the
+ * ack deadline while the message is being processed, to then issue the ack or
+ * nack of such message when the processing is done. **Note:** message
+ * redelivery is still possible.
+ *
  * @class
  *
  * @param {PubSub} pubsub PubSub object.
@@ -74,7 +83,7 @@ var MAX_ACK_IDS_PER_REQUEST = 3000;
  *     messages. Defaults to 20% of free memory.
  * @param {number} [options.flowControl.maxMessages] The maximum number of
  *     un-acked messages to allow before the subscription pauses incoming
- *     messages. Default: Infinity.
+ *     messages. Default: 100.
  * @param {number} [options.maxConnections] Use this to limit the number of
  *     connections to be used when sending and receiving messages. Default: 5.
  *
@@ -171,7 +180,7 @@ function Subscription(pubsub, name, options) {
   this.flowControl = extend(
     {
       maxBytes: os.freemem() * 0.2,
-      maxMessages: Infinity,
+      maxMessages: 100,
     },
     options.flowControl
   );
@@ -1263,13 +1272,13 @@ Subscription.prototype.writeTo_ = function(connId, data) {
         return;
       }
 
+      // we can ignore any errors that come from this since they'll be
+      // re-emitted later
       connection.write(data, function(err) {
-        if (err) {
-          reject(err);
-          return;
+        if (!err) {
+          self.latency_.add(Date.now() - startTime);
         }
 
-        self.latency_.add(Date.now() - startTime);
         resolve();
       });
     });

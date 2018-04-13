@@ -38,6 +38,8 @@ var is = require('is');
  *     to buffer before sending a payload.
  * @param {number} [options.batching.maxMilliseconds] The maximum duration to
  *     wait before sending a payload. Defaults to 100 milliseconds.
+ * @param {object} [options.gaxOpts] Request configuration options, outlined
+ *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
  *
  * @example
  * const PubSub = require('@google-cloud/pubsub');
@@ -88,6 +90,7 @@ function Publisher(topic, options) {
       maxMessages: Math.min(options.batching.maxMessages, 1000),
       maxMilliseconds: options.batching.maxMilliseconds,
     },
+    gaxOpts: options.gaxOpts,
   };
 
   this.timeoutHandle_ = null;
@@ -210,6 +213,7 @@ Publisher.prototype.publish_ = function() {
       client: 'PublisherClient',
       method: 'publish',
       reqOpts: reqOpts,
+      gaxOpts: this.settings.gaxOpts,
     },
     function(err, resp) {
       var messageIds = arrify(resp && resp.messageIds);
