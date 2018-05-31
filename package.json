@@ -51,7 +51,7 @@
     "mkamioner <mkamioner@gmail.com>"
   ],
   "scripts": {
-    "system-test": "repo-tools test run --cmd mocha -- system-test/*.js --no-timeouts",
+    "system-test": "repo-tools test run --cmd mocha -- system-test/*.js --timeout 600000",
     "cover": "nyc --reporter=lcov mocha --require intelli-espower-loader test/*.js --timeout 0 && nyc report",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
     "test-no-cover": "repo-tools test run --cmd mocha -- test/*.js --no-timeouts",
@@ -69,7 +69,7 @@
     "delay": "^2.0.0",
     "duplexify": "^3.5.4",
     "extend": "^3.0.1",
-    "google-auto-auth": "^0.9.0",
+    "google-auto-auth": "^0.10.1",
     "google-gax": "^0.16.0",
     "google-proto-files": "^0.15.0",
     "is": "^3.0.1",
