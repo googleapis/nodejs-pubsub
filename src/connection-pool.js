@@ -27,6 +27,7 @@ var uuid = require('uuid');
 
 var CHANNEL_READY_EVENT = 'channel.ready';
 var CHANNEL_ERROR_EVENT = 'channel.error';
+var KEEP_ALIVE_INTERVAL = 30000;
 
 /*!
  * if we can't establish a connection within 5 minutes, we need to back off
@@ -88,53 +89,6 @@ function ConnectionPool(subscription) {
 util.inherits(ConnectionPool, events.EventEmitter);
 
 /*!
- * Acquires a connection from the pool. Optionally you can specify an id for a
- * specific connection, but if it is no longer available it will return the
- * first available connection.
- *
- * @private
- * @param {string} [id] The id of the connection to retrieve.
- * @param {function} callback The callback function.
- * @param {?error} callback.err An error returned while acquiring a
- *     connection.
- * @param {stream} callback.connection A duplex stream.
- */
-ConnectionPool.prototype.acquire = function(id, callback) {
-  var self = this;
-
-  if (is.fn(id)) {
-    callback = id;
-    id = null;
-  }
-
-  if (!this.isOpen) {
-    callback(new Error('No connections available to make request.'));
-    return;
-  }
-
-  // it's possible that by the time a user acks the connection could have
-  // closed, so in that case we'll just return any connection
-  if (!this.connections.has(id)) {
-    id = getFirstConnectionId();
-  }
-
-  var connection = this.connections.get(id);
-
-  if (connection) {
-    callback(null, connection);
-    return;
-  }
-
-  this.once('connected', function(connection) {
-    callback(null, connection);
-  });
-
-  function getFirstConnectionId() {
-    return self.connections.keys().next().value;
-  }
-};
-
-/*!
  * Ends each connection in the pool and closes the pool, preventing new
  * connections from being created.
  *
@@ -151,6 +105,8 @@ ConnectionPool.prototype.close = function(callback) {
   this.connections.clear();
   this.queue.forEach(clearTimeout);
   this.queue.length = 0;
+
+  clearInterval(this.keepAliveHandle);
 
   this.isOpen = false;
   this.isGettingChannelState = false;
@@ -310,7 +266,6 @@ ConnectionPool.prototype.createMessage = function(connectionId, resp) {
   var originalDataLength = resp.message.data.length;
 
   var message = {
-    connectionId: connectionId,
     ackId: resp.ackId,
     id: resp.message.messageId,
     attributes: resp.message.attributes,
@@ -432,6 +387,12 @@ ConnectionPool.prototype.open = function() {
       self.getAndEmitChannelState();
     }
   });
+
+  this.keepAliveHandle = setInterval(function() {
+    self.sendKeepAlives();
+  }, KEEP_ALIVE_INTERVAL);
+
+  this.keepAliveHandle.unref();
 };
 
 /*!
@@ -482,6 +443,17 @@ ConnectionPool.prototype.resume = function() {
 
   this.connections.forEach(function(connection) {
     connection.resume();
+  });
+};
+
+/**
+ * Pings streams with empty message to act as a keep alive.
+ *
+ * @private
+ */
+ConnectionPool.prototype.sendKeepAlives = function() {
+  this.connections.forEach(function(connection) {
+    connection.write({});
   });
 };
 

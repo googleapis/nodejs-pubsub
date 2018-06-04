@@ -75,6 +75,9 @@ var MAX_ACK_IDS_PER_REQUEST = 3000;
  * @param {string} name The name of the subscription.
  * @param {object} [options] See a
  *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions)
+ * @param {object} [options.batching] Batching configurations
+ * @param {number} [options.batching.maxMilliseconds=100] The maximum duration
+ *     to wait before sending ack and modack requests.
  * @param {object} [options.flowControl] Flow control configurations for
  *     receiving messages. Note that these options do not persist across
  *     subscription instances.
@@ -183,6 +186,13 @@ function Subscription(pubsub, name, options) {
       maxMessages: 100,
     },
     options.flowControl
+  );
+
+  this.batching = extend(
+    {
+      maxMilliseconds: 100,
+    },
+    options.batching
   );
 
   this.flushTimeoutHandle_ = null;
@@ -295,12 +305,6 @@ Subscription.prototype.ack_ = function(message) {
   var breakLease = this.breakLease_.bind(this, message);
 
   this.histogram.add(Date.now() - message.received);
-
-  if (this.isConnected_()) {
-    this.acknowledge_(message.ackId, message.connectionId).then(breakLease);
-    return;
-  }
-
   this.inventory_.ack.push(message.ackId);
   this.setFlushTimeout_().then(breakLease);
 };
@@ -322,10 +326,6 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
   var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
     ackIdChunk
   ) {
-    if (self.isConnected_()) {
-      return self.writeTo_(connId, {ackIds: ackIdChunk});
-    }
-
     return common.util.promisify(self.request).call(self, {
       client: 'SubscriberClient',
       method: 'acknowledge',
@@ -798,17 +798,6 @@ Subscription.prototype.getMetadata = function(gaxOpts, callback) {
 };
 
 /*!
- * Checks to see if we currently have a streaming connection.
- *
- * @private
- *
- * @return {boolean}
- */
-Subscription.prototype.isConnected_ = function() {
-  return !!(this.connectionPool && this.connectionPool.isConnected());
-};
-
-/*!
  * Checks to see if this Subscription has hit any of the flow control
  * thresholds.
  *
@@ -898,13 +887,6 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
   var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
     ackIdChunk
   ) {
-    if (self.isConnected_()) {
-      return self.writeTo_(connId, {
-        modifyDeadlineAckIds: ackIdChunk,
-        modifyDeadlineSeconds: Array(ackIdChunk.length).fill(deadline),
-      });
-    }
-
     return common.util.promisify(self.request).call(self, {
       client: 'SubscriberClient',
       method: 'modifyAckDeadline',
@@ -1003,13 +985,6 @@ Subscription.prototype.modifyPushConfig = function(config, gaxOpts, callback) {
 Subscription.prototype.nack_ = function(message) {
   var breakLease = this.breakLease_.bind(this, message);
 
-  if (this.isConnected_()) {
-    this.modifyAckDeadline_(message.ackId, 0, message.connectionId).then(
-      breakLease
-    );
-    return;
-  }
-
   this.inventory_.nack.push(message.ackId);
   this.setFlushTimeout_().then(breakLease);
 };
@@ -1035,10 +1010,6 @@ Subscription.prototype.openConnection_ = function() {
     if (!pool.isPaused && self.hasMaxMessages_()) {
       pool.pause();
     }
-  });
-
-  pool.once('connected', function() {
-    self.flushQueues_();
   });
 };
 
@@ -1141,7 +1112,7 @@ Subscription.prototype.seek = function(snapshot, gaxOpts, callback) {
  */
 Subscription.prototype.setFlushTimeout_ = function() {
   if (!this.flushTimeoutHandle_) {
-    var timeout = delay(1000);
+    var timeout = delay(this.batching.maxMilliseconds);
     var promise = timeout
       .then(this.flushQueues_.bind(this))
       .catch(common.util.noop);
@@ -1249,40 +1220,6 @@ Subscription.prototype.setMetadata = function(metadata, gaxOpts, callback) {
  */
 Subscription.prototype.snapshot = function(name) {
   return this.pubsub.snapshot.call(this, name);
-};
-
-/**
- * Writes to specified duplex stream. This is useful for capturing write
- * latencies that can later be used to adjust the auto lease timeout.
- *
- * @private
- *
- * @param {string} connId The ID of the connection to write to.
- * @param {object} data The data to be written to the stream.
- * @returns {Promise}
- */
-Subscription.prototype.writeTo_ = function(connId, data) {
-  var self = this;
-  var startTime = Date.now();
-
-  return new Promise(function(resolve, reject) {
-    self.connectionPool.acquire(connId, function(err, connection) {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      // we can ignore any errors that come from this since they'll be
-      // re-emitted later
-      connection.write(data, function(err) {
-        if (!err) {
-          self.latency_.add(Date.now() - startTime);
-        }
-
-        resolve();
-      });
-    });
-  });
 };
 
 /*! Developer Documentation
