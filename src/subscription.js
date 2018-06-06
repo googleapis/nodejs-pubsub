@@ -315,10 +315,9 @@ Subscription.prototype.ack_ = function(message) {
  * @private
  *
  * @param {string|string[]} ackIds The ack IDs to acknowledge.
- * @param {string} [connId] Connection ID to send request on.
  * @return {Promise}
  */
-Subscription.prototype.acknowledge_ = function(ackIds, connId) {
+Subscription.prototype.acknowledge_ = function(ackIds) {
   var self = this;
 
   ackIds = arrify(ackIds);
@@ -326,7 +325,7 @@ Subscription.prototype.acknowledge_ = function(ackIds, connId) {
   var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
     ackIdChunk
   ) {
-    return common.util.promisify(self.request).call(self, {
+    return self.makeAckModAckRequest_({
       client: 'SubscriberClient',
       method: 'acknowledge',
       reqOpts: {
@@ -870,16 +869,35 @@ Subscription.prototype.listenForEvents_ = function() {
 };
 
 /*!
+ * Makes a request and captures latency to adjust future deadlines.
+ *
+ * @private
+ *
+ * @param {object} config - Request config.
+ * @return {Promise}
+ */
+Subscription.prototype.makeAckModAckRequest_ = function(config) {
+  const start = Date.now();
+
+  return common.util
+    .promisify(this.request)
+    .call(this, config)
+    .then(response => {
+      this.latency_.add(Date.now() - start);
+      return response;
+    })
+};
+
+/*!
  * Sends a modifyAckDeadline request for the provided ack ids.
  *
  * @private
  *
  * @param {string|string[]} ackIds The ack IDs to acknowledge.
  * @param {number} deadline The dealine in seconds.
- * @param {string=} connId Connection ID to send request on.
  * @return {Promise}
  */
-Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
+Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline) {
   var self = this;
 
   ackIds = arrify(ackIds);
@@ -887,7 +905,7 @@ Subscription.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
   var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
     ackIdChunk
   ) {
-    return common.util.promisify(self.request).call(self, {
+    return self.makeAckModAckRequest_({
       client: 'SubscriberClient',
       method: 'modifyAckDeadline',
       reqOpts: {
