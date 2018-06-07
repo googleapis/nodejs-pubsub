@@ -696,7 +696,7 @@ describe('Subscriber', function() {
 
       return subscriber
         .makeAckModAckRequest_()
-        .then(() => assert(actualDelay > 500 && actualDelay < 600));
+        .then(() => assert(actualDelay > 450 && actualDelay < 550));
     });
   });
 
