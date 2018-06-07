@@ -21,12 +21,11 @@ var common = require('@google-cloud/common');
 var duplexify = require('duplexify');
 var events = require('events');
 var extend = require('extend');
+var is = require('is');
 var proxyquire = require('proxyquire');
-var uuid = require('uuid');
 var util = require('util');
 
 var fakeUtil = extend({}, common.util);
-var fakeUuid = extend({}, uuid);
 
 function FakeConnection() {
   this.isConnected = false;
@@ -102,7 +101,6 @@ describe('ConnectionPool', function() {
         util: fakeUtil,
       },
       duplexify: fakeDuplexify,
-      uuid: fakeUuid,
     });
   });
 
@@ -152,7 +150,7 @@ describe('ConnectionPool', function() {
 
       assert.strictEqual(pool.subscription, SUBSCRIPTION);
       assert.strictEqual(pool.pubsub, SUBSCRIPTION.pubsub);
-      assert(pool.connections instanceof Map);
+      assert(pool.connections instanceof Set);
       assert.strictEqual(pool.isPaused, false);
       assert.strictEqual(pool.isOpen, false);
       assert.strictEqual(pool.isGettingChannelState, false);
@@ -192,70 +190,6 @@ describe('ConnectionPool', function() {
       };
 
       new ConnectionPool(SUBSCRIPTION);
-    });
-  });
-
-  describe('acquire', function() {
-    it('should return an error if the pool is closed', function(done) {
-      var expectedErr = 'No connections available to make request.';
-
-      pool.isOpen = false;
-
-      pool.acquire(function(err) {
-        assert(err instanceof Error);
-        assert.strictEqual(err.message, expectedErr);
-        done();
-      });
-    });
-
-    it('should return a specified connection', function(done) {
-      var id = 'a';
-      var fakeConnection = new FakeConnection();
-
-      pool.connections.set(id, fakeConnection);
-      pool.connections.set('b', new FakeConnection());
-
-      pool.acquire(id, function(err, connection) {
-        assert.ifError(err);
-        assert.strictEqual(connection, fakeConnection);
-        done();
-      });
-    });
-
-    it('should return any conn when the specified is missing', function(done) {
-      var fakeConnection = new FakeConnection();
-
-      pool.connections.set('a', fakeConnection);
-
-      pool.acquire('b', function(err, connection) {
-        assert.ifError(err);
-        assert.strictEqual(connection, fakeConnection);
-        done();
-      });
-    });
-
-    it('should return any connection when id is missing', function(done) {
-      var fakeConnection = new FakeConnection();
-
-      pool.connections.set('a', fakeConnection);
-
-      pool.acquire(function(err, connection) {
-        assert.ifError(err);
-        assert.strictEqual(connection, fakeConnection);
-        done();
-      });
-    });
-
-    it('should listen for connected event if no conn is ready', function(done) {
-      var fakeConnection = new FakeConnection();
-
-      pool.acquire(function(err, connection) {
-        assert.ifError(err);
-        assert.strictEqual(connection, fakeConnection);
-        done();
-      });
-
-      pool.emit('connected', fakeConnection);
     });
   });
 
@@ -327,8 +261,8 @@ describe('ConnectionPool', function() {
       var a = new FakeConnection();
       var b = new FakeConnection();
 
-      pool.connections.set('a', a);
-      pool.connections.set('b', b);
+      pool.connections.add(a);
+      pool.connections.add(b);
 
       pool.close(function(err) {
         assert.ifError(err);
@@ -342,8 +276,8 @@ describe('ConnectionPool', function() {
       var a = new FakeConnection();
       var b = new FakeConnection();
 
-      pool.connections.set('a', a);
-      pool.connections.set('b', b);
+      pool.connections.add(a);
+      pool.connections.add(b);
 
       pool.close();
 
@@ -488,15 +422,8 @@ describe('ConnectionPool', function() {
 
     describe('connection', function() {
       var TOKENIZED_SUB_NAME = 'project/p/subscriptions/' + SUB_NAME;
-      var fakeId;
 
       beforeEach(function() {
-        fakeId = uuid.v4();
-
-        fakeUuid.v4 = function() {
-          return fakeId;
-        };
-
         fakeUtil.replaceProjectIdToken = common.util.replaceProjectIdToken;
       });
 
@@ -522,8 +449,7 @@ describe('ConnectionPool', function() {
           });
         };
 
-        pool.connections.set = function(id, connection) {
-          assert.strictEqual(id, fakeId);
+        pool.connections.add = function(connection) {
           assert.strictEqual(connection, fakeDuplex);
           done();
         };
@@ -594,7 +520,7 @@ describe('ConnectionPool', function() {
 
       describe('status events', function() {
         beforeEach(function() {
-          pool.connections.set('a', new FakeConnection());
+          pool.connections.add(fakeConnection);
         });
 
         it('should cancel any error events', function(done) {
@@ -610,13 +536,18 @@ describe('ConnectionPool', function() {
         });
 
         it('should close and delete the connection', function(done) {
-          pool.createConnection();
+          var duplex;
 
-          pool.connections.delete = function(id) {
-            assert.strictEqual(id, fakeId);
+          pool.connections.add = function(connection) {
+            duplex = connection;
+          };
+
+          pool.connections.delete = function(connection) {
+            assert.strictEqual(connection, duplex);
             done();
           };
 
+          pool.createConnection();
           fakeConnection.emit('status', {});
         });
 
@@ -715,7 +646,7 @@ describe('ConnectionPool', function() {
           };
 
           // will only emit status errors if pool is empty
-          pool.connections = new Map();
+          pool.connections = new Set();
 
           pool.on('error', function(err) {
             assert.strictEqual(err.code, error.code);
@@ -733,8 +664,7 @@ describe('ConnectionPool', function() {
           var fakeResp = {};
           var fakeMessage = {};
 
-          pool.createMessage = function(id, resp) {
-            assert.strictEqual(id, fakeId);
+          pool.createMessage = function(resp) {
             assert.strictEqual(resp, fakeResp);
             return fakeMessage;
           };
@@ -755,7 +685,6 @@ describe('ConnectionPool', function() {
     var message;
     var globalDateNow;
 
-    var CONNECTION_ID = 'abc';
     var FAKE_DATE_NOW = Date.now();
 
     var PT = {
@@ -783,15 +712,11 @@ describe('ConnectionPool', function() {
     });
 
     beforeEach(function() {
-      message = pool.createMessage(CONNECTION_ID, RESP);
+      message = pool.createMessage(RESP);
     });
 
     after(function() {
       global.Date.now = globalDateNow;
-    });
-
-    it('should capture the connection id', function() {
-      assert.strictEqual(message.connectionId, CONNECTION_ID);
     });
 
     it('should capture the message data', function() {
@@ -1043,34 +968,34 @@ describe('ConnectionPool', function() {
 
   describe('isConnected', function() {
     it('should return true when at least one stream is connected', function() {
-      var connections = (pool.connections = new Map());
+      var connections = (pool.connections = new Set());
 
-      connections.set('a', new FakeConnection());
-      connections.set('b', new FakeConnection());
-      connections.set('c', new FakeConnection());
-      connections.set('d', new FakeConnection());
+      connections.add(new FakeConnection());
+      connections.add(new FakeConnection());
+      connections.add(new FakeConnection());
+      connections.add(new FakeConnection());
 
       var conn = new FakeConnection();
       conn.isConnected = true;
-      connections.set('e', conn);
+      connections.add(conn);
 
       assert(pool.isConnected());
     });
 
     it('should return false when there is no connection', function() {
-      var connections = (pool.connections = new Map());
+      var connections = (pool.connections = new Set());
 
-      connections.set('a', new FakeConnection());
-      connections.set('b', new FakeConnection());
-      connections.set('c', new FakeConnection());
-      connections.set('d', new FakeConnection());
-      connections.set('e', new FakeConnection());
+      connections.add(new FakeConnection());
+      connections.add(new FakeConnection());
+      connections.add(new FakeConnection());
+      connections.add(new FakeConnection());
+      connections.add(new FakeConnection());
 
       assert(!pool.isConnected());
     });
 
     it('should return false when the map is empty', function() {
-      pool.connections = new Map();
+      pool.connections = new Set();
       assert(!pool.isConnected());
     });
   });
@@ -1146,6 +1071,66 @@ describe('ConnectionPool', function() {
         pool.emit('newListener', 'channel.ready');
       });
     });
+
+    describe('keep alive interval', function() {
+      var _setInterval;
+
+      var HANDLE = {
+        unref: fakeUtil.noop,
+      };
+
+      beforeEach(function() {
+        _setInterval = global.setInterval;
+        global.setInterval = function() {
+          return HANDLE;
+        };
+      });
+
+      afterEach(function() {
+        global.setInterval = _setInterval;
+      });
+
+      it('should set an interval to make keep alive requests', function() {
+        global.setInterval = function(callback, interval) {
+          assert(is.fn(callback));
+          assert.strictEqual(interval, 30000);
+          return HANDLE;
+        };
+
+        pool.open();
+
+        assert.strictEqual(pool.keepAliveHandle, HANDLE);
+      });
+
+      it('should call the sendKeepAlives method', function() {
+        var keepAliveCalled = false;
+
+        pool.sendKeepAlives = function() {
+          keepAliveCalled = true;
+        };
+
+        global.setInterval = function(callback) {
+          callback();
+          return HANDLE;
+        };
+
+        pool.open();
+
+        assert.strictEqual(keepAliveCalled, true);
+      });
+
+      it('should call unref', function() {
+        var unrefCalled = false;
+
+        HANDLE.unref = function() {
+          unrefCalled = true;
+        };
+
+        pool.open();
+
+        assert.strictEqual(unrefCalled, true);
+      });
+    });
   });
 
   describe('pause', function() {
@@ -1158,8 +1143,8 @@ describe('ConnectionPool', function() {
       var a = new FakeConnection();
       var b = new FakeConnection();
 
-      pool.connections.set('a', a);
-      pool.connections.set('b', b);
+      pool.connections.add(a);
+      pool.connections.add(b);
 
       pool.pause();
 
@@ -1252,13 +1237,36 @@ describe('ConnectionPool', function() {
       var a = new FakeConnection();
       var b = new FakeConnection();
 
-      pool.connections.set('a', a);
-      pool.connections.set('b', b);
+      pool.connections.add(a);
+      pool.connections.add(b);
 
       pool.resume();
 
       assert.strictEqual(a.isPaused, false);
       assert.strictEqual(b.isPaused, false);
+    });
+  });
+
+  describe('sendKeepAlives', function() {
+    it('should send an empty message to each stream', function() {
+      var a = new FakeConnection();
+      var b = new FakeConnection();
+
+      pool.connections.add(a);
+      pool.connections.add(b);
+
+      a.write = write;
+      b.write = write;
+
+      pool.sendKeepAlives();
+
+      assert.strictEqual(a.emptyWriteSent, true);
+      assert.strictEqual(b.emptyWriteSent, true);
+
+      function write(message) {
+        assert.deepEqual(message, {});
+        this.emptyWriteSent = true;
+      }
     });
   });
 

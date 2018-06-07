@@ -20,10 +20,8 @@ var common = require('@google-cloud/common');
 var duplexify = require('duplexify');
 var each = require('async-each');
 var events = require('events');
-var is = require('is');
 var through = require('through2');
 var util = require('util');
-var uuid = require('uuid');
 
 var CHANNEL_READY_EVENT = 'channel.ready';
 var CHANNEL_ERROR_EVENT = 'channel.error';
@@ -66,7 +64,7 @@ function ConnectionPool(subscription) {
   this.subscription = subscription;
   this.pubsub = subscription.pubsub;
 
-  this.connections = new Map();
+  this.connections = new Set();
 
   this.isPaused = false;
   this.isOpen = false;
@@ -164,7 +162,6 @@ ConnectionPool.prototype.createConnection = function() {
     );
 
     var connection = duplexify(requestStream, readStream, {objectMode: true});
-    var id = uuid.v4();
     var errorImmediateHandle;
 
     connection.cancel = requestStream.cancel.bind(requestStream);
@@ -192,7 +189,7 @@ ConnectionPool.prototype.createConnection = function() {
         streamAckDeadlineSeconds: self.settings.ackDeadline / 1000,
       });
 
-    self.connections.set(id, connection);
+    self.connections.add(connection);
 
     function onChannelError() {
       self.removeListener(CHANNEL_READY_EVENT, onChannelReady);
@@ -222,14 +219,14 @@ ConnectionPool.prototype.createConnection = function() {
     }
 
     function onConnectionData(message) {
-      self.emit('message', self.createMessage(id, message));
+      self.emit('message', self.createMessage(message));
     }
 
     function onConnectionStatus(status) {
       clearImmediate(errorImmediateHandle);
 
       connection.end();
-      self.connections.delete(id);
+      self.connections.delete(connection);
 
       if (!connection.isConnected) {
         self.failedConnectionAttempts += 1;
@@ -253,12 +250,10 @@ ConnectionPool.prototype.createConnection = function() {
 /**
  * Creates a message object for the user.
  *
- * @param {string} connectionId The connection id that the message was
- *     received on.
  * @param {object} resp The message response data from StreamingPull.
  * @return {object} message The message object.
  */
-ConnectionPool.prototype.createMessage = function(connectionId, resp) {
+ConnectionPool.prototype.createMessage = function(resp) {
   var self = this;
 
   var pt = resp.message.publishTime;
