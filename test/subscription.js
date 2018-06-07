@@ -19,9 +19,7 @@
 var assert = require('assert');
 var common = require('@google-cloud/common');
 var extend = require('extend');
-var is = require('is');
 var proxyquire = require('proxyquire');
-var util = require('util');
 
 var promisified = false;
 var fakeUtil = extend({}, common.util, {
