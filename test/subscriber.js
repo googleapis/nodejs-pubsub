@@ -51,7 +51,7 @@ function fakeDelay(timeout) {
   return (delayOverride || delay)(timeout);
 }
 
-describe.only('Subscriber', function() {
+describe('Subscriber', function() {
   var Subscriber;
   var subscriber;
 
@@ -650,6 +650,53 @@ describe.only('Subscriber', function() {
         subscriber.on('message', noop);
         subscriber.removeListener('message', noop);
       });
+    });
+  });
+
+  describe('makeAckModAckRequest_', function() {
+    beforeEach(function() {
+      subscriber.latency_.add = common.util.noop;
+    });
+
+    it('should promisify the request', function() {
+      var fakeConfig = {};
+      var fakeResponse = {};
+
+      function fakePromisified(config) {
+        assert.strictEqual(this, subscriber);
+        assert.strictEqual(config, fakeConfig);
+        return Promise.resolve(fakeResponse);
+      }
+
+      fakeUtil.promisify = function(fn) {
+        assert.strictEqual(fn, subscriber.request);
+        return fakePromisified;
+      };
+
+      return subscriber
+        .makeAckModAckRequest_(fakeConfig)
+        .then(response => assert.strictEqual(response, fakeResponse));
+    });
+
+    it('should capture the request latency', function() {
+      var expectedDelay = 500;
+      var actualDelay;
+
+      subscriber.latency_.add = function(latency) {
+        actualDelay = latency;
+      };
+
+      fakeUtil.promisify = function() {
+        return {
+          call: function() {
+            return delay(expectedDelay);
+          },
+        };
+      };
+
+      return subscriber
+        .makeAckModAckRequest_()
+        .then(() => assert(actualDelay > 500 && actualDelay < 600));
     });
   });
 
