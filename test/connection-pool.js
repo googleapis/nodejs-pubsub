@@ -194,16 +194,31 @@ describe('ConnectionPool', function() {
   });
 
   describe('close', function() {
+    var _clearTimeout;
+    var _clearInterval;
+
+    before(function() {
+      _clearTimeout = global.clearTimeout;
+      _clearInterval = global.clearInterval;
+    });
+
+    beforeEach(function() {
+      global.clearTimeout = global.clearInterval = fakeUtil.noop;
+    });
+
+    afterEach(function() {
+      global.clearTimeout = _clearTimeout;
+      global.clearInterval = _clearInterval;
+    });
+
     it('should clear the connections map', function(done) {
       pool.connections.clear = done;
       pool.close();
     });
 
     it('should clear any timeouts in the queue', function() {
-      var _clearTimeout = global.clearTimeout;
-      var clearCalls = 0;
-
       var fakeHandles = ['a', 'b', 'c', 'd'];
+      var clearCalls = 0;
 
       global.clearTimeout = function(handle) {
         assert.strictEqual(handle, fakeHandles[clearCalls++]);
@@ -214,8 +229,18 @@ describe('ConnectionPool', function() {
 
       assert.strictEqual(clearCalls, fakeHandles.length);
       assert.strictEqual(pool.queue.length, 0);
+    });
 
-      global.clearTimeout = _clearTimeout;
+    it('should clear the keep alive interval', function(done) {
+      var fakeHandle = 'abc';
+
+      global.clearInterval = function(handle) {
+        assert.strictEqual(handle, fakeHandle);
+        done();
+      };
+
+      pool.keepAliveHandle = fakeHandle;
+      pool.close();
     });
 
     it('should set isOpen to false', function() {
@@ -1079,8 +1104,11 @@ describe('ConnectionPool', function() {
         unref: fakeUtil.noop,
       };
 
-      beforeEach(function() {
+      before(function() {
         _setInterval = global.setInterval;
+      });
+
+      beforeEach(function() {
         global.setInterval = function() {
           return HANDLE;
         };

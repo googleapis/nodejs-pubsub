@@ -899,14 +899,18 @@ describe('Subscriber', function() {
   });
 
   describe('renewLeases_', function() {
-    beforeEach(function() {
-      subscriber.modifyAckDeadline_ = function() {
-        return Promise.resolve();
-      };
-    });
+    var _clearTimeout;
 
     var fakeDeadline = 9999;
     var fakeAckIds = ['abc', 'def'];
+
+    before(function() {
+      _clearTimeout = global.clearTimeout;
+    });
+
+    afterEach(function() {
+      global.clearTimeout = _clearTimeout;
+    });
 
     beforeEach(function() {
       subscriber.inventory_.lease = fakeAckIds;
@@ -915,12 +919,15 @@ describe('Subscriber', function() {
       subscriber.histogram.percentile = function() {
         return fakeDeadline;
       };
+
+      subscriber.modifyAckDeadline_ = function() {
+        return Promise.resolve();
+      };
     });
 
     it('should clean up the old timeout handle', function() {
       var fakeHandle = 123;
       var clearTimeoutCalled = false;
-      var _clearTimeout = global.clearTimeout;
 
       global.clearTimeout = function(handle) {
         assert.strictEqual(handle, fakeHandle);
@@ -932,8 +939,6 @@ describe('Subscriber', function() {
 
       assert.strictEqual(subscriber.leaseTimeoutHandle_, null);
       assert.strictEqual(clearTimeoutCalled, true);
-
-      global.clearTimeout = _clearTimeout;
     });
 
     it('should update the ackDeadline', function() {
@@ -1050,7 +1055,7 @@ describe('Subscriber', function() {
       };
     });
 
-    after(function() {
+    afterEach(function() {
       global.setTimeout = globalSetTimeout;
       global.Math.random = globalMathRandom;
     });
