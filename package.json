@@ -71,7 +71,7 @@
     "extend": "^3.0.1",
     "google-auto-auth": "^0.10.1",
     "google-gax": "^0.16.0",
-    "google-proto-files": "^0.15.0",
+    "google-proto-files": "^0.16.0",
     "is": "^3.0.1",
     "lodash.chunk": "^4.2.0",
     "lodash.merge": "^4.6.0",
@@ -92,7 +92,7 @@
     "intelli-espower-loader": "^1.0.1",
     "jsdoc": "^3.5.5",
     "mocha": "^5.0.0",
-    "nyc": "^11.3.0",
+    "nyc": "^12.0.2",
     "power-assert": "^1.4.4",
     "prettier": "^1.9.1",
     "proxyquire": "^2.0.0"
