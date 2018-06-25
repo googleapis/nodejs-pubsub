@@ -69,11 +69,23 @@ function Subscriber(options) {
     options.flowControl
   );
 
+  this.batching = extend(
+    {
+      maxMilliseconds: 100,
+    },
+    options.batching
+  );
+
   this.flushTimeoutHandle_ = null;
   this.leaseTimeoutHandle_ = null;
   this.userClosed_ = false;
   this.isOpen = false;
   this.messageListeners = 0;
+
+  // As of right now we do not write any acks/modacks to the pull streams.
+  // But with allowing users to opt out of using streaming pulls altogether on
+  // the horizon, we may need to support this feature again in the near future.
+  this.writeToStreams_ = false;
 
   events.EventEmitter.call(this);
 
@@ -96,7 +108,7 @@ Subscriber.prototype.ack_ = function(message) {
 
   this.histogram.add(Date.now() - message.received);
 
-  if (this.isConnected_()) {
+  if (this.writeToStreams_ && this.isConnected_()) {
     this.acknowledge_(message.ackId, message.connectionId).then(breakLease);
     return;
   }
@@ -122,7 +134,7 @@ Subscriber.prototype.acknowledge_ = function(ackIds, connId) {
   var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
     ackIdChunk
   ) {
-    if (self.isConnected_()) {
+    if (self.writeToStreams_ && self.isConnected_()) {
       return self.writeTo_(connId, {ackIds: ackIdChunk});
     }
 
@@ -377,7 +389,7 @@ Subscriber.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
   var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
     ackIdChunk
   ) {
-    if (self.isConnected_()) {
+    if (self.writeToStreams_ && self.isConnected_()) {
       return self.writeTo_(connId, {
         modifyDeadlineAckIds: ackIdChunk,
         modifyDeadlineSeconds: Array(ackIdChunk.length).fill(deadline),
@@ -485,7 +497,7 @@ Subscriber.prototype.renewLeases_ = function() {
  */
 Subscriber.prototype.setFlushTimeout_ = function() {
   if (!this.flushTimeoutHandle_) {
-    var timeout = delay(1000);
+    var timeout = delay(this.batching.maxMilliseconds);
     var promise = timeout
       .then(this.flushQueues_.bind(this))
       .catch(common.util.noop);
