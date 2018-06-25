@@ -81,6 +81,10 @@ function Subscriber(options) {
   this.userClosed_ = false;
   this.isOpen = false;
   this.messageListeners = 0;
+
+  // As of right now we do not write any acks/modacks to the pull streams.
+  // But with allowing users to opt out of using streaming pulls altogether on
+  // the horizon, we may need to support this feature again in the near future.
   this.writeToStreams_ = false;
 
   events.EventEmitter.call(this);
