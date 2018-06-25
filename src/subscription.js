@@ -60,6 +60,10 @@ var Subscriber = require('./subscriber.js');
  * @param {string} name The name of the subscription.
  * @param {object} [options] See a
  *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions)
+ * @param {object} [options.batching] Batch configurations for sending out
+ *     Acknowledge and ModifyAckDeadline requests.
+ * @param {number} [options.batching.maxMilliseconds] The maximum amount of time
+ *     to buffer Acknowledge and ModifyAckDeadline requests. Default: 100.
  * @param {object} [options.flowControl] Flow control configurations for
  *     receiving messages. Note that these options do not persist across
  *     subscription instances.
