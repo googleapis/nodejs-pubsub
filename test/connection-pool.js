@@ -263,15 +263,30 @@ describe('ConnectionPool', function() {
   });
 
   describe('close', function() {
+    var _clearTimeout;
+    var _clearInterval;
+
+    before(function() {
+      _clearTimeout = global.clearTimeout;
+      _clearInterval = global.clearInterval;
+    });
+
+    beforeEach(function() {
+      global.clearTimeout = global.clearInterval = fakeUtil.noop;
+    });
+
+    afterEach(function() {
+      global.clearTimeout = _clearTimeout;
+      global.clearInterval = _clearInterval;
+    });
+
     it('should stop running the keepAlive task', function(done) {
-      var _clearInterval = global.clearInterval;
       var fakeHandle = 123;
 
       pool.keepAliveHandle = fakeHandle;
 
       global.clearInterval = function(handle) {
         assert.strictEqual(handle, fakeHandle);
-        global.clearInterval = _clearInterval;
         done();
       };
 
@@ -284,7 +299,6 @@ describe('ConnectionPool', function() {
     });
 
     it('should clear any timeouts in the queue', function() {
-      var _clearTimeout = global.clearTimeout;
       var clearCalls = 0;
 
       var fakeHandles = ['a', 'b', 'c', 'd'];
@@ -298,8 +312,6 @@ describe('ConnectionPool', function() {
 
       assert.strictEqual(clearCalls, fakeHandles.length);
       assert.strictEqual(pool.queue.length, 0);
-
-      global.clearTimeout = _clearTimeout;
     });
 
     it('should set isOpen to false', function() {
