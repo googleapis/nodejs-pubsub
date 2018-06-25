@@ -28,6 +28,8 @@ var uuid = require('uuid');
 var CHANNEL_READY_EVENT = 'channel.ready';
 var CHANNEL_ERROR_EVENT = 'channel.error';
 
+var KEEP_ALIVE_INTERVAL = 30000;
+
 /*!
  * if we can't establish a connection within 5 minutes, we need to back off
  * and emit an error to the user.
@@ -147,6 +149,8 @@ ConnectionPool.prototype.close = function(callback) {
   var connections = Array.from(this.connections.values());
 
   callback = callback || common.util.noop;
+
+  clearInterval(this.keepAliveHandle);
 
   this.connections.clear();
   this.queue.forEach(clearTimeout);
@@ -432,6 +436,14 @@ ConnectionPool.prototype.open = function() {
       self.getAndEmitChannelState();
     }
   });
+
+  if (!this.subscription.writeToStreams_) {
+    this.keepAliveHandle = setInterval(function() {
+      self.sendKeepAlives();
+    }, KEEP_ALIVE_INTERVAL);
+
+    this.keepAliveHandle.unref();
+  }
 };
 
 /*!
@@ -482,6 +494,17 @@ ConnectionPool.prototype.resume = function() {
 
   this.connections.forEach(function(connection) {
     connection.resume();
+  });
+};
+
+/*!
+ * Sends empty message in an effort to keep the stream alive.
+ *
+ * @private
+ */
+ConnectionPool.prototype.sendKeepAlives = function() {
+  this.connections.forEach(function(connection) {
+    connection.write({});
   });
 };
 
