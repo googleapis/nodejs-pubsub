@@ -90,6 +90,9 @@ describe('Subscriber', function() {
           maxBytes: 5,
           maxMessages: 10,
         },
+        batching: {
+          maxMilliseconds: 10,
+        },
       };
 
       var subscriber = new Subscriber(options);
@@ -100,6 +103,8 @@ describe('Subscriber', function() {
         maxBytes: options.flowControl.maxBytes,
         maxMessages: options.flowControl.maxMessages,
       });
+
+      assert.strictEqual(subscriber.batching.maxMilliseconds, 10);
     });
 
     it('should set sensible defaults', function() {
@@ -108,11 +113,14 @@ describe('Subscriber', function() {
       assert.strictEqual(subscriber.userClosed_, false);
       assert.strictEqual(subscriber.messageListeners, 0);
       assert.strictEqual(subscriber.isOpen, false);
+      assert.strictEqual(subscriber.writeToStreams_, false);
 
       assert.deepEqual(subscriber.flowControl, {
         maxBytes: FAKE_FREE_MEM * 0.2,
         maxMessages: 100,
       });
+
+      assert.strictEqual(subscriber.batching.maxMilliseconds, 100);
     });
 
     it('should create an inventory object', function() {
@@ -181,6 +189,8 @@ describe('Subscriber', function() {
         subscriber.isConnected_ = function() {
           return true;
         };
+
+        subscriber.writeToStreams_ = true;
       });
 
       it('should acknowledge if there is a connection', function(done) {
@@ -329,6 +339,8 @@ describe('Subscriber', function() {
         subscriber.isConnected_ = function() {
           return true;
         };
+
+        subscriber.writeToStreams_ = true;
       });
 
       it('should send the correct request', function(done) {
@@ -903,6 +915,8 @@ describe('Subscriber', function() {
         subscriber.isConnected_ = function() {
           return true;
         };
+
+        subscriber.writeToStreams_ = true;
       });
 
       it('should send the correct request', function(done) {
@@ -988,6 +1002,8 @@ describe('Subscriber', function() {
         subscriber.isConnected_ = function() {
           return true;
         };
+
+        subscriber.writeToStreams_ = true;
       });
 
       it('should nack if there is a connection', function(done) {
@@ -1218,6 +1234,12 @@ describe('Subscriber', function() {
   });
 
   describe('setFlushTimeout_', function() {
+    var FLUSH_TIMEOUT = 100;
+
+    beforeEach(function() {
+      subscriber.batching.maxMilliseconds = FLUSH_TIMEOUT;
+    });
+
     it('should set a flush timeout', function(done) {
       var flushed = false;
 
@@ -1234,7 +1256,7 @@ describe('Subscriber', function() {
       };
 
       delayOverride = function(timeout) {
-        assert.strictEqual(timeout, 1000);
+        assert.strictEqual(timeout, FLUSH_TIMEOUT);
         return delayPromise;
       };
 
