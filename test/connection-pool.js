@@ -33,13 +33,16 @@ function FakeConnection() {
   this.isPaused = false;
   this.ended = false;
   this.canceled = false;
+  this.written = [];
 
   events.EventEmitter.call(this);
 }
 
 util.inherits(FakeConnection, events.EventEmitter);
 
-FakeConnection.prototype.write = function() {};
+FakeConnection.prototype.write = function(data) {
+  this.written.push(data);
+};
 
 FakeConnection.prototype.end = function(callback) {
   this.ended = true;
@@ -260,13 +263,42 @@ describe('ConnectionPool', function() {
   });
 
   describe('close', function() {
+    var _clearTimeout;
+    var _clearInterval;
+
+    before(function() {
+      _clearTimeout = global.clearTimeout;
+      _clearInterval = global.clearInterval;
+    });
+
+    beforeEach(function() {
+      global.clearTimeout = global.clearInterval = fakeUtil.noop;
+    });
+
+    afterEach(function() {
+      global.clearTimeout = _clearTimeout;
+      global.clearInterval = _clearInterval;
+    });
+
+    it('should stop running the keepAlive task', function(done) {
+      var fakeHandle = 123;
+
+      pool.keepAliveHandle = fakeHandle;
+
+      global.clearInterval = function(handle) {
+        assert.strictEqual(handle, fakeHandle);
+        done();
+      };
+
+      pool.close();
+    });
+
     it('should clear the connections map', function(done) {
       pool.connections.clear = done;
       pool.close();
     });
 
     it('should clear any timeouts in the queue', function() {
-      var _clearTimeout = global.clearTimeout;
       var clearCalls = 0;
 
       var fakeHandles = ['a', 'b', 'c', 'd'];
@@ -280,8 +312,6 @@ describe('ConnectionPool', function() {
 
       assert.strictEqual(clearCalls, fakeHandles.length);
       assert.strictEqual(pool.queue.length, 0);
-
-      global.clearTimeout = _clearTimeout;
     });
 
     it('should set isOpen to false', function() {
@@ -1078,6 +1108,7 @@ describe('ConnectionPool', function() {
   describe('open', function() {
     beforeEach(function() {
       pool.queueConnection = fakeUtil.noop;
+      clearInterval(pool.keepAliveHandle);
     });
 
     it('should make the specified number of connections', function() {
@@ -1145,6 +1176,31 @@ describe('ConnectionPool', function() {
         pool.isGettingChannelState = true;
         pool.emit('newListener', 'channel.ready');
       });
+    });
+
+    it('should start a keepAlive task', function(done) {
+      var _setInterval = global.setInterval;
+      var unreffed = false;
+      var fakeHandle = {
+        unref: () => (unreffed = true),
+      };
+
+      pool.subscription = {writeToStreams_: false};
+      pool.sendKeepAlives = done;
+
+      global.setInterval = function(fn, interval) {
+        global.setInterval = _setInterval;
+
+        assert.strictEqual(interval, 30000);
+        fn(); // should call sendKeepAlives aka done
+
+        return fakeHandle;
+      };
+
+      pool.open();
+
+      assert.strictEqual(pool.keepAliveHandle, fakeHandle);
+      assert.strictEqual(unreffed, true);
     });
   });
 
@@ -1259,6 +1315,21 @@ describe('ConnectionPool', function() {
 
       assert.strictEqual(a.isPaused, false);
       assert.strictEqual(b.isPaused, false);
+    });
+  });
+
+  describe('sendKeepAlives', function() {
+    it('should write an empty message to all the streams', function() {
+      var a = new FakeConnection();
+      var b = new FakeConnection();
+
+      pool.connections.set('a', a);
+      pool.connections.set('b', b);
+
+      pool.sendKeepAlives();
+
+      assert.deepEqual(a.written, [{}]);
+      assert.deepEqual(b.written, [{}]);
     });
   });
 

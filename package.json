@@ -1,7 +1,7 @@
 {
   "name": "@google-cloud/pubsub",
   "description": "Cloud Pub/Sub Client Library for Node.js",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "license": "Apache-2.0",
   "author": "Google Inc.",
   "engines": {
@@ -51,14 +51,14 @@
     "mkamioner <mkamioner@gmail.com>"
   ],
   "scripts": {
-    "system-test": "repo-tools test run --cmd mocha -- system-test/*.js --timeout 600000",
+    "system-test": "mocha system-test/*.js --timeout 600000",
     "cover": "nyc --reporter=lcov mocha --require intelli-espower-loader test/*.js --timeout 0 && nyc report",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
-    "test-no-cover": "repo-tools test run --cmd mocha -- test/*.js --no-timeouts",
-    "test": "repo-tools test run --cmd npm -- run cover",
-    "lint": "repo-tools lint --cmd eslint -- src/ samples/ system-test/ test/",
-    "prettier": "repo-tools exec -- prettier --write src/*.js src/*/*.js samples/*.js samples/*/*.js test/*.js test/*/*.js system-test/*.js system-test/*/*.js",
-    "docs": "repo-tools exec -- jsdoc -c .jsdoc.js",
+    "test-no-cover": "mocha test/*.js --no-timeouts",
+    "test": "npm run cover",
+    "lint": "eslint src/ samples/ system-test/ test/",
+    "prettier": "prettier --write src/*.js src/*/*.js samples/*.js samples/*/*.js test/*.js test/*/*.js system-test/*.js system-test/*/*.js",
+    "docs": "jsdoc -c .jsdoc.js",
     "publish-module": "node ../../scripts/publish.js pubsub",
     "generate-scaffolding": "repo-tools generate all && repo-tools generate lib_samples_readme -l samples/ --config ../.cloud-repo-tools.json"
   },
