@@ -1,4 +1,4 @@
-// Copyright 2017 Google LLC
+// Copyright 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,8 @@ const VERSION = require('../../package.json').version;
 
 /**
  * The service that an application uses to manipulate subscriptions and to
- * consume messages from a subscription via the `Pull` method.
+ * consume messages from a subscription via the `Pull` method or by
+ * establishing a bi-directional stream using the `StreamingPull` method.
  *
  * @class
  * @memberof v1
@@ -38,10 +39,10 @@ class SubscriberClient {
    * @param {string} [options.credentials.client_email]
    * @param {string} [options.credentials.private_key]
    * @param {string} [options.email] - Account email address. Required when
-   *   usaing a .pem or .p12 keyFilename.
+   *     using a .pem or .p12 keyFilename.
    * @param {string} [options.keyFilename] - Full path to the a .json, .pem, or
    *     .p12 key downloaded from the Google Developers Console. If you provide
-   *     a path to a JSON file, the projectId option above is not necessary.
+   *     a path to a JSON file, the projectId option below is not necessary.
    *     NOTE: .pem and .p12 require you to specify options.email as well.
    * @param {number} [options.port] - The port on which to connect to
    *     the remote host.
@@ -72,14 +73,14 @@ class SubscriberClient {
     // Create a `gaxGrpc` object, with any grpc-specific options
     // sent to the client.
     opts.scopes = this.constructor.scopes;
-    var gaxGrpc = gax.grpc(opts);
+    var gaxGrpc = new gax.GrpcClient(opts);
 
     // Save the auth object to the client, for use by other methods.
     this.auth = gaxGrpc.auth;
 
     // Determine the client header string.
     var clientHeader = [
-      `gl-node/${process.version.node}`,
+      `gl-node/${process.version}`,
       `grpc/${gaxGrpc.grpcVersion}`,
       `gax/${gax.version}`,
       `gapic/${VERSION}`,
@@ -105,15 +106,15 @@ class SubscriberClient {
     // identifiers to uniquely identify resources within the API.
     // Create useful helper objects for these.
     this._pathTemplates = {
-      projectPathTemplate: new gax.PathTemplate('projects/{project}'),
-      snapshotPathTemplate: new gax.PathTemplate(
-        'projects/{project}/snapshots/{snapshot}'
-      ),
       subscriptionPathTemplate: new gax.PathTemplate(
         'projects/{project}/subscriptions/{subscription}'
       ),
       topicPathTemplate: new gax.PathTemplate(
         'projects/{project}/topics/{topic}'
+      ),
+      projectPathTemplate: new gax.PathTemplate('projects/{project}'),
+      snapshotPathTemplate: new gax.PathTemplate(
+        'projects/{project}/snapshots/{snapshot}'
       ),
     };
 
@@ -221,14 +222,6 @@ class SubscriberClient {
           this._descriptors.stream[methodName]
       );
     }
-
-    // note: editing generated code
-    this.waitForReady = function(deadline, callback) {
-      return subscriberStub.then(
-        stub => stub.waitForReady(deadline, callback),
-        callback
-      );
-    };
   }
 
   /**
@@ -270,7 +263,8 @@ class SubscriberClient {
   // -------------------
 
   /**
-   * Creates a subscription to a given topic.
+   * Creates a subscription to a given topic. See the
+   * <a href="/pubsub/docs/admin#resource_names"> resource name rules</a>.
    * If the subscription already exists, returns `ALREADY_EXISTS`.
    * If the corresponding topic doesn't exist, returns `NOT_FOUND`.
    *
@@ -289,7 +283,7 @@ class SubscriberClient {
    *   start with a letter, and contain only letters (`[A-Za-z]`), numbers
    *   (`[0-9]`), dashes (`-`), underscores (`_`), periods (`.`), tildes (`~`),
    *   plus (`+`) or percent signs (`%`). It must be between 3 and 255 characters
-   *   in length, and it must not start with `"goog"`.
+   *   in length, and it must not start with `"goog"`
    * @param {string} request.topic
    *   The name of the topic from which this subscription is receiving messages.
    *   Format is `projects/{project}/topics/{topic}`.
@@ -311,7 +305,8 @@ class SubscriberClient {
    *   For pull subscriptions, this value is used as the initial value for the ack
    *   deadline. To override this value for a given message, call
    *   `ModifyAckDeadline` with the corresponding `ack_id` if using
-   *   pull.
+   *   non-streaming pull or send the `ack_id` in a
+   *   `StreamingModifyAckDeadlineRequest` if using streaming pull.
    *   The minimum custom deadline you can specify is 10 seconds.
    *   The maximum custom deadline you can specify is 600 seconds (10 minutes).
    *   If this parameter is 0, a default value of 10 seconds is used.
@@ -325,14 +320,20 @@ class SubscriberClient {
    *   Indicates whether to retain acknowledged messages. If true, then
    *   messages are not expunged from the subscription's backlog, even if they are
    *   acknowledged, until they fall out of the `message_retention_duration`
-   *   window.
+   *   window.<br><br>
+   *   <b>ALPHA:</b> This feature is part of an alpha release. This API might be
+   *   changed in backward-incompatible ways and is not recommended for production
+   *   use. It is not subject to any SLA or deprecation policy.
    * @param {Object} [request.messageRetentionDuration]
    *   How long to retain unacknowledged messages in the subscription's backlog,
    *   from the moment a message is published.
    *   If `retain_acked_messages` is true, then this also configures the retention
    *   of acknowledged messages, and thus configures how far back in time a `Seek`
    *   can be done. Defaults to 7 days. Cannot be more than 7 days or less than 10
-   *   minutes.
+   *   minutes.<br><br>
+   *   <b>ALPHA:</b> This feature is part of an alpha release. This API might be
+   *   changed in backward-incompatible ways and is not recommended for production
+   *   use. It is not subject to any SLA or deprecation policy.
    *
    *   This object should have the same structure as [Duration]{@link google.protobuf.Duration}
    * @param {Object.<string, string>} [request.labels]
@@ -431,10 +432,6 @@ class SubscriberClient {
   /**
    * Updates an existing subscription. Note that certain properties of a
    * subscription, such as its topic, are not modifiable.
-   * NOTE:  The style guide requires body: "subscription" instead of body: "*".
-   * Keeping the latter for internal consistency in V1, however it should be
-   * corrected in V2.  See
-   * https://cloud.google.com/apis/design/standard_methods#update for details.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -871,18 +868,13 @@ class SubscriberClient {
   }
 
   /**
-   * (EXPERIMENTAL) StreamingPull is an experimental feature. This RPC will
-   * respond with UNIMPLEMENTED errors unless you have been invited to test
-   * this feature. Contact cloud-pubsub@google.com with any questions.
-   *
    * Establishes a stream with the server, which sends messages down to the
    * client. The client streams acknowledgements and ack deadline modifications
    * back to the server. The server will close the stream and return the status
-   * on any error. The server may close the stream with status `OK` to reassign
-   * server-side resources, in which case, the client should re-establish the
-   * stream. `UNAVAILABLE` may also be returned in the case of a transient error
-   * (e.g., a server restart). These should also be retried by the client. Flow
-   * control can be achieved by configuring the underlying RPC channel.
+   * on any error. The server may close the stream with status `UNAVAILABLE` to
+   * reassign server-side resources, in which case, the client should
+   * re-establish the stream. Flow control can be achieved by configuring the
+   * underlying RPC channel.
    *
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
@@ -908,9 +900,6 @@ class SubscriberClient {
    * var request = {
    *   subscription: formattedSubscription,
    *   streamAckDeadlineSeconds: streamAckDeadlineSeconds,
-   * };
-   * var request = {
-   *   root: request,
    * };
    * // Write request objects.
    * stream.write(request);
@@ -940,7 +929,7 @@ class SubscriberClient {
    *   An empty `pushConfig` indicates that the Pub/Sub system should
    *   stop pushing messages from the given subscription and allow
    *   messages to be pulled and acknowledged - effectively pausing
-   *   the subscription if `Pull` is not called.
+   *   the subscription if `Pull` or `StreamingPull` is not called.
    *
    *   This object should have the same structure as [PushConfig]{@link google.pubsub.v1.PushConfig}
    * @param {Object} [options]
@@ -980,7 +969,10 @@ class SubscriberClient {
   }
 
   /**
-   * Lists the existing snapshots.
+   * Lists the existing snapshots.<br><br>
+   * <b>ALPHA:</b> This feature is part of an alpha release. This API might be
+   * changed in backward-incompatible ways and is not recommended for production
+   * use. It is not subject to any SLA or deprecation policy.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1131,16 +1123,21 @@ class SubscriberClient {
   }
 
   /**
-   * Creates a snapshot from the requested subscription.
+   * Creates a snapshot from the requested subscription.<br><br>
+   * <b>ALPHA:</b> This feature is part of an alpha release. This API might be
+   * changed in backward-incompatible ways and is not recommended for production
+   * use. It is not subject to any SLA or deprecation policy.
    * If the snapshot already exists, returns `ALREADY_EXISTS`.
    * If the requested subscription doesn't exist, returns `NOT_FOUND`.
-   *
-   * If the name is not provided in the request, the server will assign a random
+   * If the backlog in the subscription is too old -- and the resulting snapshot
+   * would expire in less than 1 hour -- then `FAILED_PRECONDITION` is returned.
+   * See also the `Snapshot.expire_time` field. If the name is not provided in
+   * the request, the server will assign a random
    * name for this snapshot on the same project as the subscription, conforming
-   * to the
-   * [resource name format](https://cloud.google.com/pubsub/docs/overview#names).
-   * The generated name is populated in the returned Snapshot object.
-   * Note that for REST API requests, you must specify a name in the request.
+   * to the [resource name format](https://cloud.google.com/pubsub/docs/overview#names).
+   * The generated
+   * name is populated in the returned Snapshot object. Note that for REST API
+   * requests, you must specify a name in the request.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1160,6 +1157,8 @@ class SubscriberClient {
    *    (b) Any messages published to the subscription's topic following the
    *        successful completion of the CreateSnapshot request.
    *   Format is `projects/{project}/subscriptions/{sub}`.
+   * @param {Object.<string, string>} [request.labels]
+   *   User labels.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/global.html#CallOptions} for the details.
@@ -1205,17 +1204,16 @@ class SubscriberClient {
   }
 
   /**
-   * Updates an existing snapshot. Note that certain properties of a snapshot
-   * are not modifiable.
-   * NOTE:  The style guide requires body: "snapshot" instead of body: "*".
-   * Keeping the latter for internal consistency in V1, however it should be
-   * corrected in V2.  See
-   * https://cloud.google.com/apis/design/standard_methods#update for details.
+   * Updates an existing snapshot.<br><br>
+   * <b>ALPHA:</b> This feature is part of an alpha release. This API might be
+   * changed in backward-incompatible ways and is not recommended for production
+   * use. It is not subject to any SLA or deprecation policy.
+   * Note that certain properties of a snapshot are not modifiable.
    *
    * @param {Object} request
    *   The request object that will be sent.
    * @param {Object} request.snapshot
-   *   The updated snpashot object.
+   *   The updated snapshot object.
    *
    *   This object should have the same structure as [Snapshot]{@link google.pubsub.v1.Snapshot}
    * @param {Object} request.updateMask
@@ -1278,7 +1276,11 @@ class SubscriberClient {
   }
 
   /**
-   * Removes an existing snapshot. All messages retained in the snapshot
+   * Removes an existing snapshot. <br><br>
+   * <b>ALPHA:</b> This feature is part of an alpha release. This API might be
+   * changed in backward-incompatible ways and is not recommended for production
+   * use. It is not subject to any SLA or deprecation policy.
+   * When the snapshot is deleted, all messages retained in the snapshot
    * are immediately dropped. After a snapshot is deleted, a new one may be
    * created with the same name, but the new one has no association with the old
    * snapshot or its subscription, unless the same subscription is specified.
@@ -1321,7 +1323,10 @@ class SubscriberClient {
 
   /**
    * Seeks an existing subscription to a point in time or to a given snapshot,
-   * whichever is provided in the request.
+   * whichever is provided in the request.<br><br>
+   * <b>ALPHA:</b> This feature is part of an alpha release. This API might be
+   * changed in backward-incompatible ways and is not recommended for production
+   * use. It is not subject to any SLA or deprecation policy.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1560,32 +1565,6 @@ class SubscriberClient {
   // --------------------
 
   /**
-   * Return a fully-qualified project resource name string.
-   *
-   * @param {String} project
-   * @returns {String}
-   */
-  projectPath(project) {
-    return this._pathTemplates.projectPathTemplate.render({
-      project: project,
-    });
-  }
-
-  /**
-   * Return a fully-qualified snapshot resource name string.
-   *
-   * @param {String} project
-   * @param {String} snapshot
-   * @returns {String}
-   */
-  snapshotPath(project, snapshot) {
-    return this._pathTemplates.snapshotPathTemplate.render({
-      project: project,
-      snapshot: snapshot,
-    });
-  }
-
-  /**
    * Return a fully-qualified subscription resource name string.
    *
    * @param {String} project
@@ -1614,37 +1593,29 @@ class SubscriberClient {
   }
 
   /**
-   * Parse the projectName from a project resource.
+   * Return a fully-qualified project resource name string.
    *
-   * @param {String} projectName
-   *   A fully-qualified path representing a project resources.
-   * @returns {String} - A string representing the project.
+   * @param {String} project
+   * @returns {String}
    */
-  matchProjectFromProjectName(projectName) {
-    return this._pathTemplates.projectPathTemplate.match(projectName).project;
+  projectPath(project) {
+    return this._pathTemplates.projectPathTemplate.render({
+      project: project,
+    });
   }
 
   /**
-   * Parse the snapshotName from a snapshot resource.
+   * Return a fully-qualified snapshot resource name string.
    *
-   * @param {String} snapshotName
-   *   A fully-qualified path representing a snapshot resources.
-   * @returns {String} - A string representing the project.
+   * @param {String} project
+   * @param {String} snapshot
+   * @returns {String}
    */
-  matchProjectFromSnapshotName(snapshotName) {
-    return this._pathTemplates.snapshotPathTemplate.match(snapshotName).project;
-  }
-
-  /**
-   * Parse the snapshotName from a snapshot resource.
-   *
-   * @param {String} snapshotName
-   *   A fully-qualified path representing a snapshot resources.
-   * @returns {String} - A string representing the snapshot.
-   */
-  matchSnapshotFromSnapshotName(snapshotName) {
-    return this._pathTemplates.snapshotPathTemplate.match(snapshotName)
-      .snapshot;
+  snapshotPath(project, snapshot) {
+    return this._pathTemplates.snapshotPathTemplate.render({
+      project: project,
+      snapshot: snapshot,
+    });
   }
 
   /**
@@ -1691,6 +1662,40 @@ class SubscriberClient {
    */
   matchTopicFromTopicName(topicName) {
     return this._pathTemplates.topicPathTemplate.match(topicName).topic;
+  }
+
+  /**
+   * Parse the projectName from a project resource.
+   *
+   * @param {String} projectName
+   *   A fully-qualified path representing a project resources.
+   * @returns {String} - A string representing the project.
+   */
+  matchProjectFromProjectName(projectName) {
+    return this._pathTemplates.projectPathTemplate.match(projectName).project;
+  }
+
+  /**
+   * Parse the snapshotName from a snapshot resource.
+   *
+   * @param {String} snapshotName
+   *   A fully-qualified path representing a snapshot resources.
+   * @returns {String} - A string representing the project.
+   */
+  matchProjectFromSnapshotName(snapshotName) {
+    return this._pathTemplates.snapshotPathTemplate.match(snapshotName).project;
+  }
+
+  /**
+   * Parse the snapshotName from a snapshot resource.
+   *
+   * @param {String} snapshotName
+   *   A fully-qualified path representing a snapshot resources.
+   * @returns {String} - A string representing the snapshot.
+   */
+  matchSnapshotFromSnapshotName(snapshotName) {
+    return this._pathTemplates.snapshotPathTemplate.match(snapshotName)
+      .snapshot;
   }
 }
 
