@@ -70,7 +70,7 @@
     "duplexify": "^3.5.4",
     "extend": "^3.0.1",
     "google-auto-auth": "^0.10.1",
-    "google-gax": "^0.16.0",
+    "google-gax": "^0.17.1",
     "google-proto-files": "^0.16.0",
     "is": "^3.0.1",
     "lodash.chunk": "^4.2.0",
