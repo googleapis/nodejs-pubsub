@@ -17,6 +17,18 @@ s.copy(
     library,
     excludes=['package.json', 'README.md', 'src/index.js'])
 
+# https://github.com/googleapis/gapic-generator/issues/2127
+s.replace("src/v1/subscriber_client.js",
+          "  }\n\s*/\*\*\n\s+\* The DNS address for this API service.",
+          "\n    // note: editing generated code\n"
+          "    this.waitForReady = function(deadline, callback) {\n"
+          "      return subscriberStub.then(\n"
+          "        stub => stub.waitForReady(deadline, callback),\n"
+          "        callback\n"
+          "      );\n"
+          "    };\n"
+          "\g<0>")
+
 #
 # Node.js specific cleanup
 #

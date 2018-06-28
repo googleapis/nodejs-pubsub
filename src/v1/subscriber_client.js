@@ -222,6 +222,14 @@ class SubscriberClient {
           this._descriptors.stream[methodName]
       );
     }
+
+    // note: editing generated code
+    this.waitForReady = function(deadline, callback) {
+      return subscriberStub.then(
+        stub => stub.waitForReady(deadline, callback),
+        callback
+      );
+    };
   }
 
   /**

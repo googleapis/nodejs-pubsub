@@ -19,7 +19,7 @@
 var arrify = require('arrify');
 var assert = require('assert');
 var extend = require('extend');
-var gax = require('google-gax')
+var gax = require('google-gax');
 var proxyquire = require('proxyquire');
 var util = require('@google-cloud/common').util;
 
