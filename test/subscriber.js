@@ -597,7 +597,7 @@ describe('Subscriber', function() {
     it('should cancel any pending flushes', function() {
       var canceled = false;
       var fakeHandle = {
-        cancel: function() {
+        clear: function() {
           canceled = true;
         },
       };
@@ -1250,7 +1250,7 @@ describe('Subscriber', function() {
       var delayPromise = delay(0);
       var fakeBoundDelay = function() {};
 
-      delayPromise.cancel.bind = function(context) {
+      delayPromise.clear.bind = function(context) {
         assert.strictEqual(context, delayPromise);
         return fakeBoundDelay;
       };
@@ -1264,7 +1264,7 @@ describe('Subscriber', function() {
 
       promise.then(function() {
         assert.strictEqual(subscriber.flushTimeoutHandle_, promise);
-        assert.strictEqual(promise.cancel, fakeBoundDelay);
+        assert.strictEqual(promise.clear, fakeBoundDelay);
         assert.strictEqual(flushed, true);
         done();
       });
@@ -1272,7 +1272,7 @@ describe('Subscriber', function() {
 
     it('should swallow cancel errors', function() {
       var promise = subscriber.setFlushTimeout_();
-      promise.cancel();
+      promise.clear();
       return promise;
     });
 
