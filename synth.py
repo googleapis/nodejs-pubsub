@@ -29,9 +29,7 @@ s.replace("src/v1/subscriber_client.js",
           "    };\n"
           "\g<0>")
 
-#
 # Node.js specific cleanup
-#
-subprocess.run(['npm', 'install'])
+subprocess.run(['npm', 'ci'])
 subprocess.run(['npm', 'run', 'prettier'])
 subprocess.run(['npm', 'run', 'lint'])
