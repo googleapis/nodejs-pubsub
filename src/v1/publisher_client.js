@@ -109,7 +109,9 @@ class PublisherClient {
       topicPathTemplate: new gax.PathTemplate(
         'projects/{project}/topics/{topic}'
       ),
-      projectPathTemplate: new gax.PathTemplate('projects/{project}'),
+      projectPathTemplate: new gax.PathTemplate(
+        'projects/{project}'
+      ),
     };
 
     // Some of the methods on this service return "paged" results,
@@ -129,36 +131,25 @@ class PublisherClient {
     };
     var protoFilesRoot = new gax.GoogleProtoFilesRoot();
     protoFilesRoot = protobuf.loadSync(
-      path.join(
-        __dirname,
-        '..',
-        '..',
-        'protos',
-        'google/iam/v1/iam_policy.proto'
-      ),
+      path.join(__dirname, '..', '..', 'protos', 'google/iam/v1/iam_policy.proto'),
       protoFilesRoot
     );
     protoFilesRoot = protobuf.loadSync(
-      path.join(
-        __dirname,
-        '..',
-        '..',
-        'protos',
-        'google/pubsub/v1/pubsub.proto'
-      ),
+      path.join(__dirname, '..', '..', 'protos', 'google/pubsub/v1/pubsub.proto'),
       protoFilesRoot
     );
+
 
     // Some methods on this API support automatically batching
     // requests; denote this.
     this._descriptors.batching = {
       publish: new gax.BundleDescriptor(
         'messages',
-        ['topic'],
+        [
+          'topic',
+        ],
         'messageIds',
-        gax.createByteLengthFunction(
-          protoFilesRoot.lookup('google.pubsub.v1.PubsubMessage')
-        )
+        gax.createByteLengthFunction(protoFilesRoot.lookup('google.pubsub.v1.PubsubMessage'))
       ),
     };
 
@@ -199,8 +190,7 @@ class PublisherClient {
             }
         ),
         defaults[methodName],
-        this._descriptors.page[methodName] ||
-          this._descriptors.batching[methodName]
+        this._descriptors.page[methodName] || this._descriptors.batching[methodName]
       );
     }
 
@@ -232,8 +222,7 @@ class PublisherClient {
             }
         ),
         defaults[methodName],
-        this._descriptors.page[methodName] ||
-          this._descriptors.batching[methodName]
+        this._descriptors.page[methodName] || this._descriptors.batching[methodName]
       );
     }
   }
@@ -659,7 +648,7 @@ class PublisherClient {
       request,
       options
     );
-  }
+  };
 
   /**
    * Lists the names of the subscriptions on this topic.
@@ -753,11 +742,7 @@ class PublisherClient {
     }
     options = options || {};
 
-    return this._innerApiCalls.listTopicSubscriptions(
-      request,
-      options,
-      callback
-    );
+    return this._innerApiCalls.listTopicSubscriptions(request, options, callback);
   }
 
   /**
@@ -814,7 +799,7 @@ class PublisherClient {
       request,
       options
     );
-  }
+  };
 
   /**
    * Deletes the topic with the given name. Returns `NOT_FOUND` if the topic
@@ -1068,7 +1053,9 @@ class PublisherClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromTopicName(topicName) {
-    return this._pathTemplates.topicPathTemplate.match(topicName).project;
+    return this._pathTemplates.topicPathTemplate
+      .match(topicName)
+      .project;
   }
 
   /**
@@ -1079,7 +1066,9 @@ class PublisherClient {
    * @returns {String} - A string representing the topic.
    */
   matchTopicFromTopicName(topicName) {
-    return this._pathTemplates.topicPathTemplate.match(topicName).topic;
+    return this._pathTemplates.topicPathTemplate
+      .match(topicName)
+      .topic;
   }
 
   /**
@@ -1090,8 +1079,11 @@ class PublisherClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromProjectName(projectName) {
-    return this._pathTemplates.projectPathTemplate.match(projectName).project;
+    return this._pathTemplates.projectPathTemplate
+      .match(projectName)
+      .project;
   }
 }
+
 
 module.exports = PublisherClient;
