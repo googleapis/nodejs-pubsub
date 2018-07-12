@@ -547,6 +547,8 @@ Topic.prototype.getSubscriptionsStream = common.paginator.streamify(
  * @param {number} [options.batching.maxMilliseconds] The maximum duration to
  *     wait before sending a payload.
  *
+ * @return {Publisher}
+ *
  * @example
  * const PubSub = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
