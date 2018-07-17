@@ -19,17 +19,25 @@
 var arrify = require('arrify');
 var assert = require('assert');
 var extend = require('extend');
+var gax = require('google-gax');
 var proxyquire = require('proxyquire');
 var util = require('@google-cloud/common').util;
 
 var PKG = require('../package.json');
 
-var fakeGrpc = {};
+var fakeCreds = {};
 var fakeGoogleGax = {
-  grpc: function() {
-    return {
-      grpc: fakeGrpc,
-    };
+  GrpcClient: class extends gax.GrpcClient {
+    constructor(opts) {
+      super(opts);
+      this.grpc = {
+        credentials: {
+          createInsecure() {
+            return fakeCreds;
+          },
+        },
+      };
+    }
   },
 };
 
@@ -149,9 +157,6 @@ describe('PubSub', function() {
       return options;
     };
 
-    fakeGrpc.credentials = {
-      createInsecure: util.noop,
-    };
     v1ClientOverrides = {};
     googleAutoAuthOverride = null;
     SubscriptionOverride = null;
@@ -646,13 +651,6 @@ describe('PubSub', function() {
     it('should use the apiEndpoint option', function() {
       var defaultBaseUrl_ = 'defaulturl';
       var testingUrl = 'localhost:8085';
-
-      var fakeCreds = {};
-      fakeGrpc.credentials = {
-        createInsecure: function() {
-          return fakeCreds;
-        },
-      };
 
       setHost(defaultBaseUrl_);
       pubsub.options.apiEndpoint = testingUrl;

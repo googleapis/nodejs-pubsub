@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "author": "Google Inc.",
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=6.0.0"
   },
   "repository": "googleapis/nodejs-pubsub",
   "main": "./src/index.js",
@@ -63,14 +63,14 @@
     "generate-scaffolding": "repo-tools generate all && repo-tools generate lib_samples_readme -l samples/ --config ../.cloud-repo-tools.json"
   },
   "dependencies": {
-    "@google-cloud/common": "^0.16.1",
+    "@google-cloud/common": "^0.20.0",
     "arrify": "^1.0.0",
     "async-each": "^1.0.1",
-    "delay": "^2.0.0",
+    "delay": "^3.0.0",
     "duplexify": "^3.5.4",
     "extend": "^3.0.1",
     "google-auto-auth": "^0.10.1",
-    "google-gax": "^0.16.0",
+    "google-gax": "^0.17.1",
     "google-proto-files": "^0.16.0",
     "is": "^3.0.1",
     "lodash.chunk": "^4.2.0",

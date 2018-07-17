@@ -256,7 +256,7 @@ Subscriber.prototype.flushQueues_ = function() {
   var self = this;
 
   if (this.flushTimeoutHandle_) {
-    this.flushTimeoutHandle_.cancel();
+    this.flushTimeoutHandle_.clear();
     this.flushTimeoutHandle_ = null;
   }
 
@@ -502,7 +502,7 @@ Subscriber.prototype.setFlushTimeout_ = function() {
       .then(this.flushQueues_.bind(this))
       .catch(common.util.noop);
 
-    promise.cancel = timeout.cancel.bind(timeout);
+    promise.clear = timeout.clear.bind(timeout);
     this.flushTimeoutHandle_ = promise;
   }
 
