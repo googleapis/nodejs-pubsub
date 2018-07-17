@@ -157,6 +157,17 @@ describe('Publisher', function() {
       }, /Data must be in the form of a Buffer\./);
     });
 
+    it('should throw an error when any attribute value is not a string', function() {
+      var brokenAttrs = {
+        key1: 'value',
+        key2: true,
+      };
+
+      assert.throws(function() {
+        publisher.publish(DATA, brokenAttrs, fakeUtil.noop);
+      });
+    });
+
     it('should queue the data', function(done) {
       publisher.queue_ = function(data, attrs, callback) {
         assert.strictEqual(data, DATA);
