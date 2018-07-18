@@ -129,7 +129,7 @@ describe('pubsub', function() {
         });
 
         // get all topics in list of known names
-        assert.equal(results.length, TOPIC_NAMES.length);
+        assert.strictEqual(results.length, TOPIC_NAMES.length);
         done();
       });
     });
@@ -149,7 +149,7 @@ describe('pubsub', function() {
             return TOPIC_FULL_NAMES.indexOf(name) !== -1;
           });
 
-          assert.equal(results.length, TOPIC_NAMES.length);
+          assert.strictEqual(results.length, TOPIC_NAMES.length);
           done();
         });
     });
@@ -303,7 +303,7 @@ describe('pubsub', function() {
     it('should list all subscriptions registered to the topic', function(done) {
       topic.getSubscriptions(function(err, subs) {
         assert.ifError(err);
-        assert.equal(subs.length, SUBSCRIPTIONS.length);
+        assert.strictEqual(subs.length, SUBSCRIPTIONS.length);
         assert(subs[0] instanceof Subscription);
         done();
       });
@@ -319,7 +319,7 @@ describe('pubsub', function() {
           subscriptionsEmitted.push(subscription);
         })
         .on('end', function() {
-          assert.equal(subscriptionsEmitted.length, SUBSCRIPTIONS.length);
+          assert.strictEqual(subscriptionsEmitted.length, SUBSCRIPTIONS.length);
           done();
         });
     });

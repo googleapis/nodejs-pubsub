@@ -196,12 +196,12 @@ describe('Subscription', function() {
   describe('formatName_', function() {
     it('should format name', function() {
       var formattedName = Subscription.formatName_(PROJECT_ID, SUB_NAME);
-      assert.equal(formattedName, SUB_FULL_NAME);
+      assert.strictEqual(formattedName, SUB_FULL_NAME);
     });
 
     it('should format name when given a complete name', function() {
       var formattedName = Subscription.formatName_(PROJECT_ID, SUB_FULL_NAME);
-      assert.equal(formattedName, SUB_FULL_NAME);
+      assert.strictEqual(formattedName, SUB_FULL_NAME);
     });
   });
 

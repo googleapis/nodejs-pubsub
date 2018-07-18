@@ -143,12 +143,12 @@ describe('Topic', function() {
   describe('formatName_', function() {
     it('should format name', function() {
       var formattedName = Topic.formatName_(PROJECT_ID, TOPIC_UNFORMATTED_NAME);
-      assert.equal(formattedName, TOPIC_NAME);
+      assert.strictEqual(formattedName, TOPIC_NAME);
     });
 
     it('should format name when given a complete name', function() {
       var formattedName = Topic.formatName_(PROJECT_ID, TOPIC_NAME);
-      assert.equal(formattedName, TOPIC_NAME);
+      assert.strictEqual(formattedName, TOPIC_NAME);
     });
   });
 
@@ -523,7 +523,7 @@ describe('Topic', function() {
       var opts = {};
 
       topic.parent.subscription = function(name, options) {
-        assert.equal(name, subscriptionName);
+        assert.strictEqual(name, subscriptionName);
         assert.deepEqual(options, opts);
         done();
       };
