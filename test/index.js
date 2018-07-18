@@ -82,7 +82,7 @@ var fakePaginator = {
     }
 
     methods = arrify(methods);
-    assert.equal(Class.name, 'PubSub');
+    assert.strictEqual(Class.name, 'PubSub');
     assert.deepEqual(methods, [
       'getSnapshots',
       'getSubscriptions',
@@ -1300,7 +1300,7 @@ describe('PubSub', function() {
 
     it('should pass specified name to the Subscription', function(done) {
       SubscriptionOverride = function(pubsub, name) {
-        assert.equal(name, SUB_NAME);
+        assert.strictEqual(name, SUB_NAME);
         done();
       };
       pubsub.subscription(SUB_NAME);
