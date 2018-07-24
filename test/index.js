@@ -96,9 +96,9 @@ var fakePaginator = {
   },
 };
 
-var googleAutoAuthOverride;
-function fakeGoogleAutoAuth() {
-  return (googleAutoAuthOverride || util.noop).apply(null, arguments);
+var googleAuthOverride;
+function fakeGoogleAuth() {
+  return (googleAuthOverride || util.noop).apply(null, arguments);
 }
 
 var v1Override = {};
@@ -137,7 +137,9 @@ describe('PubSub', function() {
         paginator: fakePaginator,
         util: fakeUtil,
       },
-      'google-auto-auth': fakeGoogleAutoAuth,
+      'google-auth-library': {
+        GoogleAuth: fakeGoogleAuth,
+      },
       'google-gax': fakeGoogleGax,
       './snapshot.js': FakeSnapshot,
       './subscription.js': Subscription,
@@ -158,7 +160,7 @@ describe('PubSub', function() {
     };
 
     v1ClientOverrides = {};
-    googleAutoAuthOverride = null;
+    googleAuthOverride = null;
     SubscriptionOverride = null;
     pubsub = new PubSub(OPTIONS);
     pubsub.projectId = PROJECT_ID;
@@ -224,14 +226,14 @@ describe('PubSub', function() {
       assert.deepEqual(pubsub.api, {});
     });
 
-    it('should cache a local google-auto-auth instance', function() {
-      var fakeGoogleAutoAuthInstance = {};
+    it('should cache a local google-auth-library instance', function() {
+      var fakeGoogleAuthInstance = {};
       var options = {
         a: 'b',
         c: 'd',
       };
 
-      googleAutoAuthOverride = function(options_) {
+      googleAuthOverride = function(options_) {
         assert.deepEqual(
           options_,
           extend(
@@ -245,11 +247,11 @@ describe('PubSub', function() {
             options
           )
         );
-        return fakeGoogleAutoAuthInstance;
+        return fakeGoogleAuthInstance;
       };
 
       var pubsub = new PubSub(options);
-      assert.strictEqual(pubsub.auth, fakeGoogleAutoAuthInstance);
+      assert.strictEqual(pubsub.auth, fakeGoogleAuthInstance);
     });
 
     it('should localize the options provided', function() {
