@@ -25,7 +25,7 @@ var promisified = false;
 var fakeUtil = extend({}, common.util, {
   promisifyAll: function(Class, options) {
     if (Class.name === 'Publisher') {
-      assert.deepEqual(options, {singular: true});
+      assert.deepStrictEqual(options, {singular: true});
       promisified = true;
     }
   },
@@ -71,7 +71,7 @@ describe('Publisher', function() {
     });
 
     it('should create an inventory object', function() {
-      assert.deepEqual(publisher.inventory_, {
+      assert.deepStrictEqual(publisher.inventory_, {
         callbacks: [],
         queued: [],
         bytes: 0,
@@ -80,7 +80,7 @@ describe('Publisher', function() {
 
     describe('options', function() {
       it('should provide default values for batching', function() {
-        assert.deepEqual(publisher.settings.batching, {
+        assert.deepStrictEqual(publisher.settings.batching, {
           maxBytes: Math.pow(1024, 2) * 5,
           maxMessages: 1000,
           maxMilliseconds: 100,
@@ -99,8 +99,8 @@ describe('Publisher', function() {
           batching: options,
         });
 
-        assert.deepEqual(publisher.settings.batching, options);
-        assert.deepEqual(options, optionsCopy);
+        assert.deepStrictEqual(publisher.settings.batching, options);
+        assert.deepStrictEqual(options, optionsCopy);
       });
 
       it('should cap maxBytes', function() {
@@ -127,7 +127,7 @@ describe('Publisher', function() {
           gaxOpts: fakeGaxOpts,
         });
 
-        assert.deepEqual(publisher.settings.gaxOpts, fakeGaxOpts);
+        assert.deepStrictEqual(publisher.settings.gaxOpts, fakeGaxOpts);
       });
     });
   });
@@ -170,7 +170,7 @@ describe('Publisher', function() {
     it('should optionally accept attributes', function(done) {
       publisher.queue_ = function(data, attrs, callback) {
         assert.strictEqual(data, DATA);
-        assert.deepEqual(attrs, {});
+        assert.deepStrictEqual(attrs, {});
         callback(); // the done fn
       };
 
@@ -262,8 +262,8 @@ describe('Publisher', function() {
 
       publisher.publish_();
 
-      assert.deepEqual(publisher.inventory_.callbacks, []);
-      assert.deepEqual(publisher.inventory_.queued, []);
+      assert.deepStrictEqual(publisher.inventory_.callbacks, []);
+      assert.deepStrictEqual(publisher.inventory_.queued, []);
       assert.strictEqual(publisher.inventory_.bytes, 0);
     });
 
@@ -274,7 +274,7 @@ describe('Publisher', function() {
       TOPIC.request = function(config) {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'publish');
-        assert.deepEqual(config.reqOpts, {
+        assert.deepStrictEqual(config.reqOpts, {
           topic: TOPIC_NAME,
           messages: [FAKE_MESSAGE],
         });
@@ -326,7 +326,7 @@ describe('Publisher', function() {
     it('should add the data and attrs to the inventory', function() {
       publisher.queue_(DATA, ATTRS, fakeUtil.noop);
 
-      assert.deepEqual(publisher.inventory_.queued, [
+      assert.deepStrictEqual(publisher.inventory_.queued, [
         {
           data: DATA,
           attributes: ATTRS,
@@ -343,7 +343,7 @@ describe('Publisher', function() {
     it('should capture the callback', function() {
       publisher.queue_(DATA, ATTRS, fakeUtil.noop);
 
-      assert.deepEqual(publisher.inventory_.callbacks, [fakeUtil.noop]);
+      assert.deepStrictEqual(publisher.inventory_.callbacks, [fakeUtil.noop]);
     });
   });
 });
