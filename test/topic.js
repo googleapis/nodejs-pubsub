@@ -29,7 +29,7 @@ var fakeUtil = extend({}, util, {
     }
 
     promisified = true;
-    assert.deepEqual(options.exclude, ['publisher', 'subscription']);
+    assert.deepStrictEqual(options.exclude, ['publisher', 'subscription']);
   },
 });
 
@@ -48,7 +48,7 @@ var fakePaginator = {
       return;
     }
 
-    assert.deepEqual(methods, ['getSubscriptions']);
+    assert.deepStrictEqual(methods, ['getSubscriptions']);
     extended = true;
   },
   streamify: function(methodName) {
@@ -136,7 +136,7 @@ describe('Topic', function() {
     });
 
     it('should create an iam object', function() {
-      assert.deepEqual(topic.iam.calledWith_, [PUBSUB, TOPIC_NAME]);
+      assert.deepStrictEqual(topic.iam.calledWith_, [PUBSUB, TOPIC_NAME]);
     });
   });
 
@@ -187,7 +187,7 @@ describe('Topic', function() {
       topic.request = function(config, callback) {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'deleteTopic');
-        assert.deepEqual(config.reqOpts, {topic: topic.name});
+        assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
         callback(); // the done fn
       };
 
@@ -362,7 +362,7 @@ describe('Topic', function() {
       topic.request = function(config) {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'getTopic');
-        assert.deepEqual(config.reqOpts, {topic: topic.name});
+        assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
         done();
       };
 
@@ -442,8 +442,8 @@ describe('Topic', function() {
       topic.request = function(config) {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'listTopicSubscriptions');
-        assert.deepEqual(config.reqOpts, expectedOptions);
-        assert.deepEqual(config.gaxOpts, expectedGaxOpts);
+        assert.deepStrictEqual(config.reqOpts, expectedOptions);
+        assert.deepStrictEqual(config.gaxOpts, expectedGaxOpts);
         done();
       };
 
@@ -452,8 +452,8 @@ describe('Topic', function() {
 
     it('should accept only a callback', function(done) {
       topic.request = function(config) {
-        assert.deepEqual(config.reqOpts, {topic: topic.name});
-        assert.deepEqual(config.gaxOpts, {autoPaginate: undefined});
+        assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
+        assert.deepStrictEqual(config.gaxOpts, {autoPaginate: undefined});
         done();
       };
 
@@ -475,7 +475,7 @@ describe('Topic', function() {
 
       topic.getSubscriptions(function(err, subscriptions) {
         assert.ifError(err);
-        assert.deepEqual(subscriptions, [
+        assert.deepStrictEqual(subscriptions, [
           {name: 'a'},
           {name: 'b'},
           {name: 'c'},
@@ -496,7 +496,7 @@ describe('Topic', function() {
 
       topic.getSubscriptions(function(err, subs, nextQuery, apiResponse) {
         assert.strictEqual(err, err_);
-        assert.deepEqual(subs, subs_);
+        assert.deepStrictEqual(subs, subs_);
         assert.strictEqual(nextQuery, nextQuery_);
         assert.strictEqual(apiResponse, apiResponse_);
         done();
@@ -524,7 +524,7 @@ describe('Topic', function() {
 
       topic.parent.subscription = function(name, options) {
         assert.strictEqual(name, subscriptionName);
-        assert.deepEqual(options, opts);
+        assert.deepStrictEqual(options, opts);
         done();
       };
 

@@ -29,7 +29,7 @@ var fakeUtil = extend({}, common.util, {
     }
 
     promisified = true;
-    assert.deepEqual(options.exclude, ['snapshot']);
+    assert.deepStrictEqual(options.exclude, ['snapshot']);
   },
 });
 
@@ -157,7 +157,7 @@ describe('Subscription', function() {
       var metadata = {a: 'a'};
       var formatted = Subscription.formatMetadata_(metadata);
 
-      assert.deepEqual(metadata, formatted);
+      assert.deepStrictEqual(metadata, formatted);
       assert.notStrictEqual(metadata, formatted);
     });
 
@@ -226,7 +226,7 @@ describe('Subscription', function() {
       subscription.request = function(config) {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'createSnapshot');
-        assert.deepEqual(config.reqOpts, {
+        assert.deepStrictEqual(config.reqOpts, {
           name: SNAPSHOT_NAME,
           subscription: subscription.name,
         });
@@ -295,7 +295,9 @@ describe('Subscription', function() {
       subscription.request = function(config) {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'deleteSubscription');
-        assert.deepEqual(config.reqOpts, {subscription: subscription.name});
+        assert.deepStrictEqual(config.reqOpts, {
+          subscription: subscription.name,
+        });
         done();
       };
 
@@ -575,7 +577,9 @@ describe('Subscription', function() {
       subscription.request = function(config) {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'getSubscription');
-        assert.deepEqual(config.reqOpts, {subscription: subscription.name});
+        assert.deepStrictEqual(config.reqOpts, {
+          subscription: subscription.name,
+        });
         done();
       };
 
@@ -631,7 +635,7 @@ describe('Subscription', function() {
       subscription.request = function(config, callback) {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'modifyPushConfig');
-        assert.deepEqual(config.reqOpts, {
+        assert.deepStrictEqual(config.reqOpts, {
           subscription: subscription.name,
           pushConfig: fakeConfig,
         });
@@ -679,7 +683,7 @@ describe('Subscription', function() {
       subscription.request = function(config, callback) {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'seek');
-        assert.deepEqual(config.reqOpts, {
+        assert.deepStrictEqual(config.reqOpts, {
           subscription: subscription.name,
           snapshot: FAKE_FULL_SNAPSHOT_NAME,
         });
@@ -745,8 +749,10 @@ describe('Subscription', function() {
       subscription.request = function(config, callback) {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'updateSubscription');
-        assert.deepEqual(config.reqOpts.subscription, expectedBody);
-        assert.deepEqual(config.reqOpts.updateMask, {paths: ['push_config']});
+        assert.deepStrictEqual(config.reqOpts.subscription, expectedBody);
+        assert.deepStrictEqual(config.reqOpts.updateMask, {
+          paths: ['push_config'],
+        });
         callback(); // the done fn
       };
 

@@ -159,7 +159,7 @@ describe('IAM', function() {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'testIamPermissions');
         assert.strictEqual(config.reqOpts.resource, iam.id);
-        assert.deepEqual(config.reqOpts.permissions, [permissions]);
+        assert.deepStrictEqual(config.reqOpts.permissions, [permissions]);
 
         done();
       };
@@ -208,7 +208,7 @@ describe('IAM', function() {
 
       iam.testPermissions(permissions, function(err, permissions, apiResp) {
         assert.ifError(err);
-        assert.deepEqual(permissions, {
+        assert.deepStrictEqual(permissions, {
           'storage.bucket.list': false,
           'storage.bucket.consume': true,
         });
