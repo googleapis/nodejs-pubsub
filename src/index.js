@@ -18,7 +18,7 @@
 
 var common = require('@google-cloud/common');
 var extend = require('extend');
-var googleAuth = require('google-auto-auth');
+var {GoogleAuth} = require('google-auth-library');
 var gax = require('google-gax');
 var grpc = new gax.GrpcClient().grpc;
 var is = require('is');
@@ -129,7 +129,7 @@ function PubSub(options) {
   this.determineBaseUrl_();
 
   this.api = {};
-  this.auth = googleAuth(this.options);
+  this.auth = new GoogleAuth(this.options);
   this.projectId = this.options.projectId || PROJECT_ID_PLACEHOLDER;
 
   if (this.options.promise) {
