@@ -5,8 +5,8 @@ import subprocess
 
 logging.basicConfig(level=logging.DEBUG)
 
-gapic = gcp.GAPICGeneratorgcp.CommonTemplates()
-()
+gapic = gcp.GAPICGenerator()
+gcp.CommonTemplates()
 
 # tasks has two product names, and a poorly named artman yaml
 version = 'v1'
