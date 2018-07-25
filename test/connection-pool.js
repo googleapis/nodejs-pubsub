@@ -163,7 +163,7 @@ describe('ConnectionPool', function() {
       assert.strictEqual(pool.noConnectionsTime, 0);
       assert.strictEqual(pool.settings.maxConnections, 5);
       assert.strictEqual(pool.settings.ackDeadline, 10000);
-      assert.deepEqual(pool.queue, []);
+      assert.deepStrictEqual(pool.queue, []);
 
       ConnectionPool.prototype.open = open;
     });
@@ -178,8 +178,8 @@ describe('ConnectionPool', function() {
       var subscriptionCopy = extend({}, subscription);
       var pool = new ConnectionPool(subscription);
 
-      assert.deepEqual(pool.settings, options);
-      assert.deepEqual(subscription, subscriptionCopy);
+      assert.deepStrictEqual(pool.settings, options);
+      assert.deepStrictEqual(subscription, subscriptionCopy);
     });
 
     it('should inherit from EventEmitter', function() {
@@ -535,7 +535,7 @@ describe('ConnectionPool', function() {
 
         duplexifyOverride = function(writable, readable, options) {
           assert.strictEqual(writable, fakeConnection);
-          assert.deepEqual(options, {objectMode: true});
+          assert.deepStrictEqual(options, {objectMode: true});
           return fakeDuplex;
         };
 
@@ -546,7 +546,7 @@ describe('ConnectionPool', function() {
         };
 
         fakeDuplex.write = function(reqOpts) {
-          assert.deepEqual(reqOpts, {
+          assert.deepStrictEqual(reqOpts, {
             subscription: TOKENIZED_SUB_NAME,
             streamAckDeadlineSeconds: pool.settings.ackDeadline / 1000,
           });
@@ -833,7 +833,7 @@ describe('ConnectionPool', function() {
       assert.strictEqual(message.id, RESP.message.messageId);
       assert.strictEqual(message.data, RESP.message.data);
       assert.strictEqual(message.attributes, RESP.message.attributes);
-      assert.deepEqual(message.publishTime, expectedPublishTime);
+      assert.deepStrictEqual(message.publishTime, expectedPublishTime);
       assert.strictEqual(message.received, FAKE_DATE_NOW);
     });
 
@@ -1285,7 +1285,7 @@ describe('ConnectionPool', function() {
 
     it('should capture the timeout handle', function() {
       pool.queueConnection();
-      assert.deepEqual(pool.queue, [fakeTimeoutHandle]);
+      assert.deepStrictEqual(pool.queue, [fakeTimeoutHandle]);
     });
 
     it('should remove the timeout handle once it fires', function(done) {
@@ -1328,8 +1328,8 @@ describe('ConnectionPool', function() {
 
       pool.sendKeepAlives();
 
-      assert.deepEqual(a.written, [{}]);
-      assert.deepEqual(b.written, [{}]);
+      assert.deepStrictEqual(a.written, [{}]);
+      assert.deepStrictEqual(b.written, [{}]);
     });
   });
 
