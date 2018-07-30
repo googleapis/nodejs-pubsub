@@ -170,7 +170,7 @@ All attributes must be in the form of a string.
 
       assert.throws(function() {
         publisher.publish(DATA, brokenAttrs, assert.ifError);
-      }, expectedErrorMessage);
+      }, new RegExp(expectedErrorMessage));
     });
 
     it('should queue the data', function(done) {
