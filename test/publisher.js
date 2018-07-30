@@ -153,19 +153,24 @@ describe('Publisher', function() {
 
     it('should throw an error when data is not a buffer', function() {
       assert.throws(function() {
-        publisher.publish('hello', {}, fakeUtil.noop);
+        publisher.publish('hello', {}, assert.ifError);
       }, /Data must be in the form of a Buffer\./);
     });
 
-    it('should throw an error when any attribute value is not a string', function() {
+    it('should throw when an attribute value is not a string', function() {
       var brokenAttrs = {
         key1: 'value',
         key2: true,
       };
 
+      var expectedErrorMessage = `
+All attributes must be in the form of a string.
+\nInvalid value of type "${typeof true}" provided for "key2".
+      `.trim();
+
       assert.throws(function() {
-        publisher.publish(DATA, brokenAttrs, fakeUtil.noop);
-      });
+        publisher.publish(DATA, brokenAttrs, assert.ifError);
+      }, expectedErrorMessage);
     });
 
     it('should queue the data', function(done) {

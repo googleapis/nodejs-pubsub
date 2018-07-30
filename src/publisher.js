@@ -109,12 +109,11 @@ function Publisher(topic, options) {
  * Publish the provided message.
  *
  * @throws {TypeError} If data is not a Buffer object.
- * @throws {TypeError} If any value in attributes is not a string.
+ * @throws {TypeError} If any value in `attributes` object is not a string.
  *
  * @param {buffer} data The message data. This must come in the form of a
  *     Buffer object.
- * @param {object} [attributes] Optional attributes for this message. The values
- *     of the object must come in the form of a string.
+ * @param {object.<string, string>} [attributes] Attributes for this message.
  * @param {PublisherPublishCallback} [callback] Callback function.
  * @returns {Promise<PublisherPublishResponse>}
  *
@@ -164,11 +163,9 @@ Publisher.prototype.publish = function(data, attributes, callback) {
   for (var key in attributes) {
     var value = attributes[key];
 
-    if (typeof value !== 'string') {
-      throw new TypeError(
-        'All attributes must be in the form of a string. Invalid value: ' +
-          JSON.stringify(value)
-      );
+    if (!is.string(value)) {
+      throw new TypeError(`All attributes must be in the form of a string.
+\nInvalid value of type "${typeof value}" provided for "${key}".`);
     }
   }
 
