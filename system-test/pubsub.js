@@ -129,7 +129,7 @@ describe('pubsub', function() {
         });
 
         // get all topics in list of known names
-        assert.equal(results.length, TOPIC_NAMES.length);
+        assert.strictEqual(results.length, TOPIC_NAMES.length);
         done();
       });
     });
@@ -149,7 +149,7 @@ describe('pubsub', function() {
             return TOPIC_FULL_NAMES.indexOf(name) !== -1;
           });
 
-          assert.equal(results.length, TOPIC_NAMES.length);
+          assert.strictEqual(results.length, TOPIC_NAMES.length);
           done();
         });
     });
@@ -223,8 +223,8 @@ describe('pubsub', function() {
       publishPop(data, attrs, function(err, message) {
         assert.ifError(err);
 
-        assert.deepEqual(message.data, data);
-        assert.deepEqual(message.attributes, attrs);
+        assert.deepStrictEqual(message.data, data);
+        assert.deepStrictEqual(message.attributes, attrs);
 
         done();
       });
@@ -303,7 +303,7 @@ describe('pubsub', function() {
     it('should list all subscriptions registered to the topic', function(done) {
       topic.getSubscriptions(function(err, subs) {
         assert.ifError(err);
-        assert.equal(subs.length, SUBSCRIPTIONS.length);
+        assert.strictEqual(subs.length, SUBSCRIPTIONS.length);
         assert(subs[0] instanceof Subscription);
         done();
       });
@@ -319,7 +319,7 @@ describe('pubsub', function() {
           subscriptionsEmitted.push(subscription);
         })
         .on('end', function() {
-          assert.equal(subscriptionsEmitted.length, SUBSCRIPTIONS.length);
+          assert.strictEqual(subscriptionsEmitted.length, SUBSCRIPTIONS.length);
           done();
         });
     });
@@ -468,7 +468,7 @@ describe('pubsub', function() {
       subscription.on('error', done);
 
       subscription.on('message', function(message) {
-        assert.deepEqual(message.data, Buffer.from('hello'));
+        assert.deepStrictEqual(message.data, Buffer.from('hello'));
 
         if (++messageCount === 10) {
           subscription.close(done);
@@ -538,7 +538,7 @@ describe('pubsub', function() {
       topic.iam.getPolicy(function(err, policy) {
         assert.ifError(err);
 
-        assert.deepEqual(policy.bindings, []);
+        assert.deepStrictEqual(policy.bindings, []);
         assert.strictEqual(policy.version, 0);
 
         done();
@@ -560,7 +560,7 @@ describe('pubsub', function() {
 
       topic.iam.setPolicy(policy, function(err, newPolicy) {
         assert.ifError(err);
-        assert.deepEqual(newPolicy.bindings, policy.bindings);
+        assert.deepStrictEqual(newPolicy.bindings, policy.bindings);
         done();
       });
     });
@@ -571,7 +571,7 @@ describe('pubsub', function() {
 
       topic.iam.testPermissions(testPermissions, function(err, permissions) {
         assert.ifError(err);
-        assert.deepEqual(permissions, {
+        assert.deepStrictEqual(permissions, {
           'pubsub.topics.get': true,
           'pubsub.topics.update': true,
         });

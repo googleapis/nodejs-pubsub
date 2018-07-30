@@ -18,7 +18,7 @@
 
 var common = require('@google-cloud/common');
 var extend = require('extend');
-var googleAuth = require('google-auto-auth');
+var {GoogleAuth} = require('google-auth-library');
 var gax = require('google-gax');
 var grpc = new gax.GrpcClient().grpc;
 var is = require('is');
@@ -89,7 +89,7 @@ var PROJECT_ID_PLACEHOLDER = '{{projectId}}';
  * });
  *
  * @example <caption>include:samples/quickstart.js</caption>
- * region_tag:pubsub_quickstart
+ * region_tag:pubsub_quickstart_create_topic
  * Full quickstart example:
  */
 function PubSub(options) {
@@ -129,7 +129,7 @@ function PubSub(options) {
   this.determineBaseUrl_();
 
   this.api = {};
-  this.auth = googleAuth(this.options);
+  this.auth = new GoogleAuth(this.options);
   this.projectId = this.options.projectId || PROJECT_ID_PLACEHOLDER;
 
   if (this.options.promise) {
@@ -974,7 +974,7 @@ common.util.promisifyAll(PubSub, {
  * });
  *
  * @example <caption>include:samples/quickstart.js</caption>
- * region_tag:pubsub_quickstart
+ * region_tag:pubsub_quickstart_create_topic
  * Full quickstart example:
  */
 module.exports = PubSub;

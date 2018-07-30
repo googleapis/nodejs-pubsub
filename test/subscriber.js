@@ -99,7 +99,7 @@ describe('Subscriber', function() {
 
       assert.strictEqual(subscriber.maxConnections, options.maxConnections);
 
-      assert.deepEqual(subscriber.flowControl, {
+      assert.deepStrictEqual(subscriber.flowControl, {
         maxBytes: options.flowControl.maxBytes,
         maxMessages: options.flowControl.maxMessages,
       });
@@ -115,7 +115,7 @@ describe('Subscriber', function() {
       assert.strictEqual(subscriber.isOpen, false);
       assert.strictEqual(subscriber.writeToStreams_, false);
 
-      assert.deepEqual(subscriber.flowControl, {
+      assert.deepStrictEqual(subscriber.flowControl, {
         maxBytes: FAKE_FREE_MEM * 0.2,
         maxMessages: 100,
       });
@@ -266,7 +266,7 @@ describe('Subscriber', function() {
             assert.strictEqual(config.client, 'SubscriberClient');
             assert.strictEqual(config.method, 'acknowledge');
             assert.strictEqual(config.reqOpts.subscription, subscriber.name);
-            assert.deepEqual(config.reqOpts.ackIds, fakeAckIds);
+            assert.deepStrictEqual(config.reqOpts.ackIds, fakeAckIds);
 
             setImmediate(done);
 
@@ -294,7 +294,7 @@ describe('Subscriber', function() {
               offset + batchSize
             );
 
-            assert.deepEqual(config.reqOpts.ackIds, expectedAckIds);
+            assert.deepStrictEqual(config.reqOpts.ackIds, expectedAckIds);
 
             receivedCalls += 1;
             if (receivedCalls === expectedCalls) {
@@ -348,7 +348,7 @@ describe('Subscriber', function() {
 
         subscriber.writeTo_ = function(connectionId, data) {
           assert.strictEqual(connectionId, fakeConnectionId);
-          assert.deepEqual(data, {ackIds: fakeAckIds});
+          assert.deepStrictEqual(data, {ackIds: fakeAckIds});
           done();
         };
 
@@ -368,7 +368,7 @@ describe('Subscriber', function() {
             offset + batchSize
           );
 
-          assert.deepEqual(data, {ackIds: expectedAckIds});
+          assert.deepStrictEqual(data, {ackIds: expectedAckIds});
 
           if (++receivedCalls === expectedCalls) {
             done();
@@ -515,7 +515,7 @@ describe('Subscriber', function() {
 
       subscriber.close();
 
-      assert.deepEqual(subscriber.inventory_, {
+      assert.deepStrictEqual(subscriber.inventory_, {
         lease: [],
         bytes: 0,
       });
@@ -724,7 +724,7 @@ describe('Subscriber', function() {
 
     it('should add the ackId to the inventory', function() {
       subscriber.leaseMessage_(MESSAGE);
-      assert.deepEqual(subscriber.inventory_.lease, [MESSAGE.ackId]);
+      assert.deepStrictEqual(subscriber.inventory_.lease, [MESSAGE.ackId]);
     });
 
     it('should update the byte count', function() {
@@ -841,7 +841,7 @@ describe('Subscriber', function() {
             assert.strictEqual(config.method, 'modifyAckDeadline');
             assert.strictEqual(config.reqOpts.subscription, subscriber.name);
             assert.strictEqual(config.reqOpts.ackDeadlineSeconds, fakeDeadline);
-            assert.deepEqual(config.reqOpts.ackIds, fakeAckIds);
+            assert.deepStrictEqual(config.reqOpts.ackIds, fakeAckIds);
 
             setImmediate(done);
 
@@ -870,7 +870,7 @@ describe('Subscriber', function() {
             );
 
             assert.strictEqual(config.reqOpts.ackDeadlineSeconds, fakeDeadline);
-            assert.deepEqual(config.reqOpts.ackIds, expectedAckIds);
+            assert.deepStrictEqual(config.reqOpts.ackIds, expectedAckIds);
 
             receivedCalls += 1;
             if (receivedCalls === expectedCalls) {
@@ -925,8 +925,8 @@ describe('Subscriber', function() {
 
         subscriber.writeTo_ = function(connectionId, data) {
           assert.strictEqual(connectionId, fakeConnId);
-          assert.deepEqual(data.modifyDeadlineAckIds, fakeAckIds);
-          assert.deepEqual(data.modifyDeadlineSeconds, expectedDeadlines);
+          assert.deepStrictEqual(data.modifyDeadlineAckIds, fakeAckIds);
+          assert.deepStrictEqual(data.modifyDeadlineSeconds, expectedDeadlines);
           done();
         };
 
@@ -949,8 +949,8 @@ describe('Subscriber', function() {
             fakeDeadline
           );
 
-          assert.deepEqual(data.modifyDeadlineAckIds, expectedAckIds);
-          assert.deepEqual(data.modifyDeadlineSeconds, expectedDeadlines);
+          assert.deepStrictEqual(data.modifyDeadlineAckIds, expectedAckIds);
+          assert.deepStrictEqual(data.modifyDeadlineSeconds, expectedDeadlines);
 
           if (++receivedCalls === expectedCalls) {
             done();
@@ -1216,7 +1216,7 @@ describe('Subscriber', function() {
 
     it('should modAck the leased messages', function(done) {
       subscriber.modifyAckDeadline_ = function(ackIds, deadline) {
-        assert.deepEqual(ackIds, fakeAckIds);
+        assert.deepStrictEqual(ackIds, fakeAckIds);
         assert.strictEqual(deadline, subscriber.ackDeadline / 1000);
 
         setImmediate(done);

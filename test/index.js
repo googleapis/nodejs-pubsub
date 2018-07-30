@@ -57,7 +57,7 @@ var fakeUtil = extend({}, util, {
     }
 
     promisified = true;
-    assert.deepEqual(options.exclude, [
+    assert.deepStrictEqual(options.exclude, [
       'request',
       'snapshot',
       'subscription',
@@ -82,8 +82,8 @@ var fakePaginator = {
     }
 
     methods = arrify(methods);
-    assert.equal(Class.name, 'PubSub');
-    assert.deepEqual(methods, [
+    assert.strictEqual(Class.name, 'PubSub');
+    assert.deepStrictEqual(methods, [
       'getSnapshots',
       'getSubscriptions',
       'getTopics',
@@ -96,9 +96,9 @@ var fakePaginator = {
   },
 };
 
-var googleAutoAuthOverride;
-function fakeGoogleAutoAuth() {
-  return (googleAutoAuthOverride || util.noop).apply(null, arguments);
+var googleAuthOverride;
+function fakeGoogleAuth() {
+  return (googleAuthOverride || util.noop).apply(null, arguments);
 }
 
 var v1Override = {};
@@ -137,7 +137,9 @@ describe('PubSub', function() {
         paginator: fakePaginator,
         util: fakeUtil,
       },
-      'google-auto-auth': fakeGoogleAutoAuth,
+      'google-auth-library': {
+        GoogleAuth: fakeGoogleAuth,
+      },
       'google-gax': fakeGoogleGax,
       './snapshot.js': FakeSnapshot,
       './subscription.js': Subscription,
@@ -158,7 +160,7 @@ describe('PubSub', function() {
     };
 
     v1ClientOverrides = {};
-    googleAutoAuthOverride = null;
+    googleAuthOverride = null;
     SubscriptionOverride = null;
     pubsub = new PubSub(OPTIONS);
     pubsub.projectId = PROJECT_ID;
@@ -204,7 +206,7 @@ describe('PubSub', function() {
       v1ClientOverrides.PublisherClient.scopes = ['b', 'c', 'd', 'e'];
 
       var pubsub = new PubSub({});
-      assert.deepEqual(pubsub.options.scopes, ['a', 'b', 'c', 'd', 'e']);
+      assert.deepStrictEqual(pubsub.options.scopes, ['a', 'b', 'c', 'd', 'e']);
     });
 
     it('should attempt to determine the service path and port', function() {
@@ -221,18 +223,18 @@ describe('PubSub', function() {
     });
 
     it('should initialize the API object', function() {
-      assert.deepEqual(pubsub.api, {});
+      assert.deepStrictEqual(pubsub.api, {});
     });
 
-    it('should cache a local google-auto-auth instance', function() {
-      var fakeGoogleAutoAuthInstance = {};
+    it('should cache a local google-auth-library instance', function() {
+      var fakeGoogleAuthInstance = {};
       var options = {
         a: 'b',
         c: 'd',
       };
 
-      googleAutoAuthOverride = function(options_) {
-        assert.deepEqual(
+      googleAuthOverride = function(options_) {
+        assert.deepStrictEqual(
           options_,
           extend(
             {
@@ -245,15 +247,15 @@ describe('PubSub', function() {
             options
           )
         );
-        return fakeGoogleAutoAuthInstance;
+        return fakeGoogleAuthInstance;
       };
 
       var pubsub = new PubSub(options);
-      assert.strictEqual(pubsub.auth, fakeGoogleAutoAuthInstance);
+      assert.strictEqual(pubsub.auth, fakeGoogleAuthInstance);
     });
 
     it('should localize the options provided', function() {
-      assert.deepEqual(
+      assert.deepStrictEqual(
         pubsub.options,
         extend(
           {
@@ -342,7 +344,7 @@ describe('PubSub', function() {
 
       pubsub.subscription = function(subName, options) {
         assert.strictEqual(subName, SUB_NAME);
-        assert.deepEqual(options, opts);
+        assert.deepStrictEqual(options, opts);
         setImmediate(done);
         return SUBSCRIPTION;
       };
@@ -419,7 +421,7 @@ describe('PubSub', function() {
 
       pubsub.request = function(config) {
         assert.notStrictEqual(config.reqOpts, options);
-        assert.deepEqual(config.reqOpts, expectedBody);
+        assert.deepStrictEqual(config.reqOpts, expectedBody);
         done();
       };
 
@@ -450,7 +452,7 @@ describe('PubSub', function() {
 
       pubsub.request = function(config) {
         assert.notStrictEqual(config.reqOpts, options);
-        assert.deepEqual(config.reqOpts, expectedBody);
+        assert.deepStrictEqual(config.reqOpts, expectedBody);
         done();
       };
 
@@ -569,8 +571,8 @@ describe('PubSub', function() {
       pubsub.request = function(config) {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'createTopic');
-        assert.deepEqual(config.reqOpts, {name: formattedName});
-        assert.deepEqual(config.gaxOpts, gaxOpts);
+        assert.deepStrictEqual(config.reqOpts, {name: formattedName});
+        assert.deepStrictEqual(config.gaxOpts, gaxOpts);
         done();
       };
 
@@ -746,8 +748,8 @@ describe('PubSub', function() {
       pubsub.request = function(config) {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'listSnapshots');
-        assert.deepEqual(config.reqOpts, expectedOptions);
-        assert.deepEqual(config.gaxOpts, expectedGaxOpts);
+        assert.deepStrictEqual(config.reqOpts, expectedOptions);
+        assert.deepStrictEqual(config.gaxOpts, expectedGaxOpts);
         done();
       };
 
@@ -782,7 +784,7 @@ describe('PubSub', function() {
 
       pubsub.getSnapshots(function(err, snapshots, nextQuery, apiResponse) {
         assert.strictEqual(err, err_);
-        assert.deepEqual(snapshots, snapshots_);
+        assert.deepStrictEqual(snapshots, snapshots_);
         assert.strictEqual(nextQuery, nextQuery_);
         assert.strictEqual(apiResponse, apiResponse_);
         done();
@@ -827,8 +829,8 @@ describe('PubSub', function() {
       pubsub.request = function(config) {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'listSubscriptions');
-        assert.deepEqual(config.reqOpts, {project: project});
-        assert.deepEqual(config.gaxOpts, expectedGaxOpts);
+        assert.deepStrictEqual(config.reqOpts, {project: project});
+        assert.deepStrictEqual(config.gaxOpts, expectedGaxOpts);
         done();
       };
 
@@ -868,7 +870,7 @@ describe('PubSub', function() {
 
       pubsub.getSubscriptions(function(err, subs, nextQuery, apiResponse) {
         assert.strictEqual(err, err_);
-        assert.deepEqual(subs, subs_);
+        assert.deepStrictEqual(subs, subs_);
         assert.strictEqual(nextQuery, nextQuery_);
         assert.strictEqual(apiResponse, apiResponse_);
         done();
@@ -960,8 +962,8 @@ describe('PubSub', function() {
       pubsub.request = function(config) {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'listTopics');
-        assert.deepEqual(config.reqOpts, expectedOptions);
-        assert.deepEqual(config.gaxOpts, expectedGaxOpts);
+        assert.deepStrictEqual(config.reqOpts, expectedOptions);
+        assert.deepStrictEqual(config.gaxOpts, expectedGaxOpts);
         done();
       };
 
@@ -996,7 +998,7 @@ describe('PubSub', function() {
 
       pubsub.getTopics(function(err, topics, nextQuery, apiResponse) {
         assert.strictEqual(err, err_);
-        assert.deepEqual(topics, topics_);
+        assert.deepStrictEqual(topics, topics_);
         assert.strictEqual(nextQuery, nextQuery_);
         assert.strictEqual(apiResponse, apiResponse_);
         done();
@@ -1052,8 +1054,8 @@ describe('PubSub', function() {
     it('should call client method with correct options', function(done) {
       var fakeClient = {};
       fakeClient.fakeMethod = function(reqOpts, gaxOpts) {
-        assert.deepEqual(CONFIG.reqOpts, reqOpts);
-        assert.deepEqual(CONFIG.gaxOpts, gaxOpts);
+        assert.deepStrictEqual(CONFIG.reqOpts, reqOpts);
+        assert.deepStrictEqual(CONFIG.gaxOpts, gaxOpts);
         done();
       };
       pubsub.getClient_ = function(config, callback) {
@@ -1064,7 +1066,7 @@ describe('PubSub', function() {
 
     it('should replace the project id token on reqOpts', function(done) {
       fakeUtil.replaceProjectIdToken = function(reqOpts, projectId) {
-        assert.deepEqual(reqOpts, CONFIG.reqOpts);
+        assert.deepStrictEqual(reqOpts, CONFIG.reqOpts);
         assert.strictEqual(projectId, PROJECT_ID);
         done();
       };
@@ -1232,7 +1234,7 @@ describe('PubSub', function() {
 
     it('should replace the project id token on reqOpts', function(done) {
       fakeUtil.replaceProjectIdToken = function(reqOpts, projectId) {
-        assert.deepEqual(reqOpts, CONFIG.reqOpts);
+        assert.deepStrictEqual(reqOpts, CONFIG.reqOpts);
         assert.strictEqual(projectId, PROJECT_ID);
         done();
       };
@@ -1300,7 +1302,7 @@ describe('PubSub', function() {
 
     it('should pass specified name to the Subscription', function(done) {
       SubscriptionOverride = function(pubsub, name) {
-        assert.equal(name, SUB_NAME);
+        assert.strictEqual(name, SUB_NAME);
         done();
       };
       pubsub.subscription(SUB_NAME);
