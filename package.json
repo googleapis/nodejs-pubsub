@@ -53,9 +53,9 @@
   ],
   "scripts": {
     "system-test": "mocha system-test/*.js --timeout 600000",
-    "cover": "nyc --reporter=lcov mocha --require intelli-espower-loader test/*.js --timeout 0 && nyc report",
+    "cover": "nyc --reporter=lcov mocha test/*.js --timeout 0 && nyc report",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
-    "test-no-cover": "mocha test/*.js --no-timeouts",
+    "test-no-cover": "mocha test/*.js",
     "test": "npm run cover",
     "lint": "eslint src/ samples/ system-test/ test/",
     "prettier": "prettier --write src/*.js src/*/*.js samples/*.js samples/*/*.js test/*.js test/*/*.js system-test/*.js system-test/*/*.js",
