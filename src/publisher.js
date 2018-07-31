@@ -109,10 +109,11 @@ function Publisher(topic, options) {
  * Publish the provided message.
  *
  * @throws {TypeError} If data is not a Buffer object.
+ * @throws {TypeError} If any value in `attributes` object is not a string.
  *
  * @param {buffer} data The message data. This must come in the form of a
  *     Buffer object.
- * @param {object} [attributes] Optional attributes for this message.
+ * @param {object.<string, string>} [attributes] Attributes for this message.
  * @param {PublisherPublishCallback} [callback] Callback function.
  * @returns {Promise<PublisherPublishResponse>}
  *
@@ -135,7 +136,7 @@ function Publisher(topic, options) {
  *
  * //-
  * // Optionally you can provide an object containing attributes for the
- * // message.
+ * // message. Note that all values in the object must be strings.
  * //-
  * const attributes = {
  *   key: 'value'
@@ -148,14 +149,24 @@ function Publisher(topic, options) {
  * //-
  * publisher.publish(data).then(function(messageId) {});
  */
-Publisher.prototype.publish = function(data, attrs, callback) {
+Publisher.prototype.publish = function(data, attributes, callback) {
   if (!(data instanceof Buffer)) {
     throw new TypeError('Data must be in the form of a Buffer.');
   }
 
-  if (is.fn(attrs)) {
-    callback = attrs;
-    attrs = {};
+  if (is.fn(attributes)) {
+    callback = attributes;
+    attributes = {};
+  }
+
+  // Ensure the `attributes` object only has string values
+  for (var key in attributes) {
+    var value = attributes[key];
+
+    if (!is.string(value)) {
+      throw new TypeError(`All attributes must be in the form of a string.
+\nInvalid value of type "${typeof value}" provided for "${key}".`);
+    }
   }
 
   var opts = this.settings.batching;
@@ -167,7 +178,7 @@ Publisher.prototype.publish = function(data, attrs, callback) {
   }
 
   // add it to the queue!
-  this.queue_(data, attrs, callback);
+  this.queue_(data, attributes, callback);
 
   // next lets check if this message brings us to the message cap or if we
   // magically hit the max byte limit
