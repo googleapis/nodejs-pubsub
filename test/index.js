@@ -1058,12 +1058,10 @@ describe('PubSub', function() {
 
     it('should replace the project id token on reqOpts', function(done) {
       pjyOverride = function(reqOpts, projectId) {
-        console.log('in the override');
         assert.deepStrictEqual(reqOpts, CONFIG.reqOpts);
         assert.strictEqual(projectId, PROJECT_ID);
         done();
       };
-      console.log('going in ');
       pubsub.request(CONFIG, assert.ifError);
     });
   });
