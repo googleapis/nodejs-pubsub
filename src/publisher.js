@@ -17,7 +17,7 @@
 'use strict';
 
 var arrify = require('arrify');
-var common = require('@google-cloud/common');
+const {promisifyAll} = require('@google-cloud/promisify');
 var each = require('async-each');
 var extend = require('extend');
 var is = require('is');
@@ -263,7 +263,7 @@ Publisher.prototype.queue_ = function(data, attrs, callback) {
  * All async methods (except for streams) will return a Promise in the event
  * that a callback is omitted.
  */
-common.util.promisifyAll(Publisher, {
+promisifyAll(Publisher, {
   singular: true,
 });
 

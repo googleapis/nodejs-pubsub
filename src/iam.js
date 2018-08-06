@@ -21,7 +21,7 @@
 'use strict';
 
 var arrify = require('arrify');
-var common = require('@google-cloud/common');
+const {promisifyAll} = require('@google-cloud/promisify');
 var is = require('is');
 
 /**
@@ -332,6 +332,6 @@ IAM.prototype.testPermissions = function(permissions, gaxOpts, callback) {
  * All async methods (except for streams) will return a Promise in the event
  * that a callback is omitted.
  */
-common.util.promisifyAll(IAM);
+promisifyAll(IAM);
 
 module.exports = IAM;

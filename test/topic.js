@@ -19,15 +19,15 @@
 var assert = require('assert');
 var extend = require('extend');
 var proxyquire = require('proxyquire');
-var util = require('@google-cloud/common').util;
+var {util} = require('@google-cloud/common');
+const pfy = require('@google-cloud/promisify');
 
 var promisified = false;
-var fakeUtil = extend({}, util, {
+var fakePromisify = extend({}, pfy, {
   promisifyAll: function(Class, options) {
     if (Class.name !== 'Topic') {
       return;
     }
-
     promisified = true;
     assert.deepStrictEqual(options.exclude, ['publisher', 'subscription']);
   },
@@ -73,9 +73,9 @@ describe('Topic', function() {
 
   before(function() {
     Topic = proxyquire('../src/topic.js', {
-      '@google-cloud/common': {
+      '@google-cloud/promisify': fakePromisify,
+      '@google-cloud/paginator': {
         paginator: fakePaginator,
-        util: fakeUtil,
       },
       './iam.js': FakeIAM,
       './publisher.js': FakePublisher,
@@ -206,7 +206,7 @@ describe('Topic', function() {
     });
 
     it('should optionally accept a callback', function(done) {
-      fakeUtil.noop = done;
+      util.noop = done;
 
       topic.request = function(config, callback) {
         callback(); // the done fn

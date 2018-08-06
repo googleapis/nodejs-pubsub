@@ -17,6 +17,8 @@
 'use strict';
 
 var common = require('@google-cloud/common');
+const {promisifyAll} = require('@google-cloud/promisify');
+const {paginator} = require('@google-cloud/paginator');
 var extend = require('extend');
 var is = require('is');
 
@@ -531,7 +533,7 @@ Topic.prototype.getSubscriptions = function(options, callback) {
  *     this.end();
  *   });
  */
-Topic.prototype.getSubscriptionsStream = common.paginator.streamify(
+Topic.prototype.getSubscriptionsStream = paginator.streamify(
   'getSubscriptions'
 );
 
@@ -616,14 +618,14 @@ Topic.prototype.subscription = function(name, options) {
  *
  * These methods can be agto-paginated.
  */
-common.paginator.extend(Topic, ['getSubscriptions']);
+paginator.extend(Topic, ['getSubscriptions']);
 
 /*! Developer Documentation
  *
  * All async methods (except for streams) will return a Promise in the event
  * that a callback is omitted.
  */
-common.util.promisifyAll(Topic, {
+promisifyAll(Topic, {
   exclude: ['publisher', 'subscription'],
 });
 

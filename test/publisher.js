@@ -17,12 +17,13 @@
 'use strict';
 
 var assert = require('assert');
-var common = require('@google-cloud/common');
+var {util} = require('@google-cloud/common');
+const pfy = require('@google-cloud/promisify');
 var extend = require('extend');
 var proxyquire = require('proxyquire');
 
 var promisified = false;
-var fakeUtil = extend({}, common.util, {
+var fakePromisify = extend({}, pfy, {
   promisifyAll: function(Class, options) {
     if (Class.name === 'Publisher') {
       assert.deepStrictEqual(options, {singular: true});
@@ -40,19 +41,17 @@ describe('Publisher', function() {
   var TOPIC = {
     name: TOPIC_NAME,
     Promise: {},
-    request: fakeUtil.noop,
+    request: util.noop,
   };
 
   before(function() {
     Publisher = proxyquire('../src/publisher.js', {
-      '@google-cloud/common': {
-        util: fakeUtil,
-      },
+      '@google-cloud/promisify': fakePromisify,
     });
   });
 
   beforeEach(function() {
-    TOPIC.request = fakeUtil.noop;
+    TOPIC.request = util.noop;
     publisher = new Publisher(TOPIC);
     batchOpts = publisher.settings.batching;
   });
@@ -143,8 +142,8 @@ describe('Publisher', function() {
     });
 
     beforeEach(function() {
-      publisher.publish_ = fakeUtil.noop;
-      global.setTimeout = fakeUtil.noop;
+      publisher.publish_ = util.noop;
+      global.setTimeout = util.noop;
     });
 
     after(function() {
@@ -218,7 +217,7 @@ All attributes must be in the form of a string.
 
       publisher.publish_ = done;
       publisher.inventory_.bytes = batchOpts.maxBytes - DATA.length;
-      publisher.publish(DATA, fakeUtil.noop);
+      publisher.publish(DATA, util.noop);
     });
 
     it('should publish if data puts payload at message cap', function(done) {
@@ -234,7 +233,7 @@ All attributes must be in the form of a string.
       };
 
       publisher.inventory_.queued = Array(batchOpts.maxMessages).fill({});
-      publisher.publish(DATA, fakeUtil.noop);
+      publisher.publish(DATA, util.noop);
     });
 
     it('should set a timeout if a publish did not occur', function(done) {
@@ -249,7 +248,7 @@ All attributes must be in the form of a string.
       };
 
       publisher.publish_ = done;
-      publisher.publish(DATA, fakeUtil.noop);
+      publisher.publish(DATA, util.noop);
 
       assert.strictEqual(publisher.timeoutHandle_, fakeTimeoutHandle);
     });
@@ -258,7 +257,7 @@ All attributes must be in the form of a string.
       var fakeTimeoutHandle = 'not-a-real-handle';
 
       publisher.timeoutHandle_ = 'not-a-real-handle';
-      publisher.publish(DATA, fakeUtil.noop);
+      publisher.publish(DATA, util.noop);
       assert.strictEqual(publisher.timeoutHandle_, fakeTimeoutHandle);
     });
   });
@@ -272,7 +271,7 @@ All attributes must be in the form of a string.
     });
 
     it('should reset the inventory object', function() {
-      publisher.inventory_.callbacks.push(fakeUtil.noop);
+      publisher.inventory_.callbacks.push(util.noop);
       publisher.inventory_.queued.push({});
       publisher.inventory_.bytes = 5;
 
@@ -340,7 +339,7 @@ All attributes must be in the form of a string.
     var ATTRS = {a: 'a'};
 
     it('should add the data and attrs to the inventory', function() {
-      publisher.queue_(DATA, ATTRS, fakeUtil.noop);
+      publisher.queue_(DATA, ATTRS, util.noop);
 
       assert.deepStrictEqual(publisher.inventory_.queued, [
         {
@@ -351,15 +350,15 @@ All attributes must be in the form of a string.
     });
 
     it('should update the inventory size', function() {
-      publisher.queue_(DATA, ATTRS, fakeUtil.noop);
+      publisher.queue_(DATA, ATTRS, util.noop);
 
       assert.strictEqual(publisher.inventory_.bytes, DATA.length);
     });
 
     it('should capture the callback', function() {
-      publisher.queue_(DATA, ATTRS, fakeUtil.noop);
+      publisher.queue_(DATA, ATTRS, util.noop);
 
-      assert.deepStrictEqual(publisher.inventory_.callbacks, [fakeUtil.noop]);
+      assert.deepStrictEqual(publisher.inventory_.callbacks, [util.noop]);
     });
   });
 });

@@ -24,6 +24,7 @@ var extend = require('extend');
 var proxyquire = require('proxyquire');
 var uuid = require('uuid');
 var util = require('util');
+const pjy = require('@google-cloud/projectify');
 
 var fakeUtil = extend({}, common.util);
 var fakeUuid = extend({}, uuid);
@@ -99,10 +100,18 @@ describe('ConnectionPool', function() {
     request: fakeUtil.noop,
   };
 
+  let pjyOverride;
+  function fakePjy() {
+    return (pjyOverride || pjy.replaceProjectIdToken).apply(null, arguments);
+  }
+
   before(function() {
     ConnectionPool = proxyquire('../src/connection-pool.js', {
       '@google-cloud/common': {
         util: fakeUtil,
+      },
+      '@google-cloud/projectify': {
+        replaceProjectIdToken: fakePjy,
       },
       duplexify: fakeDuplexify,
       uuid: fakeUuid,
@@ -527,7 +536,7 @@ describe('ConnectionPool', function() {
           return fakeId;
         };
 
-        fakeUtil.replaceProjectIdToken = common.util.replaceProjectIdToken;
+        pjyOverride = null;
       });
 
       it('should create a connection', function(done) {
@@ -539,7 +548,7 @@ describe('ConnectionPool', function() {
           return fakeDuplex;
         };
 
-        fakeUtil.replaceProjectIdToken = function(subName, projectId) {
+        pjyOverride = function(subName, projectId) {
           assert.strictEqual(subName, SUB_NAME);
           assert.strictEqual(projectId, PROJECT_ID);
           return TOKENIZED_SUB_NAME;

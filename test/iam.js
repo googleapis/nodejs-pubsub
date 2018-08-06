@@ -19,10 +19,10 @@
 var assert = require('assert');
 var extend = require('extend');
 var proxyquire = require('proxyquire');
-var util = require('@google-cloud/common').util;
+var {util} = require('@google-cloud/common');
 
 var promisified = false;
-var fakeUtil = extend({}, util, {
+var fakePromisify = extend({}, util, {
   promisifyAll: function(Class) {
     if (Class.name === 'IAM') {
       promisified = true;
@@ -43,9 +43,7 @@ describe('IAM', function() {
 
   before(function() {
     IAM = proxyquire('../src/iam.js', {
-      '@google-cloud/common': {
-        util: fakeUtil,
-      },
+      '@google-cloud/promisify': fakePromisify,
     });
   });
 

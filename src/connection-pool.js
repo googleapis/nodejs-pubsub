@@ -17,6 +17,7 @@
 'use strict';
 
 var common = require('@google-cloud/common');
+const {replaceProjectIdToken} = require('@google-cloud/projectify');
 var duplexify = require('duplexify');
 var each = require('async-each');
 var events = require('events');
@@ -233,7 +234,7 @@ ConnectionPool.prototype.createConnection = function() {
       .on('error', onConnectionError)
       .on('data', onConnectionData)
       .write({
-        subscription: common.util.replaceProjectIdToken(
+        subscription: replaceProjectIdToken(
           self.subscription.name,
           self.pubsub.projectId
         ),
