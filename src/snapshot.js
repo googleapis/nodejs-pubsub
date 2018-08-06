@@ -17,6 +17,7 @@
 'use strict';
 
 var common = require('@google-cloud/common');
+const {promisifyAll} = require('@google-cloud/promisify');
 var is = require('is');
 
 /**
@@ -211,6 +212,6 @@ Snapshot.prototype.delete = function(callback) {
  * All async methods (except for streams) will return a Promise in the event
  * that a callback is omitted.
  */
-common.util.promisifyAll(Snapshot);
+promisifyAll(Snapshot);
 
 module.exports = Snapshot;

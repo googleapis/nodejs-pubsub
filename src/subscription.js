@@ -17,6 +17,7 @@
 'use strict';
 
 var common = require('@google-cloud/common');
+const {promisifyAll} = require('@google-cloud/promisify');
 var extend = require('extend');
 var is = require('is');
 var snakeCase = require('lodash.snakecase');
@@ -784,7 +785,7 @@ Subscription.prototype.snapshot = function(name) {
  * All async methods (except for streams) will return a Promise in the event
  * that a callback is omitted.
  */
-common.util.promisifyAll(Subscription, {
+promisifyAll(Subscription, {
   exclude: ['snapshot'],
 });
 

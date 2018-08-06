@@ -17,12 +17,13 @@
 'use strict';
 
 var assert = require('assert');
-var common = require('@google-cloud/common');
+var {util} = require('@google-cloud/common');
 var extend = require('extend');
 var proxyquire = require('proxyquire');
+const pfy = require('@google-cloud/promisify');
 
 var promisified = false;
-var fakeUtil = extend({}, common.util, {
+var fakePromisify = extend({}, pfy, {
   promisifyAll: function(Class, options) {
     if (Class.name !== 'Subscription') {
       return;
@@ -56,14 +57,12 @@ describe('Subscription', function() {
   var PUBSUB = {
     projectId: PROJECT_ID,
     Promise: {},
-    request: fakeUtil.noop,
+    request: util.noop,
   };
 
   before(function() {
     Subscription = proxyquire('../src/subscription.js', {
-      '@google-cloud/common': {
-        util: fakeUtil,
-      },
+      '@google-cloud/promisify': fakePromisify,
       './iam.js': FakeIAM,
       './snapshot.js': FakeSnapshot,
       './subscriber.js': FakeSubscriber,
@@ -71,7 +70,7 @@ describe('Subscription', function() {
   });
 
   beforeEach(function() {
-    PUBSUB.request = fakeUtil.noop = function() {};
+    PUBSUB.request = util.noop = function() {};
     subscription = new Subscription(PUBSUB, SUB_NAME);
   });
 
@@ -287,8 +286,8 @@ describe('Subscription', function() {
 
   describe('delete', function() {
     beforeEach(function() {
-      subscription.removeAllListeners = fakeUtil.noop;
-      subscription.close = fakeUtil.noop;
+      subscription.removeAllListeners = util.noop;
+      subscription.close = util.noop;
     });
 
     it('should make the correct request', function(done) {
@@ -325,7 +324,7 @@ describe('Subscription', function() {
       });
 
       it('should optionally accept a callback', function(done) {
-        fakeUtil.noop = function(err, resp) {
+        util.noop = function(err, resp) {
           assert.ifError(err);
           assert.strictEqual(resp, apiResponse);
           done();
@@ -451,7 +450,7 @@ describe('Subscription', function() {
 
   describe('get', function() {
     beforeEach(function() {
-      subscription.create = fakeUtil.noop;
+      subscription.create = util.noop;
     });
 
     it('should delete the autoCreate option', function(done) {

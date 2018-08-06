@@ -17,12 +17,13 @@
 'use strict';
 
 var assert = require('assert');
-var common = require('@google-cloud/common');
+var {util} = require('@google-cloud/common');
 var extend = require('extend');
 var proxyquire = require('proxyquire');
+const pfy = require('@google-cloud/promisify');
 
 var promisified = false;
-var fakeUtil = extend({}, common.util, {
+var fakePromisify = extend({}, pfy, {
   promisifyAll: function(Class) {
     if (Class.name === 'Snapshot') {
       promisified = true;
@@ -52,14 +53,12 @@ describe('Snapshot', function() {
 
   before(function() {
     Snapshot = proxyquire('../src/snapshot.js', {
-      '@google-cloud/common': {
-        util: fakeUtil,
-      },
+      '@google-cloud/promisify': fakePromisify,
     });
   });
 
   beforeEach(function() {
-    fakeUtil.noop = function() {};
+    util.noop = function() {};
     snapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
   });
 
@@ -182,7 +181,7 @@ describe('Snapshot', function() {
     });
 
     it('should optionally accept a callback', function(done) {
-      fakeUtil.noop = done;
+      util.noop = done;
 
       snapshot.parent.request = function(config, callback) {
         callback(); // the done fn

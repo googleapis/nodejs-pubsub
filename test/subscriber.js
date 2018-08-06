@@ -24,8 +24,14 @@ var extend = require('extend');
 var is = require('is');
 var proxyquire = require('proxyquire');
 var util = require('util');
+const pfy = require('@google-cloud/promisify');
 
 var fakeUtil = extend({}, common.util);
+
+let promisifyOverride;
+function fakePromisify() {
+  return (promisifyOverride || pfy.promisify).apply(null, arguments);
+}
 
 var FAKE_FREE_MEM = 168222720;
 var fakeOs = {
@@ -61,6 +67,9 @@ describe('Subscriber', function() {
     Subscriber = proxyquire('../src/subscriber.js', {
       '@google-cloud/common': {
         util: fakeUtil,
+      },
+      '@google-cloud/promisify': {
+        promisify: fakePromisify,
       },
       delay: fakeDelay,
       os: fakeOs,
@@ -274,7 +283,7 @@ describe('Subscriber', function() {
           },
         };
 
-        fakeUtil.promisify = function(fn) {
+        promisifyOverride = function(fn) {
           assert.strictEqual(fn, subscriber.request);
           return fakePromisified;
         };
@@ -305,7 +314,7 @@ describe('Subscriber', function() {
           },
         };
 
-        fakeUtil.promisify = function() {
+        promisifyOverride = function() {
           return fakePromisified;
         };
 
@@ -321,7 +330,7 @@ describe('Subscriber', function() {
           },
         };
 
-        fakeUtil.promisify = function() {
+        promisifyOverride = function() {
           return fakePromisified;
         };
 
@@ -849,7 +858,7 @@ describe('Subscriber', function() {
           },
         };
 
-        fakeUtil.promisify = function(fn) {
+        promisifyOverride = function(fn) {
           assert.strictEqual(fn, subscriber.request);
           return fakePromisified;
         };
@@ -881,7 +890,7 @@ describe('Subscriber', function() {
           },
         };
 
-        fakeUtil.promisify = function() {
+        promisifyOverride = function() {
           return fakePromisified;
         };
 
@@ -897,7 +906,7 @@ describe('Subscriber', function() {
           },
         };
 
-        fakeUtil.promisify = function() {
+        promisifyOverride = function() {
           return fakePromisified;
         };
 

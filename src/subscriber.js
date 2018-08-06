@@ -19,6 +19,7 @@
 var arrify = require('arrify');
 var chunk = require('lodash.chunk');
 var common = require('@google-cloud/common');
+const {promisify} = require('@google-cloud/promisify');
 var delay = require('delay');
 var events = require('events');
 var extend = require('extend');
@@ -138,7 +139,7 @@ Subscriber.prototype.acknowledge_ = function(ackIds, connId) {
       return self.writeTo_(connId, {ackIds: ackIdChunk});
     }
 
-    return common.util.promisify(self.request).call(self, {
+    return promisify(self.request).call(self, {
       client: 'SubscriberClient',
       method: 'acknowledge',
       reqOpts: {
@@ -396,7 +397,7 @@ Subscriber.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
       });
     }
 
-    return common.util.promisify(self.request).call(self, {
+    return promisify(self.request).call(self, {
       client: 'SubscriberClient',
       method: 'modifyAckDeadline',
       reqOpts: {

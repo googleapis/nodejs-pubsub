@@ -22,6 +22,7 @@ var extend = require('extend');
 var gax = require('google-gax');
 var proxyquire = require('proxyquire');
 var util = require('@google-cloud/common').util;
+const pjy = require('@google-cloud/projectify');
 
 var PKG = require('../package.json');
 
@@ -50,7 +51,7 @@ function Subscription(a, b, c) {
 }
 
 var promisified = false;
-var fakeUtil = extend({}, util, {
+var fakePromisify = extend({}, util, {
   promisifyAll: function(Class, options) {
     if (Class.name !== 'PubSub') {
       return;
@@ -65,6 +66,11 @@ var fakeUtil = extend({}, util, {
     ]);
   },
 });
+
+let pjyOverride;
+function fakePjy() {
+  return (pjyOverride || pjy.replaceProjectIdToken).apply(this, arguments);
+}
 
 function FakeSnapshot() {
   this.calledWith_ = arguments;
@@ -133,9 +139,12 @@ describe('PubSub', function() {
   before(function() {
     delete process.env.PUBSUB_EMULATOR_HOST;
     PubSub = proxyquire('../', {
-      '@google-cloud/common': {
+      '@google-cloud/paginator': {
         paginator: fakePaginator,
-        util: fakeUtil,
+      },
+      '@google-cloud/promisify': fakePromisify,
+      '@google-cloud/projectify': {
+        replaceProjectIdToken: fakePjy,
       },
       'google-auth-library': {
         GoogleAuth: fakeGoogleAuth,
@@ -155,10 +164,6 @@ describe('PubSub', function() {
   });
 
   beforeEach(function() {
-    fakeUtil.normalizeArguments = function(context, options) {
-      return options;
-    };
-
     v1ClientOverrides = {};
     googleAuthOverride = null;
     SubscriptionOverride = null;
@@ -183,19 +188,6 @@ describe('PubSub', function() {
 
     it('should return an instance', function() {
       assert(PubSub() instanceof PubSub);
-    });
-
-    it('should normalize the arguments', function() {
-      var normalizeArgumentsCalled = false;
-
-      fakeUtil.normalizeArguments = function(context, options) {
-        normalizeArgumentsCalled = true;
-        assert.strictEqual(options, OPTIONS);
-        return options;
-      };
-
-      new PubSub(OPTIONS);
-      assert.strictEqual(normalizeArgumentsCalled, true);
     });
 
     it('should combine all required scopes', function() {
@@ -1023,7 +1015,7 @@ describe('PubSub', function() {
         },
       };
 
-      fakeUtil.replaceProjectIdToken = function(reqOpts) {
+      pjyOverride = function(reqOpts) {
         return reqOpts;
       };
 
@@ -1065,12 +1057,11 @@ describe('PubSub', function() {
     });
 
     it('should replace the project id token on reqOpts', function(done) {
-      fakeUtil.replaceProjectIdToken = function(reqOpts, projectId) {
+      pjyOverride = function(reqOpts, projectId) {
         assert.deepStrictEqual(reqOpts, CONFIG.reqOpts);
         assert.strictEqual(projectId, PROJECT_ID);
         done();
       };
-
       pubsub.request(CONFIG, assert.ifError);
     });
   });
@@ -1201,7 +1192,7 @@ describe('PubSub', function() {
     };
 
     beforeEach(function() {
-      fakeUtil.replaceProjectIdToken = function(reqOpts) {
+      pjyOverride = function(reqOpts) {
         return reqOpts;
       };
 
@@ -1233,7 +1224,7 @@ describe('PubSub', function() {
     });
 
     it('should replace the project id token on reqOpts', function(done) {
-      fakeUtil.replaceProjectIdToken = function(reqOpts, projectId) {
+      pjyOverride = function(reqOpts, projectId) {
         assert.deepStrictEqual(reqOpts, CONFIG.reqOpts);
         assert.strictEqual(projectId, PROJECT_ID);
         done();
@@ -1252,7 +1243,7 @@ describe('PubSub', function() {
 
       var replacedReqOpts = {};
 
-      fakeUtil.replaceProjectIdToken = function() {
+      pjyOverride = function() {
         return replacedReqOpts;
       };
 

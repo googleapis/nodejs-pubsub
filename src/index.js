@@ -16,11 +16,13 @@
 
 'use strict';
 
-var common = require('@google-cloud/common');
+const {replaceProjectIdToken} = require('@google-cloud/projectify');
+const {paginator} = require('@google-cloud/paginator');
+const {promisifyAll} = require('@google-cloud/promisify');
 var extend = require('extend');
 var {GoogleAuth} = require('google-auth-library');
 var gax = require('google-gax');
-var grpc = new gax.GrpcClient().grpc;
+var {grpc} = new gax.GrpcClient();
 var is = require('is');
 
 var PKG = require('../package.json');
@@ -97,7 +99,7 @@ function PubSub(options) {
     return new PubSub(options);
   }
 
-  options = common.util.normalizeArguments(this, options);
+  options = options || {};
 
   // Determine what scopes are needed.
   // It is the union of the scopes on both clients.
@@ -483,9 +485,7 @@ PubSub.prototype.getSnapshots = function(options, callback) {
  *     this.end();
  *   });
  */
-PubSub.prototype.getSnapshotsStream = common.paginator.streamify(
-  'getSnapshots'
-);
+PubSub.prototype.getSnapshotsStream = paginator.streamify('getSnapshots');
 
 /**
  * Query object for listing subscriptions.
@@ -629,7 +629,7 @@ PubSub.prototype.getSubscriptions = function(options, callback) {
  *     this.end();
  *   });
  */
-PubSub.prototype.getSubscriptionsStream = common.paginator.streamify(
+PubSub.prototype.getSubscriptionsStream = paginator.streamify(
   'getSubscriptions'
 );
 
@@ -768,7 +768,7 @@ PubSub.prototype.getTopics = function(options, callback) {
  *     this.end();
  *   });
  */
-PubSub.prototype.getTopicsStream = common.paginator.streamify('getTopics');
+PubSub.prototype.getTopicsStream = paginator.streamify('getTopics');
 
 /**
  * Get the PubSub client object.
@@ -832,7 +832,7 @@ PubSub.prototype.request = function(config, callback) {
     }
 
     var reqOpts = extend(true, {}, config.reqOpts);
-    reqOpts = common.util.replaceProjectIdToken(reqOpts, self.projectId);
+    reqOpts = replaceProjectIdToken(reqOpts, self.projectId);
 
     client[config.method](reqOpts, config.gaxOpts, callback);
   });
@@ -933,18 +933,14 @@ PubSub.prototype.topic = function(name, options) {
  *
  * These methods can be agto-paginated.
  */
-common.paginator.extend(PubSub, [
-  'getSnapshots',
-  'getSubscriptions',
-  'getTopics',
-]);
+paginator.extend(PubSub, ['getSnapshots', 'getSubscriptions', 'getTopics']);
 
 /*! Developer Documentation
  *
  * All async methods (except for streams) will return a Promise in the event
  * that a callback is omitted.
  */
-common.util.promisifyAll(PubSub, {
+promisifyAll(PubSub, {
   exclude: ['request', 'snapshot', 'subscription', 'topic'],
 });
 
