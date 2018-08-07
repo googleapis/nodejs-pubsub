@@ -16,19 +16,19 @@
 
 'use strict';
 
-var arrify = require('arrify');
-var chunk = require('lodash.chunk');
-var common = require('@google-cloud/common');
+const arrify = require('arrify');
+const chunk = require('lodash.chunk');
+const common = require('@google-cloud/common');
 const {promisify} = require('@google-cloud/promisify');
-var delay = require('delay');
-var events = require('events');
-var extend = require('extend');
-var is = require('is');
-var os = require('os');
-var util = require('util');
+const delay = require('delay');
+const events = require('events');
+const extend = require('extend');
+const is = require('is');
+const os = require('os');
+const util = require('util');
 
-var ConnectionPool = require('./connection-pool.js');
-var Histogram = require('./histogram.js');
+const ConnectionPool = require('./connection-pool.js');
+const Histogram = require('./histogram.js');
 
 /**
  * @type {number} - The maximum number of ackIds to be sent in acknowledge/modifyAckDeadline
@@ -37,7 +37,7 @@ var Histogram = require('./histogram.js');
  *     overhead, a maximum of 3000 ackIds per request should be safe.
  * @private
  */
-var MAX_ACK_IDS_PER_REQUEST = 3000;
+const MAX_ACK_IDS_PER_REQUEST = 3000;
 
 /**
  * Subscriber class is used to manage all message related functionality.
@@ -105,7 +105,7 @@ util.inherits(Subscriber, events.EventEmitter);
  * @param {object} message The message object.
  */
 Subscriber.prototype.ack_ = function(message) {
-  var breakLease = this.breakLease_.bind(this, message);
+  const breakLease = this.breakLease_.bind(this, message);
 
   this.histogram.add(Date.now() - message.received);
 
@@ -128,11 +128,11 @@ Subscriber.prototype.ack_ = function(message) {
  * @return {Promise}
  */
 Subscriber.prototype.acknowledge_ = function(ackIds, connId) {
-  var self = this;
+  const self = this;
 
   ackIds = arrify(ackIds);
 
-  var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
+  const promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
     ackIdChunk
   ) {
     if (self.writeToStreams_ && self.isConnected_()) {
@@ -166,7 +166,7 @@ Subscriber.prototype.acknowledge_ = function(ackIds, connId) {
  * @param {object} message The message object.
  */
 Subscriber.prototype.breakLease_ = function(message) {
-  var messageIndex = this.inventory_.lease.indexOf(message.ackId);
+  const messageIndex = this.inventory_.lease.indexOf(message.ackId);
 
   if (messageIndex === -1) {
     return;
@@ -175,7 +175,7 @@ Subscriber.prototype.breakLease_ = function(message) {
   this.inventory_.lease.splice(messageIndex, 1);
   this.inventory_.bytes -= message.length;
 
-  var pool = this.connectionPool;
+  const pool = this.connectionPool;
 
   if (pool && pool.isPaused && !this.hasMaxMessages_()) {
     pool.resume();
@@ -208,11 +208,11 @@ Subscriber.prototype.breakLease_ = function(message) {
  * Subscriber.close().then(function() {});
  */
 Subscriber.prototype.close = function(callback) {
-  var self = this;
+  const self = this;
 
   this.userClosed_ = true;
 
-  var inventory = this.inventory_;
+  const inventory = this.inventory_;
   inventory.lease.length = inventory.bytes = 0;
 
   clearTimeout(this.leaseTimeoutHandle_);
@@ -254,21 +254,21 @@ Subscriber.prototype.closeConnection_ = function(callback) {
  * @private
  */
 Subscriber.prototype.flushQueues_ = function() {
-  var self = this;
+  const self = this;
 
   if (this.flushTimeoutHandle_) {
     this.flushTimeoutHandle_.clear();
     this.flushTimeoutHandle_ = null;
   }
 
-  var acks = this.inventory_.ack;
-  var nacks = this.inventory_.nack;
+  const acks = this.inventory_.ack;
+  const nacks = this.inventory_.nack;
 
   if (!acks.length && !nacks.length) {
     return Promise.resolve();
   }
 
-  var requests = [];
+  const requests = [];
 
   if (acks.length) {
     requests.push(
@@ -352,7 +352,7 @@ Subscriber.prototype.leaseMessage_ = function(message) {
  * Subscriber.listenForEvents_();
  */
 Subscriber.prototype.listenForEvents_ = function() {
-  var self = this;
+  const self = this;
 
   this.on('newListener', function(event) {
     if (event === 'message') {
@@ -383,11 +383,11 @@ Subscriber.prototype.listenForEvents_ = function() {
  * @return {Promise}
  */
 Subscriber.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
-  var self = this;
+  const self = this;
 
   ackIds = arrify(ackIds);
 
-  var promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
+  const promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
     ackIdChunk
   ) {
     if (self.writeToStreams_ && self.isConnected_()) {
@@ -423,7 +423,7 @@ Subscriber.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
  * @param {object} message - The message object.
  */
 Subscriber.prototype.nack_ = function(message) {
-  var breakLease = this.breakLease_.bind(this, message);
+  const breakLease = this.breakLease_.bind(this, message);
 
   if (this.isConnected_()) {
     this.modifyAckDeadline_(message.ackId, 0, message.connectionId).then(
@@ -442,8 +442,8 @@ Subscriber.prototype.nack_ = function(message) {
  * @private
  */
 Subscriber.prototype.openConnection_ = function() {
-  var self = this;
-  var pool = (this.connectionPool = new ConnectionPool(this));
+  const self = this;
+  const pool = (this.connectionPool = new ConnectionPool(this));
 
   this.isOpen = true;
 
@@ -471,7 +471,7 @@ Subscriber.prototype.openConnection_ = function() {
  * @private
  */
 Subscriber.prototype.renewLeases_ = function() {
-  var self = this;
+  const self = this;
 
   clearTimeout(this.leaseTimeoutHandle_);
   this.leaseTimeoutHandle_ = null;
@@ -482,8 +482,8 @@ Subscriber.prototype.renewLeases_ = function() {
 
   this.ackDeadline = this.histogram.percentile(99);
 
-  var ackIds = this.inventory_.lease.slice();
-  var ackDeadlineSeconds = this.ackDeadline / 1000;
+  const ackIds = this.inventory_.lease.slice();
+  const ackDeadlineSeconds = this.ackDeadline / 1000;
 
   this.modifyAckDeadline_(ackIds, ackDeadlineSeconds).then(function() {
     self.setLeaseTimeout_();
@@ -498,8 +498,8 @@ Subscriber.prototype.renewLeases_ = function() {
  */
 Subscriber.prototype.setFlushTimeout_ = function() {
   if (!this.flushTimeoutHandle_) {
-    var timeout = delay(this.batching.maxMilliseconds);
-    var promise = timeout
+    const timeout = delay(this.batching.maxMilliseconds);
+    const promise = timeout
       .then(this.flushQueues_.bind(this))
       .catch(common.util.noop);
 
@@ -521,8 +521,8 @@ Subscriber.prototype.setLeaseTimeout_ = function() {
     return;
   }
 
-  var latency = this.latency_.percentile(99);
-  var timeout = Math.random() * this.ackDeadline * 0.9 - latency;
+  const latency = this.latency_.percentile(99);
+  const timeout = Math.random() * this.ackDeadline * 0.9 - latency;
 
   this.leaseTimeoutHandle_ = setTimeout(this.renewLeases_.bind(this), timeout);
 };
@@ -538,8 +538,8 @@ Subscriber.prototype.setLeaseTimeout_ = function() {
  * @returns {Promise}
  */
 Subscriber.prototype.writeTo_ = function(connId, data) {
-  var self = this;
-  var startTime = Date.now();
+  const self = this;
+  const startTime = Date.now();
 
   return new Promise(function(resolve, reject) {
     self.connectionPool.acquire(connId, function(err, connection) {

@@ -16,9 +16,9 @@
 
 'use strict';
 
-var common = require('@google-cloud/common');
+const common = require('@google-cloud/common');
 const {promisifyAll} = require('@google-cloud/promisify');
-var is = require('is');
+const is = require('is');
 
 /**
  * A Snapshot object will give you access to your Cloud Pub/Sub snapshot.
@@ -59,13 +59,13 @@ var is = require('is');
  * //-
  * // From {@link PubSub#snapshot}:
  * //-
- * var snapshot = pubsub.snapshot('my-snapshot');
+ * const snapshot = pubsub.snapshot('my-snapshot');
  * // snapshot is a Snapshot object.
  *
  * //-
  * // Create a snapshot with {module:pubsub/subscription#createSnapshot}:
  * //-
- * var subscription = pubsub.subscription('my-subscription');
+ * const subscription = pubsub.subscription('my-subscription');
  *
  * subscription.createSnapshot('my-snapshot', function(err, snapshot) {
  *   if (!err) {
@@ -76,7 +76,7 @@ var is = require('is');
  * //-
  * // Seek to your snapshot:
  * //-
- * var subscription = pubsub.subscription('my-subscription');
+ * const subscription = pubsub.subscription('my-subscription');
  *
  * subscription.seek('my-snapshot', function(err) {
  *   if (err) {
@@ -109,10 +109,10 @@ function Snapshot(parent, name) {
      *     service.
      *
      * @example
-     * var subscription = pubsub.subscription('my-subscription');
-     * var snapshot = subscription.snapshot('my-snapshot');
+     * const subscription = pubsub.subscription('my-subscription');
+     * const snapshot = subscription.snapshot('my-snapshot');
      *
-     * var callback = function(err, snapshot, apiResponse) {
+     * const callback = function(err, snapshot, apiResponse) {
      *   if (!err) {
      *     // The snapshot was created successfully.
      *   }
@@ -124,8 +124,8 @@ function Snapshot(parent, name) {
      * // If the callback is omitted, we'll return a Promise.
      * //-
      * snapshot.create('my-snapshot').then(function(data) {
-     *   var snapshot = data[0];
-     *   var apiResponse = data[1];
+     *   const snapshot = data[0];
+     *   const apiResponse = data[1];
      * });
      */
     this.create = parent.createSnapshot.bind(parent, name);
@@ -145,8 +145,8 @@ function Snapshot(parent, name) {
      *     service.
      *
      * @example
-     * var subscription = pubsub.subscription('my-subscription');
-     * var snapshot = subscription.snapshot('my-snapshot');
+     * const subscription = pubsub.subscription('my-subscription');
+     * const snapshot = subscription.snapshot('my-snapshot');
      *
      * snapshot.seek(function(err, apiResponse) {});
      *
@@ -154,7 +154,7 @@ function Snapshot(parent, name) {
      * // If the callback is omitted, we'll return a Promise.
      * //-
      * snapshot.seek().then(function(data) {
-     *   var apiResponse = data[0];
+     *   const apiResponse = data[0];
      * });
      */
     this.seek = parent.seek.bind(parent, name);
@@ -187,11 +187,11 @@ Snapshot.formatName_ = function(projectId, name) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * snapshot.delete().then(function(data) {
- *   var apiResponse = data[0];
+ *   const apiResponse = data[0];
  * });
  */
 Snapshot.prototype.delete = function(callback) {
-  var reqOpts = {
+  const reqOpts = {
     snapshot: this.name,
   };
 

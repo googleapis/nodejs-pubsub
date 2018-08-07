@@ -20,9 +20,9 @@
 
 'use strict';
 
-var arrify = require('arrify');
+const arrify = require('arrify');
 const {promisifyAll} = require('@google-cloud/promisify');
-var is = require('is');
+const is = require('is');
 
 /**
  * [IAM (Identity and Access Management)](https://cloud.google.com/pubsub/access_control)
@@ -109,8 +109,8 @@ function IAM(pubsub, id) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * topic.iam.getPolicy().then(function(data) {
- *   var policy = data[0];
- *   var apiResponse = data[1];
+ *   const policy = data[0];
+ *   const apiResponse = data[1];
  * });
  */
 IAM.prototype.getPolicy = function(gaxOpts, callback) {
@@ -119,7 +119,7 @@ IAM.prototype.getPolicy = function(gaxOpts, callback) {
     gaxOpts = null;
   }
 
-  var reqOpts = {
+  const reqOpts = {
     resource: this.id,
   };
 
@@ -170,7 +170,7 @@ IAM.prototype.getPolicy = function(gaxOpts, callback) {
  * const topic = pubsub.topic('my-topic');
  * const subscription = topic.subscription('my-subscription');
  *
- * var myPolicy = {
+ * const myPolicy = {
  *   bindings: [
  *     {
  *       role: 'roles/pubsub.subscriber',
@@ -187,8 +187,8 @@ IAM.prototype.getPolicy = function(gaxOpts, callback) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * topic.iam.setPolicy(myPolicy).then(function(data) {
- *   var policy = data[0];
- *   var apiResponse = data[1];
+ *   const policy = data[0];
+ *   const apiResponse = data[1];
  * });
  */
 IAM.prototype.setPolicy = function(policy, gaxOpts, callback) {
@@ -201,7 +201,7 @@ IAM.prototype.setPolicy = function(policy, gaxOpts, callback) {
     gaxOpts = null;
   }
 
-  var reqOpts = {
+  const reqOpts = {
     resource: this.id,
     policy,
   };
@@ -298,7 +298,7 @@ IAM.prototype.testPermissions = function(permissions, gaxOpts, callback) {
     gaxOpts = null;
   }
 
-  var reqOpts = {
+  const reqOpts = {
     resource: this.id,
     permissions: arrify(permissions),
   };
@@ -316,8 +316,8 @@ IAM.prototype.testPermissions = function(permissions, gaxOpts, callback) {
         return;
       }
 
-      var availablePermissions = arrify(resp.permissions);
-      var permissionHash = permissions.reduce(function(acc, permission) {
+      const availablePermissions = arrify(resp.permissions);
+      const permissionHash = permissions.reduce(function(acc, permission) {
         acc[permission] = availablePermissions.indexOf(permission) > -1;
         return acc;
       }, {});

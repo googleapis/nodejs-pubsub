@@ -16,11 +16,11 @@
 
 'use strict';
 
-var arrify = require('arrify');
+const arrify = require('arrify');
 const {promisifyAll} = require('@google-cloud/promisify');
-var each = require('async-each');
-var extend = require('extend');
-var is = require('is');
+const each = require('async-each');
+const extend = require('extend');
+const is = require('is');
 
 /**
  * A Publisher object allows you to publish messages to a specific topic.
@@ -160,8 +160,8 @@ Publisher.prototype.publish = function(data, attributes, callback) {
   }
 
   // Ensure the `attributes` object only has string values
-  for (var key in attributes) {
-    var value = attributes[key];
+  for (const key in attributes) {
+    const value = attributes[key];
 
     if (!is.string(value)) {
       throw new TypeError(`All attributes must be in the form of a string.
@@ -169,7 +169,7 @@ Publisher.prototype.publish = function(data, attributes, callback) {
     }
   }
 
-  var opts = this.settings.batching;
+  const opts = this.settings.batching;
 
   // if this message puts us over the maxBytes option, then let's ship
   // what we have and add it to the next batch
@@ -182,7 +182,7 @@ Publisher.prototype.publish = function(data, attributes, callback) {
 
   // next lets check if this message brings us to the message cap or if we
   // magically hit the max byte limit
-  var hasMaxMessages = this.inventory_.queued.length === opts.maxMessages;
+  const hasMaxMessages = this.inventory_.queued.length === opts.maxMessages;
 
   if (this.inventory_.bytes === opts.maxBytes || hasMaxMessages) {
     this.publish_();
@@ -204,8 +204,8 @@ Publisher.prototype.publish = function(data, attributes, callback) {
  * @private
  */
 Publisher.prototype.publish_ = function() {
-  var callbacks = this.inventory_.callbacks;
-  var messages = this.inventory_.queued;
+  const callbacks = this.inventory_.callbacks;
+  const messages = this.inventory_.queued;
 
   this.inventory_.callbacks = [];
   this.inventory_.queued = [];
@@ -214,7 +214,7 @@ Publisher.prototype.publish_ = function() {
   clearTimeout(this.timeoutHandle_);
   this.timeoutHandle_ = null;
 
-  var reqOpts = {
+  const reqOpts = {
     topic: this.topic.name,
     messages: messages,
   };
@@ -227,10 +227,10 @@ Publisher.prototype.publish_ = function() {
       gaxOpts: this.settings.gaxOpts,
     },
     function(err, resp) {
-      var messageIds = arrify(resp && resp.messageIds);
+      const messageIds = arrify(resp && resp.messageIds);
 
       each(callbacks, function(callback, next) {
-        var messageId = messageIds[callbacks.indexOf(callback)];
+        const messageId = messageIds[callbacks.indexOf(callback)];
 
         callback(err, messageId);
         next();

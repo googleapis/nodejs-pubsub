@@ -16,15 +16,15 @@
 
 'use strict';
 
-var assert = require('assert');
+const assert = require('assert');
 
-var Histogram = require('../src/histogram.js');
+const Histogram = require('../src/histogram.js');
 
 describe('Histogram', function() {
-  var histogram;
+  let histogram;
 
-  var MIN_VALUE = 10000;
-  var MAX_VALUE = 600000;
+  const MIN_VALUE = 10000;
+  const MAX_VALUE = 600000;
 
   beforeEach(function() {
     histogram = new Histogram();
@@ -75,7 +75,7 @@ describe('Histogram', function() {
     });
 
     it('should cap the value', function() {
-      var outOfBounds = MAX_VALUE + MIN_VALUE;
+      const outOfBounds = MAX_VALUE + MIN_VALUE;
 
       histogram.add(outOfBounds);
 
@@ -84,7 +84,7 @@ describe('Histogram', function() {
     });
 
     it('should apply a minimum', function() {
-      var outOfBounds = MIN_VALUE - 1000;
+      const outOfBounds = MIN_VALUE - 1000;
 
       histogram.add(outOfBounds);
 
@@ -93,8 +93,8 @@ describe('Histogram', function() {
     });
 
     it('should use seconds level precision', function() {
-      var ms = 303823;
-      var expected = 304000;
+      const ms = 303823;
+      const expected = 304000;
 
       histogram.add(ms);
 
@@ -105,7 +105,7 @@ describe('Histogram', function() {
 
   describe('percentile', function() {
     function range(a, b) {
-      var result = [];
+      const result = [];
 
       for (; a < b; a++) {
         result.push(a);

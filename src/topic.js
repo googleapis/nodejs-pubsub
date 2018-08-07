@@ -16,14 +16,14 @@
 
 'use strict';
 
-var common = require('@google-cloud/common');
+const common = require('@google-cloud/common');
 const {promisifyAll} = require('@google-cloud/promisify');
 const {paginator} = require('@google-cloud/paginator');
-var extend = require('extend');
-var is = require('is');
+const extend = require('extend');
+const is = require('is');
 
-var IAM = require('./iam.js');
-var Publisher = require('./publisher.js');
+const IAM = require('./iam.js');
+const Publisher = require('./publisher.js');
 
 /**
  * A Topic object allows you to interact with a Cloud Pub/Sub topic.
@@ -229,7 +229,7 @@ Topic.prototype.delete = function(gaxOpts, callback) {
 
   callback = callback || common.util.noop;
 
-  var reqOpts = {
+  const reqOpts = {
     topic: this.name,
   };
 
@@ -330,14 +330,14 @@ Topic.prototype.exists = function(callback) {
  * });
  */
 Topic.prototype.get = function(gaxOpts, callback) {
-  var self = this;
+  const self = this;
 
   if (is.fn(gaxOpts)) {
     callback = gaxOpts;
     gaxOpts = {};
   }
 
-  var autoCreate = !!gaxOpts.autoCreate;
+  const autoCreate = !!gaxOpts.autoCreate;
   delete gaxOpts.autoCreate;
 
   this.getMetadata(gaxOpts, function(err, apiResponse) {
@@ -390,14 +390,14 @@ Topic.prototype.get = function(gaxOpts, callback) {
  * });
  */
 Topic.prototype.getMetadata = function(gaxOpts, callback) {
-  var self = this;
+  const self = this;
 
   if (is.fn(gaxOpts)) {
     callback = gaxOpts;
     gaxOpts = {};
   }
 
-  var reqOpts = {
+  const reqOpts = {
     topic: this.name,
   };
 
@@ -454,14 +454,14 @@ Topic.prototype.getMetadata = function(gaxOpts, callback) {
  * });
  */
 Topic.prototype.getSubscriptions = function(options, callback) {
-  var self = this;
+  const self = this;
 
   if (is.fn(options)) {
     callback = options;
     options = {};
   }
 
-  var reqOpts = extend(
+  const reqOpts = extend(
     {
       topic: this.name,
     },
@@ -471,7 +471,7 @@ Topic.prototype.getSubscriptions = function(options, callback) {
   delete reqOpts.gaxOpts;
   delete reqOpts.autoPaginate;
 
-  var gaxOpts = extend(
+  const gaxOpts = extend(
     {
       autoPaginate: options.autoPaginate,
     },
@@ -486,7 +486,7 @@ Topic.prototype.getSubscriptions = function(options, callback) {
       gaxOpts: gaxOpts,
     },
     function() {
-      var subscriptions = arguments[1];
+      const subscriptions = arguments[1];
 
       if (subscriptions) {
         arguments[1] = subscriptions.map(function(sub) {

@@ -19,24 +19,24 @@
 const {replaceProjectIdToken} = require('@google-cloud/projectify');
 const {paginator} = require('@google-cloud/paginator');
 const {promisifyAll} = require('@google-cloud/promisify');
-var extend = require('extend');
-var {GoogleAuth} = require('google-auth-library');
-var gax = require('google-gax');
-var {grpc} = new gax.GrpcClient();
-var is = require('is');
+const extend = require('extend');
+const {GoogleAuth} = require('google-auth-library');
+const gax = require('google-gax');
+const {grpc} = new gax.GrpcClient();
+const is = require('is');
 
-var PKG = require('../package.json');
-var v1 = require('./v1');
+const PKG = require('../package.json');
+const v1 = require('./v1');
 
-var Snapshot = require('./snapshot.js');
-var Subscription = require('./subscription.js');
-var Topic = require('./topic.js');
+const Snapshot = require('./snapshot.js');
+const Subscription = require('./subscription.js');
+const Topic = require('./topic.js');
 
 /**
  * @type {string} - Project ID placeholder.
  * @private
  */
-var PROJECT_ID_PLACEHOLDER = '{{projectId}}';
+const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
 
 /**
  * @typedef {object} ClientConfig
@@ -230,10 +230,10 @@ PubSub.prototype.createSubscription = function(topic, name, options, callback) {
 
   options = options || {};
 
-  var metadata = Subscription.formatMetadata_(options);
-  var subscription = this.subscription(name, metadata);
+  const metadata = Subscription.formatMetadata_(options);
+  const subscription = this.subscription(name, metadata);
 
-  var reqOpts = extend(metadata, {
+  const reqOpts = extend(metadata, {
     topic: topic.name,
     name: subscription.name,
   });
@@ -301,9 +301,9 @@ PubSub.prototype.createSubscription = function(topic, name, options, callback) {
  * });
  */
 PubSub.prototype.createTopic = function(name, gaxOpts, callback) {
-  var topic = this.topic(name);
+  const topic = this.topic(name);
 
-  var reqOpts = {
+  const reqOpts = {
     name: topic.name,
   };
 
@@ -340,17 +340,17 @@ PubSub.prototype.createTopic = function(name, gaxOpts, callback) {
  * @private
  */
 PubSub.prototype.determineBaseUrl_ = function() {
-  var apiEndpoint = this.options.apiEndpoint;
+  const apiEndpoint = this.options.apiEndpoint;
 
   if (!apiEndpoint && !process.env.PUBSUB_EMULATOR_HOST) {
     return;
   }
 
-  var baseUrl = apiEndpoint || process.env.PUBSUB_EMULATOR_HOST;
-  var leadingProtocol = new RegExp('^https*://');
-  var trailingSlashes = new RegExp('/*$');
+  const baseUrl = apiEndpoint || process.env.PUBSUB_EMULATOR_HOST;
+  const leadingProtocol = new RegExp('^https*://');
+  const trailingSlashes = new RegExp('/*$');
 
-  var baseUrlParts = baseUrl
+  const baseUrlParts = baseUrl
     .replace(leadingProtocol, '')
     .replace(trailingSlashes, '')
     .split(':');
@@ -408,14 +408,14 @@ PubSub.prototype.determineBaseUrl_ = function() {
  * });
  */
 PubSub.prototype.getSnapshots = function(options, callback) {
-  var self = this;
+  const self = this;
 
   if (is.fn(options)) {
     callback = options;
     options = {};
   }
 
-  var reqOpts = extend(
+  const reqOpts = extend(
     {
       project: 'projects/' + this.projectId,
     },
@@ -425,7 +425,7 @@ PubSub.prototype.getSnapshots = function(options, callback) {
   delete reqOpts.gaxOpts;
   delete reqOpts.autoPaginate;
 
-  var gaxOpts = extend(
+  const gaxOpts = extend(
     {
       autoPaginate: options.autoPaginate,
     },
@@ -440,11 +440,11 @@ PubSub.prototype.getSnapshots = function(options, callback) {
       gaxOpts: gaxOpts,
     },
     function() {
-      var snapshots = arguments[1];
+      const snapshots = arguments[1];
 
       if (snapshots) {
         arguments[1] = snapshots.map(function(snapshot) {
-          var snapshotInstance = self.snapshot(snapshot.name);
+          const snapshotInstance = self.snapshot(snapshot.name);
           snapshotInstance.metadata = snapshot;
           return snapshotInstance;
         });
@@ -545,14 +545,14 @@ PubSub.prototype.getSnapshotsStream = paginator.streamify('getSnapshots');
  * });
  */
 PubSub.prototype.getSubscriptions = function(options, callback) {
-  var self = this;
+  const self = this;
 
   if (is.fn(options)) {
     callback = options;
     options = {};
   }
 
-  var topic = options.topic;
+  let topic = options.topic;
 
   if (topic) {
     if (!(topic instanceof Topic)) {
@@ -562,13 +562,13 @@ PubSub.prototype.getSubscriptions = function(options, callback) {
     return topic.getSubscriptions(options, callback);
   }
 
-  var reqOpts = extend({}, options);
+  const reqOpts = extend({}, options);
 
   reqOpts.project = 'projects/' + this.projectId;
   delete reqOpts.gaxOpts;
   delete reqOpts.autoPaginate;
 
-  var gaxOpts = extend(
+  const gaxOpts = extend(
     {
       autoPaginate: options.autoPaginate,
     },
@@ -583,11 +583,11 @@ PubSub.prototype.getSubscriptions = function(options, callback) {
       gaxOpts: gaxOpts,
     },
     function() {
-      var subscriptions = arguments[1];
+      const subscriptions = arguments[1];
 
       if (subscriptions) {
         arguments[1] = subscriptions.map(function(sub) {
-          var subscriptionInstance = self.subscription(sub.name);
+          const subscriptionInstance = self.subscription(sub.name);
           subscriptionInstance.metadata = sub;
           return subscriptionInstance;
         });
@@ -690,14 +690,14 @@ PubSub.prototype.getSubscriptionsStream = paginator.streamify(
  * });
  */
 PubSub.prototype.getTopics = function(options, callback) {
-  var self = this;
+  const self = this;
 
   if (is.fn(options)) {
     callback = options;
     options = {};
   }
 
-  var reqOpts = extend(
+  const reqOpts = extend(
     {
       project: 'projects/' + this.projectId,
     },
@@ -707,7 +707,7 @@ PubSub.prototype.getTopics = function(options, callback) {
   delete reqOpts.gaxOpts;
   delete reqOpts.autoPaginate;
 
-  var gaxOpts = extend(
+  const gaxOpts = extend(
     {
       autoPaginate: options.autoPaginate,
     },
@@ -722,11 +722,11 @@ PubSub.prototype.getTopics = function(options, callback) {
       gaxOpts: gaxOpts,
     },
     function() {
-      var topics = arguments[1];
+      const topics = arguments[1];
 
       if (topics) {
         arguments[1] = topics.map(function(topic) {
-          var topicInstance = self.topic(topic.name);
+          const topicInstance = self.topic(topic.name);
           topicInstance.metadata = topic;
           return topicInstance;
         });
@@ -782,9 +782,9 @@ PubSub.prototype.getTopicsStream = paginator.streamify('getTopics');
  * @param {function} [callback] The callback function.
  */
 PubSub.prototype.getClient_ = function(config, callback) {
-  var self = this;
+  const self = this;
 
-  var hasProjectId =
+  const hasProjectId =
     this.projectId && this.projectId !== PROJECT_ID_PLACEHOLDER;
 
   if (!hasProjectId && !this.isEmulator) {
@@ -800,7 +800,7 @@ PubSub.prototype.getClient_ = function(config, callback) {
     return;
   }
 
-  var gaxClient = this.api[config.client];
+  let gaxClient = this.api[config.client];
 
   if (!gaxClient) {
     // Lazily instantiate client.
@@ -823,7 +823,7 @@ PubSub.prototype.getClient_ = function(config, callback) {
  * @param {function} [callback] The callback function.
  */
 PubSub.prototype.request = function(config, callback) {
-  var self = this;
+  const self = this;
 
   this.getClient_(config, function(err, client) {
     if (err) {
@@ -831,7 +831,7 @@ PubSub.prototype.request = function(config, callback) {
       return;
     }
 
-    var reqOpts = extend(true, {}, config.reqOpts);
+    let reqOpts = extend(true, {}, config.reqOpts);
     reqOpts = replaceProjectIdToken(reqOpts, self.projectId);
 
     client[config.method](reqOpts, config.gaxOpts, callback);
