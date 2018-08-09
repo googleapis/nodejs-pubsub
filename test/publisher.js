@@ -16,14 +16,14 @@
 
 'use strict';
 
-var assert = require('assert');
-var {util} = require('@google-cloud/common');
+const assert = require('assert');
+const {util} = require('@google-cloud/common');
 const pfy = require('@google-cloud/promisify');
-var extend = require('extend');
-var proxyquire = require('proxyquire');
+const extend = require('extend');
+const proxyquire = require('proxyquire');
 
-var promisified = false;
-var fakePromisify = extend({}, pfy, {
+let promisified = false;
+const fakePromisify = extend({}, pfy, {
   promisifyAll: function(Class, options) {
     if (Class.name === 'Publisher') {
       assert.deepStrictEqual(options, {singular: true});
@@ -33,12 +33,12 @@ var fakePromisify = extend({}, pfy, {
 });
 
 describe('Publisher', function() {
-  var Publisher;
-  var publisher;
-  var batchOpts;
+  let Publisher;
+  let publisher;
+  let batchOpts;
 
-  var TOPIC_NAME = 'test-topic';
-  var TOPIC = {
+  const TOPIC_NAME = 'test-topic';
+  const TOPIC = {
     name: TOPIC_NAME,
     Promise: {},
     request: util.noop,
@@ -87,14 +87,14 @@ describe('Publisher', function() {
       });
 
       it('should capture user specified options', function() {
-        var options = {
+        const options = {
           maxBytes: 10,
           maxMessages: 11,
           maxMilliseconds: 12,
         };
-        var optionsCopy = extend({}, options);
+        const optionsCopy = extend({}, options);
 
-        var publisher = new Publisher(TOPIC, {
+        const publisher = new Publisher(TOPIC, {
           batching: options,
         });
 
@@ -103,9 +103,9 @@ describe('Publisher', function() {
       });
 
       it('should cap maxBytes', function() {
-        var expected = Math.pow(1024, 2) * 9;
+        const expected = Math.pow(1024, 2) * 9;
 
-        var publisher = new Publisher(TOPIC, {
+        const publisher = new Publisher(TOPIC, {
           batching: {maxBytes: expected + 1024},
         });
 
@@ -113,7 +113,7 @@ describe('Publisher', function() {
       });
 
       it('should cap maxMessages', function() {
-        var publisher = new Publisher(TOPIC, {
+        const publisher = new Publisher(TOPIC, {
           batching: {maxMessages: 2000},
         });
 
@@ -121,8 +121,8 @@ describe('Publisher', function() {
       });
 
       it('should capture gaxOptions', function() {
-        var fakeGaxOpts = {a: 'a'};
-        var publisher = new Publisher(TOPIC, {
+        const fakeGaxOpts = {a: 'a'};
+        const publisher = new Publisher(TOPIC, {
           gaxOpts: fakeGaxOpts,
         });
 
@@ -132,10 +132,10 @@ describe('Publisher', function() {
   });
 
   describe('publish', function() {
-    var DATA = Buffer.from('hello');
-    var ATTRS = {a: 'a'};
+    const DATA = Buffer.from('hello');
+    const ATTRS = {a: 'a'};
 
-    var globalSetTimeout;
+    let globalSetTimeout;
 
     before(function() {
       globalSetTimeout = global.setTimeout;
@@ -157,12 +157,12 @@ describe('Publisher', function() {
     });
 
     it('should throw when an attribute value is not a string', function() {
-      var brokenAttrs = {
+      const brokenAttrs = {
         key1: 'value',
         key2: true,
       };
 
-      var expectedErrorMessage = `
+      const expectedErrorMessage = `
 All attributes must be in the form of a string.
 \nInvalid value of type "${typeof true}" provided for "key2".
       `.trim();
@@ -193,7 +193,7 @@ All attributes must be in the form of a string.
     });
 
     it('should publish if data puts payload size over cap', function(done) {
-      var queueCalled = false;
+      let queueCalled = false;
 
       publisher.publish_ = function() {
         assert.strictEqual(queueCalled, false);
@@ -221,7 +221,7 @@ All attributes must be in the form of a string.
     });
 
     it('should publish if data puts payload at message cap', function(done) {
-      var queueCalled = false;
+      let queueCalled = false;
 
       publisher.queue_ = function() {
         queueCalled = true;
@@ -237,8 +237,8 @@ All attributes must be in the form of a string.
     });
 
     it('should set a timeout if a publish did not occur', function(done) {
-      var globalSetTimeout = global.setTimeout;
-      var fakeTimeoutHandle = 12345;
+      const globalSetTimeout = global.setTimeout;
+      const fakeTimeoutHandle = 12345;
 
       global.setTimeout = function(callback, duration) {
         assert.strictEqual(duration, batchOpts.maxMilliseconds);
@@ -254,7 +254,7 @@ All attributes must be in the form of a string.
     });
 
     it('should not set a timeout if one exists', function() {
-      var fakeTimeoutHandle = 'not-a-real-handle';
+      const fakeTimeoutHandle = 'not-a-real-handle';
 
       publisher.timeoutHandle_ = 'not-a-real-handle';
       publisher.publish(DATA, util.noop);
@@ -283,8 +283,8 @@ All attributes must be in the form of a string.
     });
 
     it('should make the correct request', function(done) {
-      var FAKE_MESSAGE = {};
-      var FAKE_GAX_OPTS = {a: 'b'};
+      const FAKE_MESSAGE = {};
+      const FAKE_GAX_OPTS = {a: 'b'};
 
       TOPIC.request = function(config) {
         assert.strictEqual(config.client, 'PublisherClient');
@@ -303,9 +303,9 @@ All attributes must be in the form of a string.
     });
 
     it('should pass back the err/msg id to correct callback', function(done) {
-      var error = new Error('err');
-      var FAKE_IDS = ['abc', 'def'];
-      var callbackCalls = 0;
+      const error = new Error('err');
+      const FAKE_IDS = ['abc', 'def'];
+      let callbackCalls = 0;
 
       publisher.inventory_.callbacks = [
         function(err, messageId) {
@@ -335,8 +335,8 @@ All attributes must be in the form of a string.
   });
 
   describe('queue_', function() {
-    var DATA = Buffer.from('hello');
-    var ATTRS = {a: 'a'};
+    const DATA = Buffer.from('hello');
+    const ATTRS = {a: 'a'};
 
     it('should add the data and attrs to the inventory', function() {
       publisher.queue_(DATA, ATTRS, util.noop);

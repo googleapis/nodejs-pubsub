@@ -16,31 +16,31 @@
 
 'use strict';
 
-var common = require('@google-cloud/common');
+const common = require('@google-cloud/common');
 const {replaceProjectIdToken} = require('@google-cloud/projectify');
-var duplexify = require('duplexify');
-var each = require('async-each');
-var events = require('events');
-var is = require('is');
-var through = require('through2');
-var util = require('util');
-var uuid = require('uuid');
+const duplexify = require('duplexify');
+const each = require('async-each');
+const events = require('events');
+const is = require('is');
+const through = require('through2');
+const util = require('util');
+const uuid = require('uuid');
 
-var CHANNEL_READY_EVENT = 'channel.ready';
-var CHANNEL_ERROR_EVENT = 'channel.error';
+const CHANNEL_READY_EVENT = 'channel.ready';
+const CHANNEL_ERROR_EVENT = 'channel.error';
 
-var KEEP_ALIVE_INTERVAL = 30000;
+const KEEP_ALIVE_INTERVAL = 30000;
 
 /*!
  * if we can't establish a connection within 5 minutes, we need to back off
  * and emit an error to the user.
  */
-var MAX_TIMEOUT = 300000;
+const MAX_TIMEOUT = 300000;
 
 /*!
  * codes to retry streams
  */
-var RETRY_CODES = [
+const RETRY_CODES = [
   0, // ok
   1, // canceled
   2, // unknown
@@ -103,7 +103,7 @@ util.inherits(ConnectionPool, events.EventEmitter);
  * @param {stream} callback.connection A duplex stream.
  */
 ConnectionPool.prototype.acquire = function(id, callback) {
-  var self = this;
+  const self = this;
 
   if (is.fn(id)) {
     callback = id;
@@ -121,7 +121,7 @@ ConnectionPool.prototype.acquire = function(id, callback) {
     id = getFirstConnectionId();
   }
 
-  var connection = this.connections.get(id);
+  const connection = this.connections.get(id);
 
   if (connection) {
     callback(null, connection);
@@ -146,8 +146,8 @@ ConnectionPool.prototype.acquire = function(id, callback) {
  * @param {?error} callback.error An error returned while closing the pool.
  */
 ConnectionPool.prototype.close = function(callback) {
-  var self = this;
-  var connections = Array.from(this.connections.values());
+  const self = this;
+  const connections = Array.from(this.connections.values());
 
   callback = callback || common.util.noop;
 
@@ -193,7 +193,7 @@ ConnectionPool.prototype.close = function(callback) {
  * @private
  */
 ConnectionPool.prototype.createConnection = function() {
-  var self = this;
+  const self = this;
 
   this.getClient(function(err, client) {
     if (err) {
@@ -201,9 +201,9 @@ ConnectionPool.prototype.createConnection = function() {
       return;
     }
 
-    var requestStream = client.streamingPull();
+    const requestStream = client.streamingPull();
 
-    var readStream = requestStream.pipe(
+    const readStream = requestStream.pipe(
       through.obj(function(chunk, enc, next) {
         chunk.receivedMessages.forEach(function(message) {
           readStream.push(message);
@@ -212,9 +212,9 @@ ConnectionPool.prototype.createConnection = function() {
       })
     );
 
-    var connection = duplexify(requestStream, readStream, {objectMode: true});
-    var id = uuid.v4();
-    var errorImmediateHandle;
+    const connection = duplexify(requestStream, readStream, {objectMode: true});
+    const id = uuid.v4();
+    let errorImmediateHandle;
 
     connection.cancel = requestStream.cancel.bind(requestStream);
 
@@ -291,7 +291,7 @@ ConnectionPool.prototype.createConnection = function() {
       if (self.shouldReconnect(status)) {
         self.queueConnection();
       } else if (self.isOpen && !self.connections.size) {
-        var error = new Error(status.details);
+        const error = new Error(status.details);
         error.code = status.code;
         self.emit('error', error);
       }
@@ -308,13 +308,13 @@ ConnectionPool.prototype.createConnection = function() {
  * @return {object} message The message object.
  */
 ConnectionPool.prototype.createMessage = function(connectionId, resp) {
-  var self = this;
+  const self = this;
 
-  var pt = resp.message.publishTime;
-  var milliseconds = parseInt(pt.nanos, 10) / 1e6;
-  var originalDataLength = resp.message.data.length;
+  const pt = resp.message.publishTime;
+  const milliseconds = parseInt(pt.nanos, 10) / 1e6;
+  const originalDataLength = resp.message.data.length;
 
-  var message = {
+  const message = {
     connectionId: connectionId,
     ackId: resp.ackId,
     id: resp.message.messageId,
@@ -344,7 +344,7 @@ ConnectionPool.prototype.createMessage = function(connectionId, resp) {
  * @fires CHANNEL_READY_EVENT
  */
 ConnectionPool.prototype.getAndEmitChannelState = function() {
-  var self = this;
+  const self = this;
 
   this.isGettingChannelState = true;
 
@@ -356,9 +356,9 @@ ConnectionPool.prototype.getAndEmitChannelState = function() {
       return;
     }
 
-    var elapsedTimeWithoutConnection = 0;
-    var now = Date.now();
-    var deadline;
+    let elapsedTimeWithoutConnection = 0;
+    const now = Date.now();
+    let deadline;
 
     if (self.noConnectionsTime) {
       elapsedTimeWithoutConnection = now - self.noConnectionsTime;
@@ -399,8 +399,8 @@ ConnectionPool.prototype.getClient = function(callback) {
  * @returns {boolean}
  */
 ConnectionPool.prototype.isConnected = function() {
-  var interator = this.connections.values();
-  var connection = interator.next().value;
+  const interator = this.connections.values();
+  let connection = interator.next().value;
 
   while (connection) {
     if (connection.isConnected) {
@@ -419,10 +419,10 @@ ConnectionPool.prototype.isConnected = function() {
  * @private
  */
 ConnectionPool.prototype.open = function() {
-  var self = this;
+  const self = this;
 
-  var existing = this.connections.size;
-  var max = this.settings.maxConnections;
+  let existing = this.connections.size;
+  const max = this.settings.maxConnections;
 
   for (; existing < max; existing++) {
     this.queueConnection();
@@ -467,21 +467,20 @@ ConnectionPool.prototype.pause = function() {
  * @private
  */
 ConnectionPool.prototype.queueConnection = function() {
-  var self = this;
-  var delay = 0;
-
+  const self = this;
+  let delay = 0;
   if (this.failedConnectionAttempts > 0) {
     delay =
       Math.pow(2, this.failedConnectionAttempts) * 1000 +
       Math.floor(Math.random() * 1000);
   }
-
-  var timeoutHandle = setTimeout(createConnection, delay);
+  const timeoutHandle = setTimeout(createConnection, delay);
   this.queue.push(timeoutHandle);
-
   function createConnection() {
-    self.createConnection();
-    self.queue.splice(self.queue.indexOf(timeoutHandle), 1);
+    setImmediate(() => {
+      self.createConnection();
+      self.queue.splice(self.queue.indexOf(timeoutHandle), 1);
+    });
   }
 };
 
@@ -528,7 +527,7 @@ ConnectionPool.prototype.shouldReconnect = function(status) {
     return false;
   }
 
-  var exceededRetryLimit =
+  const exceededRetryLimit =
     this.noConnectionsTime && Date.now() - this.noConnectionsTime > MAX_TIMEOUT;
 
   if (exceededRetryLimit) {

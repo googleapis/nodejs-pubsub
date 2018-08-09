@@ -16,16 +16,16 @@
 
 'use strict';
 
-var common = require('@google-cloud/common');
+const common = require('@google-cloud/common');
 const {promisifyAll} = require('@google-cloud/promisify');
-var extend = require('extend');
-var is = require('is');
-var snakeCase = require('lodash.snakecase');
-var util = require('util');
+const extend = require('extend');
+const is = require('is');
+const snakeCase = require('lodash.snakecase');
+const util = require('util');
 
-var IAM = require('./iam.js');
-var Snapshot = require('./snapshot.js');
-var Subscriber = require('./subscriber.js');
+const IAM = require('./iam.js');
+const Snapshot = require('./snapshot.js');
+const Subscriber = require('./subscriber.js');
 
 /**
  * A Subscription object will give you access to your Cloud Pub/Sub
@@ -91,7 +91,7 @@ var Subscriber = require('./subscriber.js');
  * //-
  * // From {@link Topic#getSubscriptions}:
  * //-
- * var topic = pubsub.topic('my-topic');
+ * const topic = pubsub.topic('my-topic');
  * topic.getSubscriptions(function(err, subscriptions) {
  *   // `subscriptions` is an array of Subscription objects.
  * });
@@ -99,7 +99,7 @@ var Subscriber = require('./subscriber.js');
  * //-
  * // From {@link Topic#createSubscription}:
  * //-
- * var topic = pubsub.topic('my-topic');
+ * const topic = pubsub.topic('my-topic');
  * topic.createSubscription('new-subscription', function(err, subscription) {
  *   // `subscription` is a Subscription object.
  * });
@@ -107,8 +107,8 @@ var Subscriber = require('./subscriber.js');
  * //-
  * // From {@link Topic#subscription}:
  * //-
- * var topic = pubsub.topic('my-topic');
- * var subscription = topic.subscription('my-subscription');
+ * const topic = pubsub.topic('my-topic');
+ * const subscription = topic.subscription('my-subscription');
  * // `subscription` is a Subscription object.
  *
  * //-
@@ -189,8 +189,8 @@ function Subscription(pubsub, name, options) {
    * // If the callback is omitted, we'll return a Promise.
    * //-
    * subscription.iam.getPolicy().then(function(data) {
-   *   var policy = data[0];
-   *   var apiResponse = data[1];
+   *   const policy = data[0];
+   *   const apiResponse = data[1];
    * });
    */
   this.iam = new IAM(pubsub, this.name);
@@ -206,7 +206,7 @@ util.inherits(Subscription, Subscriber);
  * @private
  */
 Subscription.formatMetadata_ = function(metadata) {
-  var formatted = extend({}, metadata);
+  const formatted = extend({}, metadata);
 
   if (metadata.messageRetentionDuration) {
     formatted.retainAckedMessages = true;
@@ -287,7 +287,7 @@ Subscription.formatName_ = function(projectId, name) {
  * });
  */
 Subscription.prototype.createSnapshot = function(name, gaxOpts, callback) {
-  var self = this;
+  const self = this;
 
   if (!is.string(name)) {
     throw new Error('A name is required to create a snapshot.');
@@ -298,9 +298,9 @@ Subscription.prototype.createSnapshot = function(name, gaxOpts, callback) {
     gaxOpts = {};
   }
 
-  var snapshot = self.snapshot(name);
+  const snapshot = self.snapshot(name);
 
-  var reqOpts = {
+  const reqOpts = {
     name: snapshot.name,
     subscription: this.name,
   };
@@ -354,7 +354,7 @@ Subscription.prototype.createSnapshot = function(name, gaxOpts, callback) {
  * });
  */
 Subscription.prototype.delete = function(gaxOpts, callback) {
-  var self = this;
+  const self = this;
 
   if (is.fn(gaxOpts)) {
     callback = gaxOpts;
@@ -363,7 +363,7 @@ Subscription.prototype.delete = function(gaxOpts, callback) {
 
   callback = callback || common.util.noop;
 
-  var reqOpts = {
+  const reqOpts = {
     subscription: this.name,
   };
 
@@ -413,7 +413,7 @@ Subscription.prototype.delete = function(gaxOpts, callback) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * subscription.exists().then(function(data) {
- *   var exists = data[0];
+ *   const exists = data[0];
  * });
  */
 Subscription.prototype.exists = function(callback) {
@@ -473,14 +473,14 @@ Subscription.prototype.exists = function(callback) {
  * });
  */
 Subscription.prototype.get = function(gaxOpts, callback) {
-  var self = this;
+  const self = this;
 
   if (is.fn(gaxOpts)) {
     callback = gaxOpts;
     gaxOpts = {};
   }
 
-  var autoCreate = !!gaxOpts.autoCreate && is.fn(this.create);
+  const autoCreate = !!gaxOpts.autoCreate && is.fn(this.create);
   delete gaxOpts.autoCreate;
 
   this.getMetadata(gaxOpts, function(err, apiResponse) {
@@ -532,18 +532,18 @@ Subscription.prototype.get = function(gaxOpts, callback) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * subscription.getMetadata().then(function(data) {
- *   var apiResponse = data[0];
+ *   const apiResponse = data[0];
  * });
  */
 Subscription.prototype.getMetadata = function(gaxOpts, callback) {
-  var self = this;
+  const self = this;
 
   if (is.fn(gaxOpts)) {
     callback = gaxOpts;
     gaxOpts = {};
   }
 
-  var reqOpts = {
+  const reqOpts = {
     subscription: this.name,
   };
 
@@ -592,7 +592,7 @@ Subscription.prototype.getMetadata = function(gaxOpts, callback) {
  * const topic = pubsub.topic('my-topic');
  * const subscription = topic.subscription('my-subscription');
  *
- * var pushConfig = {
+ * const pushConfig = {
  *   pushEndpoint: 'https://mydomain.com/push',
  *   attributes: {
  *     key: 'value'
@@ -609,7 +609,7 @@ Subscription.prototype.getMetadata = function(gaxOpts, callback) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * subscription.modifyPushConfig(pushConfig).then(function(data) {
- *   var apiResponse = data[0];
+ *   const apiResponse = data[0];
  * });
  */
 Subscription.prototype.modifyPushConfig = function(config, gaxOpts, callback) {
@@ -618,7 +618,7 @@ Subscription.prototype.modifyPushConfig = function(config, gaxOpts, callback) {
     gaxOpts = {};
   }
 
-  var reqOpts = {
+  const reqOpts = {
     subscription: this.name,
     pushConfig: config,
   };
@@ -654,7 +654,7 @@ Subscription.prototype.modifyPushConfig = function(config, gaxOpts, callback) {
  * @returns {Promise<SeekResponse>}
  *
  * @example
- * var callback = function(err, resp) {
+ * const callback = function(err, resp) {
  *   if (!err) {
  *     // Seek was successful.
  *   }
@@ -666,7 +666,7 @@ Subscription.prototype.modifyPushConfig = function(config, gaxOpts, callback) {
  * // Alternatively, to specify a certain point in time, you can provide a Date
  * // object.
  * //-
- * var date = new Date('October 21 2015');
+ * const date = new Date('October 21 2015');
  *
  * subscription.seek(date, callback);
  */
@@ -676,7 +676,7 @@ Subscription.prototype.seek = function(snapshot, gaxOpts, callback) {
     gaxOpts = {};
   }
 
-  var reqOpts = {
+  const reqOpts = {
     subscription: this.name,
   };
 
@@ -718,7 +718,7 @@ Subscription.prototype.seek = function(snapshot, gaxOpts, callback) {
  * @returns {Promise<SetSubscriptionMetadataResponse>}
  *
  * @example
- * var metadata = {
+ * const metadata = {
  *   key: 'value'
  * };
  *
@@ -732,7 +732,7 @@ Subscription.prototype.seek = function(snapshot, gaxOpts, callback) {
  * // If the callback is omitted, we'll return a Promise.
  * //-
  * subscription.setMetadata(metadata).then(function(data) {
- *   var apiResponse = data[0];
+ *   const apiResponse = data[0];
  * });
  */
 Subscription.prototype.setMetadata = function(metadata, gaxOpts, callback) {
@@ -741,12 +741,12 @@ Subscription.prototype.setMetadata = function(metadata, gaxOpts, callback) {
     gaxOpts = {};
   }
 
-  var subscription = Subscription.formatMetadata_(metadata);
-  var fields = Object.keys(subscription).map(snakeCase);
+  const subscription = Subscription.formatMetadata_(metadata);
+  const fields = Object.keys(subscription).map(snakeCase);
 
   subscription.name = this.name;
 
-  var reqOpts = {
+  const reqOpts = {
     subscription: subscription,
     updateMask: {
       paths: fields,
@@ -774,7 +774,7 @@ Subscription.prototype.setMetadata = function(metadata, gaxOpts, callback) {
  * @returns {Snapshot}
  *
  * @example
- * var snapshot = subscription.snapshot('my-snapshot');
+ * const snapshot = subscription.snapshot('my-snapshot');
  */
 Subscription.prototype.snapshot = function(name) {
   return this.pubsub.snapshot.call(this, name);

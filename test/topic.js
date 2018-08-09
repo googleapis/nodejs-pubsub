@@ -16,14 +16,14 @@
 
 'use strict';
 
-var assert = require('assert');
-var extend = require('extend');
-var proxyquire = require('proxyquire');
-var {util} = require('@google-cloud/common');
+const assert = require('assert');
+const extend = require('extend');
+const proxyquire = require('proxyquire');
+const {util} = require('@google-cloud/common');
 const pfy = require('@google-cloud/promisify');
 
-var promisified = false;
-var fakePromisify = extend({}, pfy, {
+let promisified = false;
+const fakePromisify = extend({}, pfy, {
   promisifyAll: function(Class, options) {
     if (Class.name !== 'Topic') {
       return;
@@ -41,8 +41,8 @@ function FakePublisher() {
   this.calledWith_ = [].slice.call(arguments);
 }
 
-var extended = false;
-var fakePaginator = {
+let extended = false;
+const fakePaginator = {
   extend: function(Class, methods) {
     if (Class.name !== 'Topic') {
       return;
@@ -57,14 +57,14 @@ var fakePaginator = {
 };
 
 describe('Topic', function() {
-  var Topic;
-  var topic;
+  let Topic;
+  let topic;
 
-  var PROJECT_ID = 'test-project';
-  var TOPIC_NAME = 'projects/' + PROJECT_ID + '/topics/test-topic';
-  var TOPIC_UNFORMATTED_NAME = TOPIC_NAME.split('/').pop();
+  const PROJECT_ID = 'test-project';
+  const TOPIC_NAME = 'projects/' + PROJECT_ID + '/topics/test-topic';
+  const TOPIC_UNFORMATTED_NAME = TOPIC_NAME.split('/').pop();
 
-  var PUBSUB = {
+  const PUBSUB = {
     Promise: {},
     projectId: PROJECT_ID,
     createTopic: util.noop,
@@ -105,9 +105,9 @@ describe('Topic', function() {
     });
 
     it('should format the name', function() {
-      var formattedName = 'a/b/c/d';
+      const formattedName = 'a/b/c/d';
 
-      var formatName_ = Topic.formatName_;
+      const formatName_ = Topic.formatName_;
       Topic.formatName_ = function(projectId, name) {
         assert.strictEqual(projectId, PROJECT_ID);
         assert.strictEqual(name, TOPIC_NAME);
@@ -117,7 +117,7 @@ describe('Topic', function() {
         return formattedName;
       };
 
-      var topic = new Topic(PUBSUB, TOPIC_NAME);
+      const topic = new Topic(PUBSUB, TOPIC_NAME);
       assert.strictEqual(topic.name, formattedName);
     });
 
@@ -131,7 +131,7 @@ describe('Topic', function() {
         callback(); // the done fn
       };
 
-      var topic = new Topic(PUBSUB, TOPIC_NAME);
+      const topic = new Topic(PUBSUB, TOPIC_NAME);
       topic.request(done);
     });
 
@@ -142,19 +142,22 @@ describe('Topic', function() {
 
   describe('formatName_', function() {
     it('should format name', function() {
-      var formattedName = Topic.formatName_(PROJECT_ID, TOPIC_UNFORMATTED_NAME);
+      const formattedName = Topic.formatName_(
+        PROJECT_ID,
+        TOPIC_UNFORMATTED_NAME
+      );
       assert.strictEqual(formattedName, TOPIC_NAME);
     });
 
     it('should format name when given a complete name', function() {
-      var formattedName = Topic.formatName_(PROJECT_ID, TOPIC_NAME);
+      const formattedName = Topic.formatName_(PROJECT_ID, TOPIC_NAME);
       assert.strictEqual(formattedName, TOPIC_NAME);
     });
   });
 
   describe('create', function() {
     it('should call the parent createTopic method', function(done) {
-      var options_ = {};
+      const options_ = {};
 
       PUBSUB.createTopic = function(name, options, callback) {
         assert.strictEqual(name, topic.name);
@@ -168,8 +171,8 @@ describe('Topic', function() {
 
   describe('createSubscription', function() {
     it('should call the parent createSubscription method', function(done) {
-      var NAME = 'sub-name';
-      var OPTIONS = {a: 'a'};
+      const NAME = 'sub-name';
+      const OPTIONS = {a: 'a'};
 
       PUBSUB.createSubscription = function(topic_, name, options, callback) {
         assert.strictEqual(topic_, topic);
@@ -195,7 +198,7 @@ describe('Topic', function() {
     });
 
     it('should optionally accept gax options', function(done) {
-      var options = {};
+      const options = {};
 
       topic.request = function(config, callback) {
         assert.strictEqual(config.gaxOpts, options);
@@ -218,7 +221,7 @@ describe('Topic', function() {
 
   describe('get', function() {
     it('should delete the autoCreate option', function(done) {
-      var options = {
+      const options = {
         autoCreate: true,
         a: 'a',
       };
@@ -233,7 +236,7 @@ describe('Topic', function() {
     });
 
     describe('success', function() {
-      var fakeMetadata = {};
+      const fakeMetadata = {};
 
       beforeEach(function() {
         topic.getMetadata = function(gaxOpts, callback) {
@@ -251,7 +254,7 @@ describe('Topic', function() {
       });
 
       it('should optionally accept options', function(done) {
-        var options = {};
+        const options = {};
 
         topic.getMetadata = function(gaxOpts, callback) {
           assert.strictEqual(gaxOpts, options);
@@ -264,8 +267,8 @@ describe('Topic', function() {
 
     describe('error', function() {
       it('should pass back errors when not auto-creating', function(done) {
-        var error = {code: 4};
-        var apiResponse = {};
+        const error = {code: 4};
+        const apiResponse = {};
 
         topic.getMetadata = function(gaxOpts, callback) {
           callback(error, apiResponse);
@@ -280,8 +283,8 @@ describe('Topic', function() {
       });
 
       it('should pass back 404 errors if autoCreate is false', function(done) {
-        var error = {code: 5};
-        var apiResponse = {};
+        const error = {code: 5};
+        const apiResponse = {};
 
         topic.getMetadata = function(gaxOpts, callback) {
           callback(error, apiResponse);
@@ -296,10 +299,10 @@ describe('Topic', function() {
       });
 
       it('should create the topic if 404 + autoCreate is true', function(done) {
-        var error = {code: 5};
-        var apiResponse = {};
+        const error = {code: 5};
+        const apiResponse = {};
 
-        var fakeOptions = {
+        const fakeOptions = {
           autoCreate: true,
         };
 
@@ -343,7 +346,7 @@ describe('Topic', function() {
     });
 
     it('should pass back any other type of error', function(done) {
-      var error = {code: 4};
+      const error = {code: 4};
 
       topic.getMetadata = function(callback) {
         callback(error);
@@ -370,7 +373,7 @@ describe('Topic', function() {
     });
 
     it('should optionally accept gax options', function(done) {
-      var options = {};
+      const options = {};
 
       topic.request = function(config) {
         assert.strictEqual(config.gaxOpts, options);
@@ -381,8 +384,8 @@ describe('Topic', function() {
     });
 
     it('should pass back any errors that occur', function(done) {
-      var error = new Error('err');
-      var apiResponse = {};
+      const error = new Error('err');
+      const apiResponse = {};
 
       topic.request = function(config, callback) {
         callback(error, apiResponse);
@@ -396,7 +399,7 @@ describe('Topic', function() {
     });
 
     it('should set the metadata if no error occurs', function(done) {
-      var apiResponse = {};
+      const apiResponse = {};
 
       topic.request = function(config, callback) {
         callback(null, apiResponse);
@@ -413,7 +416,7 @@ describe('Topic', function() {
 
   describe('getSubscriptions', function() {
     it('should make the correct request', function(done) {
-      var options = {
+      const options = {
         a: 'a',
         b: 'b',
         gaxOpts: {
@@ -422,14 +425,14 @@ describe('Topic', function() {
         autoPaginate: false,
       };
 
-      var expectedOptions = extend(
+      const expectedOptions = extend(
         {
           topic: topic.name,
         },
         options
       );
 
-      var expectedGaxOpts = extend(
+      const expectedGaxOpts = extend(
         {
           autoPaginate: options.autoPaginate,
         },
@@ -461,7 +464,7 @@ describe('Topic', function() {
     });
 
     it('should create subscription objects', function(done) {
-      var fakeSubs = ['a', 'b', 'c'];
+      const fakeSubs = ['a', 'b', 'c'];
 
       topic.subscription = function(name) {
         return {
@@ -485,10 +488,10 @@ describe('Topic', function() {
     });
 
     it('should pass all params to the callback', function(done) {
-      var err_ = new Error('err');
-      var subs_ = false;
-      var nextQuery_ = {};
-      var apiResponse_ = {};
+      const err_ = new Error('err');
+      const subs_ = false;
+      const nextQuery_ = {};
+      const apiResponse_ = {};
 
       topic.request = function(config, callback) {
         callback(err_, subs_, nextQuery_, apiResponse_);
@@ -506,10 +509,10 @@ describe('Topic', function() {
 
   describe('publisher', function() {
     it('should return a Publisher instance', function() {
-      var options = {};
+      const options = {};
 
-      var publisher = topic.publisher(options);
-      var args = publisher.calledWith_;
+      const publisher = topic.publisher(options);
+      const args = publisher.calledWith_;
 
       assert(publisher instanceof FakePublisher);
       assert.strictEqual(args[0], topic);
@@ -519,8 +522,8 @@ describe('Topic', function() {
 
   describe('subscription', function() {
     it('should pass correct arguments to pubsub#subscription', function(done) {
-      var subscriptionName = 'subName';
-      var opts = {};
+      const subscriptionName = 'subName';
+      const opts = {};
 
       topic.parent.subscription = function(name, options) {
         assert.strictEqual(name, subscriptionName);
@@ -545,7 +548,7 @@ describe('Topic', function() {
         return done;
       };
 
-      var doneFn = topic.subscription();
+      const doneFn = topic.subscription();
       doneFn();
     });
   });
