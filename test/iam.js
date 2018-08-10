@@ -19,10 +19,11 @@
 const assert = require('assert');
 const extend = require('extend');
 const proxyquire = require('proxyquire');
-const {util} = require('@google-cloud/common');
+const util = require('../src/util');
+const promisify = require('@google-cloud/promisify');
 
 let promisified = false;
-const fakePromisify = extend({}, util, {
+const fakePromisify = extend({}, promisify, {
   promisifyAll: function(Class) {
     if (Class.name === 'IAM') {
       promisified = true;

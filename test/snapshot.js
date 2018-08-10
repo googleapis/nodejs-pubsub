@@ -17,7 +17,7 @@
 'use strict';
 
 const assert = require('assert');
-const {util} = require('@google-cloud/common');
+const util = require('../src/util');
 const extend = require('extend');
 const proxyquire = require('proxyquire');
 const pfy = require('@google-cloud/promisify');
@@ -52,7 +52,7 @@ describe('Snapshot', function() {
   };
 
   before(function() {
-    Snapshot = proxyquire('../src/snapshot.js', {
+    Snapshot = proxyquire('../src/snapshot', {
       '@google-cloud/promisify': fakePromisify,
     });
   });
@@ -157,13 +157,11 @@ describe('Snapshot', function() {
 
     it('should format the name', function() {
       const name = Snapshot.formatName_(PROJECT_ID, SNAPSHOT_NAME);
-
       assert.strictEqual(name, EXPECTED);
     });
 
     it('should not re-format the name', function() {
       const name = Snapshot.formatName_(PROJECT_ID, EXPECTED);
-
       assert.strictEqual(name, EXPECTED);
     });
   });

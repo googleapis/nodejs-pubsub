@@ -16,7 +16,7 @@
 
 'use strict';
 
-const common = require('@google-cloud/common');
+const util = require('./util');
 const {promisifyAll} = require('@google-cloud/promisify');
 const is = require('is');
 
@@ -195,7 +195,7 @@ Snapshot.prototype.delete = function(callback) {
     snapshot: this.name,
   };
 
-  callback = callback || common.util.noop;
+  callback = callback || util.noop;
 
   this.parent.request(
     {

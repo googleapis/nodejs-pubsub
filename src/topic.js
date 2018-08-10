@@ -16,7 +16,7 @@
 
 'use strict';
 
-const common = require('@google-cloud/common');
+const util = require('./util');
 const {promisifyAll} = require('@google-cloud/promisify');
 const {paginator} = require('@google-cloud/paginator');
 const extend = require('extend');
@@ -227,7 +227,7 @@ Topic.prototype.delete = function(gaxOpts, callback) {
     gaxOpts = {};
   }
 
-  callback = callback || common.util.noop;
+  callback = callback || util.noop;
 
   const reqOpts = {
     topic: this.name,

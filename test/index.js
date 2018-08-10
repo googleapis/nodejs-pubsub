@@ -21,8 +21,9 @@ const assert = require('assert');
 const extend = require('extend');
 const gax = require('google-gax');
 const proxyquire = require('proxyquire');
-const util = require('@google-cloud/common').util;
+const util = require('../src/util');
 const pjy = require('@google-cloud/projectify');
+const promisify = require('@google-cloud/promisify');
 
 const PKG = require('../package.json');
 
@@ -51,7 +52,7 @@ function Subscription(a, b, c) {
 }
 
 let promisified = false;
-const fakePromisify = extend({}, util, {
+const fakePromisify = extend({}, promisify, {
   promisifyAll: function(Class, options) {
     if (Class.name !== 'PubSub') {
       return;
@@ -150,9 +151,9 @@ describe('PubSub', function() {
         GoogleAuth: fakeGoogleAuth,
       },
       'google-gax': fakeGoogleGax,
-      './snapshot.js': FakeSnapshot,
-      './subscription.js': Subscription,
-      './topic.js': FakeTopic,
+      './snapshot': FakeSnapshot,
+      './subscription': Subscription,
+      './topic': FakeTopic,
       './v1': v1Override,
     });
   });

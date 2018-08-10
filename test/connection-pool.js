@@ -17,60 +17,56 @@
 'use strict';
 
 const assert = require('assert');
-const common = require('@google-cloud/common');
+const util = require('../src/util');
 const duplexify = require('duplexify');
-const events = require('events');
+const {EventEmitter} = require('events');
 const extend = require('extend');
 const proxyquire = require('proxyquire');
 const uuid = require('uuid');
-const util = require('util');
 const pjy = require('@google-cloud/projectify');
 
-const fakeUtil = extend({}, common.util);
+const fakeUtil = extend({}, util);
 const fakeUuid = extend({}, uuid);
 
-function FakeConnection() {
-  this.isConnected = false;
-  this.isPaused = false;
-  this.ended = false;
-  this.canceled = false;
-  this.written = [];
+class FakeConnection extends EventEmitter {
+  constructor() {
+    super();
+    this.isConnected = false;
+    this.isPaused = false;
+    this.ended = false;
+    this.canceled = false;
+    this.written = [];
+  }
 
-  events.EventEmitter.call(this);
+  write(data) {
+    this.written.push(data);
+  }
+
+  end(callback) {
+    this.ended = true;
+    if (callback) {
+      callback(null);
+    }
+  }
+
+  pause() {
+    this.isPaused = true;
+  }
+
+  pipe(stream) {
+    return stream;
+  }
+
+  resume() {
+    this.isPaused = false;
+  }
+
+  cancel() {
+    this.canceled = true;
+  }
 }
 
-util.inherits(FakeConnection, events.EventEmitter);
-
-FakeConnection.prototype.write = function(data) {
-  this.written.push(data);
-};
-
-FakeConnection.prototype.end = function(callback) {
-  this.ended = true;
-
-  if (callback) {
-    callback(null);
-  }
-};
-
-FakeConnection.prototype.pause = function() {
-  this.isPaused = true;
-};
-
-FakeConnection.prototype.pipe = function(stream) {
-  return stream;
-};
-
-FakeConnection.prototype.resume = function() {
-  this.isPaused = false;
-};
-
-FakeConnection.prototype.cancel = function() {
-  this.canceled = true;
-};
-
 let duplexifyOverride = null;
-
 function fakeDuplexify() {
   const args = [].slice.call(arguments);
   return (duplexifyOverride || duplexify).apply(null, args);
@@ -106,10 +102,8 @@ describe('ConnectionPool', function() {
   }
 
   before(function() {
-    ConnectionPool = proxyquire('../src/connection-pool.js', {
-      '@google-cloud/common': {
-        util: fakeUtil,
-      },
+    ConnectionPool = proxyquire('../src/connection-pool', {
+      '../src/util': fakeUtil,
       '@google-cloud/projectify': {
         replaceProjectIdToken: fakePjy,
       },
@@ -192,7 +186,7 @@ describe('ConnectionPool', function() {
     });
 
     it('should inherit from EventEmitter', function() {
-      assert(pool instanceof events.EventEmitter);
+      assert(pool instanceof EventEmitter);
     });
 
     it('should call open', function(done) {
@@ -404,7 +398,6 @@ describe('ConnectionPool', function() {
         fakeUtil.noop = function() {};
         done();
       };
-
       pool.close();
     });
   });
@@ -599,14 +592,12 @@ describe('ConnectionPool', function() {
 
       it('should proxy the cancel method', function() {
         const fakeCancel = function() {};
-
         fakeConnection.cancel = {
           bind: function(context) {
             assert.strictEqual(context, fakeConnection);
             return fakeCancel;
           },
         };
-
         pool.createConnection();
         assert.strictEqual(fakeDuplex.cancel, fakeCancel);
       });
