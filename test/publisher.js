@@ -17,7 +17,7 @@
 'use strict';
 
 const assert = require('assert');
-const {util} = require('@google-cloud/common');
+const util = require('../src/util');
 const pfy = require('@google-cloud/promisify');
 const extend = require('extend');
 const proxyquire = require('proxyquire');

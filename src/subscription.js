@@ -16,12 +16,12 @@
 
 'use strict';
 
-const common = require('@google-cloud/common');
+const util = require('./util');
 const {promisifyAll} = require('@google-cloud/promisify');
 const extend = require('extend');
 const is = require('is');
 const snakeCase = require('lodash.snakecase');
-const util = require('util');
+const nodeUtil = require('util');
 
 const IAM = require('./iam.js');
 const Snapshot = require('./snapshot.js');
@@ -198,7 +198,7 @@ function Subscription(pubsub, name, options) {
   Subscriber.call(this, options);
 }
 
-util.inherits(Subscription, Subscriber);
+nodeUtil.inherits(Subscription, Subscriber);
 
 /*!
  * Formats Subscription metadata.
@@ -361,7 +361,7 @@ Subscription.prototype.delete = function(gaxOpts, callback) {
     gaxOpts = {};
   }
 
-  callback = callback || common.util.noop;
+  callback = callback || util.noop;
 
   const reqOpts = {
     subscription: this.name,

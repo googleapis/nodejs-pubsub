@@ -28,9 +28,9 @@ const is = require('is');
 const PKG = require('../package.json');
 const v1 = require('./v1');
 
-const Snapshot = require('./snapshot.js');
-const Subscription = require('./subscription.js');
-const Topic = require('./topic.js');
+const Snapshot = require('./snapshot');
+const Subscription = require('./subscription');
+const Topic = require('./topic');
 
 /**
  * @type {string} - Project ID placeholder.

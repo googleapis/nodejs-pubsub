@@ -17,16 +17,15 @@
 'use strict';
 
 const assert = require('assert');
-const common = require('@google-cloud/common');
 const delay = require('delay');
-const events = require('events');
+const {EventEmitter} = require('events');
 const extend = require('extend');
 const is = require('is');
 const proxyquire = require('proxyquire');
-const util = require('util');
+const util = require('../src/util');
 const pfy = require('@google-cloud/promisify');
 
-const fakeUtil = extend({}, common.util);
+const fakeUtil = extend({}, util);
 
 let promisifyOverride;
 function fakePromisify() {
@@ -40,12 +39,12 @@ const fakeOs = {
   },
 };
 
-function FakeConnectionPool() {
-  this.calledWith_ = [].slice.call(arguments);
-  events.EventEmitter.call(this);
+class FakeConnectionPool extends EventEmitter {
+  constructor() {
+    super();
+    this.calledWith_ = [].slice.call(arguments);
+  }
 }
-
-util.inherits(FakeConnectionPool, events.EventEmitter);
 
 function FakeHistogram() {
   this.calledWith_ = [].slice.call(arguments);
@@ -65,9 +64,7 @@ describe('Subscriber', function() {
 
   before(function() {
     Subscriber = proxyquire('../src/subscriber.js', {
-      '@google-cloud/common': {
-        util: fakeUtil,
-      },
+      '../src/util': fakeUtil,
       '@google-cloud/promisify': {
         promisify: fakePromisify,
       },
@@ -141,7 +138,7 @@ describe('Subscriber', function() {
     });
 
     it('should inherit from EventEmitter', function() {
-      assert(subscriber instanceof events.EventEmitter);
+      assert(subscriber instanceof EventEmitter);
     });
 
     it('should listen for events', function() {

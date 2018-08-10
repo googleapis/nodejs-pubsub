@@ -18,14 +18,14 @@
 
 const arrify = require('arrify');
 const chunk = require('lodash.chunk');
-const common = require('@google-cloud/common');
+const util = require('./util');
 const {promisify} = require('@google-cloud/promisify');
 const delay = require('delay');
 const events = require('events');
 const extend = require('extend');
 const is = require('is');
 const os = require('os');
-const util = require('util');
+const nodeUtil = require('util');
 
 const ConnectionPool = require('./connection-pool.js');
 const Histogram = require('./histogram.js');
@@ -93,7 +93,7 @@ function Subscriber(options) {
   this.listenForEvents_();
 }
 
-util.inherits(Subscriber, events.EventEmitter);
+nodeUtil.inherits(Subscriber, events.EventEmitter);
 
 /*!
  * Acks the provided message. If the connection pool is absent, it will be
@@ -235,7 +235,7 @@ Subscriber.prototype.closeConnection_ = function(callback) {
   this.isOpen = false;
 
   if (this.connectionPool) {
-    this.connectionPool.close(callback || common.util.noop);
+    this.connectionPool.close(callback || util.noop);
     this.connectionPool = null;
   } else if (is.fn(callback)) {
     setImmediate(callback);
@@ -499,9 +499,7 @@ Subscriber.prototype.renewLeases_ = function() {
 Subscriber.prototype.setFlushTimeout_ = function() {
   if (!this.flushTimeoutHandle_) {
     const timeout = delay(this.batching.maxMilliseconds);
-    const promise = timeout
-      .then(this.flushQueues_.bind(this))
-      .catch(common.util.noop);
+    const promise = timeout.then(this.flushQueues_.bind(this)).catch(util.noop);
 
     promise.clear = timeout.clear.bind(timeout);
     this.flushTimeoutHandle_ = promise;

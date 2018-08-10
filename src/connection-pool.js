@@ -16,15 +16,15 @@
 
 'use strict';
 
-const common = require('@google-cloud/common');
 const {replaceProjectIdToken} = require('@google-cloud/projectify');
 const duplexify = require('duplexify');
 const each = require('async-each');
 const events = require('events');
 const is = require('is');
 const through = require('through2');
-const util = require('util');
+const nodeUtil = require('util');
 const uuid = require('uuid');
+const util = require('./util');
 
 const CHANNEL_READY_EVENT = 'channel.ready';
 const CHANNEL_ERROR_EVENT = 'channel.error';
@@ -88,7 +88,7 @@ function ConnectionPool(subscription) {
   this.open();
 }
 
-util.inherits(ConnectionPool, events.EventEmitter);
+nodeUtil.inherits(ConnectionPool, events.EventEmitter);
 
 /*!
  * Acquires a connection from the pool. Optionally you can specify an id for a
@@ -149,7 +149,7 @@ ConnectionPool.prototype.close = function(callback) {
   const self = this;
   const connections = Array.from(this.connections.values());
 
-  callback = callback || common.util.noop;
+  callback = callback || util.noop;
 
   clearInterval(this.keepAliveHandle);
 
