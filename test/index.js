@@ -188,7 +188,7 @@ describe('PubSub', function() {
     });
 
     it('should return an instance', function() {
-      assert(PubSub() instanceof PubSub);
+      assert(new PubSub() instanceof PubSub);
     });
 
     it('should combine all required scopes', function() {

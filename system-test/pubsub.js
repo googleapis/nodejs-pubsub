@@ -22,7 +22,7 @@ const Subscription = require('../src/subscription.js');
 const uuid = require('uuid');
 
 const PubSub = require('../');
-const pubsub = PubSub();
+const pubsub = new PubSub();
 
 describe('pubsub', function() {
   const TOPIC_NAMES = [
