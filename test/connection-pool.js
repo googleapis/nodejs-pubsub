@@ -395,7 +395,6 @@ describe('ConnectionPool', function() {
 
     it('should use noop when callback is omitted', function(done) {
       fakeUtil.noop = function() {
-        console.log('fish');
         fakeUtil.noop = function() {};
         done();
       };
