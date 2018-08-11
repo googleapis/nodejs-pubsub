@@ -84,128 +84,123 @@ const is = require('is');
  *   }
  * });
  */
-function Snapshot(parent, name) {
-  if (parent.Promise) {
-    this.Promise = parent.Promise;
+class Snapshot {
+  constructor(parent, name) {
+    if (parent.Promise) {
+      this.Promise = parent.Promise;
+    }
+    this.parent = parent;
+    this.name = Snapshot.formatName_(parent.projectId, name);
+    if (is.fn(parent.createSnapshot)) {
+      /**
+       * Create a snapshot with the given name.
+       *
+       * **This is only available if you accessed this object through
+       * {@link Subscription#snapshot}.**
+       *
+       * @method Snapshot#create
+       * @param {string} name Name of the snapshot.
+       * @param {function} [callback] The callback function.
+       * @param {?error} callback.err An error from the API call, may be null.
+       * @param {Snapshot} callback.snapshot The newly created
+       *     snapshot.
+       * @param {object} callback.apiResponse The full API response from the
+       *     service.
+       *
+       * @example
+       * const subscription = pubsub.subscription('my-subscription');
+       * const snapshot = subscription.snapshot('my-snapshot');
+       *
+       * const callback = function(err, snapshot, apiResponse) {
+       *   if (!err) {
+       *     // The snapshot was created successfully.
+       *   }
+       * };
+       *
+       * snapshot.create('my-snapshot', callback);
+       *
+       * //-
+       * // If the callback is omitted, we'll return a Promise.
+       * //-
+       * snapshot.create('my-snapshot').then(function(data) {
+       *   const snapshot = data[0];
+       *   const apiResponse = data[1];
+       * });
+       */
+      this.create = parent.createSnapshot.bind(parent, name);
+    }
+    if (is.fn(parent.seek)) {
+      /**
+       * Seeks an existing subscription to the snapshot.
+       *
+       * **This is only available if you accessed this object through
+       * {@link Subscription#snapshot}.**
+       *
+       * @method Snapshot#seek
+       * @param {function} callback The callback function.
+       * @param {?error} callback.err An error from the API call, may be null.
+       * @param {object} callback.apiResponse The full API response from the
+       *     service.
+       *
+       * @example
+       * const subscription = pubsub.subscription('my-subscription');
+       * const snapshot = subscription.snapshot('my-snapshot');
+       *
+       * snapshot.seek(function(err, apiResponse) {});
+       *
+       * //-
+       * // If the callback is omitted, we'll return a Promise.
+       * //-
+       * snapshot.seek().then(function(data) {
+       *   const apiResponse = data[0];
+       * });
+       */
+      this.seek = parent.seek.bind(parent, name);
+    }
   }
-
-  this.parent = parent;
-  this.name = Snapshot.formatName_(parent.projectId, name);
-
-  if (is.fn(parent.createSnapshot)) {
-    /**
-     * Create a snapshot with the given name.
-     *
-     * **This is only available if you accessed this object through
-     * {@link Subscription#snapshot}.**
-     *
-     * @method Snapshot#create
-     * @param {string} name Name of the snapshot.
-     * @param {function} [callback] The callback function.
-     * @param {?error} callback.err An error from the API call, may be null.
-     * @param {Snapshot} callback.snapshot The newly created
-     *     snapshot.
-     * @param {object} callback.apiResponse The full API response from the
-     *     service.
-     *
-     * @example
-     * const subscription = pubsub.subscription('my-subscription');
-     * const snapshot = subscription.snapshot('my-snapshot');
-     *
-     * const callback = function(err, snapshot, apiResponse) {
-     *   if (!err) {
-     *     // The snapshot was created successfully.
-     *   }
-     * };
-     *
-     * snapshot.create('my-snapshot', callback);
-     *
-     * //-
-     * // If the callback is omitted, we'll return a Promise.
-     * //-
-     * snapshot.create('my-snapshot').then(function(data) {
-     *   const snapshot = data[0];
-     *   const apiResponse = data[1];
-     * });
-     */
-    this.create = parent.createSnapshot.bind(parent, name);
+  /**
+   * Delete the snapshot.
+   *
+   * @param {function} [callback] The callback function.
+   * @param {?error} callback.err An error returned while making this
+   *     request.
+   * @param {object} callback.apiResponse The full API response from the
+   *     service.
+   *
+   * @example
+   * snapshot.delete(function(err, apiResponse) {});
+   *
+   * //-
+   * // If the callback is omitted, we'll return a Promise.
+   * //-
+   * snapshot.delete().then(function(data) {
+   *   const apiResponse = data[0];
+   * });
+   */
+  delete(callback) {
+    const reqOpts = {
+      snapshot: this.name,
+    };
+    callback = callback || util.noop;
+    this.parent.request(
+      {
+        client: 'SubscriberClient',
+        method: 'deleteSnapshot',
+        reqOpts: reqOpts,
+      },
+      callback
+    );
   }
-
-  if (is.fn(parent.seek)) {
-    /**
-     * Seeks an existing subscription to the snapshot.
-     *
-     * **This is only available if you accessed this object through
-     * {@link Subscription#snapshot}.**
-     *
-     * @method Snapshot#seek
-     * @param {function} callback The callback function.
-     * @param {?error} callback.err An error from the API call, may be null.
-     * @param {object} callback.apiResponse The full API response from the
-     *     service.
-     *
-     * @example
-     * const subscription = pubsub.subscription('my-subscription');
-     * const snapshot = subscription.snapshot('my-snapshot');
-     *
-     * snapshot.seek(function(err, apiResponse) {});
-     *
-     * //-
-     * // If the callback is omitted, we'll return a Promise.
-     * //-
-     * snapshot.seek().then(function(data) {
-     *   const apiResponse = data[0];
-     * });
-     */
-    this.seek = parent.seek.bind(parent, name);
+  /*@
+   * Format the name of a snapshot. A snapshot's full name is in the format of
+   * projects/{projectId}/snapshots/{snapshotName}
+   *
+   * @private
+   */
+  static formatName_(projectId, name) {
+    return 'projects/' + projectId + '/snapshots/' + name.split('/').pop();
   }
 }
-
-/*@
- * Format the name of a snapshot. A snapshot's full name is in the format of
- * projects/{projectId}/snapshots/{snapshotName}
- *
- * @private
- */
-Snapshot.formatName_ = function(projectId, name) {
-  return 'projects/' + projectId + '/snapshots/' + name.split('/').pop();
-};
-
-/**
- * Delete the snapshot.
- *
- * @param {function} [callback] The callback function.
- * @param {?error} callback.err An error returned while making this
- *     request.
- * @param {object} callback.apiResponse The full API response from the
- *     service.
- *
- * @example
- * snapshot.delete(function(err, apiResponse) {});
- *
- * //-
- * // If the callback is omitted, we'll return a Promise.
- * //-
- * snapshot.delete().then(function(data) {
- *   const apiResponse = data[0];
- * });
- */
-Snapshot.prototype.delete = function(callback) {
-  const reqOpts = {
-    snapshot: this.name,
-  };
-
-  callback = callback || util.noop;
-
-  this.parent.request(
-    {
-      client: 'SubscriberClient',
-      method: 'deleteSnapshot',
-      reqOpts: reqOpts,
-    },
-    callback
-  );
-};
 
 /*! Developer Documentation
  *
