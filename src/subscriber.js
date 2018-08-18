@@ -112,25 +112,22 @@ class Subscriber extends EventEmitter {
    * @return {Promise}
    */
   acknowledge_(ackIds, connId) {
-    const self = this;
     ackIds = arrify(ackIds);
-    const promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
-      ackIdChunk
-    ) {
-      if (self.writeToStreams_ && self.isConnected_()) {
-        return self.writeTo_(connId, {ackIds: ackIdChunk});
+    const promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(ackIdChunk => {
+      if (this.writeToStreams_ && this.isConnected_()) {
+        return this.writeTo_(connId, {ackIds: ackIdChunk});
       }
-      return promisify(self.request).call(self, {
+      return promisify(this.request).call(this, {
         client: 'SubscriberClient',
         method: 'acknowledge',
         reqOpts: {
-          subscription: self.name,
+          subscription: this.name,
           ackIds: ackIdChunk,
         },
       });
     });
-    return Promise.all(promises).catch(function(err) {
-      self.emit('error', err);
+    return Promise.all(promises).catch(err => {
+      this.emit('error', err);
     });
   }
   /*!
@@ -169,7 +166,7 @@ class Subscriber extends EventEmitter {
    *     Subscriber.
    *
    * @example
-   * Subscriber.close(function(err) {
+   * Subscriber.close((err) => {
    *   if (err) {
    *     // Error handling omitted.
    *   }
@@ -178,17 +175,16 @@ class Subscriber extends EventEmitter {
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * Subscriber.close().then(function() {});
+   * Subscriber.close().then(() => {});
    */
   close(callback) {
-    const self = this;
     this.userClosed_ = true;
     const inventory = this.inventory_;
     inventory.lease.length = inventory.bytes = 0;
     clearTimeout(this.leaseTimeoutHandle_);
     this.leaseTimeoutHandle_ = null;
-    this.flushQueues_().then(function() {
-      self.closeConnection_(callback);
+    this.flushQueues_().then(() => {
+      this.closeConnection_(callback);
     });
   }
   /*!
@@ -220,7 +216,6 @@ class Subscriber extends EventEmitter {
    * @private
    */
   flushQueues_() {
-    const self = this;
     if (this.flushTimeoutHandle_) {
       this.flushTimeoutHandle_.clear();
       this.flushTimeoutHandle_ = null;
@@ -233,15 +228,15 @@ class Subscriber extends EventEmitter {
     const requests = [];
     if (acks.length) {
       requests.push(
-        this.acknowledge_(acks).then(function() {
-          self.inventory_.ack = [];
+        this.acknowledge_(acks).then(() => {
+          this.inventory_.ack = [];
         })
       );
     }
     if (nacks.length) {
       requests.push(
-        this.modifyAckDeadline_(nacks, 0).then(function() {
-          self.inventory_.nack = [];
+        this.modifyAckDeadline_(nacks, 0).then(() => {
+          this.inventory_.nack = [];
         })
       );
     }
@@ -305,19 +300,18 @@ class Subscriber extends EventEmitter {
    * Subscriber.listenForEvents_();
    */
   listenForEvents_() {
-    const self = this;
-    this.on('newListener', function(event) {
+    this.on('newListener', event => {
       if (event === 'message') {
-        self.messageListeners++;
-        if (!self.connectionPool) {
-          self.userClosed_ = false;
-          self.openConnection_();
+        this.messageListeners++;
+        if (!this.connectionPool) {
+          this.userClosed_ = false;
+          this.openConnection_();
         }
       }
     });
-    this.on('removeListener', function(event) {
-      if (event === 'message' && --self.messageListeners === 0) {
-        self.closeConnection_();
+    this.on('removeListener', event => {
+      if (event === 'message' && --this.messageListeners === 0) {
+        this.closeConnection_();
       }
     });
   }
@@ -332,29 +326,26 @@ class Subscriber extends EventEmitter {
    * @return {Promise}
    */
   modifyAckDeadline_(ackIds, deadline, connId) {
-    const self = this;
     ackIds = arrify(ackIds);
-    const promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(function(
-      ackIdChunk
-    ) {
-      if (self.writeToStreams_ && self.isConnected_()) {
-        return self.writeTo_(connId, {
+    const promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(ackIdChunk => {
+      if (this.writeToStreams_ && this.isConnected_()) {
+        return this.writeTo_(connId, {
           modifyDeadlineAckIds: ackIdChunk,
           modifyDeadlineSeconds: Array(ackIdChunk.length).fill(deadline),
         });
       }
-      return promisify(self.request).call(self, {
+      return promisify(this.request).call(this, {
         client: 'SubscriberClient',
         method: 'modifyAckDeadline',
         reqOpts: {
-          subscription: self.name,
+          subscription: this.name,
           ackDeadlineSeconds: deadline,
           ackIds: ackIdChunk,
         },
       });
     });
-    return Promise.all(promises).catch(function(err) {
-      self.emit('error', err);
+    return Promise.all(promises).catch(err => {
+      this.emit('error', err);
     });
   }
   /*!
@@ -383,20 +374,19 @@ class Subscriber extends EventEmitter {
    * @private
    */
   openConnection_() {
-    const self = this;
     const pool = (this.connectionPool = new ConnectionPool(this));
     this.isOpen = true;
-    pool.on('error', function(err) {
-      self.emit('error', err);
+    pool.on('error', err => {
+      this.emit('error', err);
     });
-    pool.on('message', function(message) {
-      self.emit('message', self.leaseMessage_(message));
-      if (!pool.isPaused && self.hasMaxMessages_()) {
+    pool.on('message', message => {
+      this.emit('message', this.leaseMessage_(message));
+      if (!pool.isPaused && this.hasMaxMessages_()) {
         pool.pause();
       }
     });
-    pool.once('connected', function() {
-      self.flushQueues_();
+    pool.once('connected', () => {
+      this.flushQueues_();
     });
   }
   /*!
@@ -406,7 +396,6 @@ class Subscriber extends EventEmitter {
    * @private
    */
   renewLeases_() {
-    const self = this;
     clearTimeout(this.leaseTimeoutHandle_);
     this.leaseTimeoutHandle_ = null;
     if (!this.inventory_.lease.length) {
@@ -415,8 +404,8 @@ class Subscriber extends EventEmitter {
     this.ackDeadline = this.histogram.percentile(99);
     const ackIds = this.inventory_.lease.slice();
     const ackDeadlineSeconds = this.ackDeadline / 1000;
-    this.modifyAckDeadline_(ackIds, ackDeadlineSeconds).then(function() {
-      self.setLeaseTimeout_();
+    this.modifyAckDeadline_(ackIds, ackDeadlineSeconds).then(() => {
+      this.setLeaseTimeout_();
     });
   }
   /*!
@@ -464,19 +453,18 @@ class Subscriber extends EventEmitter {
    * @returns {Promise}
    */
   writeTo_(connId, data) {
-    const self = this;
     const startTime = Date.now();
-    return new Promise(function(resolve, reject) {
-      self.connectionPool.acquire(connId, function(err, connection) {
+    return new Promise((resolve, reject) => {
+      this.connectionPool.acquire(connId, (err, connection) => {
         if (err) {
           reject(err);
           return;
         }
         // we can ignore any errors that come from this since they'll be
         // re-emitted later
-        connection.write(data, function(err) {
+        connection.write(data, err => {
           if (!err) {
-            self.latency_.add(Date.now() - startTime);
+            this.latency_.add(Date.now() - startTime);
           }
           resolve();
         });
