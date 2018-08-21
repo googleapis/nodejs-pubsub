@@ -94,7 +94,6 @@ class ConnectionPool extends EventEmitter {
    * @param {stream} callback.connection A duplex stream.
    */
   acquire(id, callback) {
-    const self = this;
     if (is.fn(id)) {
       callback = id;
       id = null;
@@ -106,19 +105,16 @@ class ConnectionPool extends EventEmitter {
     // it's possible that by the time a user acks the connection could have
     // closed, so in that case we'll just return any connection
     if (!this.connections.has(id)) {
-      id = getFirstConnectionId();
+      id = this.connections.keys().next().value;
     }
     const connection = this.connections.get(id);
     if (connection) {
       callback(null, connection);
       return;
     }
-    this.once('connected', function(connection) {
+    this.once('connected', connection => {
       callback(null, connection);
     });
-    function getFirstConnectionId() {
-      return self.connections.keys().next().value;
-    }
   }
   /*!
    * Ends each connection in the pool and closes the pool, preventing new
@@ -129,7 +125,6 @@ class ConnectionPool extends EventEmitter {
    * @param {?error} callback.error An error returned while closing the pool.
    */
   close(callback) {
-    const self = this;
     const connections = Array.from(this.connections.values());
     callback = callback || util.noop;
     clearInterval(this.keepAliveHandle);
@@ -145,16 +140,16 @@ class ConnectionPool extends EventEmitter {
     this.noConnectionsTime = 0;
     each(
       connections,
-      function(connection, onEndCallback) {
-        connection.end(function(err) {
+      (connection, onEndCallback) => {
+        connection.end(err => {
           connection.cancel();
           onEndCallback(err);
         });
       },
-      function(err) {
-        if (self.client) {
-          self.client.close();
-          self.client = null;
+      err => {
+        if (this.client) {
+          this.client.close();
+          this.client = null;
         }
         callback(err);
       }
@@ -167,16 +162,15 @@ class ConnectionPool extends EventEmitter {
    * @private
    */
   createConnection() {
-    const self = this;
-    this.getClient(function(err, client) {
+    this.getClient((err, client) => {
       if (err) {
-        self.emit('error', err);
+        this.emit('error', err);
         return;
       }
       const requestStream = client.streamingPull();
       const readStream = requestStream.pipe(
-        through.obj(function(chunk, enc, next) {
-          chunk.receivedMessages.forEach(function(message) {
+        through.obj((chunk, enc, next) => {
+          chunk.receivedMessages.forEach(message => {
             readStream.push(message);
           });
           next();
@@ -188,12 +182,56 @@ class ConnectionPool extends EventEmitter {
       const id = uuid.v4();
       let errorImmediateHandle;
       connection.cancel = requestStream.cancel.bind(requestStream);
-      if (self.isPaused) {
+      if (this.isPaused) {
         connection.pause();
       }
-      self
-        .once(CHANNEL_ERROR_EVENT, onChannelError)
-        .once(CHANNEL_READY_EVENT, onChannelReady);
+
+      const onChannelError = () => {
+        this.removeListener(CHANNEL_READY_EVENT, onChannelReady);
+        requestStream.cancel();
+      };
+      const onChannelReady = () => {
+        this.removeListener(CHANNEL_ERROR_EVENT, onChannelError);
+        connection.isConnected = true;
+        this.noConnectionsTime = 0;
+        this.failedConnectionAttempts = 0;
+        this.emit('connected', connection);
+      };
+      // since this is a bidi stream it's possible that we recieve errors from
+      // reads or writes. We also want to try and cut down on the number of
+      // errors that we emit if other connections are still open. So by using
+      // setImmediate we're able to cancel the error message if it gets passed
+      // to the `status` event where we can check if the connection should be
+      // re-opened or if we should send the error to the user
+      const onConnectionError = err => {
+        errorImmediateHandle = setImmediate(() => this.emit('error', err));
+      };
+      const onConnectionData = message => {
+        this.emit('message', this.createMessage(id, message));
+      };
+      const onConnectionStatus = status => {
+        clearImmediate(errorImmediateHandle);
+        connection.end();
+        this.connections.delete(id);
+        if (!connection.isConnected) {
+          this.failedConnectionAttempts += 1;
+        }
+        if (!this.isConnected() && !this.noConnectionsTime) {
+          this.noConnectionsTime = Date.now();
+        }
+        if (this.shouldReconnect(status)) {
+          this.queueConnection();
+        } else if (this.isOpen && !this.connections.size) {
+          const error = new Error(status.details);
+          error.code = status.code;
+          this.emit('error', error);
+        }
+      };
+
+      this.once(CHANNEL_ERROR_EVENT, onChannelError).once(
+        CHANNEL_READY_EVENT,
+        onChannelReady
+      );
       requestStream.on('status', status =>
         setImmediate(onConnectionStatus, status)
       );
@@ -202,53 +240,12 @@ class ConnectionPool extends EventEmitter {
         .on('data', onConnectionData)
         .write({
           subscription: replaceProjectIdToken(
-            self.subscription.name,
-            self.pubsub.projectId
+            this.subscription.name,
+            this.pubsub.projectId
           ),
-          streamAckDeadlineSeconds: self.settings.ackDeadline / 1000,
+          streamAckDeadlineSeconds: this.settings.ackDeadline / 1000,
         });
-      self.connections.set(id, connection);
-      function onChannelError() {
-        self.removeListener(CHANNEL_READY_EVENT, onChannelReady);
-        requestStream.cancel();
-      }
-      function onChannelReady() {
-        self.removeListener(CHANNEL_ERROR_EVENT, onChannelError);
-        connection.isConnected = true;
-        self.noConnectionsTime = 0;
-        self.failedConnectionAttempts = 0;
-        self.emit('connected', connection);
-      }
-      // since this is a bidi stream it's possible that we recieve errors from
-      // reads or writes. We also want to try and cut down on the number of
-      // errors that we emit if other connections are still open. So by using
-      // setImmediate we're able to cancel the error message if it gets passed
-      // to the `status` event where we can check if the connection should be
-      // re-opened or if we should send the error to the user
-      function onConnectionError(err) {
-        errorImmediateHandle = setImmediate(() => self.emit('error', err));
-      }
-      function onConnectionData(message) {
-        self.emit('message', self.createMessage(id, message));
-      }
-      function onConnectionStatus(status) {
-        clearImmediate(errorImmediateHandle);
-        connection.end();
-        self.connections.delete(id);
-        if (!connection.isConnected) {
-          self.failedConnectionAttempts += 1;
-        }
-        if (!self.isConnected() && !self.noConnectionsTime) {
-          self.noConnectionsTime = Date.now();
-        }
-        if (self.shouldReconnect(status)) {
-          self.queueConnection();
-        } else if (self.isOpen && !self.connections.size) {
-          const error = new Error(status.details);
-          error.code = status.code;
-          self.emit('error', error);
-        }
-      }
+      this.connections.set(id, connection);
     });
   }
   /**
@@ -260,7 +257,6 @@ class ConnectionPool extends EventEmitter {
    * @return {object} message The message object.
    */
   createMessage(connectionId, resp) {
-    const self = this;
     const pt = resp.message.publishTime;
     const milliseconds = parseInt(pt.nanos, 10) / 1e6;
     const originalDataLength = resp.message.data.length;
@@ -277,11 +273,11 @@ class ConnectionPool extends EventEmitter {
         return originalDataLength;
       },
     };
-    message.ack = function() {
-      self.subscription.ack_(message);
+    message.ack = () => {
+      this.subscription.ack_(message);
     };
-    message.nack = function() {
-      self.subscription.nack_(message);
+    message.nack = () => {
+      this.subscription.nack_(message);
     };
     return message;
   }
@@ -293,29 +289,28 @@ class ConnectionPool extends EventEmitter {
    * @fires CHANNEL_READY_EVENT
    */
   getAndEmitChannelState() {
-    const self = this;
     this.isGettingChannelState = true;
-    this.getClient(function(err, client) {
+    this.getClient((err, client) => {
       if (err) {
-        self.isGettingChannelState = false;
-        self.emit(CHANNEL_ERROR_EVENT);
-        self.emit('error', err);
+        this.isGettingChannelState = false;
+        this.emit(CHANNEL_ERROR_EVENT);
+        this.emit('error', err);
         return;
       }
       let elapsedTimeWithoutConnection = 0;
       const now = Date.now();
       let deadline;
-      if (self.noConnectionsTime) {
-        elapsedTimeWithoutConnection = now - self.noConnectionsTime;
+      if (this.noConnectionsTime) {
+        elapsedTimeWithoutConnection = now - this.noConnectionsTime;
       }
       deadline = now + (MAX_TIMEOUT - elapsedTimeWithoutConnection);
-      client.waitForReady(deadline, function(err) {
-        self.isGettingChannelState = false;
+      client.waitForReady(deadline, err => {
+        this.isGettingChannelState = false;
         if (err) {
-          self.emit(CHANNEL_ERROR_EVENT, err);
+          this.emit(CHANNEL_ERROR_EVENT, err);
           return;
         }
-        self.emit(CHANNEL_READY_EVENT);
+        this.emit(CHANNEL_READY_EVENT);
       });
     });
   }
@@ -354,7 +349,6 @@ class ConnectionPool extends EventEmitter {
    * @private
    */
   open() {
-    const self = this;
     let existing = this.connections.size;
     const max = this.settings.maxConnections;
     for (; existing < max; existing++) {
@@ -363,14 +357,14 @@ class ConnectionPool extends EventEmitter {
     this.isOpen = true;
     this.failedConnectionAttempts = 0;
     this.noConnectionsTime = Date.now();
-    this.on('newListener', function(eventName) {
-      if (eventName === CHANNEL_READY_EVENT && !self.isGettingChannelState) {
-        self.getAndEmitChannelState();
+    this.on('newListener', eventName => {
+      if (eventName === CHANNEL_READY_EVENT && !this.isGettingChannelState) {
+        this.getAndEmitChannelState();
       }
     });
     if (!this.subscription.writeToStreams_) {
-      this.keepAliveHandle = setInterval(function() {
-        self.sendKeepAlives();
+      this.keepAliveHandle = setInterval(() => {
+        this.sendKeepAlives();
       }, KEEP_ALIVE_INTERVAL);
       this.keepAliveHandle.unref();
     }
@@ -382,7 +376,7 @@ class ConnectionPool extends EventEmitter {
    */
   pause() {
     this.isPaused = true;
-    this.connections.forEach(function(connection) {
+    this.connections.forEach(connection => {
       connection.pause();
     });
   }
@@ -393,21 +387,20 @@ class ConnectionPool extends EventEmitter {
    * @private
    */
   queueConnection() {
-    const self = this;
     let delay = 0;
     if (this.failedConnectionAttempts > 0) {
       delay =
         Math.pow(2, this.failedConnectionAttempts) * 1000 +
         Math.floor(Math.random() * 1000);
     }
+    const createConnection = () => {
+      setImmediate(() => {
+        this.createConnection();
+        this.queue.splice(this.queue.indexOf(timeoutHandle), 1);
+      });
+    };
     const timeoutHandle = setTimeout(createConnection, delay);
     this.queue.push(timeoutHandle);
-    function createConnection() {
-      setImmediate(() => {
-        self.createConnection();
-        self.queue.splice(self.queue.indexOf(timeoutHandle), 1);
-      });
-    }
   }
   /*!
    * Calls resume on each connection, allowing `message` events to fire off again.
@@ -416,7 +409,7 @@ class ConnectionPool extends EventEmitter {
    */
   resume() {
     this.isPaused = false;
-    this.connections.forEach(function(connection) {
+    this.connections.forEach(connection => {
       connection.resume();
     });
   }
@@ -426,7 +419,7 @@ class ConnectionPool extends EventEmitter {
    * @private
    */
   sendKeepAlives() {
-    this.connections.forEach(function(connection) {
+    this.connections.forEach(connection => {
       connection.write({});
     });
   }

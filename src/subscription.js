@@ -22,9 +22,9 @@ const extend = require('extend');
 const is = require('is');
 const snakeCase = require('lodash.snakecase');
 
-const IAM = require('./iam.js');
-const Snapshot = require('./snapshot.js');
-const Subscriber = require('./subscriber.js');
+const IAM = require('./iam');
+const Snapshot = require('./snapshot');
+const Subscriber = require('./subscriber');
 
 /**
  * A Subscription object will give you access to your Cloud Pub/Sub
@@ -83,7 +83,7 @@ const Subscriber = require('./subscriber.js');
  * //-
  * // From {@link PubSub#getSubscriptions}:
  * //-
- * pubsub.getSubscriptions(function(err, subscriptions) {
+ * pubsub.getSubscriptions((err, subscriptions) => {
  *   // `subscriptions` is an array of Subscription objects.
  * });
  *
@@ -91,7 +91,7 @@ const Subscriber = require('./subscriber.js');
  * // From {@link Topic#getSubscriptions}:
  * //-
  * const topic = pubsub.topic('my-topic');
- * topic.getSubscriptions(function(err, subscriptions) {
+ * topic.getSubscriptions((err, subscriptions) => {
  *   // `subscriptions` is an array of Subscription objects.
  * });
  *
@@ -99,7 +99,7 @@ const Subscriber = require('./subscriber.js');
  * // From {@link Topic#createSubscription}:
  * //-
  * const topic = pubsub.topic('my-topic');
- * topic.createSubscription('new-subscription', function(err, subscription) {
+ * topic.createSubscription('new-subscription', (err, subscription) => {
  *   // `subscription` is a Subscription object.
  * });
  *
@@ -116,7 +116,7 @@ const Subscriber = require('./subscriber.js');
  * //-
  *
  * // Register an error handler.
- * subscription.on('error', function(err) {});
+ * subscription.on('error', (err) => {});
  *
  * // Register a listener for `message` events.
  * function onMessage(message) {
@@ -177,14 +177,14 @@ class Subscription extends Subscriber {
      * //-
      * // Get the IAM policy for your subscription.
      * //-
-     * subscription.iam.getPolicy(function(err, policy) {
+     * subscription.iam.getPolicy((err, policy) => {
      *   console.log(policy);
      * });
      *
      * //-
      * // If the callback is omitted, we'll return a Promise.
      * //-
-     * subscription.iam.getPolicy().then(function(data) {
+     * subscription.iam.getPolicy().then((data) => {
      *   const policy = data[0];
      *   const apiResponse = data[1];
      * });
@@ -218,7 +218,7 @@ class Subscription extends Subscriber {
    * const topic = pubsub.topic('my-topic');
    * const subscription = topic.subscription('my-subscription');
    *
-   * const callback = function(err, snapshot, apiResponse) {
+   * const callback = (err, snapshot, apiResponse) => {
    *   if (!err) {
    *     // The snapshot was created successfully.
    *   }
@@ -229,13 +229,12 @@ class Subscription extends Subscriber {
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * subscription.createSnapshot('my-snapshot').then(function(data) {
+   * subscription.createSnapshot('my-snapshot').then((data) => {
    *   const snapshot = data[0];
    *   const apiResponse = data[1];
    * });
    */
   createSnapshot(name, gaxOpts, callback) {
-    const self = this;
     if (!is.string(name)) {
       throw new Error('A name is required to create a snapshot.');
     }
@@ -243,7 +242,7 @@ class Subscription extends Subscriber {
       callback = gaxOpts;
       gaxOpts = {};
     }
-    const snapshot = self.snapshot(name);
+    const snapshot = this.snapshot(name);
     const reqOpts = {
       name: snapshot.name,
       subscription: this.name,
@@ -255,7 +254,7 @@ class Subscription extends Subscriber {
         reqOpts: reqOpts,
         gaxOpts: gaxOpts,
       },
-      function(err, resp) {
+      (err, resp) => {
         if (err) {
           callback(err, null, resp);
           return;
@@ -285,17 +284,16 @@ class Subscription extends Subscriber {
    * const topic = pubsub.topic('my-topic');
    * const subscription = topic.subscription('my-subscription');
    *
-   * subscription.delete(function(err, apiResponse) {});
+   * subscription.delete((err, apiResponse) => {});
    *
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * subscription.delete().then(function(data) {
+   * subscription.delete().then((data) => {
    *   const apiResponse = data[0];
    * });
    */
   delete(gaxOpts, callback) {
-    const self = this;
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
@@ -311,10 +309,10 @@ class Subscription extends Subscriber {
         reqOpts: reqOpts,
         gaxOpts: gaxOpts,
       },
-      function(err, resp) {
+      (err, resp) => {
         if (!err) {
-          self.removeAllListeners();
-          self.close();
+          this.removeAllListeners();
+          this.close();
         }
         callback(err, resp);
       }
@@ -342,17 +340,17 @@ class Subscription extends Subscriber {
    * const topic = pubsub.topic('my-topic');
    * const subscription = topic.subscription('my-subscription');
    *
-   * subscription.exists(function(err, exists) {});
+   * subscription.exists((err, exists) => {});
    *
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * subscription.exists().then(function(data) {
+   * subscription.exists().then((data) => {
    *   const exists = data[0];
    * });
    */
   exists(callback) {
-    this.getMetadata(function(err) {
+    this.getMetadata(err => {
       if (!err) {
         callback(null, true);
         return;
@@ -392,36 +390,35 @@ class Subscription extends Subscriber {
    * const topic = pubsub.topic('my-topic');
    * const subscription = topic.subscription('my-subscription');
    *
-   * subscription.get(function(err, subscription, apiResponse) {
+   * subscription.get((err, subscription, apiResponse) => {
    *   // The `subscription` data has been populated.
    * });
    *
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * subscription.get().then(function(data) {
+   * subscription.get().then((data) => {
    *   const subscription = data[0];
    *   const apiResponse = data[1];
    * });
    */
   get(gaxOpts, callback) {
-    const self = this;
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
     }
     const autoCreate = !!gaxOpts.autoCreate && is.fn(this.create);
     delete gaxOpts.autoCreate;
-    this.getMetadata(gaxOpts, function(err, apiResponse) {
+    this.getMetadata(gaxOpts, (err, apiResponse) => {
       if (!err) {
-        callback(null, self, apiResponse);
+        callback(null, this, apiResponse);
         return;
       }
       if (err.code !== 5 || !autoCreate) {
         callback(err, null, apiResponse);
         return;
       }
-      self.create(gaxOpts, callback);
+      this.create(gaxOpts, callback);
     });
   }
   /**
@@ -448,7 +445,7 @@ class Subscription extends Subscriber {
    * const topic = pubsub.topic('my-topic');
    * const subscription = topic.subscription('my-subscription');
    *
-   * subscription.getMetadata(function(err, apiResponse) {
+   * subscription.getMetadata((err, apiResponse) => {
    *   if (err) {
    *     // Error handling omitted.
    *   }
@@ -457,12 +454,11 @@ class Subscription extends Subscriber {
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * subscription.getMetadata().then(function(data) {
+   * subscription.getMetadata().then((data) => {
    *   const apiResponse = data[0];
    * });
    */
   getMetadata(gaxOpts, callback) {
-    const self = this;
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
@@ -477,9 +473,9 @@ class Subscription extends Subscriber {
         reqOpts: reqOpts,
         gaxOpts: gaxOpts,
       },
-      function(err, apiResponse) {
+      (err, apiResponse) => {
         if (!err) {
-          self.metadata = apiResponse;
+          this.metadata = apiResponse;
         }
         callback(err, apiResponse);
       }
@@ -520,7 +516,7 @@ class Subscription extends Subscriber {
    *   }
    * };
    *
-   * subscription.modifyPushConfig(pushConfig, function(err, apiResponse) {
+   * subscription.modifyPushConfig(pushConfig, (err, apiResponse) => {
    *   if (err) {
    *     // Error handling omitted.
    *   }
@@ -529,7 +525,7 @@ class Subscription extends Subscriber {
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * subscription.modifyPushConfig(pushConfig).then(function(data) {
+   * subscription.modifyPushConfig(pushConfig).then((data) => {
    *   const apiResponse = data[0];
    * });
    */
@@ -572,7 +568,7 @@ class Subscription extends Subscriber {
    * @returns {Promise<SeekResponse>}
    *
    * @example
-   * const callback = function(err, resp) {
+   * const callback = (err, resp) => {
    *   if (!err) {
    *     // Seek was successful.
    *   }
@@ -636,7 +632,7 @@ class Subscription extends Subscriber {
    *   key: 'value'
    * };
    *
-   * subscription.setMetadata(metadata, function(err, apiResponse) {
+   * subscription.setMetadata(metadata, (err, apiResponse) => {
    *   if (err) {
    *     // Error handling omitted.
    *   }
@@ -645,7 +641,7 @@ class Subscription extends Subscriber {
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * subscription.setMetadata(metadata).then(function(data) {
+   * subscription.setMetadata(metadata).then((data) => {
    *   const apiResponse = data[0];
    * });
    */

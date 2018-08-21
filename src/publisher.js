@@ -121,7 +121,7 @@ class Publisher {
    *
    * const data = Buffer.from('Hello, world!');
    *
-   * const callback = function(err, messageId) {
+   * const callback = (err, messageId) => {
    *   if (err) {
    *     // Error handling omitted.
    *   }
@@ -142,7 +142,7 @@ class Publisher {
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * publisher.publish(data).then(function(messageId) {});
+   * publisher.publish(data).then((messageId) => {});
    */
   publish(data, attributes, callback) {
     if (!(data instanceof Buffer)) {
@@ -207,9 +207,9 @@ class Publisher {
         reqOpts: reqOpts,
         gaxOpts: this.settings.gaxOpts,
       },
-      function(err, resp) {
+      (err, resp) => {
         const messageIds = arrify(resp && resp.messageIds);
-        each(callbacks, function(callback, next) {
+        each(callbacks, (callback, next) => {
           const messageId = messageIds[callbacks.indexOf(callback)];
           callback(err, messageId);
           next();

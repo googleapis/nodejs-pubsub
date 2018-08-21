@@ -89,14 +89,14 @@ class Topic {
      * //-
      * // Get the IAM policy for your topic.
      * //-
-     * topic.iam.getPolicy(function(err, policy) {
+     * topic.iam.getPolicy((err, policy) => {
      *   console.log(policy);
      * });
      *
      * //-
      * // If the callback is omitted, we'll return a Promise.
      * //-
-     * topic.iam.getPolicy().then(function(data) {
+     * topic.iam.getPolicy().then((data) => {
      *   const policy = data[0];
      *   const apiResponse = data[1];
      * });
@@ -117,7 +117,7 @@ class Topic {
    *
    * const topic = pubsub.topic('my-topic');
    *
-   * topic.create(function(err, topic, apiResponse) {
+   * topic.create((err, topic, apiResponse) => {
    *   if (!err) {
    *     // The topic was created successfully.
    *   }
@@ -126,7 +126,7 @@ class Topic {
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * topic.create().then(function(data) {
+   * topic.create().then((data) => {
    *   const topic = data[0];
    *   const apiResponse = data[1];
    * });
@@ -165,7 +165,7 @@ class Topic {
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * topic.createSubscription('newMessages').then(function(data) {
+   * topic.createSubscription('newMessages').then((data) => {
    *   const subscription = data[0];
    *   const apiResponse = data[1];
    * });
@@ -191,12 +191,12 @@ class Topic {
    *
    * const topic = pubsub.topic('my-topic');
    *
-   * topic.delete(function(err, apiResponse) {});
+   * topic.delete((err, apiResponse) => {});
    *
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * topic.delete().then(function(data) {
+   * topic.delete().then((data) => {
    *   const apiResponse = data[0];
    * });
    */
@@ -240,12 +240,12 @@ class Topic {
    *
    * const topic = pubsub.topic('my-topic');
    *
-   * topic.exists(function(err, exists) {});
+   * topic.exists((err, exists) => {});
    *
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * topic.exists().then(function(data) {
+   * topic.exists().then((data) => {
    *   const exists = data[0];
    * });
    */
@@ -289,36 +289,35 @@ class Topic {
    *
    * const topic = pubsub.topic('my-topic');
    *
-   * topic.get(function(err, topic, apiResponse) {
+   * topic.get((err, topic, apiResponse) => {
    *   // The `topic` data has been populated.
    * });
    *
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * topic.get().then(function(data) {
+   * topic.get().then((data) => {
    *   const topic = data[0];
    *   const apiResponse = data[1];
    * });
    */
   get(gaxOpts, callback) {
-    const self = this;
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
     }
     const autoCreate = !!gaxOpts.autoCreate;
     delete gaxOpts.autoCreate;
-    this.getMetadata(gaxOpts, function(err, apiResponse) {
+    this.getMetadata(gaxOpts, (err, apiResponse) => {
       if (!err) {
-        callback(null, self, apiResponse);
+        callback(null, this, apiResponse);
         return;
       }
       if (err.code !== 5 || !autoCreate) {
         callback(err, null, apiResponse);
         return;
       }
-      self.create(gaxOpts, callback);
+      this.create(gaxOpts, callback);
     });
   }
   /**
@@ -346,17 +345,16 @@ class Topic {
    *
    * const topic = pubsub.topic('my-topic');
    *
-   * topic.getMetadata(function(err, apiResponse) {});
+   * topic.getMetadata((err, apiResponse) => {});
    *
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * topic.getMetadata().then(function(data) {
+   * topic.getMetadata().then((data) => {
    *   const apiResponse = data[0];
    * });
    */
   getMetadata(gaxOpts, callback) {
-    const self = this;
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
@@ -371,9 +369,9 @@ class Topic {
         reqOpts: reqOpts,
         gaxOpts: gaxOpts,
       },
-      function(err, apiResponse) {
+      (err, apiResponse) => {
         if (!err) {
-          self.metadata = apiResponse;
+          this.metadata = apiResponse;
         }
         callback(err, apiResponse);
       }
@@ -398,7 +396,7 @@ class Topic {
    *
    * const topic = pubsub.topic('my-topic');
    *
-   * topic.getSubscriptions(function(err, subscriptions) {
+   * topic.getSubscriptions((err, subscriptions) => {
    *   // subscriptions is an array of `Subscription` objects.
    * });
    *
@@ -410,7 +408,7 @@ class Topic {
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * topic.getSubscriptions().then(function(data) {
+   * topic.getSubscriptions().then((data) => {
    *   const subscriptions = data[0];
    * });
    */
@@ -474,7 +472,7 @@ class Topic {
    * const topic = pubsub.topic('my-topic');
    * const publisher = topic.publisher();
    *
-   * publisher.publish(Buffer.from('Hello, world!'), function(err, messageId) {
+   * publisher.publish(Buffer.from('Hello, world!'), (err, messageId) => {
    *   if (err) {
    *     // Error handling omitted.
    *   }
@@ -513,7 +511,7 @@ class Topic {
    * const subscription = topic.subscription('my-subscription');
    *
    * // Register a listener for `message` events.
-   * subscription.on('message', function(message) {
+   * subscription.on('message', (message) => {
    *   // Called every time a message is received.
    *   // message.id = ID of the message.
    *   // message.ackId = ID used to acknowledge the message receival.
@@ -561,10 +559,10 @@ class Topic {
  *
  * topic.getSubscriptionsStream()
  *   .on('error', console.error)
- *   .on('data', function(subscription) {
+ *   .on('data', (subscription) => {
  *     // subscription is a Subscription object.
  *   })
- *   .on('end', function() {
+ *   .on('end', () => {
  *     // All subscriptions retrieved.
  *   });
  *

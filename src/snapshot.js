@@ -43,7 +43,7 @@ const is = require('is');
  * //-
  * // From {@link PubSub#getSnapshots}:
  * //-
- * pubsub.getSnapshots(function(err, snapshots) {
+ * pubsub.getSnapshots((err, snapshots) => {
  *   // `snapshots` is an array of Snapshot objects.
  * });
  *
@@ -52,7 +52,7 @@ const is = require('is');
  * //-
  * pubsub.getSnapshotsStream()
  *   .on('error', console.error)
- *   .on('data', function(snapshot) {
+ *   .on('data', (snapshot) => {
  *     // `snapshot` is a Snapshot object.
  *   });
  *
@@ -67,7 +67,7 @@ const is = require('is');
  * //-
  * const subscription = pubsub.subscription('my-subscription');
  *
- * subscription.createSnapshot('my-snapshot', function(err, snapshot) {
+ * subscription.createSnapshot('my-snapshot', (err, snapshot) => {
  *   if (!err) {
  *     // `snapshot` is a Snapshot object.
  *   }
@@ -78,7 +78,7 @@ const is = require('is');
  * //-
  * const subscription = pubsub.subscription('my-subscription');
  *
- * subscription.seek('my-snapshot', function(err) {
+ * subscription.seek('my-snapshot', (err) => {
  *   if (err) {
  *     // Error handling omitted.
  *   }
@@ -111,7 +111,7 @@ class Snapshot {
        * const subscription = pubsub.subscription('my-subscription');
        * const snapshot = subscription.snapshot('my-snapshot');
        *
-       * const callback = function(err, snapshot, apiResponse) {
+       * const callback = (err, snapshot, apiResponse) => {
        *   if (!err) {
        *     // The snapshot was created successfully.
        *   }
@@ -122,7 +122,7 @@ class Snapshot {
        * //-
        * // If the callback is omitted, we'll return a Promise.
        * //-
-       * snapshot.create('my-snapshot').then(function(data) {
+       * snapshot.create('my-snapshot').then((data) => {
        *   const snapshot = data[0];
        *   const apiResponse = data[1];
        * });
@@ -146,12 +146,12 @@ class Snapshot {
        * const subscription = pubsub.subscription('my-subscription');
        * const snapshot = subscription.snapshot('my-snapshot');
        *
-       * snapshot.seek(function(err, apiResponse) {});
+       * snapshot.seek((err, apiResponse) => {});
        *
        * //-
        * // If the callback is omitted, we'll return a Promise.
        * //-
-       * snapshot.seek().then(function(data) {
+       * snapshot.seek().then((data) => {
        *   const apiResponse = data[0];
        * });
        */
@@ -168,12 +168,12 @@ class Snapshot {
    *     service.
    *
    * @example
-   * snapshot.delete(function(err, apiResponse) {});
+   * snapshot.delete((err, apiResponse) => {});
    *
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * snapshot.delete().then(function(data) {
+   * snapshot.delete().then((data) => {
    *   const apiResponse = data[0];
    * });
    */
