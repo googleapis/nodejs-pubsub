@@ -19,27 +19,27 @@ const through2 = require('through2');
 
 const pubsubModule = require('../src');
 
-const FAKE_STATUS_CODE = 1;
-const error = new Error();
+var FAKE_STATUS_CODE = 1;
+var error = new Error();
 error.code = FAKE_STATUS_CODE;
 
 describe('PublisherClient', () => {
   describe('createTopic', () => {
     it('invokes createTopic without error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedName = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedName = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         name: formattedName,
       };
 
       // Mock response
-      const name2 = 'name2-1052831874';
-      const expectedResponse = {
+      var name2 = 'name2-1052831874';
+      var expectedResponse = {
         name: name2,
       };
 
@@ -57,14 +57,14 @@ describe('PublisherClient', () => {
     });
 
     it('invokes createTopic with error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedName = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedName = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         name: formattedName,
       };
 
@@ -86,22 +86,22 @@ describe('PublisherClient', () => {
 
   describe('updateTopic', () => {
     it('invokes updateTopic without error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const topic = {};
-      const updateMask = {};
-      const request = {
+      var topic = {};
+      var updateMask = {};
+      var request = {
         topic: topic,
         updateMask: updateMask,
       };
 
       // Mock response
-      const name = 'name3373707';
-      const expectedResponse = {
+      var name = 'name3373707';
+      var expectedResponse = {
         name: name,
       };
 
@@ -119,15 +119,15 @@ describe('PublisherClient', () => {
     });
 
     it('invokes updateTopic with error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const topic = {};
-      const updateMask = {};
-      const request = {
+      var topic = {};
+      var updateMask = {};
+      var request = {
         topic: topic,
         updateMask: updateMask,
       };
@@ -150,27 +150,27 @@ describe('PublisherClient', () => {
 
   describe('publish', () => {
     it('invokes publish without error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-      const data = '-86';
-      const messagesElement = {
+      var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      var data = '-86';
+      var messagesElement = {
         data: data,
       };
-      const messages = [messagesElement];
-      const request = {
+      var messages = [messagesElement];
+      var request = {
         topic: formattedTopic,
         messages: messages,
       };
 
       // Mock response
-      const messageIdsElement = 'messageIdsElement-744837059';
-      const messageIds = [messageIdsElement];
-      const expectedResponse = {
+      var messageIdsElement = 'messageIdsElement-744837059';
+      var messageIds = [messageIdsElement];
+      var expectedResponse = {
         messageIds: messageIds,
       };
 
@@ -188,19 +188,19 @@ describe('PublisherClient', () => {
     });
 
     it('invokes publish with error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-      const data = '-86';
-      const messagesElement = {
+      var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      var data = '-86';
+      var messagesElement = {
         data: data,
       };
-      const messages = [messagesElement];
-      const request = {
+      var messages = [messagesElement];
+      var request = {
         topic: formattedTopic,
         messages: messages,
       };
@@ -223,20 +223,20 @@ describe('PublisherClient', () => {
 
   describe('getTopic', () => {
     it('invokes getTopic without error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         topic: formattedTopic,
       };
 
       // Mock response
-      const name = 'name3373707';
-      const expectedResponse = {
+      var name = 'name3373707';
+      var expectedResponse = {
         name: name,
       };
 
@@ -254,14 +254,14 @@ describe('PublisherClient', () => {
     });
 
     it('invokes getTopic with error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         topic: formattedTopic,
       };
 
@@ -283,22 +283,22 @@ describe('PublisherClient', () => {
 
   describe('listTopics', () => {
     it('invokes listTopics without error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedProject = client.projectPath('[PROJECT]');
-      const request = {
+      var formattedProject = client.projectPath('[PROJECT]');
+      var request = {
         project: formattedProject,
       };
 
       // Mock response
-      const nextPageToken = '';
-      const topicsElement = {};
-      const topics = [topicsElement];
-      const expectedResponse = {
+      var nextPageToken = '';
+      var topicsElement = {};
+      var topics = [topicsElement];
+      var expectedResponse = {
         nextPageToken: nextPageToken,
         topics: topics,
       };
@@ -317,14 +317,14 @@ describe('PublisherClient', () => {
     });
 
     it('invokes listTopics with error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedProject = client.projectPath('[PROJECT]');
-      const request = {
+      var formattedProject = client.projectPath('[PROJECT]');
+      var request = {
         project: formattedProject,
       };
 
@@ -346,22 +346,22 @@ describe('PublisherClient', () => {
 
   describe('listTopicSubscriptions', () => {
     it('invokes listTopicSubscriptions without error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         topic: formattedTopic,
       };
 
       // Mock response
-      const nextPageToken = '';
-      const subscriptionsElement = 'subscriptionsElement1698708147';
-      const subscriptions = [subscriptionsElement];
-      const expectedResponse = {
+      var nextPageToken = '';
+      var subscriptionsElement = 'subscriptionsElement1698708147';
+      var subscriptions = [subscriptionsElement];
+      var expectedResponse = {
         nextPageToken: nextPageToken,
         subscriptions: subscriptions,
       };
@@ -384,14 +384,14 @@ describe('PublisherClient', () => {
     });
 
     it('invokes listTopicSubscriptions with error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         topic: formattedTopic,
       };
 
@@ -413,14 +413,14 @@ describe('PublisherClient', () => {
 
   describe('deleteTopic', () => {
     it('invokes deleteTopic without error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         topic: formattedTopic,
       };
 
@@ -434,14 +434,14 @@ describe('PublisherClient', () => {
     });
 
     it('invokes deleteTopic with error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         topic: formattedTopic,
       };
 
@@ -462,23 +462,23 @@ describe('PublisherClient', () => {
 
   describe('setIamPolicy', () => {
     it('invokes setIamPolicy without error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
-      const policy = {};
-      const request = {
+      var formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      var policy = {};
+      var request = {
         resource: formattedResource,
         policy: policy,
       };
 
       // Mock response
-      const version = 351608024;
-      const etag = '21';
-      const expectedResponse = {
+      var version = 351608024;
+      var etag = '21';
+      var expectedResponse = {
         version: version,
         etag: etag,
       };
@@ -497,15 +497,15 @@ describe('PublisherClient', () => {
     });
 
     it('invokes setIamPolicy with error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
-      const policy = {};
-      const request = {
+      var formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      var policy = {};
+      var request = {
         resource: formattedResource,
         policy: policy,
       };
@@ -528,21 +528,21 @@ describe('PublisherClient', () => {
 
   describe('getIamPolicy', () => {
     it('invokes getIamPolicy without error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         resource: formattedResource,
       };
 
       // Mock response
-      const version = 351608024;
-      const etag = '21';
-      const expectedResponse = {
+      var version = 351608024;
+      var etag = '21';
+      var expectedResponse = {
         version: version,
         etag: etag,
       };
@@ -561,14 +561,14 @@ describe('PublisherClient', () => {
     });
 
     it('invokes getIamPolicy with error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         resource: formattedResource,
       };
 
@@ -590,21 +590,21 @@ describe('PublisherClient', () => {
 
   describe('testIamPermissions', () => {
     it('invokes testIamPermissions without error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
-      const permissions = [];
-      const request = {
+      var formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      var permissions = [];
+      var request = {
         resource: formattedResource,
         permissions: permissions,
       };
 
       // Mock response
-      const expectedResponse = {};
+      var expectedResponse = {};
 
       // Mock Grpc layer
       client._innerApiCalls.testIamPermissions = mockSimpleGrpcMethod(
@@ -620,15 +620,15 @@ describe('PublisherClient', () => {
     });
 
     it('invokes testIamPermissions with error', done => {
-      const client = new pubsubModule.v1.PublisherClient({
+      var client = new pubsubModule.v1.PublisherClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
-      const permissions = [];
-      const request = {
+      var formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      var permissions = [];
+      var request = {
         resource: formattedResource,
         permissions: permissions,
       };
@@ -652,28 +652,28 @@ describe('PublisherClient', () => {
 describe('SubscriberClient', () => {
   describe('createSubscription', () => {
     it('invokes createSubscription without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedName = client.subscriptionPath(
+      var formattedName = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         name: formattedName,
         topic: formattedTopic,
       };
 
       // Mock response
-      const name2 = 'name2-1052831874';
-      const topic2 = 'topic2-1139259102';
-      const ackDeadlineSeconds = 2135351438;
-      const retainAckedMessages = false;
-      const expectedResponse = {
+      var name2 = 'name2-1052831874';
+      var topic2 = 'topic2-1139259102';
+      var ackDeadlineSeconds = 2135351438;
+      var retainAckedMessages = false;
+      var expectedResponse = {
         name: name2,
         topic: topic2,
         ackDeadlineSeconds: ackDeadlineSeconds,
@@ -694,18 +694,18 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes createSubscription with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedName = client.subscriptionPath(
+      var formattedName = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-      const request = {
+      var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      var request = {
         name: formattedName,
         topic: formattedTopic,
       };
@@ -728,26 +728,26 @@ describe('SubscriberClient', () => {
 
   describe('getSubscription', () => {
     it('invokes getSubscription without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const request = {
+      var request = {
         subscription: formattedSubscription,
       };
 
       // Mock response
-      const name = 'name3373707';
-      const topic = 'topic110546223';
-      const ackDeadlineSeconds = 2135351438;
-      const retainAckedMessages = false;
-      const expectedResponse = {
+      var name = 'name3373707';
+      var topic = 'topic110546223';
+      var ackDeadlineSeconds = 2135351438;
+      var retainAckedMessages = false;
+      var expectedResponse = {
         name: name,
         topic: topic,
         ackDeadlineSeconds: ackDeadlineSeconds,
@@ -768,17 +768,17 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes getSubscription with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const request = {
+      var request = {
         subscription: formattedSubscription,
       };
 
@@ -800,32 +800,32 @@ describe('SubscriberClient', () => {
 
   describe('updateSubscription', () => {
     it('invokes updateSubscription without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const ackDeadlineSeconds = 42;
-      const subscription = {
+      var ackDeadlineSeconds = 42;
+      var subscription = {
         ackDeadlineSeconds: ackDeadlineSeconds,
       };
-      const pathsElement = 'ack_deadline_seconds';
-      const paths = [pathsElement];
-      const updateMask = {
+      var pathsElement = 'ack_deadline_seconds';
+      var paths = [pathsElement];
+      var updateMask = {
         paths: paths,
       };
-      const request = {
+      var request = {
         subscription: subscription,
         updateMask: updateMask,
       };
 
       // Mock response
-      const name = 'name3373707';
-      const topic = 'topic110546223';
-      const ackDeadlineSeconds2 = 921632575;
-      const retainAckedMessages = false;
-      const expectedResponse = {
+      var name = 'name3373707';
+      var topic = 'topic110546223';
+      var ackDeadlineSeconds2 = 921632575;
+      var retainAckedMessages = false;
+      var expectedResponse = {
         name: name,
         topic: topic,
         ackDeadlineSeconds: ackDeadlineSeconds2,
@@ -846,22 +846,22 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes updateSubscription with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const ackDeadlineSeconds = 42;
-      const subscription = {
+      var ackDeadlineSeconds = 42;
+      var subscription = {
         ackDeadlineSeconds: ackDeadlineSeconds,
       };
-      const pathsElement = 'ack_deadline_seconds';
-      const paths = [pathsElement];
-      const updateMask = {
+      var pathsElement = 'ack_deadline_seconds';
+      var paths = [pathsElement];
+      var updateMask = {
         paths: paths,
       };
-      const request = {
+      var request = {
         subscription: subscription,
         updateMask: updateMask,
       };
@@ -884,22 +884,22 @@ describe('SubscriberClient', () => {
 
   describe('listSubscriptions', () => {
     it('invokes listSubscriptions without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedProject = client.projectPath('[PROJECT]');
-      const request = {
+      var formattedProject = client.projectPath('[PROJECT]');
+      var request = {
         project: formattedProject,
       };
 
       // Mock response
-      const nextPageToken = '';
-      const subscriptionsElement = {};
-      const subscriptions = [subscriptionsElement];
-      const expectedResponse = {
+      var nextPageToken = '';
+      var subscriptionsElement = {};
+      var subscriptions = [subscriptionsElement];
+      var expectedResponse = {
         nextPageToken: nextPageToken,
         subscriptions: subscriptions,
       };
@@ -922,14 +922,14 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes listSubscriptions with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedProject = client.projectPath('[PROJECT]');
-      const request = {
+      var formattedProject = client.projectPath('[PROJECT]');
+      var request = {
         project: formattedProject,
       };
 
@@ -951,17 +951,17 @@ describe('SubscriberClient', () => {
 
   describe('deleteSubscription', () => {
     it('invokes deleteSubscription without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const request = {
+      var request = {
         subscription: formattedSubscription,
       };
 
@@ -975,17 +975,17 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes deleteSubscription with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const request = {
+      var request = {
         subscription: formattedSubscription,
       };
 
@@ -1006,19 +1006,19 @@ describe('SubscriberClient', () => {
 
   describe('modifyAckDeadline', () => {
     it('invokes modifyAckDeadline without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const ackIds = [];
-      const ackDeadlineSeconds = 2135351438;
-      const request = {
+      var ackIds = [];
+      var ackDeadlineSeconds = 2135351438;
+      var request = {
         subscription: formattedSubscription,
         ackIds: ackIds,
         ackDeadlineSeconds: ackDeadlineSeconds,
@@ -1034,19 +1034,19 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes modifyAckDeadline with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const ackIds = [];
-      const ackDeadlineSeconds = 2135351438;
-      const request = {
+      var ackIds = [];
+      var ackDeadlineSeconds = 2135351438;
+      var request = {
         subscription: formattedSubscription,
         ackIds: ackIds,
         ackDeadlineSeconds: ackDeadlineSeconds,
@@ -1069,18 +1069,18 @@ describe('SubscriberClient', () => {
 
   describe('acknowledge', () => {
     it('invokes acknowledge without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const ackIds = [];
-      const request = {
+      var ackIds = [];
+      var request = {
         subscription: formattedSubscription,
         ackIds: ackIds,
       };
@@ -1095,18 +1095,18 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes acknowledge with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const ackIds = [];
-      const request = {
+      var ackIds = [];
+      var request = {
         subscription: formattedSubscription,
         ackIds: ackIds,
       };
@@ -1128,24 +1128,24 @@ describe('SubscriberClient', () => {
 
   describe('pull', () => {
     it('invokes pull without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const maxMessages = 496131527;
-      const request = {
+      var maxMessages = 496131527;
+      var request = {
         subscription: formattedSubscription,
         maxMessages: maxMessages,
       };
 
       // Mock response
-      const expectedResponse = {};
+      var expectedResponse = {};
 
       // Mock Grpc layer
       client._innerApiCalls.pull = mockSimpleGrpcMethod(
@@ -1161,18 +1161,18 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes pull with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const maxMessages = 496131527;
-      const request = {
+      var maxMessages = 496131527;
+      var request = {
         subscription: formattedSubscription,
         maxMessages: maxMessages,
       };
@@ -1191,26 +1191,26 @@ describe('SubscriberClient', () => {
 
   describe('streamingPull', () => {
     it('invokes streamingPull without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const streamAckDeadlineSeconds = 1875467245;
-      const request = {
+      var streamAckDeadlineSeconds = 1875467245;
+      var request = {
         subscription: formattedSubscription,
         streamAckDeadlineSeconds: streamAckDeadlineSeconds,
       };
 
       // Mock response
-      const receivedMessagesElement = {};
-      const receivedMessages = [receivedMessagesElement];
-      const expectedResponse = {
+      var receivedMessagesElement = {};
+      var receivedMessages = [receivedMessagesElement];
+      var expectedResponse = {
         receivedMessages: receivedMessages,
       };
 
@@ -1220,7 +1220,7 @@ describe('SubscriberClient', () => {
         expectedResponse
       );
 
-      const stream = client
+      var stream = client
         .streamingPull()
         .on('data', response => {
           assert.deepStrictEqual(response, expectedResponse);
@@ -1234,18 +1234,18 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes streamingPull with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const streamAckDeadlineSeconds = 1875467245;
-      const request = {
+      var streamAckDeadlineSeconds = 1875467245;
+      var request = {
         subscription: formattedSubscription,
         streamAckDeadlineSeconds: streamAckDeadlineSeconds,
       };
@@ -1257,7 +1257,7 @@ describe('SubscriberClient', () => {
         error
       );
 
-      const stream = client
+      var stream = client
         .streamingPull()
         .on('data', () => {
           assert.fail();
@@ -1274,18 +1274,18 @@ describe('SubscriberClient', () => {
 
   describe('modifyPushConfig', () => {
     it('invokes modifyPushConfig without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const pushConfig = {};
-      const request = {
+      var pushConfig = {};
+      var request = {
         subscription: formattedSubscription,
         pushConfig: pushConfig,
       };
@@ -1300,18 +1300,18 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes modifyPushConfig with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const pushConfig = {};
-      const request = {
+      var pushConfig = {};
+      var request = {
         subscription: formattedSubscription,
         pushConfig: pushConfig,
       };
@@ -1333,22 +1333,22 @@ describe('SubscriberClient', () => {
 
   describe('listSnapshots', () => {
     it('invokes listSnapshots without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedProject = client.projectPath('[PROJECT]');
-      const request = {
+      var formattedProject = client.projectPath('[PROJECT]');
+      var request = {
         project: formattedProject,
       };
 
       // Mock response
-      const nextPageToken = '';
-      const snapshotsElement = {};
-      const snapshots = [snapshotsElement];
-      const expectedResponse = {
+      var nextPageToken = '';
+      var snapshotsElement = {};
+      var snapshots = [snapshotsElement];
+      var expectedResponse = {
         nextPageToken: nextPageToken,
         snapshots: snapshots,
       };
@@ -1371,14 +1371,14 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes listSnapshots with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedProject = client.projectPath('[PROJECT]');
-      const request = {
+      var formattedProject = client.projectPath('[PROJECT]');
+      var request = {
         project: formattedProject,
       };
 
@@ -1400,26 +1400,26 @@ describe('SubscriberClient', () => {
 
   describe('createSnapshot', () => {
     it('invokes createSnapshot without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedName = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
-      const formattedSubscription = client.subscriptionPath(
+      var formattedName = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const request = {
+      var request = {
         name: formattedName,
         subscription: formattedSubscription,
       };
 
       // Mock response
-      const name2 = 'name2-1052831874';
-      const topic = 'topic110546223';
-      const expectedResponse = {
+      var name2 = 'name2-1052831874';
+      var topic = 'topic110546223';
+      var expectedResponse = {
         name: name2,
         topic: topic,
       };
@@ -1438,18 +1438,18 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes createSnapshot with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedName = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
-      const formattedSubscription = client.subscriptionPath(
+      var formattedName = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const request = {
+      var request = {
         name: formattedName,
         subscription: formattedSubscription,
       };
@@ -1472,33 +1472,33 @@ describe('SubscriberClient', () => {
 
   describe('updateSnapshot', () => {
     it('invokes updateSnapshot without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const seconds = 123456;
-      const expireTime = {
+      var seconds = 123456;
+      var expireTime = {
         seconds: seconds,
       };
-      const snapshot = {
+      var snapshot = {
         expireTime: expireTime,
       };
-      const pathsElement = 'expire_time';
-      const paths = [pathsElement];
-      const updateMask = {
+      var pathsElement = 'expire_time';
+      var paths = [pathsElement];
+      var updateMask = {
         paths: paths,
       };
-      const request = {
+      var request = {
         snapshot: snapshot,
         updateMask: updateMask,
       };
 
       // Mock response
-      const name = 'name3373707';
-      const topic = 'topic110546223';
-      const expectedResponse = {
+      var name = 'name3373707';
+      var topic = 'topic110546223';
+      var expectedResponse = {
         name: name,
         topic: topic,
       };
@@ -1517,25 +1517,25 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes updateSnapshot with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const seconds = 123456;
-      const expireTime = {
+      var seconds = 123456;
+      var expireTime = {
         seconds: seconds,
       };
-      const snapshot = {
+      var snapshot = {
         expireTime: expireTime,
       };
-      const pathsElement = 'expire_time';
-      const paths = [pathsElement];
-      const updateMask = {
+      var pathsElement = 'expire_time';
+      var paths = [pathsElement];
+      var updateMask = {
         paths: paths,
       };
-      const request = {
+      var request = {
         snapshot: snapshot,
         updateMask: updateMask,
       };
@@ -1558,14 +1558,14 @@ describe('SubscriberClient', () => {
 
   describe('deleteSnapshot', () => {
     it('invokes deleteSnapshot without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSnapshot = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
-      const request = {
+      var formattedSnapshot = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
+      var request = {
         snapshot: formattedSnapshot,
       };
 
@@ -1579,14 +1579,14 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes deleteSnapshot with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSnapshot = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
-      const request = {
+      var formattedSnapshot = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
+      var request = {
         snapshot: formattedSnapshot,
       };
 
@@ -1607,22 +1607,22 @@ describe('SubscriberClient', () => {
 
   describe('seek', () => {
     it('invokes seek without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const request = {
+      var request = {
         subscription: formattedSubscription,
       };
 
       // Mock response
-      const expectedResponse = {};
+      var expectedResponse = {};
 
       // Mock Grpc layer
       client._innerApiCalls.seek = mockSimpleGrpcMethod(
@@ -1638,17 +1638,17 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes seek with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedSubscription = client.subscriptionPath(
+      var formattedSubscription = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const request = {
+      var request = {
         subscription: formattedSubscription,
       };
 
@@ -1666,26 +1666,26 @@ describe('SubscriberClient', () => {
 
   describe('setIamPolicy', () => {
     it('invokes setIamPolicy without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
+      var formattedResource = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const policy = {};
-      const request = {
+      var policy = {};
+      var request = {
         resource: formattedResource,
         policy: policy,
       };
 
       // Mock response
-      const version = 351608024;
-      const etag = '21';
-      const expectedResponse = {
+      var version = 351608024;
+      var etag = '21';
+      var expectedResponse = {
         version: version,
         etag: etag,
       };
@@ -1704,18 +1704,18 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes setIamPolicy with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
+      var formattedResource = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const policy = {};
-      const request = {
+      var policy = {};
+      var request = {
         resource: formattedResource,
         policy: policy,
       };
@@ -1738,24 +1738,24 @@ describe('SubscriberClient', () => {
 
   describe('getIamPolicy', () => {
     it('invokes getIamPolicy without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
+      var formattedResource = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const request = {
+      var request = {
         resource: formattedResource,
       };
 
       // Mock response
-      const version = 351608024;
-      const etag = '21';
-      const expectedResponse = {
+      var version = 351608024;
+      var etag = '21';
+      var expectedResponse = {
         version: version,
         etag: etag,
       };
@@ -1774,17 +1774,17 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes getIamPolicy with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
+      var formattedResource = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const request = {
+      var request = {
         resource: formattedResource,
       };
 
@@ -1806,24 +1806,24 @@ describe('SubscriberClient', () => {
 
   describe('testIamPermissions', () => {
     it('invokes testIamPermissions without error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
+      var formattedResource = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const permissions = [];
-      const request = {
+      var permissions = [];
+      var request = {
         resource: formattedResource,
         permissions: permissions,
       };
 
       // Mock response
-      const expectedResponse = {};
+      var expectedResponse = {};
 
       // Mock Grpc layer
       client._innerApiCalls.testIamPermissions = mockSimpleGrpcMethod(
@@ -1839,18 +1839,18 @@ describe('SubscriberClient', () => {
     });
 
     it('invokes testIamPermissions with error', done => {
-      const client = new pubsubModule.v1.SubscriberClient({
+      var client = new pubsubModule.v1.SubscriberClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
+      var formattedResource = client.subscriptionPath(
         '[PROJECT]',
         '[SUBSCRIPTION]'
       );
-      const permissions = [];
-      const request = {
+      var permissions = [];
+      var request = {
         resource: formattedResource,
         permissions: permissions,
       };
@@ -1887,7 +1887,7 @@ function mockSimpleGrpcMethod(expectedRequest, response, error) {
 
 function mockBidiStreamingGrpcMethod(expectedRequest, response, error) {
   return () => {
-    const mockStream = through2.obj((chunk, enc, callback) => {
+    var mockStream = through2.obj((chunk, enc, callback) => {
       assert.deepStrictEqual(chunk, expectedRequest);
       if (error) {
         callback(error);
