@@ -551,6 +551,14 @@ describe('Subscriber', function() {
 
       subscriber.close(done);
     });
+
+    it('should return a promise', function(done) {
+      subscriber.closeConnection_ = function(callback) {
+        callback();
+      };
+
+      subscriber.close().then(done);
+    });
   });
 
   describe('closeConnection_', function() {

@@ -183,8 +183,26 @@ class Subscriber extends EventEmitter {
     inventory.lease.length = inventory.bytes = 0;
     clearTimeout(this.leaseTimeoutHandle_);
     this.leaseTimeoutHandle_ = null;
-    this.flushQueues_().then(() => {
-      this.closeConnection_(callback);
+
+    const flushQueuePromise = this.flushQueues_();
+    
+    if (callback) {
+      flushQueuePromise.then(() => {
+        this.closeConnection_(callback);
+      });
+      return;
+    }
+
+    return flushQueuePromise.then(() => {
+      return new Promise((resolve, reject) => {
+        this.closeConnection_((err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve()
+          }
+        });
+      });
     });
   }
   /*!
