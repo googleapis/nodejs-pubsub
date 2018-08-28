@@ -230,7 +230,7 @@ class PubSub {
         gaxOpts: options.gaxOpts,
       },
       function(err, resp) {
-        if (err && err.code !== 6) {
+        if (err) {
           callback(err, null, resp);
           return;
         }

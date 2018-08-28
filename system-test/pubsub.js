@@ -300,6 +300,26 @@ describe('pubsub', function() {
       );
     });
 
+    it('should return error if creating an existing subscription', function(done) {
+      // Use a new topic name...
+      const topic = pubsub.topic(generateTopicName());
+
+      // ...but with the same subscription name that we already created...
+      const subscription = topic.subscription(SUB_NAMES[0]);
+
+      subscription.create(function(err) {
+        if (!err) {
+          assert.fail('Should not have created subscription successfully.');
+          return;
+        }
+
+        // ...and it should fail, because the subscription name is unique to the
+        // project, and not the topic.
+        assert.strictEqual(err.code, 6);
+        done();
+      });
+    });
+
     it('should list all subscriptions registered to the topic', function(done) {
       topic.getSubscriptions(function(err, subs) {
         assert.ifError(err);

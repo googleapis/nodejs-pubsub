@@ -481,24 +481,6 @@ describe('PubSub', function() {
         };
       });
 
-      it('should re-use existing subscription', function(done) {
-        const apiResponse = {code: 6};
-
-        pubsub.subscription = function() {
-          return SUBSCRIPTION;
-        };
-
-        pubsub.request = function(config, callback) {
-          callback({code: 6}, apiResponse);
-        };
-
-        pubsub.createSubscription(TOPIC_NAME, SUB_NAME, function(err, sub) {
-          assert.ifError(err);
-          assert.strictEqual(sub, SUBSCRIPTION);
-          done();
-        });
-      });
-
       it('should return error & API response to the callback', function(done) {
         pubsub.request = function(config, callback) {
           callback(error, apiResponse);
