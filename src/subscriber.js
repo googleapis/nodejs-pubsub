@@ -185,7 +185,7 @@ class Subscriber extends EventEmitter {
     this.leaseTimeoutHandle_ = null;
 
     const flushQueuePromise = this.flushQueues_();
-    
+
     if (callback) {
       flushQueuePromise.then(() => {
         this.closeConnection_(callback);
@@ -195,11 +195,11 @@ class Subscriber extends EventEmitter {
 
     return flushQueuePromise.then(() => {
       return new Promise((resolve, reject) => {
-        this.closeConnection_((err) => {
+        this.closeConnection_(err => {
           if (err) {
             reject(err);
           } else {
-            resolve()
+            resolve();
           }
         });
       });
