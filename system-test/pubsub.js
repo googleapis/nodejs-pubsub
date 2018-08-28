@@ -462,10 +462,6 @@ describe('pubsub', function() {
         });
     });
 
-    it('should re-use an existing subscription', function(done) {
-      pubsub.createSubscription(topic, SUB_NAMES[0], done);
-    });
-
     it('should error when using a non-existent subscription', function(done) {
       const subscription = topic.subscription(generateSubName(), {
         maxConnections: 1,
