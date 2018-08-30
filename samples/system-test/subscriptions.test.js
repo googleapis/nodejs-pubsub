@@ -16,10 +16,12 @@
 'use strict';
 
 const path = require(`path`);
-const pubsub = require(`@google-cloud/pubsub`)();
+const PubSub = require(`@google-cloud/pubsub`);
 const test = require(`ava`);
 const tools = require(`@google-cloud/nodejs-repo-tools`);
 const uuid = require(`uuid`);
+
+const pubsub = new PubSub();
 
 const cwd = path.join(__dirname, `..`);
 const topicNameOne = `nodejs-docs-samples-test-${uuid.v4()}`;
@@ -76,7 +78,7 @@ test.serial(`should create a subscription`, async t => {
       const [subscriptions] = await pubsub
         .topic(topicNameOne)
         .getSubscriptions();
-      assert.equal(subscriptions[0].name, fullSubscriptionNameOne);
+      assert.strictEqual(subscriptions[0].name, fullSubscriptionNameOne);
     })
     .start();
 });
@@ -191,14 +193,14 @@ test.serial(`should listen for ordered messages`, async t => {
       subscriptionNameThree,
       timeout
     );
-    assert.equal(console.log.callCount, 3);
-    assert.deepEqual(console.log.secondCall.args, [
+    assert.strictEqual(console.log.callCount, 3);
+    assert.deepStrictEqual(console.log.secondCall.args, [
       `* %d %j %j`,
       publishedMessageIds[2],
       expected,
       {counterId: '2'},
     ]);
-    assert.deepEqual(console.log.thirdCall.args, [
+    assert.deepStrictEqual(console.log.thirdCall.args, [
       `* %d %j %j`,
       publishedMessageIds[0],
       expected,

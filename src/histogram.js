@@ -16,7 +16,7 @@
 
 'use strict';
 
-var extend = require('extend');
+const extend = require('extend');
 
 /*!
  * The Histogram class is used to capture the lifespan of messages within the
@@ -26,63 +26,56 @@ var extend = require('extend');
  * @private
  * @class
  */
-function Histogram(options) {
-  this.options = extend(
-    {
-      min: 10000,
-      max: 600000,
-    },
-    options
-  );
-
-  this.data = new Map();
-  this.length = 0;
-}
-
-/*!
- * Adds a value to the histogram.
- *
- * @private
- * @param {numnber} value - The value in milliseconds.
- */
-Histogram.prototype.add = function(value) {
-  value = Math.max(value, this.options.min);
-  value = Math.min(value, this.options.max);
-  value = Math.ceil(value / 1000) * 1000;
-
-  if (!this.data.has(value)) {
-    this.data.set(value, 0);
+class Histogram {
+  constructor(options) {
+    this.options = extend(
+      {
+        min: 10000,
+        max: 600000,
+      },
+      options
+    );
+    this.data = new Map();
+    this.length = 0;
   }
-
-  var count = this.data.get(value);
-  this.data.set(value, count + 1);
-  this.length += 1;
-};
-
-/*!
- * Retrieves the nth percentile of recorded values.
- *
- * @private
- * @param {number} percent The requested percentage.
- * @return {number}
- */
-Histogram.prototype.percentile = function(percent) {
-  percent = Math.min(percent, 100);
-
-  var target = this.length - this.length * (percent / 100);
-  var keys = Array.from(this.data.keys());
-  var key;
-
-  for (var i = keys.length - 1; i > -1; i--) {
-    key = keys[i];
-    target -= this.data.get(key);
-
-    if (target <= 0) {
-      return key;
+  /*!
+   * Adds a value to the histogram.
+   *
+   * @private
+   * @param {numnber} value - The value in milliseconds.
+   */
+  add(value) {
+    value = Math.max(value, this.options.min);
+    value = Math.min(value, this.options.max);
+    value = Math.ceil(value / 1000) * 1000;
+    if (!this.data.has(value)) {
+      this.data.set(value, 0);
     }
+    const count = this.data.get(value);
+    this.data.set(value, count + 1);
+    this.length += 1;
   }
-
-  return this.options.min;
-};
+  /*!
+   * Retrieves the nth percentile of recorded values.
+   *
+   * @private
+   * @param {number} percent The requested percentage.
+   * @return {number}
+   */
+  percentile(percent) {
+    percent = Math.min(percent, 100);
+    let target = this.length - this.length * (percent / 100);
+    const keys = Array.from(this.data.keys());
+    let key;
+    for (let i = keys.length - 1; i > -1; i--) {
+      key = keys[i];
+      target -= this.data.get(key);
+      if (target <= 0) {
+        return key;
+      }
+    }
+    return this.options.min;
+  }
+}
 
 module.exports = Histogram;

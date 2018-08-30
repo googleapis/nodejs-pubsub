@@ -1,4 +1,4 @@
-// Copyright 2017 Google LLC
+// Copyright 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,10 +39,10 @@ class PublisherClient {
    * @param {string} [options.credentials.client_email]
    * @param {string} [options.credentials.private_key]
    * @param {string} [options.email] - Account email address. Required when
-   *   usaing a .pem or .p12 keyFilename.
+   *     using a .pem or .p12 keyFilename.
    * @param {string} [options.keyFilename] - Full path to the a .json, .pem, or
    *     .p12 key downloaded from the Google Developers Console. If you provide
-   *     a path to a JSON file, the projectId option above is not necessary.
+   *     a path to a JSON file, the projectId option below is not necessary.
    *     NOTE: .pem and .p12 require you to specify options.email as well.
    * @param {number} [options.port] - The port on which to connect to
    *     the remote host.
@@ -73,14 +73,14 @@ class PublisherClient {
     // Create a `gaxGrpc` object, with any grpc-specific options
     // sent to the client.
     opts.scopes = this.constructor.scopes;
-    var gaxGrpc = gax.grpc(opts);
+    var gaxGrpc = new gax.GrpcClient(opts);
 
     // Save the auth object to the client, for use by other methods.
     this.auth = gaxGrpc.auth;
 
     // Determine the client header string.
     var clientHeader = [
-      `gl-node/${process.version.node}`,
+      `gl-node/${process.version}`,
       `grpc/${gaxGrpc.grpcVersion}`,
       `gax/${gax.version}`,
       `gapic/${VERSION}`,
@@ -106,10 +106,10 @@ class PublisherClient {
     // identifiers to uniquely identify resources within the API.
     // Create useful helper objects for these.
     this._pathTemplates = {
-      projectPathTemplate: new gax.PathTemplate('projects/{project}'),
       topicPathTemplate: new gax.PathTemplate(
         'projects/{project}/topics/{topic}'
       ),
+      projectPathTemplate: new gax.PathTemplate('projects/{project}'),
     };
 
     // Some of the methods on this service return "paged" results,
@@ -127,7 +127,7 @@ class PublisherClient {
         'subscriptions'
       ),
     };
-    var protoFilesRoot = new gax.grpc.GoogleProtoFilesRoot();
+    var protoFilesRoot = new gax.GoogleProtoFilesRoot();
     protoFilesRoot = protobuf.loadSync(
       path.join(
         __dirname,
@@ -277,7 +277,8 @@ class PublisherClient {
   // -------------------
 
   /**
-   * Creates the given topic with the given name.
+   * Creates the given topic with the given name. See the
+   * <a href="/pubsub/docs/admin#resource_names"> resource name rules</a>.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -290,6 +291,15 @@ class PublisherClient {
    *   must not start with `"goog"`.
    * @param {Object.<string, string>} [request.labels]
    *   User labels.
+   * @param {Object} [request.messageStoragePolicy]
+   *   Policy constraining how messages published to the topic may be stored. It
+   *   is determined when the topic is created based on the policy configured at
+   *   the project level. It must not be set by the caller in the request to
+   *   CreateTopic or to UpdateTopic. This field will be populated in the
+   *   responses for GetTopic, CreateTopic, and UpdateTopic: if not present in the
+   *   response, then no constraints are in effect.
+   *
+   *   This object should have the same structure as [MessageStoragePolicy]{@link google.pubsub.v1.MessageStoragePolicy}
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/global.html#CallOptions} for the details.
@@ -330,22 +340,21 @@ class PublisherClient {
   }
 
   /**
-   * Updates an existing topic. Note that certain properties of a topic are not
-   * modifiable.  Options settings follow the style guide:
-   * NOTE:  The style guide requires body: "topic" instead of body: "*".
-   * Keeping the latter for internal consistency in V1, however it should be
-   * corrected in V2.  See
-   * https://cloud.google.com/apis/design/standard_methods#update for details.
+   * Updates an existing topic. Note that certain properties of a
+   * topic are not modifiable.
    *
    * @param {Object} request
    *   The request object that will be sent.
    * @param {Object} request.topic
-   *   The topic to update.
+   *   The updated topic object.
    *
    *   This object should have the same structure as [Topic]{@link google.pubsub.v1.Topic}
    * @param {Object} request.updateMask
-   *   Indicates which fields in the provided topic to update.
-   *   Must be specified and non-empty.
+   *   Indicates which fields in the provided topic to update. Must be specified
+   *   and non-empty. Note that if `update_mask` contains
+   *   "message_storage_policy" then the new value will be determined based on the
+   *   policy configured at the project or organization level. The
+   *   `message_storage_policy` must not be set in the `topic` provided above.
    *
    *   This object should have the same structure as [FieldMask]{@link google.protobuf.FieldMask}
    * @param {Object} [options]
@@ -653,7 +662,7 @@ class PublisherClient {
   }
 
   /**
-   * Lists the name of the subscriptions for this topic.
+   * Lists the names of the subscriptions on this topic.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1026,18 +1035,6 @@ class PublisherClient {
   // --------------------
 
   /**
-   * Return a fully-qualified project resource name string.
-   *
-   * @param {String} project
-   * @returns {String}
-   */
-  projectPath(project) {
-    return this._pathTemplates.projectPathTemplate.render({
-      project: project,
-    });
-  }
-
-  /**
    * Return a fully-qualified topic resource name string.
    *
    * @param {String} project
@@ -1052,14 +1049,15 @@ class PublisherClient {
   }
 
   /**
-   * Parse the projectName from a project resource.
+   * Return a fully-qualified project resource name string.
    *
-   * @param {String} projectName
-   *   A fully-qualified path representing a project resources.
-   * @returns {String} - A string representing the project.
+   * @param {String} project
+   * @returns {String}
    */
-  matchProjectFromProjectName(projectName) {
-    return this._pathTemplates.projectPathTemplate.match(projectName).project;
+  projectPath(project) {
+    return this._pathTemplates.projectPathTemplate.render({
+      project: project,
+    });
   }
 
   /**
@@ -1082,6 +1080,17 @@ class PublisherClient {
    */
   matchTopicFromTopicName(topicName) {
     return this._pathTemplates.topicPathTemplate.match(topicName).topic;
+  }
+
+  /**
+   * Parse the projectName from a project resource.
+   *
+   * @param {String} projectName
+   *   A fully-qualified path representing a project resources.
+   * @returns {String} - A string representing the project.
+   */
+  matchProjectFromProjectName(projectName) {
+    return this._pathTemplates.projectPathTemplate.match(projectName).project;
   }
 }
 

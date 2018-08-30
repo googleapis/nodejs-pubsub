@@ -16,13 +16,14 @@
 
 'use strict';
 
-var assert = require('assert');
-var common = require('@google-cloud/common');
-var extend = require('extend');
-var proxyquire = require('proxyquire');
+const assert = require('assert');
+const util = require('../src/util');
+const extend = require('extend');
+const proxyquire = require('proxyquire');
+const pfy = require('@google-cloud/promisify');
 
-var promisified = false;
-var fakeUtil = extend({}, common.util, {
+let promisified = false;
+const fakePromisify = extend({}, pfy, {
   promisifyAll: function(Class) {
     if (Class.name === 'Snapshot') {
       promisified = true;
@@ -31,17 +32,17 @@ var fakeUtil = extend({}, common.util, {
 });
 
 describe('Snapshot', function() {
-  var Snapshot;
-  var snapshot;
+  let Snapshot;
+  let snapshot;
 
-  var SNAPSHOT_NAME = 'a';
-  var PROJECT_ID = 'grape-spaceship-123';
+  const SNAPSHOT_NAME = 'a';
+  const PROJECT_ID = 'grape-spaceship-123';
 
-  var PUBSUB = {
+  const PUBSUB = {
     projectId: PROJECT_ID,
   };
 
-  var SUBSCRIPTION = {
+  const SUBSCRIPTION = {
     Promise: {},
     projectId: PROJECT_ID,
     pubsub: PUBSUB,
@@ -51,21 +52,19 @@ describe('Snapshot', function() {
   };
 
   before(function() {
-    Snapshot = proxyquire('../src/snapshot.js', {
-      '@google-cloud/common': {
-        util: fakeUtil,
-      },
+    Snapshot = proxyquire('../src/snapshot', {
+      '@google-cloud/promisify': fakePromisify,
     });
   });
 
   beforeEach(function() {
-    fakeUtil.noop = function() {};
+    util.noop = function() {};
     snapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
   });
 
   describe('initialization', function() {
-    var FULL_SNAPSHOT_NAME = 'a/b/c/d';
-    var formatName_;
+    const FULL_SNAPSHOT_NAME = 'a/b/c/d';
+    let formatName_;
 
     before(function() {
       formatName_ = Snapshot.formatName_;
@@ -98,7 +97,7 @@ describe('Snapshot', function() {
           return FULL_SNAPSHOT_NAME;
         };
 
-        var snapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
+        const snapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
         assert.strictEqual(snapshot.name, FULL_SNAPSHOT_NAME);
       });
 
@@ -109,7 +108,7 @@ describe('Snapshot', function() {
           return FULL_SNAPSHOT_NAME;
         };
 
-        var snapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
+        const snapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
         assert.strictEqual(snapshot.name, FULL_SNAPSHOT_NAME);
       });
     });
@@ -121,7 +120,7 @@ describe('Snapshot', function() {
           callback(); // The done function
         };
 
-        var snapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
+        const snapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
         snapshot.create(done);
       });
 
@@ -131,13 +130,13 @@ describe('Snapshot', function() {
           callback(); // The done function
         };
 
-        var snapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
+        const snapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
         snapshot.seek(done);
       });
     });
 
     describe('with PubSub parent', function() {
-      var snapshot;
+      let snapshot;
 
       beforeEach(function() {
         snapshot = new Snapshot(PUBSUB, SNAPSHOT_NAME);
@@ -154,17 +153,15 @@ describe('Snapshot', function() {
   });
 
   describe('formatName_', function() {
-    var EXPECTED = 'projects/' + PROJECT_ID + '/snapshots/' + SNAPSHOT_NAME;
+    const EXPECTED = 'projects/' + PROJECT_ID + '/snapshots/' + SNAPSHOT_NAME;
 
     it('should format the name', function() {
-      var name = Snapshot.formatName_(PROJECT_ID, SNAPSHOT_NAME);
-
+      const name = Snapshot.formatName_(PROJECT_ID, SNAPSHOT_NAME);
       assert.strictEqual(name, EXPECTED);
     });
 
     it('should not re-format the name', function() {
-      var name = Snapshot.formatName_(PROJECT_ID, EXPECTED);
-
+      const name = Snapshot.formatName_(PROJECT_ID, EXPECTED);
       assert.strictEqual(name, EXPECTED);
     });
   });
@@ -174,7 +171,7 @@ describe('Snapshot', function() {
       snapshot.parent.request = function(config, callback) {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'deleteSnapshot');
-        assert.deepEqual(config.reqOpts, {snapshot: snapshot.name});
+        assert.deepStrictEqual(config.reqOpts, {snapshot: snapshot.name});
         callback(); // the done fn
       };
 
@@ -182,7 +179,7 @@ describe('Snapshot', function() {
     });
 
     it('should optionally accept a callback', function(done) {
-      fakeUtil.noop = done;
+      util.noop = done;
 
       snapshot.parent.request = function(config, callback) {
         callback(); // the done fn

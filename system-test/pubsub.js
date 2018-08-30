@@ -16,28 +16,28 @@
 
 'use strict';
 
-var assert = require('assert');
-var async = require('async');
-var Subscription = require('../src/subscription.js');
-var uuid = require('uuid');
+const assert = require('assert');
+const async = require('async');
+const Subscription = require('../src/subscription.js');
+const uuid = require('uuid');
 
-var PubSub = require('../');
-var pubsub = PubSub();
+const PubSub = require('../');
+const pubsub = new PubSub();
 
 describe('pubsub', function() {
-  var TOPIC_NAMES = [
+  const TOPIC_NAMES = [
     generateTopicName(),
     generateTopicName(),
     generateTopicName(),
   ];
 
-  var TOPICS = [
+  const TOPICS = [
     pubsub.topic(TOPIC_NAMES[0]),
     pubsub.topic(TOPIC_NAMES[1]),
     pubsub.topic(TOPIC_NAMES[2]),
   ];
 
-  var TOPIC_FULL_NAMES = TOPICS.map(getTopicName);
+  const TOPIC_FULL_NAMES = TOPICS.map(getTopicName);
 
   function generateSnapshotName() {
     return 'test-snapshot-' + uuid.v4();
@@ -63,9 +63,9 @@ describe('pubsub', function() {
 
     options = options || {};
 
-    var topic = pubsub.topic(generateTopicName());
-    var publisher = topic.publisher();
-    var subscription = topic.subscription(generateSubName());
+    const topic = pubsub.topic(generateTopicName());
+    const publisher = topic.publisher();
+    const subscription = topic.subscription(generateSubName());
 
     async.series(
       [
@@ -123,19 +123,19 @@ describe('pubsub', function() {
       pubsub.getTopics(function(err, topics) {
         assert.ifError(err);
 
-        var results = topics.filter(function(topic) {
-          var name = getTopicName(topic);
+        const results = topics.filter(function(topic) {
+          const name = getTopicName(topic);
           return TOPIC_FULL_NAMES.indexOf(name) !== -1;
         });
 
         // get all topics in list of known names
-        assert.equal(results.length, TOPIC_NAMES.length);
+        assert.strictEqual(results.length, TOPIC_NAMES.length);
         done();
       });
     });
 
     it('should list topics in a stream', function(done) {
-      var topicsEmitted = [];
+      const topicsEmitted = [];
 
       pubsub
         .getTopicsStream()
@@ -144,12 +144,12 @@ describe('pubsub', function() {
           topicsEmitted.push(topic);
         })
         .on('end', function() {
-          var results = topicsEmitted.filter(function(topic) {
-            var name = getTopicName(topic);
+          const results = topicsEmitted.filter(function(topic) {
+            const name = getTopicName(topic);
             return TOPIC_FULL_NAMES.indexOf(name) !== -1;
           });
 
-          assert.equal(results.length, TOPIC_NAMES.length);
+          assert.strictEqual(results.length, TOPIC_NAMES.length);
           done();
         });
     });
@@ -169,7 +169,7 @@ describe('pubsub', function() {
     });
 
     it('should be created and deleted', function(done) {
-      var TOPIC_NAME = generateTopicName();
+      const TOPIC_NAME = generateTopicName();
       pubsub.createTopic(TOPIC_NAME, function(err) {
         assert.ifError(err);
         pubsub.topic(TOPIC_NAME).delete(done);
@@ -177,13 +177,13 @@ describe('pubsub', function() {
     });
 
     it('should honor the autoCreate option', function(done) {
-      var topic = pubsub.topic(generateTopicName());
+      const topic = pubsub.topic(generateTopicName());
 
       topic.get({autoCreate: true}, done);
     });
 
     it('should confirm if a topic exists', function(done) {
-      var topic = pubsub.topic(TOPIC_NAMES[0]);
+      const topic = pubsub.topic(TOPIC_NAMES[0]);
 
       topic.exists(function(err, exists) {
         assert.ifError(err);
@@ -193,7 +193,7 @@ describe('pubsub', function() {
     });
 
     it('should confirm if a topic does not exist', function(done) {
-      var topic = pubsub.topic('should-not-exist');
+      const topic = pubsub.topic('should-not-exist');
 
       topic.exists(function(err, exists) {
         assert.ifError(err);
@@ -203,9 +203,9 @@ describe('pubsub', function() {
     });
 
     it('should publish a message', function(done) {
-      var topic = pubsub.topic(TOPIC_NAMES[0]);
-      var publisher = topic.publisher();
-      var message = Buffer.from('message from me');
+      const topic = pubsub.topic(TOPIC_NAMES[0]);
+      const publisher = topic.publisher();
+      const message = Buffer.from('message from me');
 
       publisher.publish(message, function(err, messageId) {
         assert.ifError(err);
@@ -215,23 +215,23 @@ describe('pubsub', function() {
     });
 
     it('should publish a message with attributes', function(done) {
-      var data = Buffer.from('raw message data');
-      var attrs = {
+      const data = Buffer.from('raw message data');
+      const attrs = {
         customAttribute: 'value',
       };
 
       publishPop(data, attrs, function(err, message) {
         assert.ifError(err);
 
-        assert.deepEqual(message.data, data);
-        assert.deepEqual(message.attributes, attrs);
+        assert.deepStrictEqual(message.data, data);
+        assert.deepStrictEqual(message.attributes, attrs);
 
         done();
       });
     });
 
     it('should get the metadata of a topic', function(done) {
-      var topic = pubsub.topic(TOPIC_NAMES[0]);
+      const topic = pubsub.topic(TOPIC_NAMES[0]);
       topic.getMetadata(function(err, metadata) {
         assert.ifError(err);
         assert.strictEqual(metadata.name, topic.name);
@@ -241,13 +241,13 @@ describe('pubsub', function() {
   });
 
   describe('Subscription', function() {
-    var TOPIC_NAME = generateTopicName();
-    var topic = pubsub.topic(TOPIC_NAME);
-    var publisher = topic.publisher();
+    const TOPIC_NAME = generateTopicName();
+    const topic = pubsub.topic(TOPIC_NAME);
+    const publisher = topic.publisher();
 
-    var SUB_NAMES = [generateSubName(), generateSubName()];
+    const SUB_NAMES = [generateSubName(), generateSubName()];
 
-    var SUBSCRIPTIONS = [
+    const SUBSCRIPTIONS = [
       topic.subscription(SUB_NAMES[0], {ackDeadline: 30000}),
       topic.subscription(SUB_NAMES[1], {ackDeadline: 60000}),
     ];
@@ -303,14 +303,14 @@ describe('pubsub', function() {
     it('should list all subscriptions registered to the topic', function(done) {
       topic.getSubscriptions(function(err, subs) {
         assert.ifError(err);
-        assert.equal(subs.length, SUBSCRIPTIONS.length);
+        assert.strictEqual(subs.length, SUBSCRIPTIONS.length);
         assert(subs[0] instanceof Subscription);
         done();
       });
     });
 
     it('should list all topic subscriptions as a stream', function(done) {
-      var subscriptionsEmitted = [];
+      const subscriptionsEmitted = [];
 
       topic
         .getSubscriptionsStream()
@@ -319,7 +319,7 @@ describe('pubsub', function() {
           subscriptionsEmitted.push(subscription);
         })
         .on('end', function() {
-          assert.equal(subscriptionsEmitted.length, SUBSCRIPTIONS.length);
+          assert.strictEqual(subscriptionsEmitted.length, SUBSCRIPTIONS.length);
           done();
         });
     });
@@ -333,7 +333,7 @@ describe('pubsub', function() {
     });
 
     it('should list all subscriptions as a stream', function(done) {
-      var subscriptionEmitted = false;
+      let subscriptionEmitted = false;
 
       pubsub
         .getSubscriptionsStream()
@@ -348,7 +348,7 @@ describe('pubsub', function() {
     });
 
     it('should allow creation and deletion of a subscription', function(done) {
-      var subName = generateSubName();
+      const subName = generateSubName();
       topic.createSubscription(subName, function(err, sub) {
         assert.ifError(err);
         assert(sub instanceof Subscription);
@@ -357,13 +357,13 @@ describe('pubsub', function() {
     });
 
     it('should honor the autoCreate option', function(done) {
-      var sub = topic.subscription(generateSubName());
+      const sub = topic.subscription(generateSubName());
 
       sub.get({autoCreate: true}, done);
     });
 
     it('should confirm if a sub exists', function(done) {
-      var sub = topic.subscription(SUB_NAMES[0]);
+      const sub = topic.subscription(SUB_NAMES[0]);
 
       sub.exists(function(err, exists) {
         assert.ifError(err);
@@ -373,7 +373,7 @@ describe('pubsub', function() {
     });
 
     it('should confirm if a sub does not exist', function(done) {
-      var sub = topic.subscription('should-not-exist');
+      const sub = topic.subscription('should-not-exist');
 
       sub.exists(function(err, exists) {
         assert.ifError(err);
@@ -383,8 +383,8 @@ describe('pubsub', function() {
     });
 
     it('should create a subscription with message retention', function(done) {
-      var subName = generateSubName();
-      var threeDaysInSeconds = 3 * 24 * 60 * 60;
+      const subName = generateSubName();
+      const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
       topic.createSubscription(
         subName,
@@ -414,8 +414,8 @@ describe('pubsub', function() {
     });
 
     it('should set metadata for a subscription', function() {
-      var subscription = topic.subscription(generateSubName());
-      var threeDaysInSeconds = 3 * 24 * 60 * 60;
+      const subscription = topic.subscription(generateSubName());
+      const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
       return subscription
         .create()
@@ -428,7 +428,7 @@ describe('pubsub', function() {
           return subscription.getMetadata();
         })
         .then(function(data) {
-          var metadata = data[0];
+          const metadata = data[0];
 
           assert.strictEqual(metadata.retainAckedMessages, true);
           assert.strictEqual(
@@ -447,7 +447,7 @@ describe('pubsub', function() {
     });
 
     it('should error when using a non-existent subscription', function(done) {
-      var subscription = topic.subscription(generateSubName(), {
+      const subscription = topic.subscription(generateSubName(), {
         maxConnections: 1,
       });
 
@@ -462,13 +462,13 @@ describe('pubsub', function() {
     });
 
     it('should receive the published messages', function(done) {
-      var messageCount = 0;
-      var subscription = topic.subscription(SUB_NAMES[1]);
+      let messageCount = 0;
+      const subscription = topic.subscription(SUB_NAMES[1]);
 
       subscription.on('error', done);
 
       subscription.on('message', function(message) {
-        assert.deepEqual(message.data, Buffer.from('hello'));
+        assert.deepStrictEqual(message.data, Buffer.from('hello'));
 
         if (++messageCount === 10) {
           subscription.close(done);
@@ -477,7 +477,7 @@ describe('pubsub', function() {
     });
 
     it('should ack the message', function(done) {
-      var subscription = topic.subscription(SUB_NAMES[1]);
+      const subscription = topic.subscription(SUB_NAMES[1]);
 
       subscription.on('error', done);
       subscription.on('message', ack);
@@ -492,7 +492,7 @@ describe('pubsub', function() {
     });
 
     it('should nack the message', function(done) {
-      var subscription = topic.subscription(SUB_NAMES[1]);
+      const subscription = topic.subscription(SUB_NAMES[1]);
 
       subscription.on('error', done);
       subscription.on('message', nack);
@@ -507,10 +507,10 @@ describe('pubsub', function() {
     });
 
     it('should respect flow control limits', function(done) {
-      var maxMessages = 3;
-      var messageCount = 0;
+      const maxMessages = 3;
+      let messageCount = 0;
 
-      var subscription = topic.subscription(SUB_NAMES[0], {
+      const subscription = topic.subscription(SUB_NAMES[0], {
         flowControl: {
           maxMessages: maxMessages,
         },
@@ -533,12 +533,12 @@ describe('pubsub', function() {
 
   describe('IAM', function() {
     it('should get a policy', function(done) {
-      var topic = pubsub.topic(TOPIC_NAMES[0]);
+      const topic = pubsub.topic(TOPIC_NAMES[0]);
 
       topic.iam.getPolicy(function(err, policy) {
         assert.ifError(err);
 
-        assert.deepEqual(policy.bindings, []);
+        assert.deepStrictEqual(policy.bindings, []);
         assert.strictEqual(policy.version, 0);
 
         done();
@@ -546,8 +546,8 @@ describe('pubsub', function() {
     });
 
     it('should set a policy', function(done) {
-      var topic = pubsub.topic(TOPIC_NAMES[0]);
-      var policy = {
+      const topic = pubsub.topic(TOPIC_NAMES[0]);
+      const policy = {
         bindings: [
           {
             role: 'roles/pubsub.publisher',
@@ -560,18 +560,18 @@ describe('pubsub', function() {
 
       topic.iam.setPolicy(policy, function(err, newPolicy) {
         assert.ifError(err);
-        assert.deepEqual(newPolicy.bindings, policy.bindings);
+        assert.deepStrictEqual(newPolicy.bindings, policy.bindings);
         done();
       });
     });
 
     it('should test the iam permissions', function(done) {
-      var topic = pubsub.topic(TOPIC_NAMES[0]);
-      var testPermissions = ['pubsub.topics.get', 'pubsub.topics.update'];
+      const topic = pubsub.topic(TOPIC_NAMES[0]);
+      const testPermissions = ['pubsub.topics.get', 'pubsub.topics.update'];
 
       topic.iam.testPermissions(testPermissions, function(err, permissions) {
         assert.ifError(err);
-        assert.deepEqual(permissions, {
+        assert.deepStrictEqual(permissions, {
           'pubsub.topics.get': true,
           'pubsub.topics.update': true,
         });
@@ -581,12 +581,12 @@ describe('pubsub', function() {
   });
 
   describe('Snapshot', function() {
-    var SNAPSHOT_NAME = generateSnapshotName();
+    const SNAPSHOT_NAME = generateSnapshotName();
 
-    var topic;
-    var publisher;
-    var subscription;
-    var snapshot;
+    let topic;
+    let publisher;
+    let subscription;
+    let snapshot;
 
     function deleteAllSnapshots() {
       return pubsub.getSnapshots().then(function(data) {
@@ -634,7 +634,7 @@ describe('pubsub', function() {
     });
 
     it('should get a list of snapshots as a stream', function(done) {
-      var snapshots = [];
+      const snapshots = [];
 
       pubsub
         .getSnapshotsStream()
@@ -650,8 +650,8 @@ describe('pubsub', function() {
     });
 
     describe('seeking', function() {
-      var subscription;
-      var messageId;
+      let subscription;
+      let messageId;
 
       beforeEach(function() {
         subscription = topic.subscription(generateSubName());
@@ -667,12 +667,12 @@ describe('pubsub', function() {
       });
 
       it('should seek to a snapshot', function(done) {
-        var snapshotName = generateSnapshotName();
+        const snapshotName = generateSnapshotName();
 
         subscription.createSnapshot(snapshotName, function(err, snapshot) {
           assert.ifError(err);
 
-          var messageCount = 0;
+          let messageCount = 0;
 
           subscription.on('error', done);
           subscription.on('message', function(message) {
@@ -696,7 +696,7 @@ describe('pubsub', function() {
       });
 
       it('should seek to a date', function(done) {
-        var messageCount = 0;
+        let messageCount = 0;
 
         subscription.on('error', done);
         subscription.on('message', function(message) {
