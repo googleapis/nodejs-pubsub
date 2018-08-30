@@ -32,6 +32,8 @@
     "Ace Nassri <anassri@google.com>",
     "Alexander Fenster <fenster@google.com>",
     "Ali Ijaz Sheikh <ofrobots@google.com>",
+    "Alix Hamilton <ajhamilton@google.com>",
+    "Anish Karandikar <anishkny@gmail.com>",
     "Antono Vasiljev <antono.vasiljev@gmail.com>",
     "Chet Husk <baronfel@users.noreply.github.com>",
     "Christoph Tavan <dev@tavan.de>",
@@ -41,12 +43,15 @@
     "Eric Uldall <ericuldall@gmail.com>",
     "Jan Pretzel <jan.pretzel@gmail.com>",
     "Jason Dobry <jdobry@google.com>",
+    "Jonathan Lui <jonathanlui@google.com>",
     "Jun Mukai <jun.mukai@gmail.com>",
     "Justin King <jcking@mtu.edu>",
+    "Kamal Aboul-Hosn <kamal.aboulhosn@gmail.com>",
     "Matthew Arbesfeld <arbesfeld@gmail.com>",
     "Song Wang <songwang@google.com>",
     "Stephen Sawchuk <sawchuk@gmail.com>",
     "Tim Swast <swast@google.com>",
+    "chenyumic <chenyumic@google.com>",
     "greenkeeper[bot] <greenkeeper[bot]@users.noreply.github.com>",
     "mkamioner <mkamioner@gmail.com>"
   ],
@@ -81,7 +86,7 @@
     "uuid": "^3.1.0"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "^2.2.3",
+    "@google-cloud/nodejs-repo-tools": "^2.3.3",
     "async": "^2.6.0",
     "codecov": "^3.0.0",
     "eslint": "^4.11.0",
