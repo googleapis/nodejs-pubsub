@@ -367,11 +367,7 @@ describe('PublisherClient', () => {
       };
 
       // Mock Grpc layer
-      client._innerApiCalls.listTopicSubscriptions = (
-        actualRequest,
-        options,
-        callback
-      ) => {
+      client._innerApiCalls.listTopicSubscriptions = (actualRequest, options, callback) => {
         assert.deepStrictEqual(actualRequest, request);
         callback(null, expectedResponse.subscriptions);
       };
@@ -648,6 +644,7 @@ describe('PublisherClient', () => {
       });
     });
   });
+
 });
 describe('SubscriberClient', () => {
   describe('createSubscription', () => {
@@ -658,10 +655,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedName = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedName = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
       var request = {
         name: formattedName,
@@ -700,10 +694,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedName = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedName = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
       var request = {
         name: formattedName,
@@ -734,10 +725,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var request = {
         subscription: formattedSubscription,
       };
@@ -774,10 +762,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var request = {
         subscription: formattedSubscription,
       };
@@ -905,11 +890,7 @@ describe('SubscriberClient', () => {
       };
 
       // Mock Grpc layer
-      client._innerApiCalls.listSubscriptions = (
-        actualRequest,
-        options,
-        callback
-      ) => {
+      client._innerApiCalls.listSubscriptions = (actualRequest, options, callback) => {
         assert.deepStrictEqual(actualRequest, request);
         callback(null, expectedResponse.subscriptions);
       };
@@ -957,10 +938,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var request = {
         subscription: formattedSubscription,
       };
@@ -981,10 +959,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var request = {
         subscription: formattedSubscription,
       };
@@ -1012,10 +987,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var ackIds = [];
       var ackDeadlineSeconds = 2135351438;
       var request = {
@@ -1040,10 +1012,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var ackIds = [];
       var ackDeadlineSeconds = 2135351438;
       var request = {
@@ -1075,10 +1044,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var ackIds = [];
       var request = {
         subscription: formattedSubscription,
@@ -1101,10 +1067,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var ackIds = [];
       var request = {
         subscription: formattedSubscription,
@@ -1134,10 +1097,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var maxMessages = 496131527;
       var request = {
         subscription: formattedSubscription,
@@ -1167,10 +1127,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var maxMessages = 496131527;
       var request = {
         subscription: formattedSubscription,
@@ -1178,7 +1135,11 @@ describe('SubscriberClient', () => {
       };
 
       // Mock Grpc layer
-      client._innerApiCalls.pull = mockSimpleGrpcMethod(request, null, error);
+      client._innerApiCalls.pull = mockSimpleGrpcMethod(
+        request,
+        null,
+        error
+      );
 
       client.pull(request, (err, response) => {
         assert(err instanceof Error);
@@ -1197,10 +1158,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var streamAckDeadlineSeconds = 1875467245;
       var request = {
         subscription: formattedSubscription,
@@ -1215,20 +1173,14 @@ describe('SubscriberClient', () => {
       };
 
       // Mock Grpc layer
-      client._innerApiCalls.streamingPull = mockBidiStreamingGrpcMethod(
-        request,
-        expectedResponse
-      );
+      client._innerApiCalls.streamingPull = mockBidiStreamingGrpcMethod(request, expectedResponse);
 
-      var stream = client
-        .streamingPull()
-        .on('data', response => {
-          assert.deepStrictEqual(response, expectedResponse);
-          done();
-        })
-        .on('error', err => {
-          done(err);
-        });
+      var stream = client.streamingPull().on('data', response => {
+        assert.deepStrictEqual(response, expectedResponse);
+        done();
+      }).on('error', err => {
+        done(err);
+      });
 
       stream.write(request);
     });
@@ -1240,10 +1192,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var streamAckDeadlineSeconds = 1875467245;
       var request = {
         subscription: formattedSubscription,
@@ -1251,22 +1200,15 @@ describe('SubscriberClient', () => {
       };
 
       // Mock Grpc layer
-      client._innerApiCalls.streamingPull = mockBidiStreamingGrpcMethod(
-        request,
-        null,
-        error
-      );
+      client._innerApiCalls.streamingPull = mockBidiStreamingGrpcMethod(request, null, error);
 
-      var stream = client
-        .streamingPull()
-        .on('data', () => {
-          assert.fail();
-        })
-        .on('error', err => {
-          assert(err instanceof Error);
-          assert.strictEqual(err.code, FAKE_STATUS_CODE);
-          done();
-        });
+      var stream = client.streamingPull().on('data', () => {
+        assert.fail();
+      }).on('error', err => {
+        assert(err instanceof Error);
+        assert.strictEqual(err.code, FAKE_STATUS_CODE);
+        done();
+      });
 
       stream.write(request);
     });
@@ -1280,10 +1222,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var pushConfig = {};
       var request = {
         subscription: formattedSubscription,
@@ -1306,10 +1245,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var pushConfig = {};
       var request = {
         subscription: formattedSubscription,
@@ -1354,11 +1290,7 @@ describe('SubscriberClient', () => {
       };
 
       // Mock Grpc layer
-      client._innerApiCalls.listSnapshots = (
-        actualRequest,
-        options,
-        callback
-      ) => {
+      client._innerApiCalls.listSnapshots = (actualRequest, options, callback) => {
         assert.deepStrictEqual(actualRequest, request);
         callback(null, expectedResponse.snapshots);
       };
@@ -1407,10 +1339,7 @@ describe('SubscriberClient', () => {
 
       // Mock request
       var formattedName = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var request = {
         name: formattedName,
         subscription: formattedSubscription,
@@ -1445,10 +1374,7 @@ describe('SubscriberClient', () => {
 
       // Mock request
       var formattedName = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var request = {
         name: formattedName,
         subscription: formattedSubscription,
@@ -1613,10 +1539,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var request = {
         subscription: formattedSubscription,
       };
@@ -1644,16 +1567,17 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedSubscription = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var request = {
         subscription: formattedSubscription,
       };
 
       // Mock Grpc layer
-      client._innerApiCalls.seek = mockSimpleGrpcMethod(request, null, error);
+      client._innerApiCalls.seek = mockSimpleGrpcMethod(
+        request,
+        null,
+        error
+      );
 
       client.seek(request, (err, response) => {
         assert(err instanceof Error);
@@ -1672,10 +1596,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var policy = {};
       var request = {
         resource: formattedResource,
@@ -1710,10 +1631,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var policy = {};
       var request = {
         resource: formattedResource,
@@ -1744,10 +1662,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var request = {
         resource: formattedResource,
       };
@@ -1780,10 +1695,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var request = {
         resource: formattedResource,
       };
@@ -1812,10 +1724,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var permissions = [];
       var request = {
         resource: formattedResource,
@@ -1845,10 +1754,7 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      var formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      var formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
       var permissions = [];
       var request = {
         resource: formattedResource,
@@ -1870,6 +1776,7 @@ describe('SubscriberClient', () => {
       });
     });
   });
+
 });
 
 function mockSimpleGrpcMethod(expectedRequest, response, error) {
@@ -1891,10 +1798,11 @@ function mockBidiStreamingGrpcMethod(expectedRequest, response, error) {
       assert.deepStrictEqual(chunk, expectedRequest);
       if (error) {
         callback(error);
-      } else {
+      }
+      else {
         callback(null, response);
       }
     });
     return mockStream;
-  };
+  }
 }
