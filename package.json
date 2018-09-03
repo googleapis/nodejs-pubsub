@@ -79,7 +79,7 @@
     "@google-cloud/promisify": "^0.3.0",
     "arrify": "^1.0.0",
     "async-each": "^1.0.1",
-    "delay": "^3.0.0",
+    "delay": "^4.0.0",
     "duplexify": "^3.5.4",
     "extend": "^3.0.1",
     "google-auth-library": "^2.0.0",
