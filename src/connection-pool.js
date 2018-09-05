@@ -366,7 +366,6 @@ class ConnectionPool extends EventEmitter {
       this.keepAliveHandle = setInterval(() => {
         this.sendKeepAlives();
       }, KEEP_ALIVE_INTERVAL);
-      this.keepAliveHandle.unref();
     }
   }
   /*!
