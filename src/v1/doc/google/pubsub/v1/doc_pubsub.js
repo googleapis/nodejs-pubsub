@@ -28,7 +28,7 @@
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.MessageStoragePolicy definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var MessageStoragePolicy = {
+const MessageStoragePolicy = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -60,7 +60,7 @@ var MessageStoragePolicy = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.Topic definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var Topic = {
+const Topic = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -91,7 +91,7 @@ var Topic = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.PubsubMessage definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var PubsubMessage = {
+const PubsubMessage = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -106,7 +106,7 @@ var PubsubMessage = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.GetTopicRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var GetTopicRequest = {
+const GetTopicRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -131,7 +131,7 @@ var GetTopicRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.UpdateTopicRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var UpdateTopicRequest = {
+const UpdateTopicRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -151,7 +151,7 @@ var UpdateTopicRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.PublishRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var PublishRequest = {
+const PublishRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -167,7 +167,7 @@ var PublishRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.PublishResponse definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var PublishResponse = {
+const PublishResponse = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -190,7 +190,7 @@ var PublishResponse = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ListTopicsRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ListTopicsRequest = {
+const ListTopicsRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -210,7 +210,7 @@ var ListTopicsRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ListTopicsResponse definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ListTopicsResponse = {
+const ListTopicsResponse = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -233,7 +233,7 @@ var ListTopicsResponse = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ListTopicSubscriptionsRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ListTopicSubscriptionsRequest = {
+const ListTopicSubscriptionsRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -252,7 +252,7 @@ var ListTopicSubscriptionsRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ListTopicSubscriptionsResponse definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ListTopicSubscriptionsResponse = {
+const ListTopicSubscriptionsResponse = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -278,7 +278,7 @@ var ListTopicSubscriptionsResponse = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ListTopicSnapshotsRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ListTopicSnapshotsRequest = {
+const ListTopicSnapshotsRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -300,7 +300,7 @@ var ListTopicSnapshotsRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ListTopicSnapshotsResponse definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ListTopicSnapshotsResponse = {
+const ListTopicSnapshotsResponse = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -315,7 +315,7 @@ var ListTopicSnapshotsResponse = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.DeleteTopicRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var DeleteTopicRequest = {
+const DeleteTopicRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -394,7 +394,7 @@ var DeleteTopicRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.Subscription definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var Subscription = {
+const Subscription = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -432,7 +432,7 @@ var Subscription = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.PushConfig definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var PushConfig = {
+const PushConfig = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -451,7 +451,7 @@ var PushConfig = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ReceivedMessage definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ReceivedMessage = {
+const ReceivedMessage = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -466,7 +466,7 @@ var ReceivedMessage = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.GetSubscriptionRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var GetSubscriptionRequest = {
+const GetSubscriptionRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -488,7 +488,7 @@ var GetSubscriptionRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.UpdateSubscriptionRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var UpdateSubscriptionRequest = {
+const UpdateSubscriptionRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -511,7 +511,7 @@ var UpdateSubscriptionRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ListSubscriptionsRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ListSubscriptionsRequest = {
+const ListSubscriptionsRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -532,7 +532,7 @@ var ListSubscriptionsRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ListSubscriptionsResponse definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ListSubscriptionsResponse = {
+const ListSubscriptionsResponse = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -547,7 +547,7 @@ var ListSubscriptionsResponse = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.DeleteSubscriptionRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var DeleteSubscriptionRequest = {
+const DeleteSubscriptionRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -572,7 +572,7 @@ var DeleteSubscriptionRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ModifyPushConfigRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ModifyPushConfigRequest = {
+const ModifyPushConfigRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -599,7 +599,7 @@ var ModifyPushConfigRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.PullRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var PullRequest = {
+const PullRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -618,7 +618,7 @@ var PullRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.PullResponse definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var PullResponse = {
+const PullResponse = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -645,7 +645,7 @@ var PullResponse = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ModifyAckDeadlineRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ModifyAckDeadlineRequest = {
+const ModifyAckDeadlineRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -664,7 +664,7 @@ var ModifyAckDeadlineRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.AcknowledgeRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var AcknowledgeRequest = {
+const AcknowledgeRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -716,7 +716,7 @@ var AcknowledgeRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.StreamingPullRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var StreamingPullRequest = {
+const StreamingPullRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -733,7 +733,7 @@ var StreamingPullRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.StreamingPullResponse definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var StreamingPullResponse = {
+const StreamingPullResponse = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -768,7 +768,7 @@ var StreamingPullResponse = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.CreateSnapshotRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var CreateSnapshotRequest = {
+const CreateSnapshotRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -793,7 +793,7 @@ var CreateSnapshotRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.UpdateSnapshotRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var UpdateSnapshotRequest = {
+const UpdateSnapshotRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -830,7 +830,7 @@ var UpdateSnapshotRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.Snapshot definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var Snapshot = {
+const Snapshot = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -848,7 +848,7 @@ var Snapshot = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.GetSnapshotRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var GetSnapshotRequest = {
+const GetSnapshotRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -874,7 +874,7 @@ var GetSnapshotRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ListSnapshotsRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ListSnapshotsRequest = {
+const ListSnapshotsRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -897,7 +897,7 @@ var ListSnapshotsRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.ListSnapshotsResponse definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var ListSnapshotsResponse = {
+const ListSnapshotsResponse = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -915,7 +915,7 @@ var ListSnapshotsResponse = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.DeleteSnapshotRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var DeleteSnapshotRequest = {
+const DeleteSnapshotRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -952,7 +952,7 @@ var DeleteSnapshotRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.SeekRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var SeekRequest = {
+const SeekRequest = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -961,6 +961,6 @@ var SeekRequest = {
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.SeekResponse definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
-var SeekResponse = {
+const SeekResponse = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
