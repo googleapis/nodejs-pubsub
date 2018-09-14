@@ -59,6 +59,7 @@ function Subscriber(options) {
     lease: [],
     ack: [],
     nack: [],
+    delayedNack: [],
     bytes: 0,
   };
 
@@ -263,8 +264,9 @@ Subscriber.prototype.flushQueues_ = function() {
 
   const acks = this.inventory_.ack;
   const nacks = this.inventory_.nack;
+  const delayedNacks = this.inventory_.delayedNack;
 
-  if (!acks.length && !nacks.length) {
+  if (!acks.length && !nacks.length && !delayedNacks.length) {
     return Promise.resolve();
   }
 
@@ -284,6 +286,17 @@ Subscriber.prototype.flushQueues_ = function() {
         self.inventory_.nack = [];
       })
     );
+  }
+
+  if (delayedNacks.length) {
+    const promises = delayedNacks.map(function(ackPair) {
+      return self.modifyAckDeadline_(ackPair[0], ackPair[1]);
+    });
+
+    Promise.all(promises).then(function() {
+      self.inventory_.delayedNack = [];
+    });
+    Array.prototype.push.apply(requests, promises);
   }
 
   return Promise.all(requests);
@@ -421,18 +434,25 @@ Subscriber.prototype.modifyAckDeadline_ = function(ackIds, deadline, connId) {
  * @private
  *
  * @param {object} message - The message object.
+ * @param {number} [delay] - Number of seconds before the message may be redelivered
  */
-Subscriber.prototype.nack_ = function(message) {
+Subscriber.prototype.nack_ = function(message, delay) {
   const breakLease = this.breakLease_.bind(this, message);
 
+  delay = delay || 0;
+
   if (this.isConnected_()) {
-    this.modifyAckDeadline_(message.ackId, 0, message.connectionId).then(
+    this.modifyAckDeadline_(message.ackId, delay, message.connectionId).then(
       breakLease
     );
     return;
   }
 
-  this.inventory_.nack.push(message.ackId);
+  if (delay > 0) {
+    this.inventory_.delayedNack.push([message.ackId, delay]);
+  } else {
+    this.inventory_.nack.push(message.ackId);
+  }
   this.setFlushTimeout_().then(breakLease);
 };
 
