@@ -289,8 +289,13 @@ Subscriber.prototype.flushQueues_ = function() {
   }
 
   if (delayedNacks.length) {
-    const promises = delayedNacks.map(function(ackPair) {
-      return self.modifyAckDeadline_(ackPair[0], ackPair[1]);
+    const groupedNacks = delayedNacks.reduce(function(table, ackPair) {
+      table[ackPair[1]] = table[ackPair[1]] || [];
+      table[ackPair[1]].push(ackPair[0]);
+      return table;
+    }, {});
+    const promises = Object.keys(groupedNacks).map(function(delay) {
+      return self.modifyAckDeadline_(groupedNacks[delay], Number(delay));
     });
 
     Promise.all(promises).then(function() {

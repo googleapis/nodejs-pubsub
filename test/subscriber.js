@@ -652,6 +652,23 @@ describe('Subscriber', function() {
         assert.strictEqual(subscriber.inventory_.nack.length, 0);
       });
     });
+
+    it('should send any pending delayed nacks', function() {
+      const fakeAckIds = ['ghi', 'jkl'];
+      subscriber.inventory_.delayedNack = fakeAckIds.map(function(ackId) {
+        return [ackId, 1];
+      });
+
+      subscriber.modifyAckDeadline_ = function(ackIds, deadline) {
+        assert.deepStrictEqual(ackIds, fakeAckIds);
+        assert.strictEqual(deadline, 1);
+        return Promise.resolve();
+      };
+
+      return subscriber.flushQueues_().then(function() {
+        assert.strictEqual(subscriber.inventory_.nack.length, 0);
+      });
+    });
   });
 
   describe('isConnected_', function() {
@@ -1035,6 +1052,18 @@ describe('Subscriber', function() {
 
         subscriber.nack_(MESSAGE);
       });
+
+      it('should use the delay if passed', function(done) {
+        subscriber.modifyAckDeadline_ = function(ackId, deadline, connId) {
+          assert.strictEqual(ackId, MESSAGE.ackId);
+          assert.strictEqual(deadline, 1);
+          assert.strictEqual(connId, MESSAGE.connectionId);
+          setImmediate(done);
+          return Promise.resolve();
+        };
+
+        subscriber.nack_(MESSAGE, 1);
+      });
     });
 
     describe('without connection', function() {
@@ -1061,6 +1090,20 @@ describe('Subscriber', function() {
         };
 
         subscriber.nack_(MESSAGE);
+      });
+
+      it('should use the delay if passed when queueing', function(done) {
+        subscriber.setFlushTimeout_ = function() {
+          assert(
+            subscriber.inventory_.delayedNack.findIndex(function(element) {
+              return element[0] === MESSAGE.ackId && element[1] === 1;
+            }) > -1
+          );
+          setImmediate(done);
+          return Promise.resolve();
+        };
+
+        subscriber.nack_(MESSAGE, 1);
       });
     });
   });
