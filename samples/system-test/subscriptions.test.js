@@ -16,10 +16,13 @@
 'use strict';
 
 const path = require(`path`);
-const pubsub = require(`@google-cloud/pubsub`)();
+const PubSub = require(`@google-cloud/pubsub`);
 const test = require(`ava`);
 const tools = require(`@google-cloud/nodejs-repo-tools`);
 const uuid = require(`uuid`);
+
+const projectId = process.env.GCLOUD_PROJECT;
+const pubsub = new PubSub({projectId});
 
 const cwd = path.join(__dirname, `..`);
 const topicNameOne = `nodejs-docs-samples-test-${uuid.v4()}`;
@@ -28,7 +31,6 @@ const subscriptionNameOne = `nodejs-docs-samples-test-sub-${uuid.v4()}`;
 const subscriptionNameTwo = `nodejs-docs-samples-test-sub-${uuid.v4()}`;
 const subscriptionNameThree = `nodejs-docs-samples-test-sub-${uuid.v4()}`;
 const subscriptionNameFour = `nodejs-docs-samples-test-sub-${uuid.v4()}`;
-const projectId = process.env.GCLOUD_PROJECT;
 const fullTopicNameOne = `projects/${projectId}/topics/${topicNameOne}`;
 const fullSubscriptionNameOne = `projects/${projectId}/subscriptions/${subscriptionNameOne}`;
 const fullSubscriptionNameTwo = `projects/${projectId}/subscriptions/${subscriptionNameTwo}`;
@@ -70,7 +72,7 @@ test.serial(`should create a subscription`, async t => {
     `${cmd} create ${topicNameOne} ${subscriptionNameOne}`,
     cwd
   );
-  t.is(output, `Subscription ${fullSubscriptionNameOne} created.`);
+  t.is(output, `Subscription ${subscriptionNameOne} created.`);
   await tools
     .tryTest(async assert => {
       const [subscriptions] = await pubsub
@@ -86,7 +88,7 @@ test.serial(`should create a push subscription`, async t => {
     `${cmd} create-push ${topicNameOne} ${subscriptionNameTwo}`,
     cwd
   );
-  t.is(output, `Subscription ${fullSubscriptionNameTwo} created.`);
+  t.is(output, `Subscription ${subscriptionNameTwo} created.`);
   await tools
     .tryTest(async assert => {
       const [subscriptions] = await pubsub
@@ -166,7 +168,10 @@ test.serial(`should listen for ordered messages`, async t => {
   const publishedMessageIds = [];
   const publisherTwo = pubsub.topic(topicNameTwo).publisher();
 
-  await pubsub.topic(topicNameTwo).createSubscription(subscriptionNameThree);
+  await pubsub
+    .topic(topicNameTwo)
+    .subscription(subscriptionNameThree)
+    .get({autoCreate: true});
   let [result] = await publisherTwo.publish(expectedBuffer, {counterId: '3'});
   publishedMessageIds.push(result);
   await subscriptions.listenForOrderedMessages(subscriptionNameThree, timeout);

@@ -16,14 +16,16 @@
 'use strict';
 
 const proxyquire = require(`proxyquire`).noPreserveCache();
-const pubsub = proxyquire(`@google-cloud/pubsub`, {})();
+const PubSub = proxyquire(`@google-cloud/pubsub`, {});
 const sinon = require(`sinon`);
 const test = require(`ava`);
 const tools = require(`@google-cloud/nodejs-repo-tools`);
 const uuid = require(`uuid`);
 
-const topicName = `nodejs-docs-samples-test-${uuid.v4()}`;
 const projectId = process.env.GCLOUD_PROJECT;
+const pubsub = new PubSub({projectId});
+
+const topicName = `nodejs-docs-samples-test-${uuid.v4()}`;
 const fullTopicName = `projects/${projectId}/topics/${topicName}`;
 
 test.before(tools.stubConsole);
@@ -40,10 +42,8 @@ test.cb(`should create a topic`, t => {
   const pubsubMock = {
     createTopic: _topicName => {
       t.is(_topicName, expectedTopicName);
-
       return pubsub.createTopic(topicName).then(([topic]) => {
         t.is(topic.name, fullTopicName);
-
         setTimeout(() => {
           try {
             t.is(console.log.callCount, 1);
@@ -55,7 +55,6 @@ test.cb(`should create a topic`, t => {
             t.end(err);
           }
         }, 200);
-
         return [topic];
       });
     },

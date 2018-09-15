@@ -16,10 +16,13 @@
 'use strict';
 
 const path = require(`path`);
-const pubsub = require(`@google-cloud/pubsub`)();
+const PubSub = require(`@google-cloud/pubsub`);
 const test = require(`ava`);
 const tools = require(`@google-cloud/nodejs-repo-tools`);
 const uuid = require(`uuid`);
+
+const projectId = process.env.GCLOUD_PROJECT;
+const pubsub = new PubSub({projectId});
 
 const cwd = path.join(__dirname, `..`);
 const topicNameOne = `nodejs-docs-samples-test-${uuid.v4()}`;
@@ -27,7 +30,6 @@ const topicNameTwo = `nodejs-docs-samples-test-${uuid.v4()}`;
 const subscriptionNameOne = `nodejs-docs-samples-test-${uuid.v4()}`;
 const subscriptionNameTwo = `nodejs-docs-samples-test-${uuid.v4()}`;
 const subscriptionNameThree = `nodejs-docs-samples-test-${uuid.v4()}`;
-const projectId = process.env.GCLOUD_PROJECT;
 const fullTopicNameOne = `projects/${projectId}/topics/${topicNameOne}`;
 const expectedMessage = {data: `Hello, world!`};
 const cmd = `node topics.js`;
@@ -86,11 +88,11 @@ const _pullOneMessage = (subscriptionObj, timeout) => {
 test.serial(`should create a topic`, async t => {
   t.plan(1);
   const output = await tools.runAsync(`${cmd} create ${topicNameOne}`, cwd);
-  t.is(output, `Topic ${fullTopicNameOne} created.`);
+  t.is(output, `Topic ${topicNameOne} created.`);
   await tools
     .tryTest(async assert => {
       const [topics] = await pubsub.getTopics();
-      assert(topics.some(s => s.name === fullTopicNameOne));
+      assert(topics.some(t => t.name === fullTopicNameOne));
     })
     .start();
 });
@@ -109,7 +111,8 @@ test.serial(`should publish a simple message`, async t => {
   t.plan(1);
   const [subscription] = await pubsub
     .topic(topicNameOne)
-    .createSubscription(subscriptionNameOne);
+    .subscription(subscriptionNameOne)
+    .get({autoCreate: true});
   await tools.runAsync(
     `${cmd} publish ${topicNameOne} "${expectedMessage.data}"`,
     cwd
@@ -121,20 +124,22 @@ test.serial(`should publish a simple message`, async t => {
 test.serial(`should publish a JSON message`, async t => {
   const [subscription] = await pubsub
     .topic(topicNameOne)
-    .createSubscription(subscriptionNameOne);
+    .subscription(subscriptionNameOne)
+    .get({autoCreate: true});
   await tools.runAsync(
-    `${cmd} publish ${topicNameOne} '${JSON.stringify(expectedMessage)}'`,
+    `${cmd} publish ${topicNameOne} "${expectedMessage.data}"`,
     cwd
   );
   const receivedMessage = await _pullOneMessage(subscription);
-  t.deepEqual(JSON.parse(receivedMessage.data.toString()), expectedMessage);
+  t.deepEqual(receivedMessage.data.toString(), expectedMessage.data);
 });
 
 test.serial(`should publish a message with custom attributes`, async t => {
   t.plan(2);
   const [subscription] = await pubsub
     .topic(topicNameOne)
-    .createSubscription(subscriptionNameOne);
+    .subscription(subscriptionNameOne)
+    .get({autoCreate: true});
   await tools.runAsync(
     `${cmd} publish-attributes ${topicNameOne} "${expectedMessage.data}"`,
     cwd
@@ -152,7 +157,8 @@ test.serial(`should publish ordered messages`, async t => {
 
   const [subscription] = await pubsub
     .topic(topicNameTwo)
-    .createSubscription(subscriptionNameTwo);
+    .subscription(subscriptionNameTwo)
+    .get({autoCreate: true});
 
   let messageId = await topics.publishOrderedMessage(
     topicNameTwo,
@@ -179,7 +185,8 @@ test.serial(`should publish with specific batch settings`, async t => {
   const expectedWait = 1000;
   const [subscription] = await pubsub
     .topic(topicNameOne)
-    .createSubscription(subscriptionNameThree);
+    .subscription(subscriptionNameThree)
+    .get({autoCreate: true});
   const startTime = Date.now();
   await tools.runAsync(
     `${cmd} publish-batch ${topicNameOne} "${

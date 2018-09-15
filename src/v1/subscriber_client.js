@@ -73,13 +73,13 @@ class SubscriberClient {
     // Create a `gaxGrpc` object, with any grpc-specific options
     // sent to the client.
     opts.scopes = this.constructor.scopes;
-    var gaxGrpc = new gax.GrpcClient(opts);
+    const gaxGrpc = new gax.GrpcClient(opts);
 
     // Save the auth object to the client, for use by other methods.
     this.auth = gaxGrpc.auth;
 
     // Determine the client header string.
-    var clientHeader = [
+    const clientHeader = [
       `gl-node/${process.version}`,
       `grpc/${gaxGrpc.grpcVersion}`,
       `gax/${gax.version}`,
@@ -90,7 +90,7 @@ class SubscriberClient {
     }
 
     // Load the applicable protos.
-    var protos = merge(
+    const protos = merge(
       {},
       gaxGrpc.loadProto(
         path.join(__dirname, '..', '..', 'protos'),
@@ -141,7 +141,7 @@ class SubscriberClient {
     };
 
     // Put together the default options sent with requests.
-    var defaults = gaxGrpc.constructSettings(
+    const defaults = gaxGrpc.constructSettings(
       'google.pubsub.v1.Subscriber',
       gapicConfig,
       opts.clientConfig,
@@ -155,14 +155,14 @@ class SubscriberClient {
 
     // Put together the "service stub" for
     // google.iam.v1.IAMPolicy.
-    var iamPolicyStub = gaxGrpc.createStub(
+    const iamPolicyStub = gaxGrpc.createStub(
       protos.google.iam.v1.IAMPolicy,
       opts
     );
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
-    var iamPolicyStubMethods = [
+    const iamPolicyStubMethods = [
       'setIamPolicy',
       'getIamPolicy',
       'testIamPermissions',
@@ -172,7 +172,7 @@ class SubscriberClient {
         iamPolicyStub.then(
           stub =>
             function() {
-              var args = Array.prototype.slice.call(arguments, 0);
+              const args = Array.prototype.slice.call(arguments, 0);
               return stub[methodName].apply(stub, args);
             }
         ),
@@ -184,14 +184,14 @@ class SubscriberClient {
 
     // Put together the "service stub" for
     // google.pubsub.v1.Subscriber.
-    var subscriberStub = gaxGrpc.createStub(
+    const subscriberStub = gaxGrpc.createStub(
       protos.google.pubsub.v1.Subscriber,
       opts
     );
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
-    var subscriberStubMethods = [
+    const subscriberStubMethods = [
       'createSubscription',
       'getSubscription',
       'updateSubscription',
@@ -213,7 +213,7 @@ class SubscriberClient {
         subscriberStub.then(
           stub =>
             function() {
-              var args = Array.prototype.slice.call(arguments, 0);
+              const args = Array.prototype.slice.call(arguments, 0);
               return stub[methodName].apply(stub, args);
             }
         ),
@@ -361,19 +361,19 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedName = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
-   * var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-   * var request = {
+   * const formattedName = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const request = {
    *   name: formattedName,
    *   topic: formattedTopic,
    * };
    * client.createSubscription(request)
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -413,14 +413,14 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
    * client.getSubscription({subscription: formattedSubscription})
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -467,26 +467,26 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var ackDeadlineSeconds = 42;
-   * var subscription = {
+   * const ackDeadlineSeconds = 42;
+   * const subscription = {
    *   ackDeadlineSeconds: ackDeadlineSeconds,
    * };
-   * var pathsElement = 'ack_deadline_seconds';
-   * var paths = [pathsElement];
-   * var updateMask = {
+   * const pathsElement = 'ack_deadline_seconds';
+   * const paths = [pathsElement];
+   * const updateMask = {
    *   paths: paths,
    * };
-   * var request = {
+   * const request = {
    *   subscription: subscription,
    *   updateMask: updateMask,
    * };
    * client.updateSubscription(request)
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -544,16 +544,16 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
    * // Iterate over all elements.
-   * var formattedProject = client.projectPath('[PROJECT]');
+   * const formattedProject = client.projectPath('[PROJECT]');
    *
    * client.listSubscriptions({project: formattedProject})
    *   .then(responses => {
-   *     var resources = responses[0];
+   *     const resources = responses[0];
    *     for (let i = 0; i < resources.length; i += 1) {
    *       // doThingsWith(resources[i])
    *     }
@@ -563,17 +563,17 @@ class SubscriberClient {
    *   });
    *
    * // Or obtain the paged response.
-   * var formattedProject = client.projectPath('[PROJECT]');
+   * const formattedProject = client.projectPath('[PROJECT]');
    *
    *
-   * var options = {autoPaginate: false};
-   * var callback = responses => {
+   * const options = {autoPaginate: false};
+   * const callback = responses => {
    *   // The actual resources in a response.
-   *   var resources = responses[0];
+   *   const resources = responses[0];
    *   // The next request if the response shows that there are more responses.
-   *   var nextRequest = responses[1];
+   *   const nextRequest = responses[1];
    *   // The actual response object, if necessary.
-   *   // var rawResponse = responses[2];
+   *   // const rawResponse = responses[2];
    *   for (let i = 0; i < resources.length; i += 1) {
    *     // doThingsWith(resources[i]);
    *   }
@@ -632,11 +632,11 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedProject = client.projectPath('[PROJECT]');
+   * const formattedProject = client.projectPath('[PROJECT]');
    * client.listSubscriptionsStream({project: formattedProject})
    *   .on('data', element => {
    *     // doThingsWith(element)
@@ -678,11 +678,11 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
    * client.deleteSubscription({subscription: formattedSubscription}).catch(err => {
    *   console.error(err);
    * });
@@ -731,14 +731,14 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
-   * var ackIds = [];
-   * var ackDeadlineSeconds = 0;
-   * var request = {
+   * const formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const ackIds = [];
+   * const ackDeadlineSeconds = 0;
+   * const request = {
    *   subscription: formattedSubscription,
    *   ackIds: ackIds,
    *   ackDeadlineSeconds: ackDeadlineSeconds,
@@ -786,13 +786,13 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
-   * var ackIds = [];
-   * var request = {
+   * const formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const ackIds = [];
+   * const request = {
    *   subscription: formattedSubscription,
    *   ackIds: ackIds,
    * };
@@ -846,19 +846,19 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
-   * var maxMessages = 0;
-   * var request = {
+   * const formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const maxMessages = 0;
+   * const request = {
    *   subscription: formattedSubscription,
    *   maxMessages: maxMessages,
    * };
    * client.pull(request)
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -896,16 +896,16 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var stream = client.streamingPull().on('data', response => {
+   * const stream = client.streamingPull().on('data', response => {
    *   // doThingsWith(response)
    * });
-   * var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
-   * var streamAckDeadlineSeconds = 0;
-   * var request = {
+   * const formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const streamAckDeadlineSeconds = 0;
+   * const request = {
    *   subscription: formattedSubscription,
    *   streamAckDeadlineSeconds: streamAckDeadlineSeconds,
    * };
@@ -952,13 +952,13 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
-   * var pushConfig = {};
-   * var request = {
+   * const formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const pushConfig = {};
+   * const request = {
    *   subscription: formattedSubscription,
    *   pushConfig: pushConfig,
    * };
@@ -1020,16 +1020,16 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
    * // Iterate over all elements.
-   * var formattedProject = client.projectPath('[PROJECT]');
+   * const formattedProject = client.projectPath('[PROJECT]');
    *
    * client.listSnapshots({project: formattedProject})
    *   .then(responses => {
-   *     var resources = responses[0];
+   *     const resources = responses[0];
    *     for (let i = 0; i < resources.length; i += 1) {
    *       // doThingsWith(resources[i])
    *     }
@@ -1039,17 +1039,17 @@ class SubscriberClient {
    *   });
    *
    * // Or obtain the paged response.
-   * var formattedProject = client.projectPath('[PROJECT]');
+   * const formattedProject = client.projectPath('[PROJECT]');
    *
    *
-   * var options = {autoPaginate: false};
-   * var callback = responses => {
+   * const options = {autoPaginate: false};
+   * const callback = responses => {
    *   // The actual resources in a response.
-   *   var resources = responses[0];
+   *   const resources = responses[0];
    *   // The next request if the response shows that there are more responses.
-   *   var nextRequest = responses[1];
+   *   const nextRequest = responses[1];
    *   // The actual response object, if necessary.
-   *   // var rawResponse = responses[2];
+   *   // const rawResponse = responses[2];
    *   for (let i = 0; i < resources.length; i += 1) {
    *     // doThingsWith(resources[i]);
    *   }
@@ -1108,11 +1108,11 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedProject = client.projectPath('[PROJECT]');
+   * const formattedProject = client.projectPath('[PROJECT]');
    * client.listSnapshotsStream({project: formattedProject})
    *   .on('data', element => {
    *     // doThingsWith(element)
@@ -1182,19 +1182,19 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedName = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
-   * var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
-   * var request = {
+   * const formattedName = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
+   * const formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const request = {
    *   name: formattedName,
    *   subscription: formattedSubscription,
    * };
    * client.createSnapshot(request)
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -1244,29 +1244,29 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var seconds = 123456;
-   * var expireTime = {
+   * const seconds = 123456;
+   * const expireTime = {
    *   seconds: seconds,
    * };
-   * var snapshot = {
+   * const snapshot = {
    *   expireTime: expireTime,
    * };
-   * var pathsElement = 'expire_time';
-   * var paths = [pathsElement];
-   * var updateMask = {
+   * const pathsElement = 'expire_time';
+   * const paths = [pathsElement];
+   * const updateMask = {
    *   paths: paths,
    * };
-   * var request = {
+   * const request = {
    *   snapshot: snapshot,
    *   updateMask: updateMask,
    * };
    * client.updateSnapshot(request)
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -1310,11 +1310,11 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedSnapshot = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
+   * const formattedSnapshot = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
    * client.deleteSnapshot({snapshot: formattedSnapshot}).catch(err => {
    *   console.error(err);
    * });
@@ -1373,14 +1373,14 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const formattedSubscription = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
    * client.seek({subscription: formattedSubscription})
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -1429,19 +1429,19 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
-   * var policy = {};
-   * var request = {
+   * const formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const policy = {};
+   * const request = {
    *   resource: formattedResource,
    *   policy: policy,
    * };
    * client.setIamPolicy(request)
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -1484,14 +1484,14 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
    * client.getIamPolicy({resource: formattedResource})
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -1539,19 +1539,19 @@ class SubscriberClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.SubscriberClient({
+   * const client = new pubsub.v1.SubscriberClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
-   * var permissions = [];
-   * var request = {
+   * const formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const permissions = [];
+   * const request = {
    *   resource: formattedResource,
    *   permissions: permissions,
    * };
    * client.testIamPermissions(request)
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {

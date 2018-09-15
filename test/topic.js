@@ -19,7 +19,7 @@
 const assert = require('assert');
 const extend = require('extend');
 const proxyquire = require('proxyquire');
-const {util} = require('@google-cloud/common');
+const util = require('../src/util');
 const pfy = require('@google-cloud/promisify');
 
 let promisified = false;
@@ -77,8 +77,8 @@ describe('Topic', function() {
       '@google-cloud/paginator': {
         paginator: fakePaginator,
       },
-      './iam.js': FakeIAM,
-      './publisher.js': FakePublisher,
+      './iam': FakeIAM,
+      './publisher': FakePublisher,
     });
   });
 
