@@ -320,6 +320,49 @@ function listenForMessages(subscriptionName, timeout) {
   // [END pubsub_quickstart_subscriber]
 }
 
+function synchronousPull(projectName, subscriptionName) {
+  // [START pubsub_subscriber_sync_pull]
+  // Imports the Google Cloud client library
+  const pubsub = require('@google-cloud/pubsub');
+
+  var client = new pubsub.v1.SubscriberClient();
+
+  /**
+   * TODO(developer): Uncomment the following lines to run the sample.
+   */
+  // const projectName = 'your-project';
+  // const subscriptionName = 'your-subscription';
+
+  const formattedSubscription = client.subscriptionPath(
+    projectName, subscriptionName);
+  const maxMessages = 2;
+  const request = {
+    subscription: formattedSubscription,
+    maxMessages: maxMessages,
+  };
+
+  client.pull(request)
+    .then(responses => {
+      var response = responses[0];
+      console.log(response);
+      response.receivedMessages.forEach(recMes => {
+        const ackRequest = {
+          subscription: formattedSubscription,
+          ackIds: [recMes.ackId],
+        };
+        client.acknowledge(ackRequest).catch(err => {
+          console.error(err);
+        });
+        console.log(`Acknowledged ${recMes.message.data}.`);
+      });
+      console.log(`Done.`);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  // [END pubsub_subscriber_sync_pull]
+}
+
 let subscribeCounterValue = 1;
 
 function getSubscribeCounterValue() {
@@ -621,6 +664,12 @@ const cli = require(`yargs`)
     opts => listenForMessages(opts.subscriptionName, opts.timeout)
   )
   .command(
+    `sync-pull <projectName> <subscriptionName>`,
+    `Receive messages synchronously.`,
+    {},
+    opts => synchronousPull(opts.projectName, opts.subscriptionName)
+  )
+  .command(
     `listen-errors <subscriptionName>`,
     `Listens to messages and errors for a subscription.`,
     {
@@ -658,6 +707,7 @@ const cli = require(`yargs`)
   .example(`node $0 modify-config my-topic worker-1`)
   .example(`node $0 get worker-1`)
   .example(`node $0 listen-messages my-subscription`)
+  .example(`node $0 sync-pull my-project my-subscription`)
   .example(`node $0 listen-errors my-subscription`)
   .example(`node $0 delete worker-1`)
   .example(`node $0 pull worker-1`)
