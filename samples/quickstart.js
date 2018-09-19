@@ -20,7 +20,7 @@
 const PubSub = require('@google-cloud/pubsub');
 
 // Your Google Cloud Platform project ID
-const projectId = 'YOUR_PROJECT_ID';
+const projectId = 'MY_PROJECT_ID';
 
 // Instantiates a client
 const pubsubClient = new PubSub({
@@ -28,7 +28,7 @@ const pubsubClient = new PubSub({
 });
 
 // The name for the new topic
-const topicName = 'my-new-topic';
+const topicName = 'my-topic';
 
 // Creates the new topic
 pubsubClient
