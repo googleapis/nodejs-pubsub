@@ -100,8 +100,8 @@ class PubSub {
     // It is the union of the scopes on both clients.
     const clientClasses = [v1.SubscriberClient, v1.PublisherClient];
     const allScopes = {};
-    for (let clientClass of clientClasses) {
-      for (let scope of clientClass.scopes) {
+    for (const clientClass of clientClasses) {
+      for (const scope of clientClass.scopes) {
         allScopes[scope] = true;
       }
     }
