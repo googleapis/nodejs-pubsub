@@ -73,13 +73,13 @@ class PublisherClient {
     // Create a `gaxGrpc` object, with any grpc-specific options
     // sent to the client.
     opts.scopes = this.constructor.scopes;
-    var gaxGrpc = new gax.GrpcClient(opts);
+    const gaxGrpc = new gax.GrpcClient(opts);
 
     // Save the auth object to the client, for use by other methods.
     this.auth = gaxGrpc.auth;
 
     // Determine the client header string.
-    var clientHeader = [
+    const clientHeader = [
       `gl-node/${process.version}`,
       `grpc/${gaxGrpc.grpcVersion}`,
       `gax/${gax.version}`,
@@ -90,7 +90,7 @@ class PublisherClient {
     }
 
     // Load the applicable protos.
-    var protos = merge(
+    const protos = merge(
       {},
       gaxGrpc.loadProto(
         path.join(__dirname, '..', '..', 'protos'),
@@ -127,7 +127,7 @@ class PublisherClient {
         'subscriptions'
       ),
     };
-    var protoFilesRoot = new gax.GoogleProtoFilesRoot();
+    let protoFilesRoot = new gax.GoogleProtoFilesRoot();
     protoFilesRoot = protobuf.loadSync(
       path.join(
         __dirname,
@@ -163,7 +163,7 @@ class PublisherClient {
     };
 
     // Put together the default options sent with requests.
-    var defaults = gaxGrpc.constructSettings(
+    const defaults = gaxGrpc.constructSettings(
       'google.pubsub.v1.Publisher',
       gapicConfig,
       opts.clientConfig,
@@ -177,14 +177,14 @@ class PublisherClient {
 
     // Put together the "service stub" for
     // google.iam.v1.IAMPolicy.
-    var iamPolicyStub = gaxGrpc.createStub(
+    const iamPolicyStub = gaxGrpc.createStub(
       protos.google.iam.v1.IAMPolicy,
       opts
     );
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
-    var iamPolicyStubMethods = [
+    const iamPolicyStubMethods = [
       'setIamPolicy',
       'getIamPolicy',
       'testIamPermissions',
@@ -194,7 +194,7 @@ class PublisherClient {
         iamPolicyStub.then(
           stub =>
             function() {
-              var args = Array.prototype.slice.call(arguments, 0);
+              const args = Array.prototype.slice.call(arguments, 0);
               return stub[methodName].apply(stub, args);
             }
         ),
@@ -206,14 +206,14 @@ class PublisherClient {
 
     // Put together the "service stub" for
     // google.pubsub.v1.Publisher.
-    var publisherStub = gaxGrpc.createStub(
+    const publisherStub = gaxGrpc.createStub(
       protos.google.pubsub.v1.Publisher,
       opts
     );
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
-    var publisherStubMethods = [
+    const publisherStubMethods = [
       'createTopic',
       'updateTopic',
       'publish',
@@ -227,7 +227,7 @@ class PublisherClient {
         publisherStub.then(
           stub =>
             function() {
-              var args = Array.prototype.slice.call(arguments, 0);
+              const args = Array.prototype.slice.call(arguments, 0);
               return stub[methodName].apply(stub, args);
             }
         ),
@@ -315,14 +315,14 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedName = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const formattedName = client.topicPath('[PROJECT]', '[TOPIC]');
    * client.createTopic({name: formattedName})
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -372,19 +372,19 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
-   * var topic = {};
-   * var updateMask = {};
-   * var request = {
+   * const topic = {};
+   * const updateMask = {};
+   * const request = {
    *   topic: topic,
    *   updateMask: updateMask,
    * };
    * client.updateTopic(request)
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -430,23 +430,23 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-   * var data = '';
-   * var messagesElement = {
+   * const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const data = '';
+   * const messagesElement = {
    *   data: data,
    * };
-   * var messages = [messagesElement];
-   * var request = {
+   * const messages = [messagesElement];
+   * const request = {
    *   topic: formattedTopic,
    *   messages: messages,
    * };
    * client.publish(request)
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -486,14 +486,14 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
    * client.getTopic({topic: formattedTopic})
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -551,16 +551,16 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
    * // Iterate over all elements.
-   * var formattedProject = client.projectPath('[PROJECT]');
+   * const formattedProject = client.projectPath('[PROJECT]');
    *
    * client.listTopics({project: formattedProject})
    *   .then(responses => {
-   *     var resources = responses[0];
+   *     const resources = responses[0];
    *     for (let i = 0; i < resources.length; i += 1) {
    *       // doThingsWith(resources[i])
    *     }
@@ -570,17 +570,17 @@ class PublisherClient {
    *   });
    *
    * // Or obtain the paged response.
-   * var formattedProject = client.projectPath('[PROJECT]');
+   * const formattedProject = client.projectPath('[PROJECT]');
    *
    *
-   * var options = {autoPaginate: false};
-   * var callback = responses => {
+   * const options = {autoPaginate: false};
+   * const callback = responses => {
    *   // The actual resources in a response.
-   *   var resources = responses[0];
+   *   const resources = responses[0];
    *   // The next request if the response shows that there are more responses.
-   *   var nextRequest = responses[1];
+   *   const nextRequest = responses[1];
    *   // The actual response object, if necessary.
-   *   // var rawResponse = responses[2];
+   *   // const rawResponse = responses[2];
    *   for (let i = 0; i < resources.length; i += 1) {
    *     // doThingsWith(resources[i]);
    *   }
@@ -639,11 +639,11 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedProject = client.projectPath('[PROJECT]');
+   * const formattedProject = client.projectPath('[PROJECT]');
    * client.listTopicsStream({project: formattedProject})
    *   .on('data', element => {
    *     // doThingsWith(element)
@@ -702,16 +702,16 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
    * // Iterate over all elements.
-   * var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
    *
    * client.listTopicSubscriptions({topic: formattedTopic})
    *   .then(responses => {
-   *     var resources = responses[0];
+   *     const resources = responses[0];
    *     for (let i = 0; i < resources.length; i += 1) {
    *       // doThingsWith(resources[i])
    *     }
@@ -721,17 +721,17 @@ class PublisherClient {
    *   });
    *
    * // Or obtain the paged response.
-   * var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
    *
    *
-   * var options = {autoPaginate: false};
-   * var callback = responses => {
+   * const options = {autoPaginate: false};
+   * const callback = responses => {
    *   // The actual resources in a response.
-   *   var resources = responses[0];
+   *   const resources = responses[0];
    *   // The next request if the response shows that there are more responses.
-   *   var nextRequest = responses[1];
+   *   const nextRequest = responses[1];
    *   // The actual response object, if necessary.
-   *   // var rawResponse = responses[2];
+   *   // const rawResponse = responses[2];
    *   for (let i = 0; i < resources.length; i += 1) {
    *     // doThingsWith(resources[i]);
    *   }
@@ -794,11 +794,11 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
    * client.listTopicSubscriptionsStream({topic: formattedTopic})
    *   .on('data', element => {
    *     // doThingsWith(element)
@@ -840,11 +840,11 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
    * client.deleteTopic({topic: formattedTopic}).catch(err => {
    *   console.error(err);
    * });
@@ -891,19 +891,19 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
-   * var policy = {};
-   * var request = {
+   * const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const policy = {};
+   * const request = {
    *   resource: formattedResource,
    *   policy: policy,
    * };
    * client.setIamPolicy(request)
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -946,14 +946,14 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
    * client.getIamPolicy({resource: formattedResource})
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
@@ -1001,19 +1001,19 @@ class PublisherClient {
    *
    * const pubsub = require('@google-cloud/pubsub');
    *
-   * var client = new pubsub.v1.PublisherClient({
+   * const client = new pubsub.v1.PublisherClient({
    *   // optional auth parameters.
    * });
    *
-   * var formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
-   * var permissions = [];
-   * var request = {
+   * const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const permissions = [];
+   * const request = {
    *   resource: formattedResource,
    *   permissions: permissions,
    * };
    * client.testIamPermissions(request)
    *   .then(responses => {
-   *     var response = responses[0];
+   *     const response = responses[0];
    *     // doThingsWith(response)
    *   })
    *   .catch(err => {
