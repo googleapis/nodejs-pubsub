@@ -215,7 +215,7 @@ describe('ConnectionPool', function() {
     });
 
     it('should return a specified connection', function(done) {
-      let id = 'a';
+      const id = 'a';
       const fakeConnection = new FakeConnection();
 
       pool.connections.set(id, fakeConnection);
