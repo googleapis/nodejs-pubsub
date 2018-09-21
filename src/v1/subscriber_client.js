@@ -167,7 +167,7 @@ class SubscriberClient {
       'getIamPolicy',
       'testIamPermissions',
     ];
-    for (const methodName of iamPolicyStubMethods) {
+    for (let methodName of iamPolicyStubMethods) {
       this._innerApiCalls[methodName] = gax.createApiCall(
         iamPolicyStub.then(
           stub =>
@@ -208,7 +208,7 @@ class SubscriberClient {
       'deleteSnapshot',
       'seek',
     ];
-    for (const methodName of subscriberStubMethods) {
+    for (let methodName of subscriberStubMethods) {
       this._innerApiCalls[methodName] = gax.createApiCall(
         subscriberStub.then(
           stub =>
