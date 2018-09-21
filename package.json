@@ -67,10 +67,10 @@
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
     "test-no-cover": "mocha test/*.js",
     "test": "npm run cover",
-    "lint": "eslint src/ samples/ system-test/ test/",
+    "lint": "eslint '**/*.js'",
     "prettier": "prettier --write src/*.js src/*/*.js samples/*.js samples/*/*.js test/*.js test/*/*.js system-test/*.js system-test/*/*.js",
     "docs": "jsdoc -c .jsdoc.js",
-    "publish-module": "node ../../scripts/publish.js pubsub",
+    "fix": "eslint --fix '**/*.js' && npm run prettier",
     "generate-scaffolding": "repo-tools generate all && repo-tools generate lib_samples_readme -l samples/ --config ../.cloud-repo-tools.json"
   },
   "dependencies": {
