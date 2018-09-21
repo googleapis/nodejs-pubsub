@@ -189,7 +189,7 @@ class PublisherClient {
       'getIamPolicy',
       'testIamPermissions',
     ];
-    for (const methodName of iamPolicyStubMethods) {
+    for (let methodName of iamPolicyStubMethods) {
       this._innerApiCalls[methodName] = gax.createApiCall(
         iamPolicyStub.then(
           stub =>
@@ -222,7 +222,7 @@ class PublisherClient {
       'listTopicSubscriptions',
       'deleteTopic',
     ];
-    for (const methodName of publisherStubMethods) {
+    for (let methodName of publisherStubMethods) {
       this._innerApiCalls[methodName] = gax.createApiCall(
         publisherStub.then(
           stub =>
