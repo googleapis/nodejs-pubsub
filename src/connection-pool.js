@@ -299,11 +299,10 @@ class ConnectionPool extends EventEmitter {
       }
       let elapsedTimeWithoutConnection = 0;
       const now = Date.now();
-      let deadline;
       if (this.noConnectionsTime) {
         elapsedTimeWithoutConnection = now - this.noConnectionsTime;
       }
-      deadline = now + (MAX_TIMEOUT - elapsedTimeWithoutConnection);
+      const deadline = now + (MAX_TIMEOUT - elapsedTimeWithoutConnection);
       client.waitForReady(deadline, err => {
         this.isGettingChannelState = false;
         if (err) {
