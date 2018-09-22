@@ -16,7 +16,7 @@
 
 describe('PublisherSmokeTest', () => {
   if (!process.env.GCLOUD_PROJECT) {
-    throw new Error('Usage: GCLOUD_PROJECT=<project_id> node #{$0}');
+    throw new Error("Usage: GCLOUD_PROJECT=<project_id> node #{$0}");
   }
   const projectId = process.env.GCLOUD_PROJECT;
 
@@ -30,8 +30,7 @@ describe('PublisherSmokeTest', () => {
     // Iterate over all elements.
     const formattedProject = client.projectPath(projectId);
 
-    client
-      .listTopics({project: formattedProject})
+    client.listTopics({project: formattedProject})
       .then(responses => {
         const resources = responses[0];
         for (let i = 0; i < resources.length; i += 1) {
@@ -52,6 +51,7 @@ describe('PublisherSmokeTest', () => {
     // Or obtain the paged response.
     const formattedProject = client.projectPath(projectId);
 
+
     const options = {autoPaginate: false};
     const callback = responses => {
       // The actual resources in a response.
@@ -67,9 +67,8 @@ describe('PublisherSmokeTest', () => {
         // Fetch the next page.
         return client.listTopics(nextRequest, options).then(callback);
       }
-    };
-    client
-      .listTopics({project: formattedProject}, options)
+    }
+    client.listTopics({project: formattedProject}, options)
       .then(callback)
       .then(done)
       .catch(done);
@@ -83,8 +82,7 @@ describe('PublisherSmokeTest', () => {
     });
 
     const formattedProject = client.projectPath(projectId);
-    client
-      .listTopicsStream({project: formattedProject})
+    client.listTopicsStream({project: formattedProject})
       .on('data', element => {
         console.log(element);
       })
