@@ -334,8 +334,9 @@ function synchronousPull(projectName, subscriptionName) {
   // const subscriptionName = 'your-subscription';
 
   const formattedSubscription = client.subscriptionPath(
-    projectName, 
-    subscriptionName);
+    projectName,
+    subscriptionName
+  );
   // The maximum number of messages returned for this request.
   // Pub/Sub may return fewer than the number specified.
   const maxMessages = 3;
@@ -345,7 +346,8 @@ function synchronousPull(projectName, subscriptionName) {
   };
 
   // The subscriber pulls a specific number of messages.
-  client.pull(request)
+  client
+    .pull(request)
     .then(responses => {
     
       // The first element of `responses` is a PullResponse object.
@@ -384,7 +386,8 @@ function synchronousPull(projectName, subscriptionName) {
             console.log(
               `Reset ack deadline for "${
                 message.message.data
-              }" for ${ackDeadlineSeconds}s.`);
+              }" for ${ackDeadlineSeconds}s.`
+            );
           }
         }
       });
