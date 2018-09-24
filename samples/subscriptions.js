@@ -384,7 +384,8 @@ function synchronousPull(projectName, subscriptionName) {
               message.message.data}" for ${ackDeadlineSeconds}s.`);
           }
         };
-      })
+      });
+      console.log("Done.");
     })
     .catch(err => {
       console.error(err);
