@@ -161,7 +161,7 @@ test.serial(`should listen for messages`, async t => {
 });
 
 test.serial(`should listen for messages synchronously`, async t => {
-  const messageIds = await pubsub
+  await pubsub
     .topic(topicNameOne)
     .publisher()
     .publish(Buffer.from(`Hello, world!`));
