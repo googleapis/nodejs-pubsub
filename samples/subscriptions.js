@@ -333,8 +333,9 @@ function synchronousPull(projectName, subscriptionName) {
   // const projectName = 'your-project';
   // const subscriptionName = 'your-subscription';
 
-  const formattedSubscription = client.subscriptionPath(projectName, 
-                                                        subscriptionName);
+  const formattedSubscription = client.subscriptionPath(
+    projectName, 
+    subscriptionName);
   // The maximum number of messages returned for this request.
   // Pub/Sub may return fewer than the number specified.
   const maxMessages = 3;
@@ -346,6 +347,7 @@ function synchronousPull(projectName, subscriptionName) {
   // The subscriber pulls a specific number of messages.
   client.pull(request)
     .then(responses => {
+    
       // The first element of `responses` is a PullResponse object.
       const response = responses[0];
 
@@ -362,7 +364,7 @@ function synchronousPull(projectName, subscriptionName) {
         };
 
         // Start a long-running process.
-        for (var i = 1; i <= target; i++) {
+        for (let i = 1; i <= target; i++) {
           // If `i` reaches `target`, we assume the message has been
           // processed, so we ack it. Else, we assume the message is
           // still being processed, so we modify its ack deadline.
@@ -379,7 +381,10 @@ function synchronousPull(projectName, subscriptionName) {
             client.modifyAckDeadline(modifyAckRequest).catch(err => {
               console.error(err);
             });
-            console.log(`Reset ack deadline for "${message.message.data}" for ${ackDeadlineSeconds}s.`);
+            console.log(`
+              `Reset ack deadline for "${
+                message.message.data
+              }" for ${ackDeadlineSeconds}s.`);
           }
         }
       });
