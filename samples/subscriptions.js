@@ -335,27 +335,57 @@ function synchronousPull(projectName, subscriptionName) {
 
   const formattedSubscription = client.subscriptionPath(
     projectName, subscriptionName);
-  const maxMessages = 2;
+  // The maximum number of messages returned for this request.
+  // Pub/Sub may return fewer than the number specified.
+  const maxMessages = 3;
   const request = {
     subscription: formattedSubscription,
-    maxMessages: maxMessages,
+    maxMessages: maxMessages
   };
 
+  // The subscriber pulls a specific number of messages.
   client.pull(request)
     .then(responses => {
+      // The first element of `responses` is a PullResponse object.
       var response = responses[0];
-      console.log(response);
-      response.receivedMessages.forEach(recMes => {
-        const ackRequest = {
+
+      // Process each received message in `response`.
+      response.receivedMessages.forEach(message => {
+
+        // Create an arbitrarily large integer `target` to help
+        // simulate a long-running process.
+        var target = Math.floor(Math.random()*1e9);
+        var ackDeadlineSeconds = 30;
+        var modifyAckRequest = {
           subscription: formattedSubscription,
-          ackIds: [recMes.ackId],
+          ackIds: [message.ackId],
+          ackDeadlineSeconds: ackDeadlineSeconds,
         };
-        client.acknowledge(ackRequest).catch(err => {
-          console.error(err);
-        });
-        console.log(`Acknowledged ${recMes.message.data}.`);
+
+        // Start a long-running process.
+        for (var i = 1; i <= target; i++) {
+          // If `i` reaches `target`, we assume the message has been
+          // processed, so we ack it. Else, we assume the message is
+          // still being processed, so we modify its ack deadline.
+          if (i == target) {
+            const ackRequest = {
+              subscription: formattedSubscription,
+              ackIds: [message.ackId],
+            };
+            client.acknowledge(ackRequest).catch(err => {
+              console.error(err);
+            });
+            console.log(`Acknowledged "${message.message.data}".`);
+          } else if (i % 1e8 == 0) {
+            client.modifyAckDeadline(modifyAckRequest).catch(err => {
+              console.error(err);
+            });
+            console.log(`Reset ack deadline for "${
+              message.message.data}" for ${ackDeadlineSeconds}s.`);
+          }
+        };
       });
-      console.log(`Done.`);
+      console.log("Done.");
     })
     .catch(err => {
       console.error(err);
