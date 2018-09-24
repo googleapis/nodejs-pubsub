@@ -381,7 +381,7 @@ function synchronousPull(projectName, subscriptionName) {
             client.modifyAckDeadline(modifyAckRequest).catch(err => {
               console.error(err);
             });
-            console.log(`
+            console.log(
               `Reset ack deadline for "${
                 message.message.data
               }" for ${ackDeadlineSeconds}s.`);
