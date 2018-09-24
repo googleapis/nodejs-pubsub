@@ -325,7 +325,7 @@ function synchronousPull(projectName, subscriptionName) {
   // Imports the Google Cloud client library
   const pubsub = require('@google-cloud/pubsub');
 
-  var client = new pubsub.v1.SubscriberClient();
+  const client = new pubsub.v1.SubscriberClient();
 
   /**
    * TODO(developer): Uncomment the following lines to run the sample.
@@ -333,30 +333,29 @@ function synchronousPull(projectName, subscriptionName) {
   // const projectName = 'your-project';
   // const subscriptionName = 'your-subscription';
 
-  const formattedSubscription = client.subscriptionPath(
-    projectName, subscriptionName);
+  const formattedSubscription = client.subscriptionPath(projectName, 
+                                                        subscriptionName);
   // The maximum number of messages returned for this request.
   // Pub/Sub may return fewer than the number specified.
   const maxMessages = 3;
   const request = {
     subscription: formattedSubscription,
-    maxMessages: maxMessages
+    maxMessages: maxMessages,
   };
 
   // The subscriber pulls a specific number of messages.
   client.pull(request)
     .then(responses => {
       // The first element of `responses` is a PullResponse object.
-      var response = responses[0];
+      const response = responses[0];
 
       // Process each received message in `response`.
       response.receivedMessages.forEach(message => {
-
         // Create an arbitrarily large integer `target` to help
         // simulate a long-running process.
-        var target = Math.floor(Math.random()*1e9);
-        var ackDeadlineSeconds = 30;
-        var modifyAckRequest = {
+        const target = Math.floor(Math.random() * 1e9);
+        const ackDeadlineSeconds = 30;
+        const modifyAckRequest = {
           subscription: formattedSubscription,
           ackIds: [message.ackId],
           ackDeadlineSeconds: ackDeadlineSeconds,
@@ -367,7 +366,7 @@ function synchronousPull(projectName, subscriptionName) {
           // If `i` reaches `target`, we assume the message has been
           // processed, so we ack it. Else, we assume the message is
           // still being processed, so we modify its ack deadline.
-          if (i == target) {
+          if (i === target) {
             const ackRequest = {
               subscription: formattedSubscription,
               ackIds: [message.ackId],
@@ -376,16 +375,15 @@ function synchronousPull(projectName, subscriptionName) {
               console.error(err);
             });
             console.log(`Acknowledged "${message.message.data}".`);
-          } else if (i % 1e8 == 0) {
+          } else if (i % 1e8 === 0) {
             client.modifyAckDeadline(modifyAckRequest).catch(err => {
               console.error(err);
             });
-            console.log(`Reset ack deadline for "${
-              message.message.data}" for ${ackDeadlineSeconds}s.`);
+            console.log(`Reset ack deadline for "${message.message.data}" for ${ackDeadlineSeconds}s.`);
           }
-        };
+        }
       });
-      console.log("Done.");
+      console.log(`Done.`);
     })
     .catch(err => {
       console.error(err);
