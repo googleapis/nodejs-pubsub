@@ -349,7 +349,6 @@ function synchronousPull(projectName, subscriptionName) {
   client
     .pull(request)
     .then(responses => {
-    
       // The first element of `responses` is a PullResponse object.
       const response = responses[0];
 
