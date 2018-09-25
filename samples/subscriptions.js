@@ -57,7 +57,7 @@ function listTopicSubscriptions(topicName) {
   /**
    * TODO(developer): Uncomment the following line to run the sample.
    */
-  // const topicName = 'your-topic';
+  // const topicName = 'my-topic';
 
   // Lists all subscriptions for the topic
   pubsub
@@ -86,8 +86,8 @@ function createSubscription(topicName, subscriptionName) {
   /**
    * TODO(developer): Uncomment the following lines to run the sample.
    */
-  // const topicName = 'your-topic';
-  // const subscriptionName = 'your-subscription';
+  // const topicName = 'my-topic';
+  // const subscriptionName = 'my-sub';
 
   // Creates a new subscription
   pubsub
@@ -119,8 +119,8 @@ function createFlowControlledSubscription(
   /**
    * TODO(developer): Uncomment the following lines to run the sample.
    */
-  // const topicName = 'your-topic';
-  // const subscriptionName = 'your-subscription';
+  // const topicName = 'my-topic';
+  // const subscriptionName = 'my-sub';
   // const maxInProgress = 5;
   // const maxBytes = 10000;
 
@@ -167,8 +167,8 @@ function createPushSubscription(topicName, subscriptionName) {
   /**
    * TODO(developer): Uncomment the following lines to run the sample.
    */
-  // const topicName = 'your-topic';
-  // const subscriptionName = 'your-subscription';
+  // const topicName = 'my-topic';
+  // const subscriptionName = 'my-sub';
 
   const options = {
     pushConfig: {
@@ -203,8 +203,8 @@ function modifyPushConfig(topicName, subscriptionName) {
   /**
    * TODO(developer): Uncomment the following line to run the sample.
    */
-  // const topicName = 'your-topic';
-  // const subscriptionName = 'your-subscription';
+  // const topicName = 'my-topic';
+  // const subscriptionName = 'my-sub';
 
   const options = {
     // Set to an HTTPS endpoint of your choice. If necessary, register
@@ -236,7 +236,7 @@ function deleteSubscription(subscriptionName) {
   /**
    * TODO(developer): Uncomment the following line to run the sample.
    */
-  // const subscriptionName = 'your-subscription';
+  // const subscriptionName = 'my-sub';
 
   // Deletes the subscription
   pubsub
@@ -261,7 +261,7 @@ function getSubscription(subscriptionName) {
   /**
    * TODO(developer): Uncomment the following line to run the sample.
    */
-  // const subscriptionName = 'your-subscription';
+  // const subscriptionName = 'my-sub';
 
   // Gets the metadata for the subscription
   pubsub
@@ -292,7 +292,7 @@ function listenForMessages(subscriptionName, timeout) {
   /**
    * TODO(developer): Uncomment the following lines to run the sample.
    */
-  // const subscriptionName = 'your-subscription';
+  // const subscriptionName = 'my-sub';
   // const timeout = 60;
 
   // References an existing subscription
@@ -318,6 +318,84 @@ function listenForMessages(subscriptionName, timeout) {
   }, timeout * 1000);
   // [END pubsub_subscriber_async_pull]
   // [END pubsub_quickstart_subscriber]
+}
+
+function synchronousPull(projectName, subscriptionName) {
+  // [START pubsub_subscriber_sync_pull]
+  // Imports the Google Cloud client library
+  const pubsub = require('@google-cloud/pubsub');
+
+  const client = new pubsub.v1.SubscriberClient();
+
+  /**
+   * TODO(developer): Uncomment the following lines to run the sample.
+   */
+  // const projectName = 'your-project';
+  // const subscriptionName = 'your-subscription';
+
+  const formattedSubscription = client.subscriptionPath(
+    projectName,
+    subscriptionName
+  );
+  // The maximum number of messages returned for this request.
+  // Pub/Sub may return fewer than the number specified.
+  const maxMessages = 3;
+  const request = {
+    subscription: formattedSubscription,
+    maxMessages: maxMessages,
+  };
+
+  // The subscriber pulls a specific number of messages.
+  client
+    .pull(request)
+    .then(responses => {
+      // The first element of `responses` is a PullResponse object.
+      const response = responses[0];
+
+      // Process each received message in `response`.
+      response.receivedMessages.forEach(message => {
+        // Create an arbitrarily large integer `target` to help
+        // simulate a long-running process.
+        const target = Math.floor(Math.random() * 1e9);
+        const ackDeadlineSeconds = 30;
+        const modifyAckRequest = {
+          subscription: formattedSubscription,
+          ackIds: [message.ackId],
+          ackDeadlineSeconds: ackDeadlineSeconds,
+        };
+
+        // Start a long-running process.
+        for (let i = 1; i <= target; i++) {
+          // If `i` reaches `target`, we assume the message has been
+          // processed, so we ack it. Else, we assume the message is
+          // still being processed, so we modify its ack deadline.
+          if (i === target) {
+            const ackRequest = {
+              subscription: formattedSubscription,
+              ackIds: [message.ackId],
+            };
+            client.acknowledge(ackRequest).catch(err => {
+              console.error(err);
+            });
+            console.log(`Acknowledged "${message.message.data}".`);
+          } else if (i % 1e8 === 0) {
+            client.modifyAckDeadline(modifyAckRequest).catch(err => {
+              console.error(err);
+            });
+            console.log(
+              `Reset ack deadline for "${
+                message.message.data
+              }" for ${ackDeadlineSeconds}s.`
+            );
+          }
+        }
+      });
+      console.log(`Done.`);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  // [END pubsub_subscriber_sync_pull]
 }
 
 let subscribeCounterValue = 1;
@@ -406,7 +484,7 @@ function listenForErrors(subscriptionName, timeout) {
   /**
    * TODO(developer): Uncomment the following lines to run the sample.
    */
-  // const subscriptionName = 'your-subscription';
+  // const subscriptionName = 'my-sub';
   // const timeout = 60;
 
   // References an existing subscription
@@ -448,7 +526,7 @@ function getSubscriptionPolicy(subscriptionName) {
   /**
    * TODO(developer): Uncomment the following line to run the sample.
    */
-  // const subscriptionName = 'your-subscription';
+  // const subscriptionName = 'my-sub';
 
   // Retrieves the IAM policy for the subscription
   pubsub
@@ -475,7 +553,7 @@ function setSubscriptionPolicy(subscriptionName) {
   /**
    * TODO(developer): Uncomment the following line to run the sample.
    */
-  // const subscriptionName = 'your-subscription';
+  // const subscriptionName = 'my-sub';
 
   // The new IAM policy
   const newPolicy = {
@@ -521,7 +599,7 @@ function testSubscriptionPermissions(subscriptionName) {
   /**
    * TODO(developer): Uncomment the following line to run the sample.
    */
-  // const subscriptionName = 'your-subscription';
+  // const subscriptionName = 'my-sub';
 
   const permissionsToTest = [
     `pubsub.subscriptions.consume`,
@@ -621,6 +699,12 @@ const cli = require(`yargs`)
     opts => listenForMessages(opts.subscriptionName, opts.timeout)
   )
   .command(
+    `sync-pull <projectName> <subscriptionName>`,
+    `Receive messages synchronously.`,
+    {},
+    opts => synchronousPull(opts.projectName, opts.subscriptionName)
+  )
+  .command(
     `listen-errors <subscriptionName>`,
     `Listens to messages and errors for a subscription.`,
     {
@@ -658,6 +742,7 @@ const cli = require(`yargs`)
   .example(`node $0 modify-config my-topic worker-1`)
   .example(`node $0 get worker-1`)
   .example(`node $0 listen-messages my-subscription`)
+  .example(`node $0 sync-pull my-project my-subscription`)
   .example(`node $0 listen-errors my-subscription`)
   .example(`node $0 delete worker-1`)
   .example(`node $0 pull worker-1`)
