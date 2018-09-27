@@ -356,41 +356,48 @@ function synchronousPull(projectName, subscriptionName) {
       response.receivedMessages.forEach(message => {
         // Create an arbitrarily large integer `target` to help
         // simulate a long-running process.
-        const target = Math.floor(Math.random() * 1e9);
+        const target = Math.floor(Math.random() * 1e1);
         const ackDeadlineSeconds = 30;
         const modifyAckRequest = {
           subscription: formattedSubscription,
           ackIds: [message.ackId],
           ackDeadlineSeconds: ackDeadlineSeconds,
         };
+        const ackRequest = {
+          subscription: formattedSubscription,
+          ackIds: [message.ackId],
+        };
 
-        // Start a long-running process.
-        for (let i = 1; i <= target; i++) {
-          // If `i` reaches `target`, we assume the message has been
-          // processed, so we ack it. Else, we assume the message is
-          // still being processed, so we modify its ack deadline.
-          if (i === target) {
-            const ackRequest = {
-              subscription: formattedSubscription,
-              ackIds: [message.ackId],
-            };
+        console.log(`${message.message.data} will take ${target}s.`);
+
+        let i = 0;
+        let isdone = false;
+
+        const interval = setInterval(function(message) {
+          // Every 1s, we modify ack deadline.
+          client.modifyAckDeadline(modifyAckRequest).catch(err => {
+            console.error(err);
+          });
+          console.log(
+            `Reset ack deadline for "${
+              message.message.data
+            }" for ${ackDeadlineSeconds}s.`
+          );
+
+          if (i > target) {
+            isdone = true;
+          } else { i++; }
+
+          // If target is reached, we will ack message and clear interval.
+          if (isdone) {
             client.acknowledge(ackRequest).catch(err => {
               console.error(err);
             });
             console.log(`Acknowledged "${message.message.data}".`);
-          } else if (i % 1e8 === 0) {
-            client.modifyAckDeadline(modifyAckRequest).catch(err => {
-              console.error(err);
-            });
-            console.log(
-              `Reset ack deadline for "${
-                message.message.data
-              }" for ${ackDeadlineSeconds}s.`
-            );
-          }
-        }
+            clearInterval(interval);
+          };
+        }, 1000, message);
       });
-      console.log(`Done.`);
     })
     .catch(err => {
       console.error(err);
