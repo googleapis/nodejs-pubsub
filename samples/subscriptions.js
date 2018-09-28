@@ -347,7 +347,7 @@ function synchronousPull(projectName, subscriptionName) {
   };
   // `messages` is a dict that stores message ack ids as keys, and message
   // data and the processing states (true if done, false if not) as values.
-  let messages = {};
+  const messages = {};
 
   // The worker function takes a message and starts a long-running process.
   function worker(message) {
