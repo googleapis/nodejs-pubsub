@@ -375,11 +375,8 @@ function synchronousPull(projectName, subscriptionName) {
       // setInterval() gets run every 10s. Every 10s, we check
       // if all the messages have been processed. We will ack those
       // that are processed, and modify the ack deadline for those
-      // that are still being processed.  
+      // that are still being processed.
       const interval = setInterval(function() {
-
-        var alldone = false;
-
         response.receivedMessages.forEach( message => {
           if (processes[message.ackId]) {
             const ackRequest = {
@@ -390,8 +387,6 @@ function synchronousPull(projectName, subscriptionName) {
               console.error(err);
             });
             console.log(`Acknowledged "${message.message.data}".`);
-
-            alldone |= true;
 
             delete processes[message.ackId];
 
@@ -411,13 +406,12 @@ function synchronousPull(projectName, subscriptionName) {
                 message.message.data
               }" for ${ackDeadlineSeconds}s.`
             );
-
-            alldone |= false;
           }
         });
-        if (alldone){
+
+        if (Object.keys(processes).every(function(k){ return processes[k] })){
           clearInterval(interval);
-        }
+        };
       }, 10000);
     })
     .catch(err => {
