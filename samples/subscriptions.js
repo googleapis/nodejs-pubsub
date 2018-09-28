@@ -340,9 +340,23 @@ function synchronousPull(projectName, subscriptionName) {
   // The maximum number of messages returned for this request.
   // Pub/Sub may return fewer than the number specified.
   const maxMessages = 3;
+  const ackDeadlineSeconds = 30;
   const request = {
     subscription: formattedSubscription,
     maxMessages: maxMessages,
+  };
+  // `processes` store message ackId as key and
+  // the processing state as values.
+  var processes = {};
+
+  // The worker function simulates a long-running process.
+  function worker(message) {
+    const target = Math.floor(Math.random()*1e5);
+    console.log(`Processing ${message.message.data} for ${target/1e3}s...`);
+    setTimeout(() =>{
+      console.log(`Finished procesing ${message.message.data}.`)
+      processes[message.ackId] = true;
+    }, target);
   };
 
   // The subscriber pulls a specific number of messages.
@@ -354,50 +368,57 @@ function synchronousPull(projectName, subscriptionName) {
 
       // Process each received message in `response`.
       response.receivedMessages.forEach(message => {
-        // Create an arbitrarily large integer `target` to help
-        // simulate a long-running process.
-        const target = Math.floor(Math.random() * 1e1);
-        const ackDeadlineSeconds = 30;
-        const modifyAckRequest = {
-          subscription: formattedSubscription,
-          ackIds: [message.ackId],
-          ackDeadlineSeconds: ackDeadlineSeconds,
-        };
-        const ackRequest = {
-          subscription: formattedSubscription,
-          ackIds: [message.ackId],
-        };
+        processes[message.ackId]=false;
+        worker(message);
+      });
 
-        console.log(`${message.message.data} will take ${target}s.`);
+      // setInterval() gets run every 10s. Every 10s, we check
+      // if all the messages have been processed. We will ack those
+      // that are processed, and modify the ack deadline for those
+      // that are still being processed.  
+      const interval = setInterval(function() {
 
-        let i = 0;
-        let isdone = false;
+        var alldone = false;
 
-        const interval = setInterval(function(message) {
-          // Every 1s, we modify ack deadline.
-          client.modifyAckDeadline(modifyAckRequest).catch(err => {
-            console.error(err);
-          });
-          console.log(
-            `Reset ack deadline for "${
-              message.message.data
-            }" for ${ackDeadlineSeconds}s.`
-          );
-
-          if (i > target) {
-            isdone = true;
-          } else { i++; }
-
-          // If target is reached, we will ack message and clear interval.
-          if (isdone) {
+        response.receivedMessages.forEach( message => {
+          if (processes[message.ackId]) {
+            const ackRequest = {
+              subscription: formattedSubscription,
+              ackIds: [message.ackId],
+            };
             client.acknowledge(ackRequest).catch(err => {
               console.error(err);
             });
             console.log(`Acknowledged "${message.message.data}".`);
-            clearInterval(interval);
-          };
-        }, 1000, message);
-      });
+
+            alldone |= true;
+
+            delete processes[message.ackId];
+
+          } else {
+            const modifyAckRequest = {
+              subscription: formattedSubscription,
+              ackIds: [message.ackId],
+              ackDeadlineSeconds: ackDeadlineSeconds,
+            };
+
+            client.modifyAckDeadline(modifyAckRequest).catch(err => {
+              console.error(err);
+            });
+
+            console.log(
+              `Reset ack deadline for "${
+                message.message.data
+              }" for ${ackDeadlineSeconds}s.`
+            );
+
+            alldone |= false;
+          }
+        });
+        if (alldone){
+          clearInterval(interval);
+        }
+      }, 10000);
     })
     .catch(err => {
       console.error(err);
