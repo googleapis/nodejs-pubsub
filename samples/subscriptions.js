@@ -345,18 +345,19 @@ function synchronousPull(projectName, subscriptionName) {
     subscription: formattedSubscription,
     maxMessages: maxMessages,
   };
-  // `processes` is a dict that stores message ackId as key, and message
-  // data and the processing state (true if done, false if not) as values.
-  var processes = {};
+  // `messages` is a dict that stores message ack ids as keys, and message
+  // data and the processing states (true if done, false if not) as values.
+  var messages = {};
 
   // The worker function takes a message and starts a long-running process.
   function worker(message) {
     const target = Math.floor(Math.random()*1e5);
-    console.log(`Processing ${message.message.data} for ${target/1e3}s...`);
+    console.log(`Processing "${message.message.data}" for ${target/1e3}s...`);
+
     setTimeout(() =>{
-      console.log(`Finished procesing ${message.message.data}.`)
+      console.log(`Finished procesing "${message.message.data}".`)
       // After the message has been processed, set its processing state to true.
-      processes[message.ackId][1] = true;
+      messages[message.ackId][1] = true;
     }, target);
   };
 
@@ -367,10 +368,10 @@ function synchronousPull(projectName, subscriptionName) {
       // The first element of `responses` is a PullResponse object.
       const response = responses[0];
 
-      // Process each received message in `response`.
+      // Initialize `messages` with message ackId, message data and `false` as
+      // processing state. Then, start each message in a worker function.
       response.receivedMessages.forEach(message => {
-        // Initializes the message. Set its processing state to false.
-        processes[message.ackId]=[message.message.data, false];
+        messages[message.ackId]=[message.message.data, false];
         worker(message);
       });
 
@@ -378,10 +379,9 @@ function synchronousPull(projectName, subscriptionName) {
 
       // setInterval() gets run every 10s.
       const interval = setInterval(function() {
-
-        // Every 10s, we check the processes that are still alive.
-        Object.keys(processes).forEach( ackId => {
-          if (processes[ackId][1]) {
+        // Every 10s, we do a check on the processing states of the messages.
+        Object.keys(messages).forEach( ackId => {
+          if (messages[ackId][1]) {
             // If the processing state for a particular message is true,
             // We will ack the message.
             const ackRequest = {
@@ -393,13 +393,13 @@ function synchronousPull(projectName, subscriptionName) {
               console.error(err);
             });
 
-            console.log(`Acknowledged "${processes[ackId][0]}".`);
+            console.log(`Acknowledged: "${messages[ackId][0]}".`);
 
             // Increment numProcessed by 1.
             numProcessed += 1;
 
-            // Remove this message from processes.
-            delete processes[ackId];
+            // Remove this message from `messages`.
+            delete messages[ackId];
           } else {
             // If the processing state of a particular message remains false,
             // we will modify its ack deadline.
@@ -415,7 +415,7 @@ function synchronousPull(projectName, subscriptionName) {
 
             console.log(
               `Reset ack deadline for "${
-                processes[ackId][0]
+                messages[ackId][0]
               }" for ${ackDeadlineSeconds}s.`
             );
           };
@@ -423,6 +423,7 @@ function synchronousPull(projectName, subscriptionName) {
           // If all messages have been processed, we clear out of the interval.
           if (numProcessed === response.receivedMessages.length){
             clearInterval(interval);
+            console.log(`Done.`);
           };
         });
       }, 10000);
