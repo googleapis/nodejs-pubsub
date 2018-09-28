@@ -347,19 +347,19 @@ function synchronousPull(projectName, subscriptionName) {
   };
   // `messages` is a dict that stores message ack ids as keys, and message
   // data and the processing states (true if done, false if not) as values.
-  var messages = {};
+  let messages = {};
 
   // The worker function takes a message and starts a long-running process.
   function worker(message) {
-    const target = Math.floor(Math.random()*1e5);
-    console.log(`Processing "${message.message.data}" for ${target/1e3}s...`);
+    const target = Math.floor(Math.random() * 1e5);
+    console.log(`Processing "${message.message.data}" for ${target / 1e3}s...`);
 
-    setTimeout(() =>{
-      console.log(`Finished procesing "${message.message.data}".`)
+    setTimeout(() => {
+      console.log(`Finished procesing "${message.message.data}".`);
       // After the message has been processed, set its processing state to true.
       messages[message.ackId][1] = true;
     }, target);
-  };
+  }
 
   // The subscriber pulls a specific number of messages.
   client
@@ -371,7 +371,7 @@ function synchronousPull(projectName, subscriptionName) {
       // Initialize `messages` with message ackId, message data and `false` as
       // processing state. Then, start each message in a worker function.
       response.receivedMessages.forEach(message => {
-        messages[message.ackId]=[message.message.data, false];
+        messages[message.ackId] = [message.message.data, false];
         worker(message);
       });
 
@@ -380,7 +380,7 @@ function synchronousPull(projectName, subscriptionName) {
       // setInterval() gets run every 10s.
       const interval = setInterval(function() {
         // Every 10s, we do a check on the processing states of the messages.
-        Object.keys(messages).forEach( ackId => {
+        Object.keys(messages).forEach(ackId => {
           if (messages[ackId][1]) {
             // If the processing state for a particular message is true,
             // We will ack the message.
@@ -418,13 +418,13 @@ function synchronousPull(projectName, subscriptionName) {
                 messages[ackId][0]
               }" for ${ackDeadlineSeconds}s.`
             );
-          };
+          }
 
           // If all messages have been processed, we clear out of the interval.
-          if (numProcessed === response.receivedMessages.length){
+          if (numProcessed === response.receivedMessages.length) {
             clearInterval(interval);
             console.log(`Done.`);
-          };
+          }
         });
       }, 10000);
     })
