@@ -163,7 +163,10 @@ class Publisher {
     const opts = this.settings.batching;
     // if this message puts us over the maxBytes option, then let's ship
     // what we have and add it to the next batch
-    if (this.inventory_.bytes > 0 && this.inventory_.bytes + data.length > opts.maxBytes) {
+    if (
+      this.inventory_.bytes > 0 &&
+      this.inventory_.bytes + data.length > opts.maxBytes
+    ) {
       this.publish_();
     }
     // add it to the queue!

@@ -216,18 +216,22 @@ All attributes must be in the form of a string.
       publisher.inventory_.bytes = 0;
 
       publisher.publish_ = function() {
-        assert.notEqual(publisher.inventory_.queued.length, 0);
+        assert.notStrictEqual(publisher.inventory_.queued.length, 0);
         pushRequests.push(publisher.inventory_.queued);
         publisher.inventory_.callbacks.forEach(function(callback) {
           callback();
         });
-      }
+      };
 
       publisher.publish(DATA, function() {
-        assert.deepStrictEqual(pushRequests, [[{
-          data: DATA,
-          attributes: {}
-        }]]);
+        assert.deepStrictEqual(pushRequests, [
+          [
+            {
+              data: DATA,
+              attributes: {},
+            },
+          ],
+        ]);
         done();
       });
     });
