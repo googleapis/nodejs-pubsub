@@ -169,9 +169,9 @@ class Publisher {
     // add it to the queue!
     this.queue_(data, attributes, callback);
     // next lets check if this message brings us to the message cap or if we
-    // magically hit the max byte limit
+    // hit the max byte limit
     const hasMaxMessages = this.inventory_.queued.length === opts.maxMessages;
-    if (this.inventory_.bytes === opts.maxBytes || hasMaxMessages) {
+    if (this.inventory_.bytes >= opts.maxBytes || hasMaxMessages) {
       this.publish_();
       return;
     }
