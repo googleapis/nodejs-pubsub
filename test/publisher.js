@@ -210,6 +210,28 @@ All attributes must be in the form of a string.
       publisher.publish(DATA, done);
     });
 
+    it('should not attempt to publish empty payload if data puts payload above size cap', function(done) {
+      const pushRequests = [];
+      publisher.settings.batching.maxBytes = 2;
+      publisher.inventory_.bytes = 0;
+
+      publisher.publish_ = function() {
+        assert.notEqual(publisher.inventory_.queued.length, 0);
+        pushRequests.push(publisher.inventory_.queued);
+        publisher.inventory_.callbacks.forEach(function(callback) {
+          callback();
+        });
+      }
+
+      publisher.publish(DATA, function() {
+        assert.deepStrictEqual(pushRequests, [[{
+          data: DATA,
+          attributes: {}
+        }]]);
+        done();
+      });
+    });
+
     it('should publish if data puts payload at size cap', function(done) {
       publisher.queue_ = function() {
         publisher.inventory_.bytes += DATA.length;
