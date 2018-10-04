@@ -16,23 +16,24 @@
 
 describe('PublisherSmokeTest', () => {
   if (!process.env.GCLOUD_PROJECT) {
-    throw new Error("Usage: GCLOUD_PROJECT=<project_id> node #{$0}");
+    throw new Error('Usage: GCLOUD_PROJECT=<project_id> node #{$0}');
   }
-  var projectId = process.env.GCLOUD_PROJECT;
+  const projectId = process.env.GCLOUD_PROJECT;
 
   it('successfully makes a call to the service using promises', done => {
     const pubsub = require('../src');
 
-    var client = new pubsub.v1.PublisherClient({
+    const client = new pubsub.v1.PublisherClient({
       // optional auth parameters.
     });
 
     // Iterate over all elements.
-    var formattedProject = client.projectPath(projectId);
+    const formattedProject = client.projectPath(projectId);
 
-    client.listTopics({project: formattedProject})
+    client
+      .listTopics({project: formattedProject})
       .then(responses => {
-        var resources = responses[0];
+        const resources = responses[0];
         for (let i = 0; i < resources.length; i += 1) {
           console.log(resources[i]);
         }
@@ -44,22 +45,21 @@ describe('PublisherSmokeTest', () => {
   it('successfully makes a call to the service using callbacks', done => {
     const pubsub = require('../src');
 
-    var client = new pubsub.v1.PublisherClient({
+    const client = new pubsub.v1.PublisherClient({
       // optional auth parameters.
     });
 
     // Or obtain the paged response.
-    var formattedProject = client.projectPath(projectId);
+    const formattedProject = client.projectPath(projectId);
 
-
-    var options = {autoPaginate: false};
-    var callback = responses => {
+    const options = {autoPaginate: false};
+    const callback = responses => {
       // The actual resources in a response.
-      var resources = responses[0];
+      const resources = responses[0];
       // The next request if the response shows that there are more responses.
-      var nextRequest = responses[1];
+      const nextRequest = responses[1];
       // The actual response object, if necessary.
-      // var rawResponse = responses[2];
+      // const rawResponse = responses[2];
       for (let i = 0; i < resources.length; i += 1) {
         console.log(resources[i]);
       }
@@ -67,8 +67,9 @@ describe('PublisherSmokeTest', () => {
         // Fetch the next page.
         return client.listTopics(nextRequest, options).then(callback);
       }
-    }
-    client.listTopics({project: formattedProject}, options)
+    };
+    client
+      .listTopics({project: formattedProject}, options)
       .then(callback)
       .then(done)
       .catch(done);
@@ -77,12 +78,13 @@ describe('PublisherSmokeTest', () => {
   it('successfully makes a call to the service using streaming', done => {
     const pubsub = require('../src');
 
-    var client = new pubsub.v1.PublisherClient({
+    const client = new pubsub.v1.PublisherClient({
       // optional auth parameters.
     });
 
-    var formattedProject = client.projectPath(projectId);
-    client.listTopicsStream({project: formattedProject})
+    const formattedProject = client.projectPath(projectId);
+    client
+      .listTopicsStream({project: formattedProject})
       .on('data', element => {
         console.log(element);
       })
