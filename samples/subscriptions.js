@@ -313,12 +313,10 @@ function listenForMessages(subscriptionName, timeout) {
   // Listen for new messages until timeout is hit
   subscription.on(`message`, messageHandler);
 
-  if (timeout) {
-    setTimeout(() => {
-      subscription.removeListener('message', messageHandler);
-      console.log(`${messageCount} message(s) received.`);
-    }, timeout * 1000);
-  }
+  setTimeout(() => {
+    subscription.removeListener('message', messageHandler);
+    console.log(`${messageCount} message(s) received.`);
+  }, timeout * 1000);
   // [END pubsub_subscriber_async_pull]
   // [END pubsub_quickstart_subscriber]
 }
@@ -548,12 +546,10 @@ function listenForErrors(subscriptionName, timeout) {
   subscription.on(`message`, messageHandler);
   subscription.on(`error`, errorHandler);
 
-  if (timeout) {
-    setTimeout(() => {
-      subscription.removeListener(`message`, messageHandler);
-      subscription.removeListener(`error`, errorHandler);
-    }, timeout * 1000);
-  }
+  setTimeout(() => {
+    subscription.removeListener(`message`, messageHandler);
+    subscription.removeListener(`error`, errorHandler);
+  }, timeout * 1000);
   // [END pubsub_subscriber_error_listener]
 }
 
