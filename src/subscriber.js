@@ -19,7 +19,7 @@
 const arrify = require('arrify');
 const chunk = require('lodash.chunk');
 const util = require('./util');
-const {promisify} = require('@google-cloud/promisify');
+const {promisify, promisifyAll} = require('@google-cloud/promisify');
 const delay = require('delay');
 const {EventEmitter} = require('events');
 const extend = require('extend');
@@ -472,5 +472,12 @@ class Subscriber extends EventEmitter {
     });
   }
 }
+
+/*! Developer Documentation
+ *
+ * All async methods (except for streams) will return a Promise in the event
+ * that a callback is omitted.
+ */
+promisifyAll(Subscriber);
 
 module.exports = Subscriber;
