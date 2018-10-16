@@ -44,7 +44,7 @@ const MessageStoragePolicy = {
  *   must not start with `"goog"`.
  *
  * @property {Object.<string, string>} labels
- *   User labels.
+ *   See <a href="/pubsub/docs/labels"> Creating and managing labels</a>.
  *
  * @property {Object} messageStoragePolicy
  *   Policy constraining how messages published to the topic may be stored. It
@@ -65,11 +65,14 @@ const Topic = {
 };
 
 /**
- * A message data and its attributes. The message payload must not be empty;
- * it must contain either a non-empty data field, or at least one attribute.
+ * A message that is published by publishers and consumed by subscribers. The
+ * message must contain either a non-empty data field or at least one attribute.
+ * See <a href="/pubsub/quotas">Quotas and limits</a> for more information about
+ * message limits.
  *
  * @property {string} data
- *   The message payload.
+ *   The message data field. If this field is empty, the message must contain
+ *   at least one attribute.
  *
  * @property {Object.<string, string>} attributes
  *   Optional attributes for this message.
@@ -175,8 +178,8 @@ const PublishResponse = {
  * Request for the `ListTopics` method.
  *
  * @property {string} project
- *   The name of the cloud project that topics belong to.
- *   Format is `projects/{project}`.
+ *   The name of the project in which to list topics.
+ *   Format is `projects/{project-id}`.
  *
  * @property {number} pageSize
  *   Maximum number of topics to return.
@@ -388,13 +391,48 @@ const DeleteTopicRequest = {
  *   This object should have the same structure as [Duration]{@link google.protobuf.Duration}
  *
  * @property {Object.<string, string>} labels
- *   User labels.
+ *   See <a href="/pubsub/docs/labels"> Creating and managing labels</a>.
+ *
+ * @property {Object} expirationPolicy
+ *   A policy that specifies the conditions for this subscription's expiration.
+ *   A subscription is considered active as long as any connected subscriber is
+ *   successfully consuming messages from the subscription or is issuing
+ *   operations on the subscription. If `expiration_policy` is not set, a
+ *   *default policy* with `ttl` of 31 days will be used. The minimum allowed
+ *   value for `expiration_policy.ttl` is 1 day.
+ *   <b>BETA:</b> This feature is part of a beta release. This API might be
+ *   changed in backward-incompatible ways and is not recommended for production
+ *   use. It is not subject to any SLA or deprecation policy.
+ *
+ *   This object should have the same structure as [ExpirationPolicy]{@link google.pubsub.v1.ExpirationPolicy}
  *
  * @typedef Subscription
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.Subscription definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
 const Subscription = {
+  // This is for documentation. Actual contents will be loaded by gRPC.
+};
+
+/**
+ * A policy that specifies the conditions for resource expiration (i.e.,
+ * automatic resource deletion).
+ *
+ * @property {Object} ttl
+ *   Specifies the "time-to-live" duration for an associated resource. The
+ *   resource expires if it is not active for a period of `ttl`. The definition
+ *   of "activity" depends on the type of the associated resource. The minimum
+ *   and maximum allowed values for `ttl` depend on the type of the associated
+ *   resource, as well. If `ttl` is not set, the associated resource never
+ *   expires.
+ *
+ *   This object should have the same structure as [Duration]{@link google.protobuf.Duration}
+ *
+ * @typedef ExpirationPolicy
+ * @memberof google.pubsub.v1
+ * @see [google.pubsub.v1.ExpirationPolicy definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
+ */
+const ExpirationPolicy = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -496,8 +534,8 @@ const UpdateSubscriptionRequest = {
  * Request for the `ListSubscriptions` method.
  *
  * @property {string} project
- *   The name of the cloud project that subscriptions belong to.
- *   Format is `projects/{project}`.
+ *   The name of the project in which to list subscriptions.
+ *   Format is `projects/{project-id}`.
  *
  * @property {number} pageSize
  *   Maximum number of subscriptions to return.
@@ -587,9 +625,7 @@ const ModifyPushConfigRequest = {
  *   If this field set to true, the system will respond immediately even if
  *   it there are no messages available to return in the `Pull` response.
  *   Otherwise, the system may wait (for a bounded amount of time) until at
- *   least one message is available, rather than returning no messages. The
- *   client may cancel the request if it does not wish to wait any longer for
- *   the response.
+ *   least one message is available, rather than returning no messages.
  *
  * @property {number} maxMessages
  *   The maximum number of messages returned for this request. The Pub/Sub
@@ -607,10 +643,10 @@ const PullRequest = {
  * Response for the `Pull` method.
  *
  * @property {Object[]} receivedMessages
- *   Received Pub/Sub messages. The Pub/Sub system will return zero messages if
- *   there are no more available in the backlog. The Pub/Sub system may return
- *   fewer than the `maxMessages` requested even if there are more messages
- *   available in the backlog.
+ *   Received Pub/Sub messages. The list will be empty if there are no more
+ *   messages available in the backlog. For JSON, the response can be entirely
+ *   empty. The Pub/Sub system may return fewer than the `maxMessages` requested
+ *   even if there are more messages available in the backlog.
  *
  *   This object should have the same structure as [ReceivedMessage]{@link google.pubsub.v1.ReceivedMessage}
  *
@@ -747,7 +783,8 @@ const StreamingPullResponse = {
  *   Optional user-provided name for this snapshot.
  *   If the name is not provided in the request, the server will assign a random
  *   name for this snapshot on the same project as the subscription.
- *   Note that for REST API requests, you must specify a name.
+ *   Note that for REST API requests, you must specify a name.  See the
+ *   <a href="/pubsub/docs/admin#resource_names">resource name rules</a>.
  *   Format is `projects/{project}/snapshots/{snap}`.
  *
  * @property {string} subscription
@@ -762,7 +799,7 @@ const StreamingPullResponse = {
  *   Format is `projects/{project}/subscriptions/{sub}`.
  *
  * @property {Object.<string, string>} labels
- *   User labels.
+ *   See <a href="/pubsub/docs/labels"> Creating and managing labels</a>.
  *
  * @typedef CreateSnapshotRequest
  * @memberof google.pubsub.v1
@@ -824,7 +861,7 @@ const UpdateSnapshotRequest = {
  *   This object should have the same structure as [Timestamp]{@link google.protobuf.Timestamp}
  *
  * @property {Object.<string, string>} labels
- *   User labels.
+ *   See <a href="/pubsub/docs/labels"> Creating and managing labels</a>.
  *
  * @typedef Snapshot
  * @memberof google.pubsub.v1
@@ -859,8 +896,8 @@ const GetSnapshotRequest = {
  * use. It is not subject to any SLA or deprecation policy.
  *
  * @property {string} project
- *   The name of the cloud project that snapshots belong to.
- *   Format is `projects/{project}`.
+ *   The name of the project in which to list snapshots.
+ *   Format is `projects/{project-id}`.
  *
  * @property {number} pageSize
  *   Maximum number of snapshots to return.
@@ -957,6 +994,7 @@ const SeekRequest = {
 };
 
 /**
+ * Response for the `Seek` method (this response is empty).
  * @typedef SeekResponse
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.SeekResponse definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
