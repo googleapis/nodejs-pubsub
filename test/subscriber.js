@@ -32,6 +32,13 @@ function fakePromisify() {
   return (promisifyOverride || pfy.promisify).apply(null, arguments);
 }
 
+let promisified = false;
+function fakePromisifyAll(Class) {
+  if (Class.name === 'Subscriber') {
+    promisified = true;
+  }
+}
+
 const FAKE_FREE_MEM = 168222720;
 const fakeOs = {
   freemem: function() {
@@ -67,6 +74,7 @@ describe('Subscriber', function() {
       '../src/util': fakeUtil,
       '@google-cloud/promisify': {
         promisify: fakePromisify,
+        promisifyAll: fakePromisifyAll,
       },
       delay: fakeDelay,
       os: fakeOs,
@@ -81,6 +89,10 @@ describe('Subscriber', function() {
   });
 
   describe('initialization', function() {
+    it('should promisify all the things', function() {
+      assert(promisified);
+    });
+
     it('should create a histogram instance', function() {
       assert(subscriber.histogram instanceof FakeHistogram);
     });

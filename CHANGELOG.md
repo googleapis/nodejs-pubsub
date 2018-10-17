@@ -4,6 +4,11 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.20.1
+
+### Documentation
+ - fix(docs): correct region tag for sample documentation (#272)
+
 ## v0.20.0
 
 ### Implementation Changes

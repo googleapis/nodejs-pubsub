@@ -12,12 +12,12 @@
     "node": ">=8"
   },
   "scripts": {
-    "ava": "ava -T 20s --verbose system-test/*.test.js",
-    "cover": "nyc --reporter=lcov --cache ava -T 20s --verbose test/*.test.js system-test/*.test.js && nyc report",
+    "ava": "ava -T 10m --verbose system-test/*.test.js",
+    "cover": "nyc --reporter=lcov --cache ava -T 10m --verbose test/*.test.js system-test/*.test.js && nyc report",
     "test": "npm run cover"
   },
   "dependencies": {
-    "@google-cloud/pubsub": "^0.20.0",
+    "@google-cloud/pubsub": "^0.20.1",
     "yargs": "^12.0.0"
   },
   "devDependencies": {
@@ -25,7 +25,7 @@
     "ava": "^0.25.0",
     "nyc": "^13.0.0",
     "proxyquire": "^2.0.0",
-    "sinon": "^6.0.0",
+    "sinon": "^7.0.0",
     "uuid": "^3.1.0"
   }
 }
