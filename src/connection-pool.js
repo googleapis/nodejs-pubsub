@@ -276,8 +276,8 @@ class ConnectionPool extends EventEmitter {
     message.ack = () => {
       this.subscription.ack_(message);
     };
-    message.nack = () => {
-      this.subscription.nack_(message);
+    message.nack = delay => {
+      this.subscription.nack_(message, delay);
     };
     return message;
   }
