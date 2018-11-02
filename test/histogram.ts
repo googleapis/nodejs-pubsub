@@ -16,7 +16,7 @@
 
 'use strict';
 
-const assert = require('assert');
+import * as assert from 'assert';
 
 const Histogram = require('../src/histogram.js');
 
@@ -105,7 +105,7 @@ describe('Histogram', function() {
 
   describe('percentile', function() {
     function range(a, b) {
-      const result = [];
+      const result: number[] = [];
 
       for (; a < b; a++) {
         result.push(a);

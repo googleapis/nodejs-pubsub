@@ -16,16 +16,17 @@
 
 'use strict';
 
-const assert = require('assert');
-const extend = require('extend');
-const proxyquire = require('proxyquire');
-const util = require('../src/util');
-const pfy = require('@google-cloud/promisify');
+import * as assert from 'assert';
+import * as extend from 'extend';
+import * as proxyquire from 'proxyquire';
+import * as util from '../src/util';
+import * as pfy from '@google-cloud/promisify';
+import * as sinon from 'sinon';
 
 let promisified = false;
 const fakePromisify = extend({}, pfy, {
-  promisifyAll: function(Class, options) {
-    if (Class.name !== 'Topic') {
+  promisifyAll: (klass, options) => {
+    if (klass.name !== 'Topic') {
       return;
     }
     promisified = true;
@@ -57,14 +58,17 @@ const fakePaginator = {
 };
 
 describe('Topic', function() {
-  let Topic;
-  let topic;
+  // tslint:disable-next-line no-any variable-name
+  let Topic: any;
+  // tslint:disable-next-line no-any
+  let topic: any;
 
   const PROJECT_ID = 'test-project';
   const TOPIC_NAME = 'projects/' + PROJECT_ID + '/topics/test-topic';
   const TOPIC_UNFORMATTED_NAME = TOPIC_NAME.split('/').pop();
 
-  const PUBSUB = {
+  // tslint:disable-next-line no-any
+  const PUBSUB: any = {
     Promise: {},
     projectId: PROJECT_ID,
     createTopic: util.noop,
@@ -82,10 +86,12 @@ describe('Topic', function() {
     });
   });
 
+  const sandbox = sinon.createSandbox();
   beforeEach(function() {
     topic = new Topic(PUBSUB, TOPIC_NAME);
     topic.parent = PUBSUB;
   });
+  afterEach(() => sandbox.restore());
 
   describe('initialization', function() {
     it('should extend the correct methods', function() {
@@ -209,12 +215,10 @@ describe('Topic', function() {
     });
 
     it('should optionally accept a callback', function(done) {
-      util.noop = done;
-
+      sandbox.stub(util, 'noop').callsFake(done);
       topic.request = function(config, callback) {
         callback(); // the done fn
       };
-
       topic.delete();
     });
   });

@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-'use strict';
-
-const {replaceProjectIdToken} = require('@google-cloud/projectify');
+import {replaceProjectIdToken} from '@google-cloud/projectify';
 const duplexify = require('duplexify');
 const each = require('async-each');
-const {EventEmitter} = require('events');
-const is = require('is');
-const through = require('through2');
-const uuid = require('uuid');
-const util = require('./util');
+import {EventEmitter} from 'events';
+import * as is from 'is';
+import * as through from 'through2';
+import * as uuid from 'uuid';
+import * as util from './util';
 
 const CHANNEL_READY_EVENT = 'channel.ready';
 const CHANNEL_ERROR_EVENT = 'channel.error';
@@ -64,6 +62,18 @@ const RETRY_CODES = [
  *     creating a connection.
  */
 class ConnectionPool extends EventEmitter {
+  subscription;
+  pubsub;
+  connections;
+  isPaused;
+  isOpen;
+  isGettingChannelState;
+  failedConnectionAttempts;
+  noConnectionsTime;
+  settings;
+  queue;
+  keepAliveHandle;
+  client;
   constructor(subscription) {
     super();
     this.subscription = subscription;
@@ -223,7 +233,7 @@ class ConnectionPool extends EventEmitter {
           this.queueConnection();
         } else if (this.isOpen && !this.connections.size) {
           const error = new Error(status.details);
-          error.code = status.code;
+          (error as any).code = status.code;
           this.emit('error', error);
         }
       };
@@ -272,13 +282,13 @@ class ConnectionPool extends EventEmitter {
       get length() {
         return originalDataLength;
       },
-    };
-    message.ack = () => {
-      this.subscription.ack_(message);
-    };
-    message.nack = () => {
-      this.subscription.nack_(message);
-    };
+      ack: () => {
+        this.subscription.ack_(message);
+      },
+      nack: () => {
+        this.subscription.nack_(message);
+      }
+    }
     return message;
   }
   /*!
