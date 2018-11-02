@@ -352,7 +352,7 @@ function synchronousPull(projectName, subscriptionName) {
   // running process, such as writing the message to a table, which may
   // take longer than the default 10-sec acknowledge deadline.
   function worker(message) {
-    console.log(`Processing \"${message.message.data}\"...`);
+    console.log(`Processing "${message.message.data}"...`);
 
     setTimeout(() => {
       console.log(`Finished procesing "${message.message.data}".`);
@@ -367,7 +367,7 @@ function synchronousPull(projectName, subscriptionName) {
       // The first element of `responses` is a PullResponse object.
       const response = responses[0];
       // Obtain the first message.
-      let message = response.receivedMessages[0]
+      const message = response.receivedMessages[0];
 
       // Send the message to the worker function.
       worker(message);
@@ -385,16 +385,16 @@ function synchronousPull(projectName, subscriptionName) {
 
           //..acknowledges the message.
           client
-          .acknowledge(ackRequest)
-          .then(() => {
-            console.log(`Acknowledged: "${message.message.data}".`);
-            // Exit after the message is acknowledged.
-            clearInterval(interval);
-            console.log(`Done.`);
-          })
-          .catch(err => {
-            console.error(err);
-          });
+            .acknowledge(ackRequest)
+            .then(() => {
+              console.log(`Acknowledged: "${message.message.data}".`);
+              // Exit after the message is acknowledged.
+              clearInterval(interval);
+              console.log(`Done.`);
+            })
+            .catch(err => {
+              console.error(err);
+            });
         } else {
           // If the message is not yet processed..
           const modifyAckRequest = {
@@ -405,19 +405,19 @@ function synchronousPull(projectName, subscriptionName) {
 
           //..reset its ack deadline.
           client
-          .modifyAckDeadline(modifyAckRequest)
-          .then(() => {
-            console.log(
-              `Reset ack deadline for "${
-                message.message.data
-              }" for ${newAckDeadlineSeconds}s.`
-            );
-          })
-          .catch(err => {
-            console.error(err);
-          });
+            .modifyAckDeadline(modifyAckRequest)
+            .then(() => {
+              console.log(
+                `Reset ack deadline for "${
+                  message.message.data
+                }" for ${newAckDeadlineSeconds}s.`
+              );
+            })
+            .catch(err => {
+              console.error(err);
+            });
         }
-      }, 5000)
+      }, 5000);
     })
     .catch(err => {
       console.error(err);
