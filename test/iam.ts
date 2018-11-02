@@ -16,10 +16,10 @@
 
 'use strict';
 
-const assert = require('assert');
-const extend = require('extend');
+import * as assert from 'assert';
+import * as extend from 'extend';
 const proxyquire = require('proxyquire');
-const util = require('../src/util');
+import * as util from '../src/util';
 const promisify = require('@google-cloud/promisify');
 
 let promisified = false;

@@ -20,9 +20,9 @@
 
 'use strict';
 
-const arrify = require('arrify');
-const {promisifyAll} = require('@google-cloud/promisify');
-const is = require('is');
+import * as arrify from 'arrify';
+import {promisifyAll} from '@google-cloud/promisify';
+import * as is from 'is';
 
 /**
  * [IAM (Identity and Access Management)](https://cloud.google.com/pubsub/access_control)
@@ -63,6 +63,10 @@ const is = require('is');
  * // subscription.iam
  */
 class IAM {
+  Promise;
+  pubsub;
+  request;
+  id;
   constructor(pubsub, id) {
     if (pubsub.Promise) {
       this.Promise = pubsub.Promise;
