@@ -16,16 +16,16 @@
 
 'use strict';
 
-const arrify = require('arrify');
-const assert = require('assert');
-const extend = require('extend');
-const gax = require('google-gax');
-const proxyquire = require('proxyquire');
-const util = require('../src/util');
-const pjy = require('@google-cloud/projectify');
-const promisify = require('@google-cloud/promisify');
+import * as arrify from 'arrify';
+import * as assert from 'assert';
+import * as extend from 'extend';
+import * as gax from 'google-gax';
+import * as proxyquire from 'proxyquire';
+import * as util from '../src/util';
+import * as pjy from '@google-cloud/projectify';
+import * as promisify from '@google-cloud/promisify';
 
-const PKG = require('../package.json');
+const PKG = require('../../package.json');
 
 const fakeCreds = {};
 const fakeGoogleGax = {
@@ -38,12 +38,12 @@ const fakeGoogleGax = {
             return fakeCreds;
           },
         },
-      };
+      } as gax.GrpcModule;
     }
   },
 };
 
-const SubscriptionCached = require('../src/subscription.js');
+const SubscriptionCached = require('../src/subscription');
 let SubscriptionOverride;
 
 function Subscription(a, b, c) {
@@ -109,7 +109,7 @@ function fakeGoogleAuth() {
 }
 
 const v1Override = {};
-let v1ClientOverrides = {};
+let v1ClientOverrides: any = {};
 
 function defineOverridableClient(clientName) {
   function DefaultClient() {}
@@ -139,7 +139,7 @@ describe('PubSub', function() {
 
   before(function() {
     delete process.env.PUBSUB_EMULATOR_HOST;
-    PubSub = proxyquire('../', {
+    PubSub = proxyquire('../src', {
       '@google-cloud/paginator': {
         paginator: fakePaginator,
       },
@@ -297,7 +297,7 @@ describe('PubSub', function() {
     };
 
     beforeEach(function() {
-      Subscription.formatMetadata_ = function(metadata) {
+      (Subscription as any).formatMetadata_ = function(metadata) {
         return extend({}, metadata);
       };
     });
@@ -458,7 +458,7 @@ describe('PubSub', function() {
         a: 'a',
       };
 
-      Subscription.formatMetadata_ = function(metadata) {
+      (Subscription as any).formatMetadata_ = function(metadata) {
         assert.strictEqual(metadata, fakeMetadata);
         return formatted;
       };
@@ -1028,7 +1028,7 @@ describe('PubSub', function() {
 
     it('should call client method with correct options', function(done) {
       const fakeClient = {};
-      fakeClient.fakeMethod = function(reqOpts, gaxOpts) {
+      (fakeClient as any).fakeMethod = function(reqOpts, gaxOpts) {
         assert.deepStrictEqual(CONFIG.reqOpts, reqOpts);
         assert.deepStrictEqual(CONFIG.gaxOpts, gaxOpts);
         done();
@@ -1050,7 +1050,7 @@ describe('PubSub', function() {
   });
 
   describe('getClient_', function() {
-    const FAKE_CLIENT_INSTANCE = util.noop;
+    const FAKE_CLIENT_INSTANCE = class {};
     const CONFIG = {
       client: 'FakeClient',
     };

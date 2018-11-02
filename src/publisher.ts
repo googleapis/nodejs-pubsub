@@ -16,11 +16,11 @@
 
 'use strict';
 
-const arrify = require('arrify');
-const {promisifyAll} = require('@google-cloud/promisify');
+import * as arrify from 'arrify';
+import {promisifyAll} from '@google-cloud/promisify';
 const each = require('async-each');
-const extend = require('extend');
-const is = require('is');
+import * as extend from 'extend';
+import * as is from 'is';
 
 /**
  * A Publisher object allows you to publish messages to a specific topic.
@@ -49,6 +49,11 @@ const is = require('is');
  * const publisher = topic.publisher();
  */
 class Publisher {
+  Promise;
+  topic;
+  inventory_;
+  settings;
+  timeoutHandle_;
   constructor(topic, options) {
     if (topic.Promise) {
       this.Promise = topic.Promise;

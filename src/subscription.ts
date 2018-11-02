@@ -16,10 +16,10 @@
 
 'use strict';
 
-const util = require('./util');
-const {promisifyAll} = require('@google-cloud/promisify');
-const extend = require('extend');
-const is = require('is');
+import * as util from './util';
+import {promisifyAll} from '@google-cloud/promisify';
+import * as extend from 'extend';
+import * as is from 'is';
 const snakeCase = require('lodash.snakecase');
 
 const IAM = require('./iam');
@@ -458,7 +458,7 @@ class Subscription extends Subscriber {
    *   const apiResponse = data[0];
    * });
    */
-  getMetadata(gaxOpts, callback) {
+  getMetadata(gaxOpts, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
@@ -589,7 +589,7 @@ class Subscription extends Subscriber {
       callback = gaxOpts;
       gaxOpts = {};
     }
-    const reqOpts = {
+    const reqOpts: any = {
       subscription: this.name,
     };
     if (is.string(snapshot)) {
