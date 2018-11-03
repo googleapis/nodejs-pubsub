@@ -61,7 +61,7 @@ const RETRY_CODES = [
  * @param {number} [options.ackDeadline] The ack deadline to send when
  *     creating a connection.
  */
-class ConnectionPool extends EventEmitter {
+export class ConnectionPool extends EventEmitter {
   subscription;
   pubsub;
   connections;
@@ -458,5 +458,3 @@ class ConnectionPool extends EventEmitter {
     return true;
   }
 }
-
-module.exports = ConnectionPool;

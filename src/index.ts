@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {paginator} from '@google-cloud/paginator';
 import {promisifyAll} from '@google-cloud/promisify';
@@ -28,9 +26,10 @@ import * as is from 'is';
 const PKG = require('../../package.json');
 const v1 = require('./v1');
 
-const Snapshot = require('./snapshot');
-const Subscription = require('./subscription');
-const Topic = require('./topic');
+import {Snapshot} from './snapshot';
+import {Subscription} from './subscription';
+import {Topic} from './topic';
+import { Readable } from 'stream';
 
 /**
  * @type {string} - Project ID placeholder.
@@ -93,14 +92,16 @@ const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
  * region_tag:pubsub_quickstart_create_topic
  * Full quickstart example:
  */
-class PubSub {
+export class PubSub {
   options;
-  isEmulator;
+  isEmulator: boolean;
   api;
-  auth;
-  projectId;
-  Promise;
-  constructor(options) {
+  auth: GoogleAuth;
+  projectId: string;
+  Promise?: PromiseConstructor;
+  getSubscriptionsStream = paginator.streamify('getSubscriptions') as () => Readable;
+  getSnapshotsStream = paginator.streamify('getSnapshots') as () => Readable;
+  constructor(options?) {
     options = options || {};
     // Determine what scopes are needed.
     // It is the union of the scopes on both clients.
@@ -285,7 +286,7 @@ class PubSub {
    *   const apiResponse = data[1];
    * });
    */
-  createTopic(name, gaxOpts, callback) {
+  createTopic(name, gaxOpts, callback?) {
     const topic = this.topic(name);
     const reqOpts = {
       name: topic.name,
@@ -382,7 +383,7 @@ class PubSub {
    *   const snapshots = data[0];
    * });
    */
-  getSnapshots(options, callback) {
+  getSnapshots(options?, callback?) {
     const self = this;
     if (is.fn(options)) {
       callback = options;
@@ -479,7 +480,7 @@ class PubSub {
    *   const subscriptions = data[0];
    * });
    */
-  getSubscriptions(options, callback) {
+  getSubscriptions(options, callback?) {
     const self = this;
     if (is.fn(options)) {
       callback = options;
@@ -578,7 +579,7 @@ class PubSub {
    *   const topics = data[0];
    * });
    */
-  getTopics(options, callback) {
+  getTopics(options, callback?) {
     const self = this;
     if (is.fn(options)) {
       callback = options;
@@ -639,7 +640,7 @@ class PubSub {
           callback(err);
           return;
         }
-        self.projectId = projectId;
+        self.projectId = projectId!;
         self.getClient_(config, callback);
       });
       return;
@@ -734,7 +735,7 @@ class PubSub {
    *   // message.publishTime = Timestamp when Pub/Sub received the message.
    * });
    */
-  subscription(name, options?) {
+  subscription(name: string, options?) {
     if (!name) {
       throw new Error('A name must be specified for a subscription.');
     }
@@ -754,11 +755,11 @@ class PubSub {
    *
    * const topic = pubsub.topic('my-topic');
    */
-  topic(name, options?) {
+  topic(name: string) {
     if (!name) {
       throw new Error('A name must be specified for a topic.');
     }
-    return new Topic(this, name, options);
+    return new Topic(this, name);
   }
 }
 
@@ -792,7 +793,6 @@ class PubSub {
  *     this.end();
  *   });
  */
-(PubSub.prototype as any).getSnapshotsStream = paginator.streamify('getSnapshots');
 
 /**
  * Get a list of the {@link Subscription} objects registered to all of
@@ -825,9 +825,6 @@ class PubSub {
  *     this.end();
  *   });
  */
-(PubSub.prototype as any).getSubscriptionsStream = paginator.streamify(
-  'getSubscriptions'
-);
 
 /**
  * Get a list of the {module:pubsub/topic} objects registered to your project as
@@ -877,6 +874,8 @@ promisifyAll(PubSub, {
   exclude: ['request', 'snapshot', 'subscription', 'topic'],
 });
 
+export {Subscription, Topic};
+
 /**
  * The default export of the `@google-cloud/pubsub` package is the
  * {@link PubSub} class.
@@ -906,7 +905,6 @@ promisifyAll(PubSub, {
  * region_tag:pubsub_quickstart_create_topic
  * Full quickstart example:
  */
-module.exports = PubSub;
 
 /**
  * @name PubSub.v1

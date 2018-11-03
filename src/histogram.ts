@@ -24,11 +24,11 @@ import * as extend from 'extend';
  * @private
  * @class
  */
-class Histogram {
+export class Histogram {
   options;
   data;
   length;
-  constructor(options) {
+  constructor(options?) {
     this.options = extend(
       {
         min: 10000,
@@ -78,5 +78,3 @@ class Histogram {
     return this.options.min;
   }
 }
-
-module.exports = Histogram;

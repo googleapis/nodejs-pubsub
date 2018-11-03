@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as assert from 'assert';
-
-const Histogram = require('../src/histogram.js');
+import {Histogram} from '../src/histogram.js';
 
 describe('Histogram', function() {
   let histogram;

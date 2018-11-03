@@ -18,8 +18,6 @@
  * @module pubsub/iam
  */
 
-'use strict';
-
 import * as arrify from 'arrify';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as is from 'is';
@@ -62,7 +60,7 @@ import * as is from 'is';
  * const subscription = pubsub.subscription('my-subscription');
  * // subscription.iam
  */
-class IAM {
+export class IAM {
   Promise;
   pubsub;
   request;
@@ -116,7 +114,7 @@ class IAM {
    *   const apiResponse = data[1];
    * });
    */
-  getPolicy(gaxOpts, callback) {
+  getPolicy(gaxOpts, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = null;
@@ -191,7 +189,7 @@ class IAM {
    *   const apiResponse = data[1];
    * });
    */
-  setPolicy(policy, gaxOpts, callback) {
+  setPolicy(policy, gaxOpts, callback?) {
     if (!is.object(policy)) {
       throw new Error('A policy object is required.');
     }
@@ -284,7 +282,7 @@ class IAM {
    *   const apiResponse = data[1];
    * });
    */
-  testPermissions(permissions, gaxOpts, callback) {
+  testPermissions(permissions, gaxOpts, callback?) {
     if (!is.array(permissions) && !is.string(permissions)) {
       throw new Error('Permissions are required.');
     }
@@ -325,5 +323,3 @@ class IAM {
  * that a callback is omitted.
  */
 promisifyAll(IAM);
-
-module.exports = IAM;
