@@ -359,7 +359,7 @@ function testTopicPermissions(topicName) {
   // [END pubsub_test_topic_permissions]
 }
 
-export default {publishOrderedMessage};
+module.exports = {publishOrderedMessage};
 
 const cli = require(`yargs`)
   .demand(1)
