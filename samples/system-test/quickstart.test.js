@@ -63,6 +63,6 @@ test.cb(`should create a topic`, t => {
   proxyquire(`../quickstart`, {
     '@google-cloud/pubsub': {
       PubSub: sinon.stub().returns(pubsubMock),
-    }
+    },
   });
 });
