@@ -41,7 +41,7 @@ import { Topic } from './topic';
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * const topic = pubsub.topic('my-topic');
@@ -117,7 +117,7 @@ export class Publisher {
    * @returns {Promise<PublisherPublishResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');

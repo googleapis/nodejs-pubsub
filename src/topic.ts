@@ -33,7 +33,7 @@ import { Readable } from 'stream';
  * @param {string} name Name of the topic.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * const topic = pubsub.topic('my-topic');
@@ -89,7 +89,7 @@ export class Topic {
      * @see [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
      *
      * @example
-     * const PubSub = require('@google-cloud/pubsub');
+     * const {PubSub} = require('@google-cloud/pubsub');
      * const pubsub = new PubSub();
      *
      * const topic = pubsub.topic('my-topic');
@@ -120,7 +120,7 @@ export class Topic {
    * @returns {Promise<CreateTopicResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -156,7 +156,7 @@ export class Topic {
    * @returns {Promise<CreateSubscriptionResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -194,7 +194,7 @@ export class Topic {
    * @param {object} callback.apiResponse Raw API response.
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -243,7 +243,7 @@ export class Topic {
    * @returns {Promise<TopicExistsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -292,7 +292,7 @@ export class Topic {
    * @returns {Promise<GetTopicResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -348,7 +348,7 @@ export class Topic {
    * @returns {Promise<GetTopicMetadataResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -399,7 +399,7 @@ export class Topic {
    * @returns {Promise<GetSubscriptionsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -474,7 +474,7 @@ export class Topic {
    * @return {Publisher}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -512,7 +512,7 @@ export class Topic {
    * @return {Subscription}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -560,7 +560,7 @@ export class Topic {
  * @returns {ReadableStream} A readable stream of {@link Subscription} instances.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * const topic = pubsub.topic('my-topic');

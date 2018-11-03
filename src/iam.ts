@@ -51,7 +51,7 @@ import * as is from 'is';
  * @see [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * const topic = pubsub.topic('my-topic');
@@ -96,7 +96,7 @@ export class IAM {
    * @see [Subscriptions: getIamPolicy API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/getIamPolicy}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -162,7 +162,7 @@ export class IAM {
    * @see [Policy]{@link https://cloud.google.com/pubsub/docs/reference/rest/Shared.Types/Policy}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -240,7 +240,7 @@ export class IAM {
    * @see [Permissions Reference]{@link https://cloud.google.com/pubsub/access_control#permissions}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');

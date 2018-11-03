@@ -77,7 +77,7 @@ const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
  * @param {ClientConfig} [options] Configuration options.
  *
  * @example <caption>Import the client library</caption>
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  *
  * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
  * const pubsub = new PubSub();
@@ -190,7 +190,7 @@ export class PubSub {
    * @returns {Promise<CreateSubscriptionResponse>}
    *
    * @example <caption>Subscribe to a topic.</caption>
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = 'messageCenter';
@@ -269,7 +269,7 @@ export class PubSub {
    * @returns {Promise<CreateTopicResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * pubsub.createTopic('my-new-topic', function(err, topic, apiResponse) {
@@ -367,7 +367,7 @@ export class PubSub {
    * @returns {Promise<GetSnapshotsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * pubsub.getSnapshots(function(err, snapshots) {
@@ -464,7 +464,7 @@ export class PubSub {
    * @returns {Promise<GetSubscriptionsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * pubsub.getSubscriptions(function(err, subscriptions) {
@@ -556,7 +556,7 @@ export class PubSub {
    * @returns {Promise<GetTopicsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * pubsub.getTopics(function(err, topics) {
@@ -686,7 +686,7 @@ export class PubSub {
    * @returns {Snapshot} A {@link Snapshot} instance.
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const snapshot = pubsub.snapshot('my-snapshot');
@@ -720,7 +720,7 @@ export class PubSub {
    * @returns {Subscription} A {@link Subscription} instance.
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const subscription = pubsub.subscription('my-subscription');
@@ -750,7 +750,7 @@ export class PubSub {
    * @returns {Topic} A {@link Topic} instance.
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -772,7 +772,7 @@ export class PubSub {
  * @returns {ReadableStream} A readable stream of {@link Snapshot} instances.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * pubsub.getSnapshotsStream()
@@ -804,7 +804,7 @@ export class PubSub {
  * @returns {ReadableStream} A readable stream of {@link Subscription} instances.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * pubsub.getSubscriptionsStream()
@@ -836,7 +836,7 @@ export class PubSub {
  * @returns {ReadableStream} A readable stream of {@link Topic} instances.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * pubsub.getTopicsStream()
@@ -890,7 +890,7 @@ export {Subscription, Topic};
  * npm install --save @google-cloud/pubsub
  *
  * @example <caption>Import the client library</caption>
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  *
  * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
  * const pubsub = new PubSub();

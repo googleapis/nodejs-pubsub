@@ -76,7 +76,7 @@ import { PubSub } from '.';
  *     connections to be used when sending and receiving messages. Default: 5.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * //-
@@ -217,7 +217,7 @@ export class Subscription extends Subscriber {
    * @returns {Promise<CreateSnapshotResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -283,7 +283,7 @@ export class Subscription extends Subscriber {
    * @param {object} callback.apiResponse Raw API response.
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -339,7 +339,7 @@ export class Subscription extends Subscriber {
    * @returns {Promise<SubscriptionExistsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -389,7 +389,7 @@ export class Subscription extends Subscriber {
    * @returns {Promise<GetSubscriptionResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -444,7 +444,7 @@ export class Subscription extends Subscriber {
    * @returns {Promise<GetSubscriptionMetadataResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -508,7 +508,7 @@ export class Subscription extends Subscriber {
    * @returns {Promise<ModifyPushConfigResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
