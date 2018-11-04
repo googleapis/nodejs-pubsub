@@ -504,7 +504,7 @@ async function getSubscriptionPolicy(subscriptionName) {
 
   // Retrieves the IAM policy for the subscription
   const [policy] = await pubsub.subscription(subscriptionName).iam.getPolicy();
-  console.log(`Policy for subscription: ${policy.bindings}.`);
+  console.log(`Policy for subscription: ${JSON.stringify(policy.bindings)}.`);
 
   // [END pubsub_get_subscription_policy]
 }
