@@ -16,16 +16,16 @@
 
 'use strict';
 
-const {replaceProjectIdToken} = require('@google-cloud/projectify');
-const {paginator} = require('@google-cloud/paginator');
-const {promisifyAll} = require('@google-cloud/promisify');
-const extend = require('extend');
-const {GoogleAuth} = require('google-auth-library');
+import {replaceProjectIdToken} from '@google-cloud/projectify';
+import {paginator} from '@google-cloud/paginator';
+import {promisifyAll} from '@google-cloud/promisify';
+import * as extend from 'extend';
+import {GoogleAuth} from 'google-auth-library';
 const gax = require('google-gax');
 const {grpc} = new gax.GrpcClient();
-const is = require('is');
+import * as is from 'is';
 
-const PKG = require('../package.json');
+const PKG = require('../../package.json');
 const v1 = require('./v1');
 
 const Snapshot = require('./snapshot');
@@ -94,6 +94,12 @@ const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
  * Full quickstart example:
  */
 class PubSub {
+  options;
+  isEmulator;
+  api;
+  auth;
+  projectId;
+  Promise;
   constructor(options) {
     options = options || {};
     // Determine what scopes are needed.
@@ -728,7 +734,7 @@ class PubSub {
    *   // message.publishTime = Timestamp when Pub/Sub received the message.
    * });
    */
-  subscription(name, options) {
+  subscription(name, options?) {
     if (!name) {
       throw new Error('A name must be specified for a subscription.');
     }
@@ -748,7 +754,7 @@ class PubSub {
    *
    * const topic = pubsub.topic('my-topic');
    */
-  topic(name, options) {
+  topic(name, options?) {
     if (!name) {
       throw new Error('A name must be specified for a topic.');
     }
@@ -786,7 +792,7 @@ class PubSub {
  *     this.end();
  *   });
  */
-PubSub.prototype.getSnapshotsStream = paginator.streamify('getSnapshots');
+(PubSub.prototype as any).getSnapshotsStream = paginator.streamify('getSnapshots');
 
 /**
  * Get a list of the {@link Subscription} objects registered to all of
@@ -819,7 +825,7 @@ PubSub.prototype.getSnapshotsStream = paginator.streamify('getSnapshots');
  *     this.end();
  *   });
  */
-PubSub.prototype.getSubscriptionsStream = paginator.streamify(
+(PubSub.prototype as any).getSubscriptionsStream = paginator.streamify(
   'getSubscriptions'
 );
 
@@ -854,7 +860,7 @@ PubSub.prototype.getSubscriptionsStream = paginator.streamify(
  *     this.end();
  *   });
  */
-PubSub.prototype.getTopicsStream = paginator.streamify('getTopics');
+(PubSub.prototype as any).getTopicsStream = paginator.streamify('getTopics');
 
 /*! Developer Documentation
  *

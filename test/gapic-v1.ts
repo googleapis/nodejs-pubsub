@@ -14,14 +14,14 @@
 
 'use strict';
 
-const assert = require('assert');
+import * as assert from 'assert';
 const through2 = require('through2');
 
 const pubsubModule = require('../src');
 
 const FAKE_STATUS_CODE = 1;
 const error = new Error();
-error.code = FAKE_STATUS_CODE;
+(error as any).code = FAKE_STATUS_CODE;
 
 describe('PublisherClient', () => {
   describe('createTopic', () => {
@@ -1872,7 +1872,7 @@ describe('SubscriberClient', () => {
   });
 });
 
-function mockSimpleGrpcMethod(expectedRequest, response, error) {
+function mockSimpleGrpcMethod(expectedRequest, response?, error?) {
   return function(actualRequest, options, callback) {
     assert.deepStrictEqual(actualRequest, expectedRequest);
     if (error) {
@@ -1885,7 +1885,7 @@ function mockSimpleGrpcMethod(expectedRequest, response, error) {
   };
 }
 
-function mockBidiStreamingGrpcMethod(expectedRequest, response, error) {
+function mockBidiStreamingGrpcMethod(expectedRequest, response, error?) {
   return () => {
     const mockStream = through2.obj((chunk, enc, callback) => {
       assert.deepStrictEqual(chunk, expectedRequest);

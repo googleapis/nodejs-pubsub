@@ -16,10 +16,10 @@
 
 'use strict';
 
-const assert = require('assert');
-const util = require('../src/util');
+import * as assert from 'assert';
+import * as util from '../src/util';
 const pfy = require('@google-cloud/promisify');
-const extend = require('extend');
+import * as extend from 'extend';
 const proxyquire = require('proxyquire');
 
 let promisified = false;
@@ -38,7 +38,7 @@ describe('Publisher', function() {
   let batchOpts;
 
   const TOPIC_NAME = 'test-topic';
-  const TOPIC = {
+  const TOPIC: any = {
     name: TOPIC_NAME,
     Promise: {},
     request: util.noop,
@@ -143,7 +143,7 @@ describe('Publisher', function() {
 
     beforeEach(function() {
       publisher.publish_ = util.noop;
-      global.setTimeout = util.noop;
+      (global as any).setTimeout = util.noop;
     });
 
     after(function() {
@@ -211,7 +211,7 @@ All attributes must be in the form of a string.
     });
 
     it('should not attempt to publish empty payload if data puts payload above size cap', function(done) {
-      const pushRequests = [];
+      const pushRequests: {}[] = [];
       publisher.settings.batching.maxBytes = 2;
       publisher.inventory_.bytes = 0;
 
@@ -266,7 +266,7 @@ All attributes must be in the form of a string.
       const globalSetTimeout = global.setTimeout;
       const fakeTimeoutHandle = 12345;
 
-      global.setTimeout = function(callback, duration) {
+      (global as any).setTimeout = function(callback, duration) {
         assert.strictEqual(duration, batchOpts.maxMilliseconds);
         global.setTimeout = globalSetTimeout;
         setImmediate(callback);

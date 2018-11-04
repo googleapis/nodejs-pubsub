@@ -16,11 +16,12 @@
 
 'use strict';
 
-const assert = require('assert');
-const util = require('../src/util');
-const extend = require('extend');
-const proxyquire = require('proxyquire');
-const pfy = require('@google-cloud/promisify');
+import * as assert from 'assert';
+import * as util from '../src/util';
+import * as extend from 'extend';
+import * as proxyquire from 'proxyquire';
+import * as pfy from '@google-cloud/promisify';
+import * as sinon from 'sinon';
 
 let promisified = false;
 const fakePromisify = extend({}, pfy, {
@@ -42,7 +43,7 @@ describe('Snapshot', function() {
     projectId: PROJECT_ID,
   };
 
-  const SUBSCRIPTION = {
+  const SUBSCRIPTION: any = {
     Promise: {},
     projectId: PROJECT_ID,
     pubsub: PUBSUB,
@@ -57,10 +58,11 @@ describe('Snapshot', function() {
     });
   });
 
+  const sandbox = sinon.createSandbox();
   beforeEach(function() {
-    util.noop = function() {};
     snapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
   });
+  afterEach(() => sandbox.restore());
 
   describe('initialization', function() {
     const FULL_SNAPSHOT_NAME = 'a/b/c/d';
@@ -179,12 +181,10 @@ describe('Snapshot', function() {
     });
 
     it('should optionally accept a callback', function(done) {
-      util.noop = done;
-
+      sandbox.stub(util, 'noop').callsFake(done);
       snapshot.parent.request = function(config, callback) {
         callback(); // the done fn
       };
-
       snapshot.delete();
     });
   });
