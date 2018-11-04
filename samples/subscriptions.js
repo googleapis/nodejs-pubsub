@@ -317,10 +317,13 @@ async function synchronousPull(projectName, subscriptionName) {
 
   let numProcessed = 0;
 
-  // setInterval() gets run every 10s.
-  const interval = setInterval(function() {
+  // setTimeout() gets run every 10s.
+  let waiting = true;
+  while (waiting) {
+    await new Promise(r => setTimeout(r, 10000));
     // Every 10s, we do a check on the processing states of the messages.
-    Object.keys(messages).forEach(async ackId => {
+    Object.keys(messages).map(async ackId => {
+      console.log(ackId);
       if (messages[ackId][1]) {
         // If the processing state for a particular message is true,
         // We will ack the message.
@@ -362,11 +365,13 @@ async function synchronousPull(projectName, subscriptionName) {
 
       // If all messages have been processed, we clear out of the interval.
       if (numProcessed === response.receivedMessages.length) {
-        clearInterval(interval);
+        waiting = false;
         console.log(`Done.`);
+        return;
       }
     });
-  }, 10000);
+  }
+
   // [END pubsub_subscriber_sync_pull]
 }
 
@@ -403,17 +408,14 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
   };
 
   // Listen for new messages until timeout is hit
-  await new Promise(resolve => {
-    subscription.on(`message`, messageHandler);
-    setTimeout(() => {
-      subscription.removeListener(`message`, messageHandler);
-      resolve();
-    }, timeout * 1000);
-  });
+  subscription.on(`message`, messageHandler);
+  await new Promise(r => setTimeout(r, timeout * 1000));
+  subscription.removeListener(`message`, messageHandler);
+
   // Pub/Sub messages are unordered, so here we manually order messages by
   // their "counterId" attribute which was set when they were published.
   const outstandingIds = Object.keys(outstandingMessages).map(counterId =>
-    parseInt(counterId, 10)
+    Number(counterId, 10)
   );
   outstandingIds.sort();
 
@@ -502,7 +504,7 @@ async function getSubscriptionPolicy(subscriptionName) {
 
   // Retrieves the IAM policy for the subscription
   const [policy] = await pubsub.subscription(subscriptionName).iam.getPolicy();
-  console.log(`Policy for subscription: %j.`, policy.bindings);
+  console.log(`Policy for subscription: ${policy.bindings}.`);
 
   // [END pubsub_get_subscription_policy]
 }
