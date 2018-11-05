@@ -20,7 +20,7 @@ const merge = require('lodash.merge');
 const path = require('path');
 const protobuf = require('protobufjs');
 
-const VERSION = require('../../package.json').version;
+const VERSION = require('../../../package.json').version;
 
 /**
  * The service that an application uses to manipulate topics, and to send

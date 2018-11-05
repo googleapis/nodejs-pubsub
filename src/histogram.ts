@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-'use strict';
-
-const extend = require('extend');
+import * as extend from 'extend';
 
 /*!
  * The Histogram class is used to capture the lifespan of messages within the
@@ -27,6 +25,9 @@ const extend = require('extend');
  * @class
  */
 class Histogram {
+  options;
+  data;
+  length;
   constructor(options) {
     this.options = extend(
       {

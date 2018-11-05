@@ -16,15 +16,15 @@
 
 'use strict';
 
-const arrify = require('arrify');
+import * as arrify from 'arrify';
 const chunk = require('lodash.chunk');
-const util = require('./util');
-const {promisify, promisifyAll} = require('@google-cloud/promisify');
+import * as util from './util';
+import {promisify, promisifyAll} from '@google-cloud/promisify';
 const delay = require('delay');
-const {EventEmitter} = require('events');
-const extend = require('extend');
-const is = require('is');
-const os = require('os');
+import {EventEmitter} from 'events';
+import * as extend from 'extend';
+import * as is from 'is';
+import * as os from 'os';
 
 const ConnectionPool = require('./connection-pool');
 const Histogram = require('./histogram');
@@ -45,6 +45,23 @@ const MAX_ACK_IDS_PER_REQUEST = 3000;
  * @param {object} options Configuration object.
  */
 class Subscriber extends EventEmitter {
+  histogram;
+  latency_;
+  connectionPool;
+  ackDeadline;
+  maxConnections;
+  inventory_;
+  flowControl;
+  batching;
+  flushTimeoutHandle_;
+  leaseTimeoutHandle_;
+  userClosed_;
+  isOpen;
+  messageListeners;
+  writeToStreams_;
+  request;
+  name;
+
   constructor(options) {
     super();
     options = options || {};
@@ -112,7 +129,7 @@ class Subscriber extends EventEmitter {
    * @param {string} [connId] Connection ID to send request on.
    * @return {Promise}
    */
-  acknowledge_(ackIds, connId) {
+  acknowledge_(ackIds: string|string[], connId?: string): Promise<any> {
     ackIds = arrify(ackIds);
     const promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(ackIdChunk => {
       if (this.writeToStreams_ && this.isConnected_()) {
@@ -196,7 +213,7 @@ class Subscriber extends EventEmitter {
    * @param {function} [callback] The callback function.
    * @param {?error} err An error returned from this request.
    */
-  closeConnection_(callback) {
+  closeConnection_(callback?) {
     this.isOpen = false;
     if (this.connectionPool) {
       this.connectionPool.close(callback || util.noop);
@@ -216,7 +233,7 @@ class Subscriber extends EventEmitter {
    *
    * @private
    */
-  flushQueues_() {
+  flushQueues_(): Promise<any> {
     if (this.flushTimeoutHandle_) {
       this.flushTimeoutHandle_.clear();
       this.flushTimeoutHandle_ = null;
@@ -227,7 +244,7 @@ class Subscriber extends EventEmitter {
     if (!acks.length && !nacks.length && !delayedNacks.length) {
       return Promise.resolve();
     }
-    const requests = [];
+    const requests: Promise<void>[] = [];
     if (acks.length) {
       requests.push(
         this.acknowledge_(acks).then(() => {
@@ -342,7 +359,7 @@ class Subscriber extends EventEmitter {
    * @param {string=} connId Connection ID to send request on.
    * @return {Promise}
    */
-  modifyAckDeadline_(ackIds, deadline, connId) {
+  modifyAckDeadline_(ackIds: string|string[], deadline: number, connId?: string) {
     ackIds = arrify(ackIds);
     const promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(ackIdChunk => {
       if (this.writeToStreams_ && this.isConnected_()) {

@@ -18,9 +18,8 @@ s.copy(
     library,
     excludes=['package.json', 'README.md', 'src/index.js'])
 
-templates = common_templates.node_library(package_name="@google-cloud/pubsub")
+templates = common_templates.node_library(source_location='build/src')
 s.copy(templates)
-
 
 # https://github.com/googleapis/gapic-generator/issues/2127
 s.replace("src/v1/subscriber_client.js",
@@ -34,7 +33,10 @@ s.replace("src/v1/subscriber_client.js",
           "    };\n"
           "\g<0>")
 
+# Update path discovery due to build/ dir and TypeScript conversion.
+s.replace("src/v1/publisher_client.js", "../../package.json", "../../../package.json")
+s.replace("src/v1/subscriber_client.js", "../../package.json", "../../../package.json")
+
 # Node.js specific cleanup
 subprocess.run(['npm', 'install'])
-subprocess.run(['npm', 'run', 'prettier'])
-subprocess.run(['npm', 'run', 'lint'])
+subprocess.run(['npm', 'run', 'fix'])

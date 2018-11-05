@@ -14,21 +14,31 @@
  * limitations under the License.
  */
 
-'use strict';
-
-const assert = require('assert');
-const util = require('../src/util');
+import * as assert from 'assert';
+import * as util from '../src/util';
 const duplexify = require('duplexify');
-const {EventEmitter} = require('events');
-const extend = require('extend');
-const proxyquire = require('proxyquire');
-const uuid = require('uuid');
-const pjy = require('@google-cloud/projectify');
+import {EventEmitter} from 'events';
+import * as extend from 'extend';
+import * as proxyquire from 'proxyquire';
+import * as uuid from 'uuid';
+import * as pjy from '@google-cloud/projectify';
+import * as sinon from 'sinon';
 
-const fakeUtil = extend({}, util);
+let noopOverride: Function|null = null;
+const fakeUtil = {
+  noop: (...args) => {
+    (noopOverride || util.noop).apply(null, args);
+  }
+};
+
 const fakeUuid = extend({}, uuid);
 
 class FakeConnection extends EventEmitter {
+  isConnected;
+  isPaused;
+  ended;
+  canceled;
+  written;
   constructor() {
     super();
     this.isConnected = false;
@@ -66,7 +76,7 @@ class FakeConnection extends EventEmitter {
   }
 }
 
-let duplexifyOverride = null;
+let duplexifyOverride: Function|null = null;
 function fakeDuplexify() {
   const args = [].slice.call(arguments);
   return (duplexifyOverride || duplexify).apply(null, args);
@@ -78,22 +88,23 @@ describe('ConnectionPool', function() {
   let fakeConnection;
   let fakeChannel;
   let fakeClient;
+  let sandbox: sinon.SinonSandbox;
 
   const FAKE_PUBSUB_OPTIONS = {};
   const PROJECT_ID = 'grapce-spacheship-123';
 
-  const PUBSUB = {
+  const PUBSUB: any = {
     auth: {
-      getAuthClient: fakeUtil.noop,
+      getAuthClient: util.noop,
     },
     options: FAKE_PUBSUB_OPTIONS,
   };
 
   const SUB_NAME = 'test-subscription';
-  const SUBSCRIPTION = {
+  const SUBSCRIPTION: any = {
     name: SUB_NAME,
     pubsub: PUBSUB,
-    request: fakeUtil.noop,
+    request: util.noop,
   };
 
   let pjyOverride;
@@ -113,6 +124,7 @@ describe('ConnectionPool', function() {
   });
 
   beforeEach(function() {
+    sandbox = sinon.createSandbox();
     fakeConnection = new FakeConnection();
     duplexifyOverride = null;
 
@@ -132,8 +144,8 @@ describe('ConnectionPool', function() {
       waitForReady: function() {},
     };
 
-    SUBSCRIPTION.request = fakeUtil.noop;
-    PUBSUB.auth.getAuthClient = fakeUtil.noop;
+    SUBSCRIPTION.request = util.noop;
+    PUBSUB.auth.getAuthClient = util.noop;
     PUBSUB.getClient_ = function(config, callback) {
       callback(null, fakeClient);
     };
@@ -147,15 +159,14 @@ describe('ConnectionPool', function() {
     if (pool.isOpen) {
       pool.close();
     }
+    noopOverride = null;
+    sandbox.restore();
   });
 
   describe('initialization', function() {
     it('should initialize internally used properties', function() {
-      const open = ConnectionPool.prototype.open;
-      ConnectionPool.prototype.open = fakeUtil.noop;
-
+      sandbox.stub(ConnectionPool.prototype, 'open').returns(undefined);
       const pool = new ConnectionPool(SUBSCRIPTION);
-
       assert.strictEqual(pool.subscription, SUBSCRIPTION);
       assert.strictEqual(pool.pubsub, SUBSCRIPTION.pubsub);
       assert(pool.connections instanceof Map);
@@ -167,8 +178,6 @@ describe('ConnectionPool', function() {
       assert.strictEqual(pool.settings.maxConnections, 5);
       assert.strictEqual(pool.settings.ackDeadline, 10000);
       assert.deepStrictEqual(pool.queue, []);
-
-      ConnectionPool.prototype.open = open;
     });
 
     it('should respect user specified settings', function() {
@@ -275,7 +284,7 @@ describe('ConnectionPool', function() {
     });
 
     beforeEach(function() {
-      global.clearTimeout = global.clearInterval = fakeUtil.noop;
+      global.clearTimeout = global.clearInterval = util.noop;
     });
 
     afterEach(function() {
@@ -394,10 +403,7 @@ describe('ConnectionPool', function() {
     });
 
     it('should use noop when callback is omitted', function(done) {
-      fakeUtil.noop = function() {
-        fakeUtil.noop = function() {};
-        done();
-      };
+      noopOverride = done;
       pool.close();
     });
   });
@@ -426,7 +432,7 @@ describe('ConnectionPool', function() {
         },
       };
 
-      fakeClient.waitForReady = fakeUtil.noop;
+      fakeClient.waitForReady = util.noop;
 
       pool.getClient = function(callback) {
         pool.pubsub = {
@@ -565,7 +571,7 @@ describe('ConnectionPool', function() {
 
       it('should unpack the recieved messages', function(done) {
         const fakeDuplex = new FakeConnection();
-        const pipedMessages = [];
+        const pipedMessages: {}[] = [];
         const fakeResp = {
           receivedMessages: [{}, {}, {}, {}, null],
         };
@@ -826,7 +832,7 @@ describe('ConnectionPool', function() {
 
     it('should capture the message data', function() {
       const expectedPublishTime = new Date(
-        parseInt(PT.seconds, 10) * 1000 + parseInt(PT.nanos, 10) / 1e6
+        Math.floor(PT.seconds) * 1000 + Math.floor(PT.nanos) / 1e6
       );
 
       assert.strictEqual(message.ackId, RESP.ackId);
@@ -883,9 +889,9 @@ describe('ConnectionPool', function() {
     let fakeChannelState;
     let dateNow;
     let fakeTimestamp;
-    const fakeChannel = {};
+    const fakeChannel: any = {};
 
-    const fakeClient = {
+    const fakeClient: any = {
       getChannel: function() {
         return fakeChannel;
       },
@@ -901,7 +907,7 @@ describe('ConnectionPool', function() {
       };
 
       fakeChannelState = 0;
-      fakeClient.waitForReady = fakeUtil.noop;
+      fakeClient.waitForReady = util.noop;
 
       pool.getClient = function(callback) {
         callback(null, fakeClient);
@@ -973,7 +979,7 @@ describe('ConnectionPool', function() {
       });
 
       pool.getAndEmitChannelState();
-      fakeClient.waitForReady = fakeUtil.noop;
+      fakeClient.waitForReady = util.noop;
     });
 
     it('should wait for the channel to be ready', function(done) {
@@ -1119,7 +1125,7 @@ describe('ConnectionPool', function() {
 
   describe('open', function() {
     beforeEach(function() {
-      pool.queueConnection = fakeUtil.noop;
+      pool.queueConnection = util.noop;
       clearInterval(pool.keepAliveHandle);
     });
 
@@ -1200,7 +1206,7 @@ describe('ConnectionPool', function() {
       pool.subscription = {writeToStreams_: false};
       pool.sendKeepAlives = done;
 
-      global.setInterval = function(fn, interval) {
+      (global as any).setInterval = function(fn, interval) {
         global.setInterval = _setInterval;
 
         assert.strictEqual(interval, 30000);
@@ -1249,7 +1255,7 @@ describe('ConnectionPool', function() {
 
       _open = ConnectionPool.prototype.open;
       // prevent open from calling queueConnection
-      ConnectionPool.prototype.open = fakeUtil.noop;
+      ConnectionPool.prototype.open = util.noop;
     });
 
     beforeEach(function() {
@@ -1257,13 +1263,13 @@ describe('ConnectionPool', function() {
         return 1;
       };
 
-      global.setTimeout = function(cb) {
+      (global as any).setTimeout = function(cb) {
         cb();
         return fakeTimeoutHandle;
       };
 
       pool.failedConnectionAttempts = 0;
-      pool.createConnection = fakeUtil.noop;
+      pool.createConnection = util.noop;
     });
 
     after(function() {
@@ -1275,7 +1281,7 @@ describe('ConnectionPool', function() {
     it('should set a timeout to create the connection', function(done) {
       pool.createConnection = done;
 
-      global.setTimeout = function(cb, delay) {
+      (global as any).setTimeout = function(cb, delay) {
         assert.strictEqual(delay, 0);
         cb(); // should call the done fn
       };
@@ -1287,7 +1293,7 @@ describe('ConnectionPool', function() {
       pool.createConnection = done;
       pool.failedConnectionAttempts = 3;
 
-      global.setTimeout = function(cb, delay) {
+      (global as any).setTimeout = function(cb, delay) {
         assert.strictEqual(delay, 9000);
         cb(); // should call the done fn
       };
