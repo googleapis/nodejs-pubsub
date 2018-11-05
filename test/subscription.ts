@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as assert from 'assert';
 import * as util from '../src/util';
 import * as extend from 'extend';
@@ -34,8 +32,11 @@ const fakePromisify = extend({}, pfy, {
   },
 });
 
-function FakeIAM() {
-  this.calledWith_ = [].slice.call(arguments);
+class FakeIAM {
+  calledWith_: IArguments;
+  constructor() {
+    this.calledWith_ = [].slice.call(arguments);
+  }
 }
 
 class FakeSnapshot {
@@ -46,8 +47,11 @@ class FakeSnapshot {
   }
 }
 
-function FakeSubscriber() {
-  this.calledWith_ = [].slice.call(arguments);
+class FakeSubscriber {
+  calledWith_: IArguments;
+  constructor() {
+    this.calledWith_ = [].slice.call(arguments);
+  }
 }
 
 describe('Subscription', function() {
@@ -70,10 +74,10 @@ describe('Subscription', function() {
   before(function() {
     Subscription = proxyquire('../src/subscription.js', {
       '@google-cloud/promisify': fakePromisify,
-      './iam.js': FakeIAM,
-      './snapshot.js': FakeSnapshot,
-      './subscriber.js': FakeSubscriber,
-    });
+      './iam.js': {IAM: FakeIAM},
+      './snapshot.js': {Snapshot: FakeSnapshot},
+      './subscriber.js': {Subscriber: FakeSubscriber},
+    }).Subscription;
   });
 
   const sandbox = sinon.createSandbox();

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-'use strict';
-
-import * as assert from 'assert';
+ import * as assert from 'assert';
 import * as extend from 'extend';
 import * as proxyquire from 'proxyquire';
 import * as util from '../src/util';
@@ -34,12 +32,18 @@ const fakePromisify = extend({}, pfy, {
   },
 });
 
-function FakeIAM() {
-  this.calledWith_ = [].slice.call(arguments);
+class FakeIAM {
+  calledWith_: IArguments;
+  constructor() {
+    this.calledWith_ = [].slice.call(arguments);
+  }
 }
 
-function FakePublisher() {
-  this.calledWith_ = [].slice.call(arguments);
+class FakePublisher {
+  calledWith_: IArguments;
+  constructor() {
+    this.calledWith_ = [].slice.call(arguments);
+  }
 }
 
 let extended = false;
@@ -81,9 +85,9 @@ describe('Topic', function() {
       '@google-cloud/paginator': {
         paginator: fakePaginator,
       },
-      './iam': FakeIAM,
-      './publisher': FakePublisher,
-    });
+      './iam': {IAM: FakeIAM},
+      './publisher': {Publisher: FakePublisher},
+    }).Topic;
   });
 
   const sandbox = sinon.createSandbox();
