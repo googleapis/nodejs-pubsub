@@ -19,7 +19,7 @@ const gax = require('google-gax');
 const merge = require('lodash.merge');
 const path = require('path');
 
-const VERSION = require('../../package.json').version;
+const VERSION = require('../../../package.json').version;
 
 /**
  * The service that an application uses to manipulate subscriptions and to
@@ -345,7 +345,19 @@ class SubscriberClient {
    *
    *   This object should have the same structure as [Duration]{@link google.protobuf.Duration}
    * @param {Object.<string, string>} [request.labels]
-   *   User labels.
+   *   See <a href="/pubsub/docs/labels"> Creating and managing labels</a>.
+   * @param {Object} [request.expirationPolicy]
+   *   A policy that specifies the conditions for this subscription's expiration.
+   *   A subscription is considered active as long as any connected subscriber is
+   *   successfully consuming messages from the subscription or is issuing
+   *   operations on the subscription. If `expiration_policy` is not set, a
+   *   *default policy* with `ttl` of 31 days will be used. The minimum allowed
+   *   value for `expiration_policy.ttl` is 1 day.
+   *   <b>BETA:</b> This feature is part of a beta release. This API might be
+   *   changed in backward-incompatible ways and is not recommended for production
+   *   use. It is not subject to any SLA or deprecation policy.
+   *
+   *   This object should have the same structure as [ExpirationPolicy]{@link google.pubsub.v1.ExpirationPolicy}
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/global.html#CallOptions} for the details.
@@ -509,8 +521,8 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
-   *   The name of the cloud project that subscriptions belong to.
-   *   Format is `projects/{project}`.
+   *   The name of the project in which to list subscriptions.
+   *   Format is `projects/{project-id}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
    *   response. If page streaming is performed per-resource, this
@@ -614,8 +626,8 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
-   *   The name of the cloud project that subscriptions belong to.
-   *   Format is `projects/{project}`.
+   *   The name of the project in which to list subscriptions.
+   *   Format is `projects/{project-id}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
    *   response. If page streaming is performed per-resource, this
@@ -811,8 +823,7 @@ class SubscriberClient {
   }
 
   /**
-   * Pulls messages from the server. Returns an empty list if there are no
-   * messages available in the backlog. The server may return `UNAVAILABLE` if
+   * Pulls messages from the server. The server may return `UNAVAILABLE` if
    * there are too many concurrent pull requests pending for the given
    * subscription.
    *
@@ -828,9 +839,7 @@ class SubscriberClient {
    *   If this field set to true, the system will respond immediately even if
    *   it there are no messages available to return in the `Pull` response.
    *   Otherwise, the system may wait (for a bounded amount of time) until at
-   *   least one message is available, rather than returning no messages. The
-   *   client may cancel the request if it does not wish to wait any longer for
-   *   the response.
+   *   least one message is available, rather than returning no messages.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/global.html#CallOptions} for the details.
@@ -985,8 +994,8 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
-   *   The name of the cloud project that snapshots belong to.
-   *   Format is `projects/{project}`.
+   *   The name of the project in which to list snapshots.
+   *   Format is `projects/{project-id}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
    *   response. If page streaming is performed per-resource, this
@@ -1090,8 +1099,8 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
-   *   The name of the cloud project that snapshots belong to.
-   *   Format is `projects/{project}`.
+   *   The name of the project in which to list snapshots.
+   *   Format is `projects/{project-id}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
    *   response. If page streaming is performed per-resource, this
@@ -1134,7 +1143,7 @@ class SubscriberClient {
    * Creates a snapshot from the requested subscription.<br><br>
    * <b>ALPHA:</b> This feature is part of an alpha release. This API might be
    * changed in backward-incompatible ways and is not recommended for production
-   * use. It is not subject to any SLA or deprecation policy.
+   * use. It is not subject to any SLA or deprecation policy.<br><br>
    * If the snapshot already exists, returns `ALREADY_EXISTS`.
    * If the requested subscription doesn't exist, returns `NOT_FOUND`.
    * If the backlog in the subscription is too old -- and the resulting snapshot
@@ -1153,7 +1162,8 @@ class SubscriberClient {
    *   Optional user-provided name for this snapshot.
    *   If the name is not provided in the request, the server will assign a random
    *   name for this snapshot on the same project as the subscription.
-   *   Note that for REST API requests, you must specify a name.
+   *   Note that for REST API requests, you must specify a name.  See the
+   *   <a href="/pubsub/docs/admin#resource_names">resource name rules</a>.
    *   Format is `projects/{project}/snapshots/{snap}`.
    * @param {string} request.subscription
    *   The subscription whose backlog the snapshot retains.
@@ -1166,7 +1176,7 @@ class SubscriberClient {
    *        successful completion of the CreateSnapshot request.
    *   Format is `projects/{project}/subscriptions/{sub}`.
    * @param {Object.<string, string>} [request.labels]
-   *   User labels.
+   *   See <a href="/pubsub/docs/labels"> Creating and managing labels</a>.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/global.html#CallOptions} for the details.

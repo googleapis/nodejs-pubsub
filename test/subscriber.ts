@@ -16,13 +16,13 @@
 
 'use strict';
 
-const assert = require('assert');
+import * as assert from 'assert';
 const delay = require('delay');
-const {EventEmitter} = require('events');
-const extend = require('extend');
-const is = require('is');
+import {EventEmitter} from 'events';
+import * as extend from 'extend';
+import * as is from 'is';
 const proxyquire = require('proxyquire');
-const util = require('../src/util');
+import * as util from '../src/util';
 const pfy = require('@google-cloud/promisify');
 
 const fakeUtil = extend({}, util);
@@ -30,6 +30,13 @@ const fakeUtil = extend({}, util);
 let promisifyOverride;
 function fakePromisify() {
   return (promisifyOverride || pfy.promisify).apply(null, arguments);
+}
+
+let promisified = false;
+function fakePromisifyAll(klass) {
+  if (klass.name === 'Subscriber') {
+    promisified = true;
+  }
 }
 
 const FAKE_FREE_MEM = 168222720;
@@ -40,6 +47,7 @@ const fakeOs = {
 };
 
 class FakeConnectionPool extends EventEmitter {
+  calledWith_: IArguments;
   constructor() {
     super();
     this.calledWith_ = [].slice.call(arguments);
@@ -50,7 +58,7 @@ function FakeHistogram() {
   this.calledWith_ = [].slice.call(arguments);
 }
 
-let delayOverride = null;
+let delayOverride: any = null;
 
 function fakeDelay(timeout) {
   return (delayOverride || delay)(timeout);
@@ -67,6 +75,7 @@ describe('Subscriber', function() {
       '../src/util': fakeUtil,
       '@google-cloud/promisify': {
         promisify: fakePromisify,
+        promisifyAll: fakePromisifyAll,
       },
       delay: fakeDelay,
       os: fakeOs,
@@ -81,6 +90,10 @@ describe('Subscriber', function() {
   });
 
   describe('initialization', function() {
+    it('should promisify all the things', function() {
+      assert(promisified);
+    });
+
     it('should create a histogram instance', function() {
       assert(subscriber.histogram instanceof FakeHistogram);
     });
@@ -1325,7 +1338,7 @@ describe('Subscriber', function() {
         return fakeRandom;
       };
 
-      global.setTimeout = function(callback, duration) {
+      (global as any).setTimeout = function(callback, duration) {
         assert.strictEqual(duration, fakeRandom * ackDeadline * 0.9);
         setImmediate(callback); // the done fn
         return fakeTimeoutHandle;
@@ -1350,7 +1363,7 @@ describe('Subscriber', function() {
         return fakeRandom;
       };
 
-      global.setTimeout = function(callback, duration) {
+      (global as any).setTimeout = function(callback, duration) {
         assert.strictEqual(duration, fakeRandom * ackDeadline * 0.9 - latency);
         done();
       };
@@ -1395,7 +1408,7 @@ describe('Subscriber', function() {
 
   describe('writeTo_', function() {
     const CONNECTION_ID = 'abc';
-    const CONNECTION = {};
+    const CONNECTION: any = {};
 
     beforeEach(function() {
       subscriber.connectionPool = {

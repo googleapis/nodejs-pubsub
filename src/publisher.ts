@@ -16,11 +16,11 @@
 
 'use strict';
 
-const arrify = require('arrify');
-const {promisifyAll} = require('@google-cloud/promisify');
+import * as arrify from 'arrify';
+import {promisifyAll} from '@google-cloud/promisify';
 const each = require('async-each');
-const extend = require('extend');
-const is = require('is');
+import * as extend from 'extend';
+import * as is from 'is';
 
 /**
  * A Publisher object allows you to publish messages to a specific topic.
@@ -49,6 +49,11 @@ const is = require('is');
  * const publisher = topic.publisher();
  */
 class Publisher {
+  Promise;
+  topic;
+  inventory_;
+  settings;
+  timeoutHandle_;
   constructor(topic, options) {
     if (topic.Promise) {
       this.Promise = topic.Promise;
@@ -163,15 +168,18 @@ class Publisher {
     const opts = this.settings.batching;
     // if this message puts us over the maxBytes option, then let's ship
     // what we have and add it to the next batch
-    if (this.inventory_.bytes + data.length > opts.maxBytes) {
+    if (
+      this.inventory_.bytes > 0 &&
+      this.inventory_.bytes + data.length > opts.maxBytes
+    ) {
       this.publish_();
     }
     // add it to the queue!
     this.queue_(data, attributes, callback);
     // next lets check if this message brings us to the message cap or if we
-    // magically hit the max byte limit
+    // hit the max byte limit
     const hasMaxMessages = this.inventory_.queued.length === opts.maxMessages;
-    if (this.inventory_.bytes === opts.maxBytes || hasMaxMessages) {
+    if (this.inventory_.bytes >= opts.maxBytes || hasMaxMessages) {
       this.publish_();
       return;
     }

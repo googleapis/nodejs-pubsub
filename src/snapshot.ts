@@ -16,9 +16,9 @@
 
 'use strict';
 
-const util = require('./util');
-const {promisifyAll} = require('@google-cloud/promisify');
-const is = require('is');
+import * as util from './util';
+import {promisifyAll} from '@google-cloud/promisify';
+import * as is from 'is';
 
 /**
  * A Snapshot object will give you access to your Cloud Pub/Sub snapshot.
@@ -85,6 +85,11 @@ const is = require('is');
  * });
  */
 class Snapshot {
+  parent;
+  name;
+  Promise;
+  create;
+  seek;
   constructor(parent, name) {
     if (parent.Promise) {
       this.Promise = parent.Promise;

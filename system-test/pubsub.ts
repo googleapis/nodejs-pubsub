@@ -16,12 +16,12 @@
 
 'use strict';
 
-const assert = require('assert');
+import * as assert from 'assert';
 const async = require('async');
 const Subscription = require('../src/subscription.js');
-const uuid = require('uuid');
+import * as uuid from 'uuid';
 
-const PubSub = require('../');
+const PubSub = require('../src');
 const pubsub = new PubSub();
 
 describe('pubsub', function() {
@@ -135,7 +135,7 @@ describe('pubsub', function() {
     });
 
     it('should list topics in a stream', function(done) {
-      const topicsEmitted = [];
+      const topicsEmitted: any[] = [];
 
       pubsub
         .getTopicsStream()
@@ -162,7 +162,7 @@ describe('pubsub', function() {
         },
         function(err, topics) {
           assert.ifError(err);
-          assert(topics.length, TOPIC_NAMES.length - 1);
+          assert.strictEqual(topics.length, TOPIC_NAMES.length - 1);
           done();
         }
       );
@@ -330,7 +330,7 @@ describe('pubsub', function() {
     });
 
     it('should list all topic subscriptions as a stream', function(done) {
-      const subscriptionsEmitted = [];
+      const subscriptionsEmitted: {}[] = [];
 
       topic
         .getSubscriptionsStream()
@@ -650,7 +650,7 @@ describe('pubsub', function() {
     });
 
     it('should get a list of snapshots as a stream', function(done) {
-      const snapshots = [];
+      const snapshots: any[] = [];
 
       pubsub
         .getSnapshotsStream()

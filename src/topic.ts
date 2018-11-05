@@ -16,11 +16,11 @@
 
 'use strict';
 
-const util = require('./util');
-const {promisifyAll} = require('@google-cloud/promisify');
-const {paginator} = require('@google-cloud/paginator');
-const extend = require('extend');
-const is = require('is');
+import * as util from './util';
+import {promisifyAll} from '@google-cloud/promisify';
+import {paginator} from '@google-cloud/paginator';
+import * as extend from 'extend';
+import * as is from 'is';
 
 const IAM = require('./iam');
 const Publisher = require('./publisher');
@@ -39,6 +39,13 @@ const Publisher = require('./publisher');
  * const topic = pubsub.topic('my-topic');
  */
 class Topic {
+  Promise;
+  name;
+  parent;
+  pubsub;
+  request;
+  iam;
+  metadata;
   constructor(pubsub, name) {
     if (pubsub.Promise) {
       this.Promise = pubsub.Promise;
@@ -354,7 +361,7 @@ class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  getMetadata(gaxOpts, callback) {
+  getMetadata(gaxOpts, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
@@ -520,7 +527,7 @@ class Topic {
    *   // message.publishTime = Timestamp when Pub/Sub received the message.
    * });
    */
-  subscription(name, options) {
+  subscription(name, options?) {
     options = options || {};
     options.topic = this;
     return this.pubsub.subscription(name, options);
@@ -575,7 +582,7 @@ class Topic {
  *     this.end();
  *   });
  */
-Topic.prototype.getSubscriptionsStream = paginator.streamify(
+(Topic.prototype as any).getSubscriptionsStream = paginator.streamify(
   'getSubscriptions'
 );
 

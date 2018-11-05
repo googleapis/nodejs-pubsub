@@ -14,10 +14,4 @@
  * limitations under the License.
  */
 
-'use strict';
-
-const util = {
-  noop: function() {},
-};
-
-module.exports = util;
+export function noop() {};

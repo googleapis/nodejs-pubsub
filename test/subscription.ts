@@ -16,19 +16,19 @@
 
 'use strict';
 
-const assert = require('assert');
-const util = require('../src/util');
-const extend = require('extend');
-const proxyquire = require('proxyquire');
-const pfy = require('@google-cloud/promisify');
+import * as assert from 'assert';
+import * as util from '../src/util';
+import * as extend from 'extend';
+import * as proxyquire from 'proxyquire';
+import * as pfy from '@google-cloud/promisify';
+import * as sinon from 'sinon';
 
 let promisified = false;
 const fakePromisify = extend({}, pfy, {
-  promisifyAll: function(Class, options) {
-    if (Class.name !== 'Subscription') {
+  promisifyAll: (klass, options) => {
+    if (klass.name !== 'Subscription') {
       return;
     }
-
     promisified = true;
     assert.deepStrictEqual(options.exclude, ['snapshot']);
   },
@@ -38,8 +38,12 @@ function FakeIAM() {
   this.calledWith_ = [].slice.call(arguments);
 }
 
-function FakeSnapshot() {
-  this.calledWith_ = [].slice.call(arguments);
+class FakeSnapshot {
+  calledWith_: IArguments;
+  static formatName_?: Function;
+  constructor() {
+    this.calledWith_ = [].slice.call(arguments);
+  }
 }
 
 function FakeSubscriber() {
@@ -47,14 +51,17 @@ function FakeSubscriber() {
 }
 
 describe('Subscription', function() {
-  let Subscription;
-  let subscription;
+  // tslint:disable-next-line no-any variable-name
+  let Subscription: any;
+  // tslint:disable-next-line no-any
+  let subscription: any;
 
   const PROJECT_ID = 'test-project';
   const SUB_NAME = 'test-subscription';
   const SUB_FULL_NAME = 'projects/' + PROJECT_ID + '/subscriptions/' + SUB_NAME;
 
-  const PUBSUB = {
+  // tslint:disable-next-line no-any
+  const PUBSUB: any = {
     projectId: PROJECT_ID,
     Promise: {},
     request: util.noop,
@@ -69,10 +76,13 @@ describe('Subscription', function() {
     });
   });
 
+  const sandbox = sinon.createSandbox();
   beforeEach(function() {
-    PUBSUB.request = util.noop = function() {};
+    PUBSUB.request = util.noop;
     subscription = new Subscription(PUBSUB, SUB_NAME);
   });
+
+  afterEach(() => sandbox.restore());
 
   describe('initialization', function() {
     it('should promisify all the things', function() {
@@ -147,7 +157,7 @@ describe('Subscription', function() {
       const subscription = new Subscription(PUBSUB, SUB_NAME, options);
 
       assert(subscription instanceof FakeSubscriber);
-      assert(subscription.calledWith_[0], options);
+      assert.strictEqual(subscription.calledWith_[0], options);
     });
   });
 
@@ -324,12 +334,11 @@ describe('Subscription', function() {
       });
 
       it('should optionally accept a callback', function(done) {
-        util.noop = function(err, resp) {
+        sandbox.stub(util, 'noop').callsFake((err, resp) => {
           assert.ifError(err);
           assert.strictEqual(resp, apiResponse);
           done();
-        };
-
+        });
         subscription.delete();
       });
 
