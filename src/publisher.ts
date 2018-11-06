@@ -48,8 +48,8 @@ import { Topic } from './topic';
  * const publisher = topic.publisher();
  */
 export class Publisher {
-  Promise;
-  topic;
+  Promise?: PromiseConstructor;
+  topic: Topic;
   inventory_;
   settings;
   timeoutHandle_;
@@ -148,7 +148,7 @@ export class Publisher {
    * //-
    * publisher.publish(data).then((messageId) => {});
    */
-  publish(data, attributes, callback?) {
+  publish(data: Buffer, attributes, callback?) {
     if (!(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
     }

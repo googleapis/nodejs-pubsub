@@ -17,7 +17,7 @@
 import * as assert from 'assert';
 import * as async from 'async';
 import * as uuid from 'uuid';
-import {PubSub, Subscription} from '../src';
+import {PubSub, Subscription, Topic} from '../src';
 
 const pubsub = new PubSub();
 
@@ -48,7 +48,7 @@ describe('pubsub', function() {
     return 'test-topic-' + uuid.v4();
   }
 
-  function getTopicName(topic) {
+  function getTopicName(topic: Topic) {
     return topic.name.split('/').pop();
   }
 
