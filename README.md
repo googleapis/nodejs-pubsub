@@ -37,7 +37,7 @@
 
 ```javascript
 // Imports the Google Cloud client library
-const PubSub = require('@google-cloud/pubsub');
+const {PubSub} = require('@google-cloud/pubsub');
 
 // Your Google Cloud Platform project ID
 const projectId = 'YOUR_PROJECT_ID';

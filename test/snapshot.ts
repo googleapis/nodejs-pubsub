@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as assert from 'assert';
 import * as util from '../src/util';
 import * as extend from 'extend';
@@ -55,7 +53,7 @@ describe('Snapshot', function() {
   before(function() {
     Snapshot = proxyquire('../src/snapshot', {
       '@google-cloud/promisify': fakePromisify,
-    });
+    }).Snapshot;
   });
 
   const sandbox = sinon.createSandbox();

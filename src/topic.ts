@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as util from './util';
 import {promisifyAll} from '@google-cloud/promisify';
 import {paginator} from '@google-cloud/paginator';
 import * as extend from 'extend';
 import * as is from 'is';
 
-const IAM = require('./iam');
-const Publisher = require('./publisher');
+import {IAM} from './iam';
+import {Publisher} from './publisher';
+import { PubSub } from '.';
+import { Readable } from 'stream';
 
 /**
  * A Topic object allows you to interact with a Cloud Pub/Sub topic.
@@ -33,20 +33,21 @@ const Publisher = require('./publisher');
  * @param {string} name Name of the topic.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * const topic = pubsub.topic('my-topic');
  */
-class Topic {
-  Promise;
-  name;
+export class Topic {
+  Promise?: PromiseConstructor;
+  name: string;
   parent;
-  pubsub;
+  pubsub: PubSub;
   request;
-  iam;
+  iam: IAM;
   metadata;
-  constructor(pubsub, name) {
+  getSubscriptionsStream = paginator.streamify('getSubscriptions') as () => Readable;
+  constructor(pubsub: PubSub, name: string) {
     if (pubsub.Promise) {
       this.Promise = pubsub.Promise;
     }
@@ -88,7 +89,7 @@ class Topic {
      * @see [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
      *
      * @example
-     * const PubSub = require('@google-cloud/pubsub');
+     * const {PubSub} = require('@google-cloud/pubsub');
      * const pubsub = new PubSub();
      *
      * const topic = pubsub.topic('my-topic');
@@ -119,7 +120,7 @@ class Topic {
    * @returns {Promise<CreateTopicResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -138,7 +139,7 @@ class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  create(gaxOpts, callback) {
+  create(gaxOpts, callback?) {
     this.pubsub.createTopic(this.name, gaxOpts, callback);
   }
   /**
@@ -155,7 +156,7 @@ class Topic {
    * @returns {Promise<CreateSubscriptionResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -177,7 +178,7 @@ class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  createSubscription(name, options, callback) {
+  createSubscription(name, options, callback?) {
     this.pubsub.createSubscription(this, name, options, callback);
   }
   /**
@@ -193,7 +194,7 @@ class Topic {
    * @param {object} callback.apiResponse Raw API response.
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -207,7 +208,7 @@ class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  delete(gaxOpts, callback) {
+  delete(gaxOpts, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
@@ -242,7 +243,7 @@ class Topic {
    * @returns {Promise<TopicExistsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -291,7 +292,7 @@ class Topic {
    * @returns {Promise<GetTopicResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -347,7 +348,7 @@ class Topic {
    * @returns {Promise<GetTopicMetadataResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -398,7 +399,7 @@ class Topic {
    * @returns {Promise<GetSubscriptionsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -419,7 +420,7 @@ class Topic {
    *   const subscriptions = data[0];
    * });
    */
-  getSubscriptions(options, callback) {
+  getSubscriptions(options, callback?) {
     const self = this;
     if (is.fn(options)) {
       callback = options;
@@ -473,7 +474,7 @@ class Topic {
    * @return {Publisher}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -485,7 +486,7 @@ class Topic {
    *   }
    * });
    */
-  publisher(options) {
+  publisher(options?) {
     return new Publisher(this, options);
   }
   /**
@@ -511,7 +512,7 @@ class Topic {
    * @return {Subscription}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -540,7 +541,7 @@ class Topic {
    *
    * @return {string}
    */
-  static formatName_(projectId, name) {
+  static formatName_(projectId: string, name: string) {
     // Simple check if the name is already formatted.
     if (name.indexOf('/') > -1) {
       return name;
@@ -559,7 +560,7 @@ class Topic {
  * @returns {ReadableStream} A readable stream of {@link Subscription} instances.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * const topic = pubsub.topic('my-topic');
@@ -582,9 +583,6 @@ class Topic {
  *     this.end();
  *   });
  */
-(Topic.prototype as any).getSubscriptionsStream = paginator.streamify(
-  'getSubscriptions'
-);
 
 /*! Developer Documentation
  *
@@ -600,5 +598,3 @@ paginator.extend(Topic, ['getSubscriptions']);
 promisifyAll(Topic, {
   exclude: ['publisher', 'subscription'],
 });
-
-module.exports = Topic;
