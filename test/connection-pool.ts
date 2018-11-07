@@ -120,7 +120,7 @@ describe('ConnectionPool', function() {
       },
       duplexify: fakeDuplexify,
       uuid: fakeUuid,
-    });
+    }).ConnectionPool;
   });
 
   beforeEach(function() {
@@ -1040,24 +1040,27 @@ describe('ConnectionPool', function() {
   describe('getClient', function() {
     const fakeCreds = {};
 
-    function FakeSubscriber(address, creds, options) {
-      this.address = address;
-      this.creds = creds;
-      this.options = options;
-      this.closed = false;
+    class FakeSubscriber {
+      address;
+      creds;
+      options;
+      closed;
+      constructor(address, creds, options) {
+        this.address = address;
+        this.creds = creds;
+        this.options = options;
+        this.closed = false;
+      }
+      streamingPull() {
+        return fakeConnection;
+      }
+      getChannel() {
+        return fakeChannel;
+      }
+      close() {
+        this.closed = true;
+      }
     }
-
-    FakeSubscriber.prototype.streamingPull = function() {
-      return fakeConnection;
-    };
-
-    FakeSubscriber.prototype.getChannel = function() {
-      return fakeChannel;
-    };
-
-    FakeSubscriber.prototype.close = function() {
-      this.closed = true;
-    };
 
     const fakeClient = new FakeSubscriber('fake-address', fakeCreds, {});
 

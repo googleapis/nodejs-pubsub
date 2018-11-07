@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as arrify from 'arrify';
 import * as assert from 'assert';
 import * as extend from 'extend';
@@ -24,6 +22,7 @@ import * as proxyquire from 'proxyquire';
 import * as util from '../src/util';
 import * as pjy from '@google-cloud/projectify';
 import * as promisify from '@google-cloud/promisify';
+import * as subby from '../src/subscription';
 
 const PKG = require('../../package.json');
 
@@ -43,7 +42,7 @@ const fakeGoogleGax = {
   },
 };
 
-const SubscriptionCached = require('../src/subscription');
+const SubscriptionCached = subby.Subscription;
 let SubscriptionOverride;
 
 function Subscription(a, b, c) {
@@ -70,15 +69,22 @@ const fakePromisify = extend({}, promisify, {
 
 let pjyOverride;
 function fakePjy() {
-  return (pjyOverride || pjy.replaceProjectIdToken).apply(this, arguments);
+  return (pjyOverride || pjy.replaceProjectIdToken).apply(null, arguments);
 }
 
-function FakeSnapshot() {
-  this.calledWith_ = arguments;
+class FakeSnapshot {
+  calledWith_: IArguments;
+  constructor() {
+    this.calledWith_ = arguments;
+  }
 }
 
-function FakeTopic() {
-  this.calledWith_ = arguments;
+class FakeTopic {
+  calledWith_: IArguments;
+  getSubscriptions?: Function;
+  constructor() {
+    this.calledWith_ = arguments;
+  }
 }
 
 let extended = false;
@@ -151,11 +157,11 @@ describe('PubSub', function() {
         GoogleAuth: fakeGoogleAuth,
       },
       'google-gax': fakeGoogleGax,
-      './snapshot': FakeSnapshot,
-      './subscription': Subscription,
-      './topic': FakeTopic,
+      './snapshot': {Snapshot: FakeSnapshot},
+      './subscription': {Subscription: Subscription},
+      './topic': {Topic: FakeTopic},
       './v1': v1Override,
-    });
+    }).PubSub;
   });
 
   after(function() {

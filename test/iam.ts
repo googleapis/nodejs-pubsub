@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as assert from 'assert';
 import * as extend from 'extend';
-const proxyquire = require('proxyquire');
+import * as proxyquire from 'proxyquire';
 import * as util from '../src/util';
-const promisify = require('@google-cloud/promisify');
+import * as promisify from '@google-cloud/promisify';
 
 let promisified = false;
 const fakePromisify = extend({}, promisify, {
@@ -45,7 +43,7 @@ describe('IAM', function() {
   before(function() {
     IAM = proxyquire('../src/iam.js', {
       '@google-cloud/promisify': fakePromisify,
-    });
+    }).IAM;
   });
 
   beforeEach(function() {

@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as assert from 'assert';
-const async = require('async');
-const Subscription = require('../src/subscription.js');
+import * as async from 'async';
 import * as uuid from 'uuid';
+import {PubSub, Subscription} from '../src';
 
-const PubSub = require('../src');
 const pubsub = new PubSub();
 
 describe('pubsub', function() {
@@ -135,9 +132,11 @@ describe('pubsub', function() {
     });
 
     it('should list topics in a stream', function(done) {
+      // tslint:disable-next-line no-any
       const topicsEmitted: any[] = [];
 
-      pubsub
+      // tslint:disable-next-line no-any
+      (pubsub as any)
         .getTopicsStream()
         .on('error', done)
         .on('data', function(topic) {
@@ -332,6 +331,7 @@ describe('pubsub', function() {
     it('should list all topic subscriptions as a stream', function(done) {
       const subscriptionsEmitted: {}[] = [];
 
+      // tslint:disable-next-line no-any
       topic
         .getSubscriptionsStream()
         .on('error', done)
@@ -605,7 +605,8 @@ describe('pubsub', function() {
     let snapshot;
 
     function deleteAllSnapshots() {
-      return pubsub.getSnapshots().then(function(data) {
+      // tslint:disable-next-line no-any
+      return (pubsub.getSnapshots() as any).then(function(data) {
         return Promise.all(
           data[0].map(function(snapshot) {
             return snapshot.delete();

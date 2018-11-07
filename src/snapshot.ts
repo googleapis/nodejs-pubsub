@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as util from './util';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as is from 'is';
@@ -84,12 +82,13 @@ import * as is from 'is';
  *   }
  * });
  */
-class Snapshot {
+export class Snapshot {
   parent;
   name;
   Promise;
   create;
   seek;
+  metadata;
   constructor(parent, name) {
     if (parent.Promise) {
       this.Promise = parent.Promise;
@@ -213,5 +212,3 @@ class Snapshot {
  * that a callback is omitted.
  */
 promisifyAll(Snapshot);
-
-module.exports = Snapshot;

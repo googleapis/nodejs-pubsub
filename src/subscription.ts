@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as util from './util';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import * as is from 'is';
 const snakeCase = require('lodash.snakecase');
 
-const IAM = require('./iam');
-const Snapshot = require('./snapshot');
-const Subscriber = require('./subscriber');
+import {IAM} from './iam';
+import {Snapshot} from './snapshot';
+import {Subscriber} from './subscriber';
+import { PubSub } from '.';
 
 /**
  * A Subscription object will give you access to your Cloud Pub/Sub
@@ -77,7 +76,7 @@ const Subscriber = require('./subscriber');
  *     connections to be used when sending and receiving messages. Default: 5.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * //-
@@ -140,7 +139,13 @@ const Subscriber = require('./subscriber');
  * // Remove the listener from receiving `message` events.
  * subscription.removeListener('message', onMessage);
  */
-class Subscription extends Subscriber {
+export class Subscription extends Subscriber {
+  Promise?: PromiseConstructor;
+  pubsub: PubSub;
+  projectId: string;
+  create!: Function;
+  iam: IAM;
+  metadata;
   constructor(pubsub, name, options) {
     options = options || {};
     super(options);
@@ -212,7 +217,7 @@ class Subscription extends Subscriber {
    * @returns {Promise<CreateSnapshotResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -278,7 +283,7 @@ class Subscription extends Subscriber {
    * @param {object} callback.apiResponse Raw API response.
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -293,7 +298,7 @@ class Subscription extends Subscriber {
    *   const apiResponse = data[0];
    * });
    */
-  delete(gaxOpts, callback) {
+  delete(gaxOpts, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
@@ -334,7 +339,7 @@ class Subscription extends Subscriber {
    * @returns {Promise<SubscriptionExistsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -384,7 +389,7 @@ class Subscription extends Subscriber {
    * @returns {Promise<GetSubscriptionResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -439,7 +444,7 @@ class Subscription extends Subscriber {
    * @returns {Promise<GetSubscriptionMetadataResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -458,7 +463,7 @@ class Subscription extends Subscriber {
    *   const apiResponse = data[0];
    * });
    */
-  getMetadata(gaxOpts, callback?) {
+  getMetadata(gaxOpts?, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
@@ -503,7 +508,7 @@ class Subscription extends Subscriber {
    * @returns {Promise<ModifyPushConfigResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -645,7 +650,7 @@ class Subscription extends Subscriber {
    *   const apiResponse = data[0];
    * });
    */
-  setMetadata(metadata, gaxOpts, callback) {
+  setMetadata(metadata, gaxOpts?, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
@@ -729,5 +734,3 @@ class Subscription extends Subscriber {
 promisifyAll(Subscription, {
   exclude: ['snapshot'],
 });
-
-module.exports = Subscription;

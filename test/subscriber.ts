@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as assert from 'assert';
 const delay = require('delay');
 import {EventEmitter} from 'events';
 import * as extend from 'extend';
 import * as is from 'is';
-const proxyquire = require('proxyquire');
+import * as proxyquire from 'proxyquire';
 import * as util from '../src/util';
-const pfy = require('@google-cloud/promisify');
+import * as pfy from '@google-cloud/promisify';
 
 const fakeUtil = extend({}, util);
 
@@ -54,8 +52,11 @@ class FakeConnectionPool extends EventEmitter {
   }
 }
 
-function FakeHistogram() {
-  this.calledWith_ = [].slice.call(arguments);
+class FakeHistogram {
+  calledWith_: IArguments;
+  constructor() {
+    this.calledWith_ = [].slice.call(arguments);
+  }
 }
 
 let delayOverride: any = null;
@@ -79,9 +80,9 @@ describe('Subscriber', function() {
       },
       delay: fakeDelay,
       os: fakeOs,
-      './connection-pool.js': FakeConnectionPool,
-      './histogram.js': FakeHistogram,
-    });
+      './connection-pool.js': {ConnectionPool: FakeConnectionPool},
+      './histogram.js': {Histogram: FakeHistogram},
+    }).Subscriber;
   });
 
   beforeEach(function() {
