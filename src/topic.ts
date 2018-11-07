@@ -41,9 +41,9 @@ import { Readable } from 'stream';
 export class Topic {
   Promise?: PromiseConstructor;
   name: string;
-  parent;
+  parent: PubSub;
   pubsub: PubSub;
-  request;
+  request: typeof PubSub.prototype.request;
   iam: IAM;
   metadata;
   getSubscriptionsStream = paginator.streamify('getSubscriptions') as () => Readable;
@@ -178,7 +178,7 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  createSubscription(name, options, callback?) {
+  createSubscription(name: string, options, callback?) {
     this.pubsub.createSubscription(this, name, options, callback);
   }
   /**

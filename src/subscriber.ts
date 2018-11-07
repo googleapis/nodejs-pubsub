@@ -26,6 +26,7 @@ import * as os from 'os';
 
 import {ConnectionPool} from './connection-pool';
 import {Histogram} from './histogram';
+import { Subscription } from '.';
 
 /**
  * @type {number} - The maximum number of ackIds to be sent in acknowledge/modifyAckDeadline
@@ -389,7 +390,8 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   openConnection_() {
-    const pool = (this.connectionPool = new ConnectionPool(this));
+    // TODO: fixup this cast
+    const pool = (this.connectionPool = new ConnectionPool(this as {} as Subscription));
     this.isOpen = true;
     pool.on('error', err => {
       this.emit('error', err);
@@ -477,7 +479,7 @@ export class Subscriber extends EventEmitter {
         }
         // we can ignore any errors that come from this since they'll be
         // re-emitted later
-        connection.write(data, err => {
+        connection!.write(data, err => {
           if (!err) {
             this.latency_.add(Date.now() - startTime);
           }
