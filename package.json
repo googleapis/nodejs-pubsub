@@ -94,7 +94,7 @@
     "lodash.merge": "^4.6.0",
     "lodash.snakecase": "^4.1.1",
     "protobufjs": "^6.8.1",
-    "through2": "^2.0.3",
+    "through2": "^3.0.0",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
