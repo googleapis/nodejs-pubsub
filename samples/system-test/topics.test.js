@@ -17,7 +17,7 @@
 
 const path = require(`path`);
 const {PubSub} = require('@google-cloud/pubsub');
-const test = require(`ava`);
+const assert = require(`assert`);
 const tools = require(`@google-cloud/nodejs-repo-tools`);
 const uuid = require(`uuid`);
 

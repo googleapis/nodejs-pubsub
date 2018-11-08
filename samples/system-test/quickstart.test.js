@@ -18,7 +18,7 @@
 const proxyquire = require('proxyquire').noPreserveCache();
 const {PubSub} = proxyquire('@google-cloud/pubsub', {});
 const sinon = require('sinon');
-const test = require('ava');
+const assert = require('assert');
 const tools = require('@google-cloud/nodejs-repo-tools');
 const uuid = require('uuid');
 
