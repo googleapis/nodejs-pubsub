@@ -16,7 +16,6 @@
 
 import * as util from './util';
 import {promisifyAll} from '@google-cloud/promisify';
-import * as extend from 'extend';
 import * as is from 'is';
 const snakeCase = require('lodash.snakecase');
 
@@ -695,7 +694,7 @@ export class Subscription extends Subscriber {
    * @private
    */
   static formatMetadata_(metadata) {
-    const formatted = extend({}, metadata);
+    const formatted = Object.assign({}, metadata);
     if (metadata.messageRetentionDuration) {
       formatted.retainAckedMessages = true;
       formatted.messageRetentionDuration = {

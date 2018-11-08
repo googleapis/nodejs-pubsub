@@ -16,13 +16,12 @@
 
 import * as assert from 'assert';
 import * as util from '../src/util';
-import * as extend from 'extend';
 import * as proxyquire from 'proxyquire';
 import * as pfy from '@google-cloud/promisify';
 import * as sinon from 'sinon';
 
 let promisified = false;
-const fakePromisify = extend({}, pfy, {
+const fakePromisify = Object.assign({}, pfy, {
   promisifyAll: (klass, options) => {
     if (klass.name !== 'Subscription') {
       return;
@@ -735,7 +734,7 @@ describe('Subscription', function() {
 
     beforeEach(function() {
       Subscription.formatMetadata_ = function(metadata) {
-        return extend({}, metadata);
+        return Object.assign({}, metadata);
       };
     });
 
@@ -746,7 +745,7 @@ describe('Subscription', function() {
         },
       };
 
-      const expectedBody = extend(
+      const expectedBody = Object.assign(
         {
           name: SUB_FULL_NAME,
         },
