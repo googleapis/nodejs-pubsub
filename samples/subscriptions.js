@@ -26,7 +26,7 @@
 async function listSubscriptions() {
   // [START pubsub_list_subscriptions]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -42,7 +42,7 @@ async function listSubscriptions() {
 async function listTopicSubscriptions(topicName) {
   // [START pubsub_list_topic_subscriptions]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -63,7 +63,7 @@ async function listTopicSubscriptions(topicName) {
 async function createSubscription(topicName, subscriptionName) {
   // [START pubsub_create_pull_subscription]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -89,7 +89,7 @@ async function createFlowControlledSubscription(
 ) {
   // [START pubsub_subscriber_flow_settings]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -130,7 +130,7 @@ async function createFlowControlledSubscription(
 async function createPushSubscription(topicName, subscriptionName) {
   // [START pubsub_create_push_subscription]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -158,7 +158,7 @@ async function createPushSubscription(topicName, subscriptionName) {
 async function modifyPushConfig(topicName, subscriptionName) {
   // [START pubsub_update_push_configuration]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -187,7 +187,7 @@ async function modifyPushConfig(topicName, subscriptionName) {
 async function deleteSubscription(subscriptionName) {
   // [START pubsub_delete_subscription]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -206,7 +206,7 @@ async function deleteSubscription(subscriptionName) {
 
 async function getSubscription(subscriptionName) {
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -228,7 +228,7 @@ function listenForMessages(subscriptionName, timeout) {
   // [START pubsub_subscriber_async_pull]
   // [START pubsub_quickstart_subscriber]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -284,94 +284,71 @@ async function synchronousPull(projectName, subscriptionName) {
   );
   // The maximum number of messages returned for this request.
   // Pub/Sub may return fewer than the number specified.
-  const maxMessages = 3;
-  const ackDeadlineSeconds = 30;
+  const maxMessages = 1;
+  const newAckDeadlineSeconds = 30;
   const request = {
     subscription: formattedSubscription,
     maxMessages: maxMessages,
   };
-  // `messages` is a dict that stores message ack ids as keys, and message
-  // data and the processing states (true if done, false if not) as values.
-  const messages = {};
 
-  // The worker function takes a message and starts a long-running process.
+  let isProcessed = false;
+
+  // The worker function is meant to be non-blocking. It starts a long-
+  // running process, such as writing the message to a table, which may
+  // take longer than the default 10-sec acknowledge deadline.
   function worker(message) {
-    const target = Math.floor(Math.random() * 1e5);
-    console.log(`Processing "${message.message.data}" for ${target / 1e3}s...`);
+    console.log(`Processing "${message.message.data}"...`);
 
     setTimeout(() => {
       console.log(`Finished procesing "${message.message.data}".`);
-      // After the message has been processed, set its processing state to true.
-      messages[message.ackId][1] = true;
-    }, target);
+      isProcessed = true;
+    }, 30000);
   }
 
-  // The subscriber pulls a specific number of messages.
+  // The subscriber pulls a specified number of messages.
   const [response] = await client.pull(request);
-  // Initialize `messages` with message ackId, message data and `false` as
-  // processing state. Then, start each message in a worker function.
-  response.receivedMessages.forEach(message => {
-    messages[message.ackId] = [message.message.data, false];
-    worker(message);
-  });
+  // Obtain the first message.
+  const message = response.receivedMessages[0];
+  // Send the message to the worker function.
+  worker(message);
 
-  let numProcessed = 0;
-
-  // setTimeout() gets run every 10s.
+  // setInterval() checks the worker process every 5 sec.
+  // If the pre-set ack deadline is n sec, it is best to
+  // set the interval to be every (n/2) sec.
   let waiting = true;
   while (waiting) {
     await new Promise(r => setTimeout(r, 10000));
-    // Every 10s, we do a check on the processing states of the messages.
-    Object.keys(messages).map(async ackId => {
-      console.log(ackId);
-      if (messages[ackId][1]) {
-        // If the processing state for a particular message is true,
-        // We will ack the message.
-        const ackRequest = {
-          subscription: formattedSubscription,
-          ackIds: [ackId],
-        };
+    // If the message has been processed..
+    if (isProcessed) {
+      const ackRequest = {
+        subscription: formattedSubscription,
+        ackIds: [message.ackId],
+      };
 
-        await client.acknowledge(ackRequest).catch(err => {
-          console.error(err);
-        });
+      //..acknowledges the message.
+      await client.acknowledge(ackRequest);
+      console.log(`Acknowledged: "${message.message.data}".`);
+      // Exit after the message is acknowledged.
+      waiting = false;
+      console.log(`Done.`);
+    } else {
+      // If the message is not yet processed..
+      const modifyAckRequest = {
+        subscription: formattedSubscription,
+        ackIds: [message.ackId],
+        ackDeadlineSeconds: newAckDeadlineSeconds,
+      };
 
-        console.log(`Acknowledged: "${messages[ackId][0]}".`);
+      //..reset its ack deadline.
+      await client.modifyAckDeadline(modifyAckRequest);
 
-        // Increment numProcessed by 1.
-        numProcessed += 1;
-
-        // Remove this message from `messages`.
-        delete messages[ackId];
-      } else {
-        // If the processing state of a particular message remains false,
-        // we will modify its ack deadline.
-        const modifyAckRequest = {
-          subscription: formattedSubscription,
-          ackIds: [ackId],
-          ackDeadlineSeconds: ackDeadlineSeconds,
-        };
-
-        await client.modifyAckDeadline(modifyAckRequest).catch(err => {
-          console.error(err);
-        });
-
-        console.log(
-          `Reset ack deadline for "${
-            messages[ackId][0]
-          }" for ${ackDeadlineSeconds}s.`
-        );
-      }
-
-      // If all messages have been processed, we clear out of the interval.
-      if (numProcessed === response.receivedMessages.length) {
-        waiting = false;
-        console.log(`Done.`);
-        return;
-      }
-    });
+      console.log(
+        `Reset ack deadline for "${
+          message.message.data
+        }" for ${newAckDeadlineSeconds}s.`
+      );
+    }
   }
-
   // [END pubsub_subscriber_sync_pull]
 }
 
@@ -390,7 +367,7 @@ const outstandingMessages = {};
 
 async function listenForOrderedMessages(subscriptionName, timeout) {
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -449,7 +426,7 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
 async function listenForErrors(subscriptionName, timeout) {
   // [START pubsub_subscriber_error_listener]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -492,7 +469,7 @@ async function listenForErrors(subscriptionName, timeout) {
 async function getSubscriptionPolicy(subscriptionName) {
   // [START pubsub_get_subscription_policy]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -512,7 +489,7 @@ async function getSubscriptionPolicy(subscriptionName) {
 async function setSubscriptionPolicy(subscriptionName) {
   // [START pubsub_set_subscription_policy]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();
@@ -550,7 +527,7 @@ async function setSubscriptionPolicy(subscriptionName) {
 async function testSubscriptionPermissions(subscriptionName) {
   // [START pubsub_test_subscription_permissions]
   // Imports the Google Cloud client library
-  const PubSub = require(`@google-cloud/pubsub`);
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client
   const pubsub = new PubSub();

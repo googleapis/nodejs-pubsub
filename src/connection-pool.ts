@@ -18,10 +18,14 @@ import {replaceProjectIdToken} from '@google-cloud/projectify';
 const duplexify = require('duplexify');
 const each = require('async-each');
 import {EventEmitter} from 'events';
-import * as is from 'is';
 import * as through from 'through2';
 import * as uuid from 'uuid';
 import * as util from './util';
+import { Subscription } from './subscription';
+import { PubSub } from '.';
+import { Duplex } from 'stream';
+import { StatusObject } from 'grpc';
+import { Subscriber } from './subscriber';
 
 const CHANNEL_READY_EVENT = 'channel.ready';
 const CHANNEL_ERROR_EVENT = 'channel.error';
@@ -49,6 +53,16 @@ const RETRY_CODES = [
   15, // dataloss
 ];
 
+export interface ConnectionPoolSettings {
+  maxConnections: number;
+  ackDeadline: number;
+}
+
+export type ConnectionResponse = [Duplex];
+export interface ConnectionCallback {
+  (err: Error|null, connection?: Duplex): void;
+}
+
 /*!
  * ConnectionPool is used to manage the stream connections created via
  * StreamingPull rpc.
@@ -61,20 +75,20 @@ const RETRY_CODES = [
  * @param {number} [options.ackDeadline] The ack deadline to send when
  *     creating a connection.
  */
-class ConnectionPool extends EventEmitter {
-  subscription;
-  pubsub;
-  connections;
-  isPaused;
-  isOpen;
-  isGettingChannelState;
-  failedConnectionAttempts;
-  noConnectionsTime;
-  settings;
-  queue;
-  keepAliveHandle;
-  client;
-  constructor(subscription) {
+export class ConnectionPool extends EventEmitter {
+  subscription: Subscription;
+  pubsub: PubSub;
+  connections: Map<string, Duplex>;
+  isPaused: boolean;
+  isOpen: boolean;
+  isGettingChannelState: boolean;
+  failedConnectionAttempts: number;
+  noConnectionsTime: number;
+  settings: ConnectionPoolSettings;
+  queue: NodeJS.Timer[];
+  keepAliveHandle?: NodeJS.Timer;
+  client?: Subscriber|null;
+  constructor(subscription: Subscription) {
     super();
     this.subscription = subscription;
     this.pubsub = subscription.pubsub;
@@ -103,21 +117,23 @@ class ConnectionPool extends EventEmitter {
    *     connection.
    * @param {stream} callback.connection A duplex stream.
    */
-  acquire(id, callback) {
-    if (is.fn(id)) {
-      callback = id;
-      id = null;
-    }
+  acquire(id?: string): Promise<ConnectionResponse>;
+  acquire(id: string, callback: ConnectionCallback): void;
+  acquire(callback: ConnectionCallback): void;
+  acquire(idOrCallback?: string|ConnectionCallback, cb?: ConnectionCallback): void|Promise<ConnectionResponse> {
+    let id = typeof idOrCallback === 'string' ? idOrCallback : null;
+    const callback = typeof idOrCallback === 'function' ? idOrCallback : cb!;
+
     if (!this.isOpen) {
       callback(new Error('No connections available to make request.'));
       return;
     }
     // it's possible that by the time a user acks the connection could have
     // closed, so in that case we'll just return any connection
-    if (!this.connections.has(id)) {
+    if (!this.connections.has(id!)) {
       id = this.connections.keys().next().value;
     }
-    const connection = this.connections.get(id);
+    const connection = this.connections.get(id!);
     if (connection) {
       callback(null, connection);
       return;
@@ -137,7 +153,7 @@ class ConnectionPool extends EventEmitter {
   close(callback) {
     const connections = Array.from(this.connections.values());
     callback = callback || util.noop;
-    clearInterval(this.keepAliveHandle);
+    clearInterval(this.keepAliveHandle!);
     this.connections.clear();
     this.queue.forEach(clearTimeout);
     this.queue.length = 0;
@@ -345,7 +361,8 @@ class ConnectionPool extends EventEmitter {
     const interator = this.connections.values();
     let connection = interator.next().value;
     while (connection) {
-      if (connection.isConnected) {
+      // tslint:disable-next-line no-any
+      if ((connection as any).isConnected) {
         return true;
       }
       connection = interator.next().value;
@@ -416,7 +433,7 @@ class ConnectionPool extends EventEmitter {
    *
    * @private
    */
-  resume() {
+  resume(): void {
     this.isPaused = false;
     this.connections.forEach(connection => {
       connection.resume();
@@ -427,7 +444,7 @@ class ConnectionPool extends EventEmitter {
    *
    * @private
    */
-  sendKeepAlives() {
+  sendKeepAlives(): void {
     this.connections.forEach(connection => {
       connection.write({});
     });
@@ -440,7 +457,7 @@ class ConnectionPool extends EventEmitter {
    * @param {object} status The gRPC status object.
    * @return {boolean}
    */
-  shouldReconnect(status) {
+  shouldReconnect(status: StatusObject): boolean {
     // If the pool was closed, we should definitely not reconnect
     if (!this.isOpen) {
       return false;
@@ -458,5 +475,3 @@ class ConnectionPool extends EventEmitter {
     return true;
   }
 }
-
-module.exports = ConnectionPool;

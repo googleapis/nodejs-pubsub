@@ -17,7 +17,7 @@
 
 // [START pubsub_quickstart_create_topic]
 // Imports the Google Cloud client library
-const PubSub = require('@google-cloud/pubsub');
+const {PubSub} = require('@google-cloud/pubsub');
 
 async function quickstart() {
   // Your Google Cloud Platform project ID

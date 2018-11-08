@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as arrify from 'arrify';
 const chunk = require('lodash.chunk');
 import * as util from './util';
@@ -26,8 +24,9 @@ import * as extend from 'extend';
 import * as is from 'is';
 import * as os from 'os';
 
-const ConnectionPool = require('./connection-pool');
-const Histogram = require('./histogram');
+import {ConnectionPool} from './connection-pool';
+import {Histogram} from './histogram';
+import { Subscription } from '.';
 
 /**
  * @type {number} - The maximum number of ackIds to be sent in acknowledge/modifyAckDeadline
@@ -44,23 +43,23 @@ const MAX_ACK_IDS_PER_REQUEST = 3000;
  *
  * @param {object} options Configuration object.
  */
-class Subscriber extends EventEmitter {
-  histogram;
-  latency_;
-  connectionPool;
-  ackDeadline;
-  maxConnections;
+export class Subscriber extends EventEmitter {
+  histogram: Histogram;
+  latency_: Histogram;
+  connectionPool: ConnectionPool|null;
+  ackDeadline: number;
+  maxConnections: number;
   inventory_;
   flowControl;
   batching;
   flushTimeoutHandle_;
   leaseTimeoutHandle_;
-  userClosed_;
-  isOpen;
+  userClosed_: boolean;
+  isOpen: boolean;
   messageListeners;
   writeToStreams_;
   request;
-  name;
+  name?: string;
 
   constructor(options) {
     super();
@@ -194,7 +193,7 @@ class Subscriber extends EventEmitter {
    * //-
    * Subscriber.close().then(() => {});
    */
-  close(callback) {
+  close(callback?) {
     this.userClosed_ = true;
     const inventory = this.inventory_;
     inventory.lease.length = inventory.bytes = 0;
@@ -391,7 +390,8 @@ class Subscriber extends EventEmitter {
    * @private
    */
   openConnection_() {
-    const pool = (this.connectionPool = new ConnectionPool(this));
+    // TODO: fixup this cast
+    const pool = (this.connectionPool = new ConnectionPool(this as {} as Subscription));
     this.isOpen = true;
     pool.on('error', err => {
       this.emit('error', err);
@@ -472,14 +472,14 @@ class Subscriber extends EventEmitter {
   writeTo_(connId, data) {
     const startTime = Date.now();
     return new Promise((resolve, reject) => {
-      this.connectionPool.acquire(connId, (err, connection) => {
+      this.connectionPool!.acquire(connId, (err, connection) => {
         if (err) {
           reject(err);
           return;
         }
         // we can ignore any errors that come from this since they'll be
         // re-emitted later
-        connection.write(data, err => {
+        connection!.write(data, err => {
           if (!err) {
             this.latency_.add(Date.now() - startTime);
           }
@@ -496,5 +496,3 @@ class Subscriber extends EventEmitter {
  * that a callback is omitted.
  */
 promisifyAll(Subscriber);
-
-module.exports = Subscriber;

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as util from './util';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as is from 'is';
+import { PubSub } from '.';
 
 /**
  * A Snapshot object will give you access to your Cloud Pub/Sub snapshot.
@@ -84,13 +83,14 @@ import * as is from 'is';
  *   }
  * });
  */
-class Snapshot {
+export class Snapshot {
   parent;
-  name;
-  Promise;
+  name: string;
+  Promise?: PromiseConstructor;
   create;
   seek;
-  constructor(parent, name) {
+  metadata;
+  constructor(parent, name: string) {
     if (parent.Promise) {
       this.Promise = parent.Promise;
     }
@@ -202,7 +202,7 @@ class Snapshot {
    *
    * @private
    */
-  static formatName_(projectId, name) {
+  static formatName_(projectId: string, name: string) {
     return 'projects/' + projectId + '/snapshots/' + name.split('/').pop();
   }
 }
@@ -213,5 +213,3 @@ class Snapshot {
  * that a callback is omitted.
  */
 promisifyAll(Snapshot);
-
-module.exports = Snapshot;

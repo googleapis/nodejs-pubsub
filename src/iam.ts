@@ -18,11 +18,10 @@
  * @module pubsub/iam
  */
 
-'use strict';
-
 import * as arrify from 'arrify';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as is from 'is';
+import { PubSub } from '.';
 
 /**
  * [IAM (Identity and Access Management)](https://cloud.google.com/pubsub/access_control)
@@ -53,7 +52,7 @@ import * as is from 'is';
  * @see [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * const topic = pubsub.topic('my-topic');
@@ -62,12 +61,12 @@ import * as is from 'is';
  * const subscription = pubsub.subscription('my-subscription');
  * // subscription.iam
  */
-class IAM {
-  Promise;
-  pubsub;
-  request;
-  id;
-  constructor(pubsub, id) {
+export class IAM {
+  Promise?: PromiseConstructor;
+  pubsub: PubSub;
+  request: typeof PubSub.prototype.request;
+  id: string;
+  constructor(pubsub: PubSub, id: string) {
     if (pubsub.Promise) {
       this.Promise = pubsub.Promise;
     }
@@ -98,7 +97,7 @@ class IAM {
    * @see [Subscriptions: getIamPolicy API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/getIamPolicy}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -116,7 +115,7 @@ class IAM {
    *   const apiResponse = data[1];
    * });
    */
-  getPolicy(gaxOpts, callback) {
+  getPolicy(gaxOpts, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = null;
@@ -164,7 +163,7 @@ class IAM {
    * @see [Policy]{@link https://cloud.google.com/pubsub/docs/reference/rest/Shared.Types/Policy}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -191,7 +190,7 @@ class IAM {
    *   const apiResponse = data[1];
    * });
    */
-  setPolicy(policy, gaxOpts, callback) {
+  setPolicy(policy, gaxOpts, callback?) {
     if (!is.object(policy)) {
       throw new Error('A policy object is required.');
     }
@@ -242,7 +241,7 @@ class IAM {
    * @see [Permissions Reference]{@link https://cloud.google.com/pubsub/access_control#permissions}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -284,7 +283,7 @@ class IAM {
    *   const apiResponse = data[1];
    * });
    */
-  testPermissions(permissions, gaxOpts, callback) {
+  testPermissions(permissions: string|string[], gaxOpts, callback?) {
     if (!is.array(permissions) && !is.string(permissions)) {
       throw new Error('Permissions are required.');
     }
@@ -309,7 +308,7 @@ class IAM {
           return;
         }
         const availablePermissions = arrify(resp.permissions);
-        const permissionHash = permissions.reduce(function(acc, permission) {
+        const permissionHash = (permissions as string[]).reduce(function(acc, permission) {
           acc[permission] = availablePermissions.indexOf(permission) > -1;
           return acc;
         }, {});
@@ -325,5 +324,3 @@ class IAM {
  * that a callback is omitted.
  */
 promisifyAll(IAM);
-
-module.exports = IAM;

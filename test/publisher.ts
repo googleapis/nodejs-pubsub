@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as assert from 'assert';
 import * as util from '../src/util';
-const pfy = require('@google-cloud/promisify');
+import * as pfy from '@google-cloud/promisify';
 import * as extend from 'extend';
-const proxyquire = require('proxyquire');
+import * as proxyquire from 'proxyquire';
 
 let promisified = false;
 const fakePromisify = extend({}, pfy, {
@@ -47,7 +45,7 @@ describe('Publisher', function() {
   before(function() {
     Publisher = proxyquire('../src/publisher.js', {
       '@google-cloud/promisify': fakePromisify,
-    });
+    }).Publisher;
   });
 
   beforeEach(function() {

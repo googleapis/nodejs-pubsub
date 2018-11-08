@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as arrify from 'arrify';
 import {promisifyAll} from '@google-cloud/promisify';
 const each = require('async-each');
 import * as extend from 'extend';
 import * as is from 'is';
+import { Topic } from './topic';
 
 /**
  * A Publisher object allows you to publish messages to a specific topic.
@@ -42,19 +41,19 @@ import * as is from 'is';
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * const topic = pubsub.topic('my-topic');
  * const publisher = topic.publisher();
  */
-class Publisher {
-  Promise;
-  topic;
+export class Publisher {
+  Promise?: PromiseConstructor;
+  topic: Topic;
   inventory_;
   settings;
   timeoutHandle_;
-  constructor(topic, options) {
+  constructor(topic: Topic, options) {
     if (topic.Promise) {
       this.Promise = topic.Promise;
     }
@@ -118,7 +117,7 @@ class Publisher {
    * @returns {Promise<PublisherPublishResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
@@ -149,7 +148,7 @@ class Publisher {
    * //-
    * publisher.publish(data).then((messageId) => {});
    */
-  publish(data, attributes, callback) {
+  publish(data: Buffer, attributes, callback?) {
     if (!(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
     }
@@ -252,5 +251,3 @@ class Publisher {
 promisifyAll(Publisher, {
   singular: true,
 });
-
-module.exports = Publisher;

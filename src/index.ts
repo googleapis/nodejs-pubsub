@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {paginator} from '@google-cloud/paginator';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
-const gax = require('google-gax');
-const {grpc} = new gax.GrpcClient();
+import * as gax from 'google-gax';
 import * as is from 'is';
 
 const PKG = require('../../package.json');
 const v1 = require('./v1');
 
-const Snapshot = require('./snapshot');
-const Subscription = require('./subscription');
-const Topic = require('./topic');
+import {Snapshot} from './snapshot';
+import {Subscription} from './subscription';
+import {Topic} from './topic';
+import { Readable } from 'stream';
+
+const opts = {} as gax.GrpcClientOptions;
+const {grpc} = new gax.GrpcClient(opts);
 
 /**
  * @type {string} - Project ID placeholder.
@@ -78,7 +79,7 @@ const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
  * @param {ClientConfig} [options] Configuration options.
  *
  * @example <caption>Import the client library</caption>
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  *
  * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
  * const pubsub = new PubSub();
@@ -93,14 +94,16 @@ const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
  * region_tag:pubsub_quickstart_create_topic
  * Full quickstart example:
  */
-class PubSub {
+export class PubSub {
   options;
-  isEmulator;
+  isEmulator: boolean;
   api;
-  auth;
-  projectId;
-  Promise;
-  constructor(options) {
+  auth: GoogleAuth;
+  projectId: string;
+  Promise?: PromiseConstructor;
+  getSubscriptionsStream = paginator.streamify('getSubscriptions') as () => Readable;
+  getSnapshotsStream = paginator.streamify('getSnapshots') as () => Readable;
+  constructor(options?) {
     options = options || {};
     // Determine what scopes are needed.
     // It is the union of the scopes on both clients.
@@ -189,7 +192,7 @@ class PubSub {
    * @returns {Promise<CreateSubscriptionResponse>}
    *
    * @example <caption>Subscribe to a topic.</caption>
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = 'messageCenter';
@@ -205,14 +208,14 @@ class PubSub {
    *   const apiResponse = data[1];
    * });
    */
-  createSubscription(topic, name, options, callback) {
+  createSubscription(topic: Topic|string, name: string, options, callback) {
     if (!is.string(topic) && !(topic instanceof Topic)) {
       throw new Error('A Topic is required for a new subscription.');
     }
     if (!is.string(name)) {
       throw new Error('A subscription name is required.');
     }
-    if (is.string(topic)) {
+    if (typeof topic === 'string') {
       topic = this.topic(topic);
     }
     if (is.fn(options)) {
@@ -268,7 +271,7 @@ class PubSub {
    * @returns {Promise<CreateTopicResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * pubsub.createTopic('my-new-topic', function(err, topic, apiResponse) {
@@ -285,7 +288,7 @@ class PubSub {
    *   const apiResponse = data[1];
    * });
    */
-  createTopic(name, gaxOpts, callback) {
+  createTopic(name: string, gaxOpts, callback?) {
     const topic = this.topic(name);
     const reqOpts = {
       name: topic.name,
@@ -366,7 +369,7 @@ class PubSub {
    * @returns {Promise<GetSnapshotsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * pubsub.getSnapshots(function(err, snapshots) {
@@ -382,7 +385,7 @@ class PubSub {
    *   const snapshots = data[0];
    * });
    */
-  getSnapshots(options, callback) {
+  getSnapshots(options?, callback?) {
     const self = this;
     if (is.fn(options)) {
       callback = options;
@@ -463,7 +466,7 @@ class PubSub {
    * @returns {Promise<GetSubscriptionsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * pubsub.getSubscriptions(function(err, subscriptions) {
@@ -479,7 +482,7 @@ class PubSub {
    *   const subscriptions = data[0];
    * });
    */
-  getSubscriptions(options, callback) {
+  getSubscriptions(options, callback?) {
     const self = this;
     if (is.fn(options)) {
       callback = options;
@@ -555,7 +558,7 @@ class PubSub {
    * @returns {Promise<GetTopicsResponse>}
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * pubsub.getTopics(function(err, topics) {
@@ -578,7 +581,7 @@ class PubSub {
    *   const topics = data[0];
    * });
    */
-  getTopics(options, callback) {
+  getTopics(options, callback?) {
     const self = this;
     if (is.fn(options)) {
       callback = options;
@@ -639,7 +642,7 @@ class PubSub {
           callback(err);
           return;
         }
-        self.projectId = projectId;
+        self.projectId = projectId!;
         self.getClient_(config, callback);
       });
       return;
@@ -685,12 +688,12 @@ class PubSub {
    * @returns {Snapshot} A {@link Snapshot} instance.
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const snapshot = pubsub.snapshot('my-snapshot');
    */
-  snapshot(name) {
+  snapshot(name: string) {
     if (!is.string(name)) {
       throw new Error('You must supply a valid name for the snapshot.');
     }
@@ -719,7 +722,7 @@ class PubSub {
    * @returns {Subscription} A {@link Subscription} instance.
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const subscription = pubsub.subscription('my-subscription');
@@ -734,7 +737,7 @@ class PubSub {
    *   // message.publishTime = Timestamp when Pub/Sub received the message.
    * });
    */
-  subscription(name, options?) {
+  subscription(name: string, options?) {
     if (!name) {
       throw new Error('A name must be specified for a subscription.');
     }
@@ -749,16 +752,16 @@ class PubSub {
    * @returns {Topic} A {@link Topic} instance.
    *
    * @example
-   * const PubSub = require('@google-cloud/pubsub');
+   * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
    */
-  topic(name, options?) {
+  topic(name: string) {
     if (!name) {
       throw new Error('A name must be specified for a topic.');
     }
-    return new Topic(this, name, options);
+    return new Topic(this, name);
   }
 }
 
@@ -771,7 +774,7 @@ class PubSub {
  * @returns {ReadableStream} A readable stream of {@link Snapshot} instances.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * pubsub.getSnapshotsStream()
@@ -792,7 +795,6 @@ class PubSub {
  *     this.end();
  *   });
  */
-(PubSub.prototype as any).getSnapshotsStream = paginator.streamify('getSnapshots');
 
 /**
  * Get a list of the {@link Subscription} objects registered to all of
@@ -804,7 +806,7 @@ class PubSub {
  * @returns {ReadableStream} A readable stream of {@link Subscription} instances.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * pubsub.getSubscriptionsStream()
@@ -825,9 +827,6 @@ class PubSub {
  *     this.end();
  *   });
  */
-(PubSub.prototype as any).getSubscriptionsStream = paginator.streamify(
-  'getSubscriptions'
-);
 
 /**
  * Get a list of the {module:pubsub/topic} objects registered to your project as
@@ -839,7 +838,7 @@ class PubSub {
  * @returns {ReadableStream} A readable stream of {@link Topic} instances.
  *
  * @example
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * pubsub.getTopicsStream()
@@ -877,6 +876,8 @@ promisifyAll(PubSub, {
   exclude: ['request', 'snapshot', 'subscription', 'topic'],
 });
 
+export {Subscription, Topic};
+
 /**
  * The default export of the `@google-cloud/pubsub` package is the
  * {@link PubSub} class.
@@ -891,7 +892,7 @@ promisifyAll(PubSub, {
  * npm install --save @google-cloud/pubsub
  *
  * @example <caption>Import the client library</caption>
- * const PubSub = require('@google-cloud/pubsub');
+ * const {PubSub} = require('@google-cloud/pubsub');
  *
  * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
  * const pubsub = new PubSub();
@@ -906,7 +907,6 @@ promisifyAll(PubSub, {
  * region_tag:pubsub_quickstart_create_topic
  * Full quickstart example:
  */
-module.exports = PubSub;
 
 /**
  * @name PubSub.v1

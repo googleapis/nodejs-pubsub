@@ -94,12 +94,14 @@
     "lodash.merge": "^4.6.0",
     "lodash.snakecase": "^4.1.1",
     "protobufjs": "^6.8.1",
-    "through2": "^2.0.3",
+    "through2": "^3.0.0",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^2.3.3",
     "@types/arrify": "^1.0.4",
+    "@types/async": "^2.0.50",
+    "@types/duplexify": "^3.6.0",
     "@types/extend": "^3.0.0",
     "@types/is": "0.0.20",
     "@types/mocha": "^5.2.5",
