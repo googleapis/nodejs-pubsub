@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import * as extend from 'extend';
-
 export interface HistogramOptions {
   min?: number;
   max?: number;
@@ -34,7 +32,7 @@ export class Histogram {
   data: Map<number, number>;
   length: number;
   constructor(options?: HistogramOptions) {
-    this.options = extend(
+    this.options = Object.assign(
       {
         min: 10000,
         max: 600000,

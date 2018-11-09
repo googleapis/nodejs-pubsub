@@ -16,7 +16,6 @@
 
 import * as arrify from 'arrify';
 import * as assert from 'assert';
-import * as extend from 'extend';
 import * as gax from 'google-gax';
 import * as proxyquire from 'proxyquire';
 import * as util from '../src/util';
@@ -51,7 +50,7 @@ function Subscription(a, b, c) {
 }
 
 let promisified = false;
-const fakePromisify = extend({}, promisify, {
+const fakePromisify = Object.assign({}, promisify, {
   promisifyAll: function(Class, options) {
     if (Class.name !== 'PubSub') {
       return;
@@ -235,7 +234,7 @@ describe('PubSub', function() {
       googleAuthOverride = function(options_) {
         assert.deepStrictEqual(
           options_,
-          extend(
+          Object.assign(
             {
               'grpc.max_receive_message_length': 20000001,
               'grpc.keepalive_time_ms': 300000,
@@ -256,7 +255,7 @@ describe('PubSub', function() {
     it('should localize the options provided', function() {
       assert.deepStrictEqual(
         pubsub.options,
-        extend(
+        Object.assign(
           {
             'grpc.max_receive_message_length': 20000001,
             'grpc.keepalive_time_ms': 300000,
@@ -289,7 +288,7 @@ describe('PubSub', function() {
 
   describe('createSubscription', function() {
     const TOPIC_NAME = 'topic';
-    const TOPIC = extend(new FakeTopic(), {
+    const TOPIC = Object.assign(new FakeTopic(), {
       name: 'projects/' + PROJECT_ID + '/topics/' + TOPIC_NAME,
     });
 
@@ -304,7 +303,7 @@ describe('PubSub', function() {
 
     beforeEach(function() {
       (Subscription as any).formatMetadata_ = function(metadata) {
-        return extend({}, metadata);
+        return Object.assign({}, metadata);
       };
     });
 
@@ -398,7 +397,7 @@ describe('PubSub', function() {
         pushEndpoint: 'https://domain/push',
       };
 
-      const expectedBody = extend(
+      const expectedBody = Object.assign(
         {
           topic: TOPIC.name,
           name: SUB_NAME,
@@ -712,11 +711,11 @@ describe('PubSub', function() {
         autoPaginate: false,
       };
 
-      const expectedOptions = extend({}, options, {
+      const expectedOptions = Object.assign({}, options, {
         project: 'projects/' + pubsub.projectId,
       });
 
-      const expectedGaxOpts = extend(
+      const expectedGaxOpts = Object.assign(
         {
           autoPaginate: options.autoPaginate,
         },
@@ -798,7 +797,7 @@ describe('PubSub', function() {
         autoPaginate: false,
       };
 
-      const expectedGaxOpts = extend(
+      const expectedGaxOpts = Object.assign(
         {
           autoPaginate: options.autoPaginate,
         },
@@ -926,11 +925,11 @@ describe('PubSub', function() {
         autoPaginate: false,
       };
 
-      const expectedOptions = extend({}, options, {
+      const expectedOptions = Object.assign({}, options, {
         project: 'projects/' + pubsub.projectId,
       });
 
-      const expectedGaxOpts = extend(
+      const expectedGaxOpts = Object.assign(
         {
           autoPaginate: options.autoPaginate,
         },

@@ -17,13 +17,12 @@
 import * as assert from 'assert';
 const delay = require('delay');
 import {EventEmitter} from 'events';
-import * as extend from 'extend';
 import * as is from 'is';
 import * as proxyquire from 'proxyquire';
 import * as util from '../src/util';
 import * as pfy from '@google-cloud/promisify';
 
-const fakeUtil = extend({}, util);
+const fakeUtil = Object.assign({}, util);
 
 let promisifyOverride;
 function fakePromisify() {

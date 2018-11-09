@@ -20,7 +20,6 @@ import * as util from './util';
 import {promisify, promisifyAll} from '@google-cloud/promisify';
 const delay = require('delay');
 import {EventEmitter} from 'events';
-import * as extend from 'extend';
 import * as is from 'is';
 import * as os from 'os';
 
@@ -75,14 +74,14 @@ export class Subscriber extends EventEmitter {
       nack: [],
       bytes: 0,
     };
-    this.flowControl = extend(
+    this.flowControl = Object.assign(
       {
         maxBytes: os.freemem() * 0.2,
         maxMessages: 100,
       },
       options.flowControl
     );
-    this.batching = extend(
+    this.batching = Object.assign(
       {
         maxMilliseconds: 100,
       },
