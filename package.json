@@ -65,7 +65,7 @@
     "uuid": "^3.1.0"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "^2.3.3",
+    "@google-cloud/nodejs-repo-tools": "^3.0.0",
     "@types/arrify": "^1.0.4",
     "@types/async": "^2.0.50",
     "@types/duplexify": "^3.6.0",
