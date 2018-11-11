@@ -55,7 +55,6 @@
     "extend": "^3.0.1",
     "google-auth-library": "^2.0.0",
     "google-gax": "^0.20.0",
-    "google-proto-files": "^0.17.0",
     "is": "^3.0.1",
     "lodash.chunk": "^4.2.0",
     "lodash.merge": "^4.6.0",
@@ -67,7 +66,6 @@
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^3.0.0",
     "@types/arrify": "^1.0.4",
-    "@types/async": "^2.0.50",
     "@types/duplexify": "^3.6.0",
     "@types/extend": "^3.0.0",
     "@types/is": "0.0.21",
@@ -76,7 +74,6 @@
     "@types/sinon": "^5.0.5",
     "@types/through2": "^2.0.34",
     "@types/uuid": "^3.4.4",
-    "async": "^2.6.0",
     "codecov": "^3.0.0",
     "eslint": "^5.0.0",
     "eslint-config-prettier": "^3.0.0",

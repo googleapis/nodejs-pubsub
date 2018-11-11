@@ -297,7 +297,7 @@ export class Subscription extends Subscriber {
    *   const apiResponse = data[0];
    * });
    */
-  delete(gaxOpts, callback?) {
+  delete(gaxOpts?, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
