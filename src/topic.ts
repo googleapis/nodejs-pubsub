@@ -138,7 +138,7 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  create(gaxOpts, callback?) {
+  create(gaxOpts?, callback?) {
     this.pubsub.createTopic(this.name, gaxOpts, callback);
   }
   /**
@@ -207,7 +207,7 @@ export class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  delete(gaxOpts, callback?) {
+  delete(gaxOpts?, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
