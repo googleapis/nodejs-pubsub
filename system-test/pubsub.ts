@@ -218,13 +218,13 @@ describe('pubsub', function() {
 
     after(() => {
       // Delete subscriptions
-      return SUBSCRIPTIONS.map(async s => {
+      return Promise.all(SUBSCRIPTIONS.map(async s => {
         try {
           await s.delete();
         } catch (e) {
           await topic.delete();
         }
-      });
+      }));
     });
 
     it('should return error if creating an existing subscription', function(done) {
