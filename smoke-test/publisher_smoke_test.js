@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+'use strict';
+
 describe('PublisherSmokeTest', () => {
   if (!process.env.GCLOUD_PROJECT) {
     throw new Error('Usage: GCLOUD_PROJECT=<project_id> node #{$0}');
