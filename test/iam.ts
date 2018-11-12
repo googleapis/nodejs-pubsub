@@ -15,13 +15,12 @@
  */
 
 import * as assert from 'assert';
-import * as extend from 'extend';
 import * as proxyquire from 'proxyquire';
 import * as util from '../src/util';
 import * as promisify from '@google-cloud/promisify';
 
 let promisified = false;
-const fakePromisify = extend({}, promisify, {
+const fakePromisify = Object.assign({}, promisify, {
   promisifyAll: function(Class) {
     if (Class.name === 'IAM') {
       promisified = true;

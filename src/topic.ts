@@ -17,7 +17,6 @@
 import * as util from './util';
 import {promisifyAll} from '@google-cloud/promisify';
 import {paginator} from '@google-cloud/paginator';
-import * as extend from 'extend';
 import * as is from 'is';
 
 import {IAM} from './iam';
@@ -426,7 +425,7 @@ export class Topic {
       callback = options;
       options = {};
     }
-    const reqOpts = extend(
+    const reqOpts = Object.assign(
       {
         topic: this.name,
       },
@@ -434,7 +433,7 @@ export class Topic {
     );
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
-    const gaxOpts = extend(
+    const gaxOpts = Object.assign(
       {
         autoPaginate: options.autoPaginate,
       },

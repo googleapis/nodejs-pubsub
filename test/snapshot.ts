@@ -16,13 +16,12 @@
 
 import * as assert from 'assert';
 import * as util from '../src/util';
-import * as extend from 'extend';
 import * as proxyquire from 'proxyquire';
 import * as pfy from '@google-cloud/promisify';
 import * as sinon from 'sinon';
 
 let promisified = false;
-const fakePromisify = extend({}, pfy, {
+const fakePromisify = Object.assign({}, pfy, {
   promisifyAll: function(Class) {
     if (Class.name === 'Snapshot') {
       promisified = true;

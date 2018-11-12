@@ -114,7 +114,7 @@ export class PubSub {
         allScopes[scope] = true;
       }
     }
-    this.options = extend(
+    this.options = Object.assign(
       {
         'grpc.keepalive_time_ms': 300000,
         'grpc.max_receive_message_length': 20000001,
@@ -225,7 +225,7 @@ export class PubSub {
     options = options || {};
     const metadata = Subscription.formatMetadata_(options);
     const subscription = this.subscription(name, metadata);
-    const reqOpts = extend(metadata, {
+    const reqOpts = Object.assign(metadata, {
       topic: topic.name,
       name: subscription.name,
     });
@@ -391,7 +391,7 @@ export class PubSub {
       callback = options;
       options = {};
     }
-    const reqOpts = extend(
+    const reqOpts = Object.assign(
       {
         project: 'projects/' + this.projectId,
       },
@@ -399,7 +399,7 @@ export class PubSub {
     );
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
-    const gaxOpts = extend(
+    const gaxOpts = Object.assign(
       {
         autoPaginate: options.autoPaginate,
       },
@@ -495,11 +495,11 @@ export class PubSub {
       }
       return topic.getSubscriptions(options, callback);
     }
-    const reqOpts = extend({}, options);
+    const reqOpts = Object.assign({}, options);
     reqOpts.project = 'projects/' + this.projectId;
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
-    const gaxOpts = extend(
+    const gaxOpts = Object.assign(
       {
         autoPaginate: options.autoPaginate,
       },
@@ -587,7 +587,7 @@ export class PubSub {
       callback = options;
       options = {};
     }
-    const reqOpts = extend(
+    const reqOpts = Object.assign(
       {
         project: 'projects/' + this.projectId,
       },
@@ -595,7 +595,7 @@ export class PubSub {
     );
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
-    const gaxOpts = extend(
+    const gaxOpts = Object.assign(
       {
         autoPaginate: options.autoPaginate,
       },

@@ -15,14 +15,13 @@
  */
 
  import * as assert from 'assert';
-import * as extend from 'extend';
 import * as proxyquire from 'proxyquire';
 import * as util from '../src/util';
 import * as pfy from '@google-cloud/promisify';
 import * as sinon from 'sinon';
 
 let promisified = false;
-const fakePromisify = extend({}, pfy, {
+const fakePromisify = Object.assign({}, pfy, {
   promisifyAll: (klass, options) => {
     if (klass.name !== 'Topic') {
       return;
@@ -433,14 +432,14 @@ describe('Topic', function() {
         autoPaginate: false,
       };
 
-      const expectedOptions = extend(
+      const expectedOptions = Object.assign(
         {
           topic: topic.name,
         },
         options
       );
 
-      const expectedGaxOpts = extend(
+      const expectedGaxOpts = Object.assign(
         {
           autoPaginate: options.autoPaginate,
         },
