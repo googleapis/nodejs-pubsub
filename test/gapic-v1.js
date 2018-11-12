@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as assert from 'assert';
-import * as through2 from 'through2';
+'use strict';
+
+const assert = require('assert');
+const through2 = require('through2');
 
 const pubsubModule = require('../src');
 
 const FAKE_STATUS_CODE = 1;
 const error = new Error();
-(error as any).code = FAKE_STATUS_CODE;
+error.code = FAKE_STATUS_CODE;
 
 describe('PublisherClient', () => {
   describe('createTopic', () => {
@@ -1870,7 +1872,7 @@ describe('SubscriberClient', () => {
   });
 });
 
-function mockSimpleGrpcMethod(expectedRequest, response?, error?) {
+function mockSimpleGrpcMethod(expectedRequest, response, error) {
   return function(actualRequest, options, callback) {
     assert.deepStrictEqual(actualRequest, expectedRequest);
     if (error) {
@@ -1883,7 +1885,7 @@ function mockSimpleGrpcMethod(expectedRequest, response?, error?) {
   };
 }
 
-function mockBidiStreamingGrpcMethod(expectedRequest, response, error?) {
+function mockBidiStreamingGrpcMethod(expectedRequest, response, error) {
   return () => {
     const mockStream = through2.obj((chunk, enc, callback) => {
       assert.deepStrictEqual(chunk, expectedRequest);
