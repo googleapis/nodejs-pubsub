@@ -9,6 +9,23 @@
 11-12-2018 17:25 PST
 
 ### Implementation Changes
+
+**BREAKING CHANGE**
+`@google-cloud/pubsub` now uses ES6 import/export syntax since v0.21.0.
+
+Before:
+```javascript
+const pubsub = require('@google-cloud/pubsub')();
+// OR
+const PubSub = require('@google-cloud/pubsub');
+const pubsub = new PubSub();
+```
+Now:
+```javascript
+const {PubSub} = require('@google-cloud/pubsub');
+const pubsub = new PubSub();
+```
+
 - refactor: use Object.assign where possible ([#324](https://github.com/googleapis/nodejs-pubsub/pull/324))
 - fix(subscription): promisify Subscription#close ([#282](https://github.com/googleapis/nodejs-pubsub/pull/282))
 - fix: maxBytes batching sending empty messages ([#281](https://github.com/googleapis/nodejs-pubsub/pull/281))
