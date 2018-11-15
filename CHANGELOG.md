@@ -4,6 +4,11 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.21.1
+
+### Bug fixes
+- fix: include protos in the package ([#336](https://github.com/googleapis/nodejs-pubsub/pull/336))
+
 ## v0.21.0
 
 11-12-2018 17:25 PST
