@@ -18,7 +18,6 @@ import * as assert from 'assert';
 import * as util from '../src/util';
 const duplexify = require('duplexify');
 import {EventEmitter} from 'events';
-import * as extend from 'extend';
 import * as proxyquire from 'proxyquire';
 import * as uuid from 'uuid';
 import * as pjy from '@google-cloud/projectify';
@@ -31,7 +30,7 @@ const fakeUtil = {
   }
 };
 
-const fakeUuid = extend({}, uuid);
+const fakeUuid = Object.assign({}, uuid);
 
 class FakeConnection extends EventEmitter {
   isConnected;
@@ -186,8 +185,8 @@ describe('ConnectionPool', function() {
         ackDeadline: 100,
       };
 
-      const subscription = extend({}, SUBSCRIPTION, options);
-      const subscriptionCopy = extend({}, subscription);
+      const subscription = Object.assign({}, SUBSCRIPTION, options);
+      const subscriptionCopy = Object.assign({}, subscription);
       const pool = new ConnectionPool(subscription);
 
       assert.deepStrictEqual(pool.settings, options);

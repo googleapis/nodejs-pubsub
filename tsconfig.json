@@ -8,7 +8,6 @@
   "include": [
     "src/*.ts",
     "test/*.ts",
-    "system-test/*.ts",
-    "smoke-test/*.ts"
+    "system-test/*.ts"
   ]
 }

@@ -19,8 +19,7 @@ import {paginator} from '@google-cloud/paginator';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
-const gax = require('google-gax');
-const {grpc} = new gax.GrpcClient();
+import * as gax from 'google-gax';
 import * as is from 'is';
 
 const PKG = require('../../package.json');
@@ -30,6 +29,9 @@ import {Snapshot} from './snapshot';
 import {Subscription} from './subscription';
 import {Topic} from './topic';
 import { Readable } from 'stream';
+
+const opts = {} as gax.GrpcClientOptions;
+const {grpc} = new gax.GrpcClient(opts);
 
 /**
  * @type {string} - Project ID placeholder.
@@ -112,7 +114,7 @@ export class PubSub {
         allScopes[scope] = true;
       }
     }
-    this.options = extend(
+    this.options = Object.assign(
       {
         'grpc.keepalive_time_ms': 300000,
         'grpc.max_receive_message_length': 20000001,
@@ -206,14 +208,14 @@ export class PubSub {
    *   const apiResponse = data[1];
    * });
    */
-  createSubscription(topic, name, options, callback) {
+  createSubscription(topic: Topic|string, name: string, options, callback) {
     if (!is.string(topic) && !(topic instanceof Topic)) {
       throw new Error('A Topic is required for a new subscription.');
     }
     if (!is.string(name)) {
       throw new Error('A subscription name is required.');
     }
-    if (is.string(topic)) {
+    if (typeof topic === 'string') {
       topic = this.topic(topic);
     }
     if (is.fn(options)) {
@@ -223,7 +225,7 @@ export class PubSub {
     options = options || {};
     const metadata = Subscription.formatMetadata_(options);
     const subscription = this.subscription(name, metadata);
-    const reqOpts = extend(metadata, {
+    const reqOpts = Object.assign(metadata, {
       topic: topic.name,
       name: subscription.name,
     });
@@ -286,7 +288,7 @@ export class PubSub {
    *   const apiResponse = data[1];
    * });
    */
-  createTopic(name, gaxOpts, callback?) {
+  createTopic(name: string, gaxOpts, callback?) {
     const topic = this.topic(name);
     const reqOpts = {
       name: topic.name,
@@ -389,7 +391,7 @@ export class PubSub {
       callback = options;
       options = {};
     }
-    const reqOpts = extend(
+    const reqOpts = Object.assign(
       {
         project: 'projects/' + this.projectId,
       },
@@ -397,7 +399,7 @@ export class PubSub {
     );
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
-    const gaxOpts = extend(
+    const gaxOpts = Object.assign(
       {
         autoPaginate: options.autoPaginate,
       },
@@ -493,11 +495,11 @@ export class PubSub {
       }
       return topic.getSubscriptions(options, callback);
     }
-    const reqOpts = extend({}, options);
+    const reqOpts = Object.assign({}, options);
     reqOpts.project = 'projects/' + this.projectId;
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
-    const gaxOpts = extend(
+    const gaxOpts = Object.assign(
       {
         autoPaginate: options.autoPaginate,
       },
@@ -585,7 +587,7 @@ export class PubSub {
       callback = options;
       options = {};
     }
-    const reqOpts = extend(
+    const reqOpts = Object.assign(
       {
         project: 'projects/' + this.projectId,
       },
@@ -593,7 +595,7 @@ export class PubSub {
     );
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
-    const gaxOpts = extend(
+    const gaxOpts = Object.assign(
       {
         autoPaginate: options.autoPaginate,
       },
@@ -691,7 +693,7 @@ export class PubSub {
    *
    * const snapshot = pubsub.snapshot('my-snapshot');
    */
-  snapshot(name) {
+  snapshot(name: string) {
     if (!is.string(name)) {
       throw new Error('You must supply a valid name for the snapshot.');
     }

@@ -15,9 +15,8 @@
  */
 
 import * as assert from 'assert';
-import * as async from 'async';
 import * as uuid from 'uuid';
-import {PubSub, Subscription} from '../src';
+import {PubSub, Subscription, Topic} from '../src';
 
 const pubsub = new PubSub();
 
@@ -48,71 +47,33 @@ describe('pubsub', function() {
     return 'test-topic-' + uuid.v4();
   }
 
-  function getTopicName(topic) {
+  function getTopicName(topic: Topic) {
     return topic.name.split('/').pop();
   }
 
-  function publishPop(message, options, callback) {
-    if (!callback) {
-      callback = options;
-      options = {};
-    }
-
-    options = options || {};
-
+  async function publishPop(message, options = {}) {
     const topic = pubsub.topic(generateTopicName());
     const publisher = topic.publisher();
     const subscription = topic.subscription(generateSubName());
-
-    async.series(
-      [
-        topic.create.bind(topic),
-        subscription.create.bind(subscription),
-        function(callback) {
-          async.times(
-            6,
-            function(_, callback) {
-              publisher.publish(Buffer.from(message), options, callback);
-            },
-            callback
-          );
-        },
-      ],
-      function(err) {
-        if (err) {
-          callback(err);
-          return;
-        }
-
-        subscription.on('error', callback);
-
-        subscription.once('message', function(message) {
-          callback(null, message);
-        });
-      }
-    );
+    await topic.create();
+    await subscription.create();
+    for (let i=0; i<6; i++) {
+      await publisher.publish(Buffer.from(message), options);
+    }
+    return new Promise((resolve, reject) => {
+      subscription.on('error', reject);
+      subscription.once('message', resolve);
+    });
   }
 
-  before(function(done) {
+  before(() => {
     // create all needed topics
-    async.each(
-      TOPICS,
-      function(topic, cb) {
-        topic.create(cb);
-      },
-      done
-    );
+    return Promise.all(TOPICS.map(t => t.create()));
   });
 
-  after(function(done) {
+  after(() => {
     // Delete topics
-    async.each(
-      TOPICS,
-      function(topic, callback) {
-        topic.delete(callback);
-      },
-      done
-    );
+    return Promise.all(TOPICS.map(t => t.delete()));
   });
 
   describe('Topic', function() {
@@ -213,20 +174,15 @@ describe('pubsub', function() {
       });
     });
 
-    it('should publish a message with attributes', function(done) {
+    it('should publish a message with attributes', async () => {
       const data = Buffer.from('raw message data');
       const attrs = {
         customAttribute: 'value',
       };
-
-      publishPop(data, attrs, function(err, message) {
-        assert.ifError(err);
-
-        assert.deepStrictEqual(message.data, data);
-        assert.deepStrictEqual(message.attributes, attrs);
-
-        done();
-      });
+      // tslint:disable-next-line no-any
+      const message: any = await publishPop(data, attrs);
+      assert.deepStrictEqual(message.data, data);
+      assert.deepStrictEqual(message.attributes, attrs);
     });
 
     it('should get the metadata of a topic', function(done) {
@@ -251,52 +207,24 @@ describe('pubsub', function() {
       topic.subscription(SUB_NAMES[1], {ackDeadline: 60000}),
     ];
 
-    before(function(done) {
-      topic.create(function(err) {
-        assert.ifError(err);
-
-        function createSubscription(subscription, callback) {
-          subscription.create(callback);
-        }
-
-        async.each(SUBSCRIPTIONS, createSubscription, function(err) {
-          if (err) {
-            done(err);
-            return;
-          }
-
-          async.times(
-            10,
-            function(_, next) {
-              publisher.publish(Buffer.from('hello'), next);
-            },
-            function(err) {
-              if (err) {
-                done(err);
-                return;
-              }
-
-              // Consistency delay for subscriptions to be returned via
-              // `topic.getSubscriptions`.
-              setTimeout(done, 2500);
-            }
-          );
-        });
-      });
+    before(async () => {
+      await topic.create();
+      await Promise.all(SUBSCRIPTIONS.map(s => s.create()));
+      for (let i=0; i<10; i++) {
+        await publisher.publish(Buffer.from('hello'));
+      }
+      await new Promise(r => setTimeout(r, 2500));
     });
 
-    after(function(done) {
+    after(() => {
       // Delete subscriptions
-      async.each(
-        SUBSCRIPTIONS,
-        function(sub, callback) {
-          sub.delete(callback);
-        },
-        function(err) {
-          assert.ifError(err);
-          topic.delete(done);
+      return Promise.all(SUBSCRIPTIONS.map(async s => {
+        try {
+          await s.delete();
+        } catch (e) {
+          await topic.delete();
         }
-      );
+      }));
     });
 
     it('should return error if creating an existing subscription', function(done) {
@@ -330,8 +258,6 @@ describe('pubsub', function() {
 
     it('should list all topic subscriptions as a stream', function(done) {
       const subscriptionsEmitted: {}[] = [];
-
-      // tslint:disable-next-line no-any
       topic
         .getSubscriptionsStream()
         .on('error', done)

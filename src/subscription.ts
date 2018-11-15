@@ -16,7 +16,6 @@
 
 import * as util from './util';
 import {promisifyAll} from '@google-cloud/promisify';
-import * as extend from 'extend';
 import * as is from 'is';
 const snakeCase = require('lodash.snakecase');
 
@@ -146,7 +145,7 @@ export class Subscription extends Subscriber {
   create!: Function;
   iam: IAM;
   metadata;
-  constructor(pubsub, name, options) {
+  constructor(pubsub: PubSub, name: string, options) {
     options = options || {};
     super(options);
     if (pubsub.Promise) {
@@ -298,7 +297,7 @@ export class Subscription extends Subscriber {
    *   const apiResponse = data[0];
    * });
    */
-  delete(gaxOpts, callback?) {
+  delete(gaxOpts?, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
@@ -686,7 +685,7 @@ export class Subscription extends Subscriber {
    * @example
    * const snapshot = subscription.snapshot('my-snapshot');
    */
-  snapshot(name) {
+  snapshot(name: string) {
     return this.pubsub.snapshot.call(this, name);
   }
   /*!
@@ -695,7 +694,7 @@ export class Subscription extends Subscriber {
    * @private
    */
   static formatMetadata_(metadata) {
-    const formatted = extend({}, metadata);
+    const formatted = Object.assign({}, metadata);
     if (metadata.messageRetentionDuration) {
       formatted.retainAckedMessages = true;
       formatted.messageRetentionDuration = {
@@ -717,7 +716,7 @@ export class Subscription extends Subscriber {
    *
    * @private
    */
-  static formatName_(projectId, name) {
+  static formatName_(projectId: string, name: string) {
     // Simple check if the name is already formatted.
     if (name.indexOf('/') > -1) {
       return name;

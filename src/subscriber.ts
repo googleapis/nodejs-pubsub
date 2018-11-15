@@ -20,12 +20,12 @@ import * as util from './util';
 import {promisify, promisifyAll} from '@google-cloud/promisify';
 const delay = require('delay');
 import {EventEmitter} from 'events';
-import * as extend from 'extend';
 import * as is from 'is';
 import * as os from 'os';
 
 import {ConnectionPool} from './connection-pool';
 import {Histogram} from './histogram';
+import { Subscription } from '.';
 
 /**
  * @type {number} - The maximum number of ackIds to be sent in acknowledge/modifyAckDeadline
@@ -75,14 +75,14 @@ export class Subscriber extends EventEmitter {
       delayedNack: [],
       bytes: 0,
     };
-    this.flowControl = extend(
+    this.flowControl = Object.assign(
       {
         maxBytes: os.freemem() * 0.2,
         maxMessages: 100,
       },
       options.flowControl
     );
-    this.batching = extend(
+    this.batching = Object.assign(
       {
         maxMilliseconds: 100,
       },
@@ -412,7 +412,8 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   openConnection_() {
-    const pool = (this.connectionPool = new ConnectionPool(this));
+    // TODO: fixup this cast
+    const pool = (this.connectionPool = new ConnectionPool(this as {} as Subscription));
     this.isOpen = true;
     pool.on('error', err => {
       this.emit('error', err);
@@ -500,7 +501,7 @@ export class Subscriber extends EventEmitter {
         }
         // we can ignore any errors that come from this since they'll be
         // re-emitted later
-        connection.write(data, err => {
+        connection!.write(data, err => {
           if (!err) {
             this.latency_.add(Date.now() - startTime);
           }

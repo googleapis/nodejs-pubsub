@@ -17,11 +17,10 @@
 import * as assert from 'assert';
 import * as util from '../src/util';
 import * as pfy from '@google-cloud/promisify';
-import * as extend from 'extend';
 import * as proxyquire from 'proxyquire';
 
 let promisified = false;
-const fakePromisify = extend({}, pfy, {
+const fakePromisify = Object.assign({}, pfy, {
   promisifyAll: function(Class, options) {
     if (Class.name === 'Publisher') {
       assert.deepStrictEqual(options, {singular: true});
@@ -90,7 +89,7 @@ describe('Publisher', function() {
           maxMessages: 11,
           maxMilliseconds: 12,
         };
-        const optionsCopy = extend({}, options);
+        const optionsCopy = Object.assign({}, options);
 
         const publisher = new Publisher(TOPIC, {
           batching: options,

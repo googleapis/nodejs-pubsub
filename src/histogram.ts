@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import * as extend from 'extend';
+export interface HistogramOptions {
+  min?: number;
+  max?: number;
+}
 
 /*!
  * The Histogram class is used to capture the lifespan of messages within the
@@ -25,11 +28,11 @@ import * as extend from 'extend';
  * @class
  */
 export class Histogram {
-  options;
-  data;
-  length;
-  constructor(options?) {
-    this.options = extend(
+  options: HistogramOptions;
+  data: Map<number, number>;
+  length: number;
+  constructor(options?: HistogramOptions) {
+    this.options = Object.assign(
       {
         min: 10000,
         max: 600000,
@@ -45,14 +48,14 @@ export class Histogram {
    * @private
    * @param {numnber} value - The value in milliseconds.
    */
-  add(value) {
-    value = Math.max(value, this.options.min);
-    value = Math.min(value, this.options.max);
+  add(value: number): void {
+    value = Math.max(value, this.options.min!);
+    value = Math.min(value, this.options.max!);
     value = Math.ceil(value / 1000) * 1000;
     if (!this.data.has(value)) {
       this.data.set(value, 0);
     }
-    const count = this.data.get(value);
+    const count = this.data.get(value)!;
     this.data.set(value, count + 1);
     this.length += 1;
   }
@@ -63,18 +66,18 @@ export class Histogram {
    * @param {number} percent The requested percentage.
    * @return {number}
    */
-  percentile(percent) {
+  percentile(percent: number): number {
     percent = Math.min(percent, 100);
     let target = this.length - this.length * (percent / 100);
     const keys = Array.from(this.data.keys());
     let key;
     for (let i = keys.length - 1; i > -1; i--) {
       key = keys[i];
-      target -= this.data.get(key);
+      target -= this.data.get(key)!;
       if (target <= 0) {
         return key;
       }
     }
-    return this.options.min;
+    return this.options.min!;
   }
 }

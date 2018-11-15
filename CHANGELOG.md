@@ -4,6 +4,93 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.21.1
+
+### Bug fixes
+- fix: include protos in the package ([#336](https://github.com/googleapis/nodejs-pubsub/pull/336))
+
+## v0.21.0
+
+11-12-2018 17:25 PST
+
+### Implementation Changes
+
+**BREAKING CHANGE**
+`@google-cloud/pubsub` now uses ES6 import/export syntax since v0.21.0.
+
+Before:
+```javascript
+const pubsub = require('@google-cloud/pubsub')();
+// OR
+const PubSub = require('@google-cloud/pubsub');
+const pubsub = new PubSub();
+```
+Now:
+```javascript
+const {PubSub} = require('@google-cloud/pubsub');
+const pubsub = new PubSub();
+```
+
+- refactor: use Object.assign where possible ([#324](https://github.com/googleapis/nodejs-pubsub/pull/324))
+- fix(subscription): promisify Subscription#close ([#282](https://github.com/googleapis/nodejs-pubsub/pull/282))
+- fix: maxBytes batching sending empty messages ([#281](https://github.com/googleapis/nodejs-pubsub/pull/281))
+- (New) Synchronous Pull with Lease Management  ([#272](https://github.com/googleapis/nodejs-pubsub/pull/272))
+- Switch to let/const ([#254](https://github.com/googleapis/nodejs-pubsub/pull/254))
+
+#### Road to TypeScript
+- refactor(ts): introduce a round of types ([#319](https://github.com/googleapis/nodejs-pubsub/pull/319))
+- refactor(ts): enable noImplicitThis ([#316](https://github.com/googleapis/nodejs-pubsub/pull/316))
+- refactor(ts): convert to typescript ([#310](https://github.com/googleapis/nodejs-pubsub/pull/310))
+
+### New Features
+- feat: add expiration policy ([#287](https://github.com/googleapis/nodejs-pubsub/pull/287))
+
+### Dependencies
+- chore(deps): update dependency eslint-plugin-prettier to v3 ([#274](https://github.com/googleapis/nodejs-pubsub/pull/274))
+- fix(deps): update dependency google-proto-files to ^0.17.0 ([#284](https://github.com/googleapis/nodejs-pubsub/pull/284))
+- chore(deps): update dependency sinon to v7 ([#285](https://github.com/googleapis/nodejs-pubsub/pull/285))
+- chore(deps): update dependency eslint-plugin-node to v8 ([#300](https://github.com/googleapis/nodejs-pubsub/pull/300))
+- fix(deps): update dependency through2 to v3 ([#320](https://github.com/googleapis/nodejs-pubsub/pull/320))
+- refactor: drop dependencies on google-proto-files and async ([#329](https://github.com/googleapis/nodejs-pubsub/pull/329))
+- chore(deps): update dependency @google-cloud/nodejs-repo-tools to v3 ([#328](https://github.com/googleapis/nodejs-pubsub/pull/328))
+- chore(deps): update dependency @types/is to v0.0.21 ([#323](https://github.com/googleapis/nodejs-pubsub/pull/323))
+- fix(deps): update dependency google-gax to ^0.20.0 ([#252](https://github.com/googleapis/nodejs-pubsub/pull/252))
+
+### Documentation
+- fix quickstart tag in v0.20 docs ([#271](https://github.com/googleapis/nodejs-pubsub/pull/271))
+
+### Samples
+- Pub/Sub Synchronous Pull Example ([#259](https://github.com/googleapis/nodejs-pubsub/pull/259))
+- Update sample topic and subscription names
+-  Add Pub/Sub ack deadline example ([#315](https://github.com/googleapis/nodejs-pubsub/pull/315))
+- docs(samples): update samples to use async/await ([#305](https://github.com/googleapis/nodejs-pubsub/pull/305))
+- chore: adjust samples timeout ([#283](https://github.com/googleapis/nodejs-pubsub/pull/283))
+- Fix the topic name in the samples ([#262](https://github.com/googleapis/nodejs-pubsub/pull/262))
+
+### Internal / Testing Changes
+- chore: update eslintignore config ([#332](https://github.com/googleapis/nodejs-pubsub/pull/332))
+- chore(build): eslint all js files, and use js for all generated files ([#331](https://github.com/googleapis/nodejs-pubsub/pull/331))
+- chore: drop contributors from multiple places ([#325](https://github.com/googleapis/nodejs-pubsub/pull/325))
+- chore: use latest npm on Windows ([#322](https://github.com/googleapis/nodejs-pubsub/pull/322))
+- chore: update CircleCI config ([#309](https://github.com/googleapis/nodejs-pubsub/pull/309))
+- chore: include build in eslintignore ([#304](https://github.com/googleapis/nodejs-pubsub/pull/304))
+- chore: update issue templates ([#299](https://github.com/googleapis/nodejs-pubsub/pull/299))
+- chore: remove old issue template ([#297](https://github.com/googleapis/nodejs-pubsub/pull/297))
+- build: run tests on node11 ([#296](https://github.com/googleapis/nodejs-pubsub/pull/296))
+- chores(build): do not collect sponge.xml from windows builds ([#295](https://github.com/googleapis/nodejs-pubsub/pull/295))
+- chores(build): run codecov on continuous builds ([#294](https://github.com/googleapis/nodejs-pubsub/pull/294))
+- chore: update new issue template ([#293](https://github.com/googleapis/nodejs-pubsub/pull/293))
+- build: fix codecov uploading on Kokoro ([#286](https://github.com/googleapis/nodejs-pubsub/pull/286))
+- Update kokoro config ([#275](https://github.com/googleapis/nodejs-pubsub/pull/275))
+- Update Kokoro configs ([#270](https://github.com/googleapis/nodejs-pubsub/pull/270))
+- Update kokoro config ([#269](https://github.com/googleapis/nodejs-pubsub/pull/269))
+- test: remove appveyor config ([#268](https://github.com/googleapis/nodejs-pubsub/pull/268))
+- Update CI config ([#266](https://github.com/googleapis/nodejs-pubsub/pull/266))
+- Run prettier on smoke tests ([#265](https://github.com/googleapis/nodejs-pubsub/pull/265))
+- Fix the linter ([#261](https://github.com/googleapis/nodejs-pubsub/pull/261))
+- Enable prefer-const in the eslint config ([#260](https://github.com/googleapis/nodejs-pubsub/pull/260))
+- Enable no-var in eslint ([#257](https://github.com/googleapis/nodejs-pubsub/pull/257))
+
 ## v0.20.1
 
 ### Documentation

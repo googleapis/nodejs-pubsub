@@ -17,7 +17,6 @@
 import * as util from './util';
 import {promisifyAll} from '@google-cloud/promisify';
 import {paginator} from '@google-cloud/paginator';
-import * as extend from 'extend';
 import * as is from 'is';
 
 import {IAM} from './iam';
@@ -41,9 +40,9 @@ import { Readable } from 'stream';
 export class Topic {
   Promise?: PromiseConstructor;
   name: string;
-  parent;
+  parent: PubSub;
   pubsub: PubSub;
-  request;
+  request: typeof PubSub.prototype.request;
   iam: IAM;
   metadata;
   getSubscriptionsStream = paginator.streamify('getSubscriptions') as () => Readable;
@@ -139,7 +138,7 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  create(gaxOpts, callback?) {
+  create(gaxOpts?, callback?) {
     this.pubsub.createTopic(this.name, gaxOpts, callback);
   }
   /**
@@ -178,7 +177,7 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  createSubscription(name, options, callback?) {
+  createSubscription(name: string, options, callback?) {
     this.pubsub.createSubscription(this, name, options, callback);
   }
   /**
@@ -208,7 +207,7 @@ export class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  delete(gaxOpts, callback?) {
+  delete(gaxOpts?, callback?) {
     if (is.fn(gaxOpts)) {
       callback = gaxOpts;
       gaxOpts = {};
@@ -426,7 +425,7 @@ export class Topic {
       callback = options;
       options = {};
     }
-    const reqOpts = extend(
+    const reqOpts = Object.assign(
       {
         topic: this.name,
       },
@@ -434,7 +433,7 @@ export class Topic {
     );
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
-    const gaxOpts = extend(
+    const gaxOpts = Object.assign(
       {
         autoPaginate: options.autoPaginate,
       },

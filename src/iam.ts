@@ -21,6 +21,7 @@
 import * as arrify from 'arrify';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as is from 'is';
+import { PubSub } from '.';
 
 /**
  * [IAM (Identity and Access Management)](https://cloud.google.com/pubsub/access_control)
@@ -61,11 +62,11 @@ import * as is from 'is';
  * // subscription.iam
  */
 export class IAM {
-  Promise;
-  pubsub;
-  request;
-  id;
-  constructor(pubsub, id) {
+  Promise?: PromiseConstructor;
+  pubsub: PubSub;
+  request: typeof PubSub.prototype.request;
+  id: string;
+  constructor(pubsub: PubSub, id: string) {
     if (pubsub.Promise) {
       this.Promise = pubsub.Promise;
     }
@@ -282,7 +283,7 @@ export class IAM {
    *   const apiResponse = data[1];
    * });
    */
-  testPermissions(permissions, gaxOpts, callback?) {
+  testPermissions(permissions: string|string[], gaxOpts, callback?) {
     if (!is.array(permissions) && !is.string(permissions)) {
       throw new Error('Permissions are required.');
     }
@@ -307,7 +308,7 @@ export class IAM {
           return;
         }
         const availablePermissions = arrify(resp.permissions);
-        const permissionHash = permissions.reduce(function(acc, permission) {
+        const permissionHash = (permissions as string[]).reduce(function(acc, permission) {
           acc[permission] = availablePermissions.indexOf(permission) > -1;
           return acc;
         }, {});
