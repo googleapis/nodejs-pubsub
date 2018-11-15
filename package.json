@@ -10,7 +10,7 @@
   "repository": "googleapis/nodejs-pubsub",
   "main": "./build/src/index.js",
   "files": [
-    "protos",
+    "build/protos",
     "build/src",
     "AUTHORS",
     "CONTRIBUTORS",
