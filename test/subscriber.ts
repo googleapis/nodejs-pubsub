@@ -650,10 +650,12 @@ describe('Subscriber', function() {
     });
 
     it('should send any pending nacks', function() {
-      const fakeAckIds = (subscriber.inventory_.nack = ['ghi', 'jkl']);
+      const fakeAckIds = ['ghi', 'jkl'];
+
+      subscriber.inventory_.nack = fakeAckIds.map(ackId => [ackId, 0]);
 
       subscriber.modifyAckDeadline_ = function(ackIds, deadline) {
-        assert.strictEqual(ackIds, fakeAckIds);
+        assert.deepStrictEqual(ackIds, fakeAckIds);
         assert.strictEqual(deadline, 0);
         return Promise.resolve();
       };
@@ -665,9 +667,8 @@ describe('Subscriber', function() {
 
     it('should send any pending delayed nacks', function() {
       const fakeAckIds = ['ghi', 'jkl'];
-      subscriber.inventory_.delayedNack = fakeAckIds.map(function(ackId) {
-        return [ackId, 1];
-      });
+
+      subscriber.inventory_.nack = fakeAckIds.map(ackId => [ackId, 1]);
 
       subscriber.modifyAckDeadline_ = function(ackIds, deadline) {
         assert.deepStrictEqual(ackIds, fakeAckIds);
@@ -1085,7 +1086,10 @@ describe('Subscriber', function() {
 
       it('should queue the message to be nacked if no conn', function(done) {
         subscriber.setFlushTimeout_ = function() {
-          assert(subscriber.inventory_.nack.indexOf(MESSAGE.ackId) > -1);
+          assert.deepStrictEqual(
+            subscriber.inventory_.nack,
+            [[MESSAGE.ackId, 0]]
+          );
           setImmediate(done);
           return Promise.resolve();
         };
@@ -1105,7 +1109,7 @@ describe('Subscriber', function() {
       it('should use the delay if passed when queueing', function(done) {
         subscriber.setFlushTimeout_ = function() {
           assert(
-            subscriber.inventory_.delayedNack.findIndex(function(element) {
+            subscriber.inventory_.nack.findIndex(element => {
               return element[0] === MESSAGE.ackId && element[1] === 1;
             }) > -1
           );

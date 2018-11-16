@@ -72,7 +72,6 @@ export class Subscriber extends EventEmitter {
       lease: [],
       ack: [],
       nack: [],
-      delayedNack: [],
       bytes: 0,
     };
     this.flowControl = Object.assign(
@@ -238,11 +237,13 @@ export class Subscriber extends EventEmitter {
     }
     const acks = this.inventory_.ack;
     const nacks = this.inventory_.nack;
-    const delayedNacks = this.inventory_.delayedNack;
-    if (!acks.length && !nacks.length && !delayedNacks.length) {
+
+    if (!acks.length && !nacks.length) {
       return Promise.resolve();
     }
+
     const requests: Promise<void>[] = [];
+
     if (acks.length) {
       requests.push(
         this.acknowledge_(acks).then(() => {
@@ -250,28 +251,27 @@ export class Subscriber extends EventEmitter {
         })
       );
     }
+
     if (nacks.length) {
-      requests.push(
-        this.modifyAckDeadline_(nacks, 0).then(() => {
-          this.inventory_.nack = [];
-        })
-      );
-    }
-    if (delayedNacks.length) {
-      const groupedNacks = delayedNacks.reduce(function(table, ackPair) {
-        table[ackPair[1]] = table[ackPair[1]] || [];
-        table[ackPair[1]].push(ackPair[0]);
+      const modAcks = nacks.reduce((table, [ackId, deadline]) => {
+        if (!table[deadline]) {
+          table[deadline] = [];
+        }
+
+        table[deadline].push(ackId);
         return table;
       }, {});
-      const promises = Object.keys(groupedNacks).map(delay =>
-        this.modifyAckDeadline_(groupedNacks[delay], Number(delay))
-      );
 
-      Promise.all(promises).then(() => {
-        this.inventory_.delayedNack = [];
+      const modAckRequests = Object.keys(modAcks).map(deadline =>
+        this.modifyAckDeadline_(modAcks[deadline], Number(deadline)));
+
+      requests.push.apply(requests, modAckRequests);
+
+      Promise.all(modAckRequests).then(() => {
+        this.inventory_.nack = [];
       });
-      Array.prototype.push.apply(requests, promises);
     }
+
     return Promise.all(requests);
   }
   /*!
@@ -388,22 +388,19 @@ export class Subscriber extends EventEmitter {
    * @private
    *
    * @param {object} message - The message object.
-   * @param {number} [delay] - Number of seconds before the message may be redelivered
+   * @param {number} [delay=0] - Number of seconds before the message may be redelivered
    */
-  nack_(message, delay) {
+  nack_(message, delay = 0) {
     const breakLease = this.breakLease_.bind(this, message);
-    delay = delay || 0;
+
     if (this.isConnected_()) {
       this.modifyAckDeadline_(message.ackId, delay, message.connectionId).then(
         breakLease
       );
       return;
     }
-    if (delay > 0) {
-      this.inventory_.delayedNack.push([message.ackId, delay]);
-    } else {
-      this.inventory_.nack.push(message.ackId);
-    }
+
+    this.inventory_.nack.push([message.ackId, delay]);
     this.setFlushTimeout_().then(breakLease);
   }
   /*!
