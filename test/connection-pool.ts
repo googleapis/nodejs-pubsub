@@ -164,6 +164,7 @@ describe('ConnectionPool', function() {
 
   describe('initialization', function() {
     it('should initialize internally used properties', function() {
+      // @ts-ignore TS2349: Cannot invoke an expression whose type lacks a call signature. Type '((obj: any) => SinonStub<any[], any>) | ((obj: {}) => SinonStub<unknown[], {}>)' has no compatible call signatures.
       sandbox.stub(ConnectionPool.prototype, 'open').returns(undefined);
       const pool = new ConnectionPool(SUBSCRIPTION);
       assert.strictEqual(pool.subscription, SUBSCRIPTION);
