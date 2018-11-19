@@ -22,6 +22,7 @@ import * as proxyquire from 'proxyquire';
 import * as uuid from 'uuid';
 import * as pjy from '@google-cloud/projectify';
 import * as sinon from 'sinon';
+import { SinonStub } from 'sinon';
 
 let noopOverride: Function|null = null;
 const fakeUtil = {
@@ -164,8 +165,11 @@ describe('ConnectionPool', function() {
 
   describe('initialization', function() {
     it('should initialize internally used properties', function() {
-      // @ts-ignore TS2349: Cannot invoke an expression whose type lacks a call signature. Type '((obj: any) => SinonStub<any[], any>) | ((obj: {}) => SinonStub<unknown[], {}>)' has no compatible call signatures.
-      sandbox.stub(ConnectionPool.prototype, 'open').returns(undefined);
+      // tslint:disable-next-line:no-any
+      (sandbox as any)
+        .stub(ConnectionPool.prototype, 'open')
+        .returns(undefined);
+
       const pool = new ConnectionPool(SUBSCRIPTION);
       assert.strictEqual(pool.subscription, SUBSCRIPTION);
       assert.strictEqual(pool.pubsub, SUBSCRIPTION.pubsub);
