@@ -867,6 +867,18 @@ describe('ConnectionPool', function() {
 
       message.nack();
     });
+
+    it('should create a nack method accepting a delay argument', function(done) {
+      const delay = Math.random();
+
+      SUBSCRIPTION.nack_ = function(message_, delay_) {
+        assert.strictEqual(message_, message);
+        assert.strictEqual(delay_, delay);
+        done();
+      };
+
+      message.nack(delay);
+    });
   });
 
   describe('getAndEmitChannelState', function() {

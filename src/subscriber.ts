@@ -237,10 +237,13 @@ export class Subscriber extends EventEmitter {
     }
     const acks = this.inventory_.ack;
     const nacks = this.inventory_.nack;
+
     if (!acks.length && !nacks.length) {
       return Promise.resolve();
     }
+
     const requests: Promise<void>[] = [];
+
     if (acks.length) {
       requests.push(
         this.acknowledge_(acks).then(() => {
@@ -248,13 +251,27 @@ export class Subscriber extends EventEmitter {
         })
       );
     }
+
     if (nacks.length) {
-      requests.push(
-        this.modifyAckDeadline_(nacks, 0).then(() => {
-          this.inventory_.nack = [];
-        })
-      );
+      const modAcks = nacks.reduce((table, [ackId, deadline]) => {
+        if (!table[deadline]) {
+          table[deadline] = [];
+        }
+
+        table[deadline].push(ackId);
+        return table;
+      }, {});
+
+      const modAckRequests = Object.keys(modAcks).map(deadline =>
+        this.modifyAckDeadline_(modAcks[deadline], Number(deadline)));
+
+      requests.push.apply(requests, modAckRequests);
+
+      Promise.all(modAckRequests).then(() => {
+        this.inventory_.nack = [];
+      });
     }
+
     return Promise.all(requests);
   }
   /*!
@@ -371,16 +388,19 @@ export class Subscriber extends EventEmitter {
    * @private
    *
    * @param {object} message - The message object.
+   * @param {number} [delay=0] - Number of seconds before the message may be redelivered
    */
-  nack_(message) {
+  nack_(message, delay = 0) {
     const breakLease = this.breakLease_.bind(this, message);
+
     if (this.isConnected_()) {
-      this.modifyAckDeadline_(message.ackId, 0, message.connectionId).then(
+      this.modifyAckDeadline_(message.ackId, delay, message.connectionId).then(
         breakLease
       );
       return;
     }
-    this.inventory_.nack.push(message.ackId);
+
+    this.inventory_.nack.push([message.ackId, delay]);
     this.setFlushTimeout_().then(breakLease);
   }
   /*!
