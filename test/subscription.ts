@@ -337,7 +337,7 @@ describe('Subscription', function() {
       });
 
       it('should optionally accept a callback', function(done) {
-        sandbox.stub(util, 'noop').callsFake((err, resp) => {
+        sandbox.stub(util, 'noop').callsFake((err?, resp?) => {
           assert.ifError(err);
           assert.strictEqual(resp, apiResponse);
           done();
