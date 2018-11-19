@@ -337,8 +337,7 @@ describe('Subscription', function() {
       });
 
       it('should optionally accept a callback', function(done) {
-        // @ts-ignore TS2345: Argument of type '(err: any, resp: any) => void' is not assignable to parameter of type '() => void'.
-        sandbox.stub(util, 'noop').callsFake((err, resp) => {
+        sandbox.stub(util, 'noop').callsFake((err?, resp?) => {
           assert.ifError(err);
           assert.strictEqual(resp, apiResponse);
           done();
