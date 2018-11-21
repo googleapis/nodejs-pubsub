@@ -206,7 +206,6 @@ it(`should publish with retry settings`, async () => {
     .topic(topicNameOne)
     .subscription(subscriptionNameFour)
     .get({autoCreate: true});
-  const startTime = Date.now();
   await tools.runAsync(
     `${cmd} publish-retry ${projectId} ${topicNameOne} "${
       expectedMessage.data
@@ -214,9 +213,7 @@ it(`should publish with retry settings`, async () => {
     cwd
   );
   const receivedMessage = await _pullOneMessage(subscription);
-  const publishTime = Date.parse(receivedMessage.publishTime);
   assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
-  assert.strictEqual(publishTime - startTime > expectedWait, true);
 });
 
 it(`should set the IAM policy for a topic`, async () => {
