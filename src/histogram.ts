@@ -33,12 +33,11 @@ export class Histogram {
   length: number;
   constructor(options?: HistogramOptions) {
     this.options = Object.assign(
-      {
-        min: 10000,
-        max: 600000,
-      },
-      options
-    );
+        {
+          min: 10000,
+          max: 600000,
+        },
+        options);
     this.data = new Map();
     this.length = 0;
   }
