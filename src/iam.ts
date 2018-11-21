@@ -92,7 +92,7 @@ export interface Expr {
 export interface Binding {
   role: string;
   members: string[];
-  condition: Expr;
+  condition?: Expr;
 }
 
 /**
