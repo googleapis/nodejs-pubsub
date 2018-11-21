@@ -178,10 +178,10 @@ async function publishBatchedMessages(
 async function publishWithRetrySettings(projectId, topicName, data) {
   // [START pubsub_publisher_retry_settings]
   // Imports the Google Cloud client library
-  const PubSub = require('@google-cloud/pubsub');
+  const {v1} = require('@google-cloud/pubsub');
 
   // Creates a publisher client
-  const client = new PubSub.v1.PublisherClient({
+  const client = new v1.PublisherClient({
     // optional auth parameters
   });
 
@@ -213,13 +213,13 @@ async function publishWithRetrySettings(projectId, topicName, data) {
       non_idempotent: [],
     },
     backoffSettings: {
-      initial_retry_delay_millis: 100,
-      retry_delay_multiplier: 1.2,
-      max_retry_delay_millis: 1000,
-      initial_rpc_timeout_millis: 2000,
-      rpc_timeout_multiplier: 1.5,
-      max_rpc_timeout_millis: 30000,
-      total_timeout_millis: 45000,
+      initialRetryDelayMillis: 100,
+      retryDelayMultiplier: 1.2,
+      maxRetryDelayMillis: 1000,
+      initialRpcTimeoutMillis: 2000,
+      rpcTimeoutMultiplier: 1.5,
+      maxRpcTimeoutMillis: 30000,
+      totalTimeoutMillis: 45000,
     },
   };
 
