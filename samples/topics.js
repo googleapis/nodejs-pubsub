@@ -418,7 +418,7 @@ const cli = require(`yargs`)
   )
   .command(
     `publish-retry <projectId> <topicName> <message>`,
-    `Publishes messages to a topic with retry settings.`,
+    `Publishes a message to a topic with retry settings.`,
     {},
     opts => {
       publishWithRetrySettings(opts.projectId, opts.topicName, opts.message);
