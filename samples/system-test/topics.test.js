@@ -56,6 +56,9 @@ after(async () => {
     await pubsub.subscription(subscriptionNameThree).delete();
   } catch (err) {} // ignore error
   try {
+    await pubsub.subscription(subscriptionNameFour).delete();
+  } catch (err) {} // ignore error
+  try {
     await pubsub.topic(topicNameTwo).delete();
   } catch (err) {} // ignore error
 });
@@ -205,16 +208,15 @@ it(`should publish with retry settings`, async () => {
     .get({autoCreate: true});
   const startTime = Date.now();
   await tools.runAsync(
-    `${cmd} publish-retry ${projectId} ${topicName} "${
-      expectedMessage.data
+    `${cmd} publish-retry ${projectId} ${topicNameOne} "${expectedMessage.data
     }"`,
     cwd
   );
   const receivedMessage = await _pullOneMessage(subscription);
-  const publishTime = Data.parse(receivedMessage.publishTime);
+  const publishTime = Date.parse(receivedMessage.publishTime);
   assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
   assert.strictEqual(publishTime - startTime > expectedWait, true);
-})
+});
 
 it(`should set the IAM policy for a topic`, async () => {
   await tools.runAsync(`${cmd} set-policy ${topicNameOne}`, cwd);

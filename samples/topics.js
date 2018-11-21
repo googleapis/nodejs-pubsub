@@ -209,22 +209,21 @@ async function publishWithRetrySettings(projectId, topicName, data) {
   // Default values are shown
   const retrySettings = {
     retry_codes: {
-      "idempotent": ["UNAVAILABLE", "DEADLINE_EXCEEDED"],
-      "non_idempotent": []
+      idempotent: ['UNAVAILABLE', 'DEADLINE_EXCEEDED'],
+      non_idempotent: []
     },
     backoffSettings: {
-      "initial_retry_delay_millis": 100,
-      "retry_delay_multiplier": 1.2,
-      "max_retry_delay_millis": 1000,
-      "initial_rpc_timeout_millis": 2000,
-      "rpc_timeout_multiplier": 1.5,
-      "max_rpc_timeout_millis": 30000,
-      "total_timeout_millis": 45000
+      initial_retry_delay_millis: 100,
+      retry_delay_multiplier: 1.2,
+      max_retry_delay_millis: 1000,
+      initial_rpc_timeout_millis: 2000,
+      rpc_timeout_multiplier: 1.5,
+      max_rpc_timeout_millis: 30000,
+      total_timeout_millis: 45000
     },
-  }
+  };
 
-  const [response] = await client
-    .publish(request, {retry: retrySettings});
+  const [response] = await client.publish(request, {retry: retrySettings});
   console.log(`Message ${response.messageIds} published.`);
 
   // [END pubsub_publisher_retry_settings]
