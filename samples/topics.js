@@ -210,7 +210,7 @@ async function publishWithRetrySettings(projectId, topicName, data) {
   const retrySettings = {
     retry_codes: {
       idempotent: ['UNAVAILABLE', 'DEADLINE_EXCEEDED'],
-      non_idempotent: []
+      non_idempotent: [],
     },
     backoffSettings: {
       initial_retry_delay_millis: 100,
@@ -219,7 +219,7 @@ async function publishWithRetrySettings(projectId, topicName, data) {
       initial_rpc_timeout_millis: 2000,
       rpc_timeout_multiplier: 1.5,
       max_rpc_timeout_millis: 30000,
-      total_timeout_millis: 45000
+      total_timeout_millis: 45000,
     },
   };
 

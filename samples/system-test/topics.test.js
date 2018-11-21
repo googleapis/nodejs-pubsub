@@ -208,7 +208,8 @@ it(`should publish with retry settings`, async () => {
     .get({autoCreate: true});
   const startTime = Date.now();
   await tools.runAsync(
-    `${cmd} publish-retry ${projectId} ${topicNameOne} "${expectedMessage.data
+    `${cmd} publish-retry ${projectId} ${topicNameOne} "${
+      expectedMessage.data
     }"`,
     cwd
   );
