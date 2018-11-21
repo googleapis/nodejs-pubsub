@@ -30,6 +30,7 @@ const topicNameTwo = `nodejs-docs-samples-test-${uuid.v4()}`;
 const subscriptionNameOne = `nodejs-docs-samples-test-${uuid.v4()}`;
 const subscriptionNameTwo = `nodejs-docs-samples-test-${uuid.v4()}`;
 const subscriptionNameThree = `nodejs-docs-samples-test-${uuid.v4()}`;
+const subscriptionNameFour = `nodejs-docs-samples-test-${uuid.v4()}`;
 const fullTopicNameOne = `projects/${projectId}/topics/${topicNameOne}`;
 const expectedMessage = {data: `Hello, world!`};
 const cmd = `node topics.js`;
@@ -195,6 +196,25 @@ it(`should publish with specific batch settings`, async () => {
   assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
   assert.strictEqual(publishTime - startTime > expectedWait, true);
 });
+
+it(`should publish with retry settings`, async () => {
+  const expectedWait = 1000;
+  const [subscription] = await pubsub
+    .topic(topicNameOne)
+    .subscription(subscriptionNameFour)
+    .get({autoCreate: true});
+  const startTime = Date.now();
+  await tools.runAsync(
+    `${cmd} publish-retry ${projectId} ${topicName} "${
+      expectedMessage.data
+    }"`,
+    cwd
+  );
+  const receivedMessage = await _pullOneMessage(subscription);
+  const publishTime = Data.parse(receivedMessage.publishTime);
+  assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
+  assert.strictEqual(publishTime - startTime > expectedWait, true);
+})
 
 it(`should set the IAM policy for a topic`, async () => {
   await tools.runAsync(`${cmd} set-policy ${topicNameOne}`, cwd);

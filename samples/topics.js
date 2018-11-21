@@ -175,6 +175,61 @@ async function publishBatchedMessages(
   // [END pubsub_publisher_batch_settings]
 }
 
+async function publishWithRetrySettings(projectId, topicName, data) {
+  // [START pubsub_publisher_retry_settings]
+  // Imports the Google Cloud client library
+  const PubSub = require('@google-cloud/pubsub');
+
+  // Creates a publisher client
+  const client = new PubSub.v1.PublisherClient({
+    // optional auth parameters
+  });
+
+  /**
+   * TODO(developer): Uncomment the following lines to run the sample.
+   */
+  // const projectId = 'my-project-id'
+  // const topicName = 'my-topic';
+  // const data = JSON.stringify({ foo: 'bar' });
+
+  const formattedTopic = client.topicPath(projectId, topicName);
+  // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
+  const dataBuffer = Buffer.from(data);
+  const messagesElement = {
+    data: dataBuffer,
+  };
+  const messages = [messagesElement];
+  // Build the request
+  const request = {
+    topic: formattedTopic,
+    messages: messages,
+  };
+
+  // Retry settings control how the publisher handles retryable failures
+  // Default values are shown
+  const retrySettings = {
+    retry_codes: {
+      "idempotent": ["UNAVAILABLE", "DEADLINE_EXCEEDED"],
+      "non_idempotent": []
+    },
+    backoffSettings: {
+      "initial_retry_delay_millis": 100,
+      "retry_delay_multiplier": 1.2,
+      "max_retry_delay_millis": 1000,
+      "initial_rpc_timeout_millis": 2000,
+      "rpc_timeout_multiplier": 1.5,
+      "max_rpc_timeout_millis": 30000,
+      "total_timeout_millis": 45000
+    },
+  }
+
+  const [response] = await client
+    .publish(request, {retry: retrySettings});
+  console.log(`Message ${response.messageIds} published.`);
+
+  // [END pubsub_publisher_retry_settings]
+}
+
 let publishCounterValue = 1;
 
 function getPublishCounterValue() {
@@ -362,6 +417,14 @@ const cli = require(`yargs`)
     }
   )
   .command(
+    `publish-retry <projectId> <topicName> <message>`,
+    `Publishes messages to a topic with retry settings.`,
+    {},
+    opts => {
+      publishWithRetrySettings(opts.projectId, opts.topicName, opts.message);
+    }
+  )
+  .command(
     `publish-ordered <topicName> <message>`,
     `Publishes an ordered message to a topic.`,
     {},
@@ -400,6 +463,7 @@ const cli = require(`yargs`)
   .example(`node $0 publish-attributes my-topic "Hello, world!"`)
   .example(`node $0 publish-ordered my-topic "Hello, world!"`)
   .example(`node $0 publish-batch my-topic "Hello, world!" -w 1000`)
+  .example(`node $0 publish-retry my-project my-topic "Hello, world!"`)
   .example(`node $0 get-policy greetings`)
   .example(`node $0 set-policy greetings`)
   .example(`node $0 test-permissions greetings`)
