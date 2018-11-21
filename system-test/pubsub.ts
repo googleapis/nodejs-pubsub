@@ -480,8 +480,8 @@ describe('pubsub', function() {
       topic.iam.getPolicy(function(err, policy) {
         assert.ifError(err);
 
-        assert.deepStrictEqual(policy.bindings, []);
-        assert.strictEqual(policy.version, 0);
+        assert.deepStrictEqual(policy!.bindings, []);
+        assert.strictEqual(policy!.version, 0);
 
         done();
       });
