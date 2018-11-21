@@ -208,7 +208,7 @@ async function publishWithRetrySettings(projectId, topicName, data) {
   // Retry settings control how the publisher handles retryable failures
   // Default values are shown
   const retrySettings = {
-    retry_codes: {
+    retryCodes: {
       idempotent: ['UNAVAILABLE', 'DEADLINE_EXCEEDED'],
       non_idempotent: [],
     },
