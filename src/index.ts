@@ -415,7 +415,8 @@ export class PubSub {
           reqOpts,
           gaxOpts,
         },
-        () => {
+        // tslint:disable-next-line only-arrow-functions
+        function() {
           const snapshots = arguments[1];
           if (snapshots) {
             arguments[1] = snapshots.map(snapshot => {
@@ -513,7 +514,8 @@ export class PubSub {
           reqOpts,
           gaxOpts,
         },
-        () => {
+        // tslint:disable-next-line only-arrow-functions
+        function() {
           const subscriptions = arguments[1];
           if (subscriptions) {
             arguments[1] = subscriptions.map(sub => {
@@ -606,7 +608,8 @@ export class PubSub {
           reqOpts,
           gaxOpts,
         },
-        () => {
+        // tslint:disable-next-line only-arrow-functions
+        function() {
           const topics = arguments[1];
           if (topics) {
             arguments[1] = topics.map(topic => {
