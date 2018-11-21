@@ -21,8 +21,9 @@ import * as is from 'is';
 
 import {IAM} from './iam';
 import {Publisher} from './publisher';
-import { PubSub } from '.';
+import { PubSub, CreateTopicResponse, CreateTopicCallback, Metadata } from '.';
 import { Readable } from 'stream';
+import { CallOptions } from 'google-gax';
 
 /**
  * A Topic object allows you to interact with a Cloud Pub/Sub topic.
@@ -44,8 +45,9 @@ export class Topic {
   pubsub: PubSub;
   request: typeof PubSub.prototype.request;
   iam: IAM;
-  metadata;
+  metadata: Metadata;
   getSubscriptionsStream = paginator.streamify('getSubscriptions') as () => Readable;
+
   constructor(pubsub: PubSub, name: string) {
     if (pubsub.Promise) {
       this.Promise = pubsub.Promise;
@@ -138,7 +140,13 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  create(gaxOpts?, callback?) {
+  create(gaxOpts?: CallOptions): Promise<CreateTopicResponse>;
+  create(callback: CreateTopicCallback): void;
+  create(gaxOpts: CallOptions, callback: CreateTopicCallback): void;
+  create(gaxOptsOrCallback?: CallOptions|CreateTopicCallback, callback?: CreateTopicCallback): Promise<CreateTopicResponse>|void {
+    const gaxOpts = typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
+    callback = typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+
     this.pubsub.createTopic(this.name, gaxOpts, callback);
   }
   /**

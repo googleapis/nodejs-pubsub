@@ -20,8 +20,6 @@
 
 import * as arrify from 'arrify';
 import {promisifyAll} from '@google-cloud/promisify';
-import * as r from 'request';
-import * as is from 'is';
 import { PubSub } from '.';
 import { CallOptions } from 'google-gax';
 
@@ -32,7 +30,7 @@ import { CallOptions } from 'google-gax';
  * @param {object} apiResponse The full API response.
  */
 export interface GetPolicyCallback {
-  (err?: Error|null, acl?: Policy, apiResponse?: r.Response): void;
+  (err?: Error|null, acl?: Policy|null, apiResponse?: object): void;
 }
 
 /**
@@ -42,7 +40,7 @@ export interface GetPolicyCallback {
  * @param {object} apiResponse The full API response.
  */
 export interface SetPolicyCallback {
-  (err?: Error|null, acl?: Policy, apiResponse?: r.Response): void;
+  (err?: Error|null, acl?: Policy|null, apiResponse?: object): void;
 }
 
 /**
@@ -50,21 +48,21 @@ export interface SetPolicyCallback {
  * @property {object} 0 The policy.
  * @property {object} 1 The full API response.
  */
-export type SetPolicyResponse = [Policy, r.Response];
+export type SetPolicyResponse = [Policy, object];
 
 /**
  * @typedef {array} GetPolicyResponse
  * @property {object} 0 The policy.
  * @property {object} 1 The full API response.
  */
-export type GetPolicyResponse = [Policy, r.Response];
+export type GetPolicyResponse = [Policy, object];
 
 /**
  * @typedef {array} TestIamPermissionsResponse
  * @property {object[]} 0 A subset of permissions that the caller is allowed.
  * @property {object} 1 The full API response.
  */
-export type TestIamPermissionsResponse = [object[], r.Response];
+export type TestIamPermissionsResponse = [object[], object];
 
 /**
  * @callback TestIamPermissionsCallback
@@ -73,7 +71,7 @@ export type TestIamPermissionsResponse = [object[], r.Response];
  * @param {object} apiResponse The full API response.
  */
 export interface TestIamPermissionsCallback {
-  (err?: Error|null, permissions?: object|null, apiResponse?: r.Response): void;
+  (err?: Error|null, permissions?: {[key: string]: boolean}|null, apiResponse?: object): void;
 }
 
 /**
@@ -201,7 +199,7 @@ export class IAM {
       resource: this.id,
     };
 
-    this.request(
+    this.request<Policy>(
       {
         client: 'SubscriberClient',
         method: 'getIamPolicy',
@@ -361,7 +359,7 @@ export class IAM {
       permissions: arrify(permissions),
     };
 
-    this.request(
+    this.request<PermissionsResponse>(
       {
         client: 'SubscriberClient',
         method: 'testIamPermissions',
@@ -370,18 +368,23 @@ export class IAM {
       },
       function(err, resp) {
         if (err) {
-          callback!(err, null, resp);
+          callback!(err, null, resp!);
           return;
         }
-        const availablePermissions = arrify(resp.permissions);
+
+        const availablePermissions = arrify(resp!.permissions);
         const permissionHash = (permissions as string[]).reduce(function(acc, permission) {
           acc[permission] = availablePermissions.indexOf(permission) > -1;
           return acc;
         }, {} as {[key: string]: boolean});
-        callback!(null, permissionHash, resp);
+        callback!(null, permissionHash, resp!);
       }
     );
   }
+}
+
+export interface PermissionsResponse {
+  permissions: string|string[];
 }
 
 /*! Developer Documentation
