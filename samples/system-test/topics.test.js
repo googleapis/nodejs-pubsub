@@ -201,7 +201,6 @@ it(`should publish with specific batch settings`, async () => {
 });
 
 it(`should publish with retry settings`, async () => {
-  const expectedWait = 1000;
   const [subscription] = await pubsub
     .topic(topicNameOne)
     .subscription(subscriptionNameFour)
