@@ -17,53 +17,53 @@
 import * as assert from 'assert';
 import {Histogram} from '../src/histogram.js';
 
-describe('Histogram', function() {
+describe('Histogram', () => {
   let histogram;
 
   const MIN_VALUE = 10000;
   const MAX_VALUE = 600000;
 
-  beforeEach(function() {
+  beforeEach(() => {
     histogram = new Histogram();
   });
 
-  describe('initialization', function() {
-    it('should set default min/max values', function() {
+  describe('initialization', () => {
+    it('should set default min/max values', () => {
       assert.strictEqual(histogram.options.min, 10000);
       assert.strictEqual(histogram.options.max, 600000);
     });
 
-    it('should accept user defined min/max values', function() {
+    it('should accept user defined min/max values', () => {
       histogram = new Histogram({min: 5, max: 10});
 
       assert.strictEqual(histogram.options.min, 5);
       assert.strictEqual(histogram.options.max, 10);
     });
 
-    it('should create a data map', function() {
+    it('should create a data map', () => {
       assert(histogram.data instanceof Map);
     });
 
-    it('should set the initial length to 0', function() {
+    it('should set the initial length to 0', () => {
       assert.strictEqual(histogram.length, 0);
     });
   });
 
-  describe('add', function() {
-    it('should increment a value', function() {
+  describe('add', () => {
+    it('should increment a value', () => {
       histogram.data.set(MIN_VALUE, 1);
       histogram.add(MIN_VALUE);
 
       assert.strictEqual(histogram.data.get(MIN_VALUE), 2);
     });
 
-    it('should initialize a value if absent', function() {
+    it('should initialize a value if absent', () => {
       histogram.add(MIN_VALUE);
 
       assert.strictEqual(histogram.data.get(MIN_VALUE), 1);
     });
 
-    it('should adjust the length for each item added', function() {
+    it('should adjust the length for each item added', () => {
       histogram.add(MIN_VALUE);
       histogram.add(MIN_VALUE);
       histogram.add(MIN_VALUE * 2);
@@ -71,7 +71,7 @@ describe('Histogram', function() {
       assert.strictEqual(histogram.length, 3);
     });
 
-    it('should cap the value', function() {
+    it('should cap the value', () => {
       const outOfBounds = MAX_VALUE + MIN_VALUE;
 
       histogram.add(outOfBounds);
@@ -80,7 +80,7 @@ describe('Histogram', function() {
       assert.strictEqual(histogram.data.get(MAX_VALUE), 1);
     });
 
-    it('should apply a minimum', function() {
+    it('should apply a minimum', () => {
       const outOfBounds = MIN_VALUE - 1000;
 
       histogram.add(outOfBounds);
@@ -89,7 +89,7 @@ describe('Histogram', function() {
       assert.strictEqual(histogram.data.get(MIN_VALUE), 1);
     });
 
-    it('should use seconds level precision', function() {
+    it('should use seconds level precision', () => {
       const ms = 303823;
       const expected = 304000;
 
@@ -100,7 +100,7 @@ describe('Histogram', function() {
     });
   });
 
-  describe('percentile', function() {
+  describe('percentile', () => {
     function range(a, b) {
       const result: number[] = [];
 
@@ -111,8 +111,8 @@ describe('Histogram', function() {
       return result;
     }
 
-    it('should return the nth percentile', function() {
-      range(100, 201).forEach(function(value) {
+    it('should return the nth percentile', () => {
+      range(100, 201).forEach(value => {
         histogram.add(value * 1000);
       });
 
@@ -122,7 +122,7 @@ describe('Histogram', function() {
       assert.strictEqual(histogram.percentile(1), 101000);
     });
 
-    it('should return the min value if unable to determine', function() {
+    it('should return the min value if unable to determine', () => {
       assert.strictEqual(histogram.percentile(99), MIN_VALUE);
     });
   });
