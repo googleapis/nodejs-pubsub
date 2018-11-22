@@ -96,7 +96,10 @@ export interface CreateSubscriptionCallback {
 }
 
 export interface CreateSubscriptionOptions extends SubscriptionMetadata {
-  flowControl?: any;
+  flowControl?: {
+    maxBytes?: number;
+    maxMessages?: number;
+  };
   gaxOpts?: CallOptions;
 }
 
@@ -285,8 +288,11 @@ export class PubSub {
     if (typeof topic === 'string') {
       topic = this.topic(topic);
     }
-    const options = typeof optionsOrCallback === 'object' ? optionsOrCallback : {} as CreateSubscriptionOptions;
+    let options = typeof optionsOrCallback === 'object' ? optionsOrCallback : {} as CreateSubscriptionOptions;
     callback = typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+
+    // Make a deep copy of options to not pollute caller object.
+    options = extend(true, {}, options);
 
     const gaxOpts = options.gaxOpts;
     const flowControl = options.flowControl;
@@ -294,7 +300,10 @@ export class PubSub {
     delete options.flowControl;
 
     const metadata = Subscription.formatMetadata_(options as SubscriptionMetadataRaw);
-    const subscription = this.subscription(name, Object.assign({flowControl}, metadata));
+
+    let subscriptionCtorOptions = flowControl ? {flowControl} : {};
+    subscriptionCtorOptions = Object.assign(subscriptionCtorOptions, metadata);
+    const subscription = this.subscription(name, subscriptionCtorOptions);
 
     const reqOpts = Object.assign(metadata, {
       topic: topic.name,
