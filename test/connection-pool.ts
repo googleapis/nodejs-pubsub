@@ -22,7 +22,7 @@ import * as proxyquire from 'proxyquire';
 import * as uuid from 'uuid';
 import * as pjy from '@google-cloud/projectify';
 import * as sinon from 'sinon';
-import { SinonStub } from 'sinon';
+import {SinonStub} from 'sinon';
 
 let noopOverride: Function|null = null;
 const fakeUtil = {
@@ -82,7 +82,8 @@ function fakeDuplexify() {
   return (duplexifyOverride || duplexify).apply(null, args);
 }
 
-describe('ConnectionPool', function() {
+describe('ConnectionPool', () => {
+  // tslint:disable-next-line variable-name
   let ConnectionPool;
   let pool;
   let fakeConnection;
@@ -93,6 +94,7 @@ describe('ConnectionPool', function() {
   const FAKE_PUBSUB_OPTIONS = {};
   const PROJECT_ID = 'grapce-spacheship-123';
 
+  // tslint:disable-next-line no-any
   const PUBSUB: any = {
     auth: {
       getAuthClient: util.noop,
@@ -101,6 +103,7 @@ describe('ConnectionPool', function() {
   };
 
   const SUB_NAME = 'test-subscription';
+  // tslint:disable-next-line no-any
   const SUBSCRIPTION: any = {
     name: SUB_NAME,
     pubsub: PUBSUB,
@@ -112,41 +115,41 @@ describe('ConnectionPool', function() {
     return (pjyOverride || pjy.replaceProjectIdToken).apply(null, arguments);
   }
 
-  before(function() {
+  before(() => {
     ConnectionPool = proxyquire('../src/connection-pool', {
-      '../src/util': fakeUtil,
-      '@google-cloud/projectify': {
-        replaceProjectIdToken: fakePjy,
-      },
-      duplexify: fakeDuplexify,
-      uuid: fakeUuid,
-    }).ConnectionPool;
+                       '../src/util': fakeUtil,
+                       '@google-cloud/projectify': {
+                         replaceProjectIdToken: fakePjy,
+                       },
+                       duplexify: fakeDuplexify,
+                       uuid: fakeUuid,
+                     }).ConnectionPool;
   });
 
-  beforeEach(function() {
+  beforeEach(() => {
     sandbox = sinon.createSandbox();
     fakeConnection = new FakeConnection();
     duplexifyOverride = null;
 
     fakeChannel = {
-      getConnectivityState: function() {
+      getConnectivityState() {
         return 2;
       },
     };
 
     fakeClient = {
-      streamingPull: function() {
+      streamingPull() {
         return fakeConnection;
       },
-      getChannel: function() {
+      getChannel() {
         return fakeChannel;
       },
-      waitForReady: function() {},
+      waitForReady() {},
     };
 
     SUBSCRIPTION.request = util.noop;
     PUBSUB.auth.getAuthClient = util.noop;
-    PUBSUB.getClient_ = function(config, callback) {
+    PUBSUB.getClient_ = (config, callback) => {
       callback(null, fakeClient);
     };
 
@@ -155,7 +158,7 @@ describe('ConnectionPool', function() {
     pool.queue.length = 0;
   });
 
-  afterEach(function() {
+  afterEach(() => {
     if (pool.isOpen) {
       pool.close();
     }
@@ -163,12 +166,12 @@ describe('ConnectionPool', function() {
     sandbox.restore();
   });
 
-  describe('initialization', function() {
-    it('should initialize internally used properties', function() {
+  describe('initialization', () => {
+    it('should initialize internally used properties', () => {
       // tslint:disable-next-line:no-any
       (sandbox as any)
-        .stub(ConnectionPool.prototype, 'open')
-        .returns(undefined);
+          .stub(ConnectionPool.prototype, 'open')
+          .returns(undefined);
 
       const pool = new ConnectionPool(SUBSCRIPTION);
       assert.strictEqual(pool.subscription, SUBSCRIPTION);
@@ -184,7 +187,7 @@ describe('ConnectionPool', function() {
       assert.deepStrictEqual(pool.queue, []);
     });
 
-    it('should respect user specified settings', function() {
+    it('should respect user specified settings', () => {
       const options = {
         maxConnections: 2,
         ackDeadline: 100,
@@ -198,77 +201,78 @@ describe('ConnectionPool', function() {
       assert.deepStrictEqual(subscription, subscriptionCopy);
     });
 
-    it('should inherit from EventEmitter', function() {
+    it('should inherit from EventEmitter', () => {
       assert(pool instanceof EventEmitter);
     });
 
-    it('should call open', function(done) {
+    it('should call open', done => {
       const open = ConnectionPool.prototype.open;
 
-      ConnectionPool.prototype.open = function() {
+      ConnectionPool.prototype.open = () => {
         ConnectionPool.prototype.open = open;
         done();
       };
 
+      // tslint:disable-next-line no-unused-expression
       new ConnectionPool(SUBSCRIPTION);
     });
   });
 
-  describe('acquire', function() {
-    it('should return an error if the pool is closed', function(done) {
+  describe('acquire', () => {
+    it('should return an error if the pool is closed', done => {
       const expectedErr = 'No connections available to make request.';
 
       pool.isOpen = false;
 
-      pool.acquire(function(err) {
+      pool.acquire(err => {
         assert(err instanceof Error);
         assert.strictEqual(err.message, expectedErr);
         done();
       });
     });
 
-    it('should return a specified connection', function(done) {
+    it('should return a specified connection', done => {
       const id = 'a';
       const fakeConnection = new FakeConnection();
 
       pool.connections.set(id, fakeConnection);
       pool.connections.set('b', new FakeConnection());
 
-      pool.acquire(id, function(err, connection) {
+      pool.acquire(id, (err, connection) => {
         assert.ifError(err);
         assert.strictEqual(connection, fakeConnection);
         done();
       });
     });
 
-    it('should return any conn when the specified is missing', function(done) {
+    it('should return any conn when the specified is missing', done => {
       const fakeConnection = new FakeConnection();
 
       pool.connections.set('a', fakeConnection);
 
-      pool.acquire('b', function(err, connection) {
+      pool.acquire('b', (err, connection) => {
         assert.ifError(err);
         assert.strictEqual(connection, fakeConnection);
         done();
       });
     });
 
-    it('should return any connection when id is missing', function(done) {
+    it('should return any connection when id is missing', done => {
       const fakeConnection = new FakeConnection();
 
       pool.connections.set('a', fakeConnection);
 
-      pool.acquire(function(err, connection) {
+      pool.acquire((err, connection) => {
         assert.ifError(err);
         assert.strictEqual(connection, fakeConnection);
         done();
       });
     });
 
-    it('should listen for connected event if no conn is ready', function(done) {
+    it('should listen for connected event if no conn is ready', done => {
       const fakeConnection = new FakeConnection();
 
-      pool.acquire(function(err, connection) {
+      pool.acquire((err, connection) => {
         assert.ifError(err);
         assert.strictEqual(connection, fakeConnection);
         done();
@@ -278,30 +282,30 @@ describe('ConnectionPool', function() {
     });
   });
 
-  describe('close', function() {
+  describe('close', () => {
     let _clearTimeout;
     let _clearInterval;
 
-    before(function() {
+    before(() => {
       _clearTimeout = global.clearTimeout;
       _clearInterval = global.clearInterval;
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
       global.clearTimeout = global.clearInterval = util.noop;
     });
 
-    afterEach(function() {
+    afterEach(() => {
       global.clearTimeout = _clearTimeout;
       global.clearInterval = _clearInterval;
     });
 
-    it('should stop running the keepAlive task', function(done) {
+    it('should stop running the keepAlive task', done => {
       const fakeHandle = 123;
 
       pool.keepAliveHandle = fakeHandle;
 
-      global.clearInterval = function(handle) {
+      global.clearInterval = handle => {
         assert.strictEqual(handle, fakeHandle);
         done();
       };
@@ -309,17 +313,17 @@ describe('ConnectionPool', function() {
       pool.close();
     });
 
-    it('should clear the connections map', function(done) {
+    it('should clear the connections map', done => {
       pool.connections.clear = done;
       pool.close();
     });
 
-    it('should clear any timeouts in the queue', function() {
+    it('should clear any timeouts in the queue', () => {
       let clearCalls = 0;
 
       const fakeHandles = ['a', 'b', 'c', 'd'];
 
-      global.clearTimeout = function(handle) {
+      global.clearTimeout = handle => {
         assert.strictEqual(handle, fakeHandles[clearCalls++]);
       };
 
@@ -330,19 +334,19 @@ describe('ConnectionPool', function() {
       assert.strictEqual(pool.queue.length, 0);
     });
 
-    it('should set isOpen to false', function() {
+    it('should set isOpen to false', () => {
       pool.close();
       assert.strictEqual(pool.isOpen, false);
     });
 
-    it('should set isGettingChannelState to false', function() {
+    it('should set isGettingChannelState to false', () => {
       pool.isGettingChannelState = true;
       pool.close();
 
       assert.strictEqual(pool.isGettingChannelState, false);
     });
 
-    it('should reset internally used props', function() {
+    it('should reset internally used props', () => {
       pool.failedConnectionAttempts = 100;
       pool.noConnectionsTime = Date.now();
 
@@ -352,11 +356,10 @@ describe('ConnectionPool', function() {
       assert.strictEqual(pool.noConnectionsTime, 0);
     });
 
-    it('should remove event listeners', function() {
-      pool
-        .on('channel.ready', nope)
-        .on('channel.error', nope)
-        .on('newListener', nope);
+    it('should remove event listeners', () => {
+      pool.on('channel.ready', nope)
+          .on('channel.error', nope)
+          .on('newListener', nope);
 
       pool.close();
 
@@ -369,14 +372,14 @@ describe('ConnectionPool', function() {
       }
     });
 
-    it('should call cancel on all active connections', function(done) {
+    it('should call cancel on all active connections', done => {
       const a = new FakeConnection();
       const b = new FakeConnection();
 
       pool.connections.set('a', a);
       pool.connections.set('b', b);
 
-      pool.close(function(err) {
+      pool.close(err => {
         assert.ifError(err);
         assert.strictEqual(a.canceled, true);
         assert.strictEqual(b.canceled, true);
@@ -384,7 +387,7 @@ describe('ConnectionPool', function() {
       });
     });
 
-    it('should call end on all active connections', function() {
+    it('should call end on all active connections', () => {
       const a = new FakeConnection();
       const b = new FakeConnection();
 
@@ -397,48 +400,48 @@ describe('ConnectionPool', function() {
       assert.strictEqual(b.ended, true);
     });
 
-    it('should close the client', function(done) {
+    it('should close the client', done => {
       pool.client = {close: done};
       pool.close();
     });
 
-    it('should exec a callback when finished closing', function(done) {
+    it('should exec a callback when finished closing', done => {
       pool.close(done);
     });
 
-    it('should use noop when callback is omitted', function(done) {
+    it('should use noop when callback is omitted', done => {
       noopOverride = done;
       pool.close();
     });
   });
 
-  describe('createConnection', function() {
+  describe('createConnection', () => {
     let fakeConnection;
     let fakeChannel;
     let fakeClient;
     let fakeDuplex;
 
-    beforeEach(function() {
+    beforeEach(() => {
       fakeConnection = new FakeConnection();
 
       fakeChannel = {
-        getConnectivityState: function() {
+        getConnectivityState() {
           return 2;
         },
       };
 
       fakeClient = {
-        streamingPull: function() {
+        streamingPull() {
           return fakeConnection;
         },
-        getChannel: function() {
+        getChannel() {
           return fakeChannel;
         },
       };
 
       fakeClient.waitForReady = util.noop;
 
-      pool.getClient = function(callback) {
+      pool.getClient = callback => {
         pool.pubsub = {
           projectId: PROJECT_ID,
         };
@@ -448,19 +451,19 @@ describe('ConnectionPool', function() {
 
       fakeDuplex = new FakeConnection();
 
-      duplexifyOverride = function() {
+      duplexifyOverride = () => {
         return fakeDuplex;
       };
     });
 
-    it('should emit any errors that occur when getting client', function(done) {
+    it('should emit any errors that occur when getting client', done => {
       const error = new Error('err');
 
-      pool.getClient = function(callback) {
+      pool.getClient = callback => {
         callback(error);
       };
 
-      pool.on('error', function(err) {
+      pool.on('error', err => {
         assert.strictEqual(err, error);
         done();
       });
@@ -468,12 +471,12 @@ describe('ConnectionPool', function() {
       pool.createConnection();
     });
 
-    describe('channel', function() {
+    describe('channel', () => {
       const channelReadyEvent = 'channel.ready';
       const channelErrorEvent = 'channel.error';
 
-      describe('error', function() {
-        it('should remove the channel ready event listener', function() {
+      describe('error', () => {
+        it('should remove the channel ready event listener', () => {
           pool.createConnection();
           assert.strictEqual(pool.listenerCount(channelReadyEvent), 1);
 
@@ -481,7 +484,7 @@ describe('ConnectionPool', function() {
           assert.strictEqual(pool.listenerCount(channelReadyEvent), 0);
         });
 
-        it('should cancel the connection', function() {
+        it('should cancel the connection', () => {
           pool.createConnection();
           pool.emit(channelErrorEvent);
 
@@ -489,8 +492,8 @@ describe('ConnectionPool', function() {
         });
       });
 
-      describe('success', function() {
-        it('should remove the channel error event', function() {
+      describe('success', () => {
+        it('should remove the channel error event', () => {
           pool.createConnection();
           assert.strictEqual(pool.listenerCount(channelErrorEvent), 1);
 
@@ -498,14 +501,14 @@ describe('ConnectionPool', function() {
           assert.strictEqual(pool.listenerCount(channelErrorEvent), 0);
         });
 
-        it('should set the isConnected flag to true', function() {
+        it('should set the isConnected flag to true', () => {
           pool.createConnection();
           pool.emit(channelReadyEvent);
 
           assert.strictEqual(fakeDuplex.isConnected, true);
         });
 
-        it('should reset internally used properties', function() {
+        it('should reset internally used properties', () => {
           pool.noConnectionsTime = Date.now();
           pool.failedConnectionAttempts = 10;
 
@@ -516,8 +519,8 @@ describe('ConnectionPool', function() {
           assert.strictEqual(pool.failedConnectionAttempts, 0);
         });
 
-        it('should emit a connected event', function(done) {
-          pool.on('connected', function(connection) {
+        it('should emit a connected event', done => {
+          pool.on('connected', connection => {
             assert.strictEqual(connection, fakeDuplex);
             done();
           });
@@ -528,43 +531,43 @@ describe('ConnectionPool', function() {
       });
     });
 
-    describe('connection', function() {
+    describe('connection', () => {
       const TOKENIZED_SUB_NAME = 'project/p/subscriptions/' + SUB_NAME;
       let fakeId;
 
-      beforeEach(function() {
+      beforeEach(() => {
         fakeId = uuid.v4();
 
-        fakeUuid.v4 = function() {
+        fakeUuid.v4 = () => {
           return fakeId;
         };
 
         pjyOverride = null;
       });
 
-      it('should create a connection', function(done) {
+      it('should create a connection', done => {
         const fakeDuplex = new FakeConnection();
 
-        duplexifyOverride = function(writable, readable, options) {
+        duplexifyOverride = (writable, readable, options) => {
           assert.strictEqual(writable, fakeConnection);
           assert.deepStrictEqual(options, {objectMode: true});
           return fakeDuplex;
         };
 
-        pjyOverride = function(subName, projectId) {
+        pjyOverride = (subName, projectId) => {
           assert.strictEqual(subName, SUB_NAME);
           assert.strictEqual(projectId, PROJECT_ID);
           return TOKENIZED_SUB_NAME;
         };
 
-        fakeDuplex.write = function(reqOpts) {
+        fakeDuplex.write = reqOpts => {
           assert.deepStrictEqual(reqOpts, {
             subscription: TOKENIZED_SUB_NAME,
             streamAckDeadlineSeconds: pool.settings.ackDeadline / 1000,
           });
         };
 
-        pool.connections.set = function(id, connection) {
+        pool.connections.set = (id, connection) => {
           assert.strictEqual(id, fakeId);
           assert.strictEqual(connection, fakeDuplex);
           done();
@@ -573,26 +576,28 @@ describe('ConnectionPool', function() {
         pool.createConnection();
       });
 
-      it('should unpack the recieved messages', function(done) {
+      it('should unpack the recieved messages', done => {
         const fakeDuplex = new FakeConnection();
-        const pipedMessages: {}[] = [];
+        const pipedMessages: Array<{}> = [];
         const fakeResp = {
           receivedMessages: [{}, {}, {}, {}, null],
         };
 
-        duplexifyOverride = function(writable, readable) {
+        duplexifyOverride = (writable, readable) => {
           readable
-            .on('data', function(message) {
-              pipedMessages.push(message);
-            })
-            .on('end', function() {
-              assert.strictEqual(pipedMessages.length, 4);
-              pipedMessages.forEach(function(message, i) {
-                assert.strictEqual(message, fakeResp.receivedMessages[i]);
-              });
-              done();
-            })
-            .write(fakeResp);
+              .on('data',
+                  message => {
+                    pipedMessages.push(message);
+                  })
+              .on('end',
+                  () => {
+                    assert.strictEqual(pipedMessages.length, 4);
+                    pipedMessages.forEach((message, i) => {
+                      assert.strictEqual(message, fakeResp.receivedMessages[i]);
+                    });
+                    done();
+                  })
+              .write(fakeResp);
 
           return fakeDuplex;
         };
@@ -600,10 +605,10 @@ describe('ConnectionPool', function() {
         pool.createConnection();
       });
 
-      it('should proxy the cancel method', function() {
-        const fakeCancel = function() {};
+      it('should proxy the cancel method', () => {
+        const fakeCancel = () => {};
         fakeConnection.cancel = {
-          bind: function(context) {
+          bind(context) {
             assert.strictEqual(context, fakeConnection);
             return fakeCancel;
           },
@@ -612,17 +617,17 @@ describe('ConnectionPool', function() {
         assert.strictEqual(fakeDuplex.cancel, fakeCancel);
       });
 
-      it('should pause the connection if the pool is paused', function(done) {
+      it('should pause the connection if the pool is paused', done => {
         fakeDuplex.pause = done;
         pool.isPaused = true;
         pool.createConnection();
       });
 
-      describe('error events', function() {
-        it('should emit errors to the pool', function(done) {
+      describe('error events', () => {
+        it('should emit errors to the pool', done => {
           const error = new Error('err');
 
-          pool.on('error', function(err) {
+          pool.on('error', err => {
             assert.strictEqual(err, error);
             done();
           });
@@ -632,15 +637,15 @@ describe('ConnectionPool', function() {
         });
       });
 
-      describe('status events', function() {
-        beforeEach(function() {
+      describe('status events', () => {
+        beforeEach(() => {
           pool.connections.set('a', new FakeConnection());
         });
 
-        it('should cancel any error events', function(done) {
+        it('should cancel any error events', done => {
           const fakeError = {code: 4};
 
-          pool.on('error', done); // should not fire
+          pool.on('error', done);  // should not fire
           pool.createConnection();
 
           fakeConnection.emit('status', fakeError);
@@ -649,10 +654,10 @@ describe('ConnectionPool', function() {
           done();
         });
 
-        it('should close and delete the connection', function(done) {
+        it('should close and delete the connection', done => {
           pool.createConnection();
 
-          pool.connections.delete = function(id) {
+          pool.connections.delete = id => {
             assert.strictEqual(id, fakeId);
             done();
           };
@@ -660,20 +665,20 @@ describe('ConnectionPool', function() {
           fakeConnection.emit('status', {});
         });
 
-        it('should increment the failed connection counter', function(done) {
+        it('should increment the failed connection counter', done => {
           pool.failedConnectionAttempts = 0;
           fakeDuplex.isConnected = false;
 
           pool.createConnection();
           fakeConnection.emit('status', {});
 
-          setImmediate(function() {
+          setImmediate(() => {
             assert.strictEqual(pool.failedConnectionAttempts, 1);
             done();
           });
         });
 
-        it('should not incr. the failed connection counter', function() {
+        it('should not incr. the failed connection counter', () => {
           pool.failedConnectionAttempts = 0;
           fakeDuplex.isConnected = true;
 
@@ -683,32 +688,32 @@ describe('ConnectionPool', function() {
           assert.strictEqual(pool.failedConnectionAttempts, 0);
         });
 
-        it('should capture the date when no conns are found', function(done) {
+        it('should capture the date when no conns are found', done => {
           const dateNow = global.Date.now;
 
           const fakeDate = Date.now();
-          global.Date.now = function() {
+          global.Date.now = () => {
             return fakeDate;
           };
 
           pool.noConnectionsTime = 0;
-          pool.isConnected = function() {
+          pool.isConnected = () => {
             return false;
           };
 
           pool.createConnection();
           fakeConnection.emit('status', {});
 
-          setImmediate(function() {
+          setImmediate(() => {
             assert.strictEqual(pool.noConnectionsTime, fakeDate);
             global.Date.now = dateNow;
             done();
           });
         });
 
-        it('should not capture the date when already set', function() {
+        it('should not capture the date when already set', () => {
           pool.noConnectionsTime = 123;
-          pool.isConnected = function() {
+          pool.isConnected = () => {
             return false;
           };
 
@@ -718,9 +723,9 @@ describe('ConnectionPool', function() {
           assert.strictEqual(pool.noConnectionsTime, 123);
         });
 
-        it('should not capture the date if a conn. is found', function() {
+        it('should not capture the date if a conn. is found', () => {
           pool.noConnectionsTime = 0;
-          pool.isConnected = function() {
+          pool.isConnected = () => {
             return true;
           };
 
@@ -730,10 +735,10 @@ describe('ConnectionPool', function() {
           assert.strictEqual(pool.noConnectionsTime, 0);
         });
 
-        it('should queue a connection if status is retryable', function(done) {
+        it('should queue a connection if status is retryable', done => {
           const fakeStatus = {};
 
-          pool.shouldReconnect = function(status) {
+          pool.shouldReconnect = status => {
             assert.strictEqual(status, fakeStatus);
             return true;
           };
@@ -744,20 +749,20 @@ describe('ConnectionPool', function() {
           fakeConnection.emit('status', fakeStatus);
         });
 
-        it('should emit error if no pending conn. are found', function(done) {
+        it('should emit error if no pending conn. are found', done => {
           const error = {
             code: 4,
             details: 'Deadline Exceeded',
           };
 
-          pool.shouldReconnect = function() {
+          pool.shouldReconnect = () => {
             return false;
           };
 
           // will only emit status errors if pool is empty
           pool.connections = new Map();
 
-          pool.on('error', function(err) {
+          pool.on('error', err => {
             assert.strictEqual(err.code, error.code);
             assert.strictEqual(err.message, error.details);
             done();
@@ -768,18 +773,18 @@ describe('ConnectionPool', function() {
         });
       });
 
-      describe('data events', function() {
-        it('should emit messages', function(done) {
+      describe('data events', () => {
+        it('should emit messages', done => {
           const fakeResp = {};
           const fakeMessage = {};
 
-          pool.createMessage = function(id, resp) {
+          pool.createMessage = (id, resp) => {
             assert.strictEqual(id, fakeId);
             assert.strictEqual(resp, fakeResp);
             return fakeMessage;
           };
 
-          pool.on('message', function(message) {
+          pool.on('message', message => {
             assert.strictEqual(message, fakeMessage);
             done();
           });
@@ -791,7 +796,7 @@ describe('ConnectionPool', function() {
     });
   });
 
-  describe('createMessage', function() {
+  describe('createMessage', () => {
     let message;
     let globalDateNow;
 
@@ -815,29 +820,28 @@ describe('ConnectionPool', function() {
       },
     };
 
-    before(function() {
+    before(() => {
       globalDateNow = global.Date.now;
-      global.Date.now = function() {
+      global.Date.now = () => {
         return FAKE_DATE_NOW;
       };
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
       message = pool.createMessage(CONNECTION_ID, RESP);
     });
 
-    after(function() {
+    after(() => {
       global.Date.now = globalDateNow;
     });
 
-    it('should capture the connection id', function() {
+    it('should capture the connection id', () => {
       assert.strictEqual(message.connectionId, CONNECTION_ID);
     });
 
-    it('should capture the message data', function() {
-      const expectedPublishTime = new Date(
-        Math.floor(PT.seconds) * 1000 + Math.floor(PT.nanos) / 1e6
-      );
+    it('should capture the message data', () => {
+      const expectedPublishTime =
+          new Date(Math.floor(PT.seconds) * 1000 + Math.floor(PT.nanos) / 1e6);
 
       assert.strictEqual(message.ackId, RESP.ackId);
       assert.strictEqual(message.id, RESP.message.messageId);
@@ -847,16 +851,16 @@ describe('ConnectionPool', function() {
       assert.strictEqual(message.received, FAKE_DATE_NOW);
     });
 
-    it('should create a read-only message length property', function() {
+    it('should create a read-only message length property', () => {
       assert.strictEqual(message.length, RESP.message.data.length);
 
-      assert.throws(function() {
+      assert.throws(() => {
         message.length = 3;
       });
     });
 
-    it('should create an ack method', function(done) {
-      SUBSCRIPTION.ack_ = function(message_) {
+    it('should create an ack method', done => {
+      SUBSCRIPTION.ack_ = message_ => {
         assert.strictEqual(message_, message);
         done();
       };
@@ -864,8 +868,8 @@ describe('ConnectionPool', function() {
       message.ack();
     });
 
-    it('should create a nack method', function(done) {
-      SUBSCRIPTION.nack_ = function(message_) {
+    it('should create a nack method', done => {
+      SUBSCRIPTION.nack_ = message_ => {
         assert.strictEqual(message_, message);
         done();
       };
@@ -873,10 +877,10 @@ describe('ConnectionPool', function() {
       message.nack();
     });
 
-    it('should create a nack method accepting a delay argument', function(done) {
+    it('should create a nack method accepting a delay argument', done => {
       const delay = Math.random();
 
-      SUBSCRIPTION.nack_ = function(message_, delay_) {
+      SUBSCRIPTION.nack_ = (message_, delay_) => {
         assert.strictEqual(message_, message);
         assert.strictEqual(delay_, delay);
         done();
@@ -886,74 +890,76 @@ describe('ConnectionPool', function() {
     });
   });
 
-  describe('getAndEmitChannelState', function() {
+  describe('getAndEmitChannelState', () => {
     const channelErrorEvent = 'channel.error';
     const channelReadyEvent = 'channel.ready';
     const channelReadyState = 2;
     let fakeChannelState;
     let dateNow;
     let fakeTimestamp;
+    // tslint:disable-next-line no-any
     const fakeChannel: any = {};
 
+    // tslint:disable-next-line no-any
     const fakeClient: any = {
-      getChannel: function() {
+      getChannel() {
         return fakeChannel;
       },
     };
 
-    before(function() {
+    before(() => {
       dateNow = global.Date.now;
     });
 
-    beforeEach(function() {
-      fakeChannel.getConnectivityState = function() {
+    beforeEach(() => {
+      fakeChannel.getConnectivityState = () => {
         return fakeChannelState;
       };
 
       fakeChannelState = 0;
       fakeClient.waitForReady = util.noop;
 
-      pool.getClient = function(callback) {
+      pool.getClient = callback => {
         callback(null, fakeClient);
       };
 
-      PUBSUB.getClient_ = function(config, callback) {
+      PUBSUB.getClient_ = (config, callback) => {
         callback(null, fakeClient);
       };
 
       fakeTimestamp = dateNow.call(global.Date);
       pool.noConnectionsTime = 0;
 
-      global.Date.now = function() {
+      global.Date.now = () => {
         return fakeTimestamp;
       };
     });
 
-    after(function() {
+    after(() => {
       global.Date.now = dateNow;
     });
 
-    it('should set the isGettingChannelState flag to true', function() {
+    it('should set the isGettingChannelState flag to true', () => {
       pool.getAndEmitChannelState();
       assert.strictEqual(pool.isGettingChannelState, true);
     });
 
-    it('should emit any client errors', function(done) {
+    it('should emit any client errors', done => {
       let channelErrorEmitted = false;
 
-      pool.on(channelErrorEvent, function() {
+      pool.on(channelErrorEvent, () => {
         channelErrorEmitted = true;
       });
 
       const fakeError = new Error('nope');
       let errorEmitted = false;
 
-      pool.on('error', function(err) {
+      pool.on('error', err => {
         assert.strictEqual(err, fakeError);
         errorEmitted = true;
       });
 
-      pool.getClient = function(callback) {
+      pool.getClient = callback => {
         callback(fakeError);
 
         assert.strictEqual(pool.isGettingChannelState, false);
@@ -966,18 +972,18 @@ describe('ConnectionPool', function() {
       pool.getAndEmitChannelState();
     });
 
-    it('should emit the ready event if the channel is ready', function(done) {
-      fakeClient.waitForReady = function(deadline, callback) {
+    it('should emit the ready event if the channel is ready', done => {
+      fakeClient.waitForReady = (deadline, callback) => {
         callback();
       };
       fakeChannelState = channelReadyState;
 
-      fakeChannel.getConnectivityState = function(shouldConnect) {
+      fakeChannel.getConnectivityState = shouldConnect => {
         assert.strictEqual(shouldConnect, false);
         return fakeChannelState;
       };
 
-      pool.on(channelReadyEvent, function() {
+      pool.on(channelReadyEvent, () => {
         assert.strictEqual(pool.isGettingChannelState, false);
         done();
       });
@@ -986,10 +992,10 @@ describe('ConnectionPool', function() {
       fakeClient.waitForReady = util.noop;
     });
 
-    it('should wait for the channel to be ready', function(done) {
+    it('should wait for the channel to be ready', done => {
       const expectedDeadline = fakeTimestamp + 300000;
 
-      fakeClient.waitForReady = function(deadline) {
+      fakeClient.waitForReady = deadline => {
         assert.strictEqual(deadline, expectedDeadline);
         done();
       };
@@ -997,13 +1003,13 @@ describe('ConnectionPool', function() {
       pool.getAndEmitChannelState();
     });
 
-    it('should factor in the noConnectionsTime property', function(done) {
+    it('should factor in the noConnectionsTime property', done => {
       pool.noConnectionsTime = 10;
 
       const fakeElapsedTime = fakeTimestamp - pool.noConnectionsTime;
       const expectedDeadline = fakeTimestamp + (300000 - fakeElapsedTime);
 
-      fakeClient.waitForReady = function(deadline) {
+      fakeClient.waitForReady = deadline => {
         assert.strictEqual(deadline, expectedDeadline);
         done();
       };
@@ -1011,29 +1017,29 @@ describe('ConnectionPool', function() {
       pool.getAndEmitChannelState();
     });
 
-    it('should emit any waitForReady errors', function(done) {
+    it('should emit any waitForReady errors', done => {
       const fakeError = new Error('err');
 
-      pool.on(channelErrorEvent, function(err) {
+      pool.on(channelErrorEvent, err => {
         assert.strictEqual(err, fakeError);
         assert.strictEqual(pool.isGettingChannelState, false);
         done();
       });
 
-      fakeClient.waitForReady = function(deadline, callback) {
+      fakeClient.waitForReady = (deadline, callback) => {
         callback(fakeError);
       };
 
       pool.getAndEmitChannelState();
     });
 
-    it('should emit the ready event when ready', function(done) {
-      pool.on(channelReadyEvent, function() {
+    it('should emit the ready event when ready', done => {
+      pool.on(channelReadyEvent, () => {
         assert.strictEqual(pool.isGettingChannelState, false);
         done();
       });
 
-      fakeClient.waitForReady = function(deadline, callback) {
+      fakeClient.waitForReady = (deadline, callback) => {
         callback(null);
       };
 
@@ -1041,7 +1047,7 @@ describe('ConnectionPool', function() {
     });
   });
 
-  describe('getClient', function() {
+  describe('getClient', () => {
     const fakeCreds = {};
 
     class FakeSubscriber {
@@ -1068,17 +1074,17 @@ describe('ConnectionPool', function() {
 
     const fakeClient = new FakeSubscriber('fake-address', fakeCreds, {});
 
-    beforeEach(function() {
-      PUBSUB.getClient_ = function(config, callback) {
+    beforeEach(() => {
+      PUBSUB.getClient_ = (config, callback) => {
         callback(null, fakeClient);
       };
     });
 
-    it('should return the cached client when available', function(done) {
-      pool.getClient(function(err1, client1) {
+    it('should return the cached client when available', done => {
+      pool.getClient((err1, client1) => {
         assert.ifError(err1);
 
-        pool.getClient(function(err2, client2) {
+        pool.getClient((err2, client2) => {
           assert.ifError(err2);
           assert.strictEqual(client1, client2);
           done();
@@ -1086,8 +1092,8 @@ describe('ConnectionPool', function() {
       });
     });
 
-    it('should create/use grpc credentials', function(done) {
-      pool.getClient(function(err, client) {
+    it('should create/use grpc credentials', done => {
+      pool.getClient((err, client) => {
         assert.ifError(err);
         assert(client instanceof FakeSubscriber);
         assert.strictEqual(client.creds, fakeCreds);
@@ -1096,8 +1102,8 @@ describe('ConnectionPool', function() {
     });
   });
 
-  describe('isConnected', function() {
-    it('should return true when at least one stream is connected', function() {
+  describe('isConnected', () => {
+    it('should return true when at least one stream is connected', () => {
       const connections = (pool.connections = new Map());
 
       connections.set('a', new FakeConnection());
@@ -1112,7 +1118,7 @@ describe('ConnectionPool', function() {
       assert(pool.isConnected());
     });
 
-    it('should return false when there is no connection', function() {
+    it('should return false when there is no connection', () => {
       const connections = (pool.connections = new Map());
 
       connections.set('a', new FakeConnection());
@@ -1124,23 +1130,23 @@ describe('ConnectionPool', function() {
       assert(!pool.isConnected());
     });
 
-    it('should return false when the map is empty', function() {
+    it('should return false when the map is empty', () => {
       pool.connections = new Map();
       assert(!pool.isConnected());
     });
   });
 
-  describe('open', function() {
-    beforeEach(function() {
+  describe('open', () => {
+    beforeEach(() => {
       pool.queueConnection = util.noop;
       clearInterval(pool.keepAliveHandle);
     });
 
-    it('should make the specified number of connections', function() {
+    it('should make the specified number of connections', () => {
       const expectedCount = 5;
       let connectionCount = 0;
 
-      pool.queueConnection = function() {
+      pool.queueConnection = () => {
         connectionCount += 1;
       };
 
@@ -1150,16 +1156,16 @@ describe('ConnectionPool', function() {
       assert.strictEqual(expectedCount, connectionCount);
     });
 
-    it('should set the isOpen flag to true', function() {
+    it('should set the isOpen flag to true', () => {
       pool.open();
       assert(pool.isOpen);
     });
 
-    it('should reset internal used props', function() {
+    it('should reset internal used props', () => {
       const fakeDate = Date.now();
       const dateNow = Date.now;
 
-      global.Date.now = function() {
+      global.Date.now = () => {
         return fakeDate;
       };
 
@@ -1174,36 +1180,36 @@ describe('ConnectionPool', function() {
       global.Date.now = dateNow;
     });
 
-    it('should listen for newListener events', function() {
+    it('should listen for newListener events', () => {
       pool.removeAllListeners('newListener');
       pool.open();
 
       assert.strictEqual(pool.listenerCount('newListener'), 1);
     });
 
-    describe('newListener callback', function() {
-      beforeEach(function() {
-        pool.getAndEmitChannelState = function() {
+    describe('newListener callback', () => {
+      beforeEach(() => {
+        pool.getAndEmitChannelState = () => {
           throw new Error('Should not be called!');
         };
       });
 
-      it('should call getAndEmitChannelState', function(done) {
+      it('should call getAndEmitChannelState', done => {
         pool.getAndEmitChannelState = done;
         pool.emit('newListener', 'channel.ready');
       });
 
-      it('should do nothing for unknown events', function() {
+      it('should do nothing for unknown events', () => {
         pool.emit('newListener', 'channel.error');
       });
 
-      it('should do nothing when already getting state', function() {
+      it('should do nothing when already getting state', () => {
         pool.isGettingChannelState = true;
         pool.emit('newListener', 'channel.ready');
       });
     });
 
-    it('should start a keepAlive task', function(done) {
+    it('should start a keepAlive task', done => {
       const _setInterval = global.setInterval;
       let unreffed = false;
       const fakeHandle = {
@@ -1213,11 +1219,12 @@ describe('ConnectionPool', function() {
       pool.subscription = {writeToStreams_: false};
       pool.sendKeepAlives = done;
 
-      (global as any).setInterval = function(fn, interval) {
+      // tslint:disable-next-line no-any
+      (global as any).setInterval = (fn, interval) => {
         global.setInterval = _setInterval;
 
         assert.strictEqual(interval, 30000);
-        fn(); // should call sendKeepAlives aka done
+        fn();  // should call sendKeepAlives aka done
 
         return fakeHandle;
       };
@@ -1229,13 +1236,13 @@ describe('ConnectionPool', function() {
     });
   });
 
-  describe('pause', function() {
-    it('should set the isPaused flag to true', function() {
+  describe('pause', () => {
+    it('should set the isPaused flag to true', () => {
       pool.pause();
       assert(pool.isPaused);
     });
 
-    it('should pause all the connections', function() {
+    it('should pause all the connections', () => {
       const a = new FakeConnection();
       const b = new FakeConnection();
 
@@ -1249,14 +1256,14 @@ describe('ConnectionPool', function() {
     });
   });
 
-  describe('queueConnection', function() {
+  describe('queueConnection', () => {
     const fakeTimeoutHandle = 123;
 
     let _setTimeout;
     let _random;
     let _open;
 
-    before(function() {
+    before(() => {
       _setTimeout = global.setTimeout;
       _random = global.Math.random;
 
@@ -1265,12 +1272,13 @@ describe('ConnectionPool', function() {
       ConnectionPool.prototype.open = util.noop;
     });
 
-    beforeEach(function() {
-      Math.random = function() {
+    beforeEach(() => {
+      Math.random = () => {
         return 1;
       };
 
-      (global as any).setTimeout = function(cb) {
+      // tslint:disable-next-line no-any
+      (global as any).setTimeout = cb => {
         cb();
         return fakeTimeoutHandle;
       };
@@ -1279,42 +1287,44 @@ describe('ConnectionPool', function() {
       pool.createConnection = util.noop;
     });
 
-    after(function() {
+    after(() => {
       global.setTimeout = _setTimeout;
       global.Math.random = _random;
       ConnectionPool.prototype.open = _open;
     });
 
-    it('should set a timeout to create the connection', function(done) {
+    it('should set a timeout to create the connection', done => {
       pool.createConnection = done;
 
-      (global as any).setTimeout = function(cb, delay) {
+      // tslint:disable-next-line no-any
+      (global as any).setTimeout = (cb, delay) => {
         assert.strictEqual(delay, 0);
-        cb(); // should call the done fn
+        cb();  // should call the done fn
       };
 
       pool.queueConnection();
     });
 
-    it('should factor in the number of failed requests', function(done) {
+    it('should factor in the number of failed requests', done => {
       pool.createConnection = done;
       pool.failedConnectionAttempts = 3;
 
-      (global as any).setTimeout = function(cb, delay) {
+      // tslint:disable-next-line no-any
+      (global as any).setTimeout = (cb, delay) => {
         assert.strictEqual(delay, 9000);
-        cb(); // should call the done fn
+        cb();  // should call the done fn
       };
 
       pool.queueConnection();
     });
 
-    it('should capture the timeout handle', function() {
+    it('should capture the timeout handle', () => {
       pool.queueConnection();
       assert.deepStrictEqual(pool.queue, [fakeTimeoutHandle]);
     });
 
-    it('should remove the timeout handle once it fires', function(done) {
-      pool.createConnection = function() {
+    it('should remove the timeout handle once it fires', done => {
+      pool.createConnection = () => {
         setImmediate(() => {
           assert.strictEqual(pool.queue.length, 0);
           done();
@@ -1325,13 +1335,13 @@ describe('ConnectionPool', function() {
     });
   });
 
-  describe('resume', function() {
-    it('should set the isPaused flag to false', function() {
+  describe('resume', () => {
+    it('should set the isPaused flag to false', () => {
       pool.resume();
       assert.strictEqual(pool.isPaused, false);
     });
 
-    it('should resume all the connections', function() {
+    it('should resume all the connections', () => {
       const a = new FakeConnection();
       const b = new FakeConnection();
 
@@ -1345,8 +1355,8 @@ describe('ConnectionPool', function() {
     });
   });
 
-  describe('sendKeepAlives', function() {
-    it('should write an empty message to all the streams', function() {
+  describe('sendKeepAlives', () => {
+    it('should write an empty message to all the streams', () => {
       const a = new FakeConnection();
       const b = new FakeConnection();
 
@@ -1360,36 +1370,36 @@ describe('ConnectionPool', function() {
     });
   });
 
-  describe('shouldReconnect', function() {
-    it('should not reconnect if the pool is closed', function() {
+  describe('shouldReconnect', () => {
+    it('should not reconnect if the pool is closed', () => {
       pool.isOpen = false;
       assert.strictEqual(pool.shouldReconnect({}), false);
     });
 
-    it('should return true for retryable errors', function() {
-      assert(pool.shouldReconnect({code: 0})); // OK
-      assert(pool.shouldReconnect({code: 1})); // Canceled
-      assert(pool.shouldReconnect({code: 2})); // Unknown
-      assert(pool.shouldReconnect({code: 4})); // DeadlineExceeded
-      assert(pool.shouldReconnect({code: 8})); // ResourceExhausted
-      assert(pool.shouldReconnect({code: 10})); // Aborted
-      assert(pool.shouldReconnect({code: 13})); // Internal
-      assert(pool.shouldReconnect({code: 14})); // Unavailable
-      assert(pool.shouldReconnect({code: 15})); // Dataloss
+    it('should return true for retryable errors', () => {
+      assert(pool.shouldReconnect({code: 0}));   // OK
+      assert(pool.shouldReconnect({code: 1}));   // Canceled
+      assert(pool.shouldReconnect({code: 2}));   // Unknown
+      assert(pool.shouldReconnect({code: 4}));   // DeadlineExceeded
+      assert(pool.shouldReconnect({code: 8}));   // ResourceExhausted
+      assert(pool.shouldReconnect({code: 10}));  // Aborted
+      assert(pool.shouldReconnect({code: 13}));  // Internal
+      assert(pool.shouldReconnect({code: 14}));  // Unavailable
+      assert(pool.shouldReconnect({code: 15}));  // Dataloss
     });
 
-    it('should return false for non-retryable errors', function() {
-      assert(!pool.shouldReconnect({code: 3})); // InvalidArgument
-      assert(!pool.shouldReconnect({code: 5})); // NotFound
-      assert(!pool.shouldReconnect({code: 6})); // AlreadyExists
-      assert(!pool.shouldReconnect({code: 7})); // PermissionDenied
-      assert(!pool.shouldReconnect({code: 9})); // FailedPrecondition
-      assert(!pool.shouldReconnect({code: 11})); // OutOfRange
-      assert(!pool.shouldReconnect({code: 12})); // Unimplemented
-      assert(!pool.shouldReconnect({code: 16})); // Unauthenticated
+    it('should return false for non-retryable errors', () => {
+      assert(!pool.shouldReconnect({code: 3}));   // InvalidArgument
+      assert(!pool.shouldReconnect({code: 5}));   // NotFound
+      assert(!pool.shouldReconnect({code: 6}));   // AlreadyExists
+      assert(!pool.shouldReconnect({code: 7}));   // PermissionDenied
+      assert(!pool.shouldReconnect({code: 9}));   // FailedPrecondition
+      assert(!pool.shouldReconnect({code: 11}));  // OutOfRange
+      assert(!pool.shouldReconnect({code: 12}));  // Unimplemented
+      assert(!pool.shouldReconnect({code: 16}));  // Unauthenticated
     });
 
-    it('should not retry if no connection can be made', function() {
+    it('should not retry if no connection can be made', () => {
       const fakeStatus = {
         code: 4,
       };
@@ -1399,7 +1409,7 @@ describe('ConnectionPool', function() {
       assert.strictEqual(pool.shouldReconnect(fakeStatus), false);
     });
 
-    it('should return true if all conditions are met', function() {
+    it('should return true if all conditions are met', () => {
       const fakeStatus = {
         code: 4,
       };
