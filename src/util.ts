@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export function noop() {};
+export function noop() {}
