@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
- import * as assert from 'assert';
-import * as proxyquire from 'proxyquire';
-import * as util from '../src/util';
 import * as pfy from '@google-cloud/promisify';
+import * as assert from 'assert';
+import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
+
+import * as util from '../src/util';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
@@ -47,7 +48,8 @@ class FakePublisher {
 
 let extended = false;
 const fakePaginator = {
-  extend: function(Class, methods) {
+  // tslint:disable-next-line variable-name
+  extend(Class, methods) {
     if (Class.name !== 'Topic') {
       return;
     }
@@ -55,12 +57,12 @@ const fakePaginator = {
     assert.deepStrictEqual(methods, ['getSubscriptions']);
     extended = true;
   },
-  streamify: function(methodName) {
+  streamify(methodName) {
     return methodName;
   },
 };
 
-describe('Topic', function() {
+describe('Topic', () => {
   // tslint:disable-next-line no-any variable-name
   let Topic: any;
   // tslint:disable-next-line no-any
@@ -78,46 +80,46 @@ describe('Topic', function() {
     request: util.noop,
   };
 
-  before(function() {
+  before(() => {
     Topic = proxyquire('../src/topic.js', {
-      '@google-cloud/promisify': fakePromisify,
-      '@google-cloud/paginator': {
-        paginator: fakePaginator,
-      },
-      './iam': {IAM: FakeIAM},
-      './publisher': {Publisher: FakePublisher},
-    }).Topic;
+              '@google-cloud/promisify': fakePromisify,
+              '@google-cloud/paginator': {
+                paginator: fakePaginator,
+              },
+              './iam': {IAM: FakeIAM},
+              './publisher': {Publisher: FakePublisher},
+            }).Topic;
   });
 
   const sandbox = sinon.createSandbox();
-  beforeEach(function() {
+  beforeEach(() => {
     topic = new Topic(PUBSUB, TOPIC_NAME);
     topic.parent = PUBSUB;
   });
   afterEach(() => sandbox.restore());
 
-  describe('initialization', function() {
-    it('should extend the correct methods', function() {
-      assert(extended); // See `fakePaginator.extend`
+  describe('initialization', () => {
+    it('should extend the correct methods', () => {
+      assert(extended);  // See `fakePaginator.extend`
     });
 
-    it('should streamify the correct methods', function() {
+    it('should streamify the correct methods', () => {
       assert.strictEqual(topic.getSubscriptionsStream, 'getSubscriptions');
     });
 
-    it('should promisify all the things', function() {
+    it('should promisify all the things', () => {
       assert(promisified);
     });
 
-    it('should localize pubsub.Promise', function() {
+    it('should localize pubsub.Promise', () => {
       assert.strictEqual(topic.Promise, PUBSUB.Promise);
     });
 
-    it('should format the name', function() {
+    it('should format the name', () => {
       const formattedName = 'a/b/c/d';
 
       const formatName_ = Topic.formatName_;
-      Topic.formatName_ = function(projectId, name) {
+      Topic.formatName_ = (projectId, name) => {
         assert.strictEqual(projectId, PROJECT_ID);
         assert.strictEqual(name, TOPIC_NAME);
 
@@ -130,110 +132,108 @@ describe('Topic', function() {
       assert.strictEqual(topic.name, formattedName);
     });
 
-    it('should localize the parent object', function() {
+    it('should localize the parent object', () => {
       assert.strictEqual(topic.parent, PUBSUB);
       assert.strictEqual(topic.pubsub, PUBSUB);
     });
 
-    it('should localize the request function', function(done) {
-      PUBSUB.request = function(callback) {
-        callback(); // the done fn
+    it('should localize the request function', done => {
+      PUBSUB.request = callback => {
+        callback();  // the done fn
       };
 
       const topic = new Topic(PUBSUB, TOPIC_NAME);
       topic.request(done);
     });
 
-    it('should create an iam object', function() {
+    it('should create an iam object', () => {
       assert.deepStrictEqual(topic.iam.calledWith_, [PUBSUB, TOPIC_NAME]);
     });
   });
 
-  describe('formatName_', function() {
-    it('should format name', function() {
-      const formattedName = Topic.formatName_(
-        PROJECT_ID,
-        TOPIC_UNFORMATTED_NAME
-      );
+  describe('formatName_', () => {
+    it('should format name', () => {
+      const formattedName =
+          Topic.formatName_(PROJECT_ID, TOPIC_UNFORMATTED_NAME);
       assert.strictEqual(formattedName, TOPIC_NAME);
     });
 
-    it('should format name when given a complete name', function() {
+    it('should format name when given a complete name', () => {
       const formattedName = Topic.formatName_(PROJECT_ID, TOPIC_NAME);
       assert.strictEqual(formattedName, TOPIC_NAME);
     });
   });
 
-  describe('create', function() {
-    it('should call the parent createTopic method', function(done) {
+  describe('create', () => {
+    it('should call the parent createTopic method', done => {
       const options_ = {};
 
-      PUBSUB.createTopic = function(name, options, callback) {
+      PUBSUB.createTopic = (name, options, callback) => {
         assert.strictEqual(name, topic.name);
         assert.strictEqual(options, options_);
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       topic.create(options_, done);
     });
   });
 
-  describe('createSubscription', function() {
-    it('should call the parent createSubscription method', function(done) {
+  describe('createSubscription', () => {
+    it('should call the parent createSubscription method', done => {
       const NAME = 'sub-name';
       const OPTIONS = {a: 'a'};
 
-      PUBSUB.createSubscription = function(topic_, name, options, callback) {
+      PUBSUB.createSubscription = (topic_, name, options, callback) => {
         assert.strictEqual(topic_, topic);
         assert.strictEqual(name, NAME);
         assert.strictEqual(options, OPTIONS);
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       topic.createSubscription(NAME, OPTIONS, done);
     });
   });
 
-  describe('delete', function() {
-    it('should make the proper request', function(done) {
-      topic.request = function(config, callback) {
+  describe('delete', () => {
+    it('should make the proper request', done => {
+      topic.request = (config, callback) => {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'deleteTopic');
         assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       topic.delete(done);
     });
 
-    it('should optionally accept gax options', function(done) {
+    it('should optionally accept gax options', done => {
       const options = {};
 
-      topic.request = function(config, callback) {
+      topic.request = (config, callback) => {
         assert.strictEqual(config.gaxOpts, options);
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       topic.delete(options, done);
     });
 
-    it('should optionally accept a callback', function(done) {
+    it('should optionally accept a callback', done => {
       sandbox.stub(util, 'noop').callsFake(done);
-      topic.request = function(config, callback) {
-        callback(); // the done fn
+      topic.request = (config, callback) => {
+        callback();  // the done fn
       };
       topic.delete();
     });
   });
 
-  describe('get', function() {
-    it('should delete the autoCreate option', function(done) {
+  describe('get', () => {
+    it('should delete the autoCreate option', done => {
       const options = {
         autoCreate: true,
         a: 'a',
       };
 
-      topic.getMetadata = function(gaxOpts) {
+      topic.getMetadata = gaxOpts => {
         assert.strictEqual(gaxOpts, options);
         assert.strictEqual(gaxOpts.autoCreate, undefined);
         done();
@@ -242,17 +242,17 @@ describe('Topic', function() {
       topic.get(options, assert.ifError);
     });
 
-    describe('success', function() {
+    describe('success', () => {
       const fakeMetadata = {};
 
-      beforeEach(function() {
-        topic.getMetadata = function(gaxOpts, callback) {
+      beforeEach(() => {
+        topic.getMetadata = (gaxOpts, callback) => {
           callback(null, fakeMetadata);
         };
       });
 
-      it('should call through to getMetadata', function(done) {
-        topic.get(function(err, _topic, resp) {
+      it('should call through to getMetadata', done => {
+        topic.get((err, _topic, resp) => {
           assert.ifError(err);
           assert.strictEqual(_topic, topic);
           assert.strictEqual(resp, fakeMetadata);
@@ -260,28 +260,28 @@ describe('Topic', function() {
         });
       });
 
-      it('should optionally accept options', function(done) {
+      it('should optionally accept options', done => {
         const options = {};
 
-        topic.getMetadata = function(gaxOpts, callback) {
+        topic.getMetadata = (gaxOpts, callback) => {
           assert.strictEqual(gaxOpts, options);
-          callback(); // the done fn
+          callback();  // the done fn
         };
 
         topic.get(options, done);
       });
     });
 
-    describe('error', function() {
-      it('should pass back errors when not auto-creating', function(done) {
+    describe('error', () => {
+      it('should pass back errors when not auto-creating', done => {
         const error = {code: 4};
         const apiResponse = {};
 
-        topic.getMetadata = function(gaxOpts, callback) {
+        topic.getMetadata = (gaxOpts, callback) => {
           callback(error, apiResponse);
         };
 
-        topic.get(function(err, _topic, resp) {
+        topic.get((err, _topic, resp) => {
           assert.strictEqual(err, error);
           assert.strictEqual(_topic, null);
           assert.strictEqual(resp, apiResponse);
@@ -289,15 +289,15 @@ describe('Topic', function() {
         });
       });
 
-      it('should pass back 404 errors if autoCreate is false', function(done) {
+      it('should pass back 404 errors if autoCreate is false', done => {
         const error = {code: 5};
         const apiResponse = {};
 
-        topic.getMetadata = function(gaxOpts, callback) {
+        topic.getMetadata = (gaxOpts, callback) => {
           callback(error, apiResponse);
         };
 
-        topic.get(function(err, _topic, resp) {
+        topic.get((err, _topic, resp) => {
           assert.strictEqual(err, error);
           assert.strictEqual(_topic, null);
           assert.strictEqual(resp, apiResponse);
@@ -305,7 +305,7 @@ describe('Topic', function() {
         });
       });
 
-      it('should create the topic if 404 + autoCreate is true', function(done) {
+      it('should create the topic if 404 + autoCreate is true', done => {
         const error = {code: 5};
         const apiResponse = {};
 
@@ -313,13 +313,13 @@ describe('Topic', function() {
           autoCreate: true,
         };
 
-        topic.getMetadata = function(gaxOpts, callback) {
+        topic.getMetadata = (gaxOpts, callback) => {
           callback(error, apiResponse);
         };
 
-        topic.create = function(options, callback) {
+        topic.create = (options, callback) => {
           assert.strictEqual(options, fakeOptions);
-          callback(); // the done fn
+          callback();  // the done fn
         };
 
         topic.get(fakeOptions, done);
@@ -327,39 +327,39 @@ describe('Topic', function() {
     });
   });
 
-  describe('exists', function() {
-    it('should return true if it finds metadata', function(done) {
-      topic.getMetadata = function(callback) {
+  describe('exists', () => {
+    it('should return true if it finds metadata', done => {
+      topic.getMetadata = callback => {
         callback(null, {});
       };
 
-      topic.exists(function(err, exists) {
+      topic.exists((err, exists) => {
         assert.ifError(err);
         assert(exists);
         done();
       });
     });
 
-    it('should return false if a not found error occurs', function(done) {
-      topic.getMetadata = function(callback) {
+    it('should return false if a not found error occurs', done => {
+      topic.getMetadata = callback => {
         callback({code: 5});
       };
 
-      topic.exists(function(err, exists) {
+      topic.exists((err, exists) => {
         assert.ifError(err);
         assert.strictEqual(exists, false);
         done();
       });
     });
 
-    it('should pass back any other type of error', function(done) {
+    it('should pass back any other type of error', done => {
       const error = {code: 4};
 
-      topic.getMetadata = function(callback) {
+      topic.getMetadata = callback => {
         callback(error);
       };
 
-      topic.exists(function(err, exists) {
+      topic.exists((err, exists) => {
         assert.strictEqual(err, error);
         assert.strictEqual(exists, undefined);
         done();
@@ -367,9 +367,9 @@ describe('Topic', function() {
     });
   });
 
-  describe('getMetadata', function() {
-    it('should make the proper request', function(done) {
-      topic.request = function(config) {
+  describe('getMetadata', () => {
+    it('should make the proper request', done => {
+      topic.request = config => {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'getTopic');
         assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
@@ -379,10 +379,10 @@ describe('Topic', function() {
       topic.getMetadata(assert.ifError);
     });
 
-    it('should optionally accept gax options', function(done) {
+    it('should optionally accept gax options', done => {
       const options = {};
 
-      topic.request = function(config) {
+      topic.request = config => {
         assert.strictEqual(config.gaxOpts, options);
         done();
       };
@@ -390,29 +390,29 @@ describe('Topic', function() {
       topic.getMetadata(options, assert.ifError);
     });
 
-    it('should pass back any errors that occur', function(done) {
+    it('should pass back any errors that occur', done => {
       const error = new Error('err');
       const apiResponse = {};
 
-      topic.request = function(config, callback) {
+      topic.request = (config, callback) => {
         callback(error, apiResponse);
       };
 
-      topic.getMetadata(function(err, metadata) {
+      topic.getMetadata((err, metadata) => {
         assert.strictEqual(err, error);
         assert.strictEqual(metadata, apiResponse);
         done();
       });
     });
 
-    it('should set the metadata if no error occurs', function(done) {
+    it('should set the metadata if no error occurs', done => {
       const apiResponse = {};
 
-      topic.request = function(config, callback) {
+      topic.request = (config, callback) => {
         callback(null, apiResponse);
       };
 
-      topic.getMetadata(function(err, metadata) {
+      topic.getMetadata((err, metadata) => {
         assert.ifError(err);
         assert.strictEqual(metadata, apiResponse);
         assert.strictEqual(topic.metadata, apiResponse);
@@ -421,8 +421,8 @@ describe('Topic', function() {
     });
   });
 
-  describe('getSubscriptions', function() {
-    it('should make the correct request', function(done) {
+  describe('getSubscriptions', () => {
+    it('should make the correct request', done => {
       const options = {
         a: 'a',
         b: 'b',
@@ -433,23 +433,21 @@ describe('Topic', function() {
       };
 
       const expectedOptions = Object.assign(
-        {
-          topic: topic.name,
-        },
-        options
-      );
+          {
+            topic: topic.name,
+          },
+          options);
 
       const expectedGaxOpts = Object.assign(
-        {
-          autoPaginate: options.autoPaginate,
-        },
-        options.gaxOpts
-      );
+          {
+            autoPaginate: options.autoPaginate,
+          },
+          options.gaxOpts);
 
       delete expectedOptions.gaxOpts;
       delete expectedOptions.autoPaginate;
 
-      topic.request = function(config) {
+      topic.request = config => {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'listTopicSubscriptions');
         assert.deepStrictEqual(config.reqOpts, expectedOptions);
@@ -460,8 +458,8 @@ describe('Topic', function() {
       topic.getSubscriptions(options, assert.ifError);
     });
 
-    it('should accept only a callback', function(done) {
-      topic.request = function(config) {
+    it('should accept only a callback', done => {
+      topic.request = config => {
         assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
         assert.deepStrictEqual(config.gaxOpts, {autoPaginate: undefined});
         done();
@@ -470,20 +468,20 @@ describe('Topic', function() {
       topic.getSubscriptions(assert.ifError);
     });
 
-    it('should create subscription objects', function(done) {
+    it('should create subscription objects', done => {
       const fakeSubs = ['a', 'b', 'c'];
 
-      topic.subscription = function(name) {
+      topic.subscription = name => {
         return {
-          name: name,
+          name,
         };
       };
 
-      topic.request = function(config, callback) {
+      topic.request = (config, callback) => {
         callback(null, fakeSubs);
       };
 
-      topic.getSubscriptions(function(err, subscriptions) {
+      topic.getSubscriptions((err, subscriptions) => {
         assert.ifError(err);
         assert.deepStrictEqual(subscriptions, [
           {name: 'a'},
@@ -494,17 +492,17 @@ describe('Topic', function() {
       });
     });
 
-    it('should pass all params to the callback', function(done) {
+    it('should pass all params to the callback', done => {
       const err_ = new Error('err');
       const subs_ = false;
       const nextQuery_ = {};
       const apiResponse_ = {};
 
-      topic.request = function(config, callback) {
+      topic.request = (config, callback) => {
         callback(err_, subs_, nextQuery_, apiResponse_);
       };
 
-      topic.getSubscriptions(function(err, subs, nextQuery, apiResponse) {
+      topic.getSubscriptions((err, subs, nextQuery, apiResponse) => {
         assert.strictEqual(err, err_);
         assert.deepStrictEqual(subs, subs_);
         assert.strictEqual(nextQuery, nextQuery_);
@@ -514,8 +512,8 @@ describe('Topic', function() {
     });
   });
 
-  describe('publisher', function() {
-    it('should return a Publisher instance', function() {
+  describe('publisher', () => {
+    it('should return a Publisher instance', () => {
       const options = {};
 
       const publisher = topic.publisher(options);
@@ -527,12 +525,12 @@ describe('Topic', function() {
     });
   });
 
-  describe('subscription', function() {
-    it('should pass correct arguments to pubsub#subscription', function(done) {
+  describe('subscription', () => {
+    it('should pass correct arguments to pubsub#subscription', done => {
       const subscriptionName = 'subName';
       const opts = {};
 
-      topic.parent.subscription = function(name, options) {
+      topic.parent.subscription = (name, options) => {
         assert.strictEqual(name, subscriptionName);
         assert.deepStrictEqual(options, opts);
         done();
@@ -541,8 +539,8 @@ describe('Topic', function() {
       topic.subscription(subscriptionName, opts);
     });
 
-    it('should attach the topic instance to the options', function(done) {
-      topic.parent.subscription = function(name, options) {
+    it('should attach the topic instance to the options', done => {
+      topic.parent.subscription = (name, options) => {
         assert.strictEqual(options.topic, topic);
         done();
       };
@@ -550,8 +548,8 @@ describe('Topic', function() {
       topic.subscription();
     });
 
-    it('should return the result', function(done) {
-      topic.parent.subscription = function() {
+    it('should return the result', done => {
+      topic.parent.subscription = () => {
         return done;
       };
 
