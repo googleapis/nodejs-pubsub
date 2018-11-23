@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import * as assert from 'assert';
-import * as util from '../src/util';
-import * as proxyquire from 'proxyquire';
 import * as pfy from '@google-cloud/promisify';
+import * as assert from 'assert';
+import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
+
+import * as util from '../src/util';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
@@ -53,7 +54,7 @@ class FakeSubscriber {
   }
 }
 
-describe('Subscription', function() {
+describe('Subscription', () => {
   // tslint:disable-next-line no-any variable-name
   let Subscription: any;
   // tslint:disable-next-line no-any
@@ -70,54 +71,54 @@ describe('Subscription', function() {
     request: util.noop,
   };
 
-  before(function() {
+  before(() => {
     Subscription = proxyquire('../src/subscription.js', {
-      '@google-cloud/promisify': fakePromisify,
-      './iam.js': {IAM: FakeIAM},
-      './snapshot.js': {Snapshot: FakeSnapshot},
-      './subscriber.js': {Subscriber: FakeSubscriber},
-    }).Subscription;
+                     '@google-cloud/promisify': fakePromisify,
+                     './iam.js': {IAM: FakeIAM},
+                     './snapshot.js': {Snapshot: FakeSnapshot},
+                     './subscriber.js': {Subscriber: FakeSubscriber},
+                   }).Subscription;
   });
 
   const sandbox = sinon.createSandbox();
-  beforeEach(function() {
+  beforeEach(() => {
     PUBSUB.request = util.noop;
     subscription = new Subscription(PUBSUB, SUB_NAME);
   });
 
   afterEach(() => sandbox.restore());
 
-  describe('initialization', function() {
-    it('should promisify all the things', function() {
+  describe('initialization', () => {
+    it('should promisify all the things', () => {
       assert(promisified);
     });
 
-    it('should localize pubsub.Promise', function() {
+    it('should localize pubsub.Promise', () => {
       assert.strictEqual(subscription.Promise, PUBSUB.Promise);
     });
 
-    it('should localize the pubsub object', function() {
+    it('should localize the pubsub object', () => {
       assert.strictEqual(subscription.pubsub, PUBSUB);
     });
 
-    it('should localize the project id', function() {
+    it('should localize the project id', () => {
       assert.strictEqual(subscription.projectId, PROJECT_ID);
     });
 
-    it('should localize pubsub request method', function(done) {
-      PUBSUB.request = function(callback) {
-        callback(); // the done fn
+    it('should localize pubsub request method', done => {
+      PUBSUB.request = callback => {
+        callback();  // the done fn
       };
 
       const subscription = new Subscription(PUBSUB, SUB_NAME);
       subscription.request(done);
     });
 
-    it('should format the sub name', function() {
+    it('should format the sub name', () => {
       const formattedName = 'a/b/c/d';
       const formatName = Subscription.formatName_;
 
-      Subscription.formatName_ = function(projectId, name) {
+      Subscription.formatName_ = (projectId, name) => {
         assert.strictEqual(projectId, PROJECT_ID);
         assert.strictEqual(name, SUB_NAME);
 
@@ -130,13 +131,13 @@ describe('Subscription', function() {
       assert.strictEqual(subscription.name, formattedName);
     });
 
-    it('should make a create method if a topic is found', function(done) {
+    it('should make a create method if a topic is found', done => {
       const TOPIC_NAME = 'test-topic';
 
-      PUBSUB.createSubscription = function(topic, subName, callback) {
+      PUBSUB.createSubscription = (topic, subName, callback) => {
         assert.strictEqual(topic, TOPIC_NAME);
         assert.strictEqual(subName, SUB_NAME);
-        callback(); // the done function
+        callback();  // the done function
       };
 
       const subscription = new Subscription(PUBSUB, SUB_NAME, {
@@ -146,7 +147,7 @@ describe('Subscription', function() {
       subscription.create(done);
     });
 
-    it('should create an IAM object', function() {
+    it('should create an IAM object', () => {
       assert(subscription.iam instanceof FakeIAM);
 
       const args = subscription.iam.calledWith_;
@@ -155,7 +156,7 @@ describe('Subscription', function() {
       assert.strictEqual(args[1], subscription.name);
     });
 
-    it('should inherit from Subscriber', function() {
+    it('should inherit from Subscriber', () => {
       const options = {};
       const subscription = new Subscription(PUBSUB, SUB_NAME, options);
 
@@ -164,8 +165,8 @@ describe('Subscription', function() {
     });
   });
 
-  describe('formatMetadata_', function() {
-    it('should make a copy of the metadata', function() {
+  describe('formatMetadata_', () => {
+    it('should make a copy of the metadata', () => {
       const metadata = {a: 'a'};
       const formatted = Subscription.formatMetadata_(metadata);
 
@@ -173,7 +174,7 @@ describe('Subscription', function() {
       assert.notStrictEqual(metadata, formatted);
     });
 
-    it('should format messageRetentionDuration', function() {
+    it('should format messageRetentionDuration', () => {
       const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
       const metadata = {
@@ -186,16 +187,14 @@ describe('Subscription', function() {
       assert.strictEqual(formatted.messageRetentionDuration.nanos, 0);
 
       assert.strictEqual(
-        formatted.messageRetentionDuration.seconds,
-        threeDaysInSeconds
-      );
+          formatted.messageRetentionDuration.seconds, threeDaysInSeconds);
     });
 
-    it('should format pushEndpoint', function() {
+    it('should format pushEndpoint', () => {
       const pushEndpoint = 'http://noop.com/push';
 
       const metadata = {
-        pushEndpoint: pushEndpoint,
+        pushEndpoint,
       };
 
       const formatted = Subscription.formatMetadata_(metadata);
@@ -205,37 +204,37 @@ describe('Subscription', function() {
     });
   });
 
-  describe('formatName_', function() {
-    it('should format name', function() {
+  describe('formatName_', () => {
+    it('should format name', () => {
       const formattedName = Subscription.formatName_(PROJECT_ID, SUB_NAME);
       assert.strictEqual(formattedName, SUB_FULL_NAME);
     });
 
-    it('should format name when given a complete name', function() {
+    it('should format name when given a complete name', () => {
       const formattedName = Subscription.formatName_(PROJECT_ID, SUB_FULL_NAME);
       assert.strictEqual(formattedName, SUB_FULL_NAME);
     });
   });
 
-  describe('createSnapshot', function() {
+  describe('createSnapshot', () => {
     const SNAPSHOT_NAME = 'test-snapshot';
 
-    beforeEach(function() {
-      subscription.snapshot = function(name) {
+    beforeEach(() => {
+      subscription.snapshot = (name) => {
         return {
-          name: name,
+          name,
         };
       };
     });
 
-    it('should throw an error if a snapshot name is not found', function() {
-      assert.throws(function() {
+    it('should throw an error if a snapshot name is not found', () => {
+      assert.throws(() => {
         subscription.createSnapshot();
       }, /A name is required to create a snapshot\./);
     });
 
-    it('should make the correct request', function(done) {
-      subscription.request = function(config) {
+    it('should make the correct request', done => {
+      subscription.request = config => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'createSnapshot');
         assert.deepStrictEqual(config.reqOpts, {
@@ -248,10 +247,10 @@ describe('Subscription', function() {
       subscription.createSnapshot(SNAPSHOT_NAME, assert.ifError);
     });
 
-    it('should optionally accept gax options', function(done) {
+    it('should optionally accept gax options', done => {
       const gaxOpts = {};
 
-      subscription.request = function(config) {
+      subscription.request = config => {
         assert.strictEqual(config.gaxOpts, gaxOpts);
         done();
       };
@@ -259,15 +258,15 @@ describe('Subscription', function() {
       subscription.createSnapshot(SNAPSHOT_NAME, gaxOpts, assert.ifError);
     });
 
-    it('should pass back any errors to the callback', function(done) {
+    it('should pass back any errors to the callback', done => {
       const error = new Error('err');
       const apiResponse = {};
 
-      subscription.request = function(config, callback) {
+      subscription.request = (config, callback) => {
         callback(error, apiResponse);
       };
 
-      subscription.createSnapshot(SNAPSHOT_NAME, function(err, snapshot, resp) {
+      subscription.createSnapshot(SNAPSHOT_NAME, (err, snapshot, resp) => {
         assert.strictEqual(err, error);
         assert.strictEqual(snapshot, null);
         assert.strictEqual(resp, apiResponse);
@@ -275,19 +274,19 @@ describe('Subscription', function() {
       });
     });
 
-    it('should return a snapshot object with metadata', function(done) {
+    it('should return a snapshot object with metadata', done => {
       const apiResponse = {};
       const fakeSnapshot = {};
 
-      subscription.snapshot = function() {
+      subscription.snapshot = () => {
         return fakeSnapshot;
       };
 
-      subscription.request = function(config, callback) {
+      subscription.request = (config, callback) => {
         callback(null, apiResponse);
       };
 
-      subscription.createSnapshot(SNAPSHOT_NAME, function(err, snapshot, resp) {
+      subscription.createSnapshot(SNAPSHOT_NAME, (err, snapshot, resp) => {
         assert.ifError(err);
         assert.strictEqual(snapshot, fakeSnapshot);
         assert.strictEqual(snapshot.metadata, apiResponse);
@@ -297,14 +296,14 @@ describe('Subscription', function() {
     });
   });
 
-  describe('delete', function() {
-    beforeEach(function() {
+  describe('delete', () => {
+    beforeEach(() => {
       subscription.removeAllListeners = util.noop;
       subscription.close = util.noop;
     });
 
-    it('should make the correct request', function(done) {
-      subscription.request = function(config) {
+    it('should make the correct request', done => {
+      subscription.request = config => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'deleteSubscription');
         assert.deepStrictEqual(config.reqOpts, {
@@ -316,10 +315,10 @@ describe('Subscription', function() {
       subscription.delete(assert.ifError);
     });
 
-    it('should optionally accept gax options', function(done) {
+    it('should optionally accept gax options', done => {
       const gaxOpts = {};
 
-      subscription.request = function(config) {
+      subscription.request = config => {
         assert.strictEqual(config.gaxOpts, gaxOpts);
         done();
       };
@@ -327,16 +326,16 @@ describe('Subscription', function() {
       subscription.delete(gaxOpts, assert.ifError);
     });
 
-    describe('success', function() {
+    describe('success', () => {
       const apiResponse = {};
 
-      beforeEach(function() {
-        subscription.request = function(config, callback) {
+      beforeEach(() => {
+        subscription.request = (config, callback) => {
           callback(null, apiResponse);
         };
       });
 
-      it('should optionally accept a callback', function(done) {
+      it('should optionally accept a callback', done => {
         sandbox.stub(util, 'noop').callsFake((err?, resp?) => {
           assert.ifError(err);
           assert.strictEqual(resp, apiResponse);
@@ -345,36 +344,36 @@ describe('Subscription', function() {
         subscription.delete();
       });
 
-      it('should return the api response', function(done) {
-        subscription.delete(function(err, resp) {
+      it('should return the api response', done => {
+        subscription.delete((err, resp) => {
           assert.ifError(err);
           assert.strictEqual(resp, apiResponse);
           done();
         });
       });
 
-      it('should remove all message listeners', function(done) {
+      it('should remove all message listeners', done => {
         let called = false;
 
-        subscription.removeAllListeners = function() {
+        subscription.removeAllListeners = () => {
           called = true;
         };
 
-        subscription.delete(function(err) {
+        subscription.delete(err => {
           assert.ifError(err);
           assert(called);
           done();
         });
       });
 
-      it('should close the subscription', function(done) {
+      it('should close the subscription', done => {
         let called = false;
 
-        subscription.close = function() {
+        subscription.close = () => {
           called = true;
         };
 
-        subscription.delete(function(err) {
+        subscription.delete(err => {
           assert.ifError(err);
           assert(called);
           done();
@@ -382,77 +381,77 @@ describe('Subscription', function() {
       });
     });
 
-    describe('error', function() {
+    describe('error', () => {
       const error = new Error('err');
 
-      beforeEach(function() {
-        subscription.request = function(config, callback) {
+      beforeEach(() => {
+        subscription.request = (config, callback) => {
           callback(error);
         };
       });
 
-      it('should return the error to the callback', function(done) {
-        subscription.delete(function(err) {
+      it('should return the error to the callback', done => {
+        subscription.delete(err => {
           assert.strictEqual(err, error);
           done();
         });
       });
 
-      it('should not remove all the listeners', function(done) {
-        subscription.removeAllListeners = function() {
+      it('should not remove all the listeners', done => {
+        subscription.removeAllListeners = () => {
           done(new Error('Should not be called.'));
         };
 
-        subscription.delete(function() {
+        subscription.delete(() => {
           done();
         });
       });
 
-      it('should not close the subscription', function(done) {
-        subscription.close = function() {
+      it('should not close the subscription', done => {
+        subscription.close = () => {
           done(new Error('Should not be called.'));
         };
 
-        subscription.delete(function() {
+        subscription.delete(() => {
           done();
         });
       });
     });
   });
 
-  describe('exists', function() {
-    it('should return true if it finds metadata', function(done) {
-      subscription.getMetadata = function(callback) {
+  describe('exists', () => {
+    it('should return true if it finds metadata', done => {
+      subscription.getMetadata = callback => {
         callback(null, {});
       };
 
-      subscription.exists(function(err, exists) {
+      subscription.exists((err, exists) => {
         assert.ifError(err);
         assert(exists);
         done();
       });
     });
 
-    it('should return false if a not found error occurs', function(done) {
-      subscription.getMetadata = function(callback) {
+    it('should return false if a not found error occurs', done => {
+      subscription.getMetadata = callback => {
         callback({code: 5});
       };
 
-      subscription.exists(function(err, exists) {
+      subscription.exists((err, exists) => {
         assert.ifError(err);
         assert.strictEqual(exists, false);
         done();
       });
     });
 
-    it('should pass back any other type of error', function(done) {
+    it('should pass back any other type of error', done => {
       const error = {code: 4};
 
-      subscription.getMetadata = function(callback) {
+      subscription.getMetadata = callback => {
         callback(error);
       };
 
-      subscription.exists(function(err, exists) {
+      subscription.exists((err, exists) => {
         assert.strictEqual(err, error);
         assert.strictEqual(exists, undefined);
         done();
@@ -460,18 +459,18 @@ describe('Subscription', function() {
     });
   });
 
-  describe('get', function() {
-    beforeEach(function() {
+  describe('get', () => {
+    beforeEach(() => {
       subscription.create = util.noop;
     });
 
-    it('should delete the autoCreate option', function(done) {
+    it('should delete the autoCreate option', done => {
       const options = {
         autoCreate: true,
         a: 'a',
       };
 
-      subscription.getMetadata = function(gaxOpts) {
+      subscription.getMetadata = gaxOpts => {
         assert.strictEqual(gaxOpts, options);
         assert.strictEqual(gaxOpts.autoCreate, undefined);
         done();
@@ -480,17 +479,17 @@ describe('Subscription', function() {
       subscription.get(options, assert.ifError);
     });
 
-    describe('success', function() {
+    describe('success', () => {
       const fakeMetadata = {};
 
-      beforeEach(function() {
-        subscription.getMetadata = function(gaxOpts, callback) {
+      beforeEach(() => {
+        subscription.getMetadata = (gaxOpts, callback) => {
           callback(null, fakeMetadata);
         };
       });
 
-      it('should call through to getMetadata', function(done) {
-        subscription.get(function(err, sub, resp) {
+      it('should call through to getMetadata', done => {
+        subscription.get((err, sub, resp) => {
           assert.ifError(err);
           assert.strictEqual(sub, subscription);
           assert.strictEqual(resp, fakeMetadata);
@@ -498,28 +497,28 @@ describe('Subscription', function() {
         });
       });
 
-      it('should optionally accept options', function(done) {
+      it('should optionally accept options', done => {
         const options = {};
 
-        subscription.getMetadata = function(gaxOpts, callback) {
+        subscription.getMetadata = (gaxOpts, callback) => {
           assert.strictEqual(gaxOpts, options);
-          callback(); // the done fn
+          callback();  // the done fn
         };
 
         subscription.get(options, done);
       });
     });
 
-    describe('error', function() {
-      it('should pass back errors when not auto-creating', function(done) {
+    describe('error', () => {
+      it('should pass back errors when not auto-creating', done => {
         const error = {code: 4};
         const apiResponse = {};
 
-        subscription.getMetadata = function(gaxOpts, callback) {
+        subscription.getMetadata = (gaxOpts, callback) => {
           callback(error, apiResponse);
         };
 
-        subscription.get(function(err, sub, resp) {
+        subscription.get((err, sub, resp) => {
           assert.strictEqual(err, error);
           assert.strictEqual(sub, null);
           assert.strictEqual(resp, apiResponse);
@@ -527,15 +526,15 @@ describe('Subscription', function() {
         });
       });
 
-      it('should pass back 404 errors if autoCreate is false', function(done) {
+      it('should pass back 404 errors if autoCreate is false', done => {
         const error = {code: 5};
         const apiResponse = {};
 
-        subscription.getMetadata = function(gaxOpts, callback) {
+        subscription.getMetadata = (gaxOpts, callback) => {
           callback(error, apiResponse);
         };
 
-        subscription.get(function(err, sub, resp) {
+        subscription.get((err, sub, resp) => {
           assert.strictEqual(err, error);
           assert.strictEqual(sub, null);
           assert.strictEqual(resp, apiResponse);
@@ -543,17 +542,17 @@ describe('Subscription', function() {
         });
       });
 
-      it('should pass back 404 errors if create doesnt exist', function(done) {
+      it('should pass back 404 errors if create doesnt exist', done => {
         const error = {code: 5};
         const apiResponse = {};
 
-        subscription.getMetadata = function(gaxOpts, callback) {
+        subscription.getMetadata = (gaxOpts, callback) => {
           callback(error, apiResponse);
         };
 
         delete subscription.create;
 
-        subscription.get(function(err, sub, resp) {
+        subscription.get((err, sub, resp) => {
           assert.strictEqual(err, error);
           assert.strictEqual(sub, null);
           assert.strictEqual(resp, apiResponse);
@@ -561,7 +560,7 @@ describe('Subscription', function() {
         });
       });
 
-      it('should create the sub if 404 + autoCreate is true', function(done) {
+      it('should create the sub if 404 + autoCreate is true', done => {
         const error = {code: 5};
         const apiResponse = {};
 
@@ -569,13 +568,13 @@ describe('Subscription', function() {
           autoCreate: true,
         };
 
-        subscription.getMetadata = function(gaxOpts, callback) {
+        subscription.getMetadata = (gaxOpts, callback) => {
           callback(error, apiResponse);
         };
 
-        subscription.create = function(options, callback) {
+        subscription.create = (options, callback) => {
           assert.strictEqual(options, fakeOptions);
-          callback(); // the done fn
+          callback();  // the done fn
         };
 
         subscription.get(fakeOptions, done);
@@ -583,9 +582,9 @@ describe('Subscription', function() {
     });
   });
 
-  describe('getMetadata', function() {
-    it('should make the correct request', function(done) {
-      subscription.request = function(config) {
+  describe('getMetadata', () => {
+    it('should make the correct request', done => {
+      subscription.request = config => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'getSubscription');
         assert.deepStrictEqual(config.reqOpts, {
@@ -597,10 +596,10 @@ describe('Subscription', function() {
       subscription.getMetadata(assert.ifError);
     });
 
-    it('should optionally accept gax options', function(done) {
+    it('should optionally accept gax options', done => {
       const gaxOpts = {};
 
-      subscription.request = function(config) {
+      subscription.request = config => {
         assert.strictEqual(config.gaxOpts, gaxOpts);
         done();
       };
@@ -608,29 +607,29 @@ describe('Subscription', function() {
       subscription.getMetadata(gaxOpts, assert.ifError);
     });
 
-    it('should pass back any errors that occur', function(done) {
+    it('should pass back any errors that occur', done => {
       const error = new Error('err');
       const apiResponse = {};
 
-      subscription.request = function(config, callback) {
+      subscription.request = (config, callback) => {
         callback(error, apiResponse);
       };
 
-      subscription.getMetadata(function(err, metadata) {
+      subscription.getMetadata((err, metadata) => {
         assert.strictEqual(err, error);
         assert.strictEqual(metadata, apiResponse);
         done();
       });
     });
 
-    it('should set the metadata if no error occurs', function(done) {
+    it('should set the metadata if no error occurs', done => {
       const apiResponse = {};
 
-      subscription.request = function(config, callback) {
+      subscription.request = (config, callback) => {
         callback(null, apiResponse);
       };
 
-      subscription.getMetadata(function(err, metadata) {
+      subscription.getMetadata((err, metadata) => {
         assert.ifError(err);
         assert.strictEqual(metadata, apiResponse);
         assert.strictEqual(subscription.metadata, apiResponse);
@@ -639,106 +638,106 @@ describe('Subscription', function() {
     });
   });
 
-  describe('modifyPushConfig', function() {
+  describe('modifyPushConfig', () => {
     const fakeConfig = {};
 
-    it('should make the correct request', function(done) {
-      subscription.request = function(config, callback) {
+    it('should make the correct request', done => {
+      subscription.request = (config, callback) => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'modifyPushConfig');
         assert.deepStrictEqual(config.reqOpts, {
           subscription: subscription.name,
           pushConfig: fakeConfig,
         });
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       subscription.modifyPushConfig(fakeConfig, done);
     });
 
-    it('should optionally accept gaxOpts', function(done) {
+    it('should optionally accept gaxOpts', done => {
       const gaxOpts = {};
 
-      subscription.request = function(config, callback) {
+      subscription.request = (config, callback) => {
         assert.strictEqual(config.gaxOpts, gaxOpts);
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       subscription.modifyPushConfig(fakeConfig, gaxOpts, done);
     });
   });
 
-  describe('seek', function() {
+  describe('seek', () => {
     const FAKE_SNAPSHOT_NAME = 'a';
     const FAKE_FULL_SNAPSHOT_NAME = 'a/b/c/d';
 
-    beforeEach(function() {
-      FakeSnapshot.formatName_ = function() {
+    beforeEach(() => {
+      FakeSnapshot.formatName_ = () => {
         return FAKE_FULL_SNAPSHOT_NAME;
       };
     });
 
-    it('should throw if a name or date is not provided', function() {
-      assert.throws(function() {
+    it('should throw if a name or date is not provided', () => {
+      assert.throws(() => {
         subscription.seek();
       }, /Either a snapshot name or Date is needed to seek to\./);
     });
 
-    it('should make the correct api request', function(done) {
-      FakeSnapshot.formatName_ = function(projectId, name) {
+    it('should make the correct api request', done => {
+      FakeSnapshot.formatName_ = (projectId, name) => {
         assert.strictEqual(projectId, PROJECT_ID);
         assert.strictEqual(name, FAKE_SNAPSHOT_NAME);
         return FAKE_FULL_SNAPSHOT_NAME;
       };
 
-      subscription.request = function(config, callback) {
+      subscription.request = (config, callback) => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'seek');
         assert.deepStrictEqual(config.reqOpts, {
           subscription: subscription.name,
           snapshot: FAKE_FULL_SNAPSHOT_NAME,
         });
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       subscription.seek(FAKE_SNAPSHOT_NAME, done);
     });
 
-    it('should optionally accept a Date object', function(done) {
+    it('should optionally accept a Date object', done => {
       const date = new Date();
 
-      subscription.request = function(config, callback) {
+      subscription.request = (config, callback) => {
         assert.strictEqual(config.reqOpts.time, date);
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       subscription.seek(date, done);
     });
 
-    it('should optionally accept gax options', function(done) {
+    it('should optionally accept gax options', done => {
       const gaxOpts = {};
 
-      subscription.request = function(config, callback) {
+      subscription.request = (config, callback) => {
         assert.strictEqual(config.gaxOpts, gaxOpts);
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       subscription.seek(FAKE_SNAPSHOT_NAME, gaxOpts, done);
     });
   });
 
-  describe('setMetadata', function() {
+  describe('setMetadata', () => {
     const METADATA = {
       pushEndpoint: 'http://noop.com/push',
     };
 
-    beforeEach(function() {
-      Subscription.formatMetadata_ = function(metadata) {
+    beforeEach(() => {
+      Subscription.formatMetadata_ = metadata => {
         return Object.assign({}, metadata);
       };
     });
 
-    it('should make the correct request', function(done) {
+    it('should make the correct request', done => {
       const formattedMetadata = {
         pushConfig: {
           pushEndpoint: METADATA.pushEndpoint,
@@ -746,46 +745,45 @@ describe('Subscription', function() {
       };
 
       const expectedBody = Object.assign(
-        {
-          name: SUB_FULL_NAME,
-        },
-        formattedMetadata
-      );
+          {
+            name: SUB_FULL_NAME,
+          },
+          formattedMetadata);
 
-      Subscription.formatMetadata_ = function(metadata) {
+      Subscription.formatMetadata_ = metadata => {
         assert.strictEqual(metadata, METADATA);
         return formattedMetadata;
       };
 
-      subscription.request = function(config, callback) {
+      subscription.request = (config, callback) => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'updateSubscription');
         assert.deepStrictEqual(config.reqOpts.subscription, expectedBody);
         assert.deepStrictEqual(config.reqOpts.updateMask, {
           paths: ['push_config'],
         });
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       subscription.setMetadata(METADATA, done);
     });
 
-    it('should optionally accept gax options', function(done) {
+    it('should optionally accept gax options', done => {
       const gaxOpts = {};
 
-      subscription.request = function(config, callback) {
+      subscription.request = (config, callback) => {
         assert.strictEqual(config.gaxOpts, gaxOpts);
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       subscription.setMetadata(METADATA, gaxOpts, done);
     });
   });
 
-  describe('snapshot', function() {
+  describe('snapshot', () => {
     const SNAPSHOT_NAME = 'a';
 
-    it('should call through to pubsub.snapshot', function(done) {
+    it('should call through to pubsub.snapshot', done => {
       PUBSUB.snapshot = function(name) {
         assert.strictEqual(this, subscription);
         assert.strictEqual(name, SNAPSHOT_NAME);
