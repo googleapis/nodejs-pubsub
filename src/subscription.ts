@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import * as util from './util';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as is from 'is';
+
+import * as util from './util';
+
 const snakeCase = require('lodash.snakecase');
 
 import {IAM} from './iam';
 import {Snapshot} from './snapshot';
 import {Subscriber} from './subscriber';
-import { PubSub } from '.';
+import {PubSub} from '.';
 
 /**
  * A Subscription object will give you access to your Cloud Pub/Sub
@@ -57,7 +59,8 @@ import { PubSub } from '.';
  * @param {PubSub} pubsub PubSub object.
  * @param {string} name The name of the subscription.
  * @param {object} [options] See a
- *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions)
+ *     [Subscription
+ * resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions)
  * @param {object} [options.batching] Batch configurations for sending out
  *     Acknowledge and ModifyAckDeadline requests.
  * @param {number} [options.batching.maxMilliseconds] The maximum amount of time
@@ -139,6 +142,7 @@ import { PubSub } from '.';
  * subscription.removeListener('message', onMessage);
  */
 export class Subscription extends Subscriber {
+  // tslint:disable-next-line variable-name
   Promise?: PromiseConstructor;
   pubsub: PubSub;
   projectId: string;
@@ -159,17 +163,18 @@ export class Subscription extends Subscriber {
       this.create = pubsub.createSubscription.bind(pubsub, options.topic, name);
     }
     /**
-     * [IAM (Identity and Access Management)](https://cloud.google.com/pubsub/access_control)
-     * allows you to set permissions on individual resources and offers a wider
-     * range of roles: editor, owner, publisher, subscriber, and viewer. This
-     * gives you greater flexibility and allows you to set more fine-grained
-     * access control.
+     * [IAM (Identity and Access
+     * Management)](https://cloud.google.com/pubsub/access_control) allows you
+     * to set permissions on individual resources and offers a wider range of
+     * roles: editor, owner, publisher, subscriber, and viewer. This gives you
+     * greater flexibility and allows you to set more fine-grained access
+     * control.
      *
      * *The IAM access control features described in this document are Beta,
      * including the API methods to get and set IAM policies, and to test IAM
      * permissions. Cloud Pub/Sub's use of IAM features is not covered by
-     * any SLA or deprecation policy, and may be subject to backward-incompatible
-     * changes.*
+     * any SLA or deprecation policy, and may be subject to
+     * backward-incompatible changes.*
      *
      * @name Subscription#iam
      * @mixes IAM
@@ -252,25 +257,24 @@ export class Subscription extends Subscriber {
       subscription: this.name,
     };
     this.request(
-      {
-        client: 'SubscriberClient',
-        method: 'createSnapshot',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      (err, resp) => {
-        if (err) {
-          callback(err, null, resp);
-          return;
-        }
-        snapshot.metadata = resp;
-        callback(null, snapshot, resp);
-      }
-    );
+        {
+          client: 'SubscriberClient',
+          method: 'createSnapshot',
+          reqOpts,
+          gaxOpts,
+        },
+        (err, resp) => {
+          if (err) {
+            callback(err, null, resp);
+            return;
+          }
+          snapshot.metadata = resp;
+          callback(null, snapshot, resp);
+        });
   }
   /**
-   * Delete the subscription. Pull requests from the current subscription will be
-   * errored once unsubscription is complete.
+   * Delete the subscription. Pull requests from the current subscription will
+   * be errored once unsubscription is complete.
    *
    * @see [Subscriptions: delete API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/delete}
    *
@@ -307,20 +311,19 @@ export class Subscription extends Subscriber {
       subscription: this.name,
     };
     this.request(
-      {
-        client: 'SubscriberClient',
-        method: 'deleteSubscription',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      (err, resp) => {
-        if (!err) {
-          this.removeAllListeners();
-          this.close();
-        }
-        callback(err, resp);
-      }
-    );
+        {
+          client: 'SubscriberClient',
+          method: 'deleteSubscription',
+          reqOpts,
+          gaxOpts,
+        },
+        (err, resp) => {
+          if (!err) {
+            this.removeAllListeners();
+            this.close();
+          }
+          callback(err, resp);
+        });
   }
   /**
    * @typedef {array} SubscriptionExistsResponse
@@ -471,19 +474,18 @@ export class Subscription extends Subscriber {
       subscription: this.name,
     };
     this.request(
-      {
-        client: 'SubscriberClient',
-        method: 'getSubscription',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      (err, apiResponse) => {
-        if (!err) {
-          this.metadata = apiResponse;
-        }
-        callback(err, apiResponse);
-      }
-    );
+        {
+          client: 'SubscriberClient',
+          method: 'getSubscription',
+          reqOpts,
+          gaxOpts,
+        },
+        (err, apiResponse) => {
+          if (!err) {
+            this.metadata = apiResponse;
+          }
+          callback(err, apiResponse);
+        });
   }
   /**
    * @typedef {array} ModifyPushConfigResponse
@@ -543,14 +545,13 @@ export class Subscription extends Subscriber {
       pushConfig: config,
     };
     this.request(
-      {
-        client: 'SubscriberClient',
-        method: 'modifyPushConfig',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      callback
-    );
+        {
+          client: 'SubscriberClient',
+          method: 'modifyPushConfig',
+          reqOpts,
+          gaxOpts,
+        },
+        callback);
   }
   /**
    * @typedef {array} SeekResponse
@@ -581,7 +582,8 @@ export class Subscription extends Subscriber {
    * subscription.seek('my-snapshot', callback);
    *
    * //-
-   * // Alternatively, to specify a certain point in time, you can provide a Date
+   * // Alternatively, to specify a certain point in time, you can provide a
+   * Date
    * // object.
    * //-
    * const date = new Date('October 21 2015');
@@ -593,9 +595,16 @@ export class Subscription extends Subscriber {
       callback = gaxOpts;
       gaxOpts = {};
     }
-    const reqOpts: any = {
+
+    interface ReqOpts {
+      subscription?: string;
+      snapshot?: string;
+      time?: Date;
+    }
+    const reqOpts: ReqOpts = {
       subscription: this.name,
     };
+
     if (is.string(snapshot)) {
       reqOpts.snapshot = Snapshot.formatName_(this.pubsub.projectId, snapshot);
     } else if (is.date(snapshot)) {
@@ -604,14 +613,13 @@ export class Subscription extends Subscriber {
       throw new Error('Either a snapshot name or Date is needed to seek to.');
     }
     this.request(
-      {
-        client: 'SubscriberClient',
-        method: 'seek',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      callback
-    );
+        {
+          client: 'SubscriberClient',
+          method: 'seek',
+          reqOpts,
+          gaxOpts,
+        },
+        callback);
   }
   /**
    * @typedef {array} SetSubscriptionMetadataResponse
@@ -658,20 +666,19 @@ export class Subscription extends Subscriber {
     const fields = Object.keys(subscription).map(snakeCase);
     subscription.name = this.name;
     const reqOpts = {
-      subscription: subscription,
+      subscription,
       updateMask: {
         paths: fields,
       },
     };
     this.request(
-      {
-        client: 'SubscriberClient',
-        method: 'updateSubscription',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      callback
-    );
+        {
+          client: 'SubscriberClient',
+          method: 'updateSubscription',
+          reqOpts,
+          gaxOpts,
+        },
+        callback);
   }
   /**
    * Create a Snapshot object. See {@link Subscription#createSnapshot} to

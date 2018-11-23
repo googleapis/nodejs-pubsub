@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import * as util from './util';
-import {promisifyAll} from '@google-cloud/promisify';
 import {paginator} from '@google-cloud/paginator';
+import {promisifyAll} from '@google-cloud/promisify';
 import * as is from 'is';
+import {Readable} from 'stream';
 
+import {PubSub} from '.';
 import {IAM} from './iam';
 import {Publisher} from './publisher';
-import { PubSub } from '.';
-import { Readable } from 'stream';
+import * as util from './util';
 
 /**
  * A Topic object allows you to interact with a Cloud Pub/Sub topic.
@@ -38,6 +38,7 @@ import { Readable } from 'stream';
  * const topic = pubsub.topic('my-topic');
  */
 export class Topic {
+  // tslint:disable-next-line variable-name
   Promise?: PromiseConstructor;
   name: string;
   parent: PubSub;
@@ -45,7 +46,8 @@ export class Topic {
   request: typeof PubSub.prototype.request;
   iam: IAM;
   metadata;
-  getSubscriptionsStream = paginator.streamify('getSubscriptions') as () => Readable;
+  getSubscriptionsStream = paginator.streamify('getSubscriptions') as() =>
+                               Readable;
   constructor(pubsub: PubSub, name: string) {
     if (pubsub.Promise) {
       this.Promise = pubsub.Promise;
@@ -69,17 +71,18 @@ export class Topic {
     this.parent = this.pubsub = pubsub;
     this.request = pubsub.request.bind(pubsub);
     /**
-     * [IAM (Identity and Access Management)](https://cloud.google.com/pubsub/access_control)
-     * allows you to set permissions on individual resources and offers a wider
-     * range of roles: editor, owner, publisher, subscriber, and viewer. This
-     * gives you greater flexibility and allows you to set more fine-grained
-     * access control.
+     * [IAM (Identity and Access
+     * Management)](https://cloud.google.com/pubsub/access_control) allows you
+     * to set permissions on individual resources and offers a wider range of
+     * roles: editor, owner, publisher, subscriber, and viewer. This gives you
+     * greater flexibility and allows you to set more fine-grained access
+     * control.
      *
      * *The IAM access control features described in this document are Beta,
      * including the API methods to get and set IAM policies, and to test IAM
      * permissions. Cloud Pub/Sub's use of IAM features is not covered by
-     * any SLA or deprecation policy, and may be subject to backward-incompatible
-     * changes.*
+     * any SLA or deprecation policy, and may be subject to
+     * backward-incompatible changes.*
      *
      * @name Topic#iam
      * @mixes IAM
@@ -150,7 +153,8 @@ export class Topic {
    *
    * @param {string} name The name of the subscription.
    * @param {CreateSubscriptionRequest} [options] See a
-   *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
+   *     [Subscription
+   * resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
    * @param {CreateSubscriptionCallback} [callback] Callback function.
    * @returns {Promise<CreateSubscriptionResponse>}
    *
@@ -217,14 +221,13 @@ export class Topic {
       topic: this.name,
     };
     this.request(
-      {
-        client: 'PublisherClient',
-        method: 'deleteTopic',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      callback
-    );
+        {
+          client: 'PublisherClient',
+          method: 'deleteTopic',
+          reqOpts,
+          gaxOpts,
+        },
+        callback);
   }
   /**
    * @typedef {array} TopicExistsResponse
@@ -257,7 +260,7 @@ export class Topic {
    * });
    */
   exists(callback) {
-    this.getMetadata(function(err) {
+    this.getMetadata(err => {
       if (!err) {
         callback(null, true);
         return;
@@ -370,23 +373,23 @@ export class Topic {
       topic: this.name,
     };
     this.request(
-      {
-        client: 'PublisherClient',
-        method: 'getTopic',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      (err, apiResponse) => {
-        if (!err) {
-          this.metadata = apiResponse;
-        }
-        callback(err, apiResponse);
-      }
-    );
+        {
+          client: 'PublisherClient',
+          method: 'getTopic',
+          reqOpts,
+          gaxOpts,
+        },
+        (err, apiResponse) => {
+          if (!err) {
+            this.metadata = apiResponse;
+          }
+          callback(err, apiResponse);
+        });
   }
   /**
-   * Get a list of the subscriptions registered to this topic. You may optionally
-   * provide a query object as the first argument to customize the response.
+   * Get a list of the subscriptions registered to this topic. You may
+   * optionally provide a query object as the first argument to customize the
+   * response.
    *
    * Your provided callback will be invoked with an error object if an API error
    * occurred or an array of {module:pubsub/subscription} objects.
@@ -426,40 +429,39 @@ export class Topic {
       options = {};
     }
     const reqOpts = Object.assign(
-      {
-        topic: this.name,
-      },
-      options
-    );
+        {
+          topic: this.name,
+        },
+        options);
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
     const gaxOpts = Object.assign(
-      {
-        autoPaginate: options.autoPaginate,
-      },
-      options.gaxOpts
-    );
+        {
+          autoPaginate: options.autoPaginate,
+        },
+        options.gaxOpts);
     this.request(
-      {
-        client: 'PublisherClient',
-        method: 'listTopicSubscriptions',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      function() {
-        const subscriptions = arguments[1];
-        if (subscriptions) {
-          arguments[1] = subscriptions.map(function(sub) {
-            // ListTopicSubscriptions only returns sub names
-            return self.subscription(sub);
-          });
-        }
-        callback.apply(null, arguments);
-      }
-    );
+        {
+          client: 'PublisherClient',
+          method: 'listTopicSubscriptions',
+          reqOpts,
+          gaxOpts,
+        },
+        // tslint:disable-next-line only-arrow-functions
+        function() {
+          const subscriptions = arguments[1];
+          if (subscriptions) {
+            arguments[1] = subscriptions.map(sub => {
+              // ListTopicSubscriptions only returns sub names
+              return self.subscription(sub);
+            });
+          }
+          callback.apply(null, arguments);
+        });
   }
   /**
-   * Creates a Publisher object that allows you to publish messages to this topic.
+   * Creates a Publisher object that allows you to publish messages to this
+   * topic.
    *
    * @param {object} [options] Configuration object.
    * @param {object} [options.batching] Batching settings.
