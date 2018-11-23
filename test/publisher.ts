@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-import * as assert from 'assert';
-import * as util from '../src/util';
 import * as pfy from '@google-cloud/promisify';
+import * as assert from 'assert';
 import * as proxyquire from 'proxyquire';
+
+import * as util from '../src/util';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
-  promisifyAll: function(Class, options) {
+  // tslint:disable-next-line variable-name
+  promisifyAll(Class, options) {
     if (Class.name === 'Publisher') {
       assert.deepStrictEqual(options, {singular: true});
       promisified = true;
@@ -29,44 +31,46 @@ const fakePromisify = Object.assign({}, pfy, {
   },
 });
 
-describe('Publisher', function() {
+describe('Publisher', () => {
+  // tslint:disable-next-line variable-name
   let Publisher;
   let publisher;
   let batchOpts;
 
   const TOPIC_NAME = 'test-topic';
+  // tslint:disable-next-line no-any
   const TOPIC: any = {
     name: TOPIC_NAME,
     Promise: {},
     request: util.noop,
   };
 
-  before(function() {
+  before(() => {
     Publisher = proxyquire('../src/publisher.js', {
-      '@google-cloud/promisify': fakePromisify,
-    }).Publisher;
+                  '@google-cloud/promisify': fakePromisify,
+                }).Publisher;
   });
 
-  beforeEach(function() {
+  beforeEach(() => {
     TOPIC.request = util.noop;
     publisher = new Publisher(TOPIC);
     batchOpts = publisher.settings.batching;
   });
 
-  describe('initialization', function() {
-    it('should promisify all the things', function() {
+  describe('initialization', () => {
+    it('should promisify all the things', () => {
       assert(promisified);
     });
 
-    it('should localize topic.Promise', function() {
+    it('should localize topic.Promise', () => {
       assert.strictEqual(publisher.Promise, TOPIC.Promise);
     });
 
-    it('should localize the topic object', function() {
+    it('should localize the topic object', () => {
       assert.strictEqual(publisher.topic, TOPIC);
     });
 
-    it('should create an inventory object', function() {
+    it('should create an inventory object', () => {
       assert.deepStrictEqual(publisher.inventory_, {
         callbacks: [],
         queued: [],
@@ -74,8 +78,8 @@ describe('Publisher', function() {
       });
     });
 
-    describe('options', function() {
-      it('should provide default values for batching', function() {
+    describe('options', () => {
+      it('should provide default values for batching', () => {
         assert.deepStrictEqual(publisher.settings.batching, {
           maxBytes: Math.pow(1024, 2) * 5,
           maxMessages: 1000,
@@ -83,7 +87,7 @@ describe('Publisher', function() {
         });
       });
 
-      it('should capture user specified options', function() {
+      it('should capture user specified options', () => {
         const options = {
           maxBytes: 10,
           maxMessages: 11,
@@ -99,7 +103,7 @@ describe('Publisher', function() {
         assert.deepStrictEqual(options, optionsCopy);
       });
 
-      it('should cap maxBytes', function() {
+      it('should cap maxBytes', () => {
         const expected = Math.pow(1024, 2) * 9;
 
         const publisher = new Publisher(TOPIC, {
@@ -109,7 +113,7 @@ describe('Publisher', function() {
         assert.strictEqual(publisher.settings.batching.maxBytes, expected);
       });
 
-      it('should cap maxMessages', function() {
+      it('should cap maxMessages', () => {
         const publisher = new Publisher(TOPIC, {
           batching: {maxMessages: 2000},
         });
@@ -117,7 +121,7 @@ describe('Publisher', function() {
         assert.strictEqual(publisher.settings.batching.maxMessages, 1000);
       });
 
-      it('should capture gaxOptions', function() {
+      it('should capture gaxOptions', () => {
         const fakeGaxOpts = {a: 'a'};
         const publisher = new Publisher(TOPIC, {
           gaxOpts: fakeGaxOpts,
@@ -128,32 +132,33 @@ describe('Publisher', function() {
     });
   });
 
-  describe('publish', function() {
+  describe('publish', () => {
     const DATA = Buffer.from('hello');
     const ATTRS = {a: 'a'};
 
     let globalSetTimeout;
 
-    before(function() {
+    before(() => {
       globalSetTimeout = global.setTimeout;
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
       publisher.publish_ = util.noop;
+      // tslint:disable-next-line no-any
       (global as any).setTimeout = util.noop;
     });
 
-    after(function() {
+    after(() => {
       global.setTimeout = globalSetTimeout;
     });
 
-    it('should throw an error when data is not a buffer', function() {
-      assert.throws(function() {
+    it('should throw an error when data is not a buffer', () => {
+      assert.throws(() => {
         publisher.publish('hello', {}, assert.ifError);
       }, /Data must be in the form of a Buffer\./);
     });
 
-    it('should throw when an attribute value is not a string', function() {
+    it('should throw when an attribute value is not a string', () => {
       const brokenAttrs = {
         key1: 'value',
         key2: true,
@@ -164,77 +169,78 @@ All attributes must be in the form of a string.
 \nInvalid value of type "${typeof true}" provided for "key2".
       `.trim();
 
-      assert.throws(function() {
+      assert.throws(() => {
         publisher.publish(DATA, brokenAttrs, assert.ifError);
       }, new RegExp(expectedErrorMessage));
     });
 
-    it('should queue the data', function(done) {
-      publisher.queue_ = function(data, attrs, callback) {
+    it('should queue the data', done => {
+      publisher.queue_ = (data, attrs, callback) => {
         assert.strictEqual(data, DATA);
         assert.strictEqual(attrs, ATTRS);
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       publisher.publish(DATA, ATTRS, done);
     });
 
-    it('should optionally accept attributes', function(done) {
-      publisher.queue_ = function(data, attrs, callback) {
+    it('should optionally accept attributes', done => {
+      publisher.queue_ = (data, attrs, callback) => {
         assert.strictEqual(data, DATA);
         assert.deepStrictEqual(attrs, {});
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       publisher.publish(DATA, done);
     });
 
-    it('should publish if data puts payload size over cap', function(done) {
+    it('should publish if data puts payload size over cap', done => {
       let queueCalled = false;
 
-      publisher.publish_ = function() {
+      publisher.publish_ = () => {
         assert.strictEqual(queueCalled, false);
         publisher.inventory_.bytes = 0;
       };
 
-      publisher.queue_ = function(data, attrs, callback) {
+      publisher.queue_ = (data, attrs, callback) => {
         assert.strictEqual(publisher.inventory_.bytes, 0);
         queueCalled = true;
-        callback(); // the done fn
+        callback();  // the done fn
       };
 
       publisher.inventory_.bytes = batchOpts.maxBytes - 1;
       publisher.publish(DATA, done);
     });
 
-    it('should not attempt to publish empty payload if data puts payload above size cap', function(done) {
-      const pushRequests: {}[] = [];
-      publisher.settings.batching.maxBytes = 2;
-      publisher.inventory_.bytes = 0;
+    it('should not attempt to publish empty payload if data puts payload above size cap',
+       done => {
+         const pushRequests: Array<{}> = [];
+         publisher.settings.batching.maxBytes = 2;
+         publisher.inventory_.bytes = 0;
 
-      publisher.publish_ = function() {
-        assert.notStrictEqual(publisher.inventory_.queued.length, 0);
-        pushRequests.push(publisher.inventory_.queued);
-        publisher.inventory_.callbacks.forEach(function(callback) {
-          callback();
-        });
-      };
+         publisher.publish_ = () => {
+           assert.notStrictEqual(publisher.inventory_.queued.length, 0);
+           pushRequests.push(publisher.inventory_.queued);
+           publisher.inventory_.callbacks.forEach(callback => {
+             callback();
+           });
+         };
 
-      publisher.publish(DATA, function() {
-        assert.deepStrictEqual(pushRequests, [
-          [
-            {
-              data: DATA,
-              attributes: {},
-            },
-          ],
-        ]);
-        done();
-      });
-    });
+         publisher.publish(DATA, () => {
+           assert.deepStrictEqual(pushRequests, [
+             [
+               {
+                 data: DATA,
+                 attributes: {},
+               },
+             ],
+           ]);
+           done();
+         });
+       });
 
-    it('should publish if data puts payload at size cap', function(done) {
-      publisher.queue_ = function() {
+    it('should publish if data puts payload at size cap', done => {
+      publisher.queue_ = () => {
         publisher.inventory_.bytes += DATA.length;
       };
 
@@ -243,27 +249,28 @@ All attributes must be in the form of a string.
       publisher.publish(DATA, util.noop);
     });
 
-    it('should publish if data puts payload at message cap', function(done) {
+    it('should publish if data puts payload at message cap', done => {
       let queueCalled = false;
 
-      publisher.queue_ = function() {
+      publisher.queue_ = () => {
         queueCalled = true;
       };
 
-      publisher.publish_ = function() {
+      publisher.publish_ = () => {
         assert(queueCalled);
         done();
       };
 
-      publisher.inventory_.queued = Array(batchOpts.maxMessages).fill({});
+      publisher.inventory_.queued = new Array(batchOpts.maxMessages).fill({});
       publisher.publish(DATA, util.noop);
     });
 
-    it('should set a timeout if a publish did not occur', function(done) {
+    it('should set a timeout if a publish did not occur', done => {
       const globalSetTimeout = global.setTimeout;
       const fakeTimeoutHandle = 12345;
 
-      (global as any).setTimeout = function(callback, duration) {
+      // tslint:disable-next-line no-any
+      (global as any).setTimeout = (callback, duration) => {
         assert.strictEqual(duration, batchOpts.maxMilliseconds);
         global.setTimeout = globalSetTimeout;
         setImmediate(callback);
@@ -276,7 +283,7 @@ All attributes must be in the form of a string.
       assert.strictEqual(publisher.timeoutHandle_, fakeTimeoutHandle);
     });
 
-    it('should not set a timeout if one exists', function() {
+    it('should not set a timeout if one exists', () => {
       const fakeTimeoutHandle = 'not-a-real-handle';
 
       publisher.timeoutHandle_ = 'not-a-real-handle';
@@ -285,15 +292,15 @@ All attributes must be in the form of a string.
     });
   });
 
-  describe('publish_', function() {
-    it('should cancel any publish timeouts', function(done) {
+  describe('publish_', () => {
+    it('should cancel any publish timeouts', done => {
       publisher.timeoutHandle_ = setTimeout(done, 1);
       publisher.publish_();
       assert.strictEqual(publisher.timeoutHandle_, null);
       done();
     });
 
-    it('should reset the inventory object', function() {
+    it('should reset the inventory object', () => {
       publisher.inventory_.callbacks.push(util.noop);
       publisher.inventory_.queued.push({});
       publisher.inventory_.bytes = 5;
@@ -305,11 +312,11 @@ All attributes must be in the form of a string.
       assert.strictEqual(publisher.inventory_.bytes, 0);
     });
 
-    it('should make the correct request', function(done) {
+    it('should make the correct request', done => {
       const FAKE_MESSAGE = {};
       const FAKE_GAX_OPTS = {a: 'b'};
 
-      TOPIC.request = function(config) {
+      TOPIC.request = config => {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'publish');
         assert.deepStrictEqual(config.reqOpts, {
@@ -325,23 +332,23 @@ All attributes must be in the form of a string.
       publisher.publish_();
     });
 
-    it('should pass back the err/msg id to correct callback', function(done) {
+    it('should pass back the err/msg id to correct callback', done => {
       const error = new Error('err');
       const FAKE_IDS = ['abc', 'def'];
       let callbackCalls = 0;
 
       publisher.inventory_.callbacks = [
-        function(err, messageId) {
+        (err, messageId) => {
           assert.strictEqual(err, error);
           assert.strictEqual(messageId, FAKE_IDS[0]);
           callbackCalls += 1;
         },
-        function(err, messageId) {
+        (err, messageId) => {
           assert.strictEqual(err, error);
           assert.strictEqual(messageId, FAKE_IDS[1]);
           callbackCalls += 1;
         },
-        function(err, messageId) {
+        (err, messageId) => {
           assert.strictEqual(err, error);
           assert.strictEqual(messageId, undefined);
           assert.strictEqual(callbackCalls, 2);
@@ -349,7 +356,7 @@ All attributes must be in the form of a string.
         },
       ];
 
-      TOPIC.request = function(config, callback) {
+      TOPIC.request = (config, callback) => {
         callback(error, {messageIds: FAKE_IDS});
       };
 
@@ -357,11 +364,11 @@ All attributes must be in the form of a string.
     });
   });
 
-  describe('queue_', function() {
+  describe('queue_', () => {
     const DATA = Buffer.from('hello');
     const ATTRS = {a: 'a'};
 
-    it('should add the data and attrs to the inventory', function() {
+    it('should add the data and attrs to the inventory', () => {
       publisher.queue_(DATA, ATTRS, util.noop);
 
       assert.deepStrictEqual(publisher.inventory_.queued, [
@@ -372,13 +379,13 @@ All attributes must be in the form of a string.
       ]);
     });
 
-    it('should update the inventory size', function() {
+    it('should update the inventory size', () => {
       publisher.queue_(DATA, ATTRS, util.noop);
 
       assert.strictEqual(publisher.inventory_.bytes, DATA.length);
     });
 
-    it('should capture the callback', function() {
+    it('should capture the callback', () => {
       publisher.queue_(DATA, ATTRS, util.noop);
 
       assert.deepStrictEqual(publisher.inventory_.callbacks, [util.noop]);
