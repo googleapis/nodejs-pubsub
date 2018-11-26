@@ -30,20 +30,18 @@ import {PubSub} from '.';
  * @callback GetPolicyCallback
  * @param {?Error} err Request error, if any.
  * @param {object} acl The policy.
- * @param {object} apiResponse The full API response.
  */
 export interface GetPolicyCallback {
-  (err?: Error|null, acl?: Policy|null, apiResponse?: object): void;
+  (err?: Error|null, acl?: Policy|null): void;
 }
 
 /**
  * @callback SetPolicyCallback
  * @param {?Error} err Request error, if any.
  * @param {object} acl The policy.
- * @param {object} apiResponse The full API response.
  */
 export interface SetPolicyCallback {
-  (err?: Error|null, acl?: Policy|null, apiResponse?: object): void;
+  (err?: Error|null, acl?: Policy|null): void;
 }
 
 /**
