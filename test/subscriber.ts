@@ -38,7 +38,7 @@ function fakePromisifyAll(klass) {
 
 const FAKE_FREE_MEM = 168222720;
 const fakeOs = {
-  freemem: function() {
+  freemem() {
     return FAKE_FREE_MEM;
   },
 };
@@ -57,52 +57,53 @@ class FakeHistogram {
     this.calledWith_ = [].slice.call(arguments);
   }
 }
-
+// tslint:disable-next-line no-any
 let delayOverride: any = null;
 
 function fakeDelay(timeout) {
   return (delayOverride || delay)(timeout);
 }
 
-describe('Subscriber', function() {
+describe('Subscriber', () => {
+  // tslint:disable-next-line variable-name
   let Subscriber;
   let subscriber;
 
   const SUB_NAME = 'fake-sub';
 
-  before(function() {
+  before(() => {
     Subscriber = proxyquire('../src/subscriber.js', {
-      '../src/util': fakeUtil,
-      '@google-cloud/promisify': {
-        promisify: fakePromisify,
-        promisifyAll: fakePromisifyAll,
-      },
-      delay: fakeDelay,
-      os: fakeOs,
-      './connection-pool.js': {ConnectionPool: FakeConnectionPool},
-      './histogram.js': {Histogram: FakeHistogram},
-    }).Subscriber;
+                   '../src/util': fakeUtil,
+                   '@google-cloud/promisify': {
+                     promisify: fakePromisify,
+                     promisifyAll: fakePromisifyAll,
+                   },
+                   delay: fakeDelay,
+                   os: fakeOs,
+                   './connection-pool.js': {ConnectionPool: FakeConnectionPool},
+                   './histogram.js': {Histogram: FakeHistogram},
+                 }).Subscriber;
   });
 
-  beforeEach(function() {
+  beforeEach(() => {
     subscriber = new Subscriber({});
     subscriber.name = SUB_NAME;
   });
 
-  describe('initialization', function() {
-    it('should promisify all the things', function() {
+  describe('initialization', () => {
+    it('should promisify all the things', () => {
       assert(promisified);
     });
 
-    it('should create a histogram instance', function() {
+    it('should create a histogram instance', () => {
       assert(subscriber.histogram instanceof FakeHistogram);
     });
 
-    it('should create a latency histogram', function() {
+    it('should create a latency histogram', () => {
       assert(subscriber.latency_ instanceof FakeHistogram);
     });
 
-    it('should honor configuration settings', function() {
+    it('should honor configuration settings', () => {
       const options = {
         maxConnections: 2,
         flowControl: {
@@ -126,7 +127,7 @@ describe('Subscriber', function() {
       assert.strictEqual(subscriber.batching.maxMilliseconds, 10);
     });
 
-    it('should set sensible defaults', function() {
+    it('should set sensible defaults', () => {
       assert.strictEqual(subscriber.ackDeadline, 10000);
       assert.strictEqual(subscriber.maxConnections, 5);
       assert.strictEqual(subscriber.userClosed_, false);
@@ -142,7 +143,7 @@ describe('Subscriber', function() {
       assert.strictEqual(subscriber.batching.maxMilliseconds, 100);
     });
 
-    it('should create an inventory object', function() {
+    it('should create an inventory object', () => {
       assert(is.object(subscriber.inventory_));
       assert(is.array(subscriber.inventory_.lease));
       assert(is.array(subscriber.inventory_.ack));
@@ -150,52 +151,53 @@ describe('Subscriber', function() {
       assert.strictEqual(subscriber.inventory_.bytes, 0);
     });
 
-    it('should inherit from EventEmitter', function() {
+    it('should inherit from EventEmitter', () => {
       assert(subscriber instanceof EventEmitter);
     });
 
-    it('should listen for events', function() {
+    it('should listen for events', () => {
       let called = false;
       const listenForEvents = Subscriber.prototype.listenForEvents_;
 
-      Subscriber.prototype.listenForEvents_ = function() {
+      Subscriber.prototype.listenForEvents_ = () => {
         Subscriber.prototype.listenForEvents_ = listenForEvents;
         called = true;
       };
 
+      // tslint:disable-next-line no-unused-expression
       new Subscriber({});
       assert(called);
     });
   });
 
-  describe('ack_', function() {
+  describe('ack_', () => {
     const MESSAGE = {
       ackId: 'abc',
       received: 12345,
       connectionId: 'def',
     };
 
-    beforeEach(function() {
+    beforeEach(() => {
       subscriber.breakLease_ = fakeUtil.noop;
       subscriber.histogram.add = fakeUtil.noop;
-      subscriber.acknowledge_ = function() {
+      subscriber.acknowledge_ = () => {
         return Promise.resolve();
       };
-      subscriber.setFlushTimeout_ = function() {
+      subscriber.setFlushTimeout_ = () => {
         return Promise.resolve();
       };
     });
 
-    it('should add the time it took to ack to the histogram', function(done) {
+    it('should add the time it took to ack to the histogram', done => {
       const fakeNow = 12381832;
       const now = global.Date.now;
 
-      global.Date.now = function() {
+      global.Date.now = () => {
         global.Date.now = now;
         return fakeNow;
       };
 
-      subscriber.histogram.add = function(time) {
+      subscriber.histogram.add = time => {
         assert.strictEqual(time, fakeNow - MESSAGE.received);
         done();
       };
@@ -203,17 +205,17 @@ describe('Subscriber', function() {
       subscriber.ack_(MESSAGE);
     });
 
-    describe('with connection', function() {
-      beforeEach(function() {
-        subscriber.isConnected_ = function() {
+    describe('with connection', () => {
+      beforeEach(() => {
+        subscriber.isConnected_ = () => {
           return true;
         };
 
         subscriber.writeToStreams_ = true;
       });
 
-      it('should acknowledge if there is a connection', function(done) {
-        subscriber.acknowledge_ = function(ackId, connectionId) {
+      it('should acknowledge if there is a connection', done => {
+        subscriber.acknowledge_ = (ackId, connectionId) => {
           assert.strictEqual(ackId, MESSAGE.ackId);
           assert.strictEqual(connectionId, MESSAGE.connectionId);
           setImmediate(done);
@@ -223,8 +225,8 @@ describe('Subscriber', function() {
         subscriber.ack_(MESSAGE);
       });
 
-      it('should break the lease on the message', function(done) {
-        subscriber.breakLease_ = function(message) {
+      it('should break the lease on the message', done => {
+        subscriber.breakLease_ = message => {
           assert.strictEqual(message, MESSAGE);
           done();
         };
@@ -233,15 +235,15 @@ describe('Subscriber', function() {
       });
     });
 
-    describe('without connection', function() {
-      beforeEach(function() {
-        subscriber.isConnected_ = function() {
+    describe('without connection', () => {
+      beforeEach(() => {
+        subscriber.isConnected_ = () => {
           return false;
         };
       });
 
-      it('should queue the message to be acked if no connection', function(done) {
-        subscriber.setFlushTimeout_ = function() {
+      it('should queue the message to be acked if no connection', done => {
+        subscriber.setFlushTimeout_ = () => {
           assert(subscriber.inventory_.ack.indexOf(MESSAGE.ackId) > -1);
           done();
         };
@@ -249,8 +251,8 @@ describe('Subscriber', function() {
         subscriber.ack_(MESSAGE);
       });
 
-      it('should break the lease on the message', function(done) {
-        subscriber.breakLease_ = function(message) {
+      it('should break the lease on the message', done => {
+        subscriber.breakLease_ = message => {
           assert.strictEqual(message, MESSAGE);
           done();
         };
@@ -260,27 +262,26 @@ describe('Subscriber', function() {
     });
   });
 
-  describe('acknowledge_', function() {
+  describe('acknowledge_', () => {
     const fakeAckIds = ['a', 'b', 'c'];
 
     const batchSize = 3000;
-    const tooManyFakeAckIds = Array(batchSize * 2.5)
-      .fill('a')
-      .map(function(x, i) {
-        return x + i;
-      });
+    const tooManyFakeAckIds =
+        new Array(batchSize * 2.5).fill('a').map((x, i) => {
+          return x + i;
+        });
     const expectedCalls = Math.ceil(tooManyFakeAckIds.length / batchSize);
 
-    describe('without streaming connection', function() {
-      beforeEach(function() {
-        subscriber.isConnected_ = function() {
+    describe('without streaming connection', () => {
+      beforeEach(() => {
+        subscriber.isConnected_ = () => {
           return false;
         };
       });
 
-      it('should make the correct request', function(done) {
+      it('should make the correct request', done => {
         const fakePromisified = {
-          call: function(context, config) {
+          call(context, config) {
             assert.strictEqual(context, subscriber);
             assert.strictEqual(config.client, 'SubscriberClient');
             assert.strictEqual(config.method, 'acknowledge');
@@ -293,7 +294,7 @@ describe('Subscriber', function() {
           },
         };
 
-        promisifyOverride = function(fn) {
+        promisifyOverride = fn => {
           assert.strictEqual(fn, subscriber.request);
           return fakePromisified;
         };
@@ -302,16 +303,14 @@ describe('Subscriber', function() {
         subscriber.acknowledge_(fakeAckIds);
       });
 
-      it('should batch requests if there are too many ackIds', function(done) {
+      it('should batch requests if there are too many ackIds', done => {
         let receivedCalls = 0;
 
         const fakePromisified = {
-          call: function(context, config) {
+          call(context, config) {
             const offset = receivedCalls * batchSize;
-            const expectedAckIds = tooManyFakeAckIds.slice(
-              offset,
-              offset + batchSize
-            );
+            const expectedAckIds =
+                tooManyFakeAckIds.slice(offset, offset + batchSize);
 
             assert.deepStrictEqual(config.reqOpts.ackIds, expectedAckIds);
 
@@ -324,7 +323,7 @@ describe('Subscriber', function() {
           },
         };
 
-        promisifyOverride = function() {
+        promisifyOverride = () => {
           return fakePromisified;
         };
 
@@ -332,19 +331,19 @@ describe('Subscriber', function() {
         subscriber.acknowledge_(tooManyFakeAckIds);
       });
 
-      it('should emit any request errors', function(done) {
+      it('should emit any request errors', done => {
         const fakeError = new Error('err');
         const fakePromisified = {
-          call: function() {
+          call() {
             return Promise.reject(fakeError);
           },
         };
 
-        promisifyOverride = function() {
+        promisifyOverride = () => {
           return fakePromisified;
         };
 
-        subscriber.on('error', function(err) {
+        subscriber.on('error', err => {
           assert.strictEqual(err, fakeError);
           done();
         });
@@ -353,19 +352,19 @@ describe('Subscriber', function() {
       });
     });
 
-    describe('with streaming connection', function() {
-      beforeEach(function() {
-        subscriber.isConnected_ = function() {
+    describe('with streaming connection', () => {
+      beforeEach(() => {
+        subscriber.isConnected_ = () => {
           return true;
         };
 
         subscriber.writeToStreams_ = true;
       });
 
-      it('should send the correct request', function(done) {
+      it('should send the correct request', done => {
         const fakeConnectionId = 'abc';
 
-        subscriber.writeTo_ = function(connectionId, data) {
+        subscriber.writeTo_ = (connectionId, data) => {
           assert.strictEqual(connectionId, fakeConnectionId);
           assert.deepStrictEqual(data, {ackIds: fakeAckIds});
           done();
@@ -374,18 +373,16 @@ describe('Subscriber', function() {
         subscriber.acknowledge_(fakeAckIds, fakeConnectionId);
       });
 
-      it('should batch requests if there are too many ackIds', function(done) {
+      it('should batch requests if there are too many ackIds', done => {
         let receivedCalls = 0;
         const fakeConnectionId = 'abc';
 
-        subscriber.writeTo_ = function(connectionId, data) {
+        subscriber.writeTo_ = (connectionId, data) => {
           assert.strictEqual(connectionId, fakeConnectionId);
 
           const offset = receivedCalls * batchSize;
-          const expectedAckIds = tooManyFakeAckIds.slice(
-            offset,
-            offset + batchSize
-          );
+          const expectedAckIds =
+              tooManyFakeAckIds.slice(offset, offset + batchSize);
 
           assert.deepStrictEqual(data, {ackIds: expectedAckIds});
 
@@ -397,14 +394,14 @@ describe('Subscriber', function() {
         subscriber.acknowledge_(tooManyFakeAckIds, fakeConnectionId);
       });
 
-      it('should emit an error when unable to get a conn', function(done) {
+      it('should emit an error when unable to get a conn', done => {
         const error = new Error('err');
 
-        subscriber.writeTo_ = function() {
+        subscriber.writeTo_ = () => {
           return Promise.reject(error);
         };
 
-        subscriber.on('error', function(err) {
+        subscriber.on('error', err => {
           assert.strictEqual(err, error);
           done();
         });
@@ -414,19 +411,19 @@ describe('Subscriber', function() {
     });
   });
 
-  describe('breakLease_', function() {
+  describe('breakLease_', () => {
     const MESSAGE = {
       ackId: 'abc',
       data: Buffer.from('hello'),
       length: 5,
     };
 
-    beforeEach(function() {
+    beforeEach(() => {
       subscriber.inventory_.lease.push(MESSAGE.ackId);
       subscriber.inventory_.bytes += MESSAGE.length;
     });
 
-    it('should remove the message from the lease array', function() {
+    it('should remove the message from the lease array', () => {
       assert.strictEqual(subscriber.inventory_.lease.length, 1);
       assert.strictEqual(subscriber.inventory_.bytes, MESSAGE.length);
 
@@ -436,7 +433,7 @@ describe('Subscriber', function() {
       assert.strictEqual(subscriber.inventory_.bytes, 0);
     });
 
-    it('should noop for unknown messages', function() {
+    it('should noop for unknown messages', () => {
       const message = {
         ackId: 'def',
         data: Buffer.from('world'),
@@ -449,44 +446,44 @@ describe('Subscriber', function() {
       assert.strictEqual(subscriber.inventory_.bytes, 5);
     });
 
-    describe('with connection pool', function() {
-      it('should resume receiving messages if paused', function(done) {
+    describe('with connection pool', () => {
+      it('should resume receiving messages if paused', done => {
         subscriber.connectionPool = {
           isPaused: true,
           resume: done,
         };
 
-        subscriber.hasMaxMessages_ = function() {
+        subscriber.hasMaxMessages_ = () => {
           return false;
         };
 
         subscriber.breakLease_(MESSAGE);
       });
 
-      it('should not resume if it is not paused', function() {
+      it('should not resume if it is not paused', () => {
         subscriber.connectionPool = {
           isPaused: false,
-          resume: function() {
+          resume() {
             throw new Error('Should not be called.');
           },
         };
 
-        subscriber.hasMaxMessages_ = function() {
+        subscriber.hasMaxMessages_ = () => {
           return false;
         };
 
         subscriber.breakLease_(MESSAGE);
       });
 
-      it('should not resume if the max message limit is hit', function() {
+      it('should not resume if the max message limit is hit', () => {
         subscriber.connectionPool = {
           isPaused: true,
-          resume: function() {
+          resume() {
             throw new Error('Should not be called.');
           },
         };
 
-        subscriber.hasMaxMessages_ = function() {
+        subscriber.hasMaxMessages_ = () => {
           return true;
         };
 
@@ -494,7 +491,7 @@ describe('Subscriber', function() {
       });
     });
 
-    it('should quit auto-leasing if all leases are gone', function(done) {
+    it('should quit auto-leasing if all leases are gone', done => {
       subscriber.leaseTimeoutHandle_ = setTimeout(done, 1);
       subscriber.breakLease_(MESSAGE);
 
@@ -502,7 +499,7 @@ describe('Subscriber', function() {
       setImmediate(done);
     });
 
-    it('should continue to auto-lease if leases exist', function(done) {
+    it('should continue to auto-lease if leases exist', done => {
       subscriber.inventory_.lease.push(MESSAGE.ackId);
       subscriber.inventory_.lease.push('abcd');
 
@@ -511,22 +508,22 @@ describe('Subscriber', function() {
     });
   });
 
-  describe('close', function() {
-    beforeEach(function() {
-      subscriber.flushQueues_ = function() {
+  describe('close', () => {
+    beforeEach(() => {
+      subscriber.flushQueues_ = () => {
         return Promise.resolve();
       };
 
       subscriber.closeConnection_ = fakeUtil.noop;
     });
 
-    it('should set the userClosed_ flag', function() {
+    it('should set the userClosed_ flag', () => {
       subscriber.close();
 
       assert.strictEqual(subscriber.userClosed_, true);
     });
 
-    it('should dump the inventory', function() {
+    it('should dump the inventory', () => {
       subscriber.inventory_ = {
         lease: [0, 1, 2],
         bytes: 123,
@@ -540,7 +537,7 @@ describe('Subscriber', function() {
       });
     });
 
-    it('should stop auto-leasing', function(done) {
+    it('should stop auto-leasing', done => {
       subscriber.leaseTimeoutHandle_ = setTimeout(done, 1);
       subscriber.close();
 
@@ -548,8 +545,8 @@ describe('Subscriber', function() {
       setImmediate(done);
     });
 
-    it('should flush immediately', function(done) {
-      subscriber.flushQueues_ = function() {
+    it('should flush immediately', done => {
+      subscriber.flushQueues_ = () => {
         setImmediate(done);
         return Promise.resolve();
       };
@@ -557,66 +554,66 @@ describe('Subscriber', function() {
       subscriber.close();
     });
 
-    it('should call closeConnection_', function(done) {
-      subscriber.closeConnection_ = function(callback) {
-        callback(); // the done fn
+    it('should call closeConnection_', done => {
+      subscriber.closeConnection_ = callback => {
+        callback();  // the done fn
       };
 
       subscriber.close(done);
     });
   });
 
-  describe('closeConnection_', function() {
-    afterEach(function() {
-      fakeUtil.noop = function() {};
+  describe('closeConnection_', () => {
+    afterEach(() => {
+      fakeUtil.noop = () => {};
     });
 
-    it('should set isOpen to false', function() {
+    it('should set isOpen to false', () => {
       subscriber.closeConnection_();
       assert.strictEqual(subscriber.isOpen, false);
     });
 
-    describe('with connection pool', function() {
-      beforeEach(function() {
+    describe('with connection pool', () => {
+      beforeEach(() => {
         subscriber.connectionPool = {
-          close: function(callback) {
-            setImmediate(callback); // the done fn
+          close(callback) {
+            setImmediate(callback);  // the done fn
           },
         };
       });
 
-      it('should call close on the connection pool', function(done) {
+      it('should call close on the connection pool', done => {
         subscriber.closeConnection_(done);
         assert.strictEqual(subscriber.connectionPool, null);
       });
 
-      it('should use a noop when callback is absent', function(done) {
+      it('should use a noop when callback is absent', done => {
         fakeUtil.noop = done;
         subscriber.closeConnection_();
         assert.strictEqual(subscriber.connectionPool, null);
       });
     });
 
-    describe('without connection pool', function() {
-      beforeEach(function() {
+    describe('without connection pool', () => {
+      beforeEach(() => {
         subscriber.connectionPool = null;
       });
 
-      it('should exec the callback if one is passed in', function(done) {
+      it('should exec the callback if one is passed in', done => {
         subscriber.closeConnection_(done);
       });
 
-      it('should optionally accept a callback', function() {
+      it('should optionally accept a callback', () => {
         subscriber.closeConnection_();
       });
     });
   });
 
-  describe('flushQueues_', function() {
-    it('should cancel any pending flushes', function() {
+  describe('flushQueues_', () => {
+    it('should cancel any pending flushes', () => {
       let canceled = false;
       const fakeHandle = {
-        clear: function() {
+        clear() {
           canceled = true;
         },
       };
@@ -628,69 +625,69 @@ describe('Subscriber', function() {
       assert.strictEqual(canceled, true);
     });
 
-    it('should do nothing if theres nothing to ack/nack', function() {
-      subscriber.acknowledge_ = subscriber.modifyAckDeadline_ = function() {
+    it('should do nothing if theres nothing to ack/nack', () => {
+      subscriber.acknowledge_ = subscriber.modifyAckDeadline_ = () => {
         throw new Error('Should not be called.');
       };
 
       return subscriber.flushQueues_();
     });
 
-    it('should send any pending acks', function() {
+    it('should send any pending acks', () => {
       const fakeAckIds = (subscriber.inventory_.ack = ['abc', 'def']);
 
-      subscriber.acknowledge_ = function(ackIds) {
+      subscriber.acknowledge_ = ackIds => {
         assert.strictEqual(ackIds, fakeAckIds);
         return Promise.resolve();
       };
 
-      return subscriber.flushQueues_().then(function() {
+      return subscriber.flushQueues_().then(() => {
         assert.strictEqual(subscriber.inventory_.ack.length, 0);
       });
     });
 
-    it('should send any pending nacks', function() {
+    it('should send any pending nacks', () => {
       const fakeAckIds = ['ghi', 'jkl'];
 
       subscriber.inventory_.nack = fakeAckIds.map(ackId => [ackId, 0]);
 
-      subscriber.modifyAckDeadline_ = function(ackIds, deadline) {
+      subscriber.modifyAckDeadline_ = (ackIds, deadline) => {
         assert.deepStrictEqual(ackIds, fakeAckIds);
         assert.strictEqual(deadline, 0);
         return Promise.resolve();
       };
 
-      return subscriber.flushQueues_().then(function() {
+      return subscriber.flushQueues_().then(() => {
         assert.strictEqual(subscriber.inventory_.nack.length, 0);
       });
     });
 
-    it('should send any pending delayed nacks', function() {
+    it('should send any pending delayed nacks', () => {
       const fakeAckIds = ['ghi', 'jkl'];
 
       subscriber.inventory_.nack = fakeAckIds.map(ackId => [ackId, 1]);
 
-      subscriber.modifyAckDeadline_ = function(ackIds, deadline) {
+      subscriber.modifyAckDeadline_ = (ackIds, deadline) => {
         assert.deepStrictEqual(ackIds, fakeAckIds);
         assert.strictEqual(deadline, 1);
         return Promise.resolve();
       };
 
-      return subscriber.flushQueues_().then(function() {
+      return subscriber.flushQueues_().then(() => {
         assert.strictEqual(subscriber.inventory_.nack.length, 0);
       });
     });
   });
 
-  describe('isConnected_', function() {
-    it('should return false if there is no pool', function() {
+  describe('isConnected_', () => {
+    it('should return false if there is no pool', () => {
       subscriber.connectionPool = null;
       assert.strictEqual(subscriber.isConnected_(), false);
     });
 
-    it('should return false if the pool says its connected', function() {
+    it('should return false if the pool says its connected', () => {
       subscriber.connectionPool = {
-        isConnected: function() {
+        isConnected() {
           return false;
         },
       };
@@ -698,9 +695,9 @@ describe('Subscriber', function() {
       assert.strictEqual(subscriber.isConnected_(), false);
     });
 
-    it('should return true if the pool says its connected', function() {
+    it('should return true if the pool says its connected', () => {
       subscriber.connectionPool = {
-        isConnected: function() {
+        isConnected() {
           return true;
         },
       };
@@ -709,22 +706,22 @@ describe('Subscriber', function() {
     });
   });
 
-  describe('hasMaxMessages_', function() {
-    it('should return true if the number of leases >= maxMessages', function() {
+  describe('hasMaxMessages_', () => {
+    it('should return true if the number of leases >= maxMessages', () => {
       subscriber.inventory_.lease = ['a', 'b', 'c'];
       subscriber.flowControl.maxMessages = 3;
 
       assert(subscriber.hasMaxMessages_());
     });
 
-    it('should return true if bytes == maxBytes', function() {
+    it('should return true if bytes == maxBytes', () => {
       subscriber.inventory_.bytes = 1000;
       subscriber.flowControl.maxBytes = 1000;
 
       assert(subscriber.hasMaxMessages_());
     });
 
-    it('should return false if neither condition is met', function() {
+    it('should return false if neither condition is met', () => {
       subscriber.inventory_.lease = ['a', 'b'];
       subscriber.flowControl.maxMessages = 3;
 
@@ -735,7 +732,7 @@ describe('Subscriber', function() {
     });
   });
 
-  describe('leaseMessage_', function() {
+  describe('leaseMessage_', () => {
     const MESSAGE = {
       ackId: 'abc',
       connectionId: 'def',
@@ -743,13 +740,13 @@ describe('Subscriber', function() {
       length: 5,
     };
 
-    beforeEach(function() {
+    beforeEach(() => {
       subscriber.setLeaseTimeout_ = fakeUtil.noop;
       subscriber.modifyAckDeadline_ = fakeUtil.noop;
     });
 
-    it('should immediately modAck the message', function(done) {
-      subscriber.modifyAckDeadline_ = function(ackId, deadline, connId) {
+    it('should immediately modAck the message', done => {
+      subscriber.modifyAckDeadline_ = (ackId, deadline, connId) => {
         assert.strictEqual(ackId, MESSAGE.ackId);
         assert.strictEqual(deadline, subscriber.ackDeadline / 1000);
         assert.strictEqual(connId, MESSAGE.connectionId);
@@ -759,61 +756,61 @@ describe('Subscriber', function() {
       subscriber.leaseMessage_(MESSAGE);
     });
 
-    it('should add the ackId to the inventory', function() {
+    it('should add the ackId to the inventory', () => {
       subscriber.leaseMessage_(MESSAGE);
       assert.deepStrictEqual(subscriber.inventory_.lease, [MESSAGE.ackId]);
     });
 
-    it('should update the byte count', function() {
+    it('should update the byte count', () => {
       assert.strictEqual(subscriber.inventory_.bytes, 0);
       subscriber.leaseMessage_(MESSAGE);
       assert.strictEqual(subscriber.inventory_.bytes, MESSAGE.length);
     });
 
-    it('should begin auto-leasing', function(done) {
+    it('should begin auto-leasing', done => {
       subscriber.setLeaseTimeout_ = done;
       subscriber.leaseMessage_(MESSAGE);
     });
 
-    it('should return the message', function() {
+    it('should return the message', () => {
       const message = subscriber.leaseMessage_(MESSAGE);
       assert.strictEqual(message, MESSAGE);
     });
   });
 
-  describe('listenForEvents_', function() {
-    beforeEach(function() {
+  describe('listenForEvents_', () => {
+    beforeEach(() => {
       subscriber.openConnection_ = fakeUtil.noop;
       subscriber.closeConnection_ = fakeUtil.noop;
     });
 
-    describe('on new listener', function() {
-      it('should increment messageListeners', function() {
+    describe('on new listener', () => {
+      it('should increment messageListeners', () => {
         assert.strictEqual(subscriber.messageListeners, 0);
         subscriber.on('message', fakeUtil.noop);
         assert.strictEqual(subscriber.messageListeners, 1);
       });
 
-      it('should ignore non-message events', function() {
+      it('should ignore non-message events', () => {
         subscriber.on('data', fakeUtil.noop);
         assert.strictEqual(subscriber.messageListeners, 0);
       });
 
-      it('should open a connection', function(done) {
+      it('should open a connection', done => {
         subscriber.openConnection_ = done;
         subscriber.on('message', fakeUtil.noop);
       });
 
-      it('should set the userClosed_ flag to false', function() {
+      it('should set the userClosed_ flag to false', () => {
         subscriber.userClosed_ = true;
         subscriber.on('message', fakeUtil.noop);
         assert.strictEqual(subscriber.userClosed_, false);
       });
 
-      it('should not open a connection when one exists', function() {
+      it('should not open a connection when one exists', () => {
         subscriber.connectionPool = {};
 
-        subscriber.openConnection_ = function() {
+        subscriber.openConnection_ = () => {
           throw new Error('Should not be called.');
         };
 
@@ -821,10 +818,10 @@ describe('Subscriber', function() {
       });
     });
 
-    describe('on remove listener', function() {
-      const noop = function() {};
+    describe('on remove listener', () => {
+      const noop = () => {};
 
-      it('should decrement messageListeners', function() {
+      it('should decrement messageListeners', () => {
         subscriber.on('message', fakeUtil.noop);
         subscriber.on('message', noop);
         assert.strictEqual(subscriber.messageListeners, 2);
@@ -833,7 +830,7 @@ describe('Subscriber', function() {
         assert.strictEqual(subscriber.messageListeners, 1);
       });
 
-      it('should ignore non-message events', function() {
+      it('should ignore non-message events', () => {
         subscriber.on('message', fakeUtil.noop);
         subscriber.on('message', noop);
         assert.strictEqual(subscriber.messageListeners, 2);
@@ -842,7 +839,7 @@ describe('Subscriber', function() {
         assert.strictEqual(subscriber.messageListeners, 2);
       });
 
-      it('should close the connection when no listeners', function(done) {
+      it('should close the connection when no listeners', done => {
         subscriber.closeConnection_ = done;
 
         subscriber.on('message', noop);
@@ -851,28 +848,27 @@ describe('Subscriber', function() {
     });
   });
 
-  describe('modifyAckDeadline_', function() {
+  describe('modifyAckDeadline_', () => {
     const fakeAckIds = ['a', 'b', 'c'];
     const fakeDeadline = 123;
 
     const batchSize = 3000;
-    const tooManyFakeAckIds = Array(batchSize * 2.5)
-      .fill('a')
-      .map(function(x, i) {
-        return x + i;
-      });
+    const tooManyFakeAckIds =
+        new Array(batchSize * 2.5).fill('a').map((x, i) => {
+          return x + i;
+        });
     const expectedCalls = Math.ceil(tooManyFakeAckIds.length / batchSize);
 
-    describe('without streaming connection', function() {
-      beforeEach(function() {
-        subscriber.isConnected_ = function() {
+    describe('without streaming connection', () => {
+      beforeEach(() => {
+        subscriber.isConnected_ = () => {
           return false;
         };
       });
 
-      it('should make the correct request', function(done) {
+      it('should make the correct request', done => {
         const fakePromisified = {
-          call: function(context, config) {
+          call(context, config) {
             assert.strictEqual(context, subscriber);
             assert.strictEqual(config.client, 'SubscriberClient');
             assert.strictEqual(config.method, 'modifyAckDeadline');
@@ -886,7 +882,7 @@ describe('Subscriber', function() {
           },
         };
 
-        promisifyOverride = function(fn) {
+        promisifyOverride = fn => {
           assert.strictEqual(fn, subscriber.request);
           return fakePromisified;
         };
@@ -895,16 +891,14 @@ describe('Subscriber', function() {
         subscriber.modifyAckDeadline_(fakeAckIds, fakeDeadline);
       });
 
-      it('should batch requests if there are too many ackIds', function(done) {
+      it('should batch requests if there are too many ackIds', done => {
         let receivedCalls = 0;
 
         const fakePromisified = {
-          call: function(context, config) {
+          call(context, config) {
             const offset = receivedCalls * batchSize;
-            const expectedAckIds = tooManyFakeAckIds.slice(
-              offset,
-              offset + batchSize
-            );
+            const expectedAckIds =
+                tooManyFakeAckIds.slice(offset, offset + batchSize);
 
             assert.strictEqual(config.reqOpts.ackDeadlineSeconds, fakeDeadline);
             assert.deepStrictEqual(config.reqOpts.ackIds, expectedAckIds);
@@ -918,7 +912,7 @@ describe('Subscriber', function() {
           },
         };
 
-        promisifyOverride = function() {
+        promisifyOverride = () => {
           return fakePromisified;
         };
 
@@ -926,19 +920,19 @@ describe('Subscriber', function() {
         subscriber.modifyAckDeadline_(tooManyFakeAckIds, fakeDeadline);
       });
 
-      it('should emit any request errors', function(done) {
+      it('should emit any request errors', done => {
         const fakeError = new Error('err');
         const fakePromisified = {
-          call: function() {
+          call() {
             return Promise.reject(fakeError);
           },
         };
 
-        promisifyOverride = function() {
+        promisifyOverride = () => {
           return fakePromisified;
         };
 
-        subscriber.on('error', function(err) {
+        subscriber.on('error', err => {
           assert.strictEqual(err, fakeError);
           done();
         });
@@ -947,20 +941,21 @@ describe('Subscriber', function() {
       });
     });
 
-    describe('with streaming connection', function() {
-      beforeEach(function() {
-        subscriber.isConnected_ = function() {
+    describe('with streaming connection', () => {
+      beforeEach(() => {
+        subscriber.isConnected_ = () => {
           return true;
         };
 
         subscriber.writeToStreams_ = true;
       });
 
-      it('should send the correct request', function(done) {
-        const expectedDeadlines = Array(fakeAckIds.length).fill(fakeDeadline);
+      it('should send the correct request', done => {
+        const expectedDeadlines =
+            new Array(fakeAckIds.length).fill(fakeDeadline);
         const fakeConnId = 'abc';
 
-        subscriber.writeTo_ = function(connectionId, data) {
+        subscriber.writeTo_ = (connectionId, data) => {
           assert.strictEqual(connectionId, fakeConnId);
           assert.deepStrictEqual(data.modifyDeadlineAckIds, fakeAckIds);
           assert.deepStrictEqual(data.modifyDeadlineSeconds, expectedDeadlines);
@@ -970,21 +965,18 @@ describe('Subscriber', function() {
         subscriber.modifyAckDeadline_(fakeAckIds, fakeDeadline, fakeConnId);
       });
 
-      it('should batch requests if there are too many ackIds', function(done) {
+      it('should batch requests if there are too many ackIds', done => {
         let receivedCalls = 0;
         const fakeConnId = 'abc';
 
-        subscriber.writeTo_ = function(connectionId, data) {
+        subscriber.writeTo_ = (connectionId, data) => {
           assert.strictEqual(connectionId, fakeConnId);
 
           const offset = receivedCalls * batchSize;
-          const expectedAckIds = tooManyFakeAckIds.slice(
-            offset,
-            offset + batchSize
-          );
-          const expectedDeadlines = Array(expectedAckIds.length).fill(
-            fakeDeadline
-          );
+          const expectedAckIds =
+              tooManyFakeAckIds.slice(offset, offset + batchSize);
+          const expectedDeadlines =
+              new Array(expectedAckIds.length).fill(fakeDeadline);
 
           assert.deepStrictEqual(data.modifyDeadlineAckIds, expectedAckIds);
           assert.deepStrictEqual(data.modifyDeadlineSeconds, expectedDeadlines);
@@ -995,20 +987,17 @@ describe('Subscriber', function() {
         };
 
         subscriber.modifyAckDeadline_(
-          tooManyFakeAckIds,
-          fakeDeadline,
-          fakeConnId
-        );
+            tooManyFakeAckIds, fakeDeadline, fakeConnId);
       });
 
-      it('should emit an error when unable to get a conn', function(done) {
+      it('should emit an error when unable to get a conn', done => {
         const error = new Error('err');
 
-        subscriber.writeTo_ = function() {
+        subscriber.writeTo_ = () => {
           return Promise.reject(error);
         };
 
-        subscriber.on('error', function(err) {
+        subscriber.on('error', err => {
           assert.strictEqual(err, error);
           done();
         });
@@ -1018,33 +1007,33 @@ describe('Subscriber', function() {
     });
   });
 
-  describe('nack_', function() {
+  describe('nack_', () => {
     const MESSAGE = {
       ackId: 'abc',
       connectionId: 'def',
     };
 
-    beforeEach(function() {
+    beforeEach(() => {
       subscriber.breakLease_ = fakeUtil.noop;
-      subscriber.modifyAckDeadline_ = function() {
+      subscriber.modifyAckDeadline_ = () => {
         return Promise.resolve();
       };
-      subscriber.setFlushTimeout_ = function() {
+      subscriber.setFlushTimeout_ = () => {
         return Promise.resolve();
       };
     });
 
-    describe('with connection', function() {
-      beforeEach(function() {
-        subscriber.isConnected_ = function() {
+    describe('with connection', () => {
+      beforeEach(() => {
+        subscriber.isConnected_ = () => {
           return true;
         };
 
         subscriber.writeToStreams_ = true;
       });
 
-      it('should nack if there is a connection', function(done) {
-        subscriber.modifyAckDeadline_ = function(ackId, deadline, connId) {
+      it('should nack if there is a connection', done => {
+        subscriber.modifyAckDeadline_ = (ackId, deadline, connId) => {
           assert.strictEqual(ackId, MESSAGE.ackId);
           assert.strictEqual(deadline, 0);
           assert.strictEqual(connId, MESSAGE.connectionId);
@@ -1055,8 +1044,8 @@ describe('Subscriber', function() {
         subscriber.nack_(MESSAGE);
       });
 
-      it('should break the lease on the message', function(done) {
-        subscriber.breakLease_ = function(message) {
+      it('should break the lease on the message', done => {
+        subscriber.breakLease_ = message => {
           assert.strictEqual(message, MESSAGE);
           done();
         };
@@ -1064,8 +1053,8 @@ describe('Subscriber', function() {
         subscriber.nack_(MESSAGE);
       });
 
-      it('should use the delay if passed', function(done) {
-        subscriber.modifyAckDeadline_ = function(ackId, deadline, connId) {
+      it('should use the delay if passed', done => {
+        subscriber.modifyAckDeadline_ = (ackId, deadline, connId) => {
           assert.strictEqual(ackId, MESSAGE.ackId);
           assert.strictEqual(deadline, 1);
           assert.strictEqual(connId, MESSAGE.connectionId);
@@ -1077,19 +1066,17 @@ describe('Subscriber', function() {
       });
     });
 
-    describe('without connection', function() {
-      beforeEach(function() {
-        subscriber.isConnected_ = function() {
+    describe('without connection', () => {
+      beforeEach(() => {
+        subscriber.isConnected_ = () => {
           return false;
         };
       });
 
-      it('should queue the message to be nacked if no conn', function(done) {
-        subscriber.setFlushTimeout_ = function() {
+      it('should queue the message to be nacked if no conn', done => {
+        subscriber.setFlushTimeout_ = () => {
           assert.deepStrictEqual(
-            subscriber.inventory_.nack,
-            [[MESSAGE.ackId, 0]]
-          );
+              subscriber.inventory_.nack, [[MESSAGE.ackId, 0]]);
           setImmediate(done);
           return Promise.resolve();
         };
@@ -1097,8 +1084,8 @@ describe('Subscriber', function() {
         subscriber.nack_(MESSAGE);
       });
 
-      it('should break the lease on the message', function(done) {
-        subscriber.breakLease_ = function(message) {
+      it('should break the lease on the message', done => {
+        subscriber.breakLease_ = message => {
           assert.strictEqual(message, MESSAGE);
           done();
         };
@@ -1106,13 +1093,11 @@ describe('Subscriber', function() {
         subscriber.nack_(MESSAGE);
       });
 
-      it('should use the delay if passed when queueing', function(done) {
-        subscriber.setFlushTimeout_ = function() {
-          assert(
-            subscriber.inventory_.nack.findIndex(element => {
-              return element[0] === MESSAGE.ackId && element[1] === 1;
-            }) > -1
-          );
+      it('should use the delay if passed when queueing', done => {
+        subscriber.setFlushTimeout_ = () => {
+          assert(subscriber.inventory_.nack.findIndex(element => {
+            return element[0] === MESSAGE.ackId && element[1] === 1;
+          }) > -1);
           setImmediate(done);
           return Promise.resolve();
         };
@@ -1122,8 +1107,8 @@ describe('Subscriber', function() {
     });
   });
 
-  describe('openConnection_', function() {
-    it('should create a ConnectionPool instance', function() {
+  describe('openConnection_', () => {
+    it('should create a ConnectionPool instance', () => {
       subscriber.openConnection_();
       assert(subscriber.connectionPool instanceof FakeConnectionPool);
 
@@ -1131,10 +1116,10 @@ describe('Subscriber', function() {
       assert.strictEqual(args[0], subscriber);
     });
 
-    it('should emit pool errors', function(done) {
+    it('should emit pool errors', done => {
       const error = new Error('err');
 
-      subscriber.on('error', function(err) {
+      subscriber.on('error', err => {
         assert.strictEqual(err, error);
         done();
       });
@@ -1143,21 +1128,21 @@ describe('Subscriber', function() {
       subscriber.connectionPool.emit('error', error);
     });
 
-    it('should set isOpen to true', function() {
+    it('should set isOpen to true', () => {
       subscriber.openConnection_();
       assert.strictEqual(subscriber.isOpen, true);
     });
 
-    it('should lease & emit messages from pool', function(done) {
+    it('should lease & emit messages from pool', done => {
       const message = {};
       const leasedMessage = {};
 
-      subscriber.leaseMessage_ = function(message_) {
+      subscriber.leaseMessage_ = message_ => {
         assert.strictEqual(message_, message);
         return leasedMessage;
       };
 
-      subscriber.on('message', function(message) {
+      subscriber.on('message', message => {
         assert.strictEqual(message, leasedMessage);
         done();
       });
@@ -1166,15 +1151,15 @@ describe('Subscriber', function() {
       subscriber.connectionPool.emit('message', message);
     });
 
-    it('should pause the pool if sub is at max messages', function(done) {
+    it('should pause the pool if sub is at max messages', done => {
       const message = {nack: fakeUtil.noop};
       const leasedMessage = {};
 
-      subscriber.leaseMessage_ = function() {
+      subscriber.leaseMessage_ = () => {
         return leasedMessage;
       };
 
-      subscriber.hasMaxMessages_ = function() {
+      subscriber.hasMaxMessages_ = () => {
         return true;
       };
 
@@ -1184,22 +1169,22 @@ describe('Subscriber', function() {
       subscriber.connectionPool.emit('message', message);
     });
 
-    it('should not re-pause the pool', function(done) {
+    it('should not re-pause the pool', done => {
       const message = {nack: fakeUtil.noop};
       const leasedMessage = {};
 
-      subscriber.leaseMessage_ = function() {
+      subscriber.leaseMessage_ = () => {
         return leasedMessage;
       };
 
-      subscriber.hasMaxMessages_ = function() {
+      subscriber.hasMaxMessages_ = () => {
         return true;
       };
 
       subscriber.openConnection_();
       subscriber.connectionPool.isPaused = true;
 
-      subscriber.connectionPool.pause = function() {
+      subscriber.connectionPool.pause = () => {
         done(new Error('Should not have been called.'));
       };
 
@@ -1207,7 +1192,7 @@ describe('Subscriber', function() {
       done();
     });
 
-    it('should flush the queue when connected', function(done) {
+    it('should flush the queue when connected', done => {
       subscriber.flushQueues_ = done;
 
       subscriber.openConnection_();
@@ -1215,9 +1200,9 @@ describe('Subscriber', function() {
     });
   });
 
-  describe('renewLeases_', function() {
-    beforeEach(function() {
-      subscriber.modifyAckDeadline_ = function() {
+  describe('renewLeases_', () => {
+    beforeEach(() => {
+      subscriber.modifyAckDeadline_ = () => {
         return Promise.resolve();
       };
     });
@@ -1225,21 +1210,21 @@ describe('Subscriber', function() {
     const fakeDeadline = 9999;
     const fakeAckIds = ['abc', 'def'];
 
-    beforeEach(function() {
+    beforeEach(() => {
       subscriber.inventory_.lease = fakeAckIds;
       subscriber.setLeaseTimeout_ = fakeUtil.noop;
 
-      subscriber.histogram.percentile = function() {
+      subscriber.histogram.percentile = () => {
         return fakeDeadline;
       };
     });
 
-    it('should clean up the old timeout handle', function() {
+    it('should clean up the old timeout handle', () => {
       const fakeHandle = 123;
       let clearTimeoutCalled = false;
       const _clearTimeout = global.clearTimeout;
 
-      global.clearTimeout = function(handle) {
+      global.clearTimeout = handle => {
         assert.strictEqual(handle, fakeHandle);
         clearTimeoutCalled = true;
       };
@@ -1253,10 +1238,10 @@ describe('Subscriber', function() {
       global.clearTimeout = _clearTimeout;
     });
 
-    it('should update the ackDeadline', function() {
+    it('should update the ackDeadline', () => {
       subscriber.request = subscriber.setLeaseTimeout_ = fakeUtil.noop;
 
-      subscriber.histogram.percentile = function(percent) {
+      subscriber.histogram.percentile = percent => {
         assert.strictEqual(percent, 99);
         return fakeDeadline;
       };
@@ -1265,14 +1250,14 @@ describe('Subscriber', function() {
       assert.strictEqual(subscriber.ackDeadline, fakeDeadline);
     });
 
-    it('should set the auto-lease timeout', function(done) {
+    it('should set the auto-lease timeout', done => {
       subscriber.request = fakeUtil.noop;
       subscriber.setLeaseTimeout_ = done;
       subscriber.renewLeases_();
     });
 
-    it('should not renew leases if inventory is empty', function() {
-      subscriber.modifyAckDeadline_ = function() {
+    it('should not renew leases if inventory is empty', () => {
+      subscriber.modifyAckDeadline_ = () => {
         throw new Error('Should not have been called.');
       };
 
@@ -1280,8 +1265,8 @@ describe('Subscriber', function() {
       subscriber.renewLeases_();
     });
 
-    it('should modAck the leased messages', function(done) {
-      subscriber.modifyAckDeadline_ = function(ackIds, deadline) {
+    it('should modAck the leased messages', done => {
+      subscriber.modifyAckDeadline_ = (ackIds, deadline) => {
         assert.deepStrictEqual(ackIds, fakeAckIds);
         assert.strictEqual(deadline, subscriber.ackDeadline / 1000);
 
@@ -1293,42 +1278,42 @@ describe('Subscriber', function() {
       subscriber.renewLeases_();
     });
 
-    it('should re-set the lease timeout', function(done) {
+    it('should re-set the lease timeout', done => {
       subscriber.setLeaseTimeout_ = done;
       subscriber.renewLeases_();
     });
   });
 
-  describe('setFlushTimeout_', function() {
+  describe('setFlushTimeout_', () => {
     const FLUSH_TIMEOUT = 100;
 
-    beforeEach(function() {
+    beforeEach(() => {
       subscriber.batching.maxMilliseconds = FLUSH_TIMEOUT;
     });
 
-    it('should set a flush timeout', function(done) {
+    it('should set a flush timeout', done => {
       let flushed = false;
 
-      subscriber.flushQueues_ = function() {
+      subscriber.flushQueues_ = () => {
         flushed = true;
       };
 
       const delayPromise = delay(0);
-      const fakeBoundDelay = function() {};
+      const fakeBoundDelay = () => {};
 
-      delayPromise.clear.bind = function(context) {
+      delayPromise.clear.bind = context => {
         assert.strictEqual(context, delayPromise);
         return fakeBoundDelay;
       };
 
-      delayOverride = function(timeout) {
+      delayOverride = timeout => {
         assert.strictEqual(timeout, FLUSH_TIMEOUT);
         return delayPromise;
       };
 
       const promise = subscriber.setFlushTimeout_();
 
-      promise.then(function() {
+      promise.then(() => {
         assert.strictEqual(subscriber.flushTimeoutHandle_, promise);
         assert.strictEqual(promise.clear, fakeBoundDelay);
         assert.strictEqual(flushed, true);
@@ -1336,13 +1321,13 @@ describe('Subscriber', function() {
       });
     });
 
-    it('should swallow cancel errors', function() {
+    it('should swallow cancel errors', () => {
       const promise = subscriber.setFlushTimeout_();
       promise.clear();
       return promise;
     });
 
-    it('should return the cached timeout', function() {
+    it('should return the cached timeout', () => {
       const fakeHandle = {};
 
       subscriber.flushTimeoutHandle_ = fakeHandle;
@@ -1352,42 +1337,43 @@ describe('Subscriber', function() {
     });
   });
 
-  describe('setLeaseTimeout_', function() {
+  describe('setLeaseTimeout_', () => {
     const fakeTimeoutHandle = 1234;
     const fakeRandom = 2;
 
     let globalSetTimeout;
     let globalMathRandom;
 
-    before(function() {
+    before(() => {
       globalSetTimeout = global.setTimeout;
       globalMathRandom = global.Math.random;
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
       subscriber.isOpen = true;
       subscriber.latency_ = {
-        percentile: function() {
+        percentile() {
           return 0;
         },
       };
     });
 
-    after(function() {
+    after(() => {
       global.setTimeout = globalSetTimeout;
       global.Math.random = globalMathRandom;
     });
 
-    it('should set a timeout to call renewLeases_', function(done) {
+    it('should set a timeout to call renewLeases_', done => {
       const ackDeadline = (subscriber.ackDeadline = 1000);
 
-      global.Math.random = function() {
+      global.Math.random = () => {
         return fakeRandom;
       };
 
-      (global as any).setTimeout = function(callback, duration) {
+      // tslint:disable-next-line no-any
+      (global as any).setTimeout = (callback, duration) => {
         assert.strictEqual(duration, fakeRandom * ackDeadline * 0.9);
-        setImmediate(callback); // the done fn
+        setImmediate(callback);  // the done fn
         return fakeTimeoutHandle;
       };
 
@@ -1396,21 +1382,22 @@ describe('Subscriber', function() {
       assert.strictEqual(subscriber.leaseTimeoutHandle_, fakeTimeoutHandle);
     });
 
-    it('should subtract the estimated latency', function(done) {
+    it('should subtract the estimated latency', done => {
       const latency = 1;
 
-      subscriber.latency_.percentile = function(percentile) {
+      subscriber.latency_.percentile = percentile => {
         assert.strictEqual(percentile, 99);
         return latency;
       };
 
       const ackDeadline = (subscriber.ackDeadline = 1000);
 
-      global.Math.random = function() {
+      global.Math.random = () => {
         return fakeRandom;
       };
 
-      (global as any).setTimeout = function(callback, duration) {
+      // tslint:disable-next-line no-any
+      (global as any).setTimeout = (callback, duration) => {
         assert.strictEqual(duration, fakeRandom * ackDeadline * 0.9 - latency);
         done();
       };
@@ -1418,16 +1405,16 @@ describe('Subscriber', function() {
       subscriber.setLeaseTimeout_();
     });
 
-    it('should not set a timeout if one already exists', function() {
-      subscriber.renewLeases_ = function() {
+    it('should not set a timeout if one already exists', () => {
+      subscriber.renewLeases_ = () => {
         throw new Error('Should not be called.');
       };
 
-      global.Math.random = function() {
+      global.Math.random = () => {
         throw new Error('Should not be called.');
       };
 
-      global.setTimeout = function() {
+      global.setTimeout = () => {
         throw new Error('Should not be called.');
       };
 
@@ -1435,16 +1422,16 @@ describe('Subscriber', function() {
       subscriber.setLeaseTimeout_();
     });
 
-    it('should not set a timeout if the sub is closed', function() {
-      subscriber.renewLeases_ = function() {
+    it('should not set a timeout if the sub is closed', () => {
+      subscriber.renewLeases_ = () => {
         throw new Error('Should not be called.');
       };
 
-      global.Math.random = function() {
+      global.Math.random = () => {
         throw new Error('Should not be called.');
       };
 
-      global.setTimeout = function() {
+      global.setTimeout = () => {
         throw new Error('Should not be called.');
       };
 
@@ -1453,47 +1440,48 @@ describe('Subscriber', function() {
     });
   });
 
-  describe('writeTo_', function() {
+  describe('writeTo_', () => {
     const CONNECTION_ID = 'abc';
+    // tslint:disable-next-line no-any
     const CONNECTION: any = {};
 
-    beforeEach(function() {
+    beforeEach(() => {
       subscriber.connectionPool = {
-        acquire: function(connId, cb) {
+        acquire(connId, cb) {
           cb(null, CONNECTION);
         },
       };
     });
 
-    it('should return a promise', function() {
-      subscriber.connectionPool.acquire = function() {};
+    it('should return a promise', () => {
+      subscriber.connectionPool.acquire = () => {};
 
       const returnValue = subscriber.writeTo_();
       assert(returnValue instanceof Promise);
     });
 
-    it('should reject the promise if unable to acquire stream', function() {
+    it('should reject the promise if unable to acquire stream', () => {
       const fakeError = new Error('err');
 
-      subscriber.connectionPool.acquire = function(connId, cb) {
+      subscriber.connectionPool.acquire = (connId, cb) => {
         assert.strictEqual(connId, CONNECTION_ID);
         cb(fakeError);
       };
 
-      return subscriber.writeTo_(CONNECTION_ID, {}).then(
-        function() {
-          throw new Error('Should not resolve.');
-        },
-        function(err) {
-          assert.strictEqual(err, fakeError);
-        }
-      );
+      return subscriber.writeTo_(CONNECTION_ID, {})
+          .then(
+              () => {
+                throw new Error('Should not resolve.');
+              },
+              err => {
+                assert.strictEqual(err, fakeError);
+              });
     });
 
-    it('should write to the stream', function(done) {
+    it('should write to the stream', done => {
       const fakeData = {a: 'b'};
 
-      CONNECTION.write = function(data) {
+      CONNECTION.write = data => {
         assert.strictEqual(data, fakeData);
         done();
       };
@@ -1501,19 +1489,19 @@ describe('Subscriber', function() {
       subscriber.writeTo_(CONNECTION_ID, fakeData);
     });
 
-    it('should capture the write latency when successful', function() {
+    it('should capture the write latency when successful', () => {
       const fakeLatency = 500;
       let capturedLatency;
 
-      CONNECTION.write = function(data, cb) {
+      CONNECTION.write = (data, cb) => {
         setTimeout(cb, fakeLatency, null);
       };
 
-      subscriber.latency_.add = function(value) {
+      subscriber.latency_.add = value => {
         capturedLatency = value;
       };
 
-      return subscriber.writeTo_(CONNECTION_ID, {}).then(function() {
+      return subscriber.writeTo_(CONNECTION_ID, {}).then(() => {
         const upper = fakeLatency + 50;
         const lower = fakeLatency - 50;
 

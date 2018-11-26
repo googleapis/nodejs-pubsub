@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {paginator} from '@google-cloud/paginator';
+import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
@@ -28,8 +28,8 @@ const v1 = require('./v1');
 import {Snapshot} from './snapshot';
 import {Subscription, SubscriptionMetadata, SubscriptionMetadataRaw} from './subscription';
 import {Topic} from './topic';
-import { Readable } from 'stream';
-import { CallOptions } from 'google-gax';
+import {CallOptions} from 'google-gax';
+import {Readable} from 'stream';
 
 const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
@@ -57,10 +57,10 @@ export type CreateTopicResponse = [Topic, object];
  * @param {object} apiResponse The full API response.
  */
 export interface CreateTopicCallback {
-  (err?: Error | null, topic?: Topic | null, apiResponse?: object): void;
+  (err?: Error|null, topic?: Topic|null, apiResponse?: object): void;
 }
 
-export type Client = 'PublisherClient' | 'SubscriberClient';
+export type Client = 'PublisherClient'|'SubscriberClient';
 
 export interface RequestConfig {
   client: Client;
@@ -92,14 +92,12 @@ export type CreateSubscriptionResponse = [Subscription, object];
  * @param {object} apiResponse The full API response.
  */
 export interface CreateSubscriptionCallback {
-  (err?: Error|null, subscription?: Subscription|null, apiResponse?: object): void;
+  (err?: Error|null, subscription?: Subscription|null,
+   apiResponse?: object): void;
 }
 
 export interface CreateSubscriptionOptions extends SubscriptionMetadata {
-  flowControl?: {
-    maxBytes?: number;
-    maxMessages?: number;
-  };
+  flowControl?: {maxBytes?: number; maxMessages?: number;};
   gaxOpts?: CallOptions;
 }
 
@@ -122,8 +120,10 @@ interface GetClientCallback {
  * @property {string} [projectId] The project ID from the Google Developer's
  *     Console, e.g. 'grape-spaceship-123'. We will also check the environment
  *     variable `GCLOUD_PROJECT` for your project ID. If your app is running in
- *     an environment which supports {@link https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application Application Default Credentials},
- *     your project ID will be detected automatically.
+ *     an environment which supports {@link
+ * https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application
+ * Application Default Credentials}, your project ID will be detected
+ * automatically.
  * @property {string} [keyFilename] Full path to the a .json, .pem, or .p12 key
  *     downloaded from the Google Developers Console. If you provide a path to a
  *     JSON file, the `projectId` option above is not necessary. NOTE: .pem and
@@ -159,13 +159,14 @@ interface GetClientCallback {
  * @example <caption>Import the client library</caption>
  * const {PubSub} = require('@google-cloud/pubsub');
  *
- * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
- * const pubsub = new PubSub();
+ * @example <caption>Create a client that uses <a
+ * href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application
+ * Default Credentials (ADC)</a>:</caption> const pubsub = new PubSub();
  *
- * @example <caption>Create a client with <a href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit credentials</a>:</caption>
- * const pubsub = new PubSub({
- *   projectId: 'your-project-id',
- *   keyFilename: '/path/to/keyfile.json'
+ * @example <caption>Create a client with <a
+ * href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit
+ * credentials</a>:</caption> const pubsub = new PubSub({ projectId:
+ * 'your-project-id', keyFilename: '/path/to/keyfile.json'
  * });
  *
  * @example <caption>include:samples/quickstart.js</caption>
@@ -178,9 +179,13 @@ export class PubSub {
   api;
   auth: GoogleAuth;
   projectId: string;
+  // tslint:disable-next-line variable-name
   Promise?: PromiseConstructor;
-  getSubscriptionsStream = paginator.streamify('getSubscriptions') as () => Readable;
-  getSnapshotsStream = paginator.streamify('getSnapshots') as () => Readable;
+  getSubscriptionsStream = paginator.streamify('getSubscriptions') as() =>
+                               Readable;
+  getSnapshotsStream = paginator.streamify('getSnapshots') as() => Readable;
+  getTopicsStream = paginator.streamify('getTopics') as() => Readable;
+
   constructor(options?) {
     options = options || {};
     // Determine what scopes are needed.
@@ -193,15 +198,14 @@ export class PubSub {
       }
     }
     this.options = Object.assign(
-      {
-        'grpc.keepalive_time_ms': 300000,
-        'grpc.max_receive_message_length': 20000001,
-        libName: 'gccl',
-        libVersion: PKG.version,
-        scopes: Object.keys(allScopes),
-      },
-      options
-    );
+        {
+          'grpc.keepalive_time_ms': 300000,
+          'grpc.max_receive_message_length': 20000001,
+          libName: 'gccl',
+          libVersion: PKG.version,
+          scopes: Object.keys(allScopes),
+        },
+        options);
     /**
      * @name PubSub#isEmulator
      * @type {boolean}
@@ -218,7 +222,8 @@ export class PubSub {
   /**
    * Options for creating a subscription.
    *
-   * See a [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
+   * See a [Subscription
+   * resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
    *
    * @typedef {object} CreateSubscriptionRequest
    * @property {object} [flowControl] Flow control configurations for
@@ -254,7 +259,8 @@ export class PubSub {
    *     subscription to.
    * @param {string} name The name of the subscription.
    * @param {CreateSubscriptionRequest} [options] See a
-   *     [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
+   *     [Subscription
+   * resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
    * @param {CreateSubscriptionCallback} [callback] Callback function.
    * @returns {Promise<CreateSubscriptionResponse>}
    *
@@ -269,16 +275,26 @@ export class PubSub {
    *
    * pubsub.createSubscription(topic, name, callback);
    *
-   * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
-   * pubsub.createSubscription(topic, name).then(function(data) {
-   *   const subscription = data[0];
-   *   const apiResponse = data[1];
+   * @example <caption>If the callback is omitted, we'll return a
+   * Promise.</caption> pubsub.createSubscription(topic,
+   * name).then(function(data) { const subscription = data[0]; const apiResponse
+   * = data[1];
    * });
    */
-  createSubscription(topic: Topic|string, name: string, options?: CreateSubscriptionOptions): Promise<CreateSubscriptionResponse>;
-  createSubscription(topic: Topic|string, name: string, options: CreateSubscriptionOptions, callback: CreateSubscriptionCallback): void;
-  createSubscription(topic: Topic|string, name: string, callback: CreateSubscriptionCallback): void;
-  createSubscription(topic: Topic|string, name: string, optionsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback, callback?: CreateSubscriptionCallback): Promise<CreateSubscriptionResponse>|void {
+  createSubscription(
+      topic: Topic|string, name: string,
+      options?: CreateSubscriptionOptions): Promise<CreateSubscriptionResponse>;
+  createSubscription(
+      topic: Topic|string, name: string, options: CreateSubscriptionOptions,
+      callback: CreateSubscriptionCallback): void;
+  createSubscription(
+      topic: Topic|string, name: string,
+      callback: CreateSubscriptionCallback): void;
+  createSubscription(
+      topic: Topic|string, name: string,
+      optionsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
+      callback?: CreateSubscriptionCallback):
+      Promise<CreateSubscriptionResponse>|void {
     if (!is.string(topic) && !(topic instanceof Topic)) {
       throw new Error('A Topic is required for a new subscription.');
     }
@@ -288,8 +304,11 @@ export class PubSub {
     if (typeof topic === 'string') {
       topic = this.topic(topic);
     }
-    let options = typeof optionsOrCallback === 'object' ? optionsOrCallback : {} as CreateSubscriptionOptions;
-    callback = typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+    let options = typeof optionsOrCallback === 'object' ?
+        optionsOrCallback :
+        {} as CreateSubscriptionOptions;
+    callback =
+        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
 
     // Make a deep copy of options to not pollute caller object.
     options = extend(true, {}, options);
@@ -299,7 +318,8 @@ export class PubSub {
     delete options.gaxOpts;
     delete options.flowControl;
 
-    const metadata = Subscription.formatMetadata_(options as SubscriptionMetadataRaw);
+    const metadata =
+        Subscription.formatMetadata_(options as SubscriptionMetadataRaw);
 
     let subscriptionCtorOptions = flowControl ? {flowControl} : {};
     subscriptionCtorOptions = Object.assign(subscriptionCtorOptions, metadata);
@@ -311,21 +331,20 @@ export class PubSub {
     });
 
     this.request(
-      {
-        client: 'SubscriberClient',
-        method: 'createSubscription',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      function(err, resp) {
-        if (err) {
-          callback!(err, null, resp!);
-          return;
-        }
-        subscription.metadata = resp;
-        callback!(null, subscription, resp!);
-      }
-    );
+        {
+          client: 'SubscriberClient',
+          method: 'createSubscription',
+          reqOpts,
+          gaxOpts,
+        },
+        (err, resp) => {
+          if (err) {
+            callback!(err, null, resp!);
+            return;
+          }
+          subscription.metadata = resp;
+          callback!(null, subscription, resp!);
+        });
   }
 
   /**
@@ -358,39 +377,43 @@ export class PubSub {
    * });
    */
   createTopic(name: string, gaxOpts: CallOptions): Promise<CreateTopicResponse>;
-  createTopic(name: string, gaxOpts: CallOptions, callback?: CreateTopicCallback): void;
+  createTopic(
+      name: string, gaxOpts: CallOptions, callback?: CreateTopicCallback): void;
   createTopic(name: string, callback: CreateTopicCallback): void;
-  createTopic(name: string, gaxOptsOrCallback?: CallOptions|CreateTopicCallback, callback?: CreateTopicCallback): Promise<CreateTopicResponse>|void {
+  createTopic(
+      name: string, gaxOptsOrCallback?: CallOptions|CreateTopicCallback,
+      callback?: CreateTopicCallback): Promise<CreateTopicResponse>|void {
     const topic = this.topic(name);
     const reqOpts = {
       name: topic.name,
     };
 
-    const gaxOpts = typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback = typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts =
+        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
+    callback =
+        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
 
     this.request<Metadata>(
-      {
-        client: 'PublisherClient',
-        method: 'createTopic',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      function(err, resp) {
-        if (err) {
-          callback!(err, null, resp);
-          return;
-        }
-        topic.metadata = resp;
-        callback!(null, topic, resp);
-      }
-    );
+        {
+          client: 'PublisherClient',
+          method: 'createTopic',
+          reqOpts,
+          gaxOpts,
+        },
+        (err, resp) => {
+          if (err) {
+            callback!(err, null, resp);
+            return;
+          }
+          topic.metadata = resp;
+          callback!(null, topic, resp);
+        });
   }
   /**
-   * Determine the appropriate endpoint to use for API requests, first trying the
-   * local `apiEndpoint` parameter. If the `apiEndpoint` parameter is null we try
-   * Pub/Sub emulator environment variable (PUBSUB_EMULATOR_HOST), otherwise the
-   * default JSON API.
+   * Determine the appropriate endpoint to use for API requests, first trying
+   * the local `apiEndpoint` parameter. If the `apiEndpoint` parameter is null
+   * we try Pub/Sub emulator environment variable (PUBSUB_EMULATOR_HOST),
+   * otherwise the default JSON API.
    *
    * @private
    */
@@ -402,10 +425,9 @@ export class PubSub {
     const baseUrl = apiEndpoint || process.env.PUBSUB_EMULATOR_HOST;
     const leadingProtocol = new RegExp('^https*://');
     const trailingSlashes = new RegExp('/*$');
-    const baseUrlParts = baseUrl
-      .replace(leadingProtocol, '')
-      .replace(trailingSlashes, '')
-      .split(':');
+    const baseUrlParts = baseUrl.replace(leadingProtocol, '')
+                             .replace(trailingSlashes, '')
+                             .split(':');
     this.options.servicePath = baseUrlParts[0];
     this.options.port = baseUrlParts[1];
     this.options.sslCreds = grpc.credentials.createInsecure();
@@ -464,38 +486,36 @@ export class PubSub {
       options = {};
     }
     const reqOpts = Object.assign(
-      {
-        project: 'projects/' + this.projectId,
-      },
-      options
-    );
+        {
+          project: 'projects/' + this.projectId,
+        },
+        options);
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
     const gaxOpts = Object.assign(
-      {
-        autoPaginate: options.autoPaginate,
-      },
-      options.gaxOpts
-    );
+        {
+          autoPaginate: options.autoPaginate,
+        },
+        options.gaxOpts);
     this.request(
-      {
-        client: 'SubscriberClient',
-        method: 'listSnapshots',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      function() {
-        const snapshots = arguments[1];
-        if (snapshots) {
-          arguments[1] = snapshots.map(function(snapshot) {
-            const snapshotInstance = self.snapshot(snapshot.name);
-            snapshotInstance.metadata = snapshot;
-            return snapshotInstance;
-          });
-        }
-        callback.apply(null, arguments);
-      }
-    );
+        {
+          client: 'SubscriberClient',
+          method: 'listSnapshots',
+          reqOpts,
+          gaxOpts,
+        },
+        // tslint:disable-next-line only-arrow-functions
+        function() {
+          const snapshots = arguments[1];
+          if (snapshots) {
+            arguments[1] = snapshots.map(snapshot => {
+              const snapshotInstance = self.snapshot(snapshot.name);
+              snapshotInstance.metadata = snapshot;
+              return snapshotInstance;
+            });
+          }
+          callback.apply(null, arguments);
+        });
   }
   /**
    * Query object for listing subscriptions.
@@ -523,8 +543,8 @@ export class PubSub {
    */
   /**
    * Get a list of the subscriptions registered to all of your project's topics.
-   * You may optionally provide a query object as the first argument to customize
-   * the response.
+   * You may optionally provide a query object as the first argument to
+   * customize the response.
    *
    * Your provided callback will be invoked with an error object if an API error
    * occurred or an array of {@link Subscription} objects.
@@ -572,30 +592,29 @@ export class PubSub {
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
     const gaxOpts = Object.assign(
-      {
-        autoPaginate: options.autoPaginate,
-      },
-      options.gaxOpts
-    );
+        {
+          autoPaginate: options.autoPaginate,
+        },
+        options.gaxOpts);
     this.request(
-      {
-        client: 'SubscriberClient',
-        method: 'listSubscriptions',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      function() {
-        const subscriptions = arguments[1];
-        if (subscriptions) {
-          arguments[1] = subscriptions.map(function(sub) {
-            const subscriptionInstance = self.subscription(sub.name);
-            subscriptionInstance.metadata = sub;
-            return subscriptionInstance;
-          });
-        }
-        callback.apply(null, arguments);
-      }
-    );
+        {
+          client: 'SubscriberClient',
+          method: 'listSubscriptions',
+          reqOpts,
+          gaxOpts,
+        },
+        // tslint:disable-next-line only-arrow-functions
+        function() {
+          const subscriptions = arguments[1];
+          if (subscriptions) {
+            arguments[1] = subscriptions.map(sub => {
+              const subscriptionInstance = self.subscription(sub.name);
+              subscriptionInstance.metadata = sub;
+              return subscriptionInstance;
+            });
+          }
+          callback.apply(null, arguments);
+        });
   }
   /**
    * Query object for listing topics.
@@ -660,38 +679,36 @@ export class PubSub {
       options = {};
     }
     const reqOpts = Object.assign(
-      {
-        project: 'projects/' + this.projectId,
-      },
-      options
-    );
+        {
+          project: 'projects/' + this.projectId,
+        },
+        options);
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
     const gaxOpts = Object.assign(
-      {
-        autoPaginate: options.autoPaginate,
-      },
-      options.gaxOpts
-    );
+        {
+          autoPaginate: options.autoPaginate,
+        },
+        options.gaxOpts);
     this.request(
-      {
-        client: 'PublisherClient',
-        method: 'listTopics',
-        reqOpts: reqOpts,
-        gaxOpts: gaxOpts,
-      },
-      function() {
-        const topics = arguments[1];
-        if (topics) {
-          arguments[1] = topics.map(function(topic) {
-            const topicInstance = self.topic(topic.name);
-            topicInstance.metadata = topic;
-            return topicInstance;
-          });
-        }
-        callback.apply(null, arguments);
-      }
-    );
+        {
+          client: 'PublisherClient',
+          method: 'listTopics',
+          reqOpts,
+          gaxOpts,
+        },
+        // tslint:disable-next-line only-arrow-functions
+        function() {
+          const topics = arguments[1];
+          if (topics) {
+            arguments[1] = topics.map(topic => {
+              const topicInstance = self.topic(topic.name);
+              topicInstance.metadata = topic;
+              return topicInstance;
+            });
+          }
+          callback.apply(null, arguments);
+        });
   }
   /**
    * Get the PubSub client object.
@@ -706,7 +723,7 @@ export class PubSub {
    */
   getClient_(config: GetClientConfig, callback: GetClientCallback) {
     const hasProjectId =
-      this.projectId && this.projectId !== PROJECT_ID_PLACEHOLDER;
+        this.projectId && this.projectId !== PROJECT_ID_PLACEHOLDER;
     if (!hasProjectId && !this.isEmulator) {
       this.auth.getProjectId((err, projectId) => {
         if (err) {
@@ -727,7 +744,8 @@ export class PubSub {
     callback(null, gaxClient);
   }
   /**
-   * Funnel all API requests through this method, to be sure we have a project ID.
+   * Funnel all API requests through this method, to be sure we have a project
+   * ID.
    *
    * @private
    *
@@ -737,9 +755,11 @@ export class PubSub {
    * @param {object} config.reqOpts Request options.
    * @param {function} [callback] The callback function.
    */
-  request<TResponse = {}>(config: RequestConfig, callback: RequestCallback<TResponse>) {
+  // tslint:disable-next-line:no-any
+  request<TResponse = any>(
+      config: RequestConfig, callback: RequestCallback<TResponse>) {
     const self = this;
-    this.getClient_(config, function(err, client) {
+    this.getClient_(config, (err, client) => {
       if (err) {
         callback(err);
         return;
@@ -930,7 +950,6 @@ export class PubSub {
  *     this.end();
  *   });
  */
-(PubSub.prototype as any).getTopicsStream = paginator.streamify('getTopics');
 
 /*! Developer Documentation
  *
@@ -959,19 +978,21 @@ export {Subscription, Topic};
  * @module {PubSub} @google-cloud/pubsub
  * @alias nodejs-pubsub
  *
- * @example <caption>Install the client library with <a href="https://www.npmjs.com/">npm</a>:</caption>
- * npm install --save @google-cloud/pubsub
+ * @example <caption>Install the client library with <a
+ * href="https://www.npmjs.com/">npm</a>:</caption> npm install --save
+ * @google-cloud/pubsub
  *
  * @example <caption>Import the client library</caption>
  * const {PubSub} = require('@google-cloud/pubsub');
  *
- * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
- * const pubsub = new PubSub();
+ * @example <caption>Create a client that uses <a
+ * href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application
+ * Default Credentials (ADC)</a>:</caption> const pubsub = new PubSub();
  *
- * @example <caption>Create a client with <a href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit credentials</a>:</caption>
- * const pubsub = new PubSub({
- *   projectId: 'your-project-id',
- *   keyFilename: '/path/to/keyfile.json'
+ * @example <caption>Create a client with <a
+ * href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit
+ * credentials</a>:</caption> const pubsub = new PubSub({ projectId:
+ * 'your-project-id', keyFilename: '/path/to/keyfile.json'
  * });
  *
  * @example <caption>include:samples/quickstart.js</caption>

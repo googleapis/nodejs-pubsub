@@ -20,7 +20,7 @@ import {PubSub, Subscription, Topic} from '../src';
 
 const pubsub = new PubSub();
 
-describe('pubsub', function() {
+describe('pubsub', () => {
   const TOPIC_NAMES = [
     generateTopicName(),
     generateTopicName(),
@@ -57,7 +57,7 @@ describe('pubsub', function() {
     const subscription = topic.subscription(generateSubName());
     await topic.create();
     await subscription.create();
-    for (let i=0; i<6; i++) {
+    for (let i = 0; i < 6; i++) {
       await publisher.publish(Buffer.from(message), options);
     }
     return new Promise((resolve, reject) => {
@@ -76,12 +76,12 @@ describe('pubsub', function() {
     return Promise.all(TOPICS.map(t => t.delete()));
   });
 
-  describe('Topic', function() {
-    it('should be listed', function(done) {
-      pubsub.getTopics(function(err, topics) {
+  describe('Topic', () => {
+    it('should be listed', done => {
+      pubsub.getTopics((err, topics) => {
         assert.ifError(err);
 
-        const results = topics.filter(function(topic) {
+        const results = topics.filter(topic => {
           const name = getTopicName(topic);
           return TOPIC_FULL_NAMES.indexOf(name) !== -1;
         });
@@ -92,82 +92,82 @@ describe('pubsub', function() {
       });
     });
 
-    it('should list topics in a stream', function(done) {
+    it('should list topics in a stream', done => {
       // tslint:disable-next-line no-any
       const topicsEmitted: any[] = [];
 
       // tslint:disable-next-line no-any
       (pubsub as any)
-        .getTopicsStream()
-        .on('error', done)
-        .on('data', function(topic) {
-          topicsEmitted.push(topic);
-        })
-        .on('end', function() {
-          const results = topicsEmitted.filter(function(topic) {
-            const name = getTopicName(topic);
-            return TOPIC_FULL_NAMES.indexOf(name) !== -1;
+          .getTopicsStream()
+          .on('error', done)
+          .on('data',
+              topic => {
+                topicsEmitted.push(topic);
+              })
+          .on('end', () => {
+            const results = topicsEmitted.filter(topic => {
+              const name = getTopicName(topic);
+              return TOPIC_FULL_NAMES.indexOf(name) !== -1;
+            });
+
+            assert.strictEqual(results.length, TOPIC_NAMES.length);
+            done();
           });
-
-          assert.strictEqual(results.length, TOPIC_NAMES.length);
-          done();
-        });
     });
 
-    it('should allow manual paging', function(done) {
+    it('should allow manual paging', done => {
       pubsub.getTopics(
-        {
-          pageSize: TOPIC_NAMES.length - 1,
-          gaxOpts: {autoPaginate: false},
-        },
-        function(err, topics) {
-          assert.ifError(err);
-          assert.strictEqual(topics.length, TOPIC_NAMES.length - 1);
-          done();
-        }
-      );
+          {
+            pageSize: TOPIC_NAMES.length - 1,
+            gaxOpts: {autoPaginate: false},
+          },
+          (err, topics) => {
+            assert.ifError(err);
+            assert.strictEqual(topics.length, TOPIC_NAMES.length - 1);
+            done();
+          });
     });
 
-    it('should be created and deleted', function(done) {
+    it('should be created and deleted', done => {
       const TOPIC_NAME = generateTopicName();
-      pubsub.createTopic(TOPIC_NAME, function(err) {
+      pubsub.createTopic(TOPIC_NAME, err => {
         assert.ifError(err);
         pubsub.topic(TOPIC_NAME).delete(done);
       });
     });
 
-    it('should honor the autoCreate option', function(done) {
+    it('should honor the autoCreate option', done => {
       const topic = pubsub.topic(generateTopicName());
 
       topic.get({autoCreate: true}, done);
     });
 
-    it('should confirm if a topic exists', function(done) {
+    it('should confirm if a topic exists', done => {
       const topic = pubsub.topic(TOPIC_NAMES[0]);
 
-      topic.exists(function(err, exists) {
+      topic.exists((err, exists) => {
         assert.ifError(err);
         assert.strictEqual(exists, true);
         done();
       });
     });
 
-    it('should confirm if a topic does not exist', function(done) {
+    it('should confirm if a topic does not exist', done => {
       const topic = pubsub.topic('should-not-exist');
 
-      topic.exists(function(err, exists) {
+      topic.exists((err, exists) => {
         assert.ifError(err);
         assert.strictEqual(exists, false);
         done();
       });
     });
 
-    it('should publish a message', function(done) {
+    it('should publish a message', done => {
       const topic = pubsub.topic(TOPIC_NAMES[0]);
       const publisher = topic.publisher();
       const message = Buffer.from('message from me');
 
-      publisher.publish(message, function(err, messageId) {
+      publisher.publish(message, (err, messageId) => {
         assert.ifError(err);
         assert.strictEqual(typeof messageId, 'string');
         done();
@@ -185,9 +185,9 @@ describe('pubsub', function() {
       assert.deepStrictEqual(message.attributes, attrs);
     });
 
-    it('should get the metadata of a topic', function(done) {
+    it('should get the metadata of a topic', done => {
       const topic = pubsub.topic(TOPIC_NAMES[0]);
-      topic.getMetadata(function(err, metadata) {
+      topic.getMetadata((err, metadata) => {
         assert.ifError(err);
         assert.strictEqual(metadata.name, topic.name);
         done();
@@ -195,7 +195,7 @@ describe('pubsub', function() {
     });
   });
 
-  describe('Subscription', function() {
+  describe('Subscription', () => {
     const TOPIC_NAME = generateTopicName();
     const topic = pubsub.topic(TOPIC_NAME);
     const publisher = topic.publisher();
@@ -210,7 +210,7 @@ describe('pubsub', function() {
     before(async () => {
       await topic.create();
       await Promise.all(SUBSCRIPTIONS.map(s => s.create()));
-      for (let i=0; i<10; i++) {
+      for (let i = 0; i < 10; i++) {
         await publisher.publish(Buffer.from('hello'));
       }
       await new Promise(r => setTimeout(r, 2500));
@@ -227,14 +227,14 @@ describe('pubsub', function() {
       }));
     });
 
-    it('should return error if creating an existing subscription', function(done) {
+    it('should return error if creating an existing subscription', done => {
       // Use a new topic name...
       const topic = pubsub.topic(generateTopicName());
 
       // ...but with the same subscription name that we already created...
       const subscription = topic.subscription(SUB_NAMES[0]);
 
-      subscription.create(function(err) {
+      subscription.create(err => {
         if (!err) {
           assert.fail('Should not have created subscription successfully.');
           return;
@@ -247,8 +247,8 @@ describe('pubsub', function() {
       });
     });
 
-    it('should list all subscriptions registered to the topic', function(done) {
-      topic.getSubscriptions(function(err, subs) {
+    it('should list all subscriptions registered to the topic', done => {
+      topic.getSubscriptions((err, subs) => {
         assert.ifError(err);
         assert.strictEqual(subs.length, SUBSCRIPTIONS.length);
         assert(subs[0] instanceof Subscription);
@@ -256,160 +256,152 @@ describe('pubsub', function() {
       });
     });
 
-    it('should list all topic subscriptions as a stream', function(done) {
-      const subscriptionsEmitted: {}[] = [];
-      topic
-        .getSubscriptionsStream()
-        .on('error', done)
-        .on('data', function(subscription) {
-          subscriptionsEmitted.push(subscription);
-        })
-        .on('end', function() {
-          assert.strictEqual(subscriptionsEmitted.length, SUBSCRIPTIONS.length);
-          done();
-        });
+    it('should list all topic subscriptions as a stream', done => {
+      const subscriptionsEmitted: Array<{}> = [];
+      topic.getSubscriptionsStream()
+          .on('error', done)
+          .on('data',
+              subscription => {
+                subscriptionsEmitted.push(subscription);
+              })
+          .on('end', () => {
+            assert.strictEqual(
+                subscriptionsEmitted.length, SUBSCRIPTIONS.length);
+            done();
+          });
     });
 
-    it('should list all subscriptions regardless of topic', function(done) {
-      pubsub.getSubscriptions(function(err, subscriptions) {
+    it('should list all subscriptions regardless of topic', done => {
+      pubsub.getSubscriptions((err, subscriptions) => {
         assert.ifError(err);
         assert(subscriptions instanceof Array);
         done();
       });
     });
 
-    it('should list all subscriptions as a stream', function(done) {
+    it('should list all subscriptions as a stream', done => {
       let subscriptionEmitted = false;
 
-      pubsub
-        .getSubscriptionsStream()
-        .on('error', done)
-        .on('data', function(subscription) {
-          subscriptionEmitted = subscription instanceof Subscription;
-        })
-        .on('end', function() {
-          assert.strictEqual(subscriptionEmitted, true);
-          done();
-        });
+      pubsub.getSubscriptionsStream()
+          .on('error', done)
+          .on('data',
+              subscription => {
+                subscriptionEmitted = subscription instanceof Subscription;
+              })
+          .on('end', () => {
+            assert.strictEqual(subscriptionEmitted, true);
+            done();
+          });
     });
 
-    it('should allow creation and deletion of a subscription', function(done) {
+    it('should allow creation and deletion of a subscription', done => {
       const subName = generateSubName();
-      topic.createSubscription(subName, function(err, sub) {
+      topic.createSubscription(subName, (err, sub) => {
         assert.ifError(err);
         assert(sub instanceof Subscription);
         sub.delete(done);
       });
     });
 
-    it('should honor the autoCreate option', function(done) {
+    it('should honor the autoCreate option', done => {
       const sub = topic.subscription(generateSubName());
 
       sub.get({autoCreate: true}, done);
     });
 
-    it('should confirm if a sub exists', function(done) {
+    it('should confirm if a sub exists', done => {
       const sub = topic.subscription(SUB_NAMES[0]);
 
-      sub.exists(function(err, exists) {
+      sub.exists((err, exists) => {
         assert.ifError(err);
         assert.strictEqual(exists, true);
         done();
       });
     });
 
-    it('should confirm if a sub does not exist', function(done) {
+    it('should confirm if a sub does not exist', done => {
       const sub = topic.subscription('should-not-exist');
 
-      sub.exists(function(err, exists) {
+      sub.exists((err, exists) => {
         assert.ifError(err);
         assert.strictEqual(exists, false);
         done();
       });
     });
 
-    it('should create a subscription with message retention', function(done) {
+    it('should create a subscription with message retention', done => {
       const subName = generateSubName();
       const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
       topic.createSubscription(
-        subName,
-        {
-          messageRetentionDuration: threeDaysInSeconds,
-        },
-        function(err, sub) {
-          assert.ifError(err);
-
-          sub.getMetadata(function(err, metadata) {
+          subName, {
+            messageRetentionDuration: threeDaysInSeconds,
+          },
+          (err, sub) => {
             assert.ifError(err);
 
-            assert.strictEqual(metadata.retainAckedMessages, true);
-            assert.strictEqual(
-              parseInt(metadata.messageRetentionDuration.seconds, 10),
-              threeDaysInSeconds
-            );
-            assert.strictEqual(
-              parseInt(metadata.messageRetentionDuration.nanos, 10),
-              0
-            );
+            sub.getMetadata((err, metadata) => {
+              assert.ifError(err);
 
-            sub.delete(done);
+              assert.strictEqual(metadata.retainAckedMessages, true);
+              assert.strictEqual(
+                  Number(metadata.messageRetentionDuration.seconds),
+                  threeDaysInSeconds);
+              assert.strictEqual(
+                  Number(metadata.messageRetentionDuration.nanos), 0);
+
+              sub.delete(done);
+            });
           });
-        }
-      );
     });
 
-    it('should set metadata for a subscription', function() {
+    it('should set metadata for a subscription', () => {
       const subscription = topic.subscription(generateSubName());
       const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
-      return subscription
-        .create()
-        .then(function() {
-          return subscription.setMetadata({
-            messageRetentionDuration: threeDaysInSeconds,
-          });
-        })
-        .then(function() {
-          return subscription.getMetadata();
-        })
-        .then(function(data) {
-          const metadata = data[0];
+      return subscription.create()
+          .then(() => {
+            return subscription.setMetadata({
+              messageRetentionDuration: threeDaysInSeconds,
+            });
+          })
+          .then(() => {
+            return subscription.getMetadata();
+          })
+          .then(data => {
+            const metadata = data[0];
 
-          assert.strictEqual(metadata.retainAckedMessages, true);
-          assert.strictEqual(
-            parseInt(metadata.messageRetentionDuration.seconds, 10),
-            threeDaysInSeconds
-          );
-          assert.strictEqual(
-            parseInt(metadata.messageRetentionDuration.nanos, 10),
-            0
-          );
-        });
+            assert.strictEqual(metadata.retainAckedMessages, true);
+            assert.strictEqual(
+                Number(metadata.messageRetentionDuration.seconds),
+                threeDaysInSeconds);
+            assert.strictEqual(
+                Number(metadata.messageRetentionDuration.nanos), 0);
+          });
     });
 
-    it('should error when using a non-existent subscription', function(done) {
+    it('should error when using a non-existent subscription', done => {
       const subscription = topic.subscription(generateSubName(), {
         maxConnections: 1,
       });
 
-      subscription.on('error', function(err) {
+      subscription.on('error', err => {
         assert.strictEqual(err.code, 5);
         subscription.close(done);
       });
 
-      subscription.on('message', function() {
+      subscription.on('message', () => {
         done(new Error('Should not have been called.'));
       });
     });
 
-    it('should receive the published messages', function(done) {
+    it('should receive the published messages', done => {
       let messageCount = 0;
       const subscription = topic.subscription(SUB_NAMES[1]);
 
       subscription.on('error', done);
 
-      subscription.on('message', function(message) {
+      subscription.on('message', message => {
         assert.deepStrictEqual(message.data, Buffer.from('hello'));
 
         if (++messageCount === 10) {
@@ -418,7 +410,7 @@ describe('pubsub', function() {
       });
     });
 
-    it('should ack the message', function(done) {
+    it('should ack the message', done => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
       subscription.on('error', done);
@@ -433,7 +425,7 @@ describe('pubsub', function() {
       }
     });
 
-    it('should nack the message', function(done) {
+    it('should nack the message', done => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
       subscription.on('error', done);
@@ -448,13 +440,13 @@ describe('pubsub', function() {
       }
     });
 
-    it('should respect flow control limits', function(done) {
+    it('should respect flow control limits', done => {
       const maxMessages = 3;
       let messageCount = 0;
 
       const subscription = topic.subscription(SUB_NAMES[0], {
         flowControl: {
-          maxMessages: maxMessages,
+          maxMessages,
         },
       });
 
@@ -466,18 +458,18 @@ describe('pubsub', function() {
           return;
         }
 
-        setImmediate(function() {
+        setImmediate(() => {
           subscription.close(done);
         });
       }
     });
   });
 
-  describe('IAM', function() {
-    it('should get a policy', function(done) {
+  describe('IAM', () => {
+    it('should get a policy', done => {
       const topic = pubsub.topic(TOPIC_NAMES[0]);
 
-      topic.iam.getPolicy(function(err, policy) {
+      topic.iam.getPolicy((err, policy) => {
         assert.ifError(err);
 
         assert.deepStrictEqual(policy!.bindings, []);
@@ -487,7 +479,7 @@ describe('pubsub', function() {
       });
     });
 
-    it('should set a policy', function(done) {
+    it('should set a policy', done => {
       const topic = pubsub.topic(TOPIC_NAMES[0]);
       const policy = {
         bindings: [
@@ -500,18 +492,18 @@ describe('pubsub', function() {
         ],
       };
 
-      topic.iam.setPolicy(policy, function(err, newPolicy) {
+      topic.iam.setPolicy(policy, (err, newPolicy) => {
         assert.ifError(err);
         assert.deepStrictEqual(newPolicy.bindings, policy.bindings);
         done();
       });
     });
 
-    it('should test the iam permissions', function(done) {
+    it('should test the iam permissions', done => {
       const topic = pubsub.topic(TOPIC_NAMES[0]);
       const testPermissions = ['pubsub.topics.get', 'pubsub.topics.update'];
 
-      topic.iam.testPermissions(testPermissions, function(err, permissions) {
+      topic.iam.testPermissions(testPermissions, (err, permissions) => {
         assert.ifError(err);
         assert.deepStrictEqual(permissions, {
           'pubsub.topics.get': true,
@@ -522,7 +514,7 @@ describe('pubsub', function() {
     });
   });
 
-  describe('Snapshot', function() {
+  describe('Snapshot', () => {
     const SNAPSHOT_NAME = generateSnapshotName();
 
     let topic;
@@ -532,43 +524,41 @@ describe('pubsub', function() {
 
     function deleteAllSnapshots() {
       // tslint:disable-next-line no-any
-      return (pubsub.getSnapshots() as any).then(function(data) {
-        return Promise.all(
-          data[0].map(function(snapshot) {
-            return snapshot.delete();
-          })
-        );
+      return (pubsub.getSnapshots() as any).then(data => {
+        return Promise.all(data[0].map(snapshot => {
+          return snapshot.delete();
+        }));
       });
     }
 
     function wait(milliseconds) {
-      return function() {
-        return new Promise(function(resolve) {
+      return () => {
+        return new Promise(resolve => {
           setTimeout(resolve, milliseconds);
         });
       };
     }
 
-    before(function() {
+    before(() => {
       topic = pubsub.topic(TOPIC_NAMES[0]);
       publisher = topic.publisher();
       subscription = topic.subscription(generateSubName());
       snapshot = subscription.snapshot(SNAPSHOT_NAME);
 
       return deleteAllSnapshots()
-        .then(wait(2500))
-        .then(subscription.create.bind(subscription))
-        .then(wait(2500))
-        .then(snapshot.create.bind(snapshot))
-        .then(wait(2500));
+          .then(wait(2500))
+          .then(subscription.create.bind(subscription))
+          .then(wait(2500))
+          .then(snapshot.create.bind(snapshot))
+          .then(wait(2500));
     });
 
-    after(function() {
+    after(() => {
       return deleteAllSnapshots();
     });
 
-    it('should get a list of snapshots', function(done) {
-      pubsub.getSnapshots(function(err, snapshots) {
+    it('should get a list of snapshots', done => {
+      pubsub.getSnapshots((err, snapshots) => {
         assert.ifError(err);
         assert.strictEqual(snapshots.length, 1);
         assert.strictEqual(snapshots[0].name.split('/').pop(), SNAPSHOT_NAME);
@@ -576,49 +566,50 @@ describe('pubsub', function() {
       });
     });
 
-    it('should get a list of snapshots as a stream', function(done) {
+    it('should get a list of snapshots as a stream', done => {
+      // tslint:disable-next-line no-any
       const snapshots: any[] = [];
 
-      pubsub
-        .getSnapshotsStream()
-        .on('error', done)
-        .on('data', function(snapshot) {
-          snapshots.push(snapshot);
-        })
-        .on('end', function() {
-          assert.strictEqual(snapshots.length, 1);
-          assert.strictEqual(snapshots[0].name.split('/').pop(), SNAPSHOT_NAME);
-          done();
-        });
+      pubsub.getSnapshotsStream()
+          .on('error', done)
+          .on('data',
+              snapshot => {
+                snapshots.push(snapshot);
+              })
+          .on('end', () => {
+            assert.strictEqual(snapshots.length, 1);
+            assert.strictEqual(
+                snapshots[0].name.split('/').pop(), SNAPSHOT_NAME);
+            done();
+          });
     });
 
-    describe('seeking', function() {
+    describe('seeking', () => {
       let subscription;
       let messageId;
 
-      beforeEach(function() {
+      beforeEach(() => {
         subscription = topic.subscription(generateSubName());
 
-        return subscription
-          .create()
-          .then(function() {
-            return publisher.publish(Buffer.from('Hello, world!'));
-          })
-          .then(function(_messageId) {
-            messageId = _messageId;
-          });
+        return subscription.create()
+            .then(() => {
+              return publisher.publish(Buffer.from('Hello, world!'));
+            })
+            .then(_messageId => {
+              messageId = _messageId;
+            });
       });
 
-      it('should seek to a snapshot', function(done) {
+      it('should seek to a snapshot', done => {
         const snapshotName = generateSnapshotName();
 
-        subscription.createSnapshot(snapshotName, function(err, snapshot) {
+        subscription.createSnapshot(snapshotName, (err, snapshot) => {
           assert.ifError(err);
 
           let messageCount = 0;
 
           subscription.on('error', done);
-          subscription.on('message', function(message) {
+          subscription.on('message', message => {
             if (message.id !== messageId) {
               return;
             }
@@ -626,7 +617,7 @@ describe('pubsub', function() {
             message.ack();
 
             if (++messageCount === 1) {
-              snapshot.seek(function(err) {
+              snapshot.seek(err => {
                 assert.ifError(err);
               });
               return;
@@ -638,11 +629,11 @@ describe('pubsub', function() {
         });
       });
 
-      it('should seek to a date', function(done) {
+      it('should seek to a date', done => {
         let messageCount = 0;
 
         subscription.on('error', done);
-        subscription.on('message', function(message) {
+        subscription.on('message', message => {
           if (message.id !== messageId) {
             return;
           }
@@ -650,7 +641,7 @@ describe('pubsub', function() {
           message.ack();
 
           if (++messageCount === 1) {
-            subscription.seek(message.publishTime, function(err) {
+            subscription.seek(message.publishTime, err => {
               assert.ifError(err);
             });
             return;

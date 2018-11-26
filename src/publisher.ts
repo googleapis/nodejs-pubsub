@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import * as arrify from 'arrify';
 import {promisifyAll} from '@google-cloud/promisify';
+import * as arrify from 'arrify';
+
 const each = require('async-each');
 import * as extend from 'extend';
 import * as is from 'is';
-import { Topic } from './topic';
+import {Topic} from './topic';
 
 interface PublishApiResponse {
   messageIds: string[];
@@ -52,6 +53,7 @@ interface PublishApiResponse {
  * const publisher = topic.publisher();
  */
 export class Publisher {
+  // tslint:disable-next-line variable-name
   Promise?: PromiseConstructor;
   topic: Topic;
   inventory_;
@@ -62,16 +64,14 @@ export class Publisher {
       this.Promise = topic.Promise;
     }
     options = extend(
-      true,
-      {
-        batching: {
-          maxBytes: Math.pow(1024, 2) * 5,
-          maxMessages: 1000,
-          maxMilliseconds: 100,
+        true, {
+          batching: {
+            maxBytes: Math.pow(1024, 2) * 5,
+            maxMessages: 1000,
+            maxMilliseconds: 100,
+          },
         },
-      },
-      options
-    );
+        options);
     /**
      * The topic of this publisher.
      *
@@ -161,20 +161,19 @@ export class Publisher {
       attributes = {};
     }
     // Ensure the `attributes` object only has string values
-    for (const key in attributes) {
+    for (const key of Object.keys(attributes)) {
       const value = attributes[key];
       if (!is.string(value)) {
         throw new TypeError(`All attributes must be in the form of a string.
 \nInvalid value of type "${typeof value}" provided for "${key}".`);
       }
     }
+
     const opts = this.settings.batching;
     // if this message puts us over the maxBytes option, then let's ship
     // what we have and add it to the next batch
-    if (
-      this.inventory_.bytes > 0 &&
-      this.inventory_.bytes + data.length > opts.maxBytes
-    ) {
+    if (this.inventory_.bytes > 0 &&
+        this.inventory_.bytes + data.length > opts.maxBytes) {
       this.publish_();
     }
     // add it to the queue!
@@ -188,10 +187,8 @@ export class Publisher {
     }
     // otherwise let's set a timeout to send the next batch
     if (!this.timeoutHandle_) {
-      this.timeoutHandle_ = setTimeout(
-        this.publish_.bind(this),
-        opts.maxMilliseconds
-      );
+      this.timeoutHandle_ =
+          setTimeout(this.publish_.bind(this), opts.maxMilliseconds);
     }
   }
   /**
@@ -209,24 +206,23 @@ export class Publisher {
     this.timeoutHandle_ = null;
     const reqOpts = {
       topic: this.topic.name,
-      messages: messages,
+      messages,
     };
-    this.topic.request<PublishApiResponse>(
-      {
-        client: 'PublisherClient',
-        method: 'publish',
-        reqOpts: reqOpts,
-        gaxOpts: this.settings.gaxOpts,
-      },
-      (err, resp) => {
-        const messageIds = arrify(resp && resp.messageIds);
-        each(callbacks, (callback, next) => {
-          const messageId = messageIds[callbacks.indexOf(callback)];
-          callback(err, messageId);
-          next();
+    this.topic.request(
+        {
+          client: 'PublisherClient',
+          method: 'publish',
+          reqOpts,
+          gaxOpts: this.settings.gaxOpts,
+        },
+        (err, resp) => {
+          const messageIds = arrify(resp && resp.messageIds);
+          each(callbacks, (callback, next) => {
+            const messageId = messageIds[callbacks.indexOf(callback)];
+            callback(err, messageId);
+            next();
+          });
         });
-      }
-    );
   }
   /**
    * Queues message to be sent to the server.
@@ -239,7 +235,7 @@ export class Publisher {
    */
   queue_(data, attrs, callback) {
     this.inventory_.queued.push({
-      data: data,
+      data,
       attributes: attrs,
     });
     this.inventory_.bytes += data.length;

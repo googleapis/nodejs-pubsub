@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import * as util from './util';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as is from 'is';
-import { PubSub } from '.';
+
+import {PubSub} from '.';
+import * as util from './util';
 
 /**
  * A Snapshot object will give you access to your Cloud Pub/Sub snapshot.
@@ -86,6 +87,7 @@ import { PubSub } from '.';
 export class Snapshot {
   parent;
   name: string;
+  // tslint:disable-next-line variable-name
   Promise?: PromiseConstructor;
   create;
   seek;
@@ -188,13 +190,12 @@ export class Snapshot {
     };
     callback = callback || util.noop;
     this.parent.request(
-      {
-        client: 'SubscriberClient',
-        method: 'deleteSnapshot',
-        reqOpts: reqOpts,
-      },
-      callback
-    );
+        {
+          client: 'SubscriberClient',
+          method: 'deleteSnapshot',
+          reqOpts,
+        },
+        callback);
   }
   /*@
    * Format the name of a snapshot. A snapshot's full name is in the format of
