@@ -47,33 +47,47 @@ export interface SetPolicyCallback {
 /**
  * @typedef {array} SetPolicyResponse
  * @property {object} 0 The policy.
- * @property {object} 1 The full API response.
  */
-export type SetPolicyResponse = [Policy, object];
+export type SetPolicyResponse = [Policy];
 
 /**
  * @typedef {array} GetPolicyResponse
  * @property {object} 0 The policy.
- * @property {object} 1 The full API response.
  */
-export type GetPolicyResponse = [Policy, object];
+export type GetPolicyResponse = [Policy];
+
+/**
+ * @typedef {string[]} PermissionsResponse
+ * A subset of TestPermissionsRequest.permissions that the caller is allowed.
+ * @see https://cloud.google.com/pubsub/docs/reference/rpc/google.iam.v1#google.iam.v1.TestIamPermissionsRequest
+ */
+export interface PermissionsResponse {
+  permissions: string|string[];
+}
+
+
+/**
+ * Shows which IAM permissions is allowed.
+ * The key to this object are the IAM permissions (string) and the values are booleans, true
+ * if permissions are granted to the corresponding key.
+ */
+export type IamPermissionsMap = {[key: string]: boolean};
 
 /**
  * @typedef {array} TestIamPermissionsResponse
  * @property {object[]} 0 A subset of permissions that the caller is allowed.
- * @property {object} 1 The full API response.
+ * @property {PermissionsResponse} 1 The full API response.
  */
-export type TestIamPermissionsResponse = [object[], object];
+export type TestIamPermissionsResponse = [PermissionsResponse];
 
 /**
  * @callback TestIamPermissionsCallback
  * @param {?Error} err Request error, if any.
- * @param {object[]} permissions A subset of permissions that the caller is allowed.
- * @param {object} apiResponse The full API response.
+ * @param {TestIamPermissionsAPIResponse} permissions A subset of permissions that the caller is allowed.
+ * @param {PermissionsResponse} apiResponse The full API response.
  */
 export interface TestIamPermissionsCallback {
-  (err?: Error|null, permissions?: {[key: string]: boolean}|null,
-   apiResponse?: object): void;
+  (err?: Error|null, permissions?: IamPermissionsMap|null, apiResponse?: PermissionsResponse): void;
 }
 
 /**
@@ -404,10 +418,6 @@ export class IAM {
           callback!(null, permissionHash, resp!);
         });
   }
-}
-
-export interface PermissionsResponse {
-  permissions: string|string[];
 }
 
 /*! Developer Documentation

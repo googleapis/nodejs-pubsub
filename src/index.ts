@@ -112,7 +112,7 @@ interface GetClientCallback {
    *                    Typed any since it's importing Javascript source.
    */
   // tslint:disable-next-line:no-any
-  (err: Error|null, gaxClient?: any): void;
+  (err: Error|null, gaxClient?: gax.ClientStub): void;
 }
 
 /**
@@ -176,7 +176,7 @@ interface GetClientCallback {
 export class PubSub {
   options;
   isEmulator: boolean;
-  api;
+  api: {[key: string]: gax.ClientStub};
   auth: GoogleAuth;
   projectId: string;
   // tslint:disable-next-line variable-name
@@ -738,7 +738,7 @@ export class PubSub {
     let gaxClient = this.api[config.client];
     if (!gaxClient) {
       // Lazily instantiate client.
-      gaxClient = new v1[config.client](this.options);
+      gaxClient = new v1[config.client](this.options) as gax.ClientStub;
       this.api[config.client] = gaxClient;
     }
     callback(null, gaxClient);
@@ -766,7 +766,7 @@ export class PubSub {
       }
       let reqOpts = extend(true, {}, config.reqOpts);
       reqOpts = replaceProjectIdToken(reqOpts, self.projectId);
-      client[config.method](reqOpts, config.gaxOpts, callback);
+      client![config.method](reqOpts, config.gaxOpts, callback);
     });
   }
   /**
