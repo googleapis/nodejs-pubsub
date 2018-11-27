@@ -68,10 +68,12 @@ export interface PermissionsResponse {
 
 /**
  * Shows which IAM permissions is allowed.
- * The key to this object are the IAM permissions (string) and the values are booleans, true
- * if permissions are granted to the corresponding key.
+ * The key to this object are the IAM permissions (string) and the values are
+ * booleans, true if permissions are granted to the corresponding key.
  */
-export type IamPermissionsMap = {[key: string]: boolean};
+export type IamPermissionsMap = {
+  [key: string]: boolean
+};
 
 /**
  * @typedef {array} TestIamPermissionsResponse
@@ -87,7 +89,8 @@ export type TestIamPermissionsResponse = [PermissionsResponse];
  * @param {PermissionsResponse} apiResponse The full API response.
  */
 export interface TestIamPermissionsCallback {
-  (err?: Error|null, permissions?: IamPermissionsMap|null, apiResponse?: PermissionsResponse): void;
+  (err?: Error|null, permissions?: IamPermissionsMap|null,
+   apiResponse?: PermissionsResponse): void;
 }
 
 /**
