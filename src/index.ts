@@ -26,8 +26,9 @@ const PKG = require('../../package.json');
 const v1 = require('./v1');
 
 import {Snapshot} from './snapshot';
-import {Subscription} from './subscription';
+import {Subscription, SubscriptionMetadata, SubscriptionMetadataRaw} from './subscription';
 import {Topic} from './topic';
+import {CallOptions} from 'google-gax';
 import {Readable} from 'stream';
 
 const opts = {} as gax.GrpcClientOptions;
@@ -38,6 +39,81 @@ const {grpc} = new gax.GrpcClient(opts);
  * @private
  */
 const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
+
+// tslint:disable-next-line:no-any
+export type Metadata = any;
+
+/**
+ * @typedef {array} CreateTopicResponse
+ * @property {Topic} 0 The new {@link Topic}.
+ * @property {object} 1 The full API response.
+ */
+export type CreateTopicResponse = [Topic, object];
+
+/**
+ * @callback CreateTopicCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Topic} topic The new {@link Topic}.
+ * @param {object} apiResponse The full API response.
+ */
+export interface CreateTopicCallback {
+  (err?: Error|null, topic?: Topic|null, apiResponse?: object): void;
+}
+
+export type Client = 'PublisherClient'|'SubscriberClient';
+
+export interface RequestConfig {
+  client: Client;
+  method: string;
+  reqOpts?: object;
+  gaxOpts?: CallOptions;
+}
+
+export interface GetClientConfig {
+  client: Client;
+  method?: string;
+}
+
+export interface RequestCallback<TResponse> {
+  (err?: Error|null, res?: TResponse|null): void;
+}
+
+/**
+ * @typedef {array} CreateSubscriptionResponse
+ * @property {Subscription} 0 The new {@link Subscription}.
+ * @property {object} 1 The full API response.
+ */
+export type CreateSubscriptionResponse = [Subscription, object];
+
+/**
+ * @callback CreateSubscriptionCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Subscription} subscription The new {@link Subscription}.
+ * @param {object} apiResponse The full API response.
+ */
+export interface CreateSubscriptionCallback {
+  (err?: Error|null, subscription?: Subscription|null,
+   apiResponse?: object): void;
+}
+
+export interface CreateSubscriptionOptions extends SubscriptionMetadata {
+  flowControl?: {maxBytes?: number; maxMessages?: number;};
+  gaxOpts?: CallOptions;
+}
+
+/**
+ * Callback function to PubSub.getClient_().
+ * @internal
+ */
+interface GetClientCallback {
+  /**
+   * @param err - Error, if any.
+   * @param gaxClient - The gax client specified in RequestConfig.client.
+   *                    Typed any since it's importing Javascript source.
+   */
+  // tslint:disable-next-line:no-any
+  (err: Error|null, gaxClient?: gax.ClientStub): void;
+}
 
 /**
  * @typedef {object} ClientConfig
@@ -100,7 +176,7 @@ const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
 export class PubSub {
   options;
   isEmulator: boolean;
-  api;
+  api: {[key: string]: gax.ClientStub};
   auth: GoogleAuth;
   projectId: string;
   // tslint:disable-next-line variable-name
@@ -171,17 +247,6 @@ export class PubSub {
    *     specified by `options.messageRetentionDuration`.
    */
   /**
-   * @typedef {array} CreateSubscriptionResponse
-   * @property {Subscription} 0 The new {@link Subscription}.
-   * @property {object} 1 The full API response.
-   */
-  /**
-   * @callback CreateSubscriptionCallback
-   * @param {?Error} err Request error, if any.
-   * @param {Subscription} subscription The new {@link Subscription}.
-   * @param {object} apiResponse The full API response.
-   */
-  /**
    * Create a subscription to a topic.
    *
    * @see [Subscriptions: create API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/create}
@@ -216,7 +281,20 @@ export class PubSub {
    * = data[1];
    * });
    */
-  createSubscription(topic: Topic|string, name: string, options, callback) {
+  createSubscription(
+      topic: Topic|string, name: string,
+      options?: CreateSubscriptionOptions): Promise<CreateSubscriptionResponse>;
+  createSubscription(
+      topic: Topic|string, name: string, options: CreateSubscriptionOptions,
+      callback: CreateSubscriptionCallback): void;
+  createSubscription(
+      topic: Topic|string, name: string,
+      callback: CreateSubscriptionCallback): void;
+  createSubscription(
+      topic: Topic|string, name: string,
+      optionsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
+      callback?: CreateSubscriptionCallback):
+      Promise<CreateSubscriptionResponse>|void {
     if (!is.string(topic) && !(topic instanceof Topic)) {
       throw new Error('A Topic is required for a new subscription.');
     }
@@ -226,46 +304,49 @@ export class PubSub {
     if (typeof topic === 'string') {
       topic = this.topic(topic);
     }
-    if (is.fn(options)) {
-      callback = options;
-      options = {};
-    }
-    options = options || {};
-    const metadata = Subscription.formatMetadata_(options);
-    const subscription = this.subscription(name, metadata);
+    let options = typeof optionsOrCallback === 'object' ?
+        optionsOrCallback :
+        {} as CreateSubscriptionOptions;
+    callback =
+        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+
+    // Make a deep copy of options to not pollute caller object.
+    options = extend(true, {}, options);
+
+    const gaxOpts = options.gaxOpts;
+    const flowControl = options.flowControl;
+    delete options.gaxOpts;
+    delete options.flowControl;
+
+    const metadata =
+        Subscription.formatMetadata_(options as SubscriptionMetadataRaw);
+
+    let subscriptionCtorOptions = flowControl ? {flowControl} : {};
+    subscriptionCtorOptions = Object.assign(subscriptionCtorOptions, metadata);
+    const subscription = this.subscription(name, subscriptionCtorOptions);
+
     const reqOpts = Object.assign(metadata, {
       topic: topic.name,
       name: subscription.name,
     });
-    delete reqOpts.gaxOpts;
-    delete reqOpts.flowControl;
+
     this.request(
         {
           client: 'SubscriberClient',
           method: 'createSubscription',
           reqOpts,
-          gaxOpts: options.gaxOpts,
+          gaxOpts,
         },
         (err, resp) => {
           if (err) {
-            callback(err, null, resp);
+            callback!(err, null, resp!);
             return;
           }
           subscription.metadata = resp;
-          callback(null, subscription, resp);
+          callback!(null, subscription, resp!);
         });
   }
-  /**
-   * @typedef {array} CreateTopicResponse
-   * @property {Topic} 0 The new {@link Topic}.
-   * @property {object} 1 The full API response.
-   */
-  /**
-   * @callback CreateTopicCallback
-   * @param {?Error} err Request error, if any.
-   * @param {Topic} topic The new {@link Topic}.
-   * @param {object} apiResponse The full API response.
-   */
+
   /**
    * Create a topic with the given name.
    *
@@ -295,16 +376,24 @@ export class PubSub {
    *   const apiResponse = data[1];
    * });
    */
-  createTopic(name: string, gaxOpts, callback?) {
+  createTopic(name: string, gaxOpts: CallOptions): Promise<CreateTopicResponse>;
+  createTopic(
+      name: string, gaxOpts: CallOptions, callback?: CreateTopicCallback): void;
+  createTopic(name: string, callback: CreateTopicCallback): void;
+  createTopic(
+      name: string, gaxOptsOrCallback?: CallOptions|CreateTopicCallback,
+      callback?: CreateTopicCallback): Promise<CreateTopicResponse>|void {
     const topic = this.topic(name);
     const reqOpts = {
       name: topic.name,
     };
-    if (is.fn(gaxOpts)) {
-      callback = gaxOpts;
-      gaxOpts = {};
-    }
-    this.request(
+
+    const gaxOpts =
+        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
+    callback =
+        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+
+    this.request<Metadata>(
         {
           client: 'PublisherClient',
           method: 'createTopic',
@@ -313,11 +402,11 @@ export class PubSub {
         },
         (err, resp) => {
           if (err) {
-            callback(err, null, resp);
+            callback!(err, null, resp);
             return;
           }
           topic.metadata = resp;
-          callback(null, topic, resp);
+          callback!(null, topic, resp);
         });
   }
   /**
@@ -632,8 +721,7 @@ export class PubSub {
    * @param {object} config.reqOpts Request options.
    * @param {function} [callback] The callback function.
    */
-  getClient_(config, callback) {
-    const self = this;
+  getClient_(config: GetClientConfig, callback: GetClientCallback) {
     const hasProjectId =
         this.projectId && this.projectId !== PROJECT_ID_PLACEHOLDER;
     if (!hasProjectId && !this.isEmulator) {
@@ -642,15 +730,15 @@ export class PubSub {
           callback(err);
           return;
         }
-        self.projectId = projectId!;
-        self.getClient_(config, callback);
+        this.projectId = projectId!;
+        this.getClient_(config, callback);
       });
       return;
     }
     let gaxClient = this.api[config.client];
     if (!gaxClient) {
       // Lazily instantiate client.
-      gaxClient = new v1[config.client](this.options);
+      gaxClient = new v1[config.client](this.options) as gax.ClientStub;
       this.api[config.client] = gaxClient;
     }
     callback(null, gaxClient);
@@ -667,7 +755,9 @@ export class PubSub {
    * @param {object} config.reqOpts Request options.
    * @param {function} [callback] The callback function.
    */
-  request(config, callback) {
+  // tslint:disable-next-line:no-any
+  request<TResponse = any>(
+      config: RequestConfig, callback: RequestCallback<TResponse>) {
     const self = this;
     this.getClient_(config, (err, client) => {
       if (err) {
@@ -676,7 +766,7 @@ export class PubSub {
       }
       let reqOpts = extend(true, {}, config.reqOpts);
       reqOpts = replaceProjectIdToken(reqOpts, self.projectId);
-      client[config.method](reqOpts, config.gaxOpts, callback);
+      client![config.method](reqOpts, config.gaxOpts, callback);
     });
   }
   /**

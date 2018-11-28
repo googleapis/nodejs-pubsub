@@ -387,7 +387,7 @@ describe('PubSub', () => {
         assert.strictEqual(config.method, 'createSubscription');
         assert.strictEqual(config.reqOpts.topic, TOPIC.name);
         assert.strictEqual(config.reqOpts.name, SUB_NAME);
-        assert.strictEqual(config.gaxOpts, options.gaxOpts);
+        assert.deepStrictEqual(config.gaxOpts, options.gaxOpts);
         done();
       };
 
@@ -467,7 +467,7 @@ describe('PubSub', () => {
 
       // tslint:disable-next-line no-any
       (Subscription as any).formatMetadata_ = metadata => {
-        assert.strictEqual(metadata, fakeMetadata);
+        assert.deepStrictEqual(metadata, fakeMetadata);
         return formatted;
       };
 

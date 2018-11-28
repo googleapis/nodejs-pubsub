@@ -22,6 +22,10 @@ import * as extend from 'extend';
 import * as is from 'is';
 import {Topic} from './topic';
 
+interface PublishApiResponse {
+  messageIds: string[];
+}
+
 /**
  * A Publisher object allows you to publish messages to a specific topic.
  *

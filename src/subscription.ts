@@ -24,7 +24,49 @@ const snakeCase = require('lodash.snakecase');
 import {IAM} from './iam';
 import {Snapshot} from './snapshot';
 import {Subscriber} from './subscriber';
-import {PubSub} from '.';
+import {PubSub, Metadata} from '.';
+import extend = require('extend');
+
+/**
+ * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions#PushConfig
+ */
+export interface PushConfig {
+  pushEndpoint: string;
+  attributes?: {[key: string]: string;};
+}
+
+/**
+ * @see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration
+ */
+export interface Duration {
+  seconds: number;
+  nanos: number;
+}
+
+/**
+ * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions
+ */
+export interface TSubscriptionMetadata {
+  name: string;
+  topic: string;
+  pushConfig?: PushConfig;
+  ackDeadlineSeconds?: number;
+  retainAckedMessages?: boolean;
+  labels?: {[key: string]: string;};
+  expirationPolicy?: {ttl: string;};
+}
+
+export interface SubscriptionMetadataRaw extends TSubscriptionMetadata {
+  /**
+   * Duration in seconds.
+   */
+  messageRetentionDuration?: number;
+  pushEndpoint?: string;
+}
+
+export interface SubscriptionMetadata extends TSubscriptionMetadata {
+  messageRetentionDuration?: Duration;
+}
 
 /**
  * A Subscription object will give you access to your Cloud Pub/Sub
@@ -148,6 +190,7 @@ export class Subscription extends Subscriber {
   projectId: string;
   create!: Function;
   iam: IAM;
+  name: string;
   metadata;
   constructor(pubsub: PubSub, name: string, options) {
     options = options || {};
@@ -700,21 +743,29 @@ export class Subscription extends Subscriber {
    *
    * @private
    */
-  static formatMetadata_(metadata) {
-    const formatted = Object.assign({}, metadata);
+  static formatMetadata_(metadata: SubscriptionMetadataRaw) {
+    let formatted = {} as SubscriptionMetadata;
+
     if (metadata.messageRetentionDuration) {
       formatted.retainAckedMessages = true;
       formatted.messageRetentionDuration = {
         seconds: metadata.messageRetentionDuration,
         nanos: 0,
       };
+      delete metadata.messageRetentionDuration;
+      delete metadata.retainAckedMessages;
     }
+
     if (metadata.pushEndpoint) {
-      delete formatted.pushEndpoint;
       formatted.pushConfig = {
         pushEndpoint: metadata.pushEndpoint,
       };
+      delete metadata.pushEndpoint;
     }
+
+    formatted = extend(true, formatted, metadata);
+
+
     return formatted;
   }
   /*!

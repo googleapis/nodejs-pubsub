@@ -23,58 +23,74 @@ import * as arrify from 'arrify';
 import {CallOptions} from 'google-gax';
 import * as is from 'is';
 import * as r from 'request';
-
 import {PubSub} from '.';
+
 
 /**
  * @callback GetPolicyCallback
  * @param {?Error} err Request error, if any.
  * @param {object} acl The policy.
- * @param {object} apiResponse The full API response.
  */
 export interface GetPolicyCallback {
-  (err?: Error|null, acl?: Policy, apiResponse?: r.Response): void;
+  (err?: Error|null, acl?: Policy|null): void;
 }
 
 /**
  * @callback SetPolicyCallback
  * @param {?Error} err Request error, if any.
  * @param {object} acl The policy.
- * @param {object} apiResponse The full API response.
  */
 export interface SetPolicyCallback {
-  (err?: Error|null, acl?: Policy, apiResponse?: r.Response): void;
+  (err?: Error|null, acl?: Policy|null): void;
 }
 
 /**
  * @typedef {array} SetPolicyResponse
  * @property {object} 0 The policy.
- * @property {object} 1 The full API response.
  */
-export type SetPolicyResponse = [Policy, r.Response];
+export type SetPolicyResponse = [Policy];
 
 /**
  * @typedef {array} GetPolicyResponse
  * @property {object} 0 The policy.
- * @property {object} 1 The full API response.
  */
-export type GetPolicyResponse = [Policy, r.Response];
+export type GetPolicyResponse = [Policy];
+
+/**
+ * @typedef {string[]} PermissionsResponse
+ * A subset of TestPermissionsRequest.permissions that the caller is allowed.
+ * @see https://cloud.google.com/pubsub/docs/reference/rpc/google.iam.v1#google.iam.v1.TestIamPermissionsRequest
+ */
+export interface PermissionsResponse {
+  permissions: string|string[];
+}
+
+
+/**
+ * Shows which IAM permissions is allowed.
+ * The key to this object are the IAM permissions (string) and the values are
+ * booleans, true if permissions are granted to the corresponding key.
+ */
+export type IamPermissionsMap = {
+  [key: string]: boolean
+};
 
 /**
  * @typedef {array} TestIamPermissionsResponse
  * @property {object[]} 0 A subset of permissions that the caller is allowed.
- * @property {object} 1 The full API response.
+ * @property {PermissionsResponse} 1 The full API response.
  */
-export type TestIamPermissionsResponse = [object[], r.Response];
+export type TestIamPermissionsResponse = [PermissionsResponse];
 
 /**
  * @callback TestIamPermissionsCallback
  * @param {?Error} err Request error, if any.
- * @param {object[]} permissions A subset of permissions that the caller is allowed.
- * @param {object} apiResponse The full API response.
+ * @param {TestIamPermissionsAPIResponse} permissions A subset of permissions that the caller is allowed.
+ * @param {PermissionsResponse} apiResponse The full API response.
  */
 export interface TestIamPermissionsCallback {
-  (err?: Error|null, permissions?: object|null, apiResponse?: r.Response): void;
+  (err?: Error|null, permissions?: IamPermissionsMap|null,
+   apiResponse?: PermissionsResponse): void;
 }
 
 /**
@@ -208,7 +224,7 @@ export class IAM {
       resource: this.id,
     };
 
-    this.request(
+    this.request<Policy>(
         {
           client: 'SubscriberClient',
           method: 'getIamPolicy',
@@ -383,7 +399,7 @@ export class IAM {
       permissions: arrify(permissions),
     };
 
-    this.request(
+    this.request<PermissionsResponse>(
         {
           client: 'SubscriberClient',
           method: 'testIamPermissions',
@@ -392,16 +408,17 @@ export class IAM {
         },
         (err, resp) => {
           if (err) {
-            callback!(err, null, resp);
+            callback!(err, null, resp!);
             return;
           }
-          const availablePermissions = arrify(resp.permissions);
+
+          const availablePermissions = arrify(resp!.permissions);
           const permissionHash =
               (permissions as string[]).reduce((acc, permission) => {
                 acc[permission] = availablePermissions.indexOf(permission) > -1;
                 return acc;
               }, {} as {[key: string]: boolean});
-          callback!(null, permissionHash, resp);
+          callback!(null, permissionHash, resp!);
         });
   }
 }
