@@ -71,7 +71,8 @@ export class Topic {
      * @type {PubSub}
      */
     this.parent = this.pubsub = pubsub;
-    this.request = pubsub.request.bind(pubsub);
+    // tslint:disable-next-line no-any
+    this.request = pubsub.request.bind(pubsub) as any;
     /**
      * [IAM (Identity and Access
      * Management)](https://cloud.google.com/pubsub/access_control) allows you

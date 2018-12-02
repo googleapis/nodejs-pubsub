@@ -47,14 +47,14 @@ class FakeConnectionPool extends EventEmitter {
   calledWith_: IArguments;
   constructor() {
     super();
-    this.calledWith_ = [].slice.call(arguments);
+    this.calledWith_ = arguments;
   }
 }
 
 class FakeHistogram {
   calledWith_: IArguments;
   constructor() {
-    this.calledWith_ = [].slice.call(arguments);
+    this.calledWith_ = arguments;
   }
 }
 // tslint:disable-next-line no-any

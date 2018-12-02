@@ -35,7 +35,7 @@ const fakePromisify = Object.assign({}, pfy, {
 class FakeIAM {
   calledWith_: IArguments;
   constructor() {
-    this.calledWith_ = [].slice.call(arguments);
+    this.calledWith_ = arguments;
   }
 }
 
@@ -43,14 +43,14 @@ class FakeSnapshot {
   calledWith_: IArguments;
   static formatName_?: Function;
   constructor() {
-    this.calledWith_ = [].slice.call(arguments);
+    this.calledWith_ = arguments;
   }
 }
 
 class FakeSubscriber {
   calledWith_: IArguments;
   constructor() {
-    this.calledWith_ = [].slice.call(arguments);
+    this.calledWith_ = arguments;
   }
 }
 
@@ -149,9 +149,7 @@ describe('Subscription', () => {
 
     it('should create an IAM object', () => {
       assert(subscription.iam instanceof FakeIAM);
-
       const args = subscription.iam.calledWith_;
-
       assert.strictEqual(args[0], PUBSUB);
       assert.strictEqual(args[1], subscription.name);
     });
@@ -159,7 +157,6 @@ describe('Subscription', () => {
     it('should inherit from Subscriber', () => {
       const options = {};
       const subscription = new Subscription(PUBSUB, SUB_NAME, options);
-
       assert(subscription instanceof FakeSubscriber);
       assert.strictEqual(subscription.calledWith_[0], options);
     });

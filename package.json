@@ -92,7 +92,7 @@
     "proxyquire": "^2.0.0",
     "sinon": "^7.1.1",
     "source-map-support": "^0.5.9",
-    "typescript": "~3.1.5"
+    "typescript": "~3.2.0"
   },
   "nyc": {
     "exclude": [

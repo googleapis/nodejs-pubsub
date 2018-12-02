@@ -264,7 +264,8 @@ export class Subscriber extends EventEmitter {
           deadline =>
               this.modifyAckDeadline_(modAcks[deadline], Number(deadline)));
 
-      requests.push.apply(requests, modAckRequests);
+      // tslint:disable-next-line no-any
+      requests.push.apply(requests, modAckRequests as any);
 
       Promise.all(modAckRequests).then(() => {
         this.inventory_.nack = [];

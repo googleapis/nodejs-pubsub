@@ -33,16 +33,20 @@ const fakePromisify = Object.assign({}, pfy, {
 });
 
 class FakeIAM {
-  calledWith_: IArguments;
-  constructor() {
-    this.calledWith_ = [].slice.call(arguments);
+  // tslint:disable-next-line no-any
+  calledWith_: any[];
+  // tslint:disable-next-line no-any
+  constructor(...args: any[]) {
+    this.calledWith_ = args;
   }
 }
 
 class FakePublisher {
-  calledWith_: IArguments;
-  constructor() {
-    this.calledWith_ = [].slice.call(arguments);
+  // tslint:disable-next-line no-any
+  calledWith_: any[];
+  // tslint:disable-next-line no-any
+  constructor(...args: any[]) {
+    this.calledWith_ = args;
   }
 }
 
