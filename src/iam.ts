@@ -21,10 +21,7 @@
 import {promisifyAll} from '@google-cloud/promisify';
 import * as arrify from 'arrify';
 import {CallOptions} from 'google-gax';
-import * as is from 'is';
-import * as r from 'request';
 import {PubSub} from '.';
-
 
 /**
  * @callback GetPolicyCallback
@@ -175,7 +172,8 @@ export class IAM {
       this.Promise = pubsub.Promise;
     }
     this.pubsub = pubsub;
-    this.request = pubsub.request.bind(pubsub);
+    // tslint:disable-next-line no-any
+    this.request = pubsub.request.bind(pubsub) as any;
     this.id = id;
   }
 
