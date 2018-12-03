@@ -5,8 +5,7 @@
 # [Google Cloud Pub/Sub: Node.js Client](https://github.com/googleapis/nodejs-pubsub)
 
 [![release level](https://img.shields.io/badge/release%20level-beta-yellow.svg?style&#x3D;flat)](https://cloud.google.com/terms/launch-stages)
-[![CircleCI](https://img.shields.io/circleci/project/github/googleapis/nodejs-pubsub.svg?style=flat)](https://circleci.com/gh/googleapis/nodejs-pubsub)
-[![AppVeyor](https://ci.appveyor.com/api/projects/status/github/googleapis/nodejs-pubsub?branch=master&svg=true)](https://ci.appveyor.com/project/googleapis/nodejs-pubsub)
+[![npm version](https://img.shields.io/npm/v/@google-cloud/pubsub.svg)](https://www.npmjs.org/package/@google-cloud/pubsub)
 [![codecov](https://img.shields.io/codecov/c/github/googleapis/nodejs-pubsub/master.svg?style=flat)](https://codecov.io/gh/googleapis/nodejs-pubsub)
 
 [Cloud Pub/Sub](https://cloud.google.com/pubsub/docs) is a fully-managed real-time messaging service that allows you to send and receive messages between independent applications.
@@ -116,3 +115,4 @@ Google APIs Client Libraries, in [Client Libraries Explained][explained].
 [billing]: https://support.google.com/cloud/answer/6293499#enable-billing
 [enable_api]: https://console.cloud.google.com/flows/enableapi?apiid=pubsub.googleapis.com
 [auth]: https://cloud.google.com/docs/authentication/getting-started
+
