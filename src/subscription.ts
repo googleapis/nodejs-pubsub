@@ -15,17 +15,22 @@
  */
 
 import {promisifyAll} from '@google-cloud/promisify';
+import {EventEmitter} from 'events';
+import * as extend from 'extend';
 import * as is from 'is';
+import * as snakeCase from 'lodash.snakecase';
 
-import * as util from './util';
-
-const snakeCase = require('lodash.snakecase');
-
+import {Metadata, PubSub} from '.';
 import {IAM} from './iam';
 import {Snapshot} from './snapshot';
-import {Subscriber} from './subscriber';
-import {PubSub, Metadata} from '.';
-import extend = require('extend');
+import {Subscriber, SubscriberOptions} from './subscriber';
+import {Topic} from './topic';
+import {noop} from './util';
+
+
+export interface SubOptions extends SubscriberOptions {
+  topic?: string|Topic;
+}
 
 /**
  * @typedef {object} ExpirationPolicy
@@ -203,28 +208,29 @@ export interface SubscriptionMetadata extends TSubscriptionMetadata {
  * // Remove the listener from receiving `message` events.
  * subscription.removeListener('message', onMessage);
  */
-export class Subscription extends Subscriber {
-  // tslint:disable-next-line variable-name
-  Promise?: PromiseConstructor;
+export class Subscription extends EventEmitter {
   pubsub: PubSub;
-  projectId: string;
   create!: Function;
   iam: IAM;
   name: string;
   metadata;
-  constructor(pubsub: PubSub, name: string, options) {
-    options = options || {};
-    super(options);
-    if (pubsub.Promise) {
-      this.Promise = pubsub.Promise;
-    }
+  request: Function;
+  _subscriber: Subscriber;
+  constructor(pubsub: PubSub, name: string, options = {} as SubOptions) {
+    super();
+
     this.pubsub = pubsub;
-    this.projectId = pubsub.projectId;
     this.request = pubsub.request.bind(pubsub);
-    this.name = Subscription.formatName_(pubsub.projectId, name);
+    this.name = Subscription.formatName_(this.projectId, name);
+    this._subscriber = new Subscriber(this, options);
+
+    this._subscriber.on('error', err => this.emit('error', err))
+        .on('message', message => this.emit('message', message));
+
     if (options.topic) {
       this.create = pubsub.createSubscription.bind(pubsub, options.topic, name);
     }
+
     /**
      * [IAM (Identity and Access
      * Management)](https://cloud.google.com/pubsub/access_control) allows you
@@ -262,6 +268,31 @@ export class Subscription extends Subscriber {
      * });
      */
     this.iam = new IAM(pubsub, this.name);
+
+    this._listen();
+  }
+  /**
+   * @type {boolean}
+   */
+  get isOpen(): boolean {
+    return !!(this._subscriber && this._subscriber.isOpen);
+  }
+  /**
+   * @type {string}
+   */
+  get projectId(): string {
+    return this.pubsub && this.pubsub.projectId || '{{projectId}}';
+  }
+  /**
+   *
+   */
+  async close(callback: Function) {
+    try {
+      await this._subscriber.close();
+      callback(null);
+    } catch (e) {
+      callback(e);
+    }
   }
   /**
    * @typedef {array} CreateSnapshotResponse
@@ -369,10 +400,13 @@ export class Subscription extends Subscriber {
       callback = gaxOpts;
       gaxOpts = {};
     }
-    callback = callback || util.noop;
+    callback = callback || noop;
     const reqOpts = {
       subscription: this.name,
     };
+
+    this._subscriber.close();
+
     this.request(
         {
           client: 'SubscriberClient',
@@ -380,13 +414,7 @@ export class Subscription extends Subscriber {
           reqOpts,
           gaxOpts,
         },
-        (err, resp) => {
-          if (!err) {
-            this.removeAllListeners();
-            this.close();
-          }
-          callback(err, resp);
-        });
+        callback);
   }
   /**
    * @typedef {array} SubscriptionExistsResponse
@@ -669,7 +697,7 @@ export class Subscription extends Subscriber {
     };
 
     if (is.string(snapshot)) {
-      reqOpts.snapshot = Snapshot.formatName_(this.pubsub.projectId, snapshot);
+      reqOpts.snapshot = Snapshot.formatName_(this.projectId, snapshot);
     } else if (is.date(snapshot)) {
       reqOpts.time = snapshot;
     } else {
@@ -744,6 +772,12 @@ export class Subscription extends Subscriber {
         callback);
   }
   /**
+   *
+   */
+  setOptions(options: SubscriberOptions): void {
+    this._subscriber.setOptions(options);
+  }
+  /**
    * Create a Snapshot object. See {@link Subscription#createSnapshot} to
    * create a snapshot.
    *
@@ -757,6 +791,22 @@ export class Subscription extends Subscriber {
    */
   snapshot(name: string) {
     return this.pubsub.snapshot.call(this, name);
+  }
+  /**
+   *
+   */
+  _listen(): void {
+    this.on('newListener', event => {
+      if (!this.isOpen && event === 'message') {
+        this._subscriber.open();
+      }
+    });
+
+    this.on('removeListener', event => {
+      if (this.isOpen && this.listenerCount('message') === 0) {
+        this._subscriber.close();
+      }
+    });
   }
   /*!
    * Formats Subscription metadata.

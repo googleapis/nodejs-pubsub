@@ -14,498 +14,244 @@
  * limitations under the License.
  */
 
-import * as arrify from 'arrify';
-const chunk = require('lodash.chunk');
-import * as util from './util';
-import {promisify, promisifyAll} from '@google-cloud/promisify';
-const delay = require('delay');
+import {replaceProjectIdToken} from '@google-cloud/projectify';
+import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
-import * as is from 'is';
-import * as os from 'os';
+import {ClientStub} from 'google-gax';
 
-import {ConnectionPool} from './connection-pool';
 import {Histogram} from './histogram';
-import {Subscription} from '.';
+import {FlowControlOptions, LeaseManager} from './lease-manager';
+import {AckQueue, BatchOptions, ModAckQueue} from './message-queues';
+import {Message, MessageStream, MessageStreamOptions} from './message-stream';
+import {Subscription} from './subscription';
+
 
 /**
- * @type {number} - The maximum number of ackIds to be sent in acknowledge/modifyAckDeadline
- *     requests. There is an API limit of 524288 bytes (512KiB) per
- * acknowledge/modifyAckDeadline request. ackIds have a maximum size of 164
- * bytes, so 524288/164 ~= 3197. Accounting for some overhead, a maximum of 3000
- * ackIds per request should be safe.
- * @private
+ * @typedef {object} SubscriberOptions
+ * @property {number} [ackDeadline=10] Acknowledge deadline in seconds. If left
+ *     unset the initial value will be 10 seconds, but it will evolve into the
+ *     99th percentile of acknowledge times.
+ * @property {BatchingOptions} [batching] Message batching options.
+ * @property {FlowControlOptions} [flowControl] Flow control options.
+ * @property {MessageStreamOptions} [streamingOptions] Message stream options.
  */
-const MAX_ACK_IDS_PER_REQUEST = 3000;
+export interface SubscriberOptions {
+  ackDeadline?: number;
+  batching?: BatchOptions;
+  flowControl?: FlowControlOptions;
+  streamingOptions?: MessageStreamOptions;
+}
 
 /**
  * Subscriber class is used to manage all message related functionality.
- * @private
  *
- * @param {object} options Configuration object.
+ * @private
+ * @class
+ *
+ * @param {Subscription} subscription The corresponding subscription.
+ * @param {SubscriberOptions} options The subscriber options.
  */
 export class Subscriber extends EventEmitter {
-  histogram: Histogram;
-  latency_: Histogram;
-  connectionPool: ConnectionPool|null;
   ackDeadline: number;
-  maxConnections: number;
-  inventory_;
-  flowControl;
-  batching;
-  flushTimeoutHandle_;
-  leaseTimeoutHandle_;
-  userClosed_: boolean;
   isOpen: boolean;
-  messageListeners;
-  writeToStreams_;
-  request;
-  name?: string;
-
-  constructor(options) {
+  _acks!: AckQueue;
+  _client!: ClientStub;
+  _histogram: Histogram;
+  _inventory!: LeaseManager;
+  _isUserSetDeadline: boolean;
+  _latencies: Histogram;
+  _modAcks!: ModAckQueue;
+  _name!: string;
+  _options!: SubscriberOptions;
+  _stream!: MessageStream;
+  _subscription: Subscription;
+  constructor(subscription: Subscription, options = {}) {
     super();
-    options = options || {};
-    this.histogram = new Histogram();
-    this.latency_ = new Histogram({min: 0});
-    this.connectionPool = null;
-    this.ackDeadline = 10000;
-    this.maxConnections = options.maxConnections || 5;
-    this.inventory_ = {
-      lease: [],
-      ack: [],
-      nack: [],
-      bytes: 0,
-    };
-    this.flowControl = Object.assign(
-        {
-          maxBytes: os.freemem() * 0.2,
-          maxMessages: 100,
-        },
-        options.flowControl);
-    this.batching = Object.assign(
-        {
-          maxMilliseconds: 100,
-        },
-        options.batching);
-    this.flushTimeoutHandle_ = null;
-    this.leaseTimeoutHandle_ = null;
-    this.userClosed_ = false;
+
+    this.ackDeadline = 10;
     this.isOpen = false;
-    this.messageListeners = 0;
-    // As of right now we do not write any acks/modacks to the pull streams.
-    // But with allowing users to opt out of using streaming pulls altogether on
-    // the horizon, we may need to support this feature again in the near
-    // future.
-    this.writeToStreams_ = false;
-    this.listenForEvents_();
-  }
-  /*!
-   * Acks the provided message. If the connection pool is absent, it will be
-   * placed in an internal queue and sent out after 1 second or if the pool is
-   * re-opened before the timeout hits.
-   *
-   * @private
-   *
-   * @param {object} message The message object.
-   */
-  ack_(message) {
-    const breakLease = this.breakLease_.bind(this, message);
-    this.histogram.add(Date.now() - message.received);
-    if (this.writeToStreams_ && this.isConnected_()) {
-      this.acknowledge_(message.ackId, message.connectionId).then(breakLease);
-      return;
-    }
-    this.inventory_.ack.push(message.ackId);
-    this.setFlushTimeout_().then(breakLease);
-  }
-  /*!
-   * Sends an acknowledge request for the provided ack ids.
-   *
-   * @private
-   *
-   * @param {string|string[]} ackIds The ack IDs to acknowledge.
-   * @param {string} [connId] Connection ID to send request on.
-   * @return {Promise}
-   */
-  acknowledge_(ackIds: string|string[], connId?: string) {
-    ackIds = arrify(ackIds);
-    const promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(ackIdChunk => {
-      if (this.writeToStreams_ && this.isConnected_()) {
-        return this.writeTo_(connId, {ackIds: ackIdChunk});
-      }
-      return promisify(this.request).call(this, {
-        client: 'SubscriberClient',
-        method: 'acknowledge',
-        reqOpts: {
-          subscription: this.name,
-          ackIds: ackIdChunk,
-        },
-      });
-    });
-    return Promise.all(promises).catch(err => {
-      this.emit('error', err);
-    });
-  }
-  /*!
-   * Breaks the lease on a message. Essentially this means we no longer treat
-   * the message as being un-acked and count it towards the flow control limits.
-   *
-   * If the pool was previously paused and we freed up space, we'll continue to
-   * recieve messages.
-   *
-   * @private
-   *
-   * @param {object} message The message object.
-   */
-  breakLease_(message) {
-    const messageIndex = this.inventory_.lease.indexOf(message.ackId);
-    if (messageIndex === -1) {
-      return;
-    }
-    this.inventory_.lease.splice(messageIndex, 1);
-    this.inventory_.bytes -= message.length;
-    const pool = this.connectionPool;
-    if (pool && pool.isPaused && !this.hasMaxMessages_()) {
-      pool.resume();
-    }
-    if (!this.inventory_.lease.length) {
-      clearTimeout(this.leaseTimeoutHandle_);
-      this.leaseTimeoutHandle_ = null;
-    }
+    this._isUserSetDeadline = false;
+    this._histogram = new Histogram({min: 10, max: 600});
+    this._latencies = new Histogram();
+    this._subscription = subscription;
+
+    this.setOptions(options);
   }
   /**
-   * Closes the Subscriber, once this is called you will no longer receive
-   * message events unless you add a new message listener.
+   * Get the 99th percentile latency.
    *
-   * @param {function} [callback] The callback function.
-   * @param {?error} callback.err An error returned while closing the
-   *     Subscriber.
-   *
-   * @example
-   * Subscriber.close((err) => {
-   *   if (err) {
-   *     // Error handling omitted.
-   *   }
-   * });
-   *
-   * //-
-   * // If the callback is omitted, we'll return a Promise.
-   * //-
-   * Subscriber.close().then(() => {});
+   * @type {number}
    */
-  close(callback?) {
-    this.userClosed_ = true;
-    const inventory = this.inventory_;
-    inventory.lease.length = inventory.bytes = 0;
-    clearTimeout(this.leaseTimeoutHandle_);
-    this.leaseTimeoutHandle_ = null;
-    this.flushQueues_().then(() => {
-      this.closeConnection_(callback);
-    });
-  }
-  /*!
-   * Closes the connection pool.
-   *
-   * @private
-   *
-   * @param {function} [callback] The callback function.
-   * @param {?error} err An error returned from this request.
-   */
-  closeConnection_(callback?) {
-    this.isOpen = false;
-    if (this.connectionPool) {
-      this.connectionPool.close(callback || util.noop);
-      this.connectionPool = null;
-    } else if (is.fn(callback)) {
-      setImmediate(callback);
-    }
-  }
-  /*!
-   * Flushes internal queues. These can build up if a user attempts to ack/nack
-   * while there is no connection pool (e.g. after they called close).
-   *
-   * Typically this will only be called either after a timeout or when a
-   * connection is re-opened.
-   *
-   * Any errors that occur will be emitted via `error` events.
-   *
-   * @private
-   */
-  flushQueues_(): Promise<void|void[]> {
-    if (this.flushTimeoutHandle_) {
-      this.flushTimeoutHandle_.clear();
-      this.flushTimeoutHandle_ = null;
-    }
-    const acks = this.inventory_.ack;
-    const nacks = this.inventory_.nack;
-
-    if (!acks.length && !nacks.length) {
-      return Promise.resolve();
-    }
-
-    const requests: Array<Promise<void>> = [];
-
-    if (acks.length) {
-      requests.push(this.acknowledge_(acks).then(() => {
-        this.inventory_.ack = [];
-      }));
-    }
-
-    if (nacks.length) {
-      const modAcks = nacks.reduce((table, [ackId, deadline]) => {
-        if (!table[deadline]) {
-          table[deadline] = [];
-        }
-
-        table[deadline].push(ackId);
-        return table;
-      }, {});
-
-      const modAckRequests = Object.keys(modAcks).map(
-          deadline =>
-              this.modifyAckDeadline_(modAcks[deadline], Number(deadline)));
-
-      // tslint:disable-next-line no-any
-      requests.push.apply(requests, modAckRequests as any);
-
-      Promise.all(modAckRequests).then(() => {
-        this.inventory_.nack = [];
-      });
-    }
-
-    return Promise.all(requests);
-  }
-  /*!
-   * Checks to see if we currently have a streaming connection.
-   *
-   * @private
-   *
-   * @return {boolean}
-   */
-  isConnected_() {
-    return !!(this.connectionPool && this.connectionPool.isConnected());
-  }
-  /*!
-   * Checks to see if this Subscriber has hit any of the flow control
-   * thresholds.
-   *
-   * @private
-   *
-   * @return {boolean}
-   */
-  hasMaxMessages_() {
-    return (
-        this.inventory_.lease.length >= this.flowControl.maxMessages ||
-        this.inventory_.bytes >= this.flowControl.maxBytes);
-  }
-  /*!
-   * Leases a message. This will add the message to our inventory list and then
-   * modifiy the ack deadline for the user if they exceed the specified ack
-   * deadline.
-   *
-   * @private
-   *
-   * @param {object} message The message object.
-   */
-  leaseMessage_(message) {
-    this.modifyAckDeadline_(
-        message.ackId, this.ackDeadline / 1000, message.connectionId);
-    this.inventory_.lease.push(message.ackId);
-    this.inventory_.bytes += message.length;
-    this.setLeaseTimeout_();
-    return message;
-  }
-  /*!
-   * Begin listening for events on the Subscriber. This method keeps track of
-   * how many message listeners are assigned, and then removed, making sure
-   * polling is handled automatically.
-   *
-   * As long as there is one active message listener, the connection is open. As
-   * soon as there are no more message listeners, the connection is closed.
-   *
-   * @private
-   *
-   * @example
-   * Subscriber.listenForEvents_();
-   */
-  listenForEvents_() {
-    this.on('newListener', event => {
-      if (event === 'message') {
-        this.messageListeners++;
-        if (!this.connectionPool) {
-          this.userClosed_ = false;
-          this.openConnection_();
-        }
-      }
-    });
-    this.on('removeListener', event => {
-      if (event === 'message' && --this.messageListeners === 0) {
-        this.closeConnection_();
-      }
-    });
-  }
-  /*!
-   * Sends a modifyAckDeadline request for the provided ack ids.
-   *
-   * @private
-   *
-   * @param {string|string[]} ackIds The ack IDs to acknowledge.
-   * @param {number} deadline The dealine in seconds.
-   * @param {string=} connId Connection ID to send request on.
-   * @return {Promise}
-   */
-  modifyAckDeadline_(
-      ackIds: string|string[], deadline: number, connId?: string) {
-    ackIds = arrify(ackIds);
-    const promises = chunk(ackIds, MAX_ACK_IDS_PER_REQUEST).map(ackIdChunk => {
-      if (this.writeToStreams_ && this.isConnected_()) {
-        return this.writeTo_(connId, {
-          modifyDeadlineAckIds: ackIdChunk,
-          modifyDeadlineSeconds: new Array(ackIdChunk.length).fill(deadline),
-        });
-      }
-      return promisify(this.request).call(this, {
-        client: 'SubscriberClient',
-        method: 'modifyAckDeadline',
-        reqOpts: {
-          subscription: this.name,
-          ackDeadlineSeconds: deadline,
-          ackIds: ackIdChunk,
-        },
-      });
-    });
-    return Promise.all(promises).catch(err => {
-      this.emit('error', err);
-    });
-  }
-  /*!
-   * Nacks the provided message. If the connection pool is absent, it will be
-   * placed in an internal queue and sent out after 1 second or if the pool is
-   * re-opened before the timeout hits.
-   *
-   * @private
-   *
-   * @param {object} message - The message object.
-   * @param {number} [delay=0] - Number of seconds before the message may be redelivered
-   */
-  nack_(message, delay = 0) {
-    const breakLease = this.breakLease_.bind(this, message);
-
-    if (this.isConnected_()) {
-      this.modifyAckDeadline_(message.ackId, delay, message.connectionId)
-          .then(breakLease);
-      return;
-    }
-
-    this.inventory_.nack.push([message.ackId, delay]);
-    this.setFlushTimeout_().then(breakLease);
-  }
-  /*!
-   * Opens the ConnectionPool.
-   *
-   * @private
-   */
-  openConnection_() {
-    // TODO: fixup this cast
-    const pool =
-        (this.connectionPool = new ConnectionPool(this as {} as Subscription));
-    this.isOpen = true;
-    pool.on('error', err => {
-      this.emit('error', err);
-    });
-    pool.on('message', message => {
-      this.emit('message', this.leaseMessage_(message));
-      if (!pool.isPaused && this.hasMaxMessages_()) {
-        pool.pause();
-      }
-    });
-    pool.once('connected', () => {
-      this.flushQueues_();
-    });
-  }
-  /*!
-   * Modifies the ack deadline on messages that have yet to be acked. We update
-   * the ack deadline to the 99th percentile of known ack times.
-   *
-   * @private
-   */
-  renewLeases_() {
-    clearTimeout(this.leaseTimeoutHandle_);
-    this.leaseTimeoutHandle_ = null;
-    if (!this.inventory_.lease.length) {
-      return;
-    }
-    this.ackDeadline = this.histogram.percentile(99);
-    const ackIds = this.inventory_.lease.slice();
-    const ackDeadlineSeconds = this.ackDeadline / 1000;
-    this.modifyAckDeadline_(ackIds, ackDeadlineSeconds).then(() => {
-      this.setLeaseTimeout_();
-    });
-  }
-  /*!
-   * Sets a timeout to flush any acks/nacks that have been made since the pool
-   * has closed.
-   *
-   * @private
-   */
-  setFlushTimeout_() {
-    if (!this.flushTimeoutHandle_) {
-      const timeout = delay(this.batching.maxMilliseconds);
-      const promise =
-          timeout.then(this.flushQueues_.bind(this)).catch(util.noop);
-      promise.clear = timeout.clear.bind(timeout);
-      this.flushTimeoutHandle_ = promise;
-    }
-    return this.flushTimeoutHandle_;
-  }
-  /*!
-   * Sets a timeout to modify the ack deadlines for any unacked/unnacked
-   * messages, renewing their lease.
-   *
-   * @private
-   */
-  setLeaseTimeout_() {
-    if (this.leaseTimeoutHandle_ || !this.isOpen) {
-      return;
-    }
-    const latency = this.latency_.percentile(99);
-    const timeout = Math.random() * this.ackDeadline * 0.9 - latency;
-    this.leaseTimeoutHandle_ =
-        setTimeout(this.renewLeases_.bind(this), timeout);
+  get latency() {
+    return this._latencies.percentile(99);
   }
   /**
-   * Writes to specified duplex stream. This is useful for capturing write
-   * latencies that can later be used to adjust the auto lease timeout.
+   * Get the name of the Subscription.
    *
-   * @private
+   * @type {string}
+   */
+  get name(): string {
+    if (!this._name) {
+      const {name, projectId} = this._subscription;
+      this._name = replaceProjectIdToken(name, projectId);
+    }
+
+    return this._name;
+  }
+  /**
+   * Acknowledges the provided message.
    *
-   * @param {string} connId The ID of the connection to write to.
-   * @param {object} data The data to be written to the stream.
+   * @param {Message} message The message to acknowledge.
    * @returns {Promise}
    */
-  writeTo_(connId, data) {
+  async ack(message: Message): Promise<void> {
     const startTime = Date.now();
-    return new Promise((resolve, reject) => {
-      this.connectionPool!.acquire(connId, (err, connection) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        // we can ignore any errors that come from this since they'll be
-        // re-emitted later
-        connection!.write(data, err => {
-          if (!err) {
-            this.latency_.add(Date.now() - startTime);
-          }
-          resolve();
-        });
-      });
-    });
+
+    if (!this._isUserSetDeadline) {
+      const ackTimeSeconds = (startTime - message.received) / 1000;
+      this._histogram.add(ackTimeSeconds);
+      this.ackDeadline = this._histogram.percentile(99);
+    }
+
+    this._acks.add(message);
+    await this._acks.onFlush();
+    this._inventory.remove(message);
+
+    const latency = (Date.now() - startTime) / 1000;
+    this._latencies.add(latency);
+  }
+  /*!
+   * @TODO look at grpc to figure out if we need to close this._client
+   */
+  /**
+   * Closes the subscriber. The returned promise will resolve once any pending
+   * acks/modAcks are flushed.
+   *
+   * @returns {Promise}
+   */
+  async close(): Promise<void> {
+    if (!this.isOpen) {
+      return;
+    }
+
+    this.isOpen = false;
+    this._stream.destroy();
+    this._inventory.clear();
+
+    const flushes: Array<Promise<void>> = [];
+
+    if (this._acks.pending) {
+      flushes.push(this._acks.onFlush());
+    }
+
+    if (this._modAcks.pending) {
+      flushes.push(this._modAcks.onFlush());
+    }
+
+    await Promise.all(flushes);
+
+    const client = await this.getClient();
+    client.close();
+  }
+  /**
+   * Gets the subscriber client instance.
+   *
+   * @returns {Promise<object>}
+   */
+  async getClient(): Promise<ClientStub> {
+    if (!this._client) {
+      const pubsub = this._subscription.pubsub;
+      const opts = {client: 'SubscriberClient'};
+      const [client] = await promisify(pubsub.getClient_).call(pubsub, opts);
+      this._client = client;
+    }
+
+    return this._client;
+  }
+  /**
+   * Modifies the acknowledge deadline for the provided message.
+   *
+   * @param {Message} message The message to modify.
+   * @param {number} deadline The deadline.
+   * @returns {Promise}
+   */
+  async modAck(message: Message, deadline: number): Promise<void> {
+    const startTime = Date.now();
+
+    this._modAcks.add(message, deadline);
+    await this._modAcks.onFlush();
+
+    const latency = (Date.now() - startTime) / 1000;
+    this._latencies.add(latency);
+  }
+  /**
+   * Modfies the acknowledge deadline for the provided message and then removes
+   * said message from our inventory, allowing it to be re-delivered.
+   *
+   * @param {Message} message The message.
+   * @param {number} [delay=0] Delay to wait before re-delivery.
+   * @return {Promise}
+   */
+  async nack(message: Message, delay = 0): Promise<void> {
+    await this.modAck(message, delay);
+    this._inventory.remove(message);
+  }
+  /**
+   * Starts pulling messages.
+   */
+  open(): void {
+    const {batching, flowControl, streamingOptions} = this._options;
+
+    this._acks = new AckQueue(this, batching);
+    this._modAcks = new ModAckQueue(this, batching);
+    this._inventory = new LeaseManager(this, flowControl);
+    this._stream = new MessageStream(this, streamingOptions);
+
+    this._stream.on('error', err => this.emit('error', err))
+        .on('data', (message: Message) => this._onmessage(message));
+
+    this.isOpen = true;
+  }
+  /**
+   * Sets subscriber options.
+   *
+   * @param {SubscriberOptions} options The options.
+   */
+  setOptions(options: SubscriberOptions): void {
+    this._options = options;
+
+    if (options.ackDeadline) {
+      this.ackDeadline = options.ackDeadline;
+      this._isUserSetDeadline = true;
+    }
+  }
+  /**
+   * Callback to be invoked when a new message is available.
+   *
+   * New messages will be added to the subscribers inventory, which in turn will
+   * automatically extend said messages ack deadline until either:
+   *   a. the user acks/nacks said message
+   *   b. the maxExtension option is hit
+   *
+   * If the message puts us at/over capacity, then we'll pause our message
+   * stream until we've freed up some inventory space.
+   *
+   * New messages must immediately issue a ModifyAckDeadline request
+   * (aka receipt) to confirm with the backend that we did infact receive the
+   * message and its ok to start ticking down to the deadline.
+   *
+   * @private
+   */
+  _onmessage(message: Message): void {
+    this._inventory.add(message);
+
+    if (this._inventory.isFull()) {
+      this._stream.pause();
+      this._inventory.onFree().then(() => this._stream.resume());
+    }
+
+    // pubsub requires a "receipt" to confirm message was received
+    this.modAck(message, this.ackDeadline);
+    this.emit('message', message);
   }
 }
-
-/*! Developer Documentation
- *
- * All async methods (except for streams) will return a Promise in the event
- * that a callback is omitted.
- */
-promisifyAll(Subscriber);
