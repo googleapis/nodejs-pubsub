@@ -35,8 +35,7 @@
     "system-test": "mocha build/system-test --timeout 600000",
     "cover": "nyc --reporter=lcov mocha build/test && nyc report",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
-    "test-no-cover": "mocha build/test",
-    "test": "npm run cover",
+    "test": "nyc mocha",
     "lint": "eslint '**/*.js' && gts check",
     "docs": "jsdoc -c .jsdoc.js",
     "fix": "eslint --fix '**/*.js' && gts fix",
@@ -93,10 +92,5 @@
     "sinon": "^7.1.1",
     "source-map-support": "^0.5.9",
     "typescript": "~3.2.0"
-  },
-  "nyc": {
-    "exclude": [
-      "build/test"
-    ]
   }
 }

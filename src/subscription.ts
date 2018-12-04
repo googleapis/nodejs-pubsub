@@ -169,7 +169,7 @@ export interface SubscriptionMetadata extends TSubscriptionMetadata {
  *   // message.ackId = ID used to acknowledge the message receival.
  *   // message.data = Contents of the message.
  *   // message.attributes = Attributes of the message.
- *   // message.timestamp = Timestamp when Pub/Sub received the message.
+ *   // message.publishTime = Timestamp when Pub/Sub received the message.
  *
  *   // Ack the message:
  *   // message.ack();
