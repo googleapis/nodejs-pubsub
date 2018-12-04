@@ -37,9 +37,9 @@ interface PublishApiResponse {
  * @param {object} [options] Configuration object.
  * @param {object} [options.batching] Batching settings.
  * @param {number} [options.batching.maxBytes] The maximum number of bytes to
- *     buffer before sending a payload.
+ *     buffer before sending a payload. Defaults to 1024^2 * 5.
  * @param {number} [options.batching.maxMessages] The maximum number of messages
- *     to buffer before sending a payload.
+ *     to buffer before sending a payload. Defaults to 1000.
  * @param {number} [options.batching.maxMilliseconds] The maximum duration to
  *     wait before sending a payload. Defaults to 100 milliseconds.
  * @param {object} [options.gaxOpts] Request configuration options, outlined
