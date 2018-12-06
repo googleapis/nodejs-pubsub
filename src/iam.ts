@@ -177,6 +177,9 @@ export class IAM {
     this.id = id;
   }
 
+  getPolicy(gaxOpts?: CallOptions): Promise<GetPolicyCallback>;
+  getPolicy(callback: GetPolicyCallback): void;
+  getPolicy(gaxOpts: CallOptions, callback: GetPolicyCallback): void;
   /**
    * Get the IAM policy
    *
@@ -207,9 +210,6 @@ export class IAM {
    *   const apiResponse = data[1];
    * });
    */
-  getPolicy(gaxOpts?: CallOptions): Promise<GetPolicyCallback>;
-  getPolicy(callback: GetPolicyCallback): void;
-  getPolicy(gaxOpts: CallOptions, callback: GetPolicyCallback): void;
   getPolicy(
       gaxOptsOrCallback?: CallOptions|GetPolicyCallback,
       callback?: GetPolicyCallback): Promise<GetPolicyCallback>|void {
@@ -232,6 +232,10 @@ export class IAM {
         callback!);
   }
 
+  setPolicy(policy: Policy, gaxOpts?: CallOptions): Promise<SetPolicyResponse>;
+  setPolicy(policy: Policy, gaxOpts: CallOptions, callback: SetPolicyCallback):
+      void;
+  setPolicy(policy: Policy, callback: SetPolicyCallback): void;
   /**
    * Set the IAM policy
    *
@@ -280,10 +284,6 @@ export class IAM {
    *   const apiResponse = data[1];
    * });
    */
-  setPolicy(policy: Policy, gaxOpts?: CallOptions): Promise<SetPolicyResponse>;
-  setPolicy(policy: Policy, gaxOpts: CallOptions, callback: SetPolicyCallback):
-      void;
-  setPolicy(policy: Policy, callback: SetPolicyCallback): void;
   setPolicy(
       policy: Policy, gaxOptsOrCallback?: CallOptions|SetPolicyCallback,
       callback?: SetPolicyCallback): Promise<SetPolicyResponse>|void {
@@ -311,6 +311,13 @@ export class IAM {
         callback!);
   }
 
+  testPermissions(permissions: string|string[], gaxOpts?: CallOptions):
+      Promise<TestIamPermissionsResponse>;
+  testPermissions(
+      permissions: string|string[], gaxOpts: CallOptions,
+      callback: TestIamPermissionsCallback): void;
+  testPermissions(
+      permissions: string|string[], callback: TestIamPermissionsCallback): void;
   /**
    * Test a set of permissions for a resource.
    *
@@ -371,13 +378,6 @@ export class IAM {
    *   const apiResponse = data[1];
    * });
    */
-  testPermissions(permissions: string|string[], gaxOpts?: CallOptions):
-      Promise<TestIamPermissionsResponse>;
-  testPermissions(
-      permissions: string|string[], gaxOpts: CallOptions,
-      callback: TestIamPermissionsCallback): void;
-  testPermissions(
-      permissions: string|string[], callback: TestIamPermissionsCallback): void;
   testPermissions(
       permissions: string|string[],
       gaxOptsOrCallback?: CallOptions|TestIamPermissionsCallback,

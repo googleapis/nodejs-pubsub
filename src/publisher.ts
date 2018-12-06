@@ -99,6 +99,7 @@ export class Publisher {
     };
     this.timeoutHandle_ = null;
   }
+
   /**
    * @typedef {array} PublisherPublishResponse
    * @property {string} 0 The id for the message.

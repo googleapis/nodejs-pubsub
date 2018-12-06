@@ -219,6 +219,16 @@ export class PubSub {
       this.Promise = this.options.promise;
     }
   }
+
+  createSubscription(
+      topic: Topic|string, name: string,
+      options?: CreateSubscriptionOptions): Promise<CreateSubscriptionResponse>;
+  createSubscription(
+      topic: Topic|string, name: string, options: CreateSubscriptionOptions,
+      callback: CreateSubscriptionCallback): void;
+  createSubscription(
+      topic: Topic|string, name: string,
+      callback: CreateSubscriptionCallback): void;
   /**
    * Options for creating a subscription.
    *
@@ -283,15 +293,6 @@ export class PubSub {
    */
   createSubscription(
       topic: Topic|string, name: string,
-      options?: CreateSubscriptionOptions): Promise<CreateSubscriptionResponse>;
-  createSubscription(
-      topic: Topic|string, name: string, options: CreateSubscriptionOptions,
-      callback: CreateSubscriptionCallback): void;
-  createSubscription(
-      topic: Topic|string, name: string,
-      callback: CreateSubscriptionCallback): void;
-  createSubscription(
-      topic: Topic|string, name: string,
       optionsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
       callback?: CreateSubscriptionCallback):
       Promise<CreateSubscriptionResponse>|void {
@@ -347,6 +348,10 @@ export class PubSub {
         });
   }
 
+  createTopic(name: string, gaxOpts: CallOptions): Promise<CreateTopicResponse>;
+  createTopic(
+      name: string, gaxOpts: CallOptions, callback?: CreateTopicCallback): void;
+  createTopic(name: string, callback: CreateTopicCallback): void;
   /**
    * Create a topic with the given name.
    *
@@ -376,10 +381,6 @@ export class PubSub {
    *   const apiResponse = data[1];
    * });
    */
-  createTopic(name: string, gaxOpts: CallOptions): Promise<CreateTopicResponse>;
-  createTopic(
-      name: string, gaxOpts: CallOptions, callback?: CreateTopicCallback): void;
-  createTopic(name: string, callback: CreateTopicCallback): void;
   createTopic(
       name: string, gaxOptsOrCallback?: CallOptions|CreateTopicCallback,
       callback?: CreateTopicCallback): Promise<CreateTopicResponse>|void {
