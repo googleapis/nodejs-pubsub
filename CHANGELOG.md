@@ -163,6 +163,21 @@ const pubsub = new PubSub();
 
 *BREAKING CHANGE*: - fix: drop support for node.js 4.x and 9.x (#171)
 
+
+**BREAKING CHANGE**
+`@google-cloud/pubsub` now requires `new`.
+
+Before:
+```javascript
+const PubSub = require('@google-cloud/pubsub');
+const pubsub = PubSub();
+```
+Now:
+```javascript
+const PubSub = require('@google-cloud/pubsub');
+const pubsub = new PubSub();
+```
+
 ### New Features
 
 - Re-generate library using /synth.py (#227)
