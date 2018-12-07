@@ -165,6 +165,7 @@ export class Snapshot {
       this.seek = parent.seek.bind(parent, name);
     }
   }
+
   /**
    * Delete the snapshot.
    *
