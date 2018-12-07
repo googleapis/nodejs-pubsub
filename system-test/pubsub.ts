@@ -15,6 +15,7 @@
  */
 
 import * as assert from 'assert';
+import * as defer from 'p-defer';
 import * as uuid from 'uuid';
 import {PubSub, Subscription, Topic} from '../src';
 
@@ -203,8 +204,8 @@ describe('pubsub', () => {
     const SUB_NAMES = [generateSubName(), generateSubName()];
 
     const SUBSCRIPTIONS = [
-      topic.subscription(SUB_NAMES[0], {ackDeadline: 30000}),
-      topic.subscription(SUB_NAMES[1], {ackDeadline: 60000}),
+      topic.subscription(SUB_NAMES[0], {ackDeadline: 30}),
+      topic.subscription(SUB_NAMES[1], {ackDeadline: 60}),
     ];
 
     before(async () => {
@@ -381,9 +382,8 @@ describe('pubsub', () => {
     });
 
     it('should error when using a non-existent subscription', done => {
-      const subscription = topic.subscription(generateSubName(), {
-        maxConnections: 1,
-      });
+      const subscription = topic.subscription(
+          generateSubName(), {streamingOptions: {maxStreams: 1}});
 
       subscription.on('error', err => {
         assert.strictEqual(err.code, 5);
@@ -444,11 +444,9 @@ describe('pubsub', () => {
       const maxMessages = 3;
       let messageCount = 0;
 
-      const subscription = topic.subscription(SUB_NAMES[0], {
-        flowControl: {
-          maxMessages,
-        },
-      });
+      const subscription = topic.subscription(
+          SUB_NAMES[0],
+          {flowControl: {maxMessages, allowExcessMessages: false}});
 
       subscription.on('error', done);
       subscription.on('message', onMessage);
@@ -458,9 +456,104 @@ describe('pubsub', () => {
           return;
         }
 
-        setImmediate(() => {
-          subscription.close(done);
+        subscription.close(done);
+      }
+    });
+
+    // can be ran manually to test options/memory usage/etc.
+    it.skip('should handle a large volume of messages', async function() {
+      const MESSAGES = 200000;
+
+      const deferred = defer();
+      const messages = new Set();
+
+      let duplicates = 0;
+
+      this.timeout(0);
+
+      const publisher = topic.publisher({batching: {maxMessages: 999}});
+      const subscription = topic.subscription(SUB_NAMES[0]);
+
+      await publish(MESSAGES);
+
+      const startTime = Date.now();
+      subscription.on('error', deferred.reject).on('message', onmessage);
+
+      return deferred.promise;
+
+      function onmessage(message) {
+        const testid = message.attributes.testid;
+
+        if (!testid) {
+          return;
+        }
+
+        message.ack();
+
+        if (!messages.has(testid)) {
+          messages.add(testid);
+        } else {
+          duplicates += 1;
+        }
+
+        if (messages.size !== MESSAGES || hasMoreData()) {
+          return;
+        }
+
+        const total = messages.size + duplicates;
+        const duration = (Date.now() - startTime) / 1000 / 60;
+        const acksPerMin = Math.floor(total / duration);
+
+        console.log(`${total} messages processed.`);
+        console.log(`${duplicates} messages redelivered.`);
+        console.log(`${acksPerMin} acks/m on average.`);
+
+        subscription.close(err => {
+          if (err) {
+            deferred.reject(err);
+          } else {
+            deferred.resolve();
+          }
         });
+      }
+
+      function publish(messageCount) {
+        const data = Buffer.from('Hello, world!');
+        const promises: Array<Promise<string>> = [];
+
+        let id = 0;
+
+        for (let i = 0; i < messageCount; i++) {
+          const attrs = {testid: String(++id)};
+          promises.push(publisher.publish(data, attrs));
+        }
+
+        return Promise.all(promises);
+      }
+
+      function hasMoreData() {
+        // "as any" lets us read private members
+        // tslint:disable-next-line:no-any
+        const subscriber = subscription._subscriber as any;
+        // tslint:disable-next-line:no-any
+        const messageStream = subscriber._stream as any;
+        // tslint:disable-next-line:no-any
+        const streams = messageStream._streams as any;
+
+        let p = getBufferLength(messageStream);
+
+        for (const stream of streams) {
+          p += getBufferLength(stream);
+          p += getBufferLength(stream.stream);
+        }
+
+        return p;
+      }
+
+      function getBufferLength(stream) {
+        const readableLength = stream._readableState.length || 0;
+        const writableLength = stream._writableState.length || 0;
+        return readableLength + writableLength;
       }
     });
   });

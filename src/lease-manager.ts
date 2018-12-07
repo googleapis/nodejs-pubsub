@@ -17,19 +17,29 @@
 import {freemem} from 'os';
 import * as defer from 'p-defer';
 
-import {Message} from './message-stream';
-import {Subscriber} from './subscriber';
+import {Message, Subscriber} from './subscriber';
 
 /**
  * @typedef {object} FlowControlOptions
- * @property {number} [maxBytes] The maximum amount of memory to allow message
- *     data to consume. Defaults to 20% of available memory.
- * @property {number} [maxExtension=Infinity] The maximum duration to extend
- *     the message deadline before re-delivering.
- * @property {number} [maxMessages=100] The maximum number of messages to allow
- *     in memory before pausing the message stream.
+ * @property {boolean} [allowExcessMessages=true] PubSub delivers messages in
+ *     batches with no way to configure the batch size. Sometimes this can be
+ *     overwhelming if you only want to process a few messages at a time.
+ *     Setting this option to false will make the client manage any excess
+ *     messages until you're ready for them. This will prevent them from being
+ *     redelivered and make the maxMessages option behave more predictably.
+ * @property {number} [maxBytes] The desired amount of memory to allow message
+ *     data to consume, defaults to 20% of available memory. Its possible that
+ *     this value will be exceeded since messages are received in batches.
+ * @property {number} [maxExtension=Infinity] The maximum duration (in seconds)
+ *      to extend the message deadline before redelivering.
+ * @property {number} [maxMessages=100] The desired number of messages to allow
+ *     in memory before pausing the message stream. Unless allowExcessMessages
+ *     is set to false, it is very likely that this value will be exceeded since
+ *     any given message batch could contain a greater number of messages than
+ *     the desired amount of messages.
  */
 export interface FlowControlOptions {
+  allowExcessMessages?: boolean;
   maxBytes?: number;
   maxExtension?: number;
   maxMessages?: number;
@@ -47,16 +57,18 @@ export interface FlowControlOptions {
  */
 export class LeaseManager {
   bytes: number;
-  _isLeasing: boolean;
-  _messages: Set<Message>;
-  _onfree?: defer.DeferredPromise<void>;
-  _options!: FlowControlOptions;
-  _subscriber: Subscriber;
-  _timer?: NodeJS.Timer;
+  private _isLeasing: boolean;
+  private _messages: Set<Message>;
+  private _onfree?: defer.DeferredPromise<void>;
+  private _options!: FlowControlOptions;
+  private _pending: Message[];
+  private _subscriber: Subscriber;
+  private _timer?: NodeJS.Timer;
   constructor(sub: Subscriber, options = {}) {
     this.bytes = 0;
     this._isLeasing = false;
     this._messages = new Set();
+    this._pending = [];
     this._subscriber = sub;
 
     this.setOptions(options);
@@ -68,11 +80,20 @@ export class LeaseManager {
     return this._messages.size;
   }
   /**
-   * Adds a message to the inventory, kicking off the auto-extender if need be.
+   * Adds a message to the inventory, kicking off the deadline extender if it
+   * isn't already running.
    *
    * @param {Message} message The message.
    */
   add(message: Message): void {
+    const {allowExcessMessages} = this._options;
+
+    if (allowExcessMessages! || !this.isFull()) {
+      this._dispense(message);
+    } else {
+      this._pending.push(message);
+    }
+
     this._messages.add(message);
     this.bytes += message.length;
 
@@ -85,12 +106,19 @@ export class LeaseManager {
    * Removes ALL messages from inventory.
    */
   clear(): void {
-    this._cancelExtension();
+    this._pending = [];
     this._messages.clear();
     this.bytes = 0;
+
+    if (this._onfree) {
+      this._onfree.resolve();
+      delete this._onfree;
+    }
+
+    this._cancelExtension();
   }
   /**
-   * Indicates if we're at/over capacity or not.
+   * Indicates if we're at or over capacity.
    *
    * @returns {boolean}
    */
@@ -99,7 +127,10 @@ export class LeaseManager {
     return this.size >= maxMessages! || this.bytes >= maxBytes!;
   }
   /**
+   * Returns a promise that will resolve once space has been freed up for new
+   * messages to be introduced.
    *
+   * @returns {Promise}
    */
   onFree(): Promise<void> {
     if (!this._onfree) {
@@ -108,8 +139,8 @@ export class LeaseManager {
     return this._onfree.promise;
   }
   /**
-   * Removes a message from the inventory. Stopping the auto-extender if no
-   * messages remain.
+   * Removes a message from the inventory. Stopping the deadline extender if no
+   * messages are left over.
    *
    * @fires LeaseManager#free
    *
@@ -126,6 +157,11 @@ export class LeaseManager {
     if (this._onfree && !this.isFull()) {
       this._onfree.resolve();
       delete this._onfree;
+    } else if (this._pending.includes(message)) {
+      const index = this._pending.indexOf(message);
+      this._pending.splice(index, 1);
+    } else if (this._pending.length) {
+      this._dispense(this._pending.shift()!);
     }
 
     if (!this.size && this._isLeasing) {
@@ -137,8 +173,9 @@ export class LeaseManager {
    *
    * @param {FlowControlOptions} [options] The options.
    */
-  setOptions(options): void {
+  setOptions(options: FlowControlOptions): void {
     const defaults: FlowControlOptions = {
+      allowExcessMessages: true,
       maxBytes: freemem() * 0.2,
       maxExtension: Infinity,
       maxMessages: 100
@@ -147,11 +184,11 @@ export class LeaseManager {
     this._options = Object.assign(defaults, options);
   }
   /**
-   * Stops extending messages.
+   * Stops extending message deadlines.
    *
    * @private
    */
-  _cancelExtension(): void {
+  private _cancelExtension(): void {
     this._isLeasing = false;
 
     if (this._timer) {
@@ -160,16 +197,29 @@ export class LeaseManager {
     }
   }
   /**
+   * Emits the message. Emitting messages is very slow, so to avoid it acting
+   * as a bottleneck, we're wrapping it in nextTick.
+   *
+   * @private
+   *
+   * @fires Subscriber#message
+   *
+   * @param {Message} message The message to emit.
+   */
+  private _dispense(message: Message): void {
+    process.nextTick(() => this._subscriber.emit('message', message));
+  }
+  /**
    * Loops through inventory and extends the deadlines for any messages that
    * have not hit the max extension option.
    *
    * @private
    */
-  _extendDeadlines(): void {
+  private _extendDeadlines(): void {
     const deadline = this._subscriber.ackDeadline;
 
     for (const message of this._messages) {
-      const lifespan = Date.now() - message.received;
+      const lifespan = (Date.now() - message.received) / 1000;
 
       if (lifespan < this._options.maxExtension!) {
         this._subscriber.modAck(message, deadline);
@@ -184,25 +234,25 @@ export class LeaseManager {
   }
   /**
    * Creates a timeout(ms) that should allow us to extend any message deadlines
-   * without them being re-delivered.
+   * before they would be redelivered.
    *
    * @private
    *
    * @returns {number}
    */
-  _getNextExtensionTimeout(): number {
+  private _getNextExtensionTimeout(): number {
     const jitter = Math.random();
     const deadline = this._subscriber.ackDeadline * 1000;
     const latency = this._subscriber.latency * 1000;
 
-    return deadline * 0.9 * jitter - latency;
+    return (deadline * 0.9 - latency) * jitter;
   }
   /**
-   * Schedules an extension for all messages within the inventory.
+   * Schedules an deadline extension for all messages.
    *
    * @private
    */
-  _scheduleExtension(): void {
+  private _scheduleExtension(): void {
     const timeout = this._getNextExtensionTimeout();
     this._timer = setTimeout(() => this._extendDeadlines(), timeout);
   }

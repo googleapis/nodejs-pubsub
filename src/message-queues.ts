@@ -14,25 +14,29 @@
  * limitations under the License.
  */
 
+import {CallOptions} from 'google-gax';
 import * as defer from 'p-defer';
 
-import {Message} from './message-stream';
-import {Subscriber} from './subscriber';
+import {Message, Subscriber} from './subscriber';
 
 /**
  * @typedef {object} BatchOptions
+ * @property {object} [callOptions] Request configuration option, outlined
+ *     here: {@link https://googleapis.github.io/gax-nodejs/CallSettings.html}.
  * @property {number} [maxMessages=3000] Maximum number of messages allowed in
  *     each batch sent.
  * @property {number} [maxMilliseconds=100] Maximum duration to wait before
- *     sending a batch.
+ *     sending a batch. Batches can be sent earlier if the maxMessages option
+ *     is met before the configured duration has passed.
  */
 export interface BatchOptions {
+  callOptions?: CallOptions;
   maxMessages?: number;
   maxMilliseconds?: number;
 }
 
 /**
- * Base class for buffering subscriber requests.
+ * Class for buffering ack/modAck requests.
  *
  * @private
  * @class
@@ -42,15 +46,15 @@ export interface BatchOptions {
  */
 export abstract class Queue {
   pending: number;
-  _onflush?: defer.DeferredPromise<void>;
-  _options!: BatchOptions;
+  protected _onflush?: defer.DeferredPromise<void>;
+  protected _options!: BatchOptions;
   // tslint:disable-next-line:no-any
-  _requests: any[];
-  _subscriber: Subscriber;
-  _timer?: NodeJS.Timer;
+  protected _requests: any[];
+  protected _subscriber: Subscriber;
+  protected _timer?: NodeJS.Timer;
   abstract add(message: Message, deadline?: number): void;
   // tslint:disable-next-line:no-any
-  abstract _sendBatch(batch: any[]): Promise<void>;
+  protected abstract _sendBatch(batch: any[]): Promise<void>;
   constructor(sub: Subscriber, options = {}) {
     this.pending = 0;
     this._requests = [];
@@ -84,12 +88,9 @@ export abstract class Queue {
    *
    * @private
    *
-   * @fires AckQueue#error
-   * @fires AckQueue#flush
-   *
    * @returns {Promise}
    */
-  async _flush(): Promise<void> {
+  protected async _flush(): Promise<void> {
     if (this._timer) {
       clearTimeout(this._timer);
       delete this._timer;
@@ -120,7 +121,7 @@ export abstract class Queue {
    *
    * @private
    */
-  _onadd(): void {
+  protected _onadd(): void {
     const {maxMessages, maxMilliseconds} = this._options;
 
     this.pending += 1;
@@ -134,7 +135,7 @@ export abstract class Queue {
 }
 
 /**
- * Queues up Acknowledge requests and sends them out in batches.
+ * Queues up Acknowledge (ack) requests.
  *
  * @private
  * @class
@@ -150,18 +151,18 @@ export class AckQueue extends Queue {
     this._onadd();
   }
   /**
-   * Makes an Acknowledge request.
+   * Sends a batch of ack requests.
    *
    * @private
    *
    * @param {string[]} ackIds The ackIds to acknowledge.
    * @return {Promise}
    */
-  async _sendBatch(ackIds: string[]): Promise<void> {
+  protected async _sendBatch(ackIds: string[]): Promise<void> {
     const client = await this._subscriber.getClient();
     const reqOpts = {subscription: this._subscriber.name, ackIds};
 
-    await client.acknowledge(reqOpts);
+    await client.acknowledge(reqOpts, this._options.callOptions!);
   }
 }
 
@@ -183,16 +184,15 @@ export class ModAckQueue extends Queue {
     this._onadd();
   }
   /**
-   * Makes an ModifyAckDeadline request. Unlike the Acknowledge rpc, each
-   * deadline requires its own request, so we have to group all the ackIds by
-   * deadline and send multiple requests out.
+   * Sends a batch of modAck requests. Each deadline requires its own request,
+   * so we have to group all the ackIds by deadline and send multiple requests.
    *
    * @private
    *
    * @param {Array.<[string, number]>} modAcks Array of ackIds and deadlines.
    * @return {Promise}
    */
-  async _sendBatch(modAcks: Array<[string, number]>): Promise<void> {
+  protected async _sendBatch(modAcks: Array<[string, number]>): Promise<void> {
     const client = await this._subscriber.getClient();
     const subscription = this._subscriber.name;
     const modAckTable = modAcks.reduce((table, [ackId, deadline]) => {
@@ -207,7 +207,7 @@ export class ModAckQueue extends Queue {
     const modAckRequests = Object.keys(modAckTable).map(ackDeadlineSeconds => {
       const ackIds = modAckTable[ackDeadlineSeconds];
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};
-      return client.modifyAckDeadline(reqOpts);
+      return client.modifyAckDeadline(reqOpts, this._options.callOptions!);
     });
 
     await Promise.all(modAckRequests);

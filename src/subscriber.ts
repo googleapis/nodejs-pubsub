@@ -18,22 +18,110 @@ import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
 import {ClientStub} from 'google-gax';
+import {common as protobuf} from 'protobufjs';
 
 import {Histogram} from './histogram';
 import {FlowControlOptions, LeaseManager} from './lease-manager';
 import {AckQueue, BatchOptions, ModAckQueue} from './message-queues';
-import {Message, MessageStream, MessageStreamOptions} from './message-stream';
+import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
 
+/**
+ * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/pull#ReceivedMessage
+ */
+interface ReceivedMessage {
+  ackId: string;
+  message: {
+    attributes: {},
+    data: Buffer,
+    messageId: string,
+    publishTime: protobuf.ITimestamp
+  };
+}
+
+/**
+ * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/pull#body.PullResponse
+ */
+interface PullResponse {
+  receivedMessages: ReceivedMessage[];
+}
+
+/**
+ * Message objects provide a simple interface for users to get message data and
+ * acknowledge the message.
+ *
+ * @private
+ * @class
+ *
+ * @param {Subscriber} sub The parent subscriber.
+ * @param {object} message The raw message response.
+ */
+export class Message {
+  ackId: string;
+  attributes: {};
+  data: Buffer;
+  id: string;
+  publishTime: Date;
+  received: number;
+  private _length: number;
+  private _subscriber: Subscriber;
+  constructor(sub: Subscriber, {ackId, message}: ReceivedMessage) {
+    this.ackId = ackId;
+    this.attributes = message.attributes || {};
+    this.data = message.data;
+    this.id = message.messageId;
+    this.publishTime = Message.formatTimestamp(message.publishTime);
+    this.received = Date.now();
+    this._length = this.data.length;
+    this._subscriber = sub;
+  }
+  /**
+   * The length of the message data.
+   *
+   * @type {number}
+   */
+  get length() {
+    return this._length;
+  }
+  /**
+   * Acknowledges the message.
+   */
+  ack(): void {
+    this._subscriber.ack(this);
+  }
+  /**
+   * Removes the message from our inventory and schedules it to be redelivered.
+   * If the delay parameter is unset, it will be redelivered immediately.
+   *
+   * @param {number} [delay=0] The desired time to wait before the
+   *     redelivery occurs.
+   */
+  nack(delay?: number): void {
+    this._subscriber.nack(this, delay);
+  }
+  /**
+   * Formats the protobuf timestamp into a JavaScript date.
+   *
+   * @private
+   *
+   * @param {object} timestamp The protobuf timestamp.
+   * @return {date}
+   */
+  static formatTimestamp({nanos = 0, seconds = 0}: protobuf.ITimestamp): Date {
+    const ms: number = Number(nanos) / 1e6;
+    const s: number = Number(seconds) * 1000;
+    return new Date(ms + s);
+  }
+}
 
 /**
  * @typedef {object} SubscriberOptions
  * @property {number} [ackDeadline=10] Acknowledge deadline in seconds. If left
  *     unset the initial value will be 10 seconds, but it will evolve into the
- *     99th percentile of acknowledge times.
- * @property {BatchingOptions} [batching] Message batching options.
+ *     99th percentile time it takes to acknowledge a message.
+ * @property {BatchingOptions} [batching] Request batching options.
  * @property {FlowControlOptions} [flowControl] Flow control options.
- * @property {MessageStreamOptions} [streamingOptions] Message stream options.
+ * @property {MessageStreamOptions} [streamingOptions] Streaming options.
  */
 export interface SubscriberOptions {
   ackDeadline?: number;
@@ -54,17 +142,17 @@ export interface SubscriberOptions {
 export class Subscriber extends EventEmitter {
   ackDeadline: number;
   isOpen: boolean;
-  _acks!: AckQueue;
-  _client!: ClientStub;
-  _histogram: Histogram;
-  _inventory!: LeaseManager;
-  _isUserSetDeadline: boolean;
-  _latencies: Histogram;
-  _modAcks!: ModAckQueue;
-  _name!: string;
-  _options!: SubscriberOptions;
-  _stream!: MessageStream;
-  _subscription: Subscription;
+  private _acks!: AckQueue;
+  private _client!: ClientStub;
+  private _histogram: Histogram;
+  private _inventory!: LeaseManager;
+  private _isUserSetDeadline: boolean;
+  private _latencies: Histogram;
+  private _modAcks!: ModAckQueue;
+  private _name!: string;
+  private _options!: SubscriberOptions;
+  private _stream!: MessageStream;
+  private _subscription: Subscription;
   constructor(subscription: Subscription, options = {}) {
     super();
 
@@ -78,7 +166,7 @@ export class Subscriber extends EventEmitter {
     this.setOptions(options);
   }
   /**
-   * Get the 99th percentile latency.
+   * The 99th percentile of request latencies.
    *
    * @type {number}
    */
@@ -86,7 +174,7 @@ export class Subscriber extends EventEmitter {
     return this._latencies.percentile(99);
   }
   /**
-   * Get the name of the Subscription.
+   * The full name of the Subscription.
    *
    * @type {string}
    */
@@ -99,7 +187,7 @@ export class Subscriber extends EventEmitter {
     return this._name;
   }
   /**
-   * Acknowledges the provided message.
+   * Acknowledges the supplied message.
    *
    * @param {Message} message The message to acknowledge.
    * @returns {Promise}
@@ -120,12 +208,9 @@ export class Subscriber extends EventEmitter {
     const latency = (Date.now() - startTime) / 1000;
     this._latencies.add(latency);
   }
-  /*!
-   * @TODO look at grpc to figure out if we need to close this._client
-   */
   /**
    * Closes the subscriber. The returned promise will resolve once any pending
-   * acks/modAcks are flushed.
+   * acks/modAcks are finished.
    *
    * @returns {Promise}
    */
@@ -138,20 +223,7 @@ export class Subscriber extends EventEmitter {
     this._stream.destroy();
     this._inventory.clear();
 
-    const flushes: Array<Promise<void>> = [];
-
-    if (this._acks.pending) {
-      flushes.push(this._acks.onFlush());
-    }
-
-    if (this._modAcks.pending) {
-      flushes.push(this._modAcks.onFlush());
-    }
-
-    await Promise.all(flushes);
-
-    const client = await this.getClient();
-    client.close();
+    await this._onflush();
   }
   /**
    * Gets the subscriber client instance.
@@ -159,14 +231,12 @@ export class Subscriber extends EventEmitter {
    * @returns {Promise<object>}
    */
   async getClient(): Promise<ClientStub> {
-    if (!this._client) {
-      const pubsub = this._subscription.pubsub;
-      const opts = {client: 'SubscriberClient'};
-      const [client] = await promisify(pubsub.getClient_).call(pubsub, opts);
-      this._client = client;
-    }
+    const pubsub = this._subscription.pubsub;
+    const [client] = await promisify(pubsub.getClient_).call(pubsub, {
+      client: 'SubscriberClient'
+    });
 
-    return this._client;
+    return client;
   }
   /**
    * Modifies the acknowledge deadline for the provided message.
@@ -186,10 +256,10 @@ export class Subscriber extends EventEmitter {
   }
   /**
    * Modfies the acknowledge deadline for the provided message and then removes
-   * said message from our inventory, allowing it to be re-delivered.
+   * it from our inventory.
    *
    * @param {Message} message The message.
-   * @param {number} [delay=0] Delay to wait before re-delivery.
+   * @param {number} [delay=0] Delay to wait before redelivery.
    * @return {Promise}
    */
   async nack(message: Message, delay = 0): Promise<void> {
@@ -208,7 +278,7 @@ export class Subscriber extends EventEmitter {
     this._stream = new MessageStream(this, streamingOptions);
 
     this._stream.on('error', err => this.emit('error', err))
-        .on('data', (message: Message) => this._onmessage(message));
+        .on('data', (data: PullResponse) => this._ondata(data));
 
     this.isOpen = true;
   }
@@ -224,13 +294,28 @@ export class Subscriber extends EventEmitter {
       this.ackDeadline = options.ackDeadline;
       this._isUserSetDeadline = true;
     }
+
+    // in the event that the user has specified the maxMessages option, we want
+    // to make sure that the maxStreams option isn't higher
+    // it doesn't really make sense to open 5 streams if the user only wants
+    // 1 message at a time.
+    if (options.flowControl) {
+      const {maxMessages = 100} = options.flowControl;
+
+      if (!options.streamingOptions) {
+        options.streamingOptions = {} as MessageStreamOptions;
+      }
+
+      const {maxStreams = 5} = options.streamingOptions;
+      options.streamingOptions.maxStreams = Math.min(maxStreams, maxMessages);
+    }
   }
   /**
    * Callback to be invoked when a new message is available.
    *
    * New messages will be added to the subscribers inventory, which in turn will
-   * automatically extend said messages ack deadline until either:
-   *   a. the user acks/nacks said message
+   * automatically extend the messages ack deadline until either:
+   *   a. the user acks/nacks it
    *   b. the maxExtension option is hit
    *
    * If the message puts us at/over capacity, then we'll pause our message
@@ -238,20 +323,42 @@ export class Subscriber extends EventEmitter {
    *
    * New messages must immediately issue a ModifyAckDeadline request
    * (aka receipt) to confirm with the backend that we did infact receive the
-   * message and its ok to start ticking down to the deadline.
+   * message and its ok to start ticking down on the deadline.
    *
    * @private
    */
-  _onmessage(message: Message): void {
-    this._inventory.add(message);
+  private _ondata(response: PullResponse): void {
+    response.receivedMessages.forEach((data: ReceivedMessage) => {
+      const message = new Message(this, data);
+
+      this._inventory.add(message);
+      this.modAck(message, this.ackDeadline);
+    });
 
     if (this._inventory.isFull()) {
       this._stream.pause();
       this._inventory.onFree().then(() => this._stream.resume());
     }
+  }
 
-    // pubsub requires a "receipt" to confirm message was received
-    this.modAck(message, this.ackDeadline);
-    this.emit('message', message);
+  /**
+   * Returns a promise that will resolve once all pending requests have settled.
+   *
+   * @private
+   *
+   * @returns {Promise}
+   */
+  private async _onflush(): Promise<void> {
+    const promises: Array<Promise<void>> = [];
+
+    if (this._acks.pending) {
+      promises.push(this._acks.onFlush());
+    }
+
+    if (this._modAcks.pending) {
+      promises.push(this._modAcks.onFlush());
+    }
+
+    await Promise.all(promises);
   }
 }
