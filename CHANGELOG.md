@@ -4,6 +4,24 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.22.1
+
+12-06-2018 17:11 PST
+
+### Dependencies
+- chore(deps): update dependency typescript to ~3.2.0 ([#380](https://github.com/googleapis/nodejs-pubsub/pull/380))
+
+### Documentation
+- fix(docs): place doc comment above the last overload ([#393](https://github.com/googleapis/nodejs-pubsub/pull/393))
+- docs: Update documentation for Subscription ([#387](https://github.com/googleapis/nodejs-pubsub/pull/387))
+- docs: Add documentation about defaults for publisher ([#384](https://github.com/googleapis/nodejs-pubsub/pull/384))
+- docs: update readme badges ([#383](https://github.com/googleapis/nodejs-pubsub/pull/383))
+
+### Internal / Testing Changes
+- chore: always nyc report before calling codecov ([#392](https://github.com/googleapis/nodejs-pubsub/pull/392))
+- chore: nyc ignore build/test by default ([#391](https://github.com/googleapis/nodejs-pubsub/pull/391))
+- chore: update license file ([#386](https://github.com/googleapis/nodejs-pubsub/pull/386))
+
 ## v0.22.0
 
 ### Implementation Changes
