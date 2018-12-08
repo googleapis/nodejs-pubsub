@@ -42,9 +42,9 @@ import extend = require('extend');
  * resource. The resource expires if it is not active for a period of ttl. The
  * eeedefinition of "activity" depends on the type of the associated resource.
  * The minimum and maximum allowed values for ttl depend on the type of the
- * associated resource, as well. If ttl is not set, the associated resource never
- * expires. A duration in seconds with up to nine fractional digits, terminated
- * by 's'. Example: "3.5s".
+ * associated resource, as well. If ttl is not set, the associated resource
+ * never expires. A duration in seconds with up to nine fractional digits,
+ * terminated by 's'. Example: "3.5s".
  */
 
 /**
