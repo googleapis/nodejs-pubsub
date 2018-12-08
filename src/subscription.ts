@@ -28,6 +28,26 @@ import {PubSub, Metadata} from '.';
 import extend = require('extend');
 
 /**
+ * @typedef {object} ExpirationPolicy
+ * A policy that specifies the conditions for this subscription's expiration. A
+ * subscription is considered active as long as any connected subscriber is
+ * successfully consuming messages from the subscription or is issuing
+ * operations on the subscription. If expirationPolicy is not set, a default
+ * policy with ttl of 31 days will be used. The minimum allowed value for
+ * expirationPolicy.ttl is 1 day. BETA: This feature is part of a beta release.
+ * This API might be changed in backward-incompatible ways and is not
+ * recommended for production use. It is not subject to any SLA or deprecation
+ * policy.
+ * @property {string} ttl Specifies the "time-to-live" duration for an associated
+ * resource. The resource expires if it is not active for a period of ttl. The
+ * eeedefinition of "activity" depends on the type of the associated resource.
+ * The minimum and maximum allowed values for ttl depend on the type of the
+ * associated resource, as well. If ttl is not set, the associated resource never
+ * expires. A duration in seconds with up to nine fractional digits, terminated
+ * by 's'. Example: "3.5s".
+ */
+
+/**
  * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions#PushConfig
  */
 export interface PushConfig {
