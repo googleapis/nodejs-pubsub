@@ -255,6 +255,8 @@ export class PubSub {
    * @property {boolean} [retainAckedMessages=false] If set, acked messages
    *     are retained in the subscription's backlog for the length of time
    *     specified by `options.messageRetentionDuration`.
+   * @property {ExpirationPolicy} [expirationPolicy] A policy that specifies
+   * the conditions for this subscription's expiration.
    */
   /**
    * Create a subscription to a topic.
