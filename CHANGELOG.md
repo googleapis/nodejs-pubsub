@@ -4,6 +4,18 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.22.2
+
+12-10-2018 09:37 PST
+
+### Implementation Changes
+*TypeScript related changes:*
+- fix(ts): copy gapic code properly ([#399](https://github.com/googleapis/nodejs-pubsub/pull/399))
+
+### Documentation
+- fix(docs): add subscription expiration policy docs ([#400](https://github.com/googleapis/nodejs-pubsub/pull/400))
+- Add migration for v0.20.0 from v0.19.0 ([#398](https://github.com/googleapis/nodejs-pubsub/pull/398))
+
 ## v0.22.1
 
 12-06-2018 17:11 PST
