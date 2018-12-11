@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.22.3
+
+12-10-2018 16:19 PST
+
+### Internal / Testing Changes
+- fix(build): fix Kokoro release script ([#404](https://github.com/googleapis/nodejs-pubsub/pull/404))
+
 ## v0.22.2
 
 12-10-2018 09:37 PST
