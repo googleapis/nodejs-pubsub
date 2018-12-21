@@ -33,10 +33,8 @@
   "scripts": {
     "presystem-test": "npm run compile",
     "system-test": "mocha build/system-test --timeout 600000",
-    "cover": "nyc --reporter=lcov mocha build/test && nyc report",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
-    "test-no-cover": "mocha build/test",
-    "test": "npm run cover",
+    "test": "nyc mocha build/test",
     "lint": "eslint '**/*.js' && gts check",
     "docs": "jsdoc -c .jsdoc.js",
     "fix": "eslint --fix '**/*.js' && gts fix",
