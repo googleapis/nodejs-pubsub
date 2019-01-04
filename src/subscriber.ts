@@ -241,7 +241,7 @@ export class Subscriber extends EventEmitter {
     this._stream.destroy();
     this._inventory.clear();
 
-    await this._onflush();
+    await this._onFlush();
   }
   /**
    * Gets the subscriber client instance.
@@ -298,6 +298,9 @@ export class Subscriber extends EventEmitter {
     this._stream.on('error', err => this.emit('error', err))
         .on('data', (data: PullResponse) => this._ondata(data));
 
+    this._inventory.on('full', () => this._stream.pause())
+        .on('free', () => this._stream.resume());
+
     this.isOpen = true;
   }
   /**
@@ -352,12 +355,6 @@ export class Subscriber extends EventEmitter {
       message.modAck(this.ackDeadline);
       this._inventory.add(message);
     });
-
-    if (this._inventory.isFull()) {
-      this._stream.pause();
-      await this._inventory.onFree();
-      this._stream.resume();
-    }
   }
 
   /**
@@ -367,14 +364,14 @@ export class Subscriber extends EventEmitter {
    *
    * @returns {Promise}
    */
-  private async _onflush(): Promise<void> {
+  private async _onFlush(): Promise<void> {
     const promises: Array<Promise<void>> = [];
 
-    if (this._acks.pending) {
+    if (this._acks.numPendingRequests) {
       promises.push(this._acks.onFlush());
     }
 
-    if (this._modAcks.pending) {
+    if (this._modAcks.numPendingRequests) {
       promises.push(this._modAcks.onFlush());
     }
 

@@ -105,6 +105,7 @@ export class MessageStream extends PassThrough {
   private _keepAliveHandle: NodeJS.Timer;
   private _options!: MessageStreamOptions;
   private _streams: Set<GaxDuplex>;
+  private _streamStatusStates: Map<GaxDuplex, boolean>;
   private _subscriber: Subscriber;
   constructor(sub: Subscriber, options = {} as MessageStreamOptions) {
     const {highWaterMark = 0} = options;
@@ -113,6 +114,7 @@ export class MessageStream extends PassThrough {
     this.destroyed = false;
     this._filling = false;
     this._streams = new Set();
+    this._streamStatusStates = new Map();
     this._subscriber = sub;
     this._keepAliveHandle =
         setInterval(() => this._keepAlive(), KEEP_ALIVE_INTERVAL);
@@ -138,10 +140,11 @@ export class MessageStream extends PassThrough {
     }
 
     this.destroyed = true;
+    this._streamStatusStates.clear();
     clearInterval(this._keepAliveHandle);
 
     this._streams.forEach(stream => {
-      this._remove(stream);
+      this._removeStream(stream);
       stream.cancel();
     });
 
@@ -181,14 +184,14 @@ export class MessageStream extends PassThrough {
    *
    * @param {stream} stream The StreamingPull stream.
    */
-  private _add(stream: GaxDuplex): void {
-    stream.receivedStatus = false;
+  private _addStream(stream: GaxDuplex): void {
+    this._streamStatusStates.set(stream, false);
 
     this._setHighWaterMark(stream);
     this._streams.add(stream);
 
-    stream.on('error', err => this._onerror(stream, err))
-        .once('status', status => this._onstatus(stream, status))
+    stream.on('error', err => this._onError(stream, err))
+        .once('status', status => this._onStatus(stream, status))
         .once('readable', () => this._setHighWaterMark(stream.stream))
         .pipe(this, {end: false});
   }
@@ -202,7 +205,7 @@ export class MessageStream extends PassThrough {
    *
    * @returns {Promise}
    */
-  private async _fill(): Promise<void> {
+  private async _fillStreams(): Promise<void> {
     if (this._filling || !this._needsFill) {
       return;
     }
@@ -215,7 +218,6 @@ export class MessageStream extends PassThrough {
       client = await this._subscriber.getClient();
     } catch (e) {
       this.destroy(e);
-      return;
     }
 
     if (this.destroyed) {
@@ -227,7 +229,7 @@ export class MessageStream extends PassThrough {
 
     for (let i = this._streams.size; i < this._options.maxStreams!; i++) {
       const stream: GaxDuplex = client.streamingPull();
-      this._add(stream);
+      this._addStream(stream);
       stream.write({subscription, streamAckDeadlineSeconds});
     }
 
@@ -257,15 +259,15 @@ export class MessageStream extends PassThrough {
    * @param {Duplex} stream The ended stream.
    * @param {object} status The stream status.
    */
-  private _onend(stream: GaxDuplex, status: StatusObject): void {
-    this._remove(stream);
+  private _onEnd(stream: GaxDuplex, status: StatusObject): void {
+    this._removeStream(stream);
 
     if (this.destroyed) {
       return;
     }
 
     if (RETRY_CODES.includes(status.code)) {
-      this._fill();
+      this._fillStreams();
     } else if (!this._streams.size) {
       this.destroy(new StatusError(status));
     }
@@ -280,8 +282,10 @@ export class MessageStream extends PassThrough {
    * @param {stream} stream The stream that errored.
    * @param {Error} err The error.
    */
-  private _onerror(stream: GaxDuplex, err: Error): void {
-    if (!(err as StatusError).code || !stream.receivedStatus) {
+  private _onError(stream: GaxDuplex, err: Error): void {
+    const receivedStatus = this._streamStatusStates.get(stream);
+
+    if (!(err as StatusError).code || !receivedStatus) {
       this.emit('error', err);
     }
   }
@@ -295,15 +299,15 @@ export class MessageStream extends PassThrough {
    * @param {stream} stream The stream that was closed.
    * @param {object} status The status message stating why it was closed.
    */
-  private _onstatus(stream: GaxDuplex, status: StatusObject): void {
-    stream.receivedStatus = true;
+  private _onStatus(stream: GaxDuplex, status: StatusObject): void {
+    this._streamStatusStates.set(stream, true);
 
     if (this.destroyed) {
       stream.destroy();
     } else if (!isStreamEnded(stream)) {
-      stream.once('end', () => this._onend(stream, status));
+      stream.once('end', () => this._onEnd(stream, status));
     } else {
-      this._onend(stream, status);
+      this._onEnd(stream, status);
     }
   }
   /**
@@ -313,13 +317,14 @@ export class MessageStream extends PassThrough {
    *
    * @param {stream} stream The stream to remove.
    */
-  private _remove(stream: GaxDuplex): void {
+  private _removeStream(stream: GaxDuplex): void {
     if (!this._streams.has(stream)) {
       return;
     }
 
     stream.unpipe(this);
     this._streams.delete(stream);
+    this._streamStatusStates.delete(stream);
   }
   /**
    * In the event that the desired number of streams is set/updated, we'll use
@@ -329,7 +334,7 @@ export class MessageStream extends PassThrough {
    */
   private _resize(): void {
     if (this._needsFill) {
-      this._fill();
+      this._fillStreams();
       return;
     }
 

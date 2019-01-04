@@ -45,7 +45,7 @@ export interface BatchOptions {
  * @param {BatchOptions} options Batching options.
  */
 export abstract class Queue {
-  pending: number;
+  numPendingRequests: number;
   protected _onflush?: defer.DeferredPromise<void>;
   protected _options!: BatchOptions;
   // tslint:disable-next-line:no-any
@@ -56,7 +56,7 @@ export abstract class Queue {
   // tslint:disable-next-line:no-any
   protected abstract _sendBatch(batch: any[]): Promise<void>;
   constructor(sub: Subscriber, options = {} as BatchOptions) {
-    this.pending = 0;
+    this.numPendingRequests = 0;
     this._requests = [];
     this._subscriber = sub;
 
@@ -109,7 +109,7 @@ export abstract class Queue {
       this._subscriber.emit('error', e);
     }
 
-    this.pending -= batchSize;
+    this.numPendingRequests -= batchSize;
 
     if (deferred) {
       deferred.resolve();
@@ -124,7 +124,7 @@ export abstract class Queue {
   protected _onadd(): void {
     const {maxMessages, maxMilliseconds} = this._options;
 
-    this.pending += 1;
+    this.numPendingRequests += 1;
 
     if (this._requests.length >= maxMessages!) {
       this._flush();

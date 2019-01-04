@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import {EventEmitter} from 'events';
 import {freemem} from 'os';
-import * as defer from 'p-defer';
 
 import {Message, Subscriber} from './subscriber';
 
@@ -55,16 +55,17 @@ export interface FlowControlOptions {
  * @param {Subscriber} sub The subscriber to manage leases for.
  * @param {FlowControlOptions} options Flow control options.
  */
-export class LeaseManager {
+export class LeaseManager extends EventEmitter {
   bytes: number;
   private _isLeasing: boolean;
   private _messages: Set<Message>;
-  private _onfree?: defer.DeferredPromise<void>;
   private _options!: FlowControlOptions;
   private _pending: Message[];
   private _subscriber: Subscriber;
   private _timer?: NodeJS.Timer;
   constructor(sub: Subscriber, options = {}) {
+    super();
+
     this.bytes = 0;
     this._isLeasing = false;
     this._messages = new Set();
@@ -93,15 +94,20 @@ export class LeaseManager {
    */
   add(message: Message): void {
     const {allowExcessMessages} = this._options;
+    const wasFull = this.isFull();
 
-    if (allowExcessMessages! || !this.isFull()) {
+    this._messages.add(message);
+    this.bytes += message.length;
+
+    if (allowExcessMessages! || !wasFull) {
       this._dispense(message);
     } else {
       this._pending.push(message);
     }
 
-    this._messages.add(message);
-    this.bytes += message.length;
+    if (!wasFull && this.isFull()) {
+      process.nextTick(() => this.emit('full'));
+    }
 
     if (!this._isLeasing) {
       this._isLeasing = true;
@@ -112,13 +118,14 @@ export class LeaseManager {
    * Removes ALL messages from inventory.
    */
   clear(): void {
+    const wasFull = this.isFull();
+
     this._pending = [];
     this._messages.clear();
     this.bytes = 0;
 
-    if (this._onfree) {
-      this._onfree.resolve();
-      delete this._onfree;
+    if (wasFull) {
+      process.nextTick(() => this.emit('free'));
     }
 
     this._cancelExtension();
@@ -133,18 +140,6 @@ export class LeaseManager {
     return this.size >= maxMessages! || this.bytes >= maxBytes!;
   }
   /**
-   * Returns a promise that will resolve once space has been freed up for new
-   * messages to be introduced.
-   *
-   * @returns {Promise}
-   */
-  onFree(): Promise<void> {
-    if (!this._onfree) {
-      this._onfree = defer();
-    }
-    return this._onfree.promise;
-  }
-  /**
    * Removes a message from the inventory. Stopping the deadline extender if no
    * messages are left over.
    *
@@ -157,12 +152,13 @@ export class LeaseManager {
       return;
     }
 
+    const wasFull = this.isFull();
+
     this._messages.delete(message);
     this.bytes -= message.length;
 
-    if (this._onfree && !this.isFull()) {
-      this._onfree.resolve();
-      delete this._onfree;
+    if (wasFull && !this.isFull()) {
+      process.nextTick(() => this.emit('free'));
     } else if (this._pending.includes(message)) {
       const index = this._pending.indexOf(message);
       this._pending.splice(index, 1);
@@ -170,7 +166,7 @@ export class LeaseManager {
       this._dispense(this._pending.shift()!);
     }
 
-    if (!this.size && this._isLeasing) {
+    if (this.size === 0 && this._isLeasing) {
       this._cancelExtension();
     }
   }
@@ -246,7 +242,7 @@ export class LeaseManager {
    *
    * @returns {number}
    */
-  private _getNextExtensionTimeout(): number {
+  private _getNextExtensionTimeoutMs(): number {
     const jitter = Math.random();
     const deadline = this._subscriber.ackDeadline * 1000;
     const latency = this._subscriber.latency * 1000;
@@ -259,7 +255,7 @@ export class LeaseManager {
    * @private
    */
   private _scheduleExtension(): void {
-    const timeout = this._getNextExtensionTimeout();
+    const timeout = this._getNextExtensionTimeoutMs();
     this._timer = setTimeout(() => this._extendDeadlines(), timeout);
   }
 }

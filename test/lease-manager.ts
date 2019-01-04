@@ -102,6 +102,15 @@ describe('LeaseManager', () => {
   });
 
   describe('add', () => {
+    it('should update the bytes/size values', () => {
+      const message = new FakeMessage();
+
+      leaseManager.add(message);
+
+      assert.strictEqual(leaseManager.size, 1);
+      assert.strictEqual(leaseManager.bytes, message.length);
+    });
+
     it('should dispatch the message if allowExcessMessages is true', done => {
       const fakeMessage = new FakeMessage();
 
@@ -143,13 +152,11 @@ describe('LeaseManager', () => {
       setImmediate(done);
     });
 
-    it('should update the bytes/size values', () => {
-      const message = new FakeMessage();
+    it('should emit the full event if it becomes full', done => {
+      leaseManager.setOptions({allowExcessMessages: false, maxMessages: 1});
 
-      leaseManager.add(message);
-
-      assert.strictEqual(leaseManager.size, 1);
-      assert.strictEqual(leaseManager.bytes, message.length);
+      leaseManager.on('full', done);
+      leaseManager.add(new FakeMessage());
     });
 
     describe('extending deadlines', () => {
@@ -251,11 +258,12 @@ describe('LeaseManager', () => {
       assert.strictEqual(leaseManager.size, 0);
     });
 
-    it('should resolve any pending promises', () => {
-      const promise = leaseManager.onFree();
+    it('should emit the free event if it was full', done => {
+      leaseManager.setOptions({maxMessages: 1});
+      leaseManager.add(new FakeMessage());
+      leaseManager.on('free', done);
 
       setImmediate(() => leaseManager.clear());
-      return promise;
     });
 
     it('should cancel any lease extensions', () => {
@@ -305,30 +313,6 @@ describe('LeaseManager', () => {
     });
   });
 
-  describe('onFree', () => {
-    it('should a promise that resolves when space is available', async () => {
-      const message = new FakeMessage();
-
-      leaseManager.setOptions({maxMessages: 1});
-      leaseManager.add(message);
-
-      const onFree = leaseManager.onFree();
-      assert(onFree instanceof Promise);
-
-      setImmediate(() => leaseManager.remove(message));
-      await onFree;
-
-      assert.strictEqual(leaseManager.size, 0);
-    });
-
-    it('should re-use the same promise internally', () => {
-      const onFree1 = leaseManager.onFree();
-      const onFree2 = leaseManager.onFree();
-
-      assert.strictEqual(onFree1, onFree2);
-    });
-  });
-
   describe('remove', () => {
     it('should noop for unknown messages', () => {
       const message = new FakeMessage();
@@ -350,16 +334,17 @@ describe('LeaseManager', () => {
       assert.strictEqual(leaseManager.bytes, 0);
     });
 
-    it('should resolve any promises if there is free space', async () => {
+    it('should emit the free event if there is free space', done => {
       const message = new FakeMessage();
 
       leaseManager.setOptions({maxMessages: 1});
       leaseManager.add(message);
       setImmediate(() => leaseManager.remove(message));
 
-      await leaseManager.onFree();
-
-      assert.strictEqual(leaseManager.size, 0);
+      leaseManager.on('free', () => {
+        assert.strictEqual(leaseManager.size, 0);
+        done();
+      });
     });
 
     it('should remove a message from the pending state', done => {

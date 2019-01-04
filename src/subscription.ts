@@ -646,9 +646,22 @@ export class Subscription extends EventEmitter {
   /**
    * Opens the Subscription to receive messages. In general this method
    * shouldn't need to be called, unless you wish to receive messages after
-   * calling {@link Subscription#close}.
+   * calling {@link Subscription#close}. Alternatively one could just assign a
+   * new `message` event listener which will also re-open the Subscription.
    *
    * @example
+   * subscription.on('message', message => message.ack());
+   *
+   * // Close the subscription.
+   * subscription.close(err => {
+   *   if (err) {
+   *     // Error handling omitted.
+   *   }
+   *
+   *   The subscription has been closed and messages will no longer received.
+   * });
+   *
+   * // Resume receiving messages.
    * subscription.open();
    */
   open() {
