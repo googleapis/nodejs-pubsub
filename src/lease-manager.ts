@@ -228,7 +228,7 @@ export class LeaseManager {
       const lifespan = (Date.now() - message.received) / 1000;
 
       if (lifespan < this._options.maxExtension!) {
-        this._subscriber.modAck(message, deadline);
+        message.modAck(deadline);
       } else {
         this.remove(message);
       }
