@@ -241,7 +241,7 @@ export class Subscriber extends EventEmitter {
     this._stream.destroy();
     this._inventory.clear();
 
-    await this._onFlush();
+    await this._waitForFlush();
   }
   /**
    * Gets the subscriber client instance.
@@ -364,7 +364,7 @@ export class Subscriber extends EventEmitter {
    *
    * @returns {Promise}
    */
-  private async _onFlush(): Promise<void> {
+  private async _waitForFlush(): Promise<void> {
     const promises: Array<Promise<void>> = [];
 
     if (this._acks.numPendingRequests) {
