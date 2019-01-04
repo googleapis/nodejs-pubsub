@@ -76,6 +76,12 @@ export class LeaseManager {
   /**
    * @type {number}
    */
+  get pending(): number {
+    return this._pending.length;
+  }
+  /**
+   * @type {number}
+   */
   get size(): number {
     return this._messages.size;
   }
@@ -160,7 +166,7 @@ export class LeaseManager {
     } else if (this._pending.includes(message)) {
       const index = this._pending.indexOf(message);
       this._pending.splice(index, 1);
-    } else if (this._pending.length) {
+    } else if (this.pending > 0) {
       this._dispense(this._pending.shift()!);
     }
 

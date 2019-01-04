@@ -63,6 +63,7 @@ export class Message {
   id: string;
   publishTime: Date;
   received: number;
+  private _handled: boolean;
   private _length: number;
   private _subscriber: Subscriber;
   constructor(sub: Subscriber, {ackId, message}: ReceivedMessage) {
@@ -72,6 +73,7 @@ export class Message {
     this.id = message.messageId;
     this.publishTime = Message.formatTimestamp(message.publishTime);
     this.received = Date.now();
+    this._handled = false;
     this._length = this.data.length;
     this._subscriber = sub;
   }
@@ -87,7 +89,20 @@ export class Message {
    * Acknowledges the message.
    */
   ack(): void {
-    this._subscriber.ack(this);
+    if (!this._handled) {
+      this._handled = true;
+      this._subscriber.ack(this);
+    }
+  }
+  /**
+   * Modifies the ack deadline.
+   *
+   * @param {number} deadline The number of seconds to extend the deadline.
+   */
+  modAck(deadline: number): void {
+    if (!this._handled) {
+      this._subscriber.modAck(this, deadline);
+    }
   }
   /**
    * Removes the message from our inventory and schedules it to be redelivered.
@@ -97,7 +112,10 @@ export class Message {
    *     redelivery occurs.
    */
   nack(delay?: number): void {
-    this._subscriber.nack(this, delay);
+    if (!this._handled) {
+      this._handled = true;
+      this._subscriber.nack(this, delay);
+    }
   }
   /**
    * Formats the protobuf timestamp into a JavaScript date.
@@ -327,17 +345,18 @@ export class Subscriber extends EventEmitter {
    *
    * @private
    */
-  private _ondata(response: PullResponse): void {
+  private async _ondata(response: PullResponse): Promise<void> {
     response.receivedMessages.forEach((data: ReceivedMessage) => {
       const message = new Message(this, data);
 
+      message.modAck(this.ackDeadline);
       this._inventory.add(message);
-      this.modAck(message, this.ackDeadline);
     });
 
     if (this._inventory.isFull()) {
       this._stream.pause();
-      this._inventory.onFree().then(() => this._stream.resume());
+      await this._inventory.onFree();
+      this._stream.resume();
     }
   }
 

@@ -55,7 +55,7 @@ export abstract class Queue {
   abstract add(message: Message, deadline?: number): void;
   // tslint:disable-next-line:no-any
   protected abstract _sendBatch(batch: any[]): Promise<void>;
-  constructor(sub: Subscriber, options = {}) {
+  constructor(sub: Subscriber, options = {} as BatchOptions) {
     this.pending = 0;
     this._requests = [];
     this._subscriber = sub;

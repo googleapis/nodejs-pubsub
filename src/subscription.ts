@@ -111,6 +111,10 @@ export interface SubscriptionMetadata extends TSubscriptionMetadata {
  * time. You can fine tune this value by adjusting the
  * `options.flowControl.maxMessages` option.
  *
+ * If your subscription is seeing more re-deliveries than preferable, you might
+ * try increasing your `options.ackDeadline` value or decreasing the
+ * `options.streamingOptions.maxStreams` value.
+ *
  * Subscription objects handle ack management, by automatically extending the
  * ack deadline while the message is being processed, to then issue the ack or
  * nack of such message when the processing is done. **Note:** message
@@ -193,7 +197,7 @@ export class Subscription extends EventEmitter {
   name: string;
   metadata;
   request: Function;
-  _subscriber: Subscriber;
+  private _subscriber: Subscriber;
   constructor(pubsub: PubSub, name: string, options?) {
     super();
 

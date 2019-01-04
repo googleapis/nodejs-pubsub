@@ -78,9 +78,9 @@ export class StatusError extends Error {
 /**
  * @typedef {object} MessageStreamOptions
  * @property {number} [highWaterMark=0] Configures the Buffer level for all
- *     underlying streams. See {@link
- * https://nodejs.org/en/docs/guides/backpressuring-in-streams/} for more
- * details.
+ *     underlying streams. See
+ *     {@link https://nodejs.org/en/docs/guides/backpressuring-in-streams/} for
+ *     more details.
  * @property {number} [maxStreams=5] Number of streaming connections to make.
  * @property {number} [timeout=300000] Timeout for establishing a connection.
  */
@@ -128,22 +128,6 @@ export class MessageStream extends PassThrough {
     return this._streams.size < this._options.maxStreams!;
   }
   /**
-   * Adds a StreamingPull stream to the combined stream.
-   *
-   * @param {stream} stream The StreamingPull stream.
-   */
-  add(stream: GaxDuplex): void {
-    stream.receivedStatus = false;
-
-    this._setHighWaterMark(stream);
-    this._streams.add(stream);
-
-    stream.on('error', err => this._onerror(stream, err))
-        .once('status', status => this._onstatus(stream, status))
-        .once('readable', () => this._setHighWaterMark(stream.stream))
-        .pipe(this, {end: false});
-  }
-  /**
    * Destroys the stream and any underlying streams.
    *
    * @param {error?} err An error to emit, if any.
@@ -157,7 +141,7 @@ export class MessageStream extends PassThrough {
     clearInterval(this._keepAliveHandle);
 
     this._streams.forEach(stream => {
-      this.remove(stream);
+      this._remove(stream);
       stream.cancel();
     });
 
@@ -171,19 +155,6 @@ export class MessageStream extends PassThrough {
       }
       this.emit('close');
     });
-  }
-  /**
-   * Removes a stream from the combined stream.
-   *
-   * @param {stream} stream The stream to remove.
-   */
-  remove(stream: GaxDuplex): void {
-    if (!this._streams.has(stream)) {
-      return;
-    }
-
-    stream.unpipe(this);
-    this._streams.delete(stream);
   }
   /**
    * Sets the streaming options.
@@ -202,6 +173,24 @@ export class MessageStream extends PassThrough {
     if (this._streams.size !== this._options.maxStreams) {
       this._resize();
     }
+  }
+  /**
+   * Adds a StreamingPull stream to the combined stream.
+   *
+   * @private
+   *
+   * @param {stream} stream The StreamingPull stream.
+   */
+  private _add(stream: GaxDuplex): void {
+    stream.receivedStatus = false;
+
+    this._setHighWaterMark(stream);
+    this._streams.add(stream);
+
+    stream.on('error', err => this._onerror(stream, err))
+        .once('status', status => this._onstatus(stream, status))
+        .once('readable', () => this._setHighWaterMark(stream.stream))
+        .pipe(this, {end: false});
   }
   /**
    * Attempts to create and cache the desired number of StreamingPull requests.
@@ -238,7 +227,7 @@ export class MessageStream extends PassThrough {
 
     for (let i = this._streams.size; i < this._options.maxStreams!; i++) {
       const stream: GaxDuplex = client.streamingPull();
-      this.add(stream);
+      this._add(stream);
       stream.write({subscription, streamAckDeadlineSeconds});
     }
 
@@ -269,7 +258,7 @@ export class MessageStream extends PassThrough {
    * @param {object} status The stream status.
    */
   private _onend(stream: GaxDuplex, status: StatusObject): void {
-    this.remove(stream);
+    this._remove(stream);
 
     if (this.destroyed) {
       return;
@@ -316,6 +305,21 @@ export class MessageStream extends PassThrough {
     } else {
       this._onend(stream, status);
     }
+  }
+  /**
+   * Removes a stream from the combined stream.
+   *
+   * @private
+   *
+   * @param {stream} stream The stream to remove.
+   */
+  private _remove(stream: GaxDuplex): void {
+    if (!this._streams.has(stream)) {
+      return;
+    }
+
+    stream.unpipe(this);
+    this._streams.delete(stream);
   }
   /**
    * In the event that the desired number of streams is set/updated, we'll use
