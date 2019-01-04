@@ -19,6 +19,8 @@ import * as defer from 'p-defer';
 
 import {Message, Subscriber} from './subscriber';
 
+type QueuedMessages = Array<[string, number?]>;
+
 /**
  * @typedef {object} BatchOptions
  * @property {object} [callOptions] Request configuration option, outlined
@@ -44,17 +46,14 @@ export interface BatchOptions {
  * @param {Subscriber} sub The subscriber we're queueing requests for.
  * @param {BatchOptions} options Batching options.
  */
-export abstract class Queue {
+export abstract class MessageQueue {
   numPendingRequests: number;
-  protected _onflush?: defer.DeferredPromise<void>;
+  protected _onFlush?: defer.DeferredPromise<void>;
   protected _options!: BatchOptions;
-  // tslint:disable-next-line:no-any
-  protected _requests: any[];
+  protected _requests: QueuedMessages;
   protected _subscriber: Subscriber;
   protected _timer?: NodeJS.Timer;
-  abstract add(message: Message, deadline?: number): void;
-  // tslint:disable-next-line:no-any
-  protected abstract _sendBatch(batch: any[]): Promise<void>;
+  protected abstract _sendBatch(batch: QueuedMessages): Promise<void>;
   constructor(sub: Subscriber, options = {} as BatchOptions) {
     this.numPendingRequests = 0;
     this._requests = [];
@@ -63,15 +62,60 @@ export abstract class Queue {
     this.setOptions(options);
   }
   /**
+   * Adds a message to the queue.
+   *
+   * @param {Message} message The message to add.
+   * @param {number} [deadline] The deadline.
+   */
+  add({ackId}: Message, deadline?: number): void {
+    const {maxMessages, maxMilliseconds} = this._options;
+
+    this._requests.push([ackId, deadline]);
+    this.numPendingRequests += 1;
+
+    if (this._requests.length >= maxMessages!) {
+      this.flush();
+    } else if (!this._timer) {
+      this._timer = setTimeout(() => this.flush(), maxMilliseconds!);
+    }
+  }
+  /**
+   * Sends a batch of messages.
+   */
+  async flush(): Promise<void> {
+    if (this._timer) {
+      clearTimeout(this._timer);
+      delete this._timer;
+    }
+
+    const batch = this._requests;
+    const batchSize = batch.length;
+    const deferred = this._onFlush;
+
+    this._requests = [];
+    this.numPendingRequests -= batchSize;
+    delete this._onFlush;
+
+    try {
+      await this._sendBatch(batch);
+    } catch (e) {
+      this._subscriber.emit('error', e);
+    }
+
+    if (deferred) {
+      deferred.resolve();
+    }
+  }
+  /**
    * Returns a promise that resolves after the next flush occurs.
    *
    * @returns {Promise}
    */
   onFlush(): Promise<void> {
-    if (!this._onflush) {
-      this._onflush = defer();
+    if (!this._onFlush) {
+      this._onFlush = defer();
     }
-    return this._onflush.promise;
+    return this._onFlush.promise;
   }
   /**
    * Set the batching options.
@@ -83,55 +127,6 @@ export abstract class Queue {
 
     this._options = Object.assign(defaults, options);
   }
-  /**
-   * This sends a batch of requests.
-   *
-   * @private
-   *
-   * @returns {Promise}
-   */
-  protected async _flush(): Promise<void> {
-    if (this._timer) {
-      clearTimeout(this._timer);
-      delete this._timer;
-    }
-
-    const batch = this._requests;
-    const batchSize = batch.length;
-    const deferred = this._onflush;
-
-    this._requests = [];
-    delete this._onflush;
-
-    try {
-      await this._sendBatch(batch);
-    } catch (e) {
-      this._subscriber.emit('error', e);
-    }
-
-    this.numPendingRequests -= batchSize;
-
-    if (deferred) {
-      deferred.resolve();
-    }
-  }
-  /**
-   * Increments the number of pending messages and schedules a batch to be
-   * sent if need be.
-   *
-   * @private
-   */
-  protected _onadd(): void {
-    const {maxMessages, maxMilliseconds} = this._options;
-
-    this.numPendingRequests += 1;
-
-    if (this._requests.length >= maxMessages!) {
-      this._flush();
-    } else if (!this._timer) {
-      this._timer = setTimeout(() => this._flush(), maxMilliseconds!);
-    }
-  }
 }
 
 /**
@@ -140,26 +135,18 @@ export abstract class Queue {
  * @private
  * @class
  */
-export class AckQueue extends Queue {
-  /**
-   * Adds a message to the queue.
-   *
-   * @param {Message} message The message to add.
-   */
-  add({ackId}: Message): void {
-    this._requests.push(ackId);
-    this._onadd();
-  }
+export class AckQueue extends MessageQueue {
   /**
    * Sends a batch of ack requests.
    *
    * @private
    *
-   * @param {string[]} ackIds The ackIds to acknowledge.
+   * @param {Array.<[string, number]>} batch Array of ackIds and deadlines.
    * @return {Promise}
    */
-  protected async _sendBatch(ackIds: string[]): Promise<void> {
+  protected async _sendBatch(batch: QueuedMessages): Promise<void> {
     const client = await this._subscriber.getClient();
+    const ackIds = batch.map(([ackId]) => ackId);
     const reqOpts = {subscription: this._subscriber.name, ackIds};
 
     await client.acknowledge(reqOpts, this._options.callOptions!);
@@ -172,41 +159,33 @@ export class AckQueue extends Queue {
  * @private
  * @class
  */
-export class ModAckQueue extends Queue {
-  /**
-   * Adds a message to the queue.
-   *
-   * @param {Message} message The message to add.
-   * @param {number} deadline The deadline.
-   */
-  add({ackId}: Message, deadline: number): void {
-    this._requests.push([ackId, deadline]);
-    this._onadd();
-  }
+export class ModAckQueue extends MessageQueue {
   /**
    * Sends a batch of modAck requests. Each deadline requires its own request,
    * so we have to group all the ackIds by deadline and send multiple requests.
    *
    * @private
    *
-   * @param {Array.<[string, number]>} modAcks Array of ackIds and deadlines.
+   * @param {Array.<[string, number]>} batch Array of ackIds and deadlines.
    * @return {Promise}
    */
-  protected async _sendBatch(modAcks: Array<[string, number]>): Promise<void> {
+  protected async _sendBatch(batch: QueuedMessages): Promise<void> {
     const client = await this._subscriber.getClient();
     const subscription = this._subscriber.name;
-    const modAckTable = modAcks.reduce((table, [ackId, deadline]) => {
-      if (!table[deadline]) {
-        table[deadline] = [];
+    const modAckTable = batch.reduce((table, [ackId, deadline]) => {
+      if (!table[deadline!]) {
+        table[deadline!] = [];
       }
 
-      table[deadline].push(ackId);
+      table[deadline!].push(ackId);
       return table;
     }, {});
 
-    const modAckRequests = Object.keys(modAckTable).map(ackDeadlineSeconds => {
-      const ackIds = modAckTable[ackDeadlineSeconds];
+    const modAckRequests = Object.keys(modAckTable).map(deadline => {
+      const ackIds = modAckTable[deadline];
+      const ackDeadlineSeconds = Number(deadline);
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};
+
       return client.modifyAckDeadline(reqOpts, this._options.callOptions!);
     });
 
