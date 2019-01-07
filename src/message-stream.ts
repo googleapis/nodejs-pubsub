@@ -93,7 +93,7 @@ export class StatusError extends Error {
  * @property {number} [timeout=300000] Timeout for establishing a connection.
  */
 export interface MessageStreamOptions {
-  highWaterMark: number;
+  highWaterMark?: number;
   maxStreams?: number;
   timeout?: number;
 }
@@ -199,7 +199,7 @@ export class MessageStream extends PassThrough {
     const subscription = this._subscriber.name;
     const streamAckDeadlineSeconds = this._subscriber.ackDeadline;
 
-    for (let i = this._streams.size; i < this._options.maxStreams; i++) {
+    for (let i = this._streams.size; i < this._options.maxStreams!; i++) {
       const stream: GaxDuplex = client.streamingPull();
       this._addStream(stream);
       stream.write({subscription, streamAckDeadlineSeconds});
@@ -307,8 +307,8 @@ export class MessageStream extends PassThrough {
    *     highWaterMarks for.
    */
   private _setHighWaterMark(stream: GrpcDuplex): void {
-    stream._readableState.highWaterMark = this._options.highWaterMark;
-    stream._writableState.highWaterMark = this._options.highWaterMark;
+    stream._readableState.highWaterMark = this._options.highWaterMark!;
+    stream._writableState.highWaterMark = this._options.highWaterMark!;
   }
   /**
    * Promisified version of gRPCs Client#waitForReady function.
@@ -319,7 +319,7 @@ export class MessageStream extends PassThrough {
    * @returns {Promise}
    */
   private _waitForClientReady(client: ClientStub): Promise<void> {
-    const deadline = Date.now() + this._options.timeout;
+    const deadline = Date.now() + this._options.timeout!;
     return promisify(client.waitForReady).call(client, deadline);
   }
 }
