@@ -42,6 +42,15 @@ const RETRY_CODES: number[] = [
   15,  // dataloss
 ];
 
+/*!
+ * default stream options
+ */
+const DEFAULT_OPTIONS = {
+  highWaterMark: 0,
+  maxStreams: 5,
+  timeout: 300000,
+};
+
 interface StreamState {
   highWaterMark: number;
 }
@@ -50,12 +59,11 @@ interface GrpcDuplex extends Duplex {
   _writableState: StreamState;
   _readableState: StreamState;
   cancel(): void;
-  destroy(): void;
 }
 
 interface GaxDuplex extends GrpcDuplex {
-  receivedStatus: boolean;
   stream: GrpcDuplex;
+  destroy(): void;
 }
 
 /**
@@ -101,33 +109,24 @@ export interface MessageStreamOptions {
  */
 export class MessageStream extends PassThrough {
   destroyed: boolean;
-  private _filling: boolean;
   private _keepAliveHandle: NodeJS.Timer;
-  private _options!: MessageStreamOptions;
-  private _streams: Set<GaxDuplex>;
-  private _streamStatusStates: Map<GaxDuplex, boolean>;
+  private _options: MessageStreamOptions;
+  private _streams: Map<GaxDuplex, boolean>;
   private _subscriber: Subscriber;
   constructor(sub: Subscriber, options = {} as MessageStreamOptions) {
     const {highWaterMark = 0} = options;
     super({objectMode: true, highWaterMark});
 
     this.destroyed = false;
-    this._filling = false;
-    this._streams = new Set();
-    this._streamStatusStates = new Map();
+    this._streams = new Map();
     this._subscriber = sub;
+    this._options = Object.assign({}, DEFAULT_OPTIONS, options);
+
+    this._fillStreamPool();
+
     this._keepAliveHandle =
         setInterval(() => this._keepAlive(), KEEP_ALIVE_INTERVAL);
-
     this._keepAliveHandle.unref();
-    this.setOptions(options);
-  }
-  /**
-   * @private
-   * @type {boolean}
-   */
-  private get _needsFill(): boolean {
-    return this._streams.size < this._options.maxStreams!;
   }
   /**
    * Destroys the stream and any underlying streams.
@@ -140,13 +139,12 @@ export class MessageStream extends PassThrough {
     }
 
     this.destroyed = true;
-    this._streamStatusStates.clear();
     clearInterval(this._keepAliveHandle);
 
-    this._streams.forEach(stream => {
+    for (const stream of this._streams.keys()) {
       this._removeStream(stream);
       stream.cancel();
-    });
+    }
 
     if (super.destroy) {
       return super.destroy(err);
@@ -160,24 +158,6 @@ export class MessageStream extends PassThrough {
     });
   }
   /**
-   * Sets the streaming options.
-   *
-   * @param {MessageStreamOptions} options The streaming options.
-   */
-  setOptions(options: MessageStreamOptions): void {
-    const defaults: MessageStreamOptions = {
-      highWaterMark: 0,
-      maxStreams: 5,
-      timeout: 300000
-    };
-
-    this._options = Object.assign(defaults, options);
-
-    if (this._streams.size !== this._options.maxStreams) {
-      this._resize();
-    }
-  }
-  /**
    * Adds a StreamingPull stream to the combined stream.
    *
    * @private
@@ -185,10 +165,8 @@ export class MessageStream extends PassThrough {
    * @param {stream} stream The StreamingPull stream.
    */
   private _addStream(stream: GaxDuplex): void {
-    this._streamStatusStates.set(stream, false);
-
     this._setHighWaterMark(stream);
-    this._streams.add(stream);
+    this._streams.set(stream, false);
 
     stream.on('error', err => this._onError(stream, err))
         .once('status', status => this._onStatus(stream, status))
@@ -205,13 +183,7 @@ export class MessageStream extends PassThrough {
    *
    * @returns {Promise}
    */
-  private async _fillStreams(): Promise<void> {
-    if (this._filling || !this._needsFill) {
-      return;
-    }
-
-    this._filling = true;
-
+  private async _fillStreamPool(): Promise<void> {
     let client;
 
     try {
@@ -227,13 +199,11 @@ export class MessageStream extends PassThrough {
     const subscription = this._subscriber.name;
     const streamAckDeadlineSeconds = this._subscriber.ackDeadline;
 
-    for (let i = this._streams.size; i < this._options.maxStreams!; i++) {
+    for (let i = this._streams.size; i < this._options.maxStreams; i++) {
       const stream: GaxDuplex = client.streamingPull();
       this._addStream(stream);
       stream.write({subscription, streamAckDeadlineSeconds});
     }
-
-    this._filling = false;
 
     try {
       await this._waitForClientReady(client);
@@ -248,7 +218,9 @@ export class MessageStream extends PassThrough {
    * @private
    */
   private _keepAlive(): void {
-    this._streams.forEach(stream => stream.write({}));
+    for (const stream of this._streams.keys()) {
+      stream.write({});
+    }
   }
   /**
    * Once the stream has nothing left to read, we'll remove it and attempt to
@@ -262,12 +234,8 @@ export class MessageStream extends PassThrough {
   private _onEnd(stream: GaxDuplex, status: StatusObject): void {
     this._removeStream(stream);
 
-    if (this.destroyed) {
-      return;
-    }
-
     if (RETRY_CODES.includes(status.code)) {
-      this._fillStreams();
+      this._fillStreamPool();
     } else if (!this._streams.size) {
       this.destroy(new StatusError(status));
     }
@@ -283,9 +251,10 @@ export class MessageStream extends PassThrough {
    * @param {Error} err The error.
    */
   private _onError(stream: GaxDuplex, err: Error): void {
-    const receivedStatus = this._streamStatusStates.get(stream);
+    const code = (err as StatusError).code;
+    const receivedStatus = this._streams.get(stream) !== false;
 
-    if (!(err as StatusError).code || !receivedStatus) {
+    if (typeof code !== 'number' || !receivedStatus) {
       this.emit('error', err);
     }
   }
@@ -300,11 +269,14 @@ export class MessageStream extends PassThrough {
    * @param {object} status The status message stating why it was closed.
    */
   private _onStatus(stream: GaxDuplex, status: StatusObject): void {
-    this._streamStatusStates.set(stream, true);
-
     if (this.destroyed) {
       stream.destroy();
-    } else if (!isStreamEnded(stream)) {
+      return;
+    }
+
+    this._streams.set(stream, true);
+
+    if (!isStreamEnded(stream)) {
       stream.once('end', () => this._onEnd(stream, status));
     } else {
       this._onEnd(stream, status);
@@ -318,30 +290,8 @@ export class MessageStream extends PassThrough {
    * @param {stream} stream The stream to remove.
    */
   private _removeStream(stream: GaxDuplex): void {
-    if (!this._streams.has(stream)) {
-      return;
-    }
-
     stream.unpipe(this);
     this._streams.delete(stream);
-    this._streamStatusStates.delete(stream);
-  }
-  /**
-   * In the event that the desired number of streams is set/updated, we'll use
-   * this method to determine if we need to create or close streams.
-   *
-   * @private
-   */
-  private _resize(): void {
-    if (this._needsFill) {
-      this._fillStreams();
-      return;
-    }
-
-    for (let i = this._streams.size; i > this._options.maxStreams!; i--) {
-      const stream: GaxDuplex = this._streams.values().next().value;
-      stream.cancel();
-    }
   }
   /**
    * Neither gRPC or gax allow for the highWaterMark option to be specified.
@@ -353,12 +303,12 @@ export class MessageStream extends PassThrough {
    *
    * @private
    *
-   * @param {Duplex} stream The grpc/gax (duplex) stream to adjust the
+   * @param {Duplex} stream The duplex stream to adjust the
    *     highWaterMarks for.
    */
   private _setHighWaterMark(stream: GrpcDuplex): void {
-    stream._readableState.highWaterMark = this.readableHighWaterMark;
-    stream._writableState.highWaterMark = this.writableHighWaterMark;
+    stream._readableState.highWaterMark = this._options.highWaterMark;
+    stream._writableState.highWaterMark = this._options.highWaterMark;
   }
   /**
    * Promisified version of gRPCs Client#waitForReady function.
@@ -369,7 +319,7 @@ export class MessageStream extends PassThrough {
    * @returns {Promise}
    */
   private _waitForClientReady(client: ClientStub): Promise<void> {
-    const deadline = Date.now() + this._options.timeout!;
+    const deadline = Date.now() + this._options.timeout;
     return promisify(client.waitForReady).call(client, deadline);
   }
 }
