@@ -141,7 +141,7 @@ export class AckQueue extends MessageQueue {
    *
    * @private
    *
-   * @param {Array.<[string, number]>} batch Array of ackIds and deadlines.
+   * @param {Array.<Array.<string|number>>} batch Array of ackIds and deadlines.
    * @return {Promise}
    */
   protected async _sendBatch(batch: QueuedMessages): Promise<void> {
@@ -166,7 +166,7 @@ export class ModAckQueue extends MessageQueue {
    *
    * @private
    *
-   * @param {Array.<[string, number]>} batch Array of ackIds and deadlines.
+   * @param {Array.<Array.<string|number>>} batch Array of ackIds and deadlines.
    * @return {Promise}
    */
   protected async _sendBatch(batch: QueuedMessages): Promise<void> {
