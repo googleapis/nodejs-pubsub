@@ -1,5 +1,5 @@
-/**
- * Copyright 2018 Google Inc. All Rights Reserved.
+/*!
+ * Copyright 2019 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,1497 +15,690 @@
  */
 
 import * as assert from 'assert';
-const delay = require('delay');
 import {EventEmitter} from 'events';
-import * as is from 'is';
 import * as proxyquire from 'proxyquire';
-import * as util from '../src/util';
-import * as pfy from '@google-cloud/promisify';
+import * as sinon from 'sinon';
+import {PassThrough} from 'stream';
+import * as uuid from 'uuid';
 
-const fakeUtil = Object.assign({}, util);
+import {HistogramOptions} from '../src/histogram';
+import {FlowControlOptions} from '../src/lease-manager';
+import {BatchOptions} from '../src/message-queues';
+import {MessageStreamOptions} from '../src/message-stream';
+import * as s from '../src/subscriber';
 
-let promisifyOverride;
-function fakePromisify() {
-  return (promisifyOverride || pfy.promisify).apply(null, arguments);
+const stubs = new Map();
+
+class FakeClient {}
+
+interface ClientOptions {
+  client: string;
 }
 
-let promisified = false;
-function fakePromisifyAll(klass) {
-  if (klass.name === 'Subscriber') {
-    promisified = true;
+interface ClientCallback {
+  (error: null|Error, client: FakeClient): void;
+}
+
+class FakePubSub {
+  client = new FakeClient();
+  getClient_(options: ClientOptions, callback: ClientCallback): void {
+    callback(null, this.client);
   }
 }
 
-const FAKE_FREE_MEM = 168222720;
-const fakeOs = {
-  freemem() {
-    return FAKE_FREE_MEM;
-  },
-};
-
-class FakeConnectionPool extends EventEmitter {
-  calledWith_: IArguments;
-  constructor() {
-    super();
-    this.calledWith_ = arguments;
-  }
+class FakeSubscription {
+  name = uuid.v4();
+  projectId = uuid.v4();
+  pubsub = new FakePubSub();
 }
 
 class FakeHistogram {
-  calledWith_: IArguments;
-  constructor() {
-    this.calledWith_ = arguments;
+  options?: HistogramOptions;
+  constructor(options?: HistogramOptions) {
+    this.options = options;
+
+    const key = options ? 'histogram' : 'latencies';
+    stubs.set(key, this);
+  }
+  add(seconds: number): void {}
+  percentile(percentile: number): number {
+    return 10;
   }
 }
-// tslint:disable-next-line no-any
-let delayOverride: any = null;
 
-function fakeDelay(timeout) {
-  return (delayOverride || delay)(timeout);
+class FakeLeaseManager extends EventEmitter {
+  options: FlowControlOptions;
+  constructor(sub: s.Subscriber, options: FlowControlOptions) {
+    super();
+    this.options = options;
+    stubs.set('inventory', this);
+  }
+  add(message: s.Message): void {}
+  clear(): void {}
+  remove(message: s.Message): void {}
 }
 
-describe('Subscriber', () => {
-  // tslint:disable-next-line variable-name
-  let Subscriber;
-  let subscriber;
+class FakeQueue {
+  options: BatchOptions;
+  numPendingRequests = 0;
+  constructor(sub: s.Subscriber, options: BatchOptions) {
+    this.options = options;
+  }
+  add(message: s.Message, deadline?: number): void {}
+  async flush(): Promise<void> {}
+  async onFlush(): Promise<void> {}
+}
 
-  const SUB_NAME = 'fake-sub';
+class FakeAckQueue extends FakeQueue {
+  constructor(sub: s.Subscriber, options: BatchOptions) {
+    super(sub, options);
+    stubs.set('ackQueue', this);
+  }
+}
+
+class FakeModAckQueue extends FakeQueue {
+  constructor(sub: s.Subscriber, options: BatchOptions) {
+    super(sub, options);
+    stubs.set('modAckQueue', this);
+  }
+}
+
+class FakeMessageStream extends PassThrough {
+  options: MessageStreamOptions;
+  constructor(sub: s.Subscriber, options: MessageStreamOptions) {
+    super({objectMode: true});
+    this.options = options;
+    stubs.set('messageStream', this);
+  }
+  destroy(error?: Error): void {}
+}
+
+const RECEIVED_MESSAGE = {
+  ackId: uuid.v4(),
+  message: {
+    attributes: {},
+    data: Buffer.from('Hello, world!'),
+    messageId: uuid.v4(),
+    publishTime: {seconds: 12, nanos: 32}
+  }
+};
+
+describe('Subscriber', () => {
+  const sandbox = sinon.createSandbox();
+
+  const fakeProjectify = {replaceProjectIdToken: sandbox.stub()};
+
+  let subscription;
+
+  // tslint:disable-next-line variable-name
+  let Message: typeof s.Message;
+  let message: s.Message;
+  // tslint:disable-next-line variable-name
+  let Subscriber: typeof s.Subscriber;
+  let subscriber: s.Subscriber;
 
   before(() => {
-    Subscriber = proxyquire('../src/subscriber.js', {
-                   '../src/util': fakeUtil,
-                   '@google-cloud/promisify': {
-                     promisify: fakePromisify,
-                     promisifyAll: fakePromisifyAll,
-                   },
-                   delay: fakeDelay,
-                   os: fakeOs,
-                   './connection-pool.js': {ConnectionPool: FakeConnectionPool},
-                   './histogram.js': {Histogram: FakeHistogram},
-                 }).Subscriber;
+    const s = proxyquire('../src/subscriber.js', {
+      '@google-cloud/projectify': fakeProjectify,
+      './histogram': {Histogram: FakeHistogram},
+      './lease-manager': {LeaseManager: FakeLeaseManager},
+      './message-queues':
+          {AckQueue: FakeAckQueue, ModAckQueue: FakeModAckQueue},
+      './message-stream': {MessageStream: FakeMessageStream},
+    });
+
+    Message = s.Message;
+    Subscriber = s.Subscriber;
   });
 
   beforeEach(() => {
-    subscriber = new Subscriber({});
-    subscriber.name = SUB_NAME;
+    subscription = new FakeSubscription();
+    subscriber = new Subscriber(subscription);
+    message = new Message(subscriber, RECEIVED_MESSAGE);
+    subscriber.open();
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+    subscriber.close();
   });
 
   describe('initialization', () => {
-    it('should promisify all the things', () => {
-      assert(promisified);
+    it('should default ackDeadline to 10', () => {
+      assert.strictEqual(subscriber.ackDeadline, 10);
     });
 
-    it('should create a histogram instance', () => {
-      assert(subscriber.histogram instanceof FakeHistogram);
+    it('should set isOpen to false', () => {
+      const s = new Subscriber(subscription);
+      assert.strictEqual(s.isOpen, false);
     });
 
-    it('should create a latency histogram', () => {
-      assert(subscriber.latency_ instanceof FakeHistogram);
-    });
+    it('should set any options passed in', () => {
+      const stub = sandbox.stub(Subscriber.prototype, 'setOptions');
+      const fakeOptions = {};
+      const sub = new Subscriber(subscription, fakeOptions);
 
-    it('should honor configuration settings', () => {
-      const options = {
-        maxConnections: 2,
-        flowControl: {
-          maxBytes: 5,
-          maxMessages: 10,
-        },
-        batching: {
-          maxMilliseconds: 10,
-        },
-      };
-
-      const subscriber = new Subscriber(options);
-
-      assert.strictEqual(subscriber.maxConnections, options.maxConnections);
-
-      assert.deepStrictEqual(subscriber.flowControl, {
-        maxBytes: options.flowControl.maxBytes,
-        maxMessages: options.flowControl.maxMessages,
-      });
-
-      assert.strictEqual(subscriber.batching.maxMilliseconds, 10);
-    });
-
-    it('should set sensible defaults', () => {
-      assert.strictEqual(subscriber.ackDeadline, 10000);
-      assert.strictEqual(subscriber.maxConnections, 5);
-      assert.strictEqual(subscriber.userClosed_, false);
-      assert.strictEqual(subscriber.messageListeners, 0);
-      assert.strictEqual(subscriber.isOpen, false);
-      assert.strictEqual(subscriber.writeToStreams_, false);
-
-      assert.deepStrictEqual(subscriber.flowControl, {
-        maxBytes: FAKE_FREE_MEM * 0.2,
-        maxMessages: 100,
-      });
-
-      assert.strictEqual(subscriber.batching.maxMilliseconds, 100);
-    });
-
-    it('should create an inventory object', () => {
-      assert(is.object(subscriber.inventory_));
-      assert(is.array(subscriber.inventory_.lease));
-      assert(is.array(subscriber.inventory_.ack));
-      assert(is.array(subscriber.inventory_.nack));
-      assert.strictEqual(subscriber.inventory_.bytes, 0);
-    });
-
-    it('should inherit from EventEmitter', () => {
-      assert(subscriber instanceof EventEmitter);
-    });
-
-    it('should listen for events', () => {
-      let called = false;
-      const listenForEvents = Subscriber.prototype.listenForEvents_;
-
-      Subscriber.prototype.listenForEvents_ = () => {
-        Subscriber.prototype.listenForEvents_ = listenForEvents;
-        called = true;
-      };
-
-      // tslint:disable-next-line no-unused-expression
-      new Subscriber({});
-      assert(called);
+      const [options] = stub.lastCall.args;
+      assert.strictEqual(options, fakeOptions);
     });
   });
 
-  describe('ack_', () => {
-    const MESSAGE = {
-      ackId: 'abc',
-      received: 12345,
-      connectionId: 'def',
-    };
+  describe('latency', () => {
+    it('should get the 99th percentile latency', () => {
+      const latencies: FakeHistogram = stubs.get('latencies');
+      const fakeLatency = 234;
 
-    beforeEach(() => {
-      subscriber.breakLease_ = fakeUtil.noop;
-      subscriber.histogram.add = fakeUtil.noop;
-      subscriber.acknowledge_ = () => {
-        return Promise.resolve();
-      };
-      subscriber.setFlushTimeout_ = () => {
-        return Promise.resolve();
-      };
+      sandbox.stub(latencies, 'percentile').withArgs(99).returns(fakeLatency);
+
+      assert.strictEqual(subscriber.latency, fakeLatency);
+    });
+  });
+
+  describe('name', () => {
+    it('should replace the project id token', () => {
+      const fakeName = 'abcd';
+
+      fakeProjectify.replaceProjectIdToken
+          .withArgs(subscription.name, subscription.projectId)
+          .returns(fakeName);
+
+      const name = subscriber.name;
+      assert.strictEqual(name, fakeName);
     });
 
-    it('should add the time it took to ack to the histogram', done => {
-      const fakeNow = 12381832;
-      const now = global.Date.now;
+    it('should cache the name', () => {
+      const fakeName = 'abcd';
+      const stub = fakeProjectify.replaceProjectIdToken
+                       .withArgs(subscription.name, subscription.projectId)
+                       .returns(fakeName);
 
-      global.Date.now = () => {
-        global.Date.now = now;
-        return fakeNow;
-      };
+      const name = subscriber.name;
+      assert.strictEqual(name, fakeName);
 
-      subscriber.histogram.add = time => {
-        assert.strictEqual(time, fakeNow - MESSAGE.received);
+      const name2 = subscriber.name;
+      assert.strictEqual(name, name2);
+      assert.strictEqual(stub.callCount, 1);
+    });
+  });
+
+  describe('ack', () => {
+    it('should update the ack histogram/deadline', () => {
+      const histogram: FakeHistogram = stubs.get('histogram');
+      const now = Date.now();
+
+      message.received = 23842328;
+      sandbox.stub(global.Date, 'now').returns(now);
+
+      const expectedSeconds = (now - message.received) / 1000;
+      const addStub = sandbox.stub(histogram, 'add').withArgs(expectedSeconds);
+
+      const fakeDeadline = 312123;
+
+      sandbox.stub(histogram, 'percentile').withArgs(99).returns(fakeDeadline);
+
+      subscriber.ack(message);
+
+      assert.strictEqual(addStub.callCount, 1);
+      assert.strictEqual(subscriber.ackDeadline, fakeDeadline);
+    });
+
+    it('should not update the deadline if user specified', () => {
+      const histogram: FakeHistogram = stubs.get('histogram');
+      const ackDeadline = 543;
+
+      sandbox.stub(histogram, 'add').throws();
+      sandbox.stub(histogram, 'percentile').throws();
+
+      subscriber.setOptions({ackDeadline});
+      subscriber.ack(message);
+
+      assert.strictEqual(subscriber.ackDeadline, ackDeadline);
+    });
+
+    it('should add the message to the ack queue', () => {
+      const ackQueue: FakeAckQueue = stubs.get('ackQueue');
+      const stub = sandbox.stub(ackQueue, 'add').withArgs(message);
+
+      subscriber.ack(message);
+
+      assert.strictEqual(stub.callCount, 1);
+    });
+
+    it('should remove the message from inv. after queue flushes', done => {
+      const ackQueue: FakeAckQueue = stubs.get('ackQueue');
+      const inventory: FakeLeaseManager = stubs.get('inventory');
+
+      const onFlushStub = sandbox.stub(ackQueue, 'onFlush').resolves();
+
+      sandbox.stub(inventory, 'remove').withArgs(message).callsFake(() => {
+        assert.strictEqual(onFlushStub.callCount, 1);
         done();
-      };
+      });
 
-      subscriber.ack_(MESSAGE);
+      subscriber.ack(message);
     });
 
-    describe('with connection', () => {
-      beforeEach(() => {
-        subscriber.isConnected_ = () => {
-          return true;
-        };
+    it('should update the latency histogram', done => {
+      const latencies: FakeHistogram = stubs.get('latencies');
 
-        subscriber.writeToStreams_ = true;
-      });
+      const start = 10000;
+      const end = 12000;
+      const expectedLatency = (end - start) / 1000;
 
-      it('should acknowledge if there is a connection', done => {
-        subscriber.acknowledge_ = (ackId, connectionId) => {
-          assert.strictEqual(ackId, MESSAGE.ackId);
-          assert.strictEqual(connectionId, MESSAGE.connectionId);
-          setImmediate(done);
-          return Promise.resolve();
-        };
+      const nowStub = sandbox.stub(global.Date, 'now');
 
-        subscriber.ack_(MESSAGE);
-      });
+      nowStub.onCall(0).returns(start);
+      nowStub.onCall(1).returns(end);
 
-      it('should break the lease on the message', done => {
-        subscriber.breakLease_ = message => {
-          assert.strictEqual(message, MESSAGE);
-          done();
-        };
+      sandbox.stub(latencies, 'add')
+          .withArgs(expectedLatency)
+          .callsFake(() => done());
 
-        subscriber.ack_(MESSAGE);
-      });
-    });
-
-    describe('without connection', () => {
-      beforeEach(() => {
-        subscriber.isConnected_ = () => {
-          return false;
-        };
-      });
-
-      it('should queue the message to be acked if no connection', done => {
-        subscriber.setFlushTimeout_ = () => {
-          assert(subscriber.inventory_.ack.indexOf(MESSAGE.ackId) > -1);
-          done();
-        };
-
-        subscriber.ack_(MESSAGE);
-      });
-
-      it('should break the lease on the message', done => {
-        subscriber.breakLease_ = message => {
-          assert.strictEqual(message, MESSAGE);
-          done();
-        };
-
-        subscriber.ack_(MESSAGE);
-      });
-    });
-  });
-
-  describe('acknowledge_', () => {
-    const fakeAckIds = ['a', 'b', 'c'];
-
-    const batchSize = 3000;
-    const tooManyFakeAckIds =
-        new Array(batchSize * 2.5).fill('a').map((x, i) => {
-          return x + i;
-        });
-    const expectedCalls = Math.ceil(tooManyFakeAckIds.length / batchSize);
-
-    describe('without streaming connection', () => {
-      beforeEach(() => {
-        subscriber.isConnected_ = () => {
-          return false;
-        };
-      });
-
-      it('should make the correct request', done => {
-        const fakePromisified = {
-          call(context, config) {
-            assert.strictEqual(context, subscriber);
-            assert.strictEqual(config.client, 'SubscriberClient');
-            assert.strictEqual(config.method, 'acknowledge');
-            assert.strictEqual(config.reqOpts.subscription, subscriber.name);
-            assert.deepStrictEqual(config.reqOpts.ackIds, fakeAckIds);
-
-            setImmediate(done);
-
-            return Promise.resolve();
-          },
-        };
-
-        promisifyOverride = fn => {
-          assert.strictEqual(fn, subscriber.request);
-          return fakePromisified;
-        };
-
-        subscriber.on('error', done);
-        subscriber.acknowledge_(fakeAckIds);
-      });
-
-      it('should batch requests if there are too many ackIds', done => {
-        let receivedCalls = 0;
-
-        const fakePromisified = {
-          call(context, config) {
-            const offset = receivedCalls * batchSize;
-            const expectedAckIds =
-                tooManyFakeAckIds.slice(offset, offset + batchSize);
-
-            assert.deepStrictEqual(config.reqOpts.ackIds, expectedAckIds);
-
-            receivedCalls += 1;
-            if (receivedCalls === expectedCalls) {
-              setImmediate(done);
-            }
-
-            return Promise.resolve();
-          },
-        };
-
-        promisifyOverride = () => {
-          return fakePromisified;
-        };
-
-        subscriber.on('error', done);
-        subscriber.acknowledge_(tooManyFakeAckIds);
-      });
-
-      it('should emit any request errors', done => {
-        const fakeError = new Error('err');
-        const fakePromisified = {
-          call() {
-            return Promise.reject(fakeError);
-          },
-        };
-
-        promisifyOverride = () => {
-          return fakePromisified;
-        };
-
-        subscriber.on('error', err => {
-          assert.strictEqual(err, fakeError);
-          done();
-        });
-
-        subscriber.acknowledge_(fakeAckIds);
-      });
-    });
-
-    describe('with streaming connection', () => {
-      beforeEach(() => {
-        subscriber.isConnected_ = () => {
-          return true;
-        };
-
-        subscriber.writeToStreams_ = true;
-      });
-
-      it('should send the correct request', done => {
-        const fakeConnectionId = 'abc';
-
-        subscriber.writeTo_ = (connectionId, data) => {
-          assert.strictEqual(connectionId, fakeConnectionId);
-          assert.deepStrictEqual(data, {ackIds: fakeAckIds});
-          done();
-        };
-
-        subscriber.acknowledge_(fakeAckIds, fakeConnectionId);
-      });
-
-      it('should batch requests if there are too many ackIds', done => {
-        let receivedCalls = 0;
-        const fakeConnectionId = 'abc';
-
-        subscriber.writeTo_ = (connectionId, data) => {
-          assert.strictEqual(connectionId, fakeConnectionId);
-
-          const offset = receivedCalls * batchSize;
-          const expectedAckIds =
-              tooManyFakeAckIds.slice(offset, offset + batchSize);
-
-          assert.deepStrictEqual(data, {ackIds: expectedAckIds});
-
-          if (++receivedCalls === expectedCalls) {
-            done();
-          }
-        };
-
-        subscriber.acknowledge_(tooManyFakeAckIds, fakeConnectionId);
-      });
-
-      it('should emit an error when unable to get a conn', done => {
-        const error = new Error('err');
-
-        subscriber.writeTo_ = () => {
-          return Promise.reject(error);
-        };
-
-        subscriber.on('error', err => {
-          assert.strictEqual(err, error);
-          done();
-        });
-
-        subscriber.acknowledge_(fakeAckIds);
-      });
-    });
-  });
-
-  describe('breakLease_', () => {
-    const MESSAGE = {
-      ackId: 'abc',
-      data: Buffer.from('hello'),
-      length: 5,
-    };
-
-    beforeEach(() => {
-      subscriber.inventory_.lease.push(MESSAGE.ackId);
-      subscriber.inventory_.bytes += MESSAGE.length;
-    });
-
-    it('should remove the message from the lease array', () => {
-      assert.strictEqual(subscriber.inventory_.lease.length, 1);
-      assert.strictEqual(subscriber.inventory_.bytes, MESSAGE.length);
-
-      subscriber.breakLease_(MESSAGE);
-
-      assert.strictEqual(subscriber.inventory_.lease.length, 0);
-      assert.strictEqual(subscriber.inventory_.bytes, 0);
-    });
-
-    it('should noop for unknown messages', () => {
-      const message = {
-        ackId: 'def',
-        data: Buffer.from('world'),
-        length: 5,
-      };
-
-      subscriber.breakLease_(message);
-
-      assert.strictEqual(subscriber.inventory_.lease.length, 1);
-      assert.strictEqual(subscriber.inventory_.bytes, 5);
-    });
-
-    describe('with connection pool', () => {
-      it('should resume receiving messages if paused', done => {
-        subscriber.connectionPool = {
-          isPaused: true,
-          resume: done,
-        };
-
-        subscriber.hasMaxMessages_ = () => {
-          return false;
-        };
-
-        subscriber.breakLease_(MESSAGE);
-      });
-
-      it('should not resume if it is not paused', () => {
-        subscriber.connectionPool = {
-          isPaused: false,
-          resume() {
-            throw new Error('Should not be called.');
-          },
-        };
-
-        subscriber.hasMaxMessages_ = () => {
-          return false;
-        };
-
-        subscriber.breakLease_(MESSAGE);
-      });
-
-      it('should not resume if the max message limit is hit', () => {
-        subscriber.connectionPool = {
-          isPaused: true,
-          resume() {
-            throw new Error('Should not be called.');
-          },
-        };
-
-        subscriber.hasMaxMessages_ = () => {
-          return true;
-        };
-
-        subscriber.breakLease_(MESSAGE);
-      });
-    });
-
-    it('should quit auto-leasing if all leases are gone', done => {
-      subscriber.leaseTimeoutHandle_ = setTimeout(done, 1);
-      subscriber.breakLease_(MESSAGE);
-
-      assert.strictEqual(subscriber.leaseTimeoutHandle_, null);
-      setImmediate(done);
-    });
-
-    it('should continue to auto-lease if leases exist', done => {
-      subscriber.inventory_.lease.push(MESSAGE.ackId);
-      subscriber.inventory_.lease.push('abcd');
-
-      subscriber.leaseTimeoutHandle_ = setTimeout(done, 1);
-      subscriber.breakLease_(MESSAGE);
+      subscriber.ack(message);
     });
   });
 
   describe('close', () => {
-    beforeEach(() => {
-      subscriber.flushQueues_ = () => {
-        return Promise.resolve();
-      };
+    it('should noop if not open', () => {
+      const s = new Subscriber(subscription);
+      const stream: FakeMessageStream = stubs.get('messageStream');
 
-      subscriber.closeConnection_ = fakeUtil.noop;
-    });
+      sandbox.stub(stream, 'destroy')
+          .rejects(new Error('should not be called.'));
 
-    it('should set the userClosed_ flag', () => {
-      subscriber.close();
-
-      assert.strictEqual(subscriber.userClosed_, true);
-    });
-
-    it('should dump the inventory', () => {
-      subscriber.inventory_ = {
-        lease: [0, 1, 2],
-        bytes: 123,
-      };
-
-      subscriber.close();
-
-      assert.deepStrictEqual(subscriber.inventory_, {
-        lease: [],
-        bytes: 0,
-      });
-    });
-
-    it('should stop auto-leasing', done => {
-      subscriber.leaseTimeoutHandle_ = setTimeout(done, 1);
-      subscriber.close();
-
-      assert.strictEqual(subscriber.leaseTimeoutHandle_, null);
-      setImmediate(done);
-    });
-
-    it('should flush immediately', done => {
-      subscriber.flushQueues_ = () => {
-        setImmediate(done);
-        return Promise.resolve();
-      };
-
-      subscriber.close();
-    });
-
-    it('should call closeConnection_', done => {
-      subscriber.closeConnection_ = callback => {
-        callback();  // the done fn
-      };
-
-      subscriber.close(done);
-    });
-  });
-
-  describe('closeConnection_', () => {
-    afterEach(() => {
-      fakeUtil.noop = () => {};
+      return s.close();
     });
 
     it('should set isOpen to false', () => {
-      subscriber.closeConnection_();
+      subscriber.close();
       assert.strictEqual(subscriber.isOpen, false);
     });
 
-    describe('with connection pool', () => {
-      beforeEach(() => {
-        subscriber.connectionPool = {
-          close(callback) {
-            setImmediate(callback);  // the done fn
-          },
-        };
-      });
+    it('should destroy the message stream', () => {
+      const stream: FakeMessageStream = stubs.get('messageStream');
+      const stub = sandbox.stub(stream, 'destroy');
 
-      it('should call close on the connection pool', done => {
-        subscriber.closeConnection_(done);
-        assert.strictEqual(subscriber.connectionPool, null);
-      });
-
-      it('should use a noop when callback is absent', done => {
-        fakeUtil.noop = done;
-        subscriber.closeConnection_();
-        assert.strictEqual(subscriber.connectionPool, null);
-      });
+      subscriber.close();
+      assert.strictEqual(stub.callCount, 1);
     });
 
-    describe('without connection pool', () => {
-      beforeEach(() => {
-        subscriber.connectionPool = null;
-      });
+    it('should clear the inventory', () => {
+      const inventory: FakeLeaseManager = stubs.get('inventory');
+      const stub = sandbox.stub(inventory, 'clear');
 
-      it('should exec the callback if one is passed in', done => {
-        subscriber.closeConnection_(done);
-      });
-
-      it('should optionally accept a callback', () => {
-        subscriber.closeConnection_();
-      });
-    });
-  });
-
-  describe('flushQueues_', () => {
-    it('should cancel any pending flushes', () => {
-      let canceled = false;
-      const fakeHandle = {
-        clear() {
-          canceled = true;
-        },
-      };
-
-      subscriber.flushTimeoutHandle_ = fakeHandle;
-      subscriber.flushQueues_();
-
-      assert.strictEqual(subscriber.flushTimeoutHandle_, null);
-      assert.strictEqual(canceled, true);
+      subscriber.close();
+      assert.strictEqual(stub.callCount, 1);
     });
 
-    it('should do nothing if theres nothing to ack/nack', () => {
-      subscriber.acknowledge_ = subscriber.modifyAckDeadline_ = () => {
-        throw new Error('Should not be called.');
-      };
+    describe('flushing the queues', () => {
+      it('should wait for any pending acks', async () => {
+        const ackQueue: FakeAckQueue = stubs.get('ackQueue');
+        const ackOnFlush = sandbox.stub(ackQueue, 'onFlush').resolves();
+        const acksFlush = sandbox.stub(ackQueue, 'flush').resolves();
 
-      return subscriber.flushQueues_();
-    });
+        ackQueue.numPendingRequests = 1;
+        await subscriber.close();
 
-    it('should send any pending acks', () => {
-      const fakeAckIds = (subscriber.inventory_.ack = ['abc', 'def']);
-
-      subscriber.acknowledge_ = ackIds => {
-        assert.strictEqual(ackIds, fakeAckIds);
-        return Promise.resolve();
-      };
-
-      return subscriber.flushQueues_().then(() => {
-        assert.strictEqual(subscriber.inventory_.ack.length, 0);
+        assert.strictEqual(ackOnFlush.callCount, 1);
+        assert.strictEqual(acksFlush.callCount, 1);
       });
-    });
 
-    it('should send any pending nacks', () => {
-      const fakeAckIds = ['ghi', 'jkl'];
+      it('should wait for any pending modAcks', async () => {
+        const modAckQueue: FakeModAckQueue = stubs.get('modAckQueue');
+        const modAckOnFlush = sandbox.stub(modAckQueue, 'onFlush').resolves();
+        const modAckFlush = sandbox.stub(modAckQueue, 'flush').resolves();
 
-      subscriber.inventory_.nack = fakeAckIds.map(ackId => [ackId, 0]);
+        modAckQueue.numPendingRequests = 1;
+        await subscriber.close();
 
-      subscriber.modifyAckDeadline_ = (ackIds, deadline) => {
-        assert.deepStrictEqual(ackIds, fakeAckIds);
-        assert.strictEqual(deadline, 0);
-        return Promise.resolve();
-      };
-
-      return subscriber.flushQueues_().then(() => {
-        assert.strictEqual(subscriber.inventory_.nack.length, 0);
+        assert.strictEqual(modAckOnFlush.callCount, 1);
+        assert.strictEqual(modAckFlush.callCount, 1);
       });
-    });
 
-    it('should send any pending delayed nacks', () => {
-      const fakeAckIds = ['ghi', 'jkl'];
+      it('should resolve if no messages are pending', () => {
+        const ackQueue: FakeAckQueue = stubs.get('ackQueue');
 
-      subscriber.inventory_.nack = fakeAckIds.map(ackId => [ackId, 1]);
+        sandbox.stub(ackQueue, 'flush').rejects();
+        sandbox.stub(ackQueue, 'onFlush').rejects();
 
-      subscriber.modifyAckDeadline_ = (ackIds, deadline) => {
-        assert.deepStrictEqual(ackIds, fakeAckIds);
-        assert.strictEqual(deadline, 1);
-        return Promise.resolve();
-      };
+        const modAckQueue: FakeModAckQueue = stubs.get('modAckQueue');
 
-      return subscriber.flushQueues_().then(() => {
-        assert.strictEqual(subscriber.inventory_.nack.length, 0);
+        sandbox.stub(modAckQueue, 'flush').rejects();
+        sandbox.stub(modAckQueue, 'onFlush').rejects();
+
+        return subscriber.close();
       });
     });
   });
 
-  describe('isConnected_', () => {
-    it('should return false if there is no pool', () => {
-      subscriber.connectionPool = null;
-      assert.strictEqual(subscriber.isConnected_(), false);
-    });
+  describe('getClient', () => {
+    it('should get a subscriber client', async () => {
+      const pubsub = subscription.pubsub;
+      const spy = sandbox.spy(pubsub, 'getClient_');
+      const client = await subscriber.getClient();
 
-    it('should return false if the pool says its connected', () => {
-      subscriber.connectionPool = {
-        isConnected() {
-          return false;
-        },
-      };
-
-      assert.strictEqual(subscriber.isConnected_(), false);
-    });
-
-    it('should return true if the pool says its connected', () => {
-      subscriber.connectionPool = {
-        isConnected() {
-          return true;
-        },
-      };
-
-      assert.strictEqual(subscriber.isConnected_(), true);
+      const [options] = spy.lastCall.args;
+      assert.deepStrictEqual(options, {client: 'SubscriberClient'});
+      assert.strictEqual(client, pubsub.client);
     });
   });
 
-  describe('hasMaxMessages_', () => {
-    it('should return true if the number of leases >= maxMessages', () => {
-      subscriber.inventory_.lease = ['a', 'b', 'c'];
-      subscriber.flowControl.maxMessages = 3;
+  describe('modAck', () => {
+    const deadline = 600;
 
-      assert(subscriber.hasMaxMessages_());
+    it('should add the message/deadline to the modAck queue', () => {
+      const modAckQueue: FakeModAckQueue = stubs.get('modAckQueue');
+      const stub = sandbox.stub(modAckQueue, 'add').withArgs(message, deadline);
+
+      subscriber.modAck(message, deadline);
+
+      assert.strictEqual(stub.callCount, 1);
     });
 
-    it('should return true if bytes == maxBytes', () => {
-      subscriber.inventory_.bytes = 1000;
-      subscriber.flowControl.maxBytes = 1000;
+    it('should capture latency after queue flush', async () => {
+      const modAckQueue: FakeModAckQueue = stubs.get('modAckQueue');
+      const latencies: FakeHistogram = stubs.get('latencies');
 
-      assert(subscriber.hasMaxMessages_());
-    });
+      const start = 1232123;
+      const end = 34838243;
+      const expectedSeconds = (end - start) / 1000;
 
-    it('should return false if neither condition is met', () => {
-      subscriber.inventory_.lease = ['a', 'b'];
-      subscriber.flowControl.maxMessages = 3;
+      const dateStub = sandbox.stub(global.Date, 'now');
 
-      subscriber.inventory_.bytes = 900;
-      subscriber.flowControl.maxBytes = 1000;
+      dateStub.onCall(0).returns(start);
+      dateStub.onCall(1).returns(end);
 
-      assert.strictEqual(subscriber.hasMaxMessages_(), false);
-    });
-  });
+      sandbox.stub(modAckQueue, 'onFlush').resolves();
+      const addStub = sandbox.stub(latencies, 'add').withArgs(expectedSeconds);
 
-  describe('leaseMessage_', () => {
-    const MESSAGE = {
-      ackId: 'abc',
-      connectionId: 'def',
-      data: Buffer.from('hello'),
-      length: 5,
-    };
+      await subscriber.modAck(message, deadline);
 
-    beforeEach(() => {
-      subscriber.setLeaseTimeout_ = fakeUtil.noop;
-      subscriber.modifyAckDeadline_ = fakeUtil.noop;
-    });
-
-    it('should immediately modAck the message', done => {
-      subscriber.modifyAckDeadline_ = (ackId, deadline, connId) => {
-        assert.strictEqual(ackId, MESSAGE.ackId);
-        assert.strictEqual(deadline, subscriber.ackDeadline / 1000);
-        assert.strictEqual(connId, MESSAGE.connectionId);
-        done();
-      };
-
-      subscriber.leaseMessage_(MESSAGE);
-    });
-
-    it('should add the ackId to the inventory', () => {
-      subscriber.leaseMessage_(MESSAGE);
-      assert.deepStrictEqual(subscriber.inventory_.lease, [MESSAGE.ackId]);
-    });
-
-    it('should update the byte count', () => {
-      assert.strictEqual(subscriber.inventory_.bytes, 0);
-      subscriber.leaseMessage_(MESSAGE);
-      assert.strictEqual(subscriber.inventory_.bytes, MESSAGE.length);
-    });
-
-    it('should begin auto-leasing', done => {
-      subscriber.setLeaseTimeout_ = done;
-      subscriber.leaseMessage_(MESSAGE);
-    });
-
-    it('should return the message', () => {
-      const message = subscriber.leaseMessage_(MESSAGE);
-      assert.strictEqual(message, MESSAGE);
+      assert.strictEqual(addStub.callCount, 1);
     });
   });
 
-  describe('listenForEvents_', () => {
-    beforeEach(() => {
-      subscriber.openConnection_ = fakeUtil.noop;
-      subscriber.closeConnection_ = fakeUtil.noop;
+  describe('nack', () => {
+    it('should modAck the message with a 0 deadline', async () => {
+      const stub = sandbox.stub(subscriber, 'modAck');
+
+      await subscriber.nack(message);
+
+      const [msg, deadline] = stub.lastCall.args;
+
+      assert.strictEqual(msg, message);
+      assert.strictEqual(deadline, 0);
     });
 
-    describe('on new listener', () => {
-      it('should increment messageListeners', () => {
-        assert.strictEqual(subscriber.messageListeners, 0);
-        subscriber.on('message', fakeUtil.noop);
-        assert.strictEqual(subscriber.messageListeners, 1);
-      });
+    it('should remove the message from the inventory', async () => {
+      const inventory: FakeLeaseManager = stubs.get('inventory');
+      const stub = sandbox.stub(inventory, 'remove').withArgs(message);
 
-      it('should ignore non-message events', () => {
-        subscriber.on('data', fakeUtil.noop);
-        assert.strictEqual(subscriber.messageListeners, 0);
-      });
+      await subscriber.nack(message);
 
-      it('should open a connection', done => {
-        subscriber.openConnection_ = done;
-        subscriber.on('message', fakeUtil.noop);
-      });
-
-      it('should set the userClosed_ flag to false', () => {
-        subscriber.userClosed_ = true;
-        subscriber.on('message', fakeUtil.noop);
-        assert.strictEqual(subscriber.userClosed_, false);
-      });
-
-      it('should not open a connection when one exists', () => {
-        subscriber.connectionPool = {};
-
-        subscriber.openConnection_ = () => {
-          throw new Error('Should not be called.');
-        };
-
-        subscriber.on('message', fakeUtil.noop);
-      });
-    });
-
-    describe('on remove listener', () => {
-      const noop = () => {};
-
-      it('should decrement messageListeners', () => {
-        subscriber.on('message', fakeUtil.noop);
-        subscriber.on('message', noop);
-        assert.strictEqual(subscriber.messageListeners, 2);
-
-        subscriber.removeListener('message', noop);
-        assert.strictEqual(subscriber.messageListeners, 1);
-      });
-
-      it('should ignore non-message events', () => {
-        subscriber.on('message', fakeUtil.noop);
-        subscriber.on('message', noop);
-        assert.strictEqual(subscriber.messageListeners, 2);
-
-        subscriber.removeListener('data', noop);
-        assert.strictEqual(subscriber.messageListeners, 2);
-      });
-
-      it('should close the connection when no listeners', done => {
-        subscriber.closeConnection_ = done;
-
-        subscriber.on('message', noop);
-        subscriber.removeListener('message', noop);
-      });
+      assert.strictEqual(stub.callCount, 1);
     });
   });
 
-  describe('modifyAckDeadline_', () => {
-    const fakeAckIds = ['a', 'b', 'c'];
-    const fakeDeadline = 123;
+  describe('open', () => {
+    beforeEach(() => subscriber.close());
 
-    const batchSize = 3000;
-    const tooManyFakeAckIds =
-        new Array(batchSize * 2.5).fill('a').map((x, i) => {
-          return x + i;
-        });
-    const expectedCalls = Math.ceil(tooManyFakeAckIds.length / batchSize);
+    it('should pass in batching options', () => {
+      const batching = {maxMessages: 100};
 
-    describe('without streaming connection', () => {
-      beforeEach(() => {
-        subscriber.isConnected_ = () => {
-          return false;
-        };
-      });
+      subscriber.setOptions({batching});
+      subscriber.open();
 
-      it('should make the correct request', done => {
-        const fakePromisified = {
-          call(context, config) {
-            assert.strictEqual(context, subscriber);
-            assert.strictEqual(config.client, 'SubscriberClient');
-            assert.strictEqual(config.method, 'modifyAckDeadline');
-            assert.strictEqual(config.reqOpts.subscription, subscriber.name);
-            assert.strictEqual(config.reqOpts.ackDeadlineSeconds, fakeDeadline);
-            assert.deepStrictEqual(config.reqOpts.ackIds, fakeAckIds);
+      const ackQueue: FakeAckQueue = stubs.get('ackQueue');
+      const modAckQueue: FakeAckQueue = stubs.get('modAckQueue');
 
-            setImmediate(done);
-
-            return Promise.resolve();
-          },
-        };
-
-        promisifyOverride = fn => {
-          assert.strictEqual(fn, subscriber.request);
-          return fakePromisified;
-        };
-
-        subscriber.on('error', done);
-        subscriber.modifyAckDeadline_(fakeAckIds, fakeDeadline);
-      });
-
-      it('should batch requests if there are too many ackIds', done => {
-        let receivedCalls = 0;
-
-        const fakePromisified = {
-          call(context, config) {
-            const offset = receivedCalls * batchSize;
-            const expectedAckIds =
-                tooManyFakeAckIds.slice(offset, offset + batchSize);
-
-            assert.strictEqual(config.reqOpts.ackDeadlineSeconds, fakeDeadline);
-            assert.deepStrictEqual(config.reqOpts.ackIds, expectedAckIds);
-
-            receivedCalls += 1;
-            if (receivedCalls === expectedCalls) {
-              setImmediate(done);
-            }
-
-            return Promise.resolve();
-          },
-        };
-
-        promisifyOverride = () => {
-          return fakePromisified;
-        };
-
-        subscriber.on('error', done);
-        subscriber.modifyAckDeadline_(tooManyFakeAckIds, fakeDeadline);
-      });
-
-      it('should emit any request errors', done => {
-        const fakeError = new Error('err');
-        const fakePromisified = {
-          call() {
-            return Promise.reject(fakeError);
-          },
-        };
-
-        promisifyOverride = () => {
-          return fakePromisified;
-        };
-
-        subscriber.on('error', err => {
-          assert.strictEqual(err, fakeError);
-          done();
-        });
-
-        subscriber.modifyAckDeadline_(fakeAckIds, fakeDeadline);
-      });
+      assert.strictEqual(ackQueue.options, batching);
+      assert.strictEqual(modAckQueue.options, batching);
     });
 
-    describe('with streaming connection', () => {
-      beforeEach(() => {
-        subscriber.isConnected_ = () => {
-          return true;
-        };
+    it('should pass in flow control options', () => {
+      const flowControl = {maxMessages: 100};
 
-        subscriber.writeToStreams_ = true;
-      });
+      subscriber.setOptions({flowControl});
+      subscriber.open();
 
-      it('should send the correct request', done => {
-        const expectedDeadlines =
-            new Array(fakeAckIds.length).fill(fakeDeadline);
-        const fakeConnId = 'abc';
+      const inventory: FakeLeaseManager = stubs.get('inventory');
 
-        subscriber.writeTo_ = (connectionId, data) => {
-          assert.strictEqual(connectionId, fakeConnId);
-          assert.deepStrictEqual(data.modifyDeadlineAckIds, fakeAckIds);
-          assert.deepStrictEqual(data.modifyDeadlineSeconds, expectedDeadlines);
-          done();
-        };
-
-        subscriber.modifyAckDeadline_(fakeAckIds, fakeDeadline, fakeConnId);
-      });
-
-      it('should batch requests if there are too many ackIds', done => {
-        let receivedCalls = 0;
-        const fakeConnId = 'abc';
-
-        subscriber.writeTo_ = (connectionId, data) => {
-          assert.strictEqual(connectionId, fakeConnId);
-
-          const offset = receivedCalls * batchSize;
-          const expectedAckIds =
-              tooManyFakeAckIds.slice(offset, offset + batchSize);
-          const expectedDeadlines =
-              new Array(expectedAckIds.length).fill(fakeDeadline);
-
-          assert.deepStrictEqual(data.modifyDeadlineAckIds, expectedAckIds);
-          assert.deepStrictEqual(data.modifyDeadlineSeconds, expectedDeadlines);
-
-          if (++receivedCalls === expectedCalls) {
-            done();
-          }
-        };
-
-        subscriber.modifyAckDeadline_(
-            tooManyFakeAckIds, fakeDeadline, fakeConnId);
-      });
-
-      it('should emit an error when unable to get a conn', done => {
-        const error = new Error('err');
-
-        subscriber.writeTo_ = () => {
-          return Promise.reject(error);
-        };
-
-        subscriber.on('error', err => {
-          assert.strictEqual(err, error);
-          done();
-        });
-
-        subscriber.modifyAckDeadline_(fakeAckIds, fakeDeadline);
-      });
-    });
-  });
-
-  describe('nack_', () => {
-    const MESSAGE = {
-      ackId: 'abc',
-      connectionId: 'def',
-    };
-
-    beforeEach(() => {
-      subscriber.breakLease_ = fakeUtil.noop;
-      subscriber.modifyAckDeadline_ = () => {
-        return Promise.resolve();
-      };
-      subscriber.setFlushTimeout_ = () => {
-        return Promise.resolve();
-      };
+      assert.strictEqual(inventory.options, flowControl);
     });
 
-    describe('with connection', () => {
-      beforeEach(() => {
-        subscriber.isConnected_ = () => {
-          return true;
-        };
+    it('should pass in streaming options', () => {
+      const streamingOptions = {maxStreams: 3};
 
-        subscriber.writeToStreams_ = true;
-      });
+      subscriber.setOptions({streamingOptions});
+      subscriber.open();
 
-      it('should nack if there is a connection', done => {
-        subscriber.modifyAckDeadline_ = (ackId, deadline, connId) => {
-          assert.strictEqual(ackId, MESSAGE.ackId);
-          assert.strictEqual(deadline, 0);
-          assert.strictEqual(connId, MESSAGE.connectionId);
-          setImmediate(done);
-          return Promise.resolve();
-        };
+      const stream: FakeMessageStream = stubs.get('messageStream');
 
-        subscriber.nack_(MESSAGE);
-      });
-
-      it('should break the lease on the message', done => {
-        subscriber.breakLease_ = message => {
-          assert.strictEqual(message, MESSAGE);
-          done();
-        };
-
-        subscriber.nack_(MESSAGE);
-      });
-
-      it('should use the delay if passed', done => {
-        subscriber.modifyAckDeadline_ = (ackId, deadline, connId) => {
-          assert.strictEqual(ackId, MESSAGE.ackId);
-          assert.strictEqual(deadline, 1);
-          assert.strictEqual(connId, MESSAGE.connectionId);
-          setImmediate(done);
-          return Promise.resolve();
-        };
-
-        subscriber.nack_(MESSAGE, 1);
-      });
+      assert.strictEqual(stream.options, streamingOptions);
     });
 
-    describe('without connection', () => {
-      beforeEach(() => {
-        subscriber.isConnected_ = () => {
-          return false;
-        };
-      });
+    it('should emit stream errors', done => {
+      subscriber.open();
 
-      it('should queue the message to be nacked if no conn', done => {
-        subscriber.setFlushTimeout_ = () => {
-          assert.deepStrictEqual(
-              subscriber.inventory_.nack, [[MESSAGE.ackId, 0]]);
-          setImmediate(done);
-          return Promise.resolve();
-        };
-
-        subscriber.nack_(MESSAGE);
-      });
-
-      it('should break the lease on the message', done => {
-        subscriber.breakLease_ = message => {
-          assert.strictEqual(message, MESSAGE);
-          done();
-        };
-
-        subscriber.nack_(MESSAGE);
-      });
-
-      it('should use the delay if passed when queueing', done => {
-        subscriber.setFlushTimeout_ = () => {
-          assert(subscriber.inventory_.nack.findIndex(element => {
-            return element[0] === MESSAGE.ackId && element[1] === 1;
-          }) > -1);
-          setImmediate(done);
-          return Promise.resolve();
-        };
-
-        subscriber.nack_(MESSAGE, 1);
-      });
-    });
-  });
-
-  describe('openConnection_', () => {
-    it('should create a ConnectionPool instance', () => {
-      subscriber.openConnection_();
-      assert(subscriber.connectionPool instanceof FakeConnectionPool);
-
-      const args = subscriber.connectionPool.calledWith_;
-      assert.strictEqual(args[0], subscriber);
-    });
-
-    it('should emit pool errors', done => {
-      const error = new Error('err');
-
-      subscriber.on('error', err => {
-        assert.strictEqual(err, error);
-        done();
-      });
-
-      subscriber.openConnection_();
-      subscriber.connectionPool.emit('error', error);
-    });
-
-    it('should set isOpen to true', () => {
-      subscriber.openConnection_();
-      assert.strictEqual(subscriber.isOpen, true);
-    });
-
-    it('should lease & emit messages from pool', done => {
-      const message = {};
-      const leasedMessage = {};
-
-      subscriber.leaseMessage_ = message_ => {
-        assert.strictEqual(message_, message);
-        return leasedMessage;
-      };
-
-      subscriber.on('message', message => {
-        assert.strictEqual(message, leasedMessage);
-        done();
-      });
-
-      subscriber.openConnection_();
-      subscriber.connectionPool.emit('message', message);
-    });
-
-    it('should pause the pool if sub is at max messages', done => {
-      const message = {nack: fakeUtil.noop};
-      const leasedMessage = {};
-
-      subscriber.leaseMessage_ = () => {
-        return leasedMessage;
-      };
-
-      subscriber.hasMaxMessages_ = () => {
-        return true;
-      };
-
-      subscriber.openConnection_();
-      subscriber.connectionPool.isPaused = false;
-      subscriber.connectionPool.pause = done;
-      subscriber.connectionPool.emit('message', message);
-    });
-
-    it('should not re-pause the pool', done => {
-      const message = {nack: fakeUtil.noop};
-      const leasedMessage = {};
-
-      subscriber.leaseMessage_ = () => {
-        return leasedMessage;
-      };
-
-      subscriber.hasMaxMessages_ = () => {
-        return true;
-      };
-
-      subscriber.openConnection_();
-      subscriber.connectionPool.isPaused = true;
-
-      subscriber.connectionPool.pause = () => {
-        done(new Error('Should not have been called.'));
-      };
-
-      subscriber.connectionPool.emit('message', message);
-      done();
-    });
-
-    it('should flush the queue when connected', done => {
-      subscriber.flushQueues_ = done;
-
-      subscriber.openConnection_();
-      subscriber.connectionPool.emit('connected');
-    });
-  });
-
-  describe('renewLeases_', () => {
-    beforeEach(() => {
-      subscriber.modifyAckDeadline_ = () => {
-        return Promise.resolve();
-      };
-    });
-
-    const fakeDeadline = 9999;
-    const fakeAckIds = ['abc', 'def'];
-
-    beforeEach(() => {
-      subscriber.inventory_.lease = fakeAckIds;
-      subscriber.setLeaseTimeout_ = fakeUtil.noop;
-
-      subscriber.histogram.percentile = () => {
-        return fakeDeadline;
-      };
-    });
-
-    it('should clean up the old timeout handle', () => {
-      const fakeHandle = 123;
-      let clearTimeoutCalled = false;
-      const _clearTimeout = global.clearTimeout;
-
-      global.clearTimeout = handle => {
-        assert.strictEqual(handle, fakeHandle);
-        clearTimeoutCalled = true;
-      };
-
-      subscriber.leaseTimeoutHandle_ = fakeHandle;
-      subscriber.renewLeases_();
-
-      assert.strictEqual(subscriber.leaseTimeoutHandle_, null);
-      assert.strictEqual(clearTimeoutCalled, true);
-
-      global.clearTimeout = _clearTimeout;
-    });
-
-    it('should update the ackDeadline', () => {
-      subscriber.request = subscriber.setLeaseTimeout_ = fakeUtil.noop;
-
-      subscriber.histogram.percentile = percent => {
-        assert.strictEqual(percent, 99);
-        return fakeDeadline;
-      };
-
-      subscriber.renewLeases_();
-      assert.strictEqual(subscriber.ackDeadline, fakeDeadline);
-    });
-
-    it('should set the auto-lease timeout', done => {
-      subscriber.request = fakeUtil.noop;
-      subscriber.setLeaseTimeout_ = done;
-      subscriber.renewLeases_();
-    });
-
-    it('should not renew leases if inventory is empty', () => {
-      subscriber.modifyAckDeadline_ = () => {
-        throw new Error('Should not have been called.');
-      };
-
-      subscriber.inventory_.lease = [];
-      subscriber.renewLeases_();
-    });
-
-    it('should modAck the leased messages', done => {
-      subscriber.modifyAckDeadline_ = (ackIds, deadline) => {
-        assert.deepStrictEqual(ackIds, fakeAckIds);
-        assert.strictEqual(deadline, subscriber.ackDeadline / 1000);
-
-        setImmediate(done);
-
-        return Promise.resolve();
-      };
-
-      subscriber.renewLeases_();
-    });
-
-    it('should re-set the lease timeout', done => {
-      subscriber.setLeaseTimeout_ = done;
-      subscriber.renewLeases_();
-    });
-  });
-
-  describe('setFlushTimeout_', () => {
-    const FLUSH_TIMEOUT = 100;
-
-    beforeEach(() => {
-      subscriber.batching.maxMilliseconds = FLUSH_TIMEOUT;
-    });
-
-    it('should set a flush timeout', done => {
-      let flushed = false;
-
-      subscriber.flushQueues_ = () => {
-        flushed = true;
-      };
-
-      const delayPromise = delay(0);
-      const fakeBoundDelay = () => {};
-
-      delayPromise.clear.bind = context => {
-        assert.strictEqual(context, delayPromise);
-        return fakeBoundDelay;
-      };
-
-      delayOverride = timeout => {
-        assert.strictEqual(timeout, FLUSH_TIMEOUT);
-        return delayPromise;
-      };
-
-      const promise = subscriber.setFlushTimeout_();
-
-      promise.then(() => {
-        assert.strictEqual(subscriber.flushTimeoutHandle_, promise);
-        assert.strictEqual(promise.clear, fakeBoundDelay);
-        assert.strictEqual(flushed, true);
-        done();
-      });
-    });
-
-    it('should swallow cancel errors', () => {
-      const promise = subscriber.setFlushTimeout_();
-      promise.clear();
-      return promise;
-    });
-
-    it('should return the cached timeout', () => {
-      const fakeHandle = {};
-
-      subscriber.flushTimeoutHandle_ = fakeHandle;
-
-      const promise = subscriber.setFlushTimeout_();
-      assert.strictEqual(fakeHandle, promise);
-    });
-  });
-
-  describe('setLeaseTimeout_', () => {
-    const fakeTimeoutHandle = 1234;
-    const fakeRandom = 2;
-
-    let globalSetTimeout;
-    let globalMathRandom;
-
-    before(() => {
-      globalSetTimeout = global.setTimeout;
-      globalMathRandom = global.Math.random;
-    });
-
-    beforeEach(() => {
-      subscriber.isOpen = true;
-      subscriber.latency_ = {
-        percentile() {
-          return 0;
-        },
-      };
-    });
-
-    after(() => {
-      global.setTimeout = globalSetTimeout;
-      global.Math.random = globalMathRandom;
-    });
-
-    it('should set a timeout to call renewLeases_', done => {
-      const ackDeadline = (subscriber.ackDeadline = 1000);
-
-      global.Math.random = () => {
-        return fakeRandom;
-      };
-
-      // tslint:disable-next-line no-any
-      (global as any).setTimeout = (callback, duration) => {
-        assert.strictEqual(duration, fakeRandom * ackDeadline * 0.9);
-        setImmediate(callback);  // the done fn
-        return fakeTimeoutHandle;
-      };
-
-      subscriber.renewLeases_ = done;
-      subscriber.setLeaseTimeout_();
-      assert.strictEqual(subscriber.leaseTimeoutHandle_, fakeTimeoutHandle);
-    });
-
-    it('should subtract the estimated latency', done => {
-      const latency = 1;
-
-      subscriber.latency_.percentile = percentile => {
-        assert.strictEqual(percentile, 99);
-        return latency;
-      };
-
-      const ackDeadline = (subscriber.ackDeadline = 1000);
-
-      global.Math.random = () => {
-        return fakeRandom;
-      };
-
-      // tslint:disable-next-line no-any
-      (global as any).setTimeout = (callback, duration) => {
-        assert.strictEqual(duration, fakeRandom * ackDeadline * 0.9 - latency);
-        done();
-      };
-
-      subscriber.setLeaseTimeout_();
-    });
-
-    it('should not set a timeout if one already exists', () => {
-      subscriber.renewLeases_ = () => {
-        throw new Error('Should not be called.');
-      };
-
-      global.Math.random = () => {
-        throw new Error('Should not be called.');
-      };
-
-      global.setTimeout = () => {
-        throw new Error('Should not be called.');
-      };
-
-      subscriber.leaseTimeoutHandle_ = fakeTimeoutHandle;
-      subscriber.setLeaseTimeout_();
-    });
-
-    it('should not set a timeout if the sub is closed', () => {
-      subscriber.renewLeases_ = () => {
-        throw new Error('Should not be called.');
-      };
-
-      global.Math.random = () => {
-        throw new Error('Should not be called.');
-      };
-
-      global.setTimeout = () => {
-        throw new Error('Should not be called.');
-      };
-
-      subscriber.isOpen = false;
-      subscriber.setLeaseTimeout_();
-    });
-  });
-
-  describe('writeTo_', () => {
-    const CONNECTION_ID = 'abc';
-    // tslint:disable-next-line no-any
-    const CONNECTION: any = {};
-
-    beforeEach(() => {
-      subscriber.connectionPool = {
-        acquire(connId, cb) {
-          cb(null, CONNECTION);
-        },
-      };
-    });
-
-    it('should return a promise', () => {
-      subscriber.connectionPool.acquire = () => {};
-
-      const returnValue = subscriber.writeTo_();
-      assert(returnValue instanceof Promise);
-    });
-
-    it('should reject the promise if unable to acquire stream', () => {
+      const stream: FakeMessageStream = stubs.get('messageStream');
       const fakeError = new Error('err');
 
-      subscriber.connectionPool.acquire = (connId, cb) => {
-        assert.strictEqual(connId, CONNECTION_ID);
-        cb(fakeError);
-      };
-
-      return subscriber.writeTo_(CONNECTION_ID, {})
-          .then(
-              () => {
-                throw new Error('Should not resolve.');
-              },
-              err => {
-                assert.strictEqual(err, fakeError);
-              });
-    });
-
-    it('should write to the stream', done => {
-      const fakeData = {a: 'b'};
-
-      CONNECTION.write = data => {
-        assert.strictEqual(data, fakeData);
+      subscriber.on('error', err => {
+        assert.strictEqual(err, fakeError);
         done();
-      };
+      });
 
-      subscriber.writeTo_(CONNECTION_ID, fakeData);
+      stream.emit('error', fakeError);
     });
 
-    it('should capture the write latency when successful', () => {
-      const fakeLatency = 500;
-      let capturedLatency;
+    it('should add messages to the inventory', done => {
+      subscriber.open();
 
-      CONNECTION.write = (data, cb) => {
-        setTimeout(cb, fakeLatency, null);
-      };
+      const modAckStub = sandbox.stub(subscriber, 'modAck');
 
-      subscriber.latency_.add = value => {
-        capturedLatency = value;
-      };
+      const stream: FakeMessageStream = stubs.get('messageStream');
+      const pullResponse = {receivedMessages: [RECEIVED_MESSAGE]};
 
-      return subscriber.writeTo_(CONNECTION_ID, {}).then(() => {
-        const upper = fakeLatency + 50;
-        const lower = fakeLatency - 50;
+      const inventory: FakeLeaseManager = stubs.get('inventory');
+      const addStub = sandbox.stub(inventory, 'add').callsFake(() => {
+        const [addMsg] = addStub.lastCall.args;
+        assert.deepStrictEqual(addMsg, message);
 
-        assert(capturedLatency > lower && capturedLatency < upper);
+        // test for receipt
+        const [modAckMsg, deadline] = modAckStub.lastCall.args;
+        assert.strictEqual(addMsg, modAckMsg);
+        assert.strictEqual(deadline, subscriber.ackDeadline);
+
+        done();
+      });
+
+      sandbox.stub(global.Date, 'now').returns(message.received);
+      stream.emit('data', pullResponse);
+    });
+
+    it('should pause the stream when full', () => {
+      const inventory: FakeLeaseManager = stubs.get('inventory');
+      const stream: FakeMessageStream = stubs.get('messageStream');
+
+      const pauseStub = sandbox.stub(stream, 'pause');
+
+      inventory.emit('full');
+
+      assert.strictEqual(pauseStub.callCount, 1);
+    });
+
+    it('should resume the stream when not full', () => {
+      const inventory: FakeLeaseManager = stubs.get('inventory');
+      const stream: FakeMessageStream = stubs.get('messageStream');
+
+      const resumeStub = sandbox.stub(stream, 'resume');
+
+      inventory.emit('free');
+
+      assert.strictEqual(resumeStub.callCount, 1);
+    });
+
+    it('should set isOpen to false', () => {
+      subscriber.open();
+      assert.strictEqual(subscriber.isOpen, true);
+    });
+  });
+
+  describe('setOptions', () => {
+    beforeEach(() => subscriber.close());
+
+    it('should capture the ackDeadline', () => {
+      const ackDeadline = 1232;
+
+      subscriber.setOptions({ackDeadline});
+      assert.strictEqual(subscriber.ackDeadline, ackDeadline);
+    });
+
+    it('should not set maxStreams higher than maxMessages', () => {
+      const maxMessages = 3;
+      const flowControl = {maxMessages};
+
+      subscriber.setOptions({flowControl});
+      subscriber.open();
+
+      const stream: FakeMessageStream = stubs.get('messageStream');
+
+      assert.strictEqual(stream.options.maxStreams, maxMessages);
+    });
+  });
+
+  describe('Message', () => {
+    describe('initialization', () => {
+      it('should localize ackId', () => {
+        assert.strictEqual(message.ackId, RECEIVED_MESSAGE.ackId);
+      });
+
+      it('should localize attributes', () => {
+        assert.strictEqual(
+            message.attributes, RECEIVED_MESSAGE.message.attributes);
+      });
+
+      it('should localize data', () => {
+        assert.strictEqual(message.data, RECEIVED_MESSAGE.message.data);
+      });
+
+      it('should localize id', () => {
+        assert.strictEqual(message.id, RECEIVED_MESSAGE.message.messageId);
+      });
+
+      it('should localize publishTime', () => {
+        const fakeDate = new Date();
+
+        sandbox.stub(Message, 'formatTimestamp')
+            .withArgs(RECEIVED_MESSAGE.message.publishTime)
+            .returns(fakeDate);
+
+        const m = new Message(subscriber, RECEIVED_MESSAGE);
+
+        assert.strictEqual(m.publishTime, fakeDate);
+      });
+
+      it('should localize recieved time', () => {
+        const now = Date.now();
+
+        sandbox.stub(global.Date, 'now').returns(now);
+
+        const m = new Message(subscriber, RECEIVED_MESSAGE);
+
+        assert.strictEqual(m.received, now);
+      });
+    });
+
+    describe('length', () => {
+      it('should return the data length', () => {
+        assert.strictEqual(message.length, message.data.length);
+      });
+
+      it('should preserve the original data lenght', () => {
+        const originalLength = message.data.length;
+
+        message.data = Buffer.from('ohno');
+        assert.notStrictEqual(message.length, message.data.length);
+        assert.strictEqual(message.length, originalLength);
+      });
+    });
+
+    describe('ack', () => {
+      it('should ack the message', () => {
+        const stub = sandbox.stub(subscriber, 'ack');
+
+        message.ack();
+
+        const [msg] = stub.lastCall.args;
+        assert.strictEqual(msg, message);
+      });
+
+      it('should not ack the message if its been handled', () => {
+        const stub = sandbox.stub(subscriber, 'ack');
+
+        message.nack();
+        message.ack();
+
+        assert.strictEqual(stub.callCount, 0);
+      });
+    });
+
+    describe('modAck', () => {
+      it('should modAck the message', () => {
+        const fakeDeadline = 10;
+        const stub = sandbox.stub(subscriber, 'modAck');
+
+        message.modAck(fakeDeadline);
+
+        const [msg, deadline] = stub.lastCall.args;
+        assert.strictEqual(msg, message);
+        assert.strictEqual(deadline, fakeDeadline);
+      });
+
+      it('should not modAck the message if its been handled', () => {
+        const deadline = 10;
+        const stub = sandbox.stub(subscriber, 'modAck');
+
+        message.ack();
+        message.modAck(deadline);
+
+        assert.strictEqual(stub.callCount, 0);
+      });
+    });
+
+    describe('nack', () => {
+      it('should nack the message', () => {
+        const fakeDelay = 10;
+        const stub = sandbox.stub(subscriber, 'modAck');
+
+        message.nack(fakeDelay);
+
+        const [msg, delay] = stub.lastCall.args;
+        assert.strictEqual(msg, message);
+        assert.strictEqual(delay, fakeDelay);
+      });
+
+      it('should not nack the message if its been handled', () => {
+        const delay = 10;
+        const stub = sandbox.stub(subscriber, 'modAck');
+
+        message.ack();
+        message.nack(delay);
+
+        assert.strictEqual(stub.callCount, 0);
+      });
+    });
+
+    describe('formatTimestamp', () => {
+      it('should format the timestamp object', () => {
+        const publishTime = RECEIVED_MESSAGE.message.publishTime;
+        const actual = Message.formatTimestamp(publishTime);
+
+        const ms = publishTime.nanos / 1e6;
+        const s = publishTime.seconds * 1000;
+        const expectedDate = new Date(ms + s);
+
+        assert.deepStrictEqual(actual, expectedDate);
       });
     });
   });
