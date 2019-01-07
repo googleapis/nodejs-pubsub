@@ -390,7 +390,7 @@ describe('LeaseManager', () => {
     it('should cancel any extensions if no messages are left', () => {
       const clock = sandbox.useFakeTimers();
       const message = new FakeMessage();
-      const stub = sinon.stub(subscriber, 'modAck').resolves();
+      const stub = sandbox.stub(subscriber, 'modAck').resolves();
 
       leaseManager.add(message);
       leaseManager.remove(message);

@@ -134,7 +134,7 @@ describe('MessageQueues', () => {
     describe('flush', () => {
       it('should cancel scheduled flushes', () => {
         const clock = sandbox.useFakeTimers();
-        const spy = sinon.spy(messageQueue, 'flush');
+        const spy = sandbox.spy(messageQueue, 'flush');
         const delay = 1000;
 
         messageQueue.setOptions({maxMilliseconds: delay});
