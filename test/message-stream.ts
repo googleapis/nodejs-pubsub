@@ -21,6 +21,21 @@ import * as sinon from 'sinon';
 import {Duplex, PassThrough} from 'stream';
 import * as uuid from 'uuid';
 
+// just need this for unit tests.. we have a ponyfill for destroy on
+// MessageStream and gax streams use Duplexify
+function destroy(stream: Duplex, err?: Error): void {
+  process.nextTick(() => {
+    if (err) {
+      stream.emit('error', err);
+    }
+    stream.emit('close');
+  });
+}
+
+interface StreamState {
+  highWaterMark: number;
+}
+
 interface StreamOptions {
   objectMode?: boolean;
   highWaterMark?: number;
@@ -33,11 +48,16 @@ class FakePassThrough extends PassThrough {
     this.options = options;
   }
   destroy(err?: Error): void {
-    return super.destroy(err);
+    if (super.destroy) {
+      return super.destroy(err);
+    }
+    destroy(this, err);
   }
 }
 
 class FakeGrpcStream extends Duplex {
+  _writableState!: StreamState;
+  _readableState!: StreamState;
   constructor() {
     super({objectMode: true});
   }
@@ -52,6 +72,12 @@ class FakeGrpcStream extends Duplex {
       this.emit('status', status);
       this.end();
     });
+  }
+  destroy(err?: Error): void {
+    if (super.destroy) {
+      return super.destroy(err);
+    }
+    destroy(this, err);
   }
   _write(chunk: object, encoding: string, callback: Function): void {
     callback();
@@ -148,8 +174,8 @@ describe('MessageStream', () => {
       describe('defaults', () => {
         it('should default highWaterMark to 0', () => {
           client.streams.forEach(stream => {
-            assert.strictEqual(stream.readableHighWaterMark, 0);
-            assert.strictEqual(stream.writableHighWaterMark, 0);
+            assert.strictEqual(stream._readableState.highWaterMark, 0);
+            assert.strictEqual(stream._writableState.highWaterMark, 0);
           });
         });
 
@@ -157,13 +183,17 @@ describe('MessageStream', () => {
           assert.strictEqual(client.streams.length, 5);
         });
 
-        it('should default timeout to 5 minutes', () => {
+        it('should default timeout to 5 minutes', done => {
           const timeout = 60000 * 5;
           const now = Date.now();
 
           sandbox.stub(global.Date, 'now').returns(now);
+          messageStream = new MessageStream(subscriber);
 
-          assert.strictEqual(client.deadline, now + timeout);
+          setImmediate(() => {
+            assert.strictEqual(client.deadline, now + timeout);
+            done();
+          });
         });
       });
 
@@ -182,8 +212,10 @@ describe('MessageStream', () => {
           setImmediate(() => {
             assert.strictEqual(client.streams.length, 5);
             client.streams.forEach(stream => {
-              assert.strictEqual(stream.readableHighWaterMark, highWaterMark);
-              assert.strictEqual(stream.writableHighWaterMark, highWaterMark);
+              assert.strictEqual(
+                  stream._readableState.highWaterMark, highWaterMark);
+              assert.strictEqual(
+                  stream._writableState.highWaterMark, highWaterMark);
             });
             done();
           });
@@ -306,8 +338,8 @@ describe('MessageStream', () => {
 
         client.streams.forEach(stream => {
           stream.emit('readable');
-          assert.strictEqual(stream.stream.readableHighWaterMark, 0);
-          assert.strictEqual(stream.stream.writableHighWaterMark, 0);
+          assert.strictEqual(stream.stream._readableState.highWaterMark, 0);
+          assert.strictEqual(stream.stream._writableState.highWaterMark, 0);
         });
       });
 
@@ -420,14 +452,18 @@ describe('MessageStream', () => {
         const [stream] = client.streams;
 
         messageStream.on('error', done);
-
         stream.push(null);
-        stream.emit('status', {code: 2});
 
-        assert.strictEqual(stream.listenerCount('end'), 0);
         setImmediate(() => {
-          assert.strictEqual(client.streams.length, 6);
-          done();
+          const count = stream.listenerCount('end');
+
+          stream.emit('status', {code: 2});
+          assert.strictEqual(stream.listenerCount('end'), count);
+
+          setImmediate(() => {
+            assert.strictEqual(client.streams.length, 6);
+            done();
+          });
         });
       });
 
