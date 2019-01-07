@@ -382,8 +382,7 @@ describe('pubsub', () => {
     });
 
     it('should error when using a non-existent subscription', done => {
-      const subscription = topic.subscription(
-          generateSubName(), {streamingOptions: {maxStreams: 1}});
+      const subscription = topic.subscription(generateSubName());
 
       subscription.on('error', err => {
         assert.strictEqual(err.code, 5);
@@ -490,17 +489,17 @@ describe('pubsub', () => {
 
         message.ack();
 
-        if (!messages.has(testid)) {
-          messages.add(testid);
+        if (messages.has(testid)) {
+          messages.delete(testid);
         } else {
           duplicates += 1;
         }
 
-        if (messages.size !== MESSAGES || hasMoreData()) {
+        if (messages.size > 0) {
           return;
         }
 
-        const total = messages.size + duplicates;
+        const total = MESSAGES + duplicates;
         const duration = (Date.now() - startTime) / 1000 / 60;
         const acksPerMin = Math.floor(total / duration);
 
@@ -524,36 +523,12 @@ describe('pubsub', () => {
         let id = 0;
 
         for (let i = 0; i < messageCount; i++) {
-          const attrs = {testid: String(++id)};
-          promises.push(publisher.publish(data, attrs));
+          const testid = String(++id);
+          messages.add(testid);
+          promises.push(publisher.publish(data, {testid}));
         }
 
         return Promise.all(promises);
-      }
-
-      function hasMoreData() {
-        // "as any" lets us read private members
-        // tslint:disable-next-line:no-any
-        const subscriber = subscription._subscriber as any;
-        // tslint:disable-next-line:no-any
-        const messageStream = subscriber._stream as any;
-        // tslint:disable-next-line:no-any
-        const streams = messageStream._streams as any;
-
-        let p = getBufferLength(messageStream);
-
-        for (const stream of streams) {
-          p += getBufferLength(stream);
-          p += getBufferLength(stream.stream);
-        }
-
-        return p;
-      }
-
-      function getBufferLength(stream) {
-        const readableLength = stream._readableState.length || 0;
-        const writableLength = stream._writableState.length || 0;
-        return readableLength + writableLength;
       }
     });
   });

@@ -276,10 +276,11 @@ export class MessageStream extends PassThrough {
 
     this._streams.set(stream, true);
 
-    if (!isStreamEnded(stream)) {
-      stream.once('end', () => this._onEnd(stream, status));
-    } else {
+    if (isStreamEnded(stream)) {
       this._onEnd(stream, status);
+    } else {
+      stream.once('end', () => this._onEnd(stream, status));
+      stream.push(null);
     }
   }
   /**
