@@ -161,7 +161,6 @@ export class Subscriber extends EventEmitter {
   ackDeadline: number;
   isOpen: boolean;
   private _acks!: AckQueue;
-  private _client!: ClientStub;
   private _histogram: Histogram;
   private _inventory!: LeaseManager;
   private _isUserSetDeadline: boolean;
