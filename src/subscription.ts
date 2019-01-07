@@ -665,7 +665,7 @@ export class Subscription extends EventEmitter {
    * subscription.open();
    */
   open() {
-    if (!this.isOpen) {
+    if (!this._subscriber.isOpen) {
       this._subscriber.open();
     }
   }

@@ -16,9 +16,11 @@
 
 import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
+import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
+import {SubscriberOptions} from '../src/subscriber';
 import * as util from '../src/util';
 
 let promisified = false;
@@ -28,7 +30,7 @@ const fakePromisify = Object.assign({}, pfy, {
       return;
     }
     promisified = true;
-    assert.deepStrictEqual(options.exclude, ['snapshot']);
+    assert.deepStrictEqual(options.exclude, ['open', 'snapshot']);
   },
 });
 
@@ -47,11 +49,23 @@ class FakeSnapshot {
   }
 }
 
-class FakeSubscriber {
+let subscriber: FakeSubscriber;
+
+class FakeSubscriber extends EventEmitter {
   calledWith_: IArguments;
+  isOpen = false;
   constructor() {
+    super();
     this.calledWith_ = arguments;
+    subscriber = this;
   }
+  open(): void {
+    this.isOpen = true;
+  }
+  async close(): Promise<void> {
+    this.isOpen = false;
+  }
+  setOptions(options: SubscriberOptions): void {}
 }
 
 describe('Subscription', () => {
@@ -91,10 +105,6 @@ describe('Subscription', () => {
   describe('initialization', () => {
     it('should promisify all the things', () => {
       assert(promisified);
-    });
-
-    it('should localize pubsub.Promise', () => {
-      assert.strictEqual(subscription.Promise, PUBSUB.Promise);
     });
 
     it('should localize the pubsub object', () => {
@@ -154,11 +164,52 @@ describe('Subscription', () => {
       assert.strictEqual(args[1], subscription.name);
     });
 
-    it('should inherit from Subscriber', () => {
+    it('should create a Subscriber', () => {
       const options = {};
       const subscription = new Subscription(PUBSUB, SUB_NAME, options);
-      assert(subscription instanceof FakeSubscriber);
-      assert.strictEqual(subscription.calledWith_[0], options);
+
+      const [sub, opts] = subscriber.calledWith_;
+      assert.strictEqual(sub, subscription);
+      assert.strictEqual(opts, options);
+    });
+
+    it('should open the subscriber when a listener is attached', () => {
+      const stub = sandbox.stub(subscriber, 'open');
+
+      subscription.on('message', () => {});
+      assert.strictEqual(stub.callCount, 1);
+    });
+
+    it('should close the subscriber when no listeners are attached', () => {
+      const stub = sandbox.stub(subscriber, 'close');
+      const cb = () => {};
+
+      subscription.on('message', cb);
+      subscription.removeListener('message', cb);
+
+      assert.strictEqual(stub.callCount, 1);
+    });
+
+    it('should emit messages', done => {
+      const message = {};
+
+      subscription.on('message', msg => {
+        assert.strictEqual(msg, message);
+        done();
+      });
+
+      subscriber.emit('message', message);
+    });
+
+    it('should emit errors', done => {
+      const error = new Error('err');
+
+      subscription.on('error', err => {
+        assert.strictEqual(err, error);
+        done();
+      });
+
+      subscriber.emit('error', error);
     });
   });
 
@@ -210,6 +261,24 @@ describe('Subscription', () => {
     it('should format name when given a complete name', () => {
       const formattedName = Subscription.formatName_(PROJECT_ID, SUB_FULL_NAME);
       assert.strictEqual(formattedName, SUB_FULL_NAME);
+    });
+  });
+
+  describe('close', () => {
+    it('should call the success callback', done => {
+      sandbox.stub(subscriber, 'close').resolves();
+      subscription.close(done);
+    });
+
+    it('should pass back any errors that occurs', done => {
+      const fakeErr = new Error('err');
+
+      sandbox.stub(subscriber, 'close').rejects(fakeErr);
+
+      subscription.close(err => {
+        assert.strictEqual(err, fakeErr);
+        done();
+      });
     });
   });
 
@@ -349,30 +418,14 @@ describe('Subscription', () => {
         });
       });
 
-      it('should remove all message listeners', done => {
-        let called = false;
+      it('should close the subscriber if open', done => {
+        const stub = sandbox.stub(subscriber, 'close');
 
-        subscription.removeAllListeners = () => {
-          called = true;
-        };
+        subscription.open();
 
         subscription.delete(err => {
           assert.ifError(err);
-          assert(called);
-          done();
-        });
-      });
-
-      it('should close the subscription', done => {
-        let called = false;
-
-        subscription.close = () => {
-          called = true;
-        };
-
-        subscription.delete(err => {
-          assert.ifError(err);
-          assert(called);
+          assert.strictEqual(stub.callCount, 1);
           done();
         });
       });
@@ -664,6 +717,25 @@ describe('Subscription', () => {
     });
   });
 
+  describe('open', () => {
+    it('should open the subscriber', () => {
+      const stub = sandbox.stub(subscriber, 'open');
+
+      subscription.open();
+
+      assert.strictEqual(stub.callCount, 1);
+    });
+
+    it('should noop if already open', () => {
+      const spy = sandbox.spy(subscriber, 'open');
+
+      subscription.open();
+      subscription.open();
+
+      assert.strictEqual(spy.callCount, 1);
+    });
+  });
+
   describe('seek', () => {
     const FAKE_SNAPSHOT_NAME = 'a';
     const FAKE_FULL_SNAPSHOT_NAME = 'a/b/c/d';
@@ -774,6 +846,17 @@ describe('Subscription', () => {
       };
 
       subscription.setMetadata(METADATA, gaxOpts, done);
+    });
+  });
+
+  describe('setOptions', () => {
+    it('should pass the options to the subscriber', () => {
+      const options = {};
+      const stub = sandbox.stub(subscriber, 'setOptions').withArgs(options);
+
+      subscription.setOptions(options);
+
+      assert.strictEqual(stub.callCount, 1);
     });
   });
 
