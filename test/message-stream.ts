@@ -86,7 +86,14 @@ class FakeGrpcStream extends Duplex {
 }
 
 class FakeGaxStream extends FakeGrpcStream {
-  stream = new FakeGrpcStream();
+  stream!: FakeGrpcStream;
+  constructor() {
+    super();
+    this.setStream(new FakeGrpcStream());
+  }
+  setStream(readable: FakeGrpcStream): void {
+    this.stream = readable;
+  }
 }
 
 class FakeClient {
@@ -337,7 +344,6 @@ describe('MessageStream', () => {
         assert.strictEqual(client.streams.length, 5);
 
         client.streams.forEach(stream => {
-          stream.emit('readable');
           assert.strictEqual(stream.stream._readableState.highWaterMark, 0);
           assert.strictEqual(stream.stream._writableState.highWaterMark, 0);
         });

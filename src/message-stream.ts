@@ -64,6 +64,7 @@ interface GrpcDuplex extends Duplex {
 interface GaxDuplex extends GrpcDuplex {
   stream: GrpcDuplex;
   destroy(): void;
+  setReadable(readable: GrpcDuplex): void;
 }
 
 /**
@@ -168,9 +169,14 @@ export class MessageStream extends PassThrough {
     this._setHighWaterMark(stream);
     this._streams.set(stream, false);
 
+    if (stream.stream) {
+      this._setHighWaterMark(stream.stream);
+    } else {
+      this._interceptGrpcStream(stream);
+    }
+
     stream.on('error', err => this._onError(stream, err))
         .once('status', status => this._onStatus(stream, status))
-        .once('readable', () => this._setHighWaterMark(stream.stream))
         .pipe(this, {end: false});
   }
   /**
@@ -210,6 +216,28 @@ export class MessageStream extends PassThrough {
     } catch (e) {
       this.destroy(e);
     }
+  }
+  /**
+   * gax streams are basically just proxy streams that allow grpc streams to be
+   * created and set asychronously without the user having to deal with that.
+   * However since there isn't a way to specify the flow control limits on any
+   * grpc stream or tap into an event when its been created, we'll stub the
+   * setter method to adjust the highWaterMark before data starts flowing.
+   *
+   * @private
+   *
+   * @param {stream} stream Duplexify stream.
+   */
+  private _interceptGrpcStream(stream: GaxDuplex): void {
+    const setReadable = stream.setReadable;
+
+    // gax streams are basically just a proxy for grpc streams, which are set
+    // asynchronously.
+    stream.setReadable = (readable: GrpcDuplex): void => {
+      stream.setReadable = setReadable;
+      this._setHighWaterMark(readable);
+      return setReadable.call(stream, readable);
+    };
   }
   /**
    * Since we do not use the streams to ack/modAck messages, they will close
