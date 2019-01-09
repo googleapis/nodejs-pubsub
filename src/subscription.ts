@@ -658,7 +658,7 @@ export class Subscription extends EventEmitter {
    *     // Error handling omitted.
    *   }
    *
-   *   The subscription has been closed and messages will no longer received.
+   *   The subscription has been closed and messages will no longer be received.
    * });
    *
    * // Resume receiving messages.
