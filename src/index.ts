@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+/**
+ * @namespace google.pubsub.v1
+ */
+/**
+ * @namespace google.protobuf
+ */
+
 import {paginator} from '@google-cloud/paginator';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisifyAll} from '@google-cloud/promisify';
