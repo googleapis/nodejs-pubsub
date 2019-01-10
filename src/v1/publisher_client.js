@@ -278,7 +278,8 @@ class PublisherClient {
 
   /**
    * Creates the given topic with the given name. See the
-   * <a href="/pubsub/docs/admin#resource_names"> resource name rules</a>.
+   * <a href="https://cloud.google.com/pubsub/docs/admin#resource_names">
+   * resource name rules</a>.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -290,7 +291,8 @@ class PublisherClient {
    *   signs (`%`). It must be between 3 and 255 characters in length, and it
    *   must not start with `"goog"`.
    * @param {Object.<string, string>} [request.labels]
-   *   See <a href="/pubsub/docs/labels"> Creating and managing labels</a>.
+   *   See <a href="https://cloud.google.com/pubsub/docs/labels"> Creating and
+   *   managing labels</a>.
    * @param {Object} [request.messageStoragePolicy]
    *   Policy constraining how messages published to the topic may be stored. It
    *   is determined when the topic is created based on the policy configured at
