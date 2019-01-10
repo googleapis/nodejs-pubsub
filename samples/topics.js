@@ -209,13 +209,13 @@ async function publishWithRetrySettings(projectId, topicName, data) {
   // Default values are shown
   const retrySettings = {
     retryCodes: [
-      "ABORTED",
-      "CANCELLED",
-      "DEADLINE_EXCEEDED",
-      "INTERNAL",
-      "RESOURCE_EXHAUSTED",
-      "UNAVAILABLE",
-      "UNKNOWN"
+      'ABORTED',
+      'CANCELLED',
+      'DEADLINE_EXCEEDED',
+      'INTERNAL',
+      'RESOURCE_EXHAUSTED',
+      'UNAVAILABLE',
+      'UNKNOWN',
     ],
     backoffSettings: {
       initialRetryDelayMillis: 100,
