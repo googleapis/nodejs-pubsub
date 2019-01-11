@@ -34,6 +34,54 @@ import {Readable} from 'stream';
 const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
 
+
+export interface ExistsCallback {
+  (err?: Error|null, res?: boolean|null): void;
+}
+
+export type GetCallOptions = {
+  autoCreate?: boolean
+};
+
+export interface PushConfig {
+  pushEndpoint: string;
+  attibutes?: Map<string, string>;
+}
+
+
+export interface SubscriptionCallOptions {
+  flowControl?: {maxBytes?: number, maxMessages?: number};
+  maxConnections?: number;
+  topic?: Topic;
+  ackDeadline?: number;
+  autoPaginate?: boolean;
+  gaxOpts?: CallOptions;
+  batching?:
+      {maxBytes?: number, maxMessages?: number, maxMilliseconds?: number};
+}
+
+export interface PublisherCallOptions {
+  batching?:
+      {maxBytes?: number, maxMessages?: number, maxMilliseconds?: number};
+}
+
+/**
+ * @callback CreateTopicCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Snapshot} snapshot
+ * @param {object} apiResponse The full API response.
+ */
+export interface CreateSnapshotCallback {
+  (err?: Error|null, topic?: Snapshot|null, apiResponse?: object): void;
+}
+
+/**
+ * @typedef {array} CreateSnapshotResponse
+ * @property {Snapshot}.
+ * @property {object} 1 The full API response.
+ */
+export type CreateSnapshotResponse = [Snapshot, object];
+
 /**
  * @type {string} - Project ID placeholder.
  * @private
@@ -58,6 +106,16 @@ export type CreateTopicResponse = [Topic, object];
  */
 export interface CreateTopicCallback {
   (err?: Error|null, topic?: Topic|null, apiResponse?: object): void;
+}
+
+/**
+ * @callback CreateSubscriptionCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Subscription} Subscription
+ * @param {object} apiResponse The full API response.
+ */
+export interface CreateSubscriptionCallback {
+  (err?: Error|null, topic?: Subscription|null, apiResponse?: object): void;
 }
 
 export type Client = 'PublisherClient'|'SubscriberClient';

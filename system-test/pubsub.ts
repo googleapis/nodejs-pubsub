@@ -189,7 +189,7 @@ describe('pubsub', () => {
       const topic = pubsub.topic(TOPIC_NAMES[0]);
       topic.getMetadata((err, metadata) => {
         assert.ifError(err);
-        assert.strictEqual(metadata.name, topic.name);
+        assert.strictEqual(metadata!.name, topic.name);
         done();
       });
     });
@@ -250,8 +250,8 @@ describe('pubsub', () => {
     it('should list all subscriptions registered to the topic', done => {
       topic.getSubscriptions((err, subs) => {
         assert.ifError(err);
-        assert.strictEqual(subs.length, SUBSCRIPTIONS.length);
-        assert(subs[0] instanceof Subscription);
+        assert.strictEqual(subs!.length, SUBSCRIPTIONS.length);
+        assert(subs![0] instanceof Subscription);
         done();
       });
     });
@@ -299,7 +299,7 @@ describe('pubsub', () => {
       topic.createSubscription(subName, (err, sub) => {
         assert.ifError(err);
         assert(sub instanceof Subscription);
-        sub.delete(done);
+        sub!.delete(done);
       });
     });
 
@@ -332,27 +332,25 @@ describe('pubsub', () => {
     it('should create a subscription with message retention', done => {
       const subName = generateSubName();
       const threeDaysInSeconds = 3 * 24 * 60 * 60;
+      const callOptions =
+          {seconds: threeDaysInSeconds, nanos: 0, topic: '', name: ''};
 
-      topic.createSubscription(
-          subName, {
-            messageRetentionDuration: threeDaysInSeconds,
-          },
-          (err, sub) => {
-            assert.ifError(err);
+      topic.createSubscription(subName, callOptions, (err, sub) => {
+        assert.ifError(err);
 
-            sub.getMetadata((err, metadata) => {
-              assert.ifError(err);
+        sub!.getMetadata((err, metadata) => {
+          assert.ifError(err);
 
-              assert.strictEqual(metadata.retainAckedMessages, true);
-              assert.strictEqual(
-                  Number(metadata.messageRetentionDuration.seconds),
-                  threeDaysInSeconds);
-              assert.strictEqual(
-                  Number(metadata.messageRetentionDuration.nanos), 0);
+          assert.strictEqual(metadata.retainAckedMessages, true);
+          assert.strictEqual(
+              Number(metadata.messageRetentionDuration.seconds),
+              threeDaysInSeconds);
+          assert.strictEqual(
+              Number(metadata.messageRetentionDuration.nanos), 0);
 
-              sub.delete(done);
-            });
-          });
+          sub!.delete(done);
+        });
+      });
     });
 
     it('should set metadata for a subscription', () => {
