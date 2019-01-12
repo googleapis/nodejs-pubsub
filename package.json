@@ -54,7 +54,7 @@
     "duplexify": "^3.5.4",
     "extend": "^3.0.1",
     "google-auth-library": "^2.0.0",
-    "google-gax": "^0.22.0",
+    "google-gax": "^0.23.0",
     "is": "^3.0.1",
     "lodash.chunk": "^4.2.0",
     "lodash.merge": "^4.6.0",
