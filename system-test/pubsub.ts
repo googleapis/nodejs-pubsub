@@ -332,8 +332,12 @@ describe('pubsub', () => {
     it('should create a subscription with message retention', done => {
       const subName = generateSubName();
       const threeDaysInSeconds = 3 * 24 * 60 * 60;
-      const callOptions =
-          {seconds: threeDaysInSeconds, nanos: 0, topic: '', name: ''};
+      const callOptions = {
+        messageRetentionDuration: threeDaysInSeconds,
+        topic: '',
+        name: ''
+      };
+
 
       topic.createSubscription(subName, callOptions, (err, sub) => {
         assert.ifError(err);

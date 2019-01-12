@@ -154,7 +154,7 @@ export interface CreateSubscriptionCallback {
    apiResponse?: object): void;
 }
 
-export interface CreateSubscriptionOptions extends SubscriptionMetadata {
+export interface CreateSubscriptionOptions extends SubscriptionMetadataRaw {
   flowControl?: {maxBytes?: number; maxMessages?: number;};
   gaxOpts?: CallOptions;
 }
