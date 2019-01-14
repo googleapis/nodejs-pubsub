@@ -41,12 +41,7 @@ interface StreamOptions {
   highWaterMark?: number;
 }
 
-class FakePassThrough extends PassThrough {
-  options: StreamOptions;
-  constructor(options: StreamOptions) {
-    super(options);
-    this.options = options;
-  }
+class FakeDuplex extends Duplex {
   destroy(err?: Error): void {
     if (super.destroy) {
       return super.destroy(err);
@@ -55,8 +50,15 @@ class FakePassThrough extends PassThrough {
   }
 }
 
+class FakePassThrough extends PassThrough {
+  options: StreamOptions;
+  constructor(options: StreamOptions) {
+    super(options);
+    this.options = options;
+  }
+}
+
 class FakeGrpcStream extends Duplex {
-  _writableState!: StreamState;
   _readableState!: StreamState;
   constructor() {
     super({objectMode: true});
@@ -85,22 +87,21 @@ class FakeGrpcStream extends Duplex {
   _read(size: number): void {}
 }
 
-class FakeGaxStream extends FakeGrpcStream {
-  stream!: FakeGrpcStream;
+class FakeGaxClient {
+  client: FakeGrpcClient;
   constructor() {
-    super();
-    this.setStream(new FakeGrpcStream());
+    this.client = new FakeGrpcClient();
   }
-  setStream(readable: FakeGrpcStream): void {
-    this.stream = readable;
+  async getSubscriberStub(): Promise<FakeGrpcClient> {
+    return this.client;
   }
 }
 
-class FakeClient {
+class FakeGrpcClient {
   deadline?: number;
-  streams = ([] as FakeGaxStream[]);
-  streamingPull(): FakeGaxStream {
-    const stream = new FakeGaxStream();
+  streams = ([] as FakeGrpcStream[]);
+  streamingPull(): FakeGrpcStream {
+    const stream = new FakeGrpcStream();
     this.streams.push(stream);
     return stream;
   }
@@ -113,13 +114,13 @@ class FakeClient {
 class FakeSubscriber {
   name: string;
   ackDeadline: number;
-  client: FakeClient;
+  client: FakeGaxClient;
   constructor(client) {
     this.name = uuid.v4();
     this.ackDeadline = Math.floor(Math.random() * 600);
     this.client = client;
   }
-  async getClient(): Promise<FakeClient> {
+  async getClient(): Promise<FakeGaxClient> {
     return this.client;
   }
 }
@@ -127,7 +128,7 @@ class FakeSubscriber {
 describe('MessageStream', () => {
   const sandbox = sinon.createSandbox();
 
-  let client: FakeClient;
+  let client: FakeGrpcClient;
   let subscriber: FakeSubscriber;
 
   // tslint:disable-next-line variable-name
@@ -135,14 +136,16 @@ describe('MessageStream', () => {
   let messageStream;
 
   before(() => {
-    MessageStream = proxyquire('../src/message-stream.js', {
-                      'stream': {PassThrough: FakePassThrough}
-                    }).MessageStream;
+    MessageStream =
+        proxyquire('../src/message-stream.js', {
+          'stream': {Duplex: FakeDuplex, PassThrough: FakePassThrough}
+        }).MessageStream;
   });
 
   beforeEach(() => {
-    client = new FakeClient();
-    subscriber = new FakeSubscriber(client);
+    const gaxClient = new FakeGaxClient();
+    client = gaxClient.client;  // we hit the grpc client directly
+    subscriber = new FakeSubscriber(gaxClient);
     messageStream = new MessageStream(subscriber);
   });
 
@@ -182,7 +185,6 @@ describe('MessageStream', () => {
         it('should default highWaterMark to 0', () => {
           client.streams.forEach(stream => {
             assert.strictEqual(stream._readableState.highWaterMark, 0);
-            assert.strictEqual(stream._writableState.highWaterMark, 0);
           });
         });
 
@@ -221,8 +223,6 @@ describe('MessageStream', () => {
             client.streams.forEach(stream => {
               assert.strictEqual(
                   stream._readableState.highWaterMark, highWaterMark);
-              assert.strictEqual(
-                  stream._writableState.highWaterMark, highWaterMark);
             });
             done();
           });
@@ -256,13 +256,16 @@ describe('MessageStream', () => {
   });
 
   describe('destroy', () => {
-    it('should noop if already destroyed', () => {
-      const stub = sandbox.stub(FakePassThrough.prototype, 'destroy');
+    it('should noop if already destroyed', done => {
+      const stub = sandbox.stub(FakeDuplex.prototype, 'destroy')
+                       .callsFake(function(this: Duplex) {
+                         if (this === messageStream) {
+                           done();
+                         }
+                       });
 
       messageStream.destroy();
       messageStream.destroy();
-
-      assert.strictEqual(stub.callCount, 1);
     });
 
     it('should set destroyed to true', () => {
@@ -302,22 +305,17 @@ describe('MessageStream', () => {
       });
     });
 
-    it('should call through to parent destroy', done => {
-      sandbox.stub(FakePassThrough.prototype, 'destroy').callsFake(done);
-      messageStream.destroy();
-    });
-
     describe('without native destroy', () => {
       let destroy;
 
       before(() => {
-        destroy = FakePassThrough.prototype.destroy;
+        destroy = FakeDuplex.prototype.destroy;
         // tslint:disable-next-line no-any
-        FakePassThrough.prototype.destroy = (false as any);
+        FakeDuplex.prototype.destroy = (false as any);
       });
 
       after(() => {
-        FakePassThrough.prototype.destroy = destroy;
+        FakeDuplex.prototype.destroy = destroy;
       });
 
       it('should emit close', done => {
@@ -340,15 +338,6 @@ describe('MessageStream', () => {
 
   describe('pull stream lifecycle', () => {
     describe('initialization', () => {
-      it('should adjust the underlying stream highWaterMark', () => {
-        assert.strictEqual(client.streams.length, 5);
-
-        client.streams.forEach(stream => {
-          assert.strictEqual(stream.stream._readableState.highWaterMark, 0);
-          assert.strictEqual(stream.stream._writableState.highWaterMark, 0);
-        });
-      });
-
       it('should pipe to the message stream', done => {
         const fakeResponses = [{}, {}, {}, {}, {}];
         const recieved: object[] = [];
@@ -428,15 +417,19 @@ describe('MessageStream', () => {
     });
 
     describe('on status', () => {
-      it('should destroy the stream if the message stream is destroyed', () => {
-        const [stream] = client.streams;
-        const stub = sandbox.stub(stream, 'destroy');
+      it('should destroy the stream if the message stream is destroyed',
+         done => {
+           const [stream] = client.streams;
+           const stub = sandbox.stub(FakeDuplex.prototype, 'destroy')
+                            .callsFake(function(this: Duplex) {
+                              if (this === stream) {
+                                done();
+                              }
+                            });
 
-        messageStream.destroy();
-        stream.emit('status', {});
-
-        assert.strictEqual(stub.callCount, 1);
-      });
+           messageStream.destroy();
+           stream.emit('status', {});
+         });
 
       it('should wait for end to fire before creating a new stream', done => {
         const [stream] = client.streams;

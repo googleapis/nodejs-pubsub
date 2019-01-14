@@ -16,11 +16,11 @@
 
 import {promisify} from '@google-cloud/promisify';
 import {ClientStub} from 'google-gax';
-import {Metadata, StatusObject} from 'grpc';
+import {ClientDuplexStream, Metadata, StatusObject} from 'grpc';
 import * as isStreamEnded from 'is-stream-ended';
 import {Duplex, PassThrough} from 'stream';
 
-import {Subscriber} from './subscriber';
+import {PullResponse, Subscriber} from './subscriber';
 
 /*!
  * Frequency to ping streams.
@@ -55,17 +55,16 @@ interface StreamState {
   highWaterMark: number;
 }
 
-interface GrpcDuplex extends Duplex {
-  _writableState: StreamState;
-  _readableState: StreamState;
-  cancel(): void;
+interface StreamingPullRequest {
+  subscription?: string;
+  ackIds?: string[];
+  modifyDeadlineSeconds?: number[];
+  modifyDeadlineAckIds?: string[];
+  streamAckDeadlineSeconds?: number;
 }
 
-interface GaxDuplex extends GrpcDuplex {
-  stream: GrpcDuplex;
-  destroy(): void;
-  setReadable(readable: GrpcDuplex): void;
-}
+type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse>&
+    {_readableState: StreamState};
 
 /**
  * Error wrapper for gRPC status objects.
@@ -82,6 +81,29 @@ export class StatusError extends Error {
     this.code = status.code;
     this.metadata = status.metadata;
   }
+}
+
+/**
+ * Ponyfill for destroying streams.
+ *
+ * @private
+ *
+ * @param {stream} stream The stream to destroy.
+ * @param {error?} err Error to emit.
+ */
+export function destroy(stream: Duplex, err?: Error): void {
+  const nativeDestroy = Duplex.prototype.destroy;
+
+  if (typeof nativeDestroy === 'function') {
+    return nativeDestroy.call(stream, err);
+  }
+
+  process.nextTick(() => {
+    if (err) {
+      stream.emit('error', err);
+    }
+    stream.emit('close');
+  });
 }
 
 /**
@@ -112,16 +134,17 @@ export class MessageStream extends PassThrough {
   destroyed: boolean;
   private _keepAliveHandle: NodeJS.Timer;
   private _options: MessageStreamOptions;
-  private _streams: Map<GaxDuplex, boolean>;
+  private _streams: Map<PullStream, boolean>;
   private _subscriber: Subscriber;
   constructor(sub: Subscriber, options = {} as MessageStreamOptions) {
-    const {highWaterMark = 0} = options;
-    super({objectMode: true, highWaterMark});
+    options = Object.assign({}, DEFAULT_OPTIONS, options);
+
+    super({objectMode: true, highWaterMark: options.highWaterMark});
 
     this.destroyed = false;
+    this._options = options;
     this._streams = new Map();
     this._subscriber = sub;
-    this._options = Object.assign({}, DEFAULT_OPTIONS, options);
 
     this._fillStreamPool();
 
@@ -147,16 +170,7 @@ export class MessageStream extends PassThrough {
       stream.cancel();
     }
 
-    if (super.destroy) {
-      return super.destroy(err);
-    }
-
-    process.nextTick(() => {
-      if (err) {
-        this.emit('error', err);
-      }
-      this.emit('close');
-    });
+    return destroy(this, err);
   }
   /**
    * Adds a StreamingPull stream to the combined stream.
@@ -165,15 +179,9 @@ export class MessageStream extends PassThrough {
    *
    * @param {stream} stream The StreamingPull stream.
    */
-  private _addStream(stream: GaxDuplex): void {
+  private _addStream(stream: PullStream): void {
     this._setHighWaterMark(stream);
     this._streams.set(stream, false);
-
-    if (stream.stream) {
-      this._setHighWaterMark(stream.stream);
-    } else {
-      this._interceptGrpcStream(stream);
-    }
 
     stream.on('error', err => this._onError(stream, err))
         .once('status', status => this._onStatus(stream, status))
@@ -193,7 +201,7 @@ export class MessageStream extends PassThrough {
     let client;
 
     try {
-      client = await this._subscriber.getClient();
+      client = await this._getClient();
     } catch (e) {
       this.destroy(e);
     }
@@ -202,13 +210,15 @@ export class MessageStream extends PassThrough {
       return;
     }
 
-    const subscription = this._subscriber.name;
-    const streamAckDeadlineSeconds = this._subscriber.ackDeadline;
+    const request: StreamingPullRequest = {
+      subscription: this._subscriber.name,
+      streamAckDeadlineSeconds: this._subscriber.ackDeadline,
+    };
 
     for (let i = this._streams.size; i < this._options.maxStreams!; i++) {
-      const stream: GaxDuplex = client.streamingPull();
+      const stream: PullStream = client.streamingPull();
       this._addStream(stream);
-      stream.write({subscription, streamAckDeadlineSeconds});
+      stream.write(request);
     }
 
     try {
@@ -218,26 +228,18 @@ export class MessageStream extends PassThrough {
     }
   }
   /**
-   * gax streams are basically just proxy streams that allow grpc streams to be
-   * created and set asychronously without the user having to deal with that.
-   * However since there isn't a way to specify the flow control limits on any
-   * grpc stream or tap into an event when its been created, we'll stub the
-   * setter method to adjust the highWaterMark before data starts flowing.
+   * It is critical that we keep as few `PullResponse` objects in memory as
+   * possible to reduce the number of potential redeliveries. Because of this we
+   * want to bypass gax for StreamingPull requests to avoid creating a Duplexify
+   * stream, doing so essentially doubles the size of our readable buffer.
    *
    * @private
    *
-   * @param {stream} stream Duplexify stream.
+   * @returns {Promise.<object>}
    */
-  private _interceptGrpcStream(stream: GaxDuplex): void {
-    const setReadable = stream.setReadable;
-
-    // gax streams are basically just a proxy for grpc streams, which are set
-    // asynchronously.
-    stream.setReadable = (readable: GrpcDuplex): void => {
-      stream.setReadable = setReadable;
-      this._setHighWaterMark(readable);
-      return setReadable.call(stream, readable);
-    };
+  private async _getClient(): Promise<ClientStub> {
+    const client = await this._subscriber.getClient();
+    return client.getSubscriberStub();
   }
   /**
    * Since we do not use the streams to ack/modAck messages, they will close
@@ -259,7 +261,7 @@ export class MessageStream extends PassThrough {
    * @param {Duplex} stream The ended stream.
    * @param {object} status The stream status.
    */
-  private _onEnd(stream: GaxDuplex, status: StatusObject): void {
+  private _onEnd(stream: PullStream, status: StatusObject): void {
     this._removeStream(stream);
 
     if (RETRY_CODES.includes(status.code)) {
@@ -278,7 +280,7 @@ export class MessageStream extends PassThrough {
    * @param {stream} stream The stream that errored.
    * @param {Error} err The error.
    */
-  private _onError(stream: GaxDuplex, err: Error): void {
+  private _onError(stream: PullStream, err: Error): void {
     const code = (err as StatusError).code;
     const receivedStatus = this._streams.get(stream) !== false;
 
@@ -296,9 +298,9 @@ export class MessageStream extends PassThrough {
    * @param {stream} stream The stream that was closed.
    * @param {object} status The status message stating why it was closed.
    */
-  private _onStatus(stream: GaxDuplex, status: StatusObject): void {
+  private _onStatus(stream: PullStream, status: StatusObject): void {
     if (this.destroyed) {
-      stream.destroy();
+      destroy(stream);
       return;
     }
 
@@ -318,7 +320,7 @@ export class MessageStream extends PassThrough {
    *
    * @param {stream} stream The stream to remove.
    */
-  private _removeStream(stream: GaxDuplex): void {
+  private _removeStream(stream: PullStream): void {
     stream.unpipe(this);
     this._streams.delete(stream);
   }
@@ -335,9 +337,8 @@ export class MessageStream extends PassThrough {
    * @param {Duplex} stream The duplex stream to adjust the
    *     highWaterMarks for.
    */
-  private _setHighWaterMark(stream: GrpcDuplex): void {
+  private _setHighWaterMark(stream: PullStream): void {
     stream._readableState.highWaterMark = this._options.highWaterMark!;
-    stream._writableState.highWaterMark = this._options.highWaterMark!;
   }
   /**
    * Promisified version of gRPCs Client#waitForReady function.
