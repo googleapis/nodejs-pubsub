@@ -15,17 +15,17 @@
  */
 
 import {promisifyAll} from '@google-cloud/promisify';
+import {EventEmitter} from 'events';
+import * as extend from 'extend';
 import * as is from 'is';
+import * as snakeCase from 'lodash.snakecase';
 
-import * as util from './util';
-
-const snakeCase = require('lodash.snakecase');
-
+import {Metadata, PubSub} from '.';
 import {IAM} from './iam';
 import {Snapshot} from './snapshot';
-import {Subscriber} from './subscriber';
-import {PubSub, Metadata} from '.';
-import extend = require('extend');
+import {Subscriber, SubscriberOptions} from './subscriber';
+import {Topic} from './topic';
+import {noop} from './util';
 
 /**
  * @typedef {object} ExpirationPolicy
@@ -111,6 +111,10 @@ export interface SubscriptionMetadata extends TSubscriptionMetadata {
  * time. You can fine tune this value by adjusting the
  * `options.flowControl.maxMessages` option.
  *
+ * If your subscription is seeing more re-deliveries than preferable, you might
+ * try increasing your `options.ackDeadline` value or decreasing the
+ * `options.streamingOptions.maxStreams` value.
+ *
  * Subscription objects handle ack management, by automatically extending the
  * ack deadline while the message is being processed, to then issue the ack or
  * nack of such message when the processing is done. **Note:** message
@@ -120,24 +124,7 @@ export interface SubscriptionMetadata extends TSubscriptionMetadata {
  *
  * @param {PubSub} pubsub PubSub object.
  * @param {string} name The name of the subscription.
- * @param {object} [options] See a
- *     [Subscription
- * resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions)
- * @param {object} [options.batching] Batch configurations for sending out
- *     Acknowledge and ModifyAckDeadline requests.
- * @param {number} [options.batching.maxMilliseconds] The maximum amount of time
- *     to buffer Acknowledge and ModifyAckDeadline requests. Default: 100.
- * @param {object} [options.flowControl] Flow control configurations for
- *     receiving messages. Note that these options do not persist across
- *     subscription instances.
- * @param {number} [options.flowControl.maxBytes] The maximum number of bytes
- *     in un-acked messages to allow before the subscription pauses incoming
- *     messages. Defaults to 20% of free memory.
- * @param {number} [options.flowControl.maxMessages] The maximum number of
- *     un-acked messages to allow before the subscription pauses incoming
- *     messages. Default: 100.
- * @param {number} [options.maxConnections] Use this to limit the number of
- *     connections to be used when sending and receiving messages. Default: 5.
+ * @param {SubscriberOptions} [options] Options for handling messages.
  *
  * @example
  * const {PubSub} = require('@google-cloud/pubsub');
@@ -189,7 +176,7 @@ export interface SubscriptionMetadata extends TSubscriptionMetadata {
  *   // message.ackId = ID used to acknowledge the message receival.
  *   // message.data = Contents of the message.
  *   // message.attributes = Attributes of the message.
- *   // message.publishTime = Timestamp when Pub/Sub received the message.
+ *   // message.publishTime = Date when Pub/Sub received the message.
  *
  *   // Ack the message:
  *   // message.ack();
@@ -203,28 +190,27 @@ export interface SubscriptionMetadata extends TSubscriptionMetadata {
  * // Remove the listener from receiving `message` events.
  * subscription.removeListener('message', onMessage);
  */
-export class Subscription extends Subscriber {
-  // tslint:disable-next-line variable-name
-  Promise?: PromiseConstructor;
+export class Subscription extends EventEmitter {
   pubsub: PubSub;
-  projectId: string;
   create!: Function;
   iam: IAM;
   name: string;
   metadata;
-  constructor(pubsub: PubSub, name: string, options) {
+  request: Function;
+  private _subscriber: Subscriber;
+  constructor(pubsub: PubSub, name: string, options?) {
+    super();
+
     options = options || {};
-    super(options);
-    if (pubsub.Promise) {
-      this.Promise = pubsub.Promise;
-    }
+
     this.pubsub = pubsub;
-    this.projectId = pubsub.projectId;
     this.request = pubsub.request.bind(pubsub);
-    this.name = Subscription.formatName_(pubsub.projectId, name);
+    this.name = Subscription.formatName_(this.projectId, name);
+
     if (options.topic) {
       this.create = pubsub.createSubscription.bind(pubsub, options.topic, name);
     }
+
     /**
      * [IAM (Identity and Access
      * Management)](https://cloud.google.com/pubsub/access_control) allows you
@@ -262,6 +248,48 @@ export class Subscription extends Subscriber {
      * });
      */
     this.iam = new IAM(pubsub, this.name);
+
+    this._subscriber = new Subscriber(this, options as SubscriberOptions);
+    this._subscriber.on('error', err => this.emit('error', err))
+        .on('message', message => this.emit('message', message));
+
+    this._listen();
+  }
+  /**
+   * Indicates if the Subscription is open and receiving messages.
+   *
+   * @type {boolean}
+   */
+  get isOpen(): boolean {
+    return !!(this._subscriber && this._subscriber.isOpen);
+  }
+  /**
+   * @type {string}
+   */
+  get projectId(): string {
+    return this.pubsub && this.pubsub.projectId || '{{projectId}}';
+  }
+  /**
+   * Closes the Subscription, once this is called you will no longer receive
+   * message events unless you call {Subscription#open} or add new message
+   * listeners.
+   *
+   * @param {function} [callback] The callback function.
+   * @param {?error} callback.err An error returned while closing the
+   *     Subscription.
+   *
+   * @example
+   * subscription.close(err => {
+   *   if (err) {
+   *     // Error handling omitted.
+   *   }
+   * });
+   *
+   * // If the callback is omitted a Promise will be returned.
+   * subscription.close().then(() => {});
+   */
+  close(callback?: (err?: Error) => void) {
+    this._subscriber.close().then(() => callback!(), callback);
   }
   /**
    * @typedef {array} CreateSnapshotResponse
@@ -369,10 +397,15 @@ export class Subscription extends Subscriber {
       callback = gaxOpts;
       gaxOpts = {};
     }
-    callback = callback || util.noop;
+    callback = callback || noop;
     const reqOpts = {
       subscription: this.name,
     };
+
+    if (this.isOpen) {
+      this._subscriber.close();
+    }
+
     this.request(
         {
           client: 'SubscriberClient',
@@ -380,13 +413,7 @@ export class Subscription extends Subscriber {
           reqOpts,
           gaxOpts,
         },
-        (err, resp) => {
-          if (!err) {
-            this.removeAllListeners();
-            this.close();
-          }
-          callback(err, resp);
-        });
+        callback);
   }
   /**
    * @typedef {array} SubscriptionExistsResponse
@@ -617,6 +644,32 @@ export class Subscription extends Subscriber {
         callback);
   }
   /**
+   * Opens the Subscription to receive messages. In general this method
+   * shouldn't need to be called, unless you wish to receive messages after
+   * calling {@link Subscription#close}. Alternatively one could just assign a
+   * new `message` event listener which will also re-open the Subscription.
+   *
+   * @example
+   * subscription.on('message', message => message.ack());
+   *
+   * // Close the subscription.
+   * subscription.close(err => {
+   *   if (err) {
+   *     // Error handling omitted.
+   *   }
+   *
+   *   The subscription has been closed and messages will no longer be received.
+   * });
+   *
+   * // Resume receiving messages.
+   * subscription.open();
+   */
+  open() {
+    if (!this._subscriber.isOpen) {
+      this._subscriber.open();
+    }
+  }
+  /**
    * @typedef {array} SeekResponse
    * @property {object} 0 The full API response.
    */
@@ -669,7 +722,7 @@ export class Subscription extends Subscriber {
     };
 
     if (is.string(snapshot)) {
-      reqOpts.snapshot = Snapshot.formatName_(this.pubsub.projectId, snapshot);
+      reqOpts.snapshot = Snapshot.formatName_(this.projectId, snapshot);
     } else if (is.date(snapshot)) {
       reqOpts.time = snapshot;
     } else {
@@ -744,6 +797,14 @@ export class Subscription extends Subscriber {
         callback);
   }
   /**
+   * Sets the Subscription options.
+   *
+   * @param {SubscriberOptions} options The options.
+   */
+  setOptions(options: SubscriberOptions): void {
+    this._subscriber.setOptions(options);
+  }
+  /**
    * Create a Snapshot object. See {@link Subscription#createSnapshot} to
    * create a snapshot.
    *
@@ -757,6 +818,25 @@ export class Subscription extends Subscriber {
    */
   snapshot(name: string) {
     return this.pubsub.snapshot.call(this, name);
+  }
+  /**
+   * Watches for incoming message event handlers and open/closes the
+   * subscriber as needed.
+   *
+   * @private
+   */
+  private _listen(): void {
+    this.on('newListener', event => {
+      if (!this.isOpen && event === 'message') {
+        this._subscriber.open();
+      }
+    });
+
+    this.on('removeListener', event => {
+      if (this.isOpen && this.listenerCount('message') === 0) {
+        this._subscriber.close();
+      }
+    });
   }
   /*!
    * Formats Subscription metadata.
@@ -809,5 +889,5 @@ export class Subscription extends Subscriber {
  * that a callback is omitted.
  */
 promisifyAll(Subscription, {
-  exclude: ['snapshot'],
+  exclude: ['open', 'snapshot'],
 });
