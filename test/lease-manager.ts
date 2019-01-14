@@ -26,7 +26,7 @@ const fakeos = {
 
 class FakeSubscriber extends EventEmitter {
   ackDeadline = 10;
-  latency = 2;
+  modAckLatency = 2000;
   async modAck(message: FakeMessage, deadline: number): Promise<void> {}
 }
 
@@ -169,10 +169,9 @@ describe('LeaseManager', () => {
         random = Math.random();
         sandbox.stub(global.Math, 'random').returns(random);
         clock = sandbox.useFakeTimers();
-        expectedTimeout = ((subscriber.ackDeadline * 1000) * 0.9 -
-                           (subscriber.latency * 1000)) *
+        expectedTimeout =
+            ((subscriber.ackDeadline * 1000) * 0.9 - subscriber.modAckLatency) *
             random;
-
         halfway = expectedTimeout / 2;
       });
 

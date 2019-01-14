@@ -42,7 +42,7 @@ interface ReceivedMessage {
 /**
  * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/pull#body.PullResponse
  */
-interface PullResponse {
+export interface PullResponse {
   receivedMessages: ReceivedMessage[];
 }
 
@@ -187,8 +187,15 @@ export class Subscriber extends EventEmitter {
    *
    * @type {number}
    */
-  get latency() {
-    return this._latencies.percentile(99);
+  get modAckLatency() {
+    const latency = this._latencies.percentile(99);
+    let bufferTime = 0;
+
+    if (this._modAcks) {
+      bufferTime = this._modAcks.maxMilliseconds;
+    }
+
+    return latency * 1000 + bufferTime;
   }
   /**
    * The full name of the Subscription.
@@ -210,10 +217,8 @@ export class Subscriber extends EventEmitter {
    * @returns {Promise}
    */
   async ack(message: Message): Promise<void> {
-    const startTime = Date.now();
-
     if (!this._isUserSetDeadline) {
-      const ackTimeSeconds = (startTime - message.received) / 1000;
+      const ackTimeSeconds = (Date.now() - message.received) / 1000;
       this._histogram.add(ackTimeSeconds);
       this.ackDeadline = this._histogram.percentile(99);
     }
@@ -221,9 +226,6 @@ export class Subscriber extends EventEmitter {
     this._acks.add(message);
     await this._acks.onFlush();
     this._inventory.remove(message);
-
-    const latency = (Date.now() - startTime) / 1000;
-    this._latencies.add(latency);
   }
   /**
    * Closes the subscriber. The returned promise will resolve once any pending
@@ -295,7 +297,7 @@ export class Subscriber extends EventEmitter {
     this._stream = new MessageStream(this, streamingOptions);
 
     this._stream.on('error', err => this.emit('error', err))
-        .on('data', (data: PullResponse) => this._ondata(data));
+        .on('data', (data: PullResponse) => this._onData(data));
 
     this._inventory.on('full', () => this._stream.pause())
         .on('free', () => this._stream.resume());
@@ -347,7 +349,7 @@ export class Subscriber extends EventEmitter {
    *
    * @private
    */
-  private async _ondata(response: PullResponse): Promise<void> {
+  private _onData(response: PullResponse): void {
     response.receivedMessages.forEach((data: ReceivedMessage) => {
       const message = new Message(this, data);
 

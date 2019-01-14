@@ -62,6 +62,14 @@ export abstract class MessageQueue {
     this.setOptions(options);
   }
   /**
+   * Gets the default buffer time in ms.
+   *
+   * @returns {number}
+   */
+  get maxMilliseconds(): number {
+    return this._options!.maxMilliseconds!;
+  }
+  /**
    * Adds a message to the queue.
    *
    * @param {Message} message The message to add.

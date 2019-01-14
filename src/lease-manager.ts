@@ -105,13 +105,13 @@ export class LeaseManager extends EventEmitter {
       this._pending.push(message);
     }
 
-    if (!wasFull && this.isFull()) {
-      process.nextTick(() => this.emit('full'));
-    }
-
     if (!this._isLeasing) {
       this._isLeasing = true;
       this._scheduleExtension();
+    }
+
+    if (!wasFull && this.isFull()) {
+      this.emit('full');
     }
   }
   /**
@@ -245,7 +245,7 @@ export class LeaseManager extends EventEmitter {
   private _getNextExtensionTimeoutMs(): number {
     const jitter = Math.random();
     const deadline = this._subscriber.ackDeadline * 1000;
-    const latency = this._subscriber.latency * 1000;
+    const latency = this._subscriber.modAckLatency;
 
     return (deadline * 0.9 - latency) * jitter;
   }

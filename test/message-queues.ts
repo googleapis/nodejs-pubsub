@@ -102,6 +102,15 @@ describe('MessageQueues', () => {
       });
     });
 
+    describe('maxMilliseconds', () => {
+      it('should return the maxMilliseconds option', () => {
+        const maxMilliseconds = 101;
+
+        messageQueue.setOptions({maxMilliseconds});
+        assert.strictEqual(messageQueue.maxMilliseconds, maxMilliseconds);
+      });
+    });
+
     describe('add', () => {
       it('should increase the number of pending requests', () => {
         messageQueue.add(new FakeMessage());

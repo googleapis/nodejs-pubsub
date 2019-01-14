@@ -81,6 +81,7 @@ class FakeLeaseManager extends EventEmitter {
 class FakeQueue {
   options: BatchOptions;
   numPendingRequests = 0;
+  maxMilliseconds = 100;
   constructor(sub: s.Subscriber, options: BatchOptions) {
     this.options = options;
   }
@@ -183,14 +184,17 @@ describe('Subscriber', () => {
     });
   });
 
-  describe('latency', () => {
+  describe('modAckLatency', () => {
     it('should get the 99th percentile latency', () => {
       const latencies: FakeHistogram = stubs.get('latencies');
       const fakeLatency = 234;
 
       sandbox.stub(latencies, 'percentile').withArgs(99).returns(fakeLatency);
 
-      assert.strictEqual(subscriber.latency, fakeLatency);
+      const maxMilliseconds = stubs.get('modAckQueue').maxMilliseconds;
+      const expectedLatency = fakeLatency * 1000 + maxMilliseconds;
+
+      assert.strictEqual(subscriber.modAckLatency, expectedLatency);
     });
   });
 
@@ -274,25 +278,6 @@ describe('Subscriber', () => {
         assert.strictEqual(onFlushStub.callCount, 1);
         done();
       });
-
-      subscriber.ack(message);
-    });
-
-    it('should update the latency histogram', done => {
-      const latencies: FakeHistogram = stubs.get('latencies');
-
-      const start = 10000;
-      const end = 12000;
-      const expectedLatency = (end - start) / 1000;
-
-      const nowStub = sandbox.stub(global.Date, 'now');
-
-      nowStub.onCall(0).returns(start);
-      nowStub.onCall(1).returns(end);
-
-      sandbox.stub(latencies, 'add')
-          .withArgs(expectedLatency)
-          .callsFake(() => done());
 
       subscriber.ack(message);
     });
