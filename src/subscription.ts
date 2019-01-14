@@ -288,8 +288,8 @@ export class Subscription extends EventEmitter {
    * // If the callback is omitted a Promise will be returned.
    * subscription.close().then(() => {});
    */
-  close(callback: (err?: Error) => void) {
-    this._subscriber.close().then(() => callback(), callback);
+  close(callback?: (err?: Error) => void) {
+    this._subscriber.close().then(() => callback!(), callback);
   }
   /**
    * @typedef {array} CreateSnapshotResponse
