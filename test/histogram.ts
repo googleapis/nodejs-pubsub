@@ -24,13 +24,14 @@ describe('Histogram', () => {
   const MAX_VALUE = 600000;
 
   beforeEach(() => {
-    histogram = new Histogram();
+    histogram = new Histogram({min: MIN_VALUE, max: MAX_VALUE});
   });
 
   describe('initialization', () => {
     it('should set default min/max values', () => {
-      assert.strictEqual(histogram.options.min, 10000);
-      assert.strictEqual(histogram.options.max, 600000);
+      histogram = new Histogram();
+      assert.strictEqual(histogram.options.min, 0);
+      assert.strictEqual(histogram.options.max, Number.MAX_SAFE_INTEGER);
     });
 
     it('should accept user defined min/max values', () => {
@@ -87,16 +88,6 @@ describe('Histogram', () => {
 
       assert.strictEqual(histogram.data.get(outOfBounds), undefined);
       assert.strictEqual(histogram.data.get(MIN_VALUE), 1);
-    });
-
-    it('should use seconds level precision', () => {
-      const ms = 303823;
-      const expected = 304000;
-
-      histogram.add(ms);
-
-      assert.strictEqual(histogram.data.get(ms), undefined);
-      assert.strictEqual(histogram.data.get(expected), 1);
     });
   });
 
