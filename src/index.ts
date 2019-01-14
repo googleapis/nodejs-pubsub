@@ -800,19 +800,8 @@ export class PubSub {
    *
    * @throws {Error} If subscription name is omitted.
    *
-   * @param {string} name - Name of the subscription.
-   * @param {object=} options - Configuration object.
-   * @param {object} options.flowControl - Flow control configurations for
-   *     receiving messages. Note that these options do not persist across
-   *     subscription instances.
-   * @param {number} options.flowControl.maxBytes - The maximum number of bytes
-   *     in un-acked messages to allow before the subscription pauses incoming
-   *     messages. Defaults to 20% of free memory.
-   * @param {number} options.flowControl.maxMessages - The maximum number of
-   *     un-acked messages to allow before the subscription pauses incoming
-   *     messages. Default: Infinity.
-   * @param {number} options.maxConnections - Use this to limit the number of
-   *     connections to be used when sending and receiving messages. Default: 5.
+   * @param {string} name Name of the subscription.
+   * @param {SubscriberOptions} [options] Subscription options.
    * @returns {Subscription} A {@link Subscription} instance.
    *
    * @example
@@ -828,7 +817,7 @@ export class PubSub {
    *   // message.ackId = ID used to acknowledge the message receival.
    *   // message.data = Contents of the message.
    *   // message.attributes = Attributes of the message.
-   *   // message.publishTime = Timestamp when Pub/Sub received the message.
+   *   // message.publishTime = Date when Pub/Sub received the message.
    * });
    */
   subscription(name: string, options?) {

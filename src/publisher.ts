@@ -153,7 +153,10 @@ export class Publisher {
    * //-
    * publisher.publish(data).then((messageId) => {});
    */
-  publish(data: Buffer, attributes?, callback?) {
+  publish(data: Buffer, attributes?: object): Promise<string>;
+  publish(data: Buffer, callback: Function): void;
+  publish(data: Buffer, attributes: object, callback: Function): void;
+  publish(data: Buffer, attributes?, callback?): Promise<string>|void {
     if (!(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
     }
