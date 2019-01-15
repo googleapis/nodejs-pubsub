@@ -76,7 +76,7 @@ export class Publisher {
      * The topic of this publisher.
      *
      * @name Publisher#topic
-     * @type {Topic} topic
+     * @type {Topic}
      */
     this.topic = topic;
     // this object keeps track of all messages scheduled to be published
@@ -153,7 +153,10 @@ export class Publisher {
    * //-
    * publisher.publish(data).then((messageId) => {});
    */
-  publish(data: Buffer, attributes?, callback?) {
+  publish(data: Buffer, attributes?: object): Promise<string>;
+  publish(data: Buffer, callback: Function): void;
+  publish(data: Buffer, attributes: object, callback: Function): void;
+  publish(data: Buffer, attributes?, callback?): Promise<string>|void {
     if (!(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
     }

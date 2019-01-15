@@ -15,6 +15,7 @@
  */
 
 import * as assert from 'assert';
+import * as defer from 'p-defer';
 import * as uuid from 'uuid';
 import {PubSub, Subscription, Topic} from '../src';
 
@@ -203,8 +204,8 @@ describe('pubsub', () => {
     const SUB_NAMES = [generateSubName(), generateSubName()];
 
     const SUBSCRIPTIONS = [
-      topic.subscription(SUB_NAMES[0], {ackDeadline: 30000}),
-      topic.subscription(SUB_NAMES[1], {ackDeadline: 60000}),
+      topic.subscription(SUB_NAMES[0], {ackDeadline: 30}),
+      topic.subscription(SUB_NAMES[1], {ackDeadline: 60}),
     ];
 
     before(async () => {
@@ -383,9 +384,7 @@ describe('pubsub', () => {
     });
 
     it('should error when using a non-existent subscription', done => {
-      const subscription = topic.subscription(generateSubName(), {
-        maxConnections: 1,
-      });
+      const subscription = topic.subscription(generateSubName());
 
       subscription.on('error', err => {
         assert.strictEqual(err.code, 5);
@@ -446,11 +445,9 @@ describe('pubsub', () => {
       const maxMessages = 3;
       let messageCount = 0;
 
-      const subscription = topic.subscription(SUB_NAMES[0], {
-        flowControl: {
-          maxMessages,
-        },
-      });
+      const subscription = topic.subscription(
+          SUB_NAMES[0],
+          {flowControl: {maxMessages, allowExcessMessages: false}});
 
       subscription.on('error', done);
       subscription.on('message', onMessage);
@@ -460,9 +457,80 @@ describe('pubsub', () => {
           return;
         }
 
-        setImmediate(() => {
-          subscription.close(done);
+        subscription.close(done);
+      }
+    });
+
+    // can be ran manually to test options/memory usage/etc.
+    it.skip('should handle a large volume of messages', async function() {
+      const MESSAGES = 200000;
+
+      const deferred = defer();
+      const messages = new Set();
+
+      let duplicates = 0;
+
+      this.timeout(0);
+
+      const publisher = topic.publisher({batching: {maxMessages: 999}});
+      const subscription = topic.subscription(SUB_NAMES[0]);
+
+      await publish(MESSAGES);
+
+      const startTime = Date.now();
+      subscription.on('error', deferred.reject).on('message', onmessage);
+
+      return deferred.promise;
+
+      function onmessage(message) {
+        const testid = message.attributes.testid;
+
+        if (!testid) {
+          return;
+        }
+
+        message.ack();
+
+        if (messages.has(testid)) {
+          messages.delete(testid);
+        } else {
+          duplicates += 1;
+        }
+
+        if (messages.size > 0) {
+          return;
+        }
+
+        const total = MESSAGES + duplicates;
+        const duration = (Date.now() - startTime) / 1000 / 60;
+        const acksPerMin = Math.floor(total / duration);
+
+        console.log(`${total} messages processed.`);
+        console.log(`${duplicates} messages redelivered.`);
+        console.log(`${acksPerMin} acks/m on average.`);
+
+        subscription.close(err => {
+          if (err) {
+            deferred.reject(err);
+          } else {
+            deferred.resolve();
+          }
         });
+      }
+
+      function publish(messageCount) {
+        const data = Buffer.from('Hello, world!');
+        const promises: Array<Promise<string>> = [];
+
+        let id = 0;
+
+        for (let i = 0; i < messageCount; i++) {
+          const testid = String(++id);
+          messages.add(testid);
+          promises.push(publisher.publish(data, {testid}));
+        }
+
+        return Promise.all(promises);
       }
     });
   });

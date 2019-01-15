@@ -142,8 +142,7 @@ export interface Policy {
  * SLA or deprecation policy, and may be subject to backward-incompatible
  * changes.*
  *
- * @constructor Iam
- * @mixin
+ * @class
  * @param {PubSub} pubsub PubSub Object.
  * @param {string} id The name of the topic or subscription.
  *
@@ -241,7 +240,7 @@ export class IAM {
    *
    * @throws {Error} If no policy is provided.
    *
-   * @param {object} policy The [policy](https://cloud.google.com/pubsub/docs/reference/rest/Shared.Types/Policy).
+   * @param {object} policy The [policy](https://cloud.google.com/pubsub/docs/reference/rest/v1/Policy).
    * @param {array} [policy.bindings] Bindings associate members with roles.
    * @param {Array<object>} [policy.rules] Rules to be applied to the policy.
    * @param {string} [policy.etag] Etags are used to perform a read-modify-write.
