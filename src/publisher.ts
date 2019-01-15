@@ -16,14 +16,46 @@
 
 import {promisifyAll} from '@google-cloud/promisify';
 import * as arrify from 'arrify';
+import {CallOptions} from 'google-gax';
+import {ServiceError} from 'grpc';
 
 const each = require('async-each');
 import * as extend from 'extend';
 import * as is from 'is';
 import {Topic} from './topic';
 
+export interface PublishCallback {
+  (err: null|ServiceError, messageId: string): void;
+}
+
 interface PublishApiResponse {
   messageIds: string[];
+}
+
+/**
+ * @typedef BatchPublishOptions
+ * @property {number} [maxBytes=1024^2 * 5] The maximum number of bytes to
+ *     buffer before sending a payload.
+ * @property {number} [maxMessages=1000] The maximum number of messages to
+ *     buffer before sending a payload.
+ * @property {number} [maxMilliseconds=100] The maximum duration to wait before
+ *     sending a payload.
+ */
+interface BatchPublishOptions {
+  maxBytes?: number;
+  maxMessages?: number;
+  maxMilliseconds?: number;
+}
+
+/**
+ * @typedef PublishOptions
+ * @property {BatchPublishOptions} [batching] Batching settings.
+ * @property {object} [gaxOpts] Request configuration options, outlined
+ *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+ */
+export interface PublishOptions {
+  batching?: BatchPublishOptions;
+  gaxOpts?: CallOptions;
 }
 
 /**
@@ -34,16 +66,7 @@ interface PublishApiResponse {
  * @see [Topics: publish API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/publish}
  *
  * @param {Topic} topic The topic associated with this publisher.
- * @param {object} [options] Configuration object.
- * @param {object} [options.batching] Batching settings.
- * @param {number} [options.batching.maxBytes] The maximum number of bytes to
- *     buffer before sending a payload. Defaults to 1024^2 * 5.
- * @param {number} [options.batching.maxMessages] The maximum number of messages
- *     to buffer before sending a payload. Defaults to 1000.
- * @param {number} [options.batching.maxMilliseconds] The maximum duration to
- *     wait before sending a payload. Defaults to 100 milliseconds.
- * @param {object} [options.gaxOpts] Request configuration options, outlined
- *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+ * @param {PublishOptions} [options] Configuration object.
  *
  * @example
  * const {PubSub} = require('@google-cloud/pubsub');
@@ -57,21 +80,15 @@ export class Publisher {
   Promise?: PromiseConstructor;
   topic: Topic;
   inventory_;
-  settings;
-  timeoutHandle_;
-  constructor(topic: Topic, options) {
+  settings!: PublishOptions;
+  timeoutHandle_?: NodeJS.Timer;
+  constructor(topic: Topic, options?: PublishOptions) {
     if (topic.Promise) {
       this.Promise = topic.Promise;
     }
-    options = extend(
-        true, {
-          batching: {
-            maxBytes: Math.pow(1024, 2) * 5,
-            maxMessages: 1000,
-            maxMilliseconds: 100,
-          },
-        },
-        options);
+
+    this.setOptions(options);
+
     /**
      * The topic of this publisher.
      *
@@ -89,15 +106,6 @@ export class Publisher {
       queued: [],
       bytes: 0,
     };
-    this.settings = {
-      batching: {
-        maxBytes: Math.min(options.batching.maxBytes, Math.pow(1024, 2) * 9),
-        maxMessages: Math.min(options.batching.maxMessages, 1000),
-        maxMilliseconds: options.batching.maxMilliseconds,
-      },
-      gaxOpts: options.gaxOpts,
-    };
-    this.timeoutHandle_ = null;
   }
 
   /**
@@ -154,8 +162,8 @@ export class Publisher {
    * publisher.publish(data).then((messageId) => {});
    */
   publish(data: Buffer, attributes?: object): Promise<string>;
-  publish(data: Buffer, callback: Function): void;
-  publish(data: Buffer, attributes: object, callback: Function): void;
+  publish(data: Buffer, callback: PublishCallback): void;
+  publish(data: Buffer, attributes: object, callback: PublishCallback): void;
   publish(data: Buffer, attributes?, callback?): Promise<string>|void {
     if (!(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
@@ -173,27 +181,52 @@ export class Publisher {
       }
     }
 
-    const opts = this.settings.batching;
+    const opts = this.settings!.batching!;
     // if this message puts us over the maxBytes option, then let's ship
     // what we have and add it to the next batch
     if (this.inventory_.bytes > 0 &&
-        this.inventory_.bytes + data.length > opts.maxBytes) {
+        this.inventory_.bytes + data.length > opts.maxBytes!) {
       this.publish_();
     }
     // add it to the queue!
     this.queue_(data, attributes, callback);
     // next lets check if this message brings us to the message cap or if we
     // hit the max byte limit
-    const hasMaxMessages = this.inventory_.queued.length === opts.maxMessages;
-    if (this.inventory_.bytes >= opts.maxBytes || hasMaxMessages) {
+    const hasMaxMessages = this.inventory_.queued.length === opts.maxMessages!;
+    if (this.inventory_.bytes >= opts.maxBytes! || hasMaxMessages) {
       this.publish_();
       return;
     }
     // otherwise let's set a timeout to send the next batch
     if (!this.timeoutHandle_) {
       this.timeoutHandle_ =
-          setTimeout(this.publish_.bind(this), opts.maxMilliseconds);
+          setTimeout(this.publish_.bind(this), opts.maxMilliseconds!);
     }
+  }
+  /**
+   * Sets the Publisher options.
+   *
+   * @param {PublishOptions} options The publisher options.
+   */
+  setOptions(options = {} as PublishOptions): void {
+    const defaults = {
+      batching: {
+        maxBytes: Math.pow(1024, 2) * 5,
+        maxMessages: 1000,
+        maxMilliseconds: 100,
+      },
+    };
+
+    const {batching, gaxOpts} = extend(true, defaults, options);
+
+    this.settings = {
+      batching: {
+        maxBytes: Math.min(batching.maxBytes, Math.pow(1024, 2) * 9),
+        maxMessages: Math.min(batching.maxMessages, 1000),
+        maxMilliseconds: batching.maxMilliseconds,
+      },
+      gaxOpts,
+    };
   }
   /**
    * This publishes a batch of messages and should never be called directly.
@@ -206,8 +239,12 @@ export class Publisher {
     this.inventory_.callbacks = [];
     this.inventory_.queued = [];
     this.inventory_.bytes = 0;
-    clearTimeout(this.timeoutHandle_);
-    this.timeoutHandle_ = null;
+
+    if (this.timeoutHandle_) {
+      clearTimeout(this.timeoutHandle_);
+      delete this.timeoutHandle_;
+    }
+
     const reqOpts = {
       topic: this.topic.name,
       messages,
@@ -217,7 +254,7 @@ export class Publisher {
           client: 'PublisherClient',
           method: 'publish',
           reqOpts,
-          gaxOpts: this.settings.gaxOpts,
+          gaxOpts: this.settings!.gaxOpts!,
         },
         (err, resp) => {
           const messageIds = arrify(resp && resp.messageIds);
@@ -254,4 +291,5 @@ export class Publisher {
  */
 promisifyAll(Publisher, {
   singular: true,
+  exclude: ['setOptions'],
 });
