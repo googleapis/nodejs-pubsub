@@ -199,11 +199,13 @@ export class Subscription extends EventEmitter {
   create!: Function;
   iam: IAM;
   name: string;
+
   metadata: Metadata;
   request: Function;
   private _subscriber: Subscriber;
   constructor(pubsub: PubSub, name: string, options?: SubscriptionCallOptions) {
     super();
+
 
 
     options = options || {};
@@ -409,6 +411,7 @@ export class Subscription extends EventEmitter {
    * });
    */
 
+
   delete(callback: RequestCallback<google.protobuf.Empty>): void;
   delete(gaxOpts?: CallOptions): Promise<google.protobuf.Empty>;
   delete(
@@ -422,6 +425,7 @@ export class Subscription extends EventEmitter {
         typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
     callback =
         typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+
     callback = callback || noop;
     const reqOpts = {
       subscription: this.name,
@@ -438,6 +442,7 @@ export class Subscription extends EventEmitter {
           reqOpts,
           gaxOpts,
         },
+
 
         (err: Error, resp: google.protobuf.Empty) => {
           if (!err) {
@@ -808,6 +813,7 @@ export class Subscription extends EventEmitter {
     if (is.string(snapshot)) {
       reqOpts.snapshot =
           Snapshot.formatName_(this.pubsub.projectId, snapshot.toString());
+
 
     } else if (is.date(snapshot)) {
       reqOpts.time = snapshot as Date;
