@@ -42,7 +42,9 @@
     "clean": "gts clean",
     "compile": "tsc -p . && cp -r src/v1 build/src/ && cp -r protos build/ && cp smoke-test/*.js build/system-test && cp test/*.js build/test",
     "prepare": "npm run compile",
-    "pretest": "npm run compile"
+    "pretest": "npm run compile",
+    "proto": "npm run proto:pubsub",
+    "proto:pubsub": "mkdir -p proto && pbjs -t static-module -w commonjs -p node_modules/google-proto-files google/pubsub/v1/pubsub.proto | pbts -o proto/pubsub.d.ts -"
   },
   "dependencies": {
     "@google-cloud/paginator": "^0.1.0",

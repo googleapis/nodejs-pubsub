@@ -419,12 +419,15 @@ export class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  getMetadata(callback: RequestCallback<Topic>): void;
-  getMetadata(gaxOpts: CallOptions, callback: RequestCallback<Topic>): void;
-  getMetadata(gaxOpts?: CallOptions): Promise<Topic>;
+  getMetadata(callback: RequestCallback<google.pubsub.v1.Topic>): void;
   getMetadata(
-      gaxOptsOrCallback?: CallOptions|RequestCallback<Topic>,
-      callback?: RequestCallback<Topic>): void|Promise<Topic> {
+      gaxOpts: CallOptions,
+      callback: RequestCallback<google.pubsub.v1.Topic>): void;
+  getMetadata(gaxOpts?: CallOptions): Promise<google.pubsub.v1.Topic>;
+  getMetadata(
+      gaxOptsOrCallback?: CallOptions|RequestCallback<google.pubsub.v1.Topic>,
+      callback?: RequestCallback<google.pubsub.v1.Topic>):
+      void|Promise<google.pubsub.v1.Topic> {
     const gaxOpts =
         typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
     callback =
@@ -432,7 +435,7 @@ export class Topic {
     const reqOpts = {
       topic: this.name,
     };
-    this.request(
+    this.request<google.pubsub.v1.Topic>(
         {
           client: 'PublisherClient',
           method: 'getTopic',
@@ -519,7 +522,8 @@ export class Topic {
           reqOpts,
           gaxOpts,
         },
-        (...args) => {
+        // tslint:disable-next-line no-any
+        (...args: any[]) => {
           const subscriptions = args[1];
           if (subscriptions) {
             args[1] = subscriptions.map((sub: string) => {
@@ -558,8 +562,8 @@ export class Topic {
    *   }
    * });
    */
-  publisher(options?: PublisherCallOptions) {
-    return new Publisher(this, options);
+  publisher(options?: PublisherCallOptions): Publisher {
+    return new Publisher(this, options!);
   }
   /**
    * Create a Subscription object. This command by itself will not run any API

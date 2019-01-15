@@ -345,12 +345,12 @@ describe('pubsub', () => {
         sub!.getMetadata((err, metadata) => {
           assert.ifError(err);
 
-          assert.strictEqual(metadata.retainAckedMessages, true);
+          assert.strictEqual(metadata!.retainAckedMessages, true);
           assert.strictEqual(
-              Number(metadata.messageRetentionDuration.seconds),
+              Number(metadata!.messageRetentionDuration!.seconds),
               threeDaysInSeconds);
           assert.strictEqual(
-              Number(metadata.messageRetentionDuration.nanos), 0);
+              Number(metadata!.messageRetentionDuration!.nanos), 0);
 
           sub!.delete(done);
         });
