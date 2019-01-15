@@ -156,6 +156,7 @@ export class MessageStream extends PassThrough {
    * Destroys the stream and any underlying streams.
    *
    * @param {error?} err An error to emit, if any.
+   * @private
    */
   destroy(err?: Error): void {
     if (this.destroyed) {

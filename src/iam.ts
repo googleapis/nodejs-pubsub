@@ -142,8 +142,7 @@ export interface Policy {
  * SLA or deprecation policy, and may be subject to backward-incompatible
  * changes.*
  *
- * @constructor Iam
- * @mixin
+ * @class
  * @param {PubSub} pubsub PubSub Object.
  * @param {string} id The name of the topic or subscription.
  *

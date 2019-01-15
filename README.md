@@ -38,27 +38,17 @@
 // Imports the Google Cloud client library
 const {PubSub} = require('@google-cloud/pubsub');
 
-// Your Google Cloud Platform project ID
-const projectId = 'YOUR_PROJECT_ID';
+async function quickstart(
+  projectId = 'your-project-id', // Your Google Cloud Platform project ID
+  topicName = 'my-topic' // Name for the new topic to create
+) {
+  // Instantiates a client
+  const pubsub = new PubSub({projectId});
 
-// Instantiates a client
-const pubsubClient = new PubSub({
-  projectId: projectId,
-});
-
-// The name for the new topic
-const topicName = 'my-new-topic';
-
-// Creates the new topic
-pubsubClient
-  .createTopic(topicName)
-  .then(results => {
-    const topic = results[0];
-    console.log(`Topic ${topic.name} created.`);
-  })
-  .catch(err => {
-    console.error('ERROR:', err);
-  });
+  // Creates the new topic
+  const [topic] = await pubsub.createTopic(topicName);
+  console.log(`Topic ${topic.name} created.`);
+}
 ```
 
 ## Samples
@@ -108,11 +98,10 @@ Google APIs Client Libraries, in [Client Libraries Explained][explained].
 
 [explained]: https://cloud.google.com/apis/docs/client-libraries-explained
 
-[client-docs]: https://googlecloudplatform.github.io/google-cloud-node/#/docs/pubsub/latest/pubsub
+[client-docs]: https://cloud.google.com/nodejs/docs/reference/pubsub/latest
 [product-docs]: https://cloud.google.com/pubsub/docs
 [shell_img]: https://gstatic.com/cloudssh/images/open-btn.png
 [projects]: https://console.cloud.google.com/project
 [billing]: https://support.google.com/cloud/answer/6293499#enable-billing
 [enable_api]: https://console.cloud.google.com/flows/enableapi?apiid=pubsub.googleapis.com
 [auth]: https://cloud.google.com/docs/authentication/getting-started
-

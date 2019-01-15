@@ -76,12 +76,14 @@ export class LeaseManager extends EventEmitter {
   }
   /**
    * @type {number}
+   * @private
    */
   get pending(): number {
     return this._pending.length;
   }
   /**
    * @type {number}
+   * @private
    */
   get size(): number {
     return this._messages.size;
@@ -91,6 +93,7 @@ export class LeaseManager extends EventEmitter {
    * isn't already running.
    *
    * @param {Message} message The message.
+   * @private
    */
   add(message: Message): void {
     const {allowExcessMessages} = this._options;
@@ -116,6 +119,7 @@ export class LeaseManager extends EventEmitter {
   }
   /**
    * Removes ALL messages from inventory.
+   * @private
    */
   clear(): void {
     const wasFull = this.isFull();
@@ -134,6 +138,7 @@ export class LeaseManager extends EventEmitter {
    * Indicates if we're at or over capacity.
    *
    * @returns {boolean}
+   * @private
    */
   isFull(): boolean {
     const {maxBytes, maxMessages} = this._options;
@@ -146,6 +151,7 @@ export class LeaseManager extends EventEmitter {
    * @fires LeaseManager#free
    *
    * @param {Message} message The message to remove.
+   * @private
    */
   remove(message: Message): void {
     if (!this._messages.has(message)) {
@@ -174,6 +180,7 @@ export class LeaseManager extends EventEmitter {
    * Sets options for the LeaseManager.
    *
    * @param {FlowControlOptions} [options] The options.
+   * @private
    */
   setOptions(options: FlowControlOptions): void {
     const defaults: FlowControlOptions = {
