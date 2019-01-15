@@ -42,7 +42,8 @@ const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
 
 /**
- * @type {string} - Project ID placeholder.
+ * Project ID placeholder.
+ * @type {string}
  * @private
  */
 const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
