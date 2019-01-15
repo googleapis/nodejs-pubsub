@@ -31,6 +31,9 @@ s.replace("src/v1/subscriber_client.js",
           "        callback\n"
           "      );\n"
           "    };\n"
+          "    this.getSubscriberStub = function() {\n"
+          "      return subscriberStub;\n"
+          "    };\n"
           "\g<0>")
 
 # Update path discovery due to build/ dir and TypeScript conversion.
