@@ -1318,5 +1318,17 @@ describe('PubSub', () => {
     it('should return a Topic object', () => {
       assert(pubsub.topic('new-topic') instanceof FakeTopic);
     });
+
+    it('should pass the correct args', () => {
+      const fakeName = 'with-options';
+      const fakeOptions = {};
+      const topic = pubsub.topic(fakeName, fakeOptions);
+
+      const [ps, name, options] = topic.calledWith_;
+
+      assert.strictEqual(ps, pubsub);
+      assert.strictEqual(name, fakeName);
+      assert.strictEqual(options, fakeOptions);
+    });
   });
 });
