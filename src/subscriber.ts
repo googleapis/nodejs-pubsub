@@ -81,12 +81,14 @@ export class Message {
    * The length of the message data.
    *
    * @type {number}
+   * @private
    */
   get length() {
     return this._length;
   }
   /**
    * Acknowledges the message.
+   * @private
    */
   ack(): void {
     if (!this._handled) {
@@ -98,6 +100,7 @@ export class Message {
    * Modifies the ack deadline.
    *
    * @param {number} deadline The number of seconds to extend the deadline.
+   * @private
    */
   modAck(deadline: number): void {
     if (!this._handled) {
@@ -110,6 +113,7 @@ export class Message {
    *
    * @param {number} [delay=0] The desired time to wait before the
    *     redelivery occurs.
+   * @private
    */
   nack(delay?: number): void {
     if (!this._handled) {
@@ -186,6 +190,7 @@ export class Subscriber extends EventEmitter {
    * The 99th percentile of request latencies.
    *
    * @type {number}
+   * @private
    */
   get modAckLatency() {
     const latency = this._latencies.percentile(99);
@@ -201,6 +206,7 @@ export class Subscriber extends EventEmitter {
    * The full name of the Subscription.
    *
    * @type {string}
+   * @private
    */
   get name(): string {
     if (!this._name) {
@@ -215,6 +221,7 @@ export class Subscriber extends EventEmitter {
    *
    * @param {Message} message The message to acknowledge.
    * @returns {Promise}
+   * @private
    */
   async ack(message: Message): Promise<void> {
     if (!this._isUserSetDeadline) {
@@ -232,6 +239,7 @@ export class Subscriber extends EventEmitter {
    * acks/modAcks are finished.
    *
    * @returns {Promise}
+   * @private
    */
   async close(): Promise<void> {
     if (!this.isOpen) {
@@ -248,6 +256,7 @@ export class Subscriber extends EventEmitter {
    * Gets the subscriber client instance.
    *
    * @returns {Promise<object>}
+   * @private
    */
   async getClient(): Promise<ClientStub> {
     const pubsub = this._subscription.pubsub;
@@ -263,6 +272,7 @@ export class Subscriber extends EventEmitter {
    * @param {Message} message The message to modify.
    * @param {number} deadline The deadline.
    * @returns {Promise}
+   * @private
    */
   async modAck(message: Message, deadline: number): Promise<void> {
     const startTime = Date.now();
@@ -280,6 +290,7 @@ export class Subscriber extends EventEmitter {
    * @param {Message} message The message.
    * @param {number} [delay=0] Delay to wait before redelivery.
    * @return {Promise}
+   * @private
    */
   async nack(message: Message, delay = 0): Promise<void> {
     await this.modAck(message, delay);
@@ -287,6 +298,7 @@ export class Subscriber extends EventEmitter {
   }
   /**
    * Starts pulling messages.
+   * @private
    */
   open(): void {
     const {batching, flowControl, streamingOptions} = this._options;
@@ -308,6 +320,7 @@ export class Subscriber extends EventEmitter {
    * Sets subscriber options.
    *
    * @param {SubscriberOptions} options The options.
+   * @private
    */
   setOptions(options: SubscriberOptions): void {
     this._options = options;

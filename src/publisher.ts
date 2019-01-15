@@ -76,7 +76,7 @@ export class Publisher {
      * The topic of this publisher.
      *
      * @name Publisher#topic
-     * @type {Topic} topic
+     * @type {Topic}
      */
     this.topic = topic;
     // this object keeps track of all messages scheduled to be published

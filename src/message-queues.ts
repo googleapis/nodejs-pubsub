@@ -65,6 +65,7 @@ export abstract class MessageQueue {
    * Gets the default buffer time in ms.
    *
    * @returns {number}
+   * @private
    */
   get maxMilliseconds(): number {
     return this._options!.maxMilliseconds!;
@@ -74,6 +75,7 @@ export abstract class MessageQueue {
    *
    * @param {Message} message The message to add.
    * @param {number} [deadline] The deadline.
+   * @private
    */
   add({ackId}: Message, deadline?: number): void {
     const {maxMessages, maxMilliseconds} = this._options;
@@ -89,6 +91,7 @@ export abstract class MessageQueue {
   }
   /**
    * Sends a batch of messages.
+   * @private
    */
   async flush(): Promise<void> {
     if (this._timer) {
@@ -118,6 +121,7 @@ export abstract class MessageQueue {
    * Returns a promise that resolves after the next flush occurs.
    *
    * @returns {Promise}
+   * @private
    */
   onFlush(): Promise<void> {
     if (!this._onFlush) {
@@ -129,6 +133,7 @@ export abstract class MessageQueue {
    * Set the batching options.
    *
    * @param {BatchOptions} options Batching options.
+   * @private
    */
   setOptions(options): void {
     const defaults: BatchOptions = {maxMessages: 3000, maxMilliseconds: 100};

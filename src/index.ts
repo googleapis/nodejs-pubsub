@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+/**
+ * @namespace google.pubsub.v1
+ */
+/**
+ * @namespace google.protobuf
+ */
+
 import {paginator} from '@google-cloud/paginator';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisifyAll} from '@google-cloud/promisify';
@@ -35,7 +42,8 @@ const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
 
 /**
- * @type {string} - Project ID placeholder.
+ * Project ID placeholder.
+ * @type {string}
  * @private
  */
 const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
