@@ -4,7 +4,7 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
-## v1.0.0
+## v0.23.0
 
 01-16-2019 13:09 PST
 
