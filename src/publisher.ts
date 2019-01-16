@@ -61,6 +61,7 @@ export interface PublishOptions {
 /**
  * A Publisher object allows you to publish messages to a specific topic.
  *
+ * @private
  * @class
  *
  * @see [Topics: publish API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/publish}
