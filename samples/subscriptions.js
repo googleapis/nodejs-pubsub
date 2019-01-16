@@ -244,14 +244,14 @@ function listenForMessages(subscriptionName, timeout) {
 
   // Create an event handler to handle messages
   let messageCount = 0;
-  const messageHandler = message => {
+  const messageHandler = async message => {
     console.log(`Received message ${message.id}:`);
     console.log(`\tData: ${message.data}`);
     console.log(`\tAttributes: ${message.attributes}`);
     messageCount += 1;
 
     // "Ack" (acknowledge receipt of) the message
-    message.ack();
+    await message.ack();
   };
 
   // Listen for new messages until timeout is hit
@@ -373,12 +373,12 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
   const subscription = pubsub.subscription(subscriptionName);
 
   // Create an event handler to handle messages
-  const messageHandler = function(message) {
+  const messageHandler = async function(message) {
     // Buffer the message in an object (for later ordering)
     outstandingMessages[message.attributes.counterId] = message;
 
     // "Ack" (acknowledge receipt of) the message
-    message.ack();
+    await message.ack();
   };
 
   // Listen for new messages until timeout is hit
