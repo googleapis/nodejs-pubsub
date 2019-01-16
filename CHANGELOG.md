@@ -4,6 +4,36 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.23.0
+
+01-16-2019 13:09 PST
+
+### Implementation Changes
+- refactor(topic): localize publisher to topic instance ([#426](https://github.com/googleapis/nodejs-pubsub/pull/426))
+- BREAKING CHANGE: refactor(subscriber): remove unneeded code & utilize typescript ([#388](https://github.com/googleapis/nodejs-pubsub/pull/388))
+
+### New Features
+- feat(topic): create method for publishing json ([#430](https://github.com/googleapis/nodejs-pubsub/pull/430))
+
+### Dependencies
+- fix(deps): update dependency google-gax to ^0.23.0 ([#423](https://github.com/googleapis/nodejs-pubsub/pull/423))
+- chore(deps): update dependency @types/sinon to v7 ([#411](https://github.com/googleapis/nodejs-pubsub/pull/411))
+- chore: update nyc and eslint configs ([#409](https://github.com/googleapis/nodejs-pubsub/pull/409))
+
+### Documentation
+- docs(samples): correct publish retry settings ([#419](https://github.com/googleapis/nodejs-pubsub/pull/419))
+- docs: sync generated grpc message type docs
+- fix(docs): remove unused long running operations and IAM types
+- fix: modernize the sample tests ([#414](https://github.com/googleapis/nodejs-pubsub/pull/414))
+
+### Internal / Testing Changes
+- chore: update subscriber gapic
+- fix: add getSubscriberStub to synth file ([#425](https://github.com/googleapis/nodejs-pubsub/pull/425))
+- build: check broken links in generated docs ([#416](https://github.com/googleapis/nodejs-pubsub/pull/416))
+- chore(build): inject yoshi automation key ([#410](https://github.com/googleapis/nodejs-pubsub/pull/410))
+- chore: fix publish.sh permission +x ([#406](https://github.com/googleapis/nodejs-pubsub/pull/406))
+- fix(build): fix Kokoro release script ([#404](https://github.com/googleapis/nodejs-pubsub/pull/404))
+
 ## v0.22.2
 
 12-10-2018 09:37 PST
