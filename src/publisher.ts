@@ -90,12 +90,6 @@ export class Publisher {
 
     this.setOptions(options);
 
-    /**
-     * The topic of this publisher.
-     *
-     * @name Publisher#topic
-     * @type {Topic}
-     */
     this.topic = topic;
     // this object keeps track of all messages scheduled to be published
     // queued is essentially the `messages` field for the publish rpc req opts
@@ -108,18 +102,19 @@ export class Publisher {
       bytes: 0,
     };
   }
-
   /**
-   * @typedef {array} PublisherPublishResponse
+   * @typedef {array} PublishResponse
    * @property {string} 0 The id for the message.
    */
   /**
-   * @callback PublisherPublishCallback
+   * @callback PublishCallback
    * @param {?Error} err Request error, if any.
    * @param {string} messageId The id for the message.
    */
   /**
    * Publish the provided message.
+   *
+   * @private
    *
    * @throws {TypeError} If data is not a Buffer object.
    * @throws {TypeError} If any value in `attributes` object is not a string.
@@ -127,8 +122,8 @@ export class Publisher {
    * @param {buffer} data The message data. This must come in the form of a
    *     Buffer object.
    * @param {object.<string, string>} [attributes] Attributes for this message.
-   * @param {PublisherPublishCallback} [callback] Callback function.
-   * @returns {Promise<PublisherPublishResponse>}
+   * @param {PublishCallback} [callback] Callback function.
+   * @returns {Promise<PublishResponse>}
    *
    * @example
    * const {PubSub} = require('@google-cloud/pubsub');
@@ -206,6 +201,8 @@ export class Publisher {
   }
   /**
    * Sets the Publisher options.
+   *
+   * @private
    *
    * @param {PublishOptions} options The publisher options.
    */

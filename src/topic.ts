@@ -483,8 +483,8 @@ export class Topic {
    * @param {buffer} data The message data. This must come in the form of a
    *     Buffer object.
    * @param {object.<string, string>} [attributes] Attributes for this message.
-   * @param {PublisherPublishCallback} [callback] Callback function.
-   * @returns {Promise<PublisherPublishResponse>}
+   * @param {PublishCallback} [callback] Callback function.
+   * @returns {Promise<PublishResponse>}
    *
    * @example
    * const {PubSub} = require('@google-cloud/pubsub');
