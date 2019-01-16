@@ -29,7 +29,8 @@ const fakePromisify = Object.assign({}, pfy, {
     }
     promisified = true;
     assert.deepStrictEqual(
-        options.exclude, ['publish', 'setPublishOptions', 'subscription']);
+        options.exclude,
+        ['publish', 'publishJSON', 'setPublishOptions', 'subscription']);
   },
 });
 
@@ -550,6 +551,37 @@ describe('Topic', () => {
 
       const promise = topic.publish(data, attributes, callback);
       assert.strictEqual(promise, fakePromise);
+    });
+  });
+
+  describe('publishJSON', () => {
+    it('should throw an error for non-object types', () => {
+      const expectedError = new Error('First parameter should be an object.');
+
+      assert.throws(() => topic.publishJSON('hi'), expectedError);
+    });
+
+    it('should transform JSON into a Buffer', () => {
+      const stub = sandbox.stub(topic, 'publish');
+      const json = {foo: 'bar'};
+      const expectedBuffer = Buffer.from(JSON.stringify(json));
+
+      topic.publishJSON(json);
+
+      const [buffer] = stub.lastCall.args;
+      assert.deepStrictEqual(buffer, expectedBuffer);
+    });
+
+    it('should pass along the attributes and callback', () => {
+      const stub = sandbox.stub(topic, 'publish');
+      const fakeAttributes = {};
+      const fakeCallback = () => {};
+
+      topic.publishJSON({}, fakeAttributes, fakeCallback);
+
+      const [, attributes, callback] = stub.lastCall.args;
+      assert.strictEqual(attributes, fakeAttributes);
+      assert.strictEqual(callback, fakeCallback);
     });
   });
 

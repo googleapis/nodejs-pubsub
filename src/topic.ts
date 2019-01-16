@@ -523,6 +523,66 @@ export class Topic {
     return this.publisher.publish(data, attributes, callback);
   }
   /**
+   * Publish the provided JSON. It should be noted that all messages published
+   * are done so in the form of a Buffer. This is simply a convenience method
+   * that will transform JSON into a Buffer before publishing.
+   * {@link Subscription} objects will always return message data in the form of
+   * a Buffer, so any JSON published will require manual deserialization.
+   *
+   * @see Topic#publish
+   *
+   * @throws {Error} If non-object data is provided.
+   *
+   * @param {object} json The JSON data to publish.
+   * @param {object} [attributes] Attributes for this message.
+   * @param {PublishCallback} [callback] Callback function.
+   * @returns {Promise<PublishResponse>}
+   *
+   * @example
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   * const topic = pubsub.topic('my-topic');
+   *
+   * const data = {
+   *   foo: 'bar'
+   * };
+   *
+   * const callback = (err, messageId) => {
+   *   if (err) {
+   *     // Error handling omitted.
+   *   }
+   * };
+   *
+   * topic.publishJSON(data, callback);
+   *
+   * //-
+   * // Optionally you can provide an object containing attributes for the
+   * // message. Note that all values in the object must be strings.
+   * //-
+   * const attributes = {
+   *   key: 'value'
+   * };
+   *
+   * topic.publishJSON(data, attributes, callback);
+   *
+   * //-
+   * // If the callback is omitted, we'll return a Promise.
+   * //-
+   * topic.publishJSON(data).then((messageId) => {});
+   */
+  publishJSON(json: object, attributes?: object): Promise<string>;
+  publishJSON(json: object, callback: PublishCallback): void;
+  publishJSON(json: object, attributes: object, callback: PublishCallback):
+      void;
+  publishJSON(json: object, attributes?, callback?): Promise<string>|void {
+    if (!is.object(json)) {
+      throw new Error('First parameter should be an object.');
+    }
+
+    const data = Buffer.from(JSON.stringify(json));
+    return this.publish(data, attributes, callback);
+  }
+  /**
    * Set the publisher options.
    *
    * @param {PublishOptions} options The publisher options.
@@ -649,7 +709,7 @@ paginator.extend(Topic, ['getSubscriptions']);
  * that a callback is omitted.
  */
 promisifyAll(Topic, {
-  exclude: ['publish', 'setPublishOptions', 'subscription'],
+  exclude: ['publish', 'publishJSON', 'setPublishOptions', 'subscription'],
 });
 
 export {PublishOptions};
