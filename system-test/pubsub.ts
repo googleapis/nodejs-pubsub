@@ -54,12 +54,11 @@ describe('pubsub', () => {
 
   async function publishPop(message, options = {}) {
     const topic = pubsub.topic(generateTopicName());
-    const publisher = topic.publisher();
     const subscription = topic.subscription(generateSubName());
     await topic.create();
     await subscription.create();
     for (let i = 0; i < 6; i++) {
-      await publisher.publish(Buffer.from(message), options);
+      await topic.publish(Buffer.from(message), options);
     }
     return new Promise((resolve, reject) => {
       subscription.on('error', reject);
@@ -165,10 +164,9 @@ describe('pubsub', () => {
 
     it('should publish a message', done => {
       const topic = pubsub.topic(TOPIC_NAMES[0]);
-      const publisher = topic.publisher();
       const message = Buffer.from('message from me');
 
-      publisher.publish(message, (err, messageId) => {
+      topic.publish(message, (err, messageId) => {
         assert.ifError(err);
         assert.strictEqual(typeof messageId, 'string');
         done();
@@ -199,7 +197,6 @@ describe('pubsub', () => {
   describe('Subscription', () => {
     const TOPIC_NAME = generateTopicName();
     const topic = pubsub.topic(TOPIC_NAME);
-    const publisher = topic.publisher();
 
     const SUB_NAMES = [generateSubName(), generateSubName()];
 
@@ -212,7 +209,7 @@ describe('pubsub', () => {
       await topic.create();
       await Promise.all(SUBSCRIPTIONS.map(s => s.create()));
       for (let i = 0; i < 10; i++) {
-        await publisher.publish(Buffer.from('hello'));
+        await topic.publish(Buffer.from('hello'));
       }
       await new Promise(r => setTimeout(r, 2500));
     });
@@ -470,9 +467,9 @@ describe('pubsub', () => {
 
       this.timeout(0);
 
-      const publisher = topic.publisher({batching: {maxMessages: 999}});
       const subscription = topic.subscription(SUB_NAMES[0]);
 
+      topic.setPublishOptions({batching: {maxMessages: 999}});
       await publish(MESSAGES);
 
       const startTime = Date.now();
@@ -525,7 +522,7 @@ describe('pubsub', () => {
         for (let i = 0; i < messageCount; i++) {
           const testid = String(++id);
           messages.add(testid);
-          promises.push(publisher.publish(data, {testid}));
+          promises.push(topic.publish(data, {testid}));
         }
 
         return Promise.all(promises);
@@ -586,7 +583,6 @@ describe('pubsub', () => {
     const SNAPSHOT_NAME = generateSnapshotName();
 
     let topic;
-    let publisher;
     let subscription;
     let snapshot;
 
@@ -609,7 +605,6 @@ describe('pubsub', () => {
 
     before(() => {
       topic = pubsub.topic(TOPIC_NAMES[0]);
-      publisher = topic.publisher();
       subscription = topic.subscription(generateSubName());
       snapshot = subscription.snapshot(SNAPSHOT_NAME);
 
@@ -661,7 +656,7 @@ describe('pubsub', () => {
 
         return subscription.create()
             .then(() => {
-              return publisher.publish(Buffer.from('Hello, world!'));
+              return topic.publish(Buffer.from('Hello, world!'));
             })
             .then(_messageId => {
               messageId = _messageId;

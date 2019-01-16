@@ -34,7 +34,7 @@ const v1 = require('./v1');
 
 import {Snapshot} from './snapshot';
 import {Subscription, SubscriptionMetadata, SubscriptionMetadataRaw} from './subscription';
-import {Topic} from './topic';
+import {Topic, PublishOptions} from './topic';
 import {CallOptions} from 'google-gax';
 import {Readable} from 'stream';
 
@@ -848,11 +848,11 @@ export class PubSub {
    *
    * const topic = pubsub.topic('my-topic');
    */
-  topic(name: string) {
+  topic(name: string, options?: PublishOptions): Topic {
     if (!name) {
       throw new Error('A name must be specified for a topic.');
     }
-    return new Topic(this, name);
+    return new Topic(this, name, options);
   }
 }
 
@@ -966,7 +966,7 @@ promisifyAll(PubSub, {
   exclude: ['request', 'snapshot', 'subscription', 'topic'],
 });
 
-export {Subscription, Topic};
+export {Subscription, Topic, PublishOptions};
 
 /**
  * The default export of the `@google-cloud/pubsub` package is the
