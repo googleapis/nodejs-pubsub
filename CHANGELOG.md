@@ -8,58 +8,60 @@
 
 01-16-2019 13:09 PST
 
-### Implementation Changes
+**This release has breaking changes.**
 
-- refactor(topic): localize publisher to topic instance ([#426](https://github.com/googleapis/nodejs-pubsub/pull/426))
+#### BREAKING: `Topic#publisher()` has been removed in favor of `Topic#publish()` ([#426](https://github.com/googleapis/nodejs-pubsub/pull/426))
 
-  Before
-  ```js
-  const publisher = topic.publisher(publishOptions);
-  await publisher.publish(Buffer.from('Hello, world!'));
-  ```
-  After
-  ```js
-  topic.setPublishOptions(publishOptions);
-  await topic.publish(Buffer.from('Hello, world!'));
-  ```
+Before
+```js
+const publisher = topic.publisher(publishOptions);
+await publisher.publish(Buffer.from('Hello, world!'));
+```
 
-- refactor(subscriber): remove unneeded code & utilize typescript ([#388](https://github.com/googleapis/nodejs-pubsub/pull/388))
+After
+```js
+topic.setPublishOptions(publishOptions);
+await topic.publish(Buffer.from('Hello, world!'));
+```
 
-  Before
-  ```js
-  const subscription = topic.subscription('my-sub', {
-    batching: {
-      maxMilliseconds: 100,
-    },
-    flowControl: {
-      maxBytes: os.freem() * 0.2,
-      maxMessages: 100,
-    },
-    maxConnections: 5,
-  });
-  ```
-  After
-  ```js
-  const subscription = topic.subscription('my-sub', {
-    ackDeadline: 10,
-    batching: {
-      callOptions: {}, // gax call options
-      maxMessages: 3000,
-      maxMilliseconds: 100,
-    },
-    flowControl: {
-      allowExcessMessages: true,
-      maxBytes: os.freem() * 0.2,
-      maxExtension: Infinity,
-      maxMessages: 100
-    },
-    streamingOptions: {
-      highWaterMark: 0,
-      maxStreams: 5, // formerly known as maxConnections
-      timeout: 60000 * 5, // 5 minutes
-    }
-  });
-  ```
+#### BREAKING: `Subscription` options have changed. ([#388](https://github.com/googleapis/nodejs-pubsub/pull/388))
+
+Before
+```js
+const subscription = topic.subscription('my-sub', {
+  batching: {
+    maxMilliseconds: 100,
+  },
+  flowControl: {
+    maxBytes: os.freem() * 0.2,
+    maxMessages: 100,
+  },
+  maxConnections: 5,
+});
+```
+
+After
+```js
+const subscription = topic.subscription('my-sub', {
+  ackDeadline: 10,
+  batching: {
+    callOptions: {}, // gax call options
+    maxMessages: 3000,
+    maxMilliseconds: 100,
+  },
+  flowControl: {
+    allowExcessMessages: true,
+    maxBytes: os.freem() * 0.2,
+    maxExtension: Infinity,
+    maxMessages: 100
+  },
+  streamingOptions: {
+    highWaterMark: 0,
+    maxStreams: 5, // formerly known as maxConnections
+    timeout: 60000 * 5, // 5 minutes
+  }
+});
+```
 
 ### New Features
 - feat(topic): create method for publishing json ([#430](https://github.com/googleapis/nodejs-pubsub/pull/430))
