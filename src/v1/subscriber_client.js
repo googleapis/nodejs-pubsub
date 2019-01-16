@@ -230,7 +230,6 @@ class SubscriberClient {
         callback
       );
     };
-
     this.getSubscriberStub = function() {
       return subscriberStub;
     };
