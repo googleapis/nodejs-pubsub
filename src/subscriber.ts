@@ -90,11 +90,12 @@ export class Message {
    * Acknowledges the message.
    * @private
    */
-  ack(): void {
+  ack(): Promise<void> {
     if (!this._handled) {
       this._handled = true;
-      this._subscriber.ack(this);
+      return this._subscriber.ack(this);
     }
+    return Promise.resolve();
   }
   /**
    * Modifies the ack deadline.
@@ -102,10 +103,11 @@ export class Message {
    * @param {number} deadline The number of seconds to extend the deadline.
    * @private
    */
-  modAck(deadline: number): void {
+  modAck(deadline: number): Promise<void> {
     if (!this._handled) {
-      this._subscriber.modAck(this, deadline);
+      return this._subscriber.modAck(this, deadline);
     }
+    return Promise.resolve();
   }
   /**
    * Removes the message from our inventory and schedules it to be redelivered.
@@ -115,11 +117,12 @@ export class Message {
    *     redelivery occurs.
    * @private
    */
-  nack(delay?: number): void {
+  nack(delay?: number): Promise<void> {
     if (!this._handled) {
       this._handled = true;
-      this._subscriber.nack(this, delay);
+      return this._subscriber.nack(this, delay);
     }
+    return Promise.resolve();
   }
   /**
    * Formats the protobuf timestamp into a JavaScript date.
