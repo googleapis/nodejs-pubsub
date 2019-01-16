@@ -61,11 +61,6 @@ export class Topic {
      * @type {string}
      */
     this.name = Topic.formatName_(pubsub.projectId, name);
-    /**
-     * The publisher instance of this topic instance.
-     * @name Topic#publisher
-     * @type {Publisher}
-     */
     this.publisher = new Publisher(this, options);
     /**
      * The parent {@link PubSub} instance of this topic instance.
