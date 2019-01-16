@@ -469,7 +469,7 @@ describe('pubsub', () => {
 
       const subscription = topic.subscription(SUB_NAMES[0]);
 
-      topic.setOptions({batching: {maxMessages: 999}});
+      topic.setPublishOptions({batching: {maxMessages: 999}});
       await publish(MESSAGES);
 
       const startTime = Date.now();

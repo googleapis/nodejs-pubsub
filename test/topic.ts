@@ -29,7 +29,7 @@ const fakePromisify = Object.assign({}, pfy, {
     }
     promisified = true;
     assert.deepStrictEqual(
-        options.exclude, ['publish', 'setOptions', 'subscription']);
+        options.exclude, ['publish', 'setPublishOptions', 'subscription']);
   },
 });
 
@@ -553,13 +553,13 @@ describe('Topic', () => {
     });
   });
 
-  describe('setOptions', () => {
+  describe('setPublishOptions', () => {
     it('should call through to Publisher#setOptions', () => {
       const fakeOptions = {};
       const stub =
           sandbox.stub(topic.publisher, 'setOptions').withArgs(fakeOptions);
 
-      topic.setOptions(fakeOptions);
+      topic.setPublishOptions(fakeOptions);
 
       assert.strictEqual(stub.callCount, 1);
     });

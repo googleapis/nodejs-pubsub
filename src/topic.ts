@@ -538,13 +538,13 @@ export class Topic {
    *
    * const topic = pubsub.topic('my-topic');
    *
-   * topic.setOptions({
+   * topic.setPublishOptions({
    *   batching: {
    *     maxMilliseconds: 10
    *   }
    * });
    */
-  setOptions(options: PublishOptions): void {
+  setPublishOptions(options: PublishOptions): void {
     this.publisher.setOptions(options);
   }
   /**
@@ -654,7 +654,7 @@ paginator.extend(Topic, ['getSubscriptions']);
  * that a callback is omitted.
  */
 promisifyAll(Topic, {
-  exclude: ['publish', 'setOptions', 'subscription'],
+  exclude: ['publish', 'setPublishOptions', 'subscription'],
 });
 
 export {PublishOptions};
