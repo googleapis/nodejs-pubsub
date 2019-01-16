@@ -556,7 +556,7 @@ describe('Topic', () => {
 
   describe('publishJSON', () => {
     it('should throw an error for non-object types', () => {
-      const expectedError = new Error('First parameter should be an object.');
+      const expectedError = /First parameter should be an object\./;
 
       assert.throws(() => topic.publishJSON('hi'), expectedError);
     });
