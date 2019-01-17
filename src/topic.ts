@@ -17,14 +17,16 @@
 import {paginator} from '@google-cloud/paginator';
 import {promisifyAll} from '@google-cloud/promisify';
 import {CallOptions} from 'google-gax';
+import * as is from 'is';
 import {Readable} from 'stream';
+
 import {google} from '../proto/pubsub';
+
 import {CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, CreateTopicCallback, CreateTopicResponse, ExistsCallback, GetCallOptions, Metadata, PublisherCallOptions, PubSub, RequestCallback, SubscriptionCallOptions} from '.';
 import {IAM} from './iam';
-import {Publisher} from './publisher';
+import {PublishCallback, Publisher, PublishOptions} from './publisher';
 import {Subscription} from './subscription';
 import * as util from './util';
-
 
 /**
  * A Topic object allows you to interact with a Cloud Pub/Sub topic.
@@ -48,10 +50,11 @@ export class Topic {
   request: typeof PubSub.prototype.request;
   iam: IAM;
   metadata: Metadata;
+  publisher: Publisher;
   getSubscriptionsStream = paginator.streamify('getSubscriptions') as() =>
                                Readable;
 
-  constructor(pubsub: PubSub, name: string) {
+  constructor(pubsub: PubSub, name: string, options?: PublishOptions) {
     if (pubsub.Promise) {
       this.Promise = pubsub.Promise;
     }
@@ -61,6 +64,7 @@ export class Topic {
      * @type {string}
      */
     this.name = Topic.formatName_(pubsub.projectId, name);
+    this.publisher = new Publisher(this, options);
     /**
      * The parent {@link PubSub} instance of this topic instance.
      * @name Topic#pubsub
@@ -535,35 +539,132 @@ export class Topic {
         });
   }
   /**
-   * Creates a Publisher object that allows you to publish messages to this
-   * topic.
+   * Publish the provided message.
    *
-   * @param {object} [options] Configuration object.
-   * @param {object} [options.batching] Batching settings.
-   * @param {number} [options.batching.maxBytes] The maximum number of bytes to
-   *     buffer before sending a payload.
-   * @param {number} [options.batching.maxMessages] The maximum number of messages
-   *     to buffer before sending a payload.
-   * @param {number} [options.batching.maxMilliseconds] The maximum duration to
-   *     wait before sending a payload.
+   * @throws {TypeError} If data is not a Buffer object.
+   * @throws {TypeError} If any value in `attributes` object is not a string.
    *
-   * @return {Publisher}
+   * @param {buffer} data The message data. This must come in the form of a
+   *     Buffer object.
+   * @param {object.<string, string>} [attributes] Attributes for this message.
+   * @param {PublishCallback} [callback] Callback function.
+   * @returns {Promise<PublishResponse>}
    *
    * @example
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
-   * const publisher = topic.publisher();
+   * const data = Buffer.from('Hello, world!');
    *
-   * publisher.publish(Buffer.from('Hello, world!'), (err, messageId) => {
+   * const callback = (err, messageId) => {
    *   if (err) {
    *     // Error handling omitted.
    *   }
+   * };
+   *
+   * topic.publish(data, callback);
+   *
+   * //-
+   * // Optionally you can provide an object containing attributes for the
+   * // message. Note that all values in the object must be strings.
+   * //-
+   * const attributes = {
+   *   key: 'value'
+   * };
+   *
+   * topic.publish(data, attributes, callback);
+   *
+   * //-
+   * // If the callback is omitted, we'll return a Promise.
+   * //-
+   * topic.publish(data).then((messageId) => {});
+   */
+  publish(data: Buffer, attributes?: object): Promise<string>;
+  publish(data: Buffer, callback: PublishCallback): void;
+  publish(data: Buffer, attributes: object, callback: PublishCallback): void;
+  publish(data: Buffer, attributes?, callback?): Promise<string>|void {
+    return this.publisher.publish(data, attributes, callback);
+  }
+  /**
+   * Publish the provided JSON. It should be noted that all messages published
+   * are done so in the form of a Buffer. This is simply a convenience method
+   * that will transform JSON into a Buffer before publishing.
+   * {@link Subscription} objects will always return message data in the form of
+   * a Buffer, so any JSON published will require manual deserialization.
+   *
+   * @see Topic#publish
+   *
+   * @throws {Error} If non-object data is provided.
+   *
+   * @param {object} json The JSON data to publish.
+   * @param {object} [attributes] Attributes for this message.
+   * @param {PublishCallback} [callback] Callback function.
+   * @returns {Promise<PublishResponse>}
+   *
+   * @example
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   * const topic = pubsub.topic('my-topic');
+   *
+   * const data = {
+   *   foo: 'bar'
+   * };
+   *
+   * const callback = (err, messageId) => {
+   *   if (err) {
+   *     // Error handling omitted.
+   *   }
+   * };
+   *
+   * topic.publishJSON(data, callback);
+   *
+   * //-
+   * // Optionally you can provide an object containing attributes for the
+   * // message. Note that all values in the object must be strings.
+   * //-
+   * const attributes = {
+   *   key: 'value'
+   * };
+   *
+   * topic.publishJSON(data, attributes, callback);
+   *
+   * //-
+   * // If the callback is omitted, we'll return a Promise.
+   * //-
+   * topic.publishJSON(data).then((messageId) => {});
+   */
+  publishJSON(json: object, attributes?: object): Promise<string>;
+  publishJSON(json: object, callback: PublishCallback): void;
+  publishJSON(json: object, attributes: object, callback: PublishCallback):
+      void;
+  publishJSON(json: object, attributes?, callback?): Promise<string>|void {
+    if (!is.object(json)) {
+      throw new Error('First parameter should be an object.');
+    }
+
+    const data = Buffer.from(JSON.stringify(json));
+    return this.publish(data, attributes, callback);
+  }
+  /**
+   * Set the publisher options.
+   *
+   * @param {PublishOptions} options The publisher options.
+   *
+   * @example
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * const topic = pubsub.topic('my-topic');
+   *
+   * topic.setPublishOptions({
+   *   batching: {
+   *     maxMilliseconds: 10
+   *   }
    * });
    */
-  publisher(options?: PublisherCallOptions): Publisher {
-    return new Publisher(this, options!);
+  setPublishOptions(options: PublishOptions): void {
+    this.publisher.setOptions(options);
   }
   /**
    * Create a Subscription object. This command by itself will not run any API
@@ -672,5 +773,7 @@ paginator.extend(Topic, ['getSubscriptions']);
  * that a callback is omitted.
  */
 promisifyAll(Topic, {
-  exclude: ['publisher', 'subscription'],
+  exclude: ['publish', 'publishJSON', 'setPublishOptions', 'subscription'],
 });
+
+export {PublishOptions};

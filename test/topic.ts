@@ -28,7 +28,9 @@ const fakePromisify = Object.assign({}, pfy, {
       return;
     }
     promisified = true;
-    assert.deepStrictEqual(options.exclude, ['publisher', 'subscription']);
+    assert.deepStrictEqual(
+        options.exclude,
+        ['publish', 'publishJSON', 'setPublishOptions', 'subscription']);
   },
 });
 
@@ -45,8 +47,18 @@ class FakePublisher {
   // tslint:disable-next-line no-any
   calledWith_: any[];
   // tslint:disable-next-line no-any
+  published_!: any[];
+  options_!: object;
+  // tslint:disable-next-line no-any
   constructor(...args: any[]) {
     this.calledWith_ = args;
+  }
+  // tslint:disable-next-line no-any
+  publish(...args: any[]) {
+    this.published_ = args;
+  }
+  setOptions(options: object) {
+    this.options_ = options;
   }
 }
 
@@ -134,6 +146,16 @@ describe('Topic', () => {
 
       const topic = new Topic(PUBSUB, TOPIC_NAME);
       assert.strictEqual(topic.name, formattedName);
+    });
+
+    it('should create a publisher', () => {
+      const fakeOptions = {};
+      const topic = new Topic(PUBSUB, TOPIC_NAME, fakeOptions);
+
+      const [t, options] = topic.publisher.calledWith_;
+
+      assert.strictEqual(t, topic);
+      assert.strictEqual(options, fakeOptions);
     });
 
     it('should localize the parent object', () => {
@@ -516,16 +538,62 @@ describe('Topic', () => {
     });
   });
 
-  describe('publisher', () => {
-    it('should return a Publisher instance', () => {
-      const options = {};
+  describe('publish', () => {
+    it('should call through to Publisher#publish', () => {
+      const data = Buffer.from('Hello, world!');
+      const attributes = {};
+      const callback = () => {};
 
-      const publisher = topic.publisher(options);
-      const args = publisher.calledWith_;
+      const fakePromise = Promise.resolve();
+      const stub = sandbox.stub(topic.publisher, 'publish')
+                       .withArgs(data, attributes, callback)
+                       .returns(fakePromise);
 
-      assert(publisher instanceof FakePublisher);
-      assert.strictEqual(args[0], topic);
-      assert.strictEqual(args[1], options);
+      const promise = topic.publish(data, attributes, callback);
+      assert.strictEqual(promise, fakePromise);
+    });
+  });
+
+  describe('publishJSON', () => {
+    it('should throw an error for non-object types', () => {
+      const expectedError = /First parameter should be an object\./;
+
+      assert.throws(() => topic.publishJSON('hi'), expectedError);
+    });
+
+    it('should transform JSON into a Buffer', () => {
+      const stub = sandbox.stub(topic, 'publish');
+      const json = {foo: 'bar'};
+      const expectedBuffer = Buffer.from(JSON.stringify(json));
+
+      topic.publishJSON(json);
+
+      const [buffer] = stub.lastCall.args;
+      assert.deepStrictEqual(buffer, expectedBuffer);
+    });
+
+    it('should pass along the attributes and callback', () => {
+      const stub = sandbox.stub(topic, 'publish');
+      const fakeAttributes = {};
+      const fakeCallback = () => {};
+
+      topic.publishJSON({}, fakeAttributes, fakeCallback);
+
+      const [, attributes, callback] = stub.lastCall.args;
+      assert.strictEqual(attributes, fakeAttributes);
+      assert.strictEqual(callback, fakeCallback);
+    });
+  });
+
+  describe('setPublishOptions', () => {
+    it('should call through to Publisher#setOptions', () => {
+      const fakeOptions = {};
+      const stub =
+          sandbox.stub(topic.publisher, 'setOptions').withArgs(fakeOptions);
+
+      topic.setPublishOptions(fakeOptions);
+
+      assert.strictEqual(stub.callCount, 1);
     });
   });
 

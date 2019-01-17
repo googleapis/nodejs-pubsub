@@ -33,8 +33,8 @@ const PKG = require('../../package.json');
 const v1 = require('./v1');
 
 import {Snapshot} from './snapshot';
-import {Subscription, SubscriptionMetadataRaw} from './subscription';
-import {Topic} from './topic';
+import {Subscription, SubscriptionMetadata, SubscriptionMetadataRaw} from './subscription';
+import {Topic, PublishOptions} from './topic';
 import {CallOptions} from 'google-gax';
 import {Readable} from 'stream';
 import {google} from '../proto/pubsub';
@@ -158,9 +158,14 @@ export type CreateSubscriptionResponse =
     [Subscription, google.pubsub.v1.Subscription];
 
 
-export interface CreateSubscriptionOptions extends SubscriptionMetadataRaw {
+export interface CreateSubscriptionOptions {
   flowControl?: {maxBytes?: number; maxMessages?: number;};
   gaxOpts?: CallOptions;
+  /**
+   * Duration in seconds.
+   */
+  messageRetentionDuration?: number;
+  pushEndpoint?: string;
 }
 
 /**
@@ -902,11 +907,11 @@ export class PubSub {
    *
    * const topic = pubsub.topic('my-topic');
    */
-  topic(name: string) {
+  topic(name: string, options?: PublishOptions): Topic {
     if (!name) {
       throw new Error('A name must be specified for a topic.');
     }
-    return new Topic(this, name);
+    return new Topic(this, name, options);
   }
 }
 
@@ -1020,7 +1025,7 @@ promisifyAll(PubSub, {
   exclude: ['request', 'snapshot', 'subscription', 'topic'],
 });
 
-export {Subscription, Topic};
+export {Subscription, Topic, PublishOptions};
 
 /**
  * The default export of the `@google-cloud/pubsub` package is the

@@ -17,6 +17,7 @@
 import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
 import * as proxyquire from 'proxyquire';
+import * as sinon from 'sinon';
 
 import * as util from '../src/util';
 
@@ -25,13 +26,16 @@ const fakePromisify = Object.assign({}, pfy, {
   // tslint:disable-next-line variable-name
   promisifyAll(Class, options) {
     if (Class.name === 'Publisher') {
-      assert.deepStrictEqual(options, {singular: true});
+      assert.deepStrictEqual(
+          options, {singular: true, exclude: ['setOptions']});
       promisified = true;
     }
   },
 });
 
 describe('Publisher', () => {
+  const sandbox = sinon.createSandbox();
+
   // tslint:disable-next-line variable-name
   let Publisher;
   let publisher;
@@ -57,9 +61,21 @@ describe('Publisher', () => {
     batchOpts = publisher.settings.batching;
   });
 
+  afterEach(() => sandbox.restore());
+
   describe('initialization', () => {
     it('should promisify all the things', () => {
       assert(promisified);
+    });
+
+    it('should pass any options to setOptions', () => {
+      const stub = sandbox.stub(Publisher.prototype, 'setOptions');
+
+      const fakeOptions = {};
+      const p = new Publisher(TOPIC, fakeOptions);
+
+      const [options] = stub.lastCall.args;
+      assert.strictEqual(options, fakeOptions);
     });
 
     it('should localize topic.Promise', () => {
@@ -75,59 +91,6 @@ describe('Publisher', () => {
         callbacks: [],
         queued: [],
         bytes: 0,
-      });
-    });
-
-    describe('options', () => {
-      it('should provide default values for batching', () => {
-        assert.deepStrictEqual(publisher.settings.batching, {
-          maxBytes: Math.pow(1024, 2) * 5,
-          maxMessages: 1000,
-          maxMilliseconds: 100,
-        });
-      });
-
-      it('should capture user specified options', () => {
-        const options = {
-          maxBytes: 10,
-          maxMessages: 11,
-          maxMilliseconds: 12,
-        };
-        const optionsCopy = Object.assign({}, options);
-
-        const publisher = new Publisher(TOPIC, {
-          batching: options,
-        });
-
-        assert.deepStrictEqual(publisher.settings.batching, options);
-        assert.deepStrictEqual(options, optionsCopy);
-      });
-
-      it('should cap maxBytes', () => {
-        const expected = Math.pow(1024, 2) * 9;
-
-        const publisher = new Publisher(TOPIC, {
-          batching: {maxBytes: expected + 1024},
-        });
-
-        assert.strictEqual(publisher.settings.batching.maxBytes, expected);
-      });
-
-      it('should cap maxMessages', () => {
-        const publisher = new Publisher(TOPIC, {
-          batching: {maxMessages: 2000},
-        });
-
-        assert.strictEqual(publisher.settings.batching.maxMessages, 1000);
-      });
-
-      it('should capture gaxOptions', () => {
-        const fakeGaxOpts = {a: 'a'};
-        const publisher = new Publisher(TOPIC, {
-          gaxOpts: fakeGaxOpts,
-        });
-
-        assert.deepStrictEqual(publisher.settings.gaxOpts, fakeGaxOpts);
       });
     });
   });
@@ -292,11 +255,72 @@ All attributes must be in the form of a string.
     });
   });
 
+  describe('setOptions', () => {
+    beforeEach(() => {
+      delete publisher.settings;
+    });
+
+    it('should provide default values for batching', () => {
+      publisher.setOptions({});
+
+      assert.deepStrictEqual(publisher.settings.batching, {
+        maxBytes: Math.pow(1024, 2) * 5,
+        maxMessages: 1000,
+        maxMilliseconds: 100,
+      });
+    });
+
+    it('should capture user specified options', () => {
+      const options = {
+        batching: {
+          maxBytes: 10,
+          maxMessages: 11,
+          maxMilliseconds: 12,
+        },
+        gaxOpts: {},
+      };
+      const optionsCopy = Object.assign({}, options);
+
+      publisher.setOptions(options);
+
+      assert.deepStrictEqual(publisher.settings, options);
+      assert.deepStrictEqual(options, optionsCopy);
+    });
+
+    it('should cap maxBytes', () => {
+      const expected = Math.pow(1024, 2) * 9;
+
+      publisher.setOptions({
+        batching: {maxBytes: expected + 1024},
+      });
+
+      assert.strictEqual(publisher.settings.batching.maxBytes, expected);
+    });
+
+    it('should cap maxMessages', () => {
+      publisher.setOptions({
+        batching: {maxMessages: 2000},
+      });
+
+      assert.strictEqual(publisher.settings.batching.maxMessages, 1000);
+    });
+
+    it('should capture gaxOptions', () => {
+      const fakeGaxOpts = {a: 'a'};
+
+      publisher.setOptions({
+        gaxOpts: fakeGaxOpts,
+      });
+
+      assert.deepStrictEqual(publisher.settings.gaxOpts, fakeGaxOpts);
+    });
+  });
+
   describe('publish_', () => {
     it('should cancel any publish timeouts', done => {
       publisher.timeoutHandle_ = setTimeout(done, 1);
       publisher.publish_();
-      assert.strictEqual(publisher.timeoutHandle_, null);
+      assert.strictEqual(publisher.timeoutHandle_, undefined);
       done();
     });
 
