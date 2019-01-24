@@ -155,6 +155,7 @@ describe('topics', () => {
   });
 
   it('should publish with specific batch settings', async () => {
+    const expectedData = 'batch-settings-test';
     const expectedWait = 1000;
     const [subscription] = await pubsub
       .topic(topicNameOne)
@@ -162,14 +163,18 @@ describe('topics', () => {
       .get({autoCreate: true});
     const startTime = Date.now();
     await exec(
-      `${cmd} publish-batch ${topicNameOne} "${
-        expectedMessage.data
-      }" -w ${expectedWait}`
+      `${cmd} publish-batch ${topicNameOne} "${expectedData}" -w ${expectedWait}`
     );
-    const receivedMessage = await _pullOneMessage(subscription);
+
+    let receivedMessage;
+
+    // lets make sure we are checking against the correct message..
+    do {
+      receivedMessage = await _pullOneMessage(subscription);
+    } while (receivedMessage.data.toString() !== expectedData);
+
     const publishTime = Date.parse(receivedMessage.publishTime);
-    assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
-    assert.strictEqual(publishTime - startTime > expectedWait, true);
+    assert(publishTime - startTime > expectedWait);
   });
 
   it('should publish with retry settings', async () => {
