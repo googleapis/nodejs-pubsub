@@ -211,6 +211,11 @@ describe('Subscription', () => {
 
       subscriber.emit('error', error);
     });
+
+    it('should emit close events', done => {
+      subscription.on('close', done);
+      subscriber.emit('close');
+    });
   });
 
   describe('formatMetadata_', () => {
