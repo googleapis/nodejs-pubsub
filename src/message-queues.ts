@@ -15,6 +15,7 @@
  */
 
 import {CallOptions} from 'google-gax';
+import {Metadata, ServiceError, status} from 'grpc';
 import * as defer from 'p-defer';
 
 import {Message, Subscriber} from './subscriber';
@@ -35,6 +36,28 @@ export interface BatchOptions {
   callOptions?: CallOptions;
   maxMessages?: number;
   maxMilliseconds?: number;
+}
+
+/**
+ * Error class used to signal a batch failure.
+ *
+ * @class
+ *
+ * @param {string} message The error message.
+ * @param {ServiceError} err The grpc service error.
+ */
+export class BatchError extends Error implements ServiceError {
+  ackIds: string[];
+  code?: status;
+  metadata?: Metadata;
+  constructor(err: ServiceError, ackIds: string[], rpc: string) {
+    super(`Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${
+        err.message}`);
+
+    this.ackIds = ackIds;
+    this.code = err.code;
+    this.metadata = err.metadata;
+  }
 }
 
 /**
@@ -162,7 +185,11 @@ export class AckQueue extends MessageQueue {
     const ackIds = batch.map(([ackId]) => ackId);
     const reqOpts = {subscription: this._subscriber.name, ackIds};
 
-    await client.acknowledge(reqOpts, this._options.callOptions!);
+    try {
+      await client.acknowledge(reqOpts, this._options.callOptions!);
+    } catch (e) {
+      throw new BatchError(e, ackIds, 'acknowledge');
+    }
   }
 }
 
@@ -194,12 +221,16 @@ export class ModAckQueue extends MessageQueue {
       return table;
     }, {});
 
-    const modAckRequests = Object.keys(modAckTable).map(deadline => {
+    const modAckRequests = Object.keys(modAckTable).map(async (deadline) => {
       const ackIds = modAckTable[deadline];
       const ackDeadlineSeconds = Number(deadline);
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};
 
-      return client.modifyAckDeadline(reqOpts, this._options.callOptions!);
+      try {
+        await client.modifyAckDeadline(reqOpts, this._options.callOptions!);
+      } catch (e) {
+        throw new BatchError(e, ackIds, 'modifyAckDeadline');
+      }
     });
 
     await Promise.all(modAckRequests);

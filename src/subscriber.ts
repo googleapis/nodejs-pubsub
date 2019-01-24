@@ -251,6 +251,8 @@ export class Subscriber extends EventEmitter {
     this._inventory.clear();
 
     await this._waitForFlush();
+
+    this.emit('close');
   }
   /**
    * Gets the subscriber client instance.
@@ -309,7 +311,8 @@ export class Subscriber extends EventEmitter {
     this._stream = new MessageStream(this, streamingOptions);
 
     this._stream.on('error', err => this.emit('error', err))
-        .on('data', (data: PullResponse) => this._onData(data));
+        .on('data', (data: PullResponse) => this._onData(data))
+        .once('close', () => this.close());
 
     this._inventory.on('full', () => this._stream.pause())
         .on('free', () => this._stream.resume());
