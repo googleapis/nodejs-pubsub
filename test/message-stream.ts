@@ -377,14 +377,32 @@ describe('MessageStream', () => {
         });
       });
 
-      it('should destroy the stream if unable to verify channel', done => {
+      it('should destroy the stream if unable to connect to channel', done => {
         const stub = sandbox.stub(client, 'waitForReady');
         const ms = new MessageStream(subscriber);
         const fakeError = new Error('err');
+        const expectedMessage = `Failed to connect to channel. Reason: err`;
 
         ms.on('error', err => {
-          assert.strictEqual(err, fakeError);
+          assert.strictEqual(err.code, 2);
+          assert.strictEqual(err.message, expectedMessage);
           assert.strictEqual(ms.destroyed, true);
+          done();
+        });
+
+        setImmediate(() => {
+          const [, callback] = stub.lastCall.args;
+          callback(fakeError);
+        });
+      });
+
+      it('should give a deadline error if waitForReady times out', done => {
+        const stub = sandbox.stub(client, 'waitForReady');
+        const ms = new MessageStream(subscriber);
+        const fakeError = new Error('Failed to connect before the deadline');
+
+        ms.on('error', err => {
+          assert.strictEqual(err.code, 4);
           done();
         });
 
@@ -403,6 +421,17 @@ describe('MessageStream', () => {
         });
 
         client.streams[0].emit('error', fakeError);
+      });
+
+      it('should ignore status errors', done => {
+        const [stream] = client.streams;
+        const status = {code: 0};
+
+        messageStream.on('error', done);
+        stream.emit('error', status);
+        stream.emit('status', status);
+
+        setImmediate(done);
       });
 
       it('should ignore errors that come in after the status', done => {

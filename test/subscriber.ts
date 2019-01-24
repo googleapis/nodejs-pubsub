@@ -315,6 +315,11 @@ describe('Subscriber', () => {
       assert.strictEqual(stub.callCount, 1);
     });
 
+    it('should emit a close event', done => {
+      subscriber.on('close', done);
+      subscriber.close();
+    });
+
     describe('flushing the queues', () => {
       it('should wait for any pending acks', async () => {
         const ackQueue: FakeAckQueue = stubs.get('ackQueue');
@@ -474,6 +479,15 @@ describe('Subscriber', () => {
       });
 
       stream.emit('error', fakeError);
+    });
+
+    it('should close the subscriber if stream closes unexpectedly', () => {
+      const stub = sandbox.stub(subscriber, 'close');
+      const stream: FakeMessageStream = stubs.get('messageStream');
+
+      stream.emit('close');
+
+      assert.strictEqual(stub.callCount, 1);
     });
 
     it('should add messages to the inventory', done => {

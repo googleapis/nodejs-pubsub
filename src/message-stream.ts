@@ -16,7 +16,7 @@
 
 import {promisify} from '@google-cloud/promisify';
 import {ClientStub} from 'google-gax';
-import {ClientDuplexStream, Metadata, StatusObject} from 'grpc';
+import {ClientDuplexStream, Metadata, ServiceError, status, StatusObject} from 'grpc';
 import * as isStreamEnded from 'is-stream-ended';
 import {Duplex, PassThrough} from 'stream';
 
@@ -28,9 +28,19 @@ import {PullResponse, Subscriber} from './subscriber';
 const KEEP_ALIVE_INTERVAL = 30000;
 
 /*!
+ * Deadline Exceeded status code
+ */
+const DEADLINE: status = 4;
+
+/*!
+ * Unknown status code
+ */
+const UNKNOWN: status = 2;
+
+/*!
  * codes to retry streams
  */
-const RETRY_CODES: number[] = [
+const RETRY_CODES: status[] = [
   0,   // ok
   1,   // canceled
   2,   // unknown
@@ -45,7 +55,7 @@ const RETRY_CODES: number[] = [
 /*!
  * default stream options
  */
-const DEFAULT_OPTIONS = {
+const DEFAULT_OPTIONS: MessageStreamOptions = {
   highWaterMark: 0,
   maxStreams: 5,
   timeout: 300000,
@@ -73,13 +83,28 @@ type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse>&
  *
  * @param {object} status The gRPC status object.
  */
-export class StatusError extends Error {
-  code: number;
-  metadata: Metadata;
+export class StatusError extends Error implements ServiceError {
+  code?: status;
+  metadata?: Metadata;
   constructor(status: StatusObject) {
     super(status.details);
     this.code = status.code;
     this.metadata = status.metadata;
+  }
+}
+
+/**
+ * Error thrown when we fail to open a channel for the message stream.
+ *
+ * @class
+ *
+ * @param {Error} err The original error.
+ */
+export class ChannelError extends Error implements ServiceError {
+  code: status;
+  constructor(err: Error) {
+    super(`Failed to connect to channel. Reason: ${err.message}`);
+    this.code = err.message.includes('deadline') ? DEADLINE : UNKNOWN;
   }
 }
 
@@ -272,16 +297,18 @@ export class MessageStream extends PassThrough {
     }
   }
   /**
-   * Sometimes a gRPC status will be emitted as both a status event and an
-   * error event. In order to cut back on emitted errors, we'll ignore any
-   * error events that come in AFTER the status has been received.
+   * gRPC will usually emit a status as a ServiceError via `error` event before
+   * it emits the status itself. In order to cut back on emitted errors, we'll
+   * wait a tick on error and ignore it if the status has been received.
    *
    * @private
    *
    * @param {stream} stream The stream that errored.
    * @param {Error} err The error.
    */
-  private _onError(stream: PullStream, err: Error): void {
+  private async _onError(stream: PullStream, err: Error): Promise<void> {
+    await promisify(setImmediate)();
+
     const code = (err as StatusError).code;
     const receivedStatus = this._streams.get(stream) !== false;
 
@@ -349,8 +376,13 @@ export class MessageStream extends PassThrough {
    * @param {object} client The gRPC client to wait for.
    * @returns {Promise}
    */
-  private _waitForClientReady(client: ClientStub): Promise<void> {
+  private async _waitForClientReady(client: ClientStub): Promise<void> {
     const deadline = Date.now() + this._options.timeout!;
-    return promisify(client.waitForReady).call(client, deadline);
+
+    try {
+      await promisify(client.waitForReady).call(client, deadline);
+    } catch (e) {
+      throw new ChannelError(e);
+    }
   }
 }
