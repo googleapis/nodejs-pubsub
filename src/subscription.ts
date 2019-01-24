@@ -23,11 +23,10 @@ import * as snakeCase from 'lodash.snakecase';
 
 import {google} from '../proto/pubsub';
 
-import {CreateSnapshotCallback, CreateSnapshotResponse, CreateSubscriptionCallback, CreateSubscriptionResponse, ExistsCallback, GetCallOptions, Metadata, PubSub, PushConfig, RequestCallback, SubscriptionCallOptions} from '.';
+import {CreateSnapshotCallback, CreateSnapshotResponse, CreateSubscriptionCallback, CreateSubscriptionResponse, ExistsCallback, GetCallOptions, GetSubscriptionMetadataCallback, Metadata, PubSub, PushConfig, RequestCallback, SubscriptionCallOptions} from '.';
 import {IAM} from './iam';
 import {Snapshot} from './snapshot';
 import {Subscriber, SubscriberOptions} from './subscriber';
-import {Topic} from './topic';
 import {noop} from './util';
 
 
@@ -442,15 +441,7 @@ export class Subscription extends EventEmitter {
           reqOpts,
           gaxOpts,
         },
-
-
-        (err: Error, resp: google.protobuf.Empty) => {
-          if (!err) {
-            this.removeAllListeners();
-            this.close();
-          }
-          callback!(err, resp);
-        });
+        callback);
   }
   /**
    * @typedef {array} SubscriptionExistsResponse
@@ -491,13 +482,8 @@ export class Subscription extends EventEmitter {
         callback!(null, true);
         return;
       }
-      let code = 0;
-      if (err.hasOwnProperty('code')) {
-        code =
-            (Object.getOwnPropertyDescriptor(err, 'code') as PropertyDescriptor)
-                .value;
-      }
-      if (code === 5) {
+
+      if (err.code === 5) {
         callback!(null, false);
         return;
       }
@@ -545,11 +531,9 @@ export class Subscription extends EventEmitter {
    * });
    */
   get(callback: CreateSubscriptionCallback): void;
-  get(gaxOpts?: CallOptions&
-      GetCallOptions): Promise<CreateSubscriptionResponse>;
-  get(gaxOpts: CallOptions&GetCallOptions,
-      callback: CreateSubscriptionCallback): void;
-  get(gaxOptsOrCallback?: CallOptions&GetCallOptions|CreateSubscriptionCallback,
+  get(gaxOpts?: GetCallOptions): Promise<CreateSubscriptionResponse>;
+  get(gaxOpts: GetCallOptions, callback: CreateSubscriptionCallback): void;
+  get(gaxOptsOrCallback?: GetCallOptions|CreateSubscriptionCallback,
       callback?: CreateSubscriptionCallback):
       void|Promise<CreateSubscriptionResponse> {
     const gaxOpts =
@@ -563,16 +547,12 @@ export class Subscription extends EventEmitter {
         callback!(null, this, apiResponse!);
         return;
       }
-      let code = 0;
-      if (err.hasOwnProperty('code')) {
-        code =
-            (Object.getOwnPropertyDescriptor(err, 'code') as PropertyDescriptor)
-                .value;
-      }
-      if (code !== 5 || !autoCreate) {
+
+      if (err.code !== 5 || !autoCreate) {
         callback!(err, null, apiResponse!);
         return;
       }
+
       this.create(gaxOpts, callback);
     });
   }
@@ -614,14 +594,12 @@ export class Subscription extends EventEmitter {
    * });
    */
   getMetadata(gaxOpts?: CallOptions): Promise<google.pubsub.v1.Subscription>;
-  getMetadata(callback: RequestCallback<google.pubsub.v1.Subscription>): void;
+  getMetadata(callback: GetSubscriptionMetadataCallback): void;
+  getMetadata(gaxOpts: CallOptions, callback: GetSubscriptionMetadataCallback):
+      void;
   getMetadata(
-      gaxOpts: CallOptions,
-      callback: RequestCallback<google.pubsub.v1.Subscription>): void;
-  getMetadata(
-      gaxOptsOrCallback?: CallOptions|
-      RequestCallback<google.pubsub.v1.Subscription>,
-      callback?: RequestCallback<google.pubsub.v1.Subscription>):
+      gaxOptsOrCallback?: CallOptions|GetSubscriptionMetadataCallback,
+      callback?: GetSubscriptionMetadataCallback):
       void|Promise<google.pubsub.v1.Subscription> {
     const gaxOpts =
         typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
@@ -810,9 +788,8 @@ export class Subscription extends EventEmitter {
       subscription: this.name,
     };
 
-    if (is.string(snapshot)) {
-      reqOpts.snapshot =
-          Snapshot.formatName_(this.pubsub.projectId, snapshot.toString());
+    if (typeof snapshot === 'string') {
+      reqOpts.snapshot = Snapshot.formatName_(this.pubsub.projectId, snapshot);
 
 
     } else if (is.date(snapshot)) {

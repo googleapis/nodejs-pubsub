@@ -38,18 +38,23 @@ import {Topic, PublishOptions} from './topic';
 import {CallOptions} from 'google-gax';
 import {Readable} from 'stream';
 import {google} from '../proto/pubsub';
+import {ServiceError} from 'grpc';
 
 const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
 
 
+export interface GetSubscriptionMetadataCallback {
+  (err: ServiceError|null, res?: google.pubsub.v1.Subscription|null): void;
+}
+
 export interface ExistsCallback {
   (err: Error|null, res?: boolean): void;
 }
 
-export type GetCallOptions = {
-  autoCreate?: boolean
-};
+export interface GetCallOptions extends CallOptions {
+  autoCreate?: boolean;
+}
 
 export interface PushConfig {
   pushEndpoint: string;
