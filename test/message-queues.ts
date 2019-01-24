@@ -16,9 +16,12 @@
 
 import * as assert from 'assert';
 import {EventEmitter} from 'events';
+import {Metadata, ServiceError} from 'grpc';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import * as uuid from 'uuid';
+
+import {BatchError} from '../src/message-queues';
 
 class FakeClient {
   async acknowledge(reqOpts, callOptions): Promise<void> {}
@@ -296,6 +299,36 @@ describe('MessageQueues', () => {
       const [, callOptions] = stub.lastCall.args;
       assert.strictEqual(callOptions, fakeCallOptions);
     });
+
+    it('should throw a BatchError if unable to ack', done => {
+      const messages = [
+        new FakeMessage(),
+        new FakeMessage(),
+        new FakeMessage(),
+      ];
+
+      const ackIds = messages.map(message => message.ackId);
+
+      const fakeError: ServiceError = new Error('Err.');
+      fakeError.code = 2;
+      fakeError.metadata = new Metadata();
+
+      const expectedMessage =
+          `Failed to "acknowledge" for 3 message(s). Reason: Err.`;
+
+      sandbox.stub(subscriber.client, 'acknowledge').rejects(fakeError);
+
+      subscriber.on('error', (err: BatchError) => {
+        assert.strictEqual(err.message, expectedMessage);
+        assert.deepStrictEqual(err.ackIds, ackIds);
+        assert.strictEqual(err.code, fakeError.code);
+        assert.strictEqual(err.metadata, fakeError.metadata);
+        done();
+      });
+
+      messages.forEach(message => ackQueue.add(message));
+      ackQueue.flush();
+    });
   });
 
   describe('ModAckQueue', () => {
@@ -375,6 +408,36 @@ describe('MessageQueues', () => {
 
       const [, callOptions] = stub.lastCall.args;
       assert.strictEqual(callOptions, fakeCallOptions);
+    });
+
+    it('should throw a BatchError if unable to modAck', done => {
+      const messages = [
+        new FakeMessage(),
+        new FakeMessage(),
+        new FakeMessage(),
+      ];
+
+      const ackIds = messages.map(message => message.ackId);
+
+      const fakeError: ServiceError = new Error('Err.');
+      fakeError.code = 2;
+      fakeError.metadata = new Metadata();
+
+      const expectedMessage =
+          `Failed to "modifyAckDeadline" for 3 message(s). Reason: Err.`;
+
+      sandbox.stub(subscriber.client, 'modifyAckDeadline').rejects(fakeError);
+
+      subscriber.on('error', (err: BatchError) => {
+        assert.strictEqual(err.message, expectedMessage);
+        assert.deepStrictEqual(err.ackIds, ackIds);
+        assert.strictEqual(err.code, fakeError.code);
+        assert.strictEqual(err.metadata, fakeError.metadata);
+        done();
+      });
+
+      messages.forEach(message => modAckQueue.add(message));
+      modAckQueue.flush();
     });
   });
 });

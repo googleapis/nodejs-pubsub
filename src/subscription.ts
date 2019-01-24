@@ -172,6 +172,9 @@ export interface SubscriptionMetadata extends TSubscriptionMetadata {
  * // Register an error handler.
  * subscription.on('error', (err) => {});
  *
+ * // Register a close handler in case the subscriber closes unexpectedly
+ * subscription.on('close', () => {});
+ *
  * // Register a listener for `message` events.
  * function onMessage(message) {
  *   // Called every time a message is received.
@@ -258,7 +261,8 @@ export class Subscription extends EventEmitter {
 
     this._subscriber = new Subscriber(this, options as SubscriberOptions);
     this._subscriber.on('error', err => this.emit('error', err))
-        .on('message', message => this.emit('message', message));
+        .on('message', message => this.emit('message', message))
+        .on('close', () => this.emit('close'));
 
     this._listen();
   }
