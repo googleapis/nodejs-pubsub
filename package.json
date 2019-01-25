@@ -30,7 +30,7 @@
     "google pubsub",
     "pubsub"
   ],
-  "scripts": {    
+  "scripts": {
     "presystem-test": "npm run compile",
     "system-test": "mocha build/system-test --timeout 600000",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
