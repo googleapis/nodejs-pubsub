@@ -37,9 +37,65 @@ import {Subscription, SubscriptionMetadata, SubscriptionMetadataRaw} from './sub
 import {Topic, PublishOptions} from './topic';
 import {CallOptions} from 'google-gax';
 import {Readable} from 'stream';
+import {google} from '../proto/pubsub';
+import {ServiceError} from 'grpc';
 
 const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
+
+
+export interface GetSubscriptionMetadataCallback {
+  (err: ServiceError|null, res?: google.pubsub.v1.Subscription|null): void;
+}
+
+export interface ExistsCallback {
+  (err: Error|null, res?: boolean): void;
+}
+
+export interface GetCallOptions extends CallOptions {
+  autoCreate?: boolean;
+}
+
+export interface PushConfig {
+  pushEndpoint: string;
+  attibutes?: Map<string, string>;
+}
+
+
+export interface SubscriptionCallOptions {
+  flowControl?:
+      {maxBytes?: number, maxMessages?: number, allowExcessMessages: boolean;};
+  maxConnections?: number;
+  topic?: Topic;
+  ackDeadline?: number;
+  autoPaginate?: boolean;
+  gaxOpts?: CallOptions;
+  batching?:
+      {maxBytes?: number, maxMessages?: number, maxMilliseconds?: number};
+}
+
+export interface PublisherCallOptions {
+  batching?:
+      {maxBytes?: number, maxMessages?: number, maxMilliseconds?: number};
+}
+
+/**
+ * @callback CreateTopicCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Snapshot} snapshot
+ * @param {object} apiResponse The full API response.
+ */
+export interface CreateSnapshotCallback {
+  (err: Error|null, snapshot?: Snapshot|null,
+   apiResponse?: google.pubsub.v1.Snapshot): void;
+}
+
+/**
+ * @typedef {array} CreateSnapshotResponse
+ * @property {Snapshot}.
+ * @property {object} 1 The full API response.
+ */
+export type CreateSnapshotResponse = [Snapshot, google.pubsub.v1.Snapshot];
 
 /**
  * Project ID placeholder.
@@ -56,7 +112,7 @@ export type Metadata = any;
  * @property {Topic} 0 The new {@link Topic}.
  * @property {object} 1 The full API response.
  */
-export type CreateTopicResponse = [Topic, object];
+export type CreateTopicResponse = [Topic, google.pubsub.v1.Topic];
 
 /**
  * @callback CreateTopicCallback
@@ -65,7 +121,19 @@ export type CreateTopicResponse = [Topic, object];
  * @param {object} apiResponse The full API response.
  */
 export interface CreateTopicCallback {
-  (err?: Error|null, topic?: Topic|null, apiResponse?: object): void;
+  (err?: Error|null, topic?: Topic|null,
+   apiResponse?: google.pubsub.v1.Topic): void;
+}
+
+/**
+ * @callback CreateSubscriptionCallback
+ * @param {?Error} err Request error, if any.
+ * @param {Subscription} Subscription
+ * @param {object} apiResponse The full API response.
+ */
+export interface CreateSubscriptionCallback {
+  (err?: Error|null, subscription?: Subscription|null,
+   apiResponse?: google.pubsub.v1.Subscription): void;
 }
 
 export type Client = 'PublisherClient'|'SubscriberClient';
@@ -91,22 +159,18 @@ export interface RequestCallback<TResponse> {
  * @property {Subscription} 0 The new {@link Subscription}.
  * @property {object} 1 The full API response.
  */
-export type CreateSubscriptionResponse = [Subscription, object];
+export type CreateSubscriptionResponse =
+    [Subscription, google.pubsub.v1.Subscription];
 
-/**
- * @callback CreateSubscriptionCallback
- * @param {?Error} err Request error, if any.
- * @param {Subscription} subscription The new {@link Subscription}.
- * @param {object} apiResponse The full API response.
- */
-export interface CreateSubscriptionCallback {
-  (err?: Error|null, subscription?: Subscription|null,
-   apiResponse?: object): void;
-}
 
-export interface CreateSubscriptionOptions extends SubscriptionMetadata {
+export interface CreateSubscriptionOptions {
   flowControl?: {maxBytes?: number; maxMessages?: number;};
   gaxOpts?: CallOptions;
+  /**
+   * Duration in seconds.
+   */
+  messageRetentionDuration?: number;
+  pushEndpoint?: string;
 }
 
 /**
