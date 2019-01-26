@@ -167,9 +167,14 @@ describe('topics', () => {
       }" -w ${expectedWait}`
     );
     const receivedMessage = await _pullOneMessage(subscription);
+
     const publishTime = Date.parse(receivedMessage.publishTime);
+    const actualWait = publishTime - startTime;
+
     assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
-    assert.strictEqual(publishTime - startTime > expectedWait, true);
+    // setTimeout isn't so reliable to publish messages EXACTLY at 1000ms,
+    // so we should consider anything above 900 as passing.
+    assert(actualWait >= (expectedWait - 100));
   });
 
   it('should publish with retry settings', async () => {
