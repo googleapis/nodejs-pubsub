@@ -597,29 +597,20 @@ describe('pubsub', () => {
       });
     }
 
-    function wait(milliseconds) {
-      return () => {
-        return new Promise(resolve => {
-          setTimeout(resolve, milliseconds);
-        });
-      };
-    }
-
-    before(() => {
-      topic = pubsub.topic(TOPIC_NAMES[0]);
+    before(async () => {
+      topic = pubsub.topic(generateTopicName());
       subscription = topic.subscription(generateSubName());
       snapshot = subscription.snapshot(SNAPSHOT_NAME);
 
-      return deleteAllSnapshots()
-          .then(wait(2500))
-          .then(subscription.create.bind(subscription))
-          .then(wait(2500))
-          .then(snapshot.create.bind(snapshot))
-          .then(wait(2500));
+      await deleteAllSnapshots();
+      await topic.create();
+      await subscription.create();
+      await snapshot.create();
     });
 
-    after(() => {
-      return deleteAllSnapshots();
+    after(async () => {
+      await deleteAllSnapshots();
+      await topic.delete();
     });
 
     it('should get a list of snapshots', done => {
