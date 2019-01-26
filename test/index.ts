@@ -1084,6 +1084,7 @@ describe('PubSub', () => {
         pubsub.getClient_(CONFIG, err => {
           assert.ifError(err);
           assert.strictEqual(pubsub.projectId, PROJECT_ID);
+          assert.strictEqual(pubsub.options.projectId, PROJECT_ID);
           done();
         });
       });
