@@ -4,6 +4,14 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.24.1
+
+01-29-2019 13:17 PST
+
+### Bug Fixes
+
+- fix(publisher): unbound max send message size ([#454](https://github.com/googleapis/nodejs-pubsub/pull/454))
+
 ## v0.24.0
 
 01-28-2019 09:54 PST
