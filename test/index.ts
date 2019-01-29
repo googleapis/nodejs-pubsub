@@ -183,6 +183,15 @@ describe('PubSub', () => {
   });
 
   describe('instantiation', () => {
+    const DEFAULT_OPTIONS = {
+      'grpc.keepalive_time_ms': 300000,
+      'grpc.max_send_message_length': -1,
+      'grpc.max_receive_message_length': 20000001,
+      libName: 'gccl',
+      libVersion: PKG.version,
+      scopes: [],
+    };
+
     it('should extend the correct methods', () => {
       assert(extended);  // See `fakePaginator.extend`
     });
@@ -236,19 +245,10 @@ describe('PubSub', () => {
         a: 'b',
         c: 'd',
       };
+      const expectedOptions = Object.assign({}, DEFAULT_OPTIONS, options);
 
       googleAuthOverride = options_ => {
-        assert.deepStrictEqual(
-            options_,
-            Object.assign(
-                {
-                  'grpc.max_receive_message_length': 20000001,
-                  'grpc.keepalive_time_ms': 300000,
-                  libName: 'gccl',
-                  libVersion: PKG.version,
-                  scopes: [],
-                },
-                options));
+        assert.deepStrictEqual(options_, expectedOptions);
         return fakeGoogleAuthInstance;
       };
 
@@ -257,17 +257,9 @@ describe('PubSub', () => {
     });
 
     it('should localize the options provided', () => {
-      assert.deepStrictEqual(
-          pubsub.options,
-          Object.assign(
-              {
-                'grpc.max_receive_message_length': 20000001,
-                'grpc.keepalive_time_ms': 300000,
-                libName: 'gccl',
-                libVersion: PKG.version,
-                scopes: [],
-              },
-              OPTIONS));
+      const expectedOptions = Object.assign({}, DEFAULT_OPTIONS, OPTIONS);
+
+      assert.deepStrictEqual(pubsub.options, expectedOptions);
     });
 
     it('should set the projectId', () => {
