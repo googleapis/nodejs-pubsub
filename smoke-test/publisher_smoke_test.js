@@ -86,7 +86,7 @@ describe('PublisherSmokeTest', () => {
     let counter = 0;
     client
       .listTopicsStream({project: formattedProject})
-      .on('data', element => {
+      .on('data', () => {
         ++counter;
       })
       .on('error', done)
