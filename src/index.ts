@@ -33,16 +33,22 @@ const PKG = require('../../package.json');
 const v1 = require('./v1');
 
 import {Snapshot} from './snapshot';
-import {Subscription, SubscriptionMetadata, SubscriptionMetadataRaw} from './subscription';
+import {Subscription, SubscriptionMetadataRaw} from './subscription';
 import {Topic, PublishOptions} from './topic';
 import {CallOptions} from 'google-gax';
 import {Readable} from 'stream';
 import {google} from '../proto/pubsub';
 import {ServiceError} from 'grpc';
+import {FlowControlOptions} from './lease-manager';
 
 const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
 
+
+export interface SnapshotParent extends PubSub {
+  createSnapshot?: Function;
+  seek?: Function;
+}
 
 export interface GetSubscriptionMetadataCallback {
   (err: ServiceError|null, res?: google.pubsub.v1.Subscription|null): void;
@@ -56,28 +62,40 @@ export interface GetCallOptions extends CallOptions {
   autoCreate?: boolean;
 }
 
-export interface PushConfig {
-  pushEndpoint: string;
-  attibutes?: Map<string, string>;
+export interface Inventory {
+  callbacks?: Array<RequestCallback<string>>;
+  queued?: Array<{}>;
+  bytes: number;
+  nack?: Array<[string, number]>;
+}
+
+export interface Batching {
+  maxBytes?: number;
+  maxMessages: number;
+  maxMilliseconds?: number;
+}
+
+export interface PublisherCallOptions {
+  batching: Batching;
+  gaxOpts?: CallOptions;
+}
+
+export interface Attributes {
+  [key: string]: string;
 }
 
 
 export interface SubscriptionCallOptions {
-  flowControl?:
-      {maxBytes?: number, maxMessages?: number, allowExcessMessages: boolean;};
+  flowControl?: FlowControlOptions;
   maxConnections?: number;
   topic?: Topic;
   ackDeadline?: number;
   autoPaginate?: boolean;
   gaxOpts?: CallOptions;
-  batching?:
-      {maxBytes?: number, maxMessages?: number, maxMilliseconds?: number};
+  batching?: Batching;
 }
 
-export interface PublisherCallOptions {
-  batching?:
-      {maxBytes?: number, maxMessages?: number, maxMilliseconds?: number};
-}
+
 
 /**
  * @callback CreateTopicCallback
@@ -164,7 +182,7 @@ export type CreateSubscriptionResponse =
 
 
 export interface CreateSubscriptionOptions {
-  flowControl?: {maxBytes?: number; maxMessages?: number;};
+  flowControl?: FlowControlOptions;
   gaxOpts?: CallOptions;
   /**
    * Duration in seconds.
@@ -406,7 +424,7 @@ export class PubSub {
       name: subscription.name,
     });
 
-    this.request(
+    this.request<google.pubsub.v1.Subscription>(
         {
           client: 'SubscriberClient',
           method: 'createSubscription',
