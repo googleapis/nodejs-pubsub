@@ -83,12 +83,16 @@ describe('PublisherSmokeTest', () => {
     });
 
     const formattedProject = client.projectPath(projectId);
+    let counter = 0;
     client
       .listTopicsStream({project: formattedProject})
-      .on('data', element => {
-        console.log(element);
+      .on('data', () => {
+        ++counter;
       })
       .on('error', done)
-      .on('end', done);
+      .on('end', () => {
+        console.log(`${counter} elements received.`);
+        done();
+      });
   });
 });
