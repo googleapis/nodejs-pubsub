@@ -153,8 +153,7 @@ export class Snapshot {
       gaxOpts?: CallOptions|CreateSnapshotCallback,
       callback?: CreateSnapshotCallback): void|Promise<CreateSnapshotResponse> {
     if (!(this.parent instanceof Subscription)) {
-      throw new Error(
-          `This is only available if you accessed this object through {@link Subscription#snapshot}`);
+      throw new Error(`Subscription#snapshot`);
     }
     return (this.parent as Subscription)
         .createSnapshot(this.name, gaxOpts! as CallOptions, callback!);
@@ -170,8 +169,7 @@ export class Snapshot {
       callback?: google.pubsub.v1.Subscriber.SeekCallback):
       void|Promise<google.pubsub.v1.SeekResponse> {
     if (!(this.parent instanceof Subscription)) {
-      throw new Error(
-          `This is only available if you accessed this object through {@link Subscription#snapshot}`);
+      throw new Error(`Subscription#snapshot`);
     }
     return (this.parent as Subscription)
         .seek(this.name, gaxOpts! as CallOptions, callback!);

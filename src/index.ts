@@ -40,15 +40,10 @@ import {Readable} from 'stream';
 import {google} from '../proto/pubsub';
 import {ServiceError} from 'grpc';
 import {FlowControlOptions} from './lease-manager';
+import {BatchPublishOptions} from './publisher';
 
 const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
-
-
-export interface SnapshotParent extends PubSub {
-  createSnapshot?: Function;
-  seek?: Function;
-}
 
 export interface GetSubscriptionMetadataCallback {
   (err: ServiceError|null, res?: google.pubsub.v1.Subscription|null): void;
@@ -60,24 +55,6 @@ export interface ExistsCallback {
 
 export interface GetCallOptions extends CallOptions {
   autoCreate?: boolean;
-}
-
-export interface Inventory {
-  callbacks?: Array<RequestCallback<string>>;
-  queued?: Array<{}>;
-  bytes: number;
-  nack?: Array<[string, number]>;
-}
-
-export interface Batching {
-  maxBytes?: number;
-  maxMessages: number;
-  maxMilliseconds?: number;
-}
-
-export interface PublisherCallOptions {
-  batching: Batching;
-  gaxOpts?: CallOptions;
 }
 
 export interface Attributes {
@@ -92,7 +69,7 @@ export interface SubscriptionCallOptions {
   ackDeadline?: number;
   autoPaginate?: boolean;
   gaxOpts?: CallOptions;
-  batching?: Batching;
+  batching?: BatchPublishOptions;
 }
 
 

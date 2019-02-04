@@ -22,7 +22,7 @@ import {Readable} from 'stream';
 
 import {google} from '../proto/pubsub';
 
-import {CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, CreateTopicCallback, CreateTopicResponse, ExistsCallback, GetCallOptions, Metadata, PublisherCallOptions, PubSub, RequestCallback, SubscriptionCallOptions} from '.';
+import {CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, CreateTopicCallback, CreateTopicResponse, ExistsCallback, GetCallOptions, Metadata, PubSub, RequestCallback, SubscriptionCallOptions} from '.';
 import {IAM} from './iam';
 import {PublishCallback, Publisher, PublishOptions} from './publisher';
 import {Subscription} from './subscription';

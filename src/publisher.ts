@@ -23,7 +23,13 @@ const each = require('async-each');
 import * as extend from 'extend';
 import * as is from 'is';
 import {Topic} from './topic';
-import {Inventory, RequestCallback, Attributes} from '.';
+import {RequestCallback, Attributes} from '.';
+
+interface Inventory {
+  callbacks: Array<RequestCallback<string>>;
+  queued: Array<{}>;
+  bytes: number;
+}
 
 export interface PublishCallback {
   (err?: null|Error, messageId?: string|null): void;
@@ -38,7 +44,7 @@ export interface PublishCallback {
  * @property {number} [maxMilliseconds=100] The maximum duration to wait before
  *     sending a payload.
  */
-interface BatchPublishOptions {
+export interface BatchPublishOptions {
   maxBytes?: number;
   maxMessages?: number;
   maxMilliseconds?: number;
@@ -164,6 +170,7 @@ export class Publisher {
     if (!(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
     }
+
     const attributes =
         typeof attributesOrCallback === 'object' ? attributesOrCallback : {};
     callback = typeof attributesOrCallback === 'function' ?
@@ -189,7 +196,7 @@ export class Publisher {
     this.queue_(data, attributes, callback!);
     // next lets check if this message brings us to the message cap or if we
     // hit the max byte limit
-    const hasMaxMessages = this.inventory_.queued!.length === opts.maxMessages;
+    const hasMaxMessages = this.inventory_.queued.length === opts.maxMessages;
     if (this.inventory_.bytes >= opts.maxBytes! || hasMaxMessages) {
       this.publish_();
       return;
@@ -261,7 +268,7 @@ export class Publisher {
               callbacks,
               (callback: RequestCallback<string>,
                next: RequestCallback<string>) => {
-                const messageId = messageIds[callbacks!.indexOf(callback)];
+                const messageId = messageIds[callbacks.indexOf(callback)];
                 callback(err, messageId);
                 next();
               });
@@ -281,12 +288,12 @@ export class Publisher {
       void;
   queue_(data: Buffer, attrs: Attributes, callback?: RequestCallback<string>):
       void|Promise<string> {
-    this.inventory_.queued!.push({
+    this.inventory_.queued.push({
       data,
       attributes: attrs,
     });
     this.inventory_.bytes += data.length;
-    this.inventory_.callbacks!.push(callback!);
+    this.inventory_.callbacks.push(callback!);
   }
 }
 

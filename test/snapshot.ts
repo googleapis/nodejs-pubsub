@@ -42,11 +42,10 @@ describe('Snapshot', () => {
   const PROJECT_ID = 'grape-spaceship-123';
 
   const PUBSUB = {
-    Promise:{},
     projectId: PROJECT_ID,
   };
-  
-  const SUBSCRIPTION = {    
+
+  const SUBSCRIPTION = {
     projectId: PROJECT_ID,
     pubsub: PUBSUB,
     api: {},
@@ -86,9 +85,10 @@ describe('Snapshot', () => {
       assert(promisified);
     });
 
-    it('should localize parent.Promise', () => {  
-      snapshot = new Snapshot(PUBSUB,SNAPSHOT_NAME);
-      assert.strictEqual(snapshot.Promise, PUBSUB.Promise); 
+    it('should localize parent.Promise', () => {
+      const pubsub = new PubSub();
+      snapshot = new Snapshot(pubsub, SNAPSHOT_NAME);
+      assert.strictEqual(snapshot.Promise, pubsub.Promise);
     });
 
     it('should localize the parent', () => {
@@ -134,7 +134,7 @@ describe('Snapshot', () => {
             });
 
         const snapshot = new Snapshot(subscription, SNAPSHOT_NAME);
-        snapshot.create(done);
+        snapshot.create(assert.ifError);
       });
 
       it('should call the seek method', done => {
@@ -143,7 +143,7 @@ describe('Snapshot', () => {
           done();
         });
         const snapshot = new Snapshot(subscription, SNAPSHOT_NAME);
-        snapshot.seek(done);
+        snapshot.seek(assert.ifError);
       });
     });
 
@@ -155,15 +155,11 @@ describe('Snapshot', () => {
       });
 
       it('should throw on create method', () => {
-        assert.throws(
-            () => snapshot.create(),
-            /This is only available if you accessed this object through {@link Subscription#snapshot}/);
+        assert.throws(() => snapshot.create(), /Subscription#snapshot/);
       });
 
       it('should throw on seek method', () => {
-        assert.throws(
-            () => snapshot.seek(),
-            /This is only available if you accessed this object through {@link Subscription#snapshot}/);
+        assert.throws(() => snapshot.seek(), /Subscription#snapshot/);
       });
     });
   });
