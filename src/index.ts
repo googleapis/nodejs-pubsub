@@ -45,6 +45,8 @@ import {BatchPublishOptions} from './publisher';
 const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
 
+export type SeekCallback = RequestCallback<google.pubsub.v1.ISeekResponse>;
+
 export interface GetSubscriptionMetadataCallback {
   (err: ServiceError|null, res?: google.pubsub.v1.Subscription|null): void;
 }

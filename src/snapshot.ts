@@ -16,8 +16,10 @@
 
 import {promisifyAll} from '@google-cloud/promisify';
 import {CallOptions} from 'google-gax';
+
 import {google} from '../proto/pubsub';
-import {CreateSnapshotCallback, CreateSnapshotResponse, RequestCallback, Subscription} from '.';
+
+import {CreateSnapshotCallback, CreateSnapshotResponse, RequestCallback, SeekCallback, Subscription} from '.';
 import {PubSub} from './index';
 import * as util from './util';
 
@@ -126,14 +128,13 @@ export class Snapshot {
       snapshot: this.name,
     };
     callback = callback || util.noop;
-    (this.parent as PubSub)
-        .request<google.protobuf.Empty>(
-            {
-              client: 'SubscriberClient',
-              method: 'deleteSnapshot',
-              reqOpts,
-            },
-            callback);
+    this.parent.request<google.protobuf.Empty>(
+        {
+          client: 'SubscriberClient',
+          method: 'deleteSnapshot',
+          reqOpts,
+        },
+        callback);
   }
   /*@
    * Format the name of a snapshot. A snapshot's full name is in the format of
@@ -153,23 +154,21 @@ export class Snapshot {
       gaxOpts?: CallOptions|CreateSnapshotCallback,
       callback?: CreateSnapshotCallback): void|Promise<CreateSnapshotResponse> {
     if (!(this.parent instanceof Subscription)) {
-      throw new Error(`Subscription#snapshot`);
+      throw new Error(
+          `This is only available if you accessed this object through Subscription#snapshot`);
     }
     return (this.parent as Subscription)
         .createSnapshot(this.name, gaxOpts! as CallOptions, callback!);
   }
 
   seek(gaxOpts?: CallOptions): Promise<google.pubsub.v1.SeekResponse>;
-  seek(callback: google.pubsub.v1.Subscriber.SeekCallback): void;
-  seek(
-      gaxOpts: CallOptions,
-      callback: google.pubsub.v1.Subscriber.SeekCallback): void;
-  seek(
-      gaxOpts?: CallOptions|google.pubsub.v1.Subscriber.SeekCallback,
-      callback?: google.pubsub.v1.Subscriber.SeekCallback):
+  seek(callback: SeekCallback): void;
+  seek(gaxOpts: CallOptions, callback: SeekCallback): void;
+  seek(gaxOpts?: CallOptions|SeekCallback, callback?: SeekCallback):
       void|Promise<google.pubsub.v1.SeekResponse> {
     if (!(this.parent instanceof Subscription)) {
-      throw new Error(`Subscription#snapshot`);
+      throw new Error(
+          `This is only available if you accessed this object through Subscription#snapshot`);
     }
     return (this.parent as Subscription)
         .seek(this.name, gaxOpts! as CallOptions, callback!);

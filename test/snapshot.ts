@@ -155,11 +155,15 @@ describe('Snapshot', () => {
       });
 
       it('should throw on create method', () => {
-        assert.throws(() => snapshot.create(), /Subscription#snapshot/);
+        assert.throws(
+            () => snapshot.create(),
+            /This is only available if you accessed this object through Subscription#snapshot/);
       });
 
       it('should throw on seek method', () => {
-        assert.throws(() => snapshot.seek(), /Subscription#snapshot/);
+        assert.throws(
+            () => snapshot.seek(),
+            /This is only available if you accessed this object through Subscription#snapshot/);
       });
     });
   });

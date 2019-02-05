@@ -24,15 +24,22 @@ import * as extend from 'extend';
 import * as is from 'is';
 import {Topic} from './topic';
 import {RequestCallback, Attributes} from '.';
+import {ServiceError} from 'grpc';
 
 interface Inventory {
-  callbacks: Array<RequestCallback<string>>;
-  queued: Array<{}>;
+  callbacks: QueueCallback[];
+  queued: google.pubsub.v1.IPubsubMessage[];
   bytes: number;
 }
 
 export interface PublishCallback {
-  (err?: null|Error, messageId?: string|null): void;
+  (err: ServiceError, messageId?: null): void;
+  (err: null, messageId: string): void;
+}
+
+interface QueueCallback {
+  (err: ServiceError, res?: null): void;
+  (err: null, res: string): void;
 }
 
 /**
@@ -284,9 +291,8 @@ export class Publisher {
    * @param {function} callback The callback function.
    */
   queue_(data: Buffer, attrs: Attributes): Promise<string>;
-  queue_(data: Buffer, attrs: Attributes, callback: RequestCallback<string>):
-      void;
-  queue_(data: Buffer, attrs: Attributes, callback?: RequestCallback<string>):
+  queue_(data: Buffer, attrs: Attributes, callback: QueueCallback): void;
+  queue_(data: Buffer, attrs: Attributes, callback?: QueueCallback):
       void|Promise<string> {
     this.inventory_.queued.push({
       data,
