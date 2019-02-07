@@ -54,7 +54,7 @@
     "arrify": "^1.0.0",
     "async-each": "^1.0.1",
     "delay": "^4.0.0",
-    "duplexify": "^3.5.4",
+    "duplexify": "^4.0.0",
     "extend": "^3.0.1",
     "google-auth-library": "^3.0.0",
     "google-gax": "^0.25.0",
@@ -95,7 +95,7 @@
     "proxyquire": "^2.0.0",
     "sinon": "^7.1.1",
     "source-map-support": "^0.5.9",
-    "typescript": "~3.2.0",
+    "typescript": "~3.3.0",
     "uuid": "^3.1.0"
   }
 }
