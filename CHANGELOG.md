@@ -95,6 +95,19 @@ const subscription = topic.subscription('my-sub', {
 });
 ```
 
+#### BREAKING: messages are no longer plain objects. ([#388](https://github.com/googleapis/nodejs-pubsub/pull/388))
+
+Messages were refactored into a [class](https://github.com/googleapis/nodejs-pubsub/blob/52305c7ee5bbc9caba1369a45ae7fdcdeba1c89b/src/subscriber.ts#L59),
+this will only affect (some) users who treat messages like plain old objects.
+
+The following example is something that would have worked previously, but will
+now throw a `TypeError` since `ack` lives on the prototype chain.
+
+```js
+const m = Object.assign({}, message, customData);
+m.ack(); // TypeError: m.ack is not a function
+```
+
 ### New Features
 - feat(topic): create method for publishing json ([#430](https://github.com/googleapis/nodejs-pubsub/pull/430))
 
