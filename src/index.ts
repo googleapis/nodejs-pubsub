@@ -33,19 +33,22 @@ const PKG = require('../../package.json');
 const v1 = require('./v1');
 
 import {Snapshot} from './snapshot';
-import {Subscription, SubscriptionMetadata, SubscriptionMetadataRaw} from './subscription';
+import {Subscription, SubscriptionMetadataRaw} from './subscription';
 import {Topic, PublishOptions} from './topic';
 import {CallOptions} from 'google-gax';
 import {Readable} from 'stream';
 import {google} from '../proto/pubsub';
 import {ServiceError} from 'grpc';
+import {FlowControlOptions} from './lease-manager';
+import {BatchPublishOptions} from './publisher';
 
 const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
 
+export type SeekCallback = RequestCallback<google.pubsub.v1.ISeekResponse>;
 
 export interface GetSubscriptionMetadataCallback {
-  (err: ServiceError|null, res?: google.pubsub.v1.Subscription|null): void;
+  (err: ServiceError|null, res?: google.pubsub.v1.ISubscription|null): void;
 }
 
 export interface ExistsCallback {
@@ -56,28 +59,22 @@ export interface GetCallOptions extends CallOptions {
   autoCreate?: boolean;
 }
 
-export interface PushConfig {
-  pushEndpoint: string;
-  attibutes?: Map<string, string>;
+export interface Attributes {
+  [key: string]: string;
 }
 
 
 export interface SubscriptionCallOptions {
-  flowControl?:
-      {maxBytes?: number, maxMessages?: number, allowExcessMessages: boolean;};
+  flowControl?: FlowControlOptions;
   maxConnections?: number;
   topic?: Topic;
   ackDeadline?: number;
   autoPaginate?: boolean;
   gaxOpts?: CallOptions;
-  batching?:
-      {maxBytes?: number, maxMessages?: number, maxMilliseconds?: number};
+  batching?: BatchPublishOptions;
 }
 
-export interface PublisherCallOptions {
-  batching?:
-      {maxBytes?: number, maxMessages?: number, maxMilliseconds?: number};
-}
+
 
 /**
  * @callback CreateTopicCallback
@@ -87,7 +84,7 @@ export interface PublisherCallOptions {
  */
 export interface CreateSnapshotCallback {
   (err: Error|null, snapshot?: Snapshot|null,
-   apiResponse?: google.pubsub.v1.Snapshot): void;
+   apiResponse?: google.pubsub.v1.ISnapshot): void;
 }
 
 /**
@@ -95,7 +92,7 @@ export interface CreateSnapshotCallback {
  * @property {Snapshot}.
  * @property {object} 1 The full API response.
  */
-export type CreateSnapshotResponse = [Snapshot, google.pubsub.v1.Snapshot];
+export type CreateSnapshotResponse = [Snapshot, google.pubsub.v1.ISnapshot];
 
 /**
  * Project ID placeholder.
@@ -112,7 +109,7 @@ export type Metadata = any;
  * @property {Topic} 0 The new {@link Topic}.
  * @property {object} 1 The full API response.
  */
-export type CreateTopicResponse = [Topic, google.pubsub.v1.Topic];
+export type CreateTopicResponse = [Topic, google.pubsub.v1.ITopic];
 
 /**
  * @callback CreateTopicCallback
@@ -122,7 +119,7 @@ export type CreateTopicResponse = [Topic, google.pubsub.v1.Topic];
  */
 export interface CreateTopicCallback {
   (err?: Error|null, topic?: Topic|null,
-   apiResponse?: google.pubsub.v1.Topic): void;
+   apiResponse?: google.pubsub.v1.ITopic): void;
 }
 
 /**
@@ -133,7 +130,7 @@ export interface CreateTopicCallback {
  */
 export interface CreateSubscriptionCallback {
   (err?: Error|null, subscription?: Subscription|null,
-   apiResponse?: google.pubsub.v1.Subscription): void;
+   apiResponse?: google.pubsub.v1.ISubscription): void;
 }
 
 export type Client = 'PublisherClient'|'SubscriberClient';
@@ -160,11 +157,11 @@ export interface RequestCallback<TResponse> {
  * @property {object} 1 The full API response.
  */
 export type CreateSubscriptionResponse =
-    [Subscription, google.pubsub.v1.Subscription];
+    [Subscription, google.pubsub.v1.ISubscription];
 
 
 export interface CreateSubscriptionOptions {
-  flowControl?: {maxBytes?: number; maxMessages?: number;};
+  flowControl?: FlowControlOptions;
   gaxOpts?: CallOptions;
   /**
    * Duration in seconds.
@@ -406,7 +403,7 @@ export class PubSub {
       name: subscription.name,
     });
 
-    this.request(
+    this.request<google.pubsub.v1.ISubscription>(
         {
           client: 'SubscriberClient',
           method: 'createSubscription',
