@@ -361,9 +361,9 @@ export class Topic {
    * });
    */
   get(callback: CreateTopicCallback): void;
-  get(gaxOpts?: CallOptions&GetCallOptions): Promise<Topic>;
-  get(gaxOpts: CallOptions&GetCallOptions, callback: CreateTopicCallback): void;
-  get(gaxOptsOrCallback?: CallOptions&GetCallOptions|CreateTopicCallback,
+  get(gaxOpts?: GetCallOptions): Promise<Topic>;
+  get(gaxOpts: GetCallOptions, callback: CreateTopicCallback): void;
+  get(gaxOptsOrCallback?: GetCallOptions|CreateTopicCallback,
       callback?: CreateTopicCallback): void|Promise<Topic> {
     const gaxOpts =
         typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
@@ -423,15 +423,15 @@ export class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  getMetadata(callback: RequestCallback<google.pubsub.v1.Topic>): void;
+  getMetadata(callback: RequestCallback<google.pubsub.v1.ITopic>): void;
   getMetadata(
       gaxOpts: CallOptions,
-      callback: RequestCallback<google.pubsub.v1.Topic>): void;
-  getMetadata(gaxOpts?: CallOptions): Promise<google.pubsub.v1.Topic>;
+      callback: RequestCallback<google.pubsub.v1.ITopic>): void;
+  getMetadata(gaxOpts?: CallOptions): Promise<google.pubsub.v1.ITopic>;
   getMetadata(
-      gaxOptsOrCallback?: CallOptions|RequestCallback<google.pubsub.v1.Topic>,
-      callback?: RequestCallback<google.pubsub.v1.Topic>):
-      void|Promise<google.pubsub.v1.Topic> {
+      gaxOptsOrCallback?: CallOptions|RequestCallback<google.pubsub.v1.ITopic>,
+      callback?: RequestCallback<google.pubsub.v1.ITopic>):
+      void|Promise<google.pubsub.v1.ITopic> {
     const gaxOpts =
         typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
     callback =
@@ -439,7 +439,7 @@ export class Topic {
     const reqOpts = {
       topic: this.name,
     };
-    this.request<google.pubsub.v1.Topic>(
+    this.request<google.pubsub.v1.ITopic>(
         {
           client: 'PublisherClient',
           method: 'getTopic',

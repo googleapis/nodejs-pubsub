@@ -48,7 +48,7 @@ const {grpc} = new gax.GrpcClient(opts);
 export type SeekCallback = RequestCallback<google.pubsub.v1.ISeekResponse>;
 
 export interface GetSubscriptionMetadataCallback {
-  (err: ServiceError|null, res?: google.pubsub.v1.Subscription|null): void;
+  (err: ServiceError|null, res?: google.pubsub.v1.ISubscription|null): void;
 }
 
 export interface ExistsCallback {
@@ -84,7 +84,7 @@ export interface SubscriptionCallOptions {
  */
 export interface CreateSnapshotCallback {
   (err: Error|null, snapshot?: Snapshot|null,
-   apiResponse?: google.pubsub.v1.Snapshot): void;
+   apiResponse?: google.pubsub.v1.ISnapshot): void;
 }
 
 /**
@@ -92,7 +92,7 @@ export interface CreateSnapshotCallback {
  * @property {Snapshot}.
  * @property {object} 1 The full API response.
  */
-export type CreateSnapshotResponse = [Snapshot, google.pubsub.v1.Snapshot];
+export type CreateSnapshotResponse = [Snapshot, google.pubsub.v1.ISnapshot];
 
 /**
  * Project ID placeholder.
@@ -109,7 +109,7 @@ export type Metadata = any;
  * @property {Topic} 0 The new {@link Topic}.
  * @property {object} 1 The full API response.
  */
-export type CreateTopicResponse = [Topic, google.pubsub.v1.Topic];
+export type CreateTopicResponse = [Topic, google.pubsub.v1.ITopic];
 
 /**
  * @callback CreateTopicCallback
@@ -119,7 +119,7 @@ export type CreateTopicResponse = [Topic, google.pubsub.v1.Topic];
  */
 export interface CreateTopicCallback {
   (err?: Error|null, topic?: Topic|null,
-   apiResponse?: google.pubsub.v1.Topic): void;
+   apiResponse?: google.pubsub.v1.ITopic): void;
 }
 
 /**
@@ -130,7 +130,7 @@ export interface CreateTopicCallback {
  */
 export interface CreateSubscriptionCallback {
   (err?: Error|null, subscription?: Subscription|null,
-   apiResponse?: google.pubsub.v1.Subscription): void;
+   apiResponse?: google.pubsub.v1.ISubscription): void;
 }
 
 export type Client = 'PublisherClient'|'SubscriberClient';
@@ -157,7 +157,7 @@ export interface RequestCallback<TResponse> {
  * @property {object} 1 The full API response.
  */
 export type CreateSubscriptionResponse =
-    [Subscription, google.pubsub.v1.Subscription];
+    [Subscription, google.pubsub.v1.ISubscription];
 
 
 export interface CreateSubscriptionOptions {
@@ -403,7 +403,7 @@ export class PubSub {
       name: subscription.name,
     });
 
-    this.request<google.pubsub.v1.Subscription>(
+    this.request<google.pubsub.v1.ISubscription>(
         {
           client: 'SubscriberClient',
           method: 'createSubscription',

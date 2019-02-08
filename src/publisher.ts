@@ -23,24 +23,19 @@ const each = require('async-each');
 import * as extend from 'extend';
 import * as is from 'is';
 import {Topic} from './topic';
-import {RequestCallback, Attributes} from '.';
+import {Attributes} from '.';
 import {ServiceError} from 'grpc';
 
 interface Inventory {
-  callbacks: QueueCallback[];
+  callbacks: PublishCallback[];
   queued: google.pubsub.v1.IPubsubMessage[];
   bytes: number;
 }
 
 export interface PublishCallback {
-  (err: ServiceError, messageId?: null): void;
-  (err: null, messageId: string): void;
+  (err?: ServiceError|null, messageId?: string|null): void;
 }
 
-interface QueueCallback {
-  (err: ServiceError, res?: null): void;
-  (err: null, res: string): void;
-}
 
 /**
  * @typedef BatchPublishOptions
@@ -262,7 +257,7 @@ export class Publisher {
       topic: this.topic.name,
       messages,
     };
-    this.topic.request<google.pubsub.v1.PublishResponse>(
+    this.topic.request<google.pubsub.v1.IPublishResponse>(
         {
           client: 'PublisherClient',
           method: 'publish',
@@ -271,14 +266,11 @@ export class Publisher {
         },
         (err, resp) => {
           const messageIds = arrify(resp && resp.messageIds);
-          each(
-              callbacks,
-              (callback: RequestCallback<string>,
-               next: RequestCallback<string>) => {
-                const messageId = messageIds[callbacks.indexOf(callback)];
-                callback(err, messageId);
-                next();
-              });
+          each(callbacks, (callback: PublishCallback, next: Function) => {
+            const messageId = messageIds[callbacks.indexOf(callback)];
+            callback(err, messageId);
+            next();
+          });
         });
   }
   /**
@@ -291,8 +283,8 @@ export class Publisher {
    * @param {function} callback The callback function.
    */
   queue_(data: Buffer, attrs: Attributes): Promise<string>;
-  queue_(data: Buffer, attrs: Attributes, callback: QueueCallback): void;
-  queue_(data: Buffer, attrs: Attributes, callback?: QueueCallback):
+  queue_(data: Buffer, attrs: Attributes, callback: PublishCallback): void;
+  queue_(data: Buffer, attrs: Attributes, callback?: PublishCallback):
       void|Promise<string> {
     this.inventory_.queued.push({
       data,
