@@ -1,4 +1,4 @@
-[//]: # "This README.md file is auto-generated, all changes to this file will be lost."
+[//]: # "This README.md file is auto-generated, all changes to this file will be lost. Really."
 [//]: # "To regenerate it, use `npm run generate-scaffolding`."
 <img src="https://avatars2.githubusercontent.com/u/2810941?v=3&s=96" alt="Google Cloud Platform logo" title="Google Cloud Platform" align="right" height="96" width="96"/>
 
