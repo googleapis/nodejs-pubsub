@@ -46,7 +46,7 @@
     "pretest": "npm run compile",
     "proto": "npm run proto:pubsub",
     "proto:pubsub": "mkdir -p proto && pbjs -t static-module -w commonjs -p node_modules/google-proto-files google/pubsub/v1/pubsub.proto | pbts -o proto/pubsub.d.ts -",
-    "docs-test": "blcl docs -r --exclude www.googleapis.com",
+    "docs-test": "linkinator docs -r --skip www.googleapis.com",
     "predocs-test": "npm run docs"
   },
   "dependencies": {
@@ -99,6 +99,6 @@
     "source-map-support": "^0.5.9",
     "typescript": "~3.3.0",
     "uuid": "^3.1.0",
-    "broken-link-checker-local": "^0.2.0"
+    "linkinator": "^1.1.2"
   }
 }
