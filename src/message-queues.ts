@@ -158,7 +158,7 @@ export abstract class MessageQueue {
    * @param {BatchOptions} options Batching options.
    * @private
    */
-  setOptions(options): void {
+  setOptions(options: BatchOptions): void {
     const defaults: BatchOptions = {maxMessages: 3000, maxMilliseconds: 100};
 
     this._options = Object.assign(defaults, options);
@@ -212,14 +212,16 @@ export class ModAckQueue extends MessageQueue {
   protected async _sendBatch(batch: QueuedMessages): Promise<void> {
     const client = await this._subscriber.getClient();
     const subscription = this._subscriber.name;
-    const modAckTable = batch.reduce((table, [ackId, deadline]) => {
-      if (!table[deadline!]) {
-        table[deadline!] = [];
-      }
+    const modAckTable: {[index: string]: string[]} = batch.reduce(
+        (table: {[index: string]: string[]}, [ackId, deadline]) => {
+          if (!table[deadline!]) {
+            table[deadline!] = [];
+          }
 
-      table[deadline!].push(ackId);
-      return table;
-    }, {});
+          table[deadline!].push(ackId);
+          return table;
+        },
+        {});
 
     const modAckRequests = Object.keys(modAckTable).map(async (deadline) => {
       const ackIds = modAckTable[deadline];

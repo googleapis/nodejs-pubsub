@@ -9,6 +9,7 @@
   },
   "repository": "googleapis/nodejs-pubsub",
   "main": "./build/src/index.js",
+  "types": "./build/src/index.d.ts",
   "files": [
     "build/protos",
     "build/src",
