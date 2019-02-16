@@ -595,7 +595,7 @@ describe('pubsub', () => {
       topic = pubsub.topic(generateTopicName());
       subscription = topic.subscription(generateSubName());
       snapshot = subscription.snapshot(SNAPSHOT_NAME);
-
+      console.log('creating snapshot', SNAPSHOT_NAME);
       await deleteAllSnapshots();
       await topic.create();
       await subscription.create();
@@ -610,6 +610,7 @@ describe('pubsub', () => {
     it('should get a list of snapshots', done => {
       pubsub.getSnapshots((err, snapshots) => {
         assert.ifError(err);
+        snapshots.forEach(({name}) => console.log(name));
         assert.strictEqual(snapshots.length, 1);
         assert.strictEqual(snapshots[0].name.split('/').pop(), SNAPSHOT_NAME);
         done();
@@ -624,6 +625,7 @@ describe('pubsub', () => {
           .on('error', done)
           .on('data',
               snapshot => {
+                console.log(snapshot.name);
                 snapshots.push(snapshot);
               })
           .on('end', () => {
