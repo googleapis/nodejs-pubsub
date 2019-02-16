@@ -415,11 +415,8 @@ describe('pubsub', () => {
       subscription.on('message', ack);
 
       function ack(message) {
-        // remove listener to we only ack first message
-        subscription.removeListener('message', ack);
-
         message.ack();
-        setTimeout(() => subscription.close(done), 2500);
+        subscription.close(done);
       }
     });
 
@@ -430,11 +427,8 @@ describe('pubsub', () => {
       subscription.on('message', nack);
 
       function nack(message) {
-        // remove listener to we only ack first message
-        subscription.removeListener('message', nack);
-
         message.nack();
-        setTimeout(() => subscription.close(done), 2500);
+        subscription.close(done);
       }
     });
 
