@@ -582,37 +582,32 @@ describe('pubsub', () => {
     let subscription;
     let snapshot;
 
-    function deleteAllSnapshots() {
-      // tslint:disable-next-line no-any
-      return (pubsub.getSnapshots() as any).then(data => {
-        return Promise.all(data[0].map(snapshot => {
-          return snapshot.delete();
-        }));
-      });
+    function getSnapshotName({name}) {
+      return name.split('/').pop();
     }
 
     before(async () => {
       topic = pubsub.topic(generateTopicName());
       subscription = topic.subscription(generateSubName());
       snapshot = subscription.snapshot(SNAPSHOT_NAME);
-      console.log('creating snapshot', SNAPSHOT_NAME);
-      await deleteAllSnapshots();
+
       await topic.create();
       await subscription.create();
       await snapshot.create();
     });
 
     after(async () => {
-      await deleteAllSnapshots();
+      await snapshot.delete();
+      await subscription.delete();
       await topic.delete();
     });
 
     it('should get a list of snapshots', done => {
       pubsub.getSnapshots((err, snapshots) => {
         assert.ifError(err);
-        snapshots.forEach(({name}) => console.log(name));
-        assert.strictEqual(snapshots.length, 1);
-        assert.strictEqual(snapshots[0].name.split('/').pop(), SNAPSHOT_NAME);
+        assert(snapshots.length > 0);
+        const names = snapshots.map(getSnapshotName);
+        assert(names.includes(SNAPSHOT_NAME));
         done();
       });
     });
@@ -625,13 +620,12 @@ describe('pubsub', () => {
           .on('error', done)
           .on('data',
               snapshot => {
-                console.log(snapshot.name);
                 snapshots.push(snapshot);
               })
           .on('end', () => {
-            assert.strictEqual(snapshots.length, 1);
-            assert.strictEqual(
-                snapshots[0].name.split('/').pop(), SNAPSHOT_NAME);
+            assert(snapshots.length > 0);
+            const names = snapshots.map(getSnapshotName);
+            assert(names.includes(SNAPSHOT_NAME));
             done();
           });
     });
