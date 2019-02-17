@@ -320,6 +320,18 @@ describe('Subscriber', () => {
       subscriber.close();
     });
 
+    it('should nack any messages that come in after', () => {
+      const stream: FakeMessageStream = stubs.get('messageStream');
+      const stub = sandbox.stub(subscriber, 'nack');
+      const pullResponse = {receivedMessages: [RECEIVED_MESSAGE]};
+
+      subscriber.close();
+      stream.emit('data', pullResponse);
+
+      const [{ackId}] = stub.lastCall.args;
+      assert.strictEqual(ackId, RECEIVED_MESSAGE.ackId);
+    });
+
     describe('flushing the queues', () => {
       it('should wait for any pending acks', async () => {
         const ackQueue: FakeAckQueue = stubs.get('ackQueue');
