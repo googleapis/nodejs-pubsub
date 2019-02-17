@@ -299,20 +299,6 @@ describe('Subscriber', () => {
       assert.strictEqual(subscriber.isOpen, false);
     });
 
-    it('should remove the data handler', done => {
-      const inventory: FakeLeaseManager = stubs.get('inventory');
-      const stream: FakeMessageStream = stubs.get('messageStream');
-      const pullResponse = {receivedMessages: [RECEIVED_MESSAGE]};
-
-      sandbox.stub(inventory, 'add').callsFake(() => {
-        done(new Error('Should not be called.'));
-      });
-
-      subscriber.close();
-      stream.emit('data', pullResponse);
-      process.nextTick(done);
-    });
-
     it('should destroy the message stream', () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
       const stub = sandbox.stub(stream, 'destroy');
