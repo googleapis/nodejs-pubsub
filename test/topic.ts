@@ -16,14 +16,18 @@
 
 import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
+import {CallOptions} from 'google-gax';
+import {ServiceError} from 'grpc';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
+import {google} from '../proto/pubsub';
+import {CreateSubscriptionCallback, CreateSubscriptionOptions, CreateTopicCallback, ExistsCallback, GetCallOptions, GetTopicMetadataCallback, Metadata, RequestCallback, RequestConfig, Subscription, SubscriptionCallOptions, Topic} from '../src';
 import * as util from '../src/util';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
-  promisifyAll: (klass, options) => {
+  promisifyAll: (klass: Function, options: pfy.PromisifyAllOptions) => {
     if (klass.name !== 'Topic') {
       return;
     }
@@ -65,7 +69,7 @@ class FakePublisher {
 let extended = false;
 const fakePaginator = {
   // tslint:disable-next-line variable-name
-  extend(Class, methods) {
+  extend(Class: Function, methods: string[]) {
     if (Class.name !== 'Topic') {
       return;
     }
@@ -73,7 +77,7 @@ const fakePaginator = {
     assert.deepStrictEqual(methods, ['getSubscriptions']);
     extended = true;
   },
-  streamify(methodName) {
+  streamify(methodName: string) {
     return methodName;
   },
 };
@@ -82,7 +86,7 @@ describe('Topic', () => {
   // tslint:disable-next-line no-any variable-name
   let Topic: any;
   // tslint:disable-next-line no-any
-  let topic: any;
+  let topic: typeof Topic;
 
   const PROJECT_ID = 'test-project';
   const TOPIC_NAME = 'projects/' + PROJECT_ID + '/topics/test-topic';
@@ -135,7 +139,7 @@ describe('Topic', () => {
       const formattedName = 'a/b/c/d';
 
       const formatName_ = Topic.formatName_;
-      Topic.formatName_ = (projectId, name) => {
+      Topic.formatName_ = (projectId: string, name: string) => {
         assert.strictEqual(projectId, PROJECT_ID);
         assert.strictEqual(name, TOPIC_NAME);
 
@@ -164,7 +168,7 @@ describe('Topic', () => {
     });
 
     it('should localize the request function', done => {
-      PUBSUB.request = callback => {
+      PUBSUB.request = (callback: RequestCallback<google.protobuf.Empty>) => {
         callback();  // the done fn
       };
 
@@ -194,11 +198,13 @@ describe('Topic', () => {
     it('should call the parent createTopic method', done => {
       const options_ = {};
 
-      PUBSUB.createTopic = (name, options, callback) => {
-        assert.strictEqual(name, topic.name);
-        assert.strictEqual(options, options_);
-        callback();  // the done fn
-      };
+      PUBSUB.createTopic =
+          (name: string, options: CallOptions,
+           callback: CreateTopicCallback) => {
+            assert.strictEqual(name, topic.name);
+            assert.strictEqual(options, options_);
+            callback();  // the done fn
+          };
 
       topic.create(options_, done);
     });
@@ -209,12 +215,14 @@ describe('Topic', () => {
       const NAME = 'sub-name';
       const OPTIONS = {a: 'a'};
 
-      PUBSUB.createSubscription = (topic_, name, options, callback) => {
-        assert.strictEqual(topic_, topic);
-        assert.strictEqual(name, NAME);
-        assert.strictEqual(options, OPTIONS);
-        callback();  // the done fn
-      };
+      PUBSUB.createSubscription =
+          (topic_: Topic, name: string, options: CreateSubscriptionOptions,
+           callback: CreateSubscriptionCallback) => {
+            assert.strictEqual(topic_, topic);
+            assert.strictEqual(name, NAME);
+            assert.strictEqual(options, OPTIONS);
+            callback();  // the done fn
+          };
 
       topic.createSubscription(NAME, OPTIONS, done);
     });
@@ -222,12 +230,14 @@ describe('Topic', () => {
 
   describe('delete', () => {
     it('should make the proper request', done => {
-      topic.request = (config, callback) => {
-        assert.strictEqual(config.client, 'PublisherClient');
-        assert.strictEqual(config.method, 'deleteTopic');
-        assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
-        callback();  // the done fn
-      };
+      topic.request =
+          (config: RequestConfig,
+           callback: RequestCallback<google.protobuf.Empty>) => {
+            assert.strictEqual(config.client, 'PublisherClient');
+            assert.strictEqual(config.method, 'deleteTopic');
+            assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
+            callback();  // the done fn
+          };
 
       topic.delete(done);
     });
@@ -235,19 +245,23 @@ describe('Topic', () => {
     it('should optionally accept gax options', done => {
       const options = {};
 
-      topic.request = (config, callback) => {
-        assert.strictEqual(config.gaxOpts, options);
-        callback();  // the done fn
-      };
+      topic.request =
+          (config: RequestConfig,
+           callback: RequestCallback<google.protobuf.Empty>) => {
+            assert.strictEqual(config.gaxOpts, options);
+            callback();  // the done fn
+          };
 
       topic.delete(options, done);
     });
 
     it('should optionally accept a callback', done => {
       sandbox.stub(util, 'noop').callsFake(done);
-      topic.request = (config, callback) => {
-        callback();  // the done fn
-      };
+      topic.request =
+          (config: RequestConfig,
+           callback: RequestCallback<google.protobuf.Empty>) => {
+            callback();  // the done fn
+          };
       topic.delete();
     });
   });
@@ -259,7 +273,7 @@ describe('Topic', () => {
         a: 'a',
       };
 
-      topic.getMetadata = gaxOpts => {
+      topic.getMetadata = (gaxOpts: GetCallOptions) => {
         assert.strictEqual(gaxOpts, options);
         assert.strictEqual(gaxOpts.autoCreate, undefined);
         done();
@@ -272,27 +286,31 @@ describe('Topic', () => {
       const fakeMetadata = {};
 
       beforeEach(() => {
-        topic.getMetadata = (gaxOpts, callback) => {
-          callback(null, fakeMetadata);
-        };
+        topic.getMetadata =
+            (gaxOpts: GetCallOptions,
+             callback: RequestCallback<google.pubsub.v1.ITopic>) => {
+              callback(null, fakeMetadata);
+            };
       });
 
       it('should call through to getMetadata', done => {
-        topic.get((err, _topic, resp) => {
-          assert.ifError(err);
-          assert.strictEqual(_topic, topic);
-          assert.strictEqual(resp, fakeMetadata);
-          done();
-        });
+        topic.get(
+            (err: Error, _topic: Topic, resp: google.pubsub.v1.ITopic) => {
+              assert.ifError(err);
+              assert.strictEqual(_topic, topic);
+              assert.strictEqual(resp, fakeMetadata);
+              done();
+            });
       });
 
       it('should optionally accept options', done => {
         const options = {};
 
-        topic.getMetadata = (gaxOpts, callback) => {
-          assert.strictEqual(gaxOpts, options);
-          callback();  // the done fn
-        };
+        topic.getMetadata =
+            (gaxOpts: GetCallOptions, callback: RequestCallback<Topic>) => {
+              assert.strictEqual(gaxOpts, options);
+              callback();  // the done fn
+            };
 
         topic.get(options, done);
       });
@@ -300,53 +318,59 @@ describe('Topic', () => {
 
     describe('error', () => {
       it('should pass back errors when not auto-creating', done => {
-        const error = {code: 4};
-        const apiResponse = {};
+        const error = {code: 4} as ServiceError;
+        const apiResponse = {} as Topic;
 
-        topic.getMetadata = (gaxOpts, callback) => {
-          callback(error, apiResponse);
-        };
+        topic.getMetadata =
+            (gaxOpts: GetCallOptions, callback: GetTopicMetadataCallback) => {
+              callback(error, apiResponse);
+            };
 
-        topic.get((err, _topic, resp) => {
-          assert.strictEqual(err, error);
-          assert.strictEqual(_topic, null);
-          assert.strictEqual(resp, apiResponse);
-          done();
-        });
+        topic.get(
+            (err: Error, _topic: Topic, resp: google.pubsub.v1.ITopic) => {
+              assert.strictEqual(err, error);
+              assert.strictEqual(_topic, null);
+              assert.strictEqual(resp, apiResponse);
+              done();
+            });
       });
 
       it('should pass back 404 errors if autoCreate is false', done => {
-        const error = {code: 5};
-        const apiResponse = {};
+        const error = {code: 5} as ServiceError;
+        const apiResponse = {} as Topic;
 
-        topic.getMetadata = (gaxOpts, callback) => {
-          callback(error, apiResponse);
-        };
+        topic.getMetadata =
+            (gaxOpts: GetCallOptions, callback: GetTopicMetadataCallback) => {
+              callback(error, apiResponse);
+            };
 
-        topic.get((err, _topic, resp) => {
-          assert.strictEqual(err, error);
-          assert.strictEqual(_topic, null);
-          assert.strictEqual(resp, apiResponse);
-          done();
-        });
+        topic.get(
+            (err: Error, _topic: Topic, resp: google.pubsub.v1.ITopic) => {
+              assert.strictEqual(err, error);
+              assert.strictEqual(_topic, null);
+              assert.strictEqual(resp, apiResponse);
+              done();
+            });
       });
 
       it('should create the topic if 404 + autoCreate is true', done => {
-        const error = {code: 5};
-        const apiResponse = {};
+        const error = {code: 5} as ServiceError;
+        const apiResponse = {} as Topic;
 
         const fakeOptions = {
           autoCreate: true,
         };
 
-        topic.getMetadata = (gaxOpts, callback) => {
-          callback(error, apiResponse);
-        };
+        topic.getMetadata =
+            (gaxOpts: GetCallOptions, callback: GetTopicMetadataCallback) => {
+              callback(error, apiResponse);
+            };
 
-        topic.create = (options, callback) => {
-          assert.strictEqual(options, fakeOptions);
-          callback();  // the done fn
-        };
+        topic.create =
+            (options: CallOptions, callback: CreateTopicCallback) => {
+              assert.strictEqual(options, fakeOptions);
+              callback();  // the done fn
+            };
 
         topic.get(fakeOptions, done);
       });
@@ -355,11 +379,11 @@ describe('Topic', () => {
 
   describe('exists', () => {
     it('should return true if it finds metadata', done => {
-      topic.getMetadata = callback => {
+      topic.getMetadata = (callback: GetTopicMetadataCallback) => {
         callback(null, {});
       };
 
-      topic.exists((err, exists) => {
+      topic.exists((err: Error, exists: ExistsCallback) => {
         assert.ifError(err);
         assert(exists);
         done();
@@ -367,11 +391,12 @@ describe('Topic', () => {
     });
 
     it('should return false if a not found error occurs', done => {
-      topic.getMetadata = callback => {
-        callback({code: 5});
+      const error = {code: 5} as ServiceError;
+      topic.getMetadata = (callback: GetTopicMetadataCallback) => {
+        callback(error);
       };
 
-      topic.exists((err, exists) => {
+      topic.exists((err: Error, exists: ExistsCallback) => {
         assert.ifError(err);
         assert.strictEqual(exists, false);
         done();
@@ -379,13 +404,13 @@ describe('Topic', () => {
     });
 
     it('should pass back any other type of error', done => {
-      const error = {code: 4};
+      const error = {code: 4} as ServiceError;
 
-      topic.getMetadata = callback => {
+      topic.getMetadata = (callback: GetTopicMetadataCallback) => {
         callback(error);
       };
 
-      topic.exists((err, exists) => {
+      topic.exists((err: Error, exists: ExistsCallback) => {
         assert.strictEqual(err, error);
         assert.strictEqual(exists, undefined);
         done();
@@ -395,7 +420,7 @@ describe('Topic', () => {
 
   describe('getMetadata', () => {
     it('should make the proper request', done => {
-      topic.request = config => {
+      topic.request = (config: RequestConfig) => {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'getTopic');
         assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
@@ -408,7 +433,7 @@ describe('Topic', () => {
     it('should optionally accept gax options', done => {
       const options = {};
 
-      topic.request = config => {
+      topic.request = (config: RequestConfig) => {
         assert.strictEqual(config.gaxOpts, options);
         done();
       };
@@ -420,11 +445,12 @@ describe('Topic', () => {
       const error = new Error('err');
       const apiResponse = {};
 
-      topic.request = (config, callback) => {
-        callback(error, apiResponse);
-      };
+      topic.request =
+          (config: RequestConfig, callback: GetTopicMetadataCallback) => {
+            callback(error, apiResponse);
+          };
 
-      topic.getMetadata((err, metadata) => {
+      topic.getMetadata((err: Error, metadata: google.pubsub.v1.ITopic) => {
         assert.strictEqual(err, error);
         assert.strictEqual(metadata, apiResponse);
         done();
@@ -434,11 +460,12 @@ describe('Topic', () => {
     it('should set the metadata if no error occurs', done => {
       const apiResponse = {};
 
-      topic.request = (config, callback) => {
-        callback(null, apiResponse);
-      };
+      topic.request =
+          (config: RequestConfig, callback: GetTopicMetadataCallback) => {
+            callback(null, apiResponse);
+          };
 
-      topic.getMetadata((err, metadata) => {
+      topic.getMetadata((err: Error, metadata: google.pubsub.v1.ITopic) => {
         assert.ifError(err);
         assert.strictEqual(metadata, apiResponse);
         assert.strictEqual(topic.metadata, apiResponse);
@@ -473,7 +500,7 @@ describe('Topic', () => {
       delete expectedOptions.gaxOpts;
       delete expectedOptions.autoPaginate;
 
-      topic.request = config => {
+      topic.request = (config: RequestConfig) => {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'listTopicSubscriptions');
         assert.deepStrictEqual(config.reqOpts, expectedOptions);
@@ -485,7 +512,7 @@ describe('Topic', () => {
     });
 
     it('should accept only a callback', done => {
-      topic.request = config => {
+      topic.request = (config: RequestConfig) => {
         assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
         assert.deepStrictEqual(config.gaxOpts, {autoPaginate: undefined});
         done();
@@ -497,17 +524,18 @@ describe('Topic', () => {
     it('should create subscription objects', done => {
       const fakeSubs = ['a', 'b', 'c'];
 
-      topic.subscription = name => {
+      topic.subscription = (name: string) => {
         return {
           name,
         };
       };
 
-      topic.request = (config, callback) => {
-        callback(null, fakeSubs);
-      };
+      topic.request =
+          (config: RequestConfig, callback: RequestCallback<string[]>) => {
+            callback(null, fakeSubs);
+          };
 
-      topic.getSubscriptions((err, subscriptions) => {
+      topic.getSubscriptions((err: Error, subscriptions: Subscription[]) => {
         assert.ifError(err);
         assert.deepStrictEqual(subscriptions, [
           {name: 'a'},
@@ -524,17 +552,21 @@ describe('Topic', () => {
       const nextQuery_ = {};
       const apiResponse_ = {};
 
-      topic.request = (config, callback) => {
-        callback(err_, subs_, nextQuery_, apiResponse_);
-      };
+      topic.request =
+          // tslint:disable-next-line:no-any
+          (config: RequestConfig, callback: (...args: any[]) => void) => {
+            callback(err_, subs_, nextQuery_, apiResponse_);
+          };
 
-      topic.getSubscriptions((err, subs, nextQuery, apiResponse) => {
-        assert.strictEqual(err, err_);
-        assert.deepStrictEqual(subs, subs_);
-        assert.strictEqual(nextQuery, nextQuery_);
-        assert.strictEqual(apiResponse, apiResponse_);
-        done();
-      });
+      topic.getSubscriptions(
+          // tslint:disable-next-line:no-any
+          (err: Error, subs: boolean, nextQuery: any, apiResponse: any) => {
+            assert.strictEqual(err, err_);
+            assert.deepStrictEqual(subs, subs_);
+            assert.strictEqual(nextQuery, nextQuery_);
+            assert.strictEqual(apiResponse, apiResponse_);
+            done();
+          });
     });
   });
 
@@ -602,20 +634,22 @@ describe('Topic', () => {
       const subscriptionName = 'subName';
       const opts = {};
 
-      topic.parent.subscription = (name, options) => {
-        assert.strictEqual(name, subscriptionName);
-        assert.deepStrictEqual(options, opts);
-        done();
-      };
+      topic.parent.subscription =
+          (name: string, options: SubscriptionCallOptions) => {
+            assert.strictEqual(name, subscriptionName);
+            assert.deepStrictEqual(options, opts);
+            done();
+          };
 
       topic.subscription(subscriptionName, opts);
     });
 
     it('should attach the topic instance to the options', done => {
-      topic.parent.subscription = (name, options) => {
-        assert.strictEqual(options.topic, topic);
-        done();
-      };
+      topic.parent.subscription =
+          (name: string, options: SubscriptionCallOptions) => {
+            assert.strictEqual(options.topic, topic);
+            done();
+          };
 
       topic.subscription();
     });
