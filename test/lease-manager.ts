@@ -26,6 +26,7 @@ const fakeos = {
 
 class FakeSubscriber extends EventEmitter {
   ackDeadline = 10;
+  isOpen = true;
   modAckLatency = 2000;
   async modAck(message: FakeMessage, deadline: number): Promise<void> {}
 }
@@ -140,7 +141,7 @@ describe('LeaseManager', () => {
     });
 
     it('should not dispatch the message if the inventory is full', done => {
-      const message = new FakeMessage();
+      const fakeMessage = new FakeMessage();
 
       leaseManager.isFull = () => true;
       leaseManager.setOptions({allowExcessMessages: false});
@@ -149,6 +150,21 @@ describe('LeaseManager', () => {
         done(new Error('Test should not have dispatched message.'));
       });
 
+      leaseManager.add(fakeMessage);
+      setImmediate(done);
+    });
+
+    it('should not dispatch the message if the sub closes', done => {
+      const fakeMessage = new FakeMessage();
+
+      leaseManager.isFull = () => false;
+
+      subscriber.isOpen = false;
+      subscriber.on('message', () => {
+        done(new Error('Test should not have dispatched message.'));
+      });
+
+      leaseManager.add(fakeMessage);
       setImmediate(done);
     });
 

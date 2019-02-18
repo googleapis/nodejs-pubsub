@@ -365,13 +365,17 @@ export class Subscriber extends EventEmitter {
    *
    * @private
    */
-  private _onData(response: PullResponse): void {
-    response.receivedMessages.forEach((data: ReceivedMessage) => {
+  private _onData({receivedMessages}: PullResponse): void {
+    for (const data of receivedMessages) {
       const message = new Message(this, data);
 
-      message.modAck(this.ackDeadline);
-      this._inventory.add(message);
-    });
+      if (this.isOpen) {
+        message.modAck(this.ackDeadline);
+        this._inventory.add(message);
+      } else {
+        message.nack();
+      }
+    }
   }
 
   /**
