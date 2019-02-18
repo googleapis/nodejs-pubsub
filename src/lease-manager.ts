@@ -216,7 +216,9 @@ export class LeaseManager extends EventEmitter {
    * @param {Message} message The message to emit.
    */
   private _dispense(message: Message): void {
-    process.nextTick(() => this._subscriber.emit('message', message));
+    if (this._subscriber.isOpen) {
+      process.nextTick(() => this._subscriber.emit('message', message));
+    }
   }
   /**
    * Loops through inventory and extends the deadlines for any messages that
