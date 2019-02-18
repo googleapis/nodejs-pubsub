@@ -81,7 +81,7 @@ describe('pubsub', () => {
       pubsub.getTopics((err, topics) => {
         assert.ifError(err);
 
-        const results = topics.filter(topic => {
+        const results = topics!.filter(topic => {
           const name = getTopicName(topic);
           return TOPIC_FULL_NAMES.indexOf(name) !== -1;
         });
@@ -123,7 +123,7 @@ describe('pubsub', () => {
           },
           (err, topics) => {
             assert.ifError(err);
-            assert.strictEqual(topics.length, TOPIC_NAMES.length - 1);
+            assert.strictEqual(topics!.length, TOPIC_NAMES.length - 1);
             done();
           });
     });
@@ -605,8 +605,8 @@ describe('pubsub', () => {
     it('should get a list of snapshots', done => {
       pubsub.getSnapshots((err, snapshots) => {
         assert.ifError(err);
-        assert(snapshots.length > 0);
-        const names = snapshots.map(getSnapshotName);
+        assert(snapshots!.length > 0);
+        const names = snapshots!.map(getSnapshotName);
         assert(names.includes(SNAPSHOT_NAME));
         done();
       });

@@ -22,7 +22,7 @@ import {Readable} from 'stream';
 
 import {google} from '../proto/pubsub';
 
-import {CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, CreateTopicCallback, CreateTopicResponse, ExistsCallback, GetCallOptions, Metadata, PubSub, RequestCallback, SubscriptionCallOptions} from '.';
+import {Attributes, CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, CreateTopicCallback, CreateTopicResponse, ExistsCallback, GetCallOptions, GetTopicMetadataCallback, Metadata, PubSub, RequestCallback, SubscriptionCallOptions} from '.';
 import {IAM} from './iam';
 import {PublishCallback, Publisher, PublishOptions} from './publisher';
 import {Subscription} from './subscription';
@@ -423,14 +423,12 @@ export class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  getMetadata(callback: RequestCallback<google.pubsub.v1.ITopic>): void;
-  getMetadata(
-      gaxOpts: CallOptions,
-      callback: RequestCallback<google.pubsub.v1.ITopic>): void;
+  getMetadata(callback: GetTopicMetadataCallback): void;
+  getMetadata(gaxOpts: CallOptions, callback: GetTopicMetadataCallback): void;
   getMetadata(gaxOpts?: CallOptions): Promise<google.pubsub.v1.ITopic>;
   getMetadata(
-      gaxOptsOrCallback?: CallOptions|RequestCallback<google.pubsub.v1.ITopic>,
-      callback?: RequestCallback<google.pubsub.v1.ITopic>):
+      gaxOptsOrCallback?: CallOptions|GetTopicMetadataCallback,
+      callback?: GetTopicMetadataCallback):
       void|Promise<google.pubsub.v1.ITopic> {
     const gaxOpts =
         typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
@@ -580,11 +578,19 @@ export class Topic {
    * //-
    * topic.publish(data).then((messageId) => {});
    */
-  publish(data: Buffer, attributes?: object): Promise<string>;
+  publish(data: Buffer, attributes?: Attributes): Promise<string>;
   publish(data: Buffer, callback: PublishCallback): void;
-  publish(data: Buffer, attributes: object, callback: PublishCallback): void;
-  publish(data: Buffer, attributes?, callback?): Promise<string>|void {
-    return this.publisher.publish(data, attributes, callback);
+  publish(data: Buffer, attributes: Attributes, callback: PublishCallback):
+      void;
+  publish(
+      data: Buffer, attributesOrCallback?: Attributes|PublishCallback,
+      callback?: PublishCallback): Promise<string>|void {
+    const attributes =
+        typeof attributesOrCallback === 'object' ? attributesOrCallback : {};
+    callback = typeof attributesOrCallback === 'function' ?
+        attributesOrCallback :
+        callback;
+    return this.publisher.publish(data, attributes, callback!);
   }
   /**
    * Publish the provided JSON. It should be noted that all messages published
@@ -634,17 +640,24 @@ export class Topic {
    * //-
    * topic.publishJSON(data).then((messageId) => {});
    */
-  publishJSON(json: object, attributes?: object): Promise<string>;
+  publishJSON(json: object, attributes?: Attributes): Promise<string>;
   publishJSON(json: object, callback: PublishCallback): void;
-  publishJSON(json: object, attributes: object, callback: PublishCallback):
+  publishJSON(json: object, attributes: Attributes, callback: PublishCallback):
       void;
-  publishJSON(json: object, attributes?, callback?): Promise<string>|void {
+  publishJSON(
+      json: object, attributesOrCallback?: Attributes|PublishCallback,
+      callback?: PublishCallback): Promise<string>|void {
     if (!is.object(json)) {
       throw new Error('First parameter should be an object.');
     }
+    const attributes =
+        typeof attributesOrCallback === 'object' ? attributesOrCallback : {};
+    callback = typeof attributesOrCallback === 'function' ?
+        attributesOrCallback :
+        callback;
 
     const data = Buffer.from(JSON.stringify(json));
-    return this.publish(data, attributes, callback);
+    return this.publish(data, attributes, callback!);
   }
   /**
    * Set the publisher options.
