@@ -19,14 +19,14 @@ import * as assert from 'assert';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
-import {PubSub, Subscription} from '../src';
-import {Snapshot} from '../src/snapshot';
+import {google} from '../proto/pubsub';
+import {PubSub, RequestCallback, RequestConfig, Subscription} from '../src';
 import * as util from '../src/util';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
   // tslint:disable-next-line variable-name
-  promisifyAll(Class: Snapshot) {
+  promisifyAll(Class: Function) {
     if (Class.name === 'Snapshot') {
       promisified = true;
     }
@@ -34,9 +34,10 @@ const fakePromisify = Object.assign({}, pfy, {
 });
 
 describe('Snapshot', () => {
-  // tslint:disable-next-line variable-name
-  let Snapshot;
-  let snapshot;
+  // tslint:disable-next-line variable-name no-any
+  let Snapshot: any;
+
+  let snapshot: typeof Snapshot;
 
   const SNAPSHOT_NAME = 'a';
   const PROJECT_ID = 'grape-spaceship-123';
@@ -68,7 +69,7 @@ describe('Snapshot', () => {
 
   describe('initialization', () => {
     const FULL_SNAPSHOT_NAME = 'a/b/c/d';
-    let formatName_;
+    let formatName_: Function;
 
     before(() => {
       formatName_ = Snapshot.formatName_;
@@ -97,7 +98,7 @@ describe('Snapshot', () => {
 
     describe('name', () => {
       it('should create and cache the full name', () => {
-        Snapshot.formatName_ = (projectId, name) => {
+        Snapshot.formatName_ = (projectId: string, name: string) => {
           assert.strictEqual(projectId, PROJECT_ID);
           assert.strictEqual(name, SNAPSHOT_NAME);
           return FULL_SNAPSHOT_NAME;
@@ -108,7 +109,7 @@ describe('Snapshot', () => {
       });
 
       it('should pull the projectId from parent object', () => {
-        Snapshot.formatName_ = (projectId, name) => {
+        Snapshot.formatName_ = (projectId: string, name: string) => {
           assert.strictEqual(projectId, PROJECT_ID);
           assert.strictEqual(name, SNAPSHOT_NAME);
           return FULL_SNAPSHOT_NAME;
@@ -148,8 +149,6 @@ describe('Snapshot', () => {
     });
 
     describe('with PubSub parent', () => {
-      let snapshot;
-
       beforeEach(() => {
         snapshot = new Snapshot(PUBSUB, SNAPSHOT_NAME);
       });
@@ -184,21 +183,25 @@ describe('Snapshot', () => {
 
   describe('delete', () => {
     it('should make the correct request', done => {
-      snapshot.parent.request = (config, callback) => {
-        assert.strictEqual(config.client, 'SubscriberClient');
-        assert.strictEqual(config.method, 'deleteSnapshot');
-        assert.deepStrictEqual(config.reqOpts, {snapshot: snapshot.name});
-        callback();  // the done fn
-      };
+      snapshot.parent.request =
+          (config: RequestConfig,
+           callback: RequestCallback<google.protobuf.Empty>) => {
+            assert.strictEqual(config.client, 'SubscriberClient');
+            assert.strictEqual(config.method, 'deleteSnapshot');
+            assert.deepStrictEqual(config.reqOpts, {snapshot: snapshot.name});
+            callback();  // the done fn
+          };
 
       snapshot.delete(done);
     });
 
     it('should optionally accept a callback', done => {
       sandbox.stub(util, 'noop').callsFake(done);
-      snapshot.parent.request = (config, callback) => {
-        callback();  // the done fn
-      };
+      snapshot.parent.request =
+          (config: RequestConfig,
+           callback: RequestCallback<google.protobuf.Empty>) => {
+            callback();  // the done fn
+          };
       snapshot.delete();
     });
   });
