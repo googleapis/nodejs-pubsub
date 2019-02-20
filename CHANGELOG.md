@@ -4,6 +4,42 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.25.0
+
+02-20-2019 10:35 PST
+
+### New Features
+- refactor(ts): improve TypeScript types ([#482](https://github.com/googleapis/nodejs-pubsub/pull/482))
+- refactor(typescript): noImplicityAny for snapshot.ts and publisher.ts ([#457](https://github.com/googleapis/nodejs-pubsub/pull/457))
+
+### Bug Fixes
+- fix: ignore messages that come in after close ([#485](https://github.com/googleapis/nodejs-pubsub/pull/485))
+- fix: throw on invalid credentials and update retry config ([#476](https://github.com/googleapis/nodejs-pubsub/pull/476))
+
+### Dependencies
+- chore(deps): update dependency mocha to v6 ([#488](https://github.com/googleapis/nodejs-pubsub/pull/488))
+- fix(deps): update dependency @google-cloud/promisify to ^0.4.0 ([#478](https://github.com/googleapis/nodejs-pubsub/pull/478))
+- fix(deps): update dependency yargs to v13 ([#475](https://github.com/googleapis/nodejs-pubsub/pull/475))
+- fix(deps): update dependency duplexify to v4 ([#462](https://github.com/googleapis/nodejs-pubsub/pull/462))
+- fix(deps): update dependency google-gax to ^0.25.0 ([#456](https://github.com/googleapis/nodejs-pubsub/pull/456))
+
+### Documentation
+- docs: update links in contrib guide ([#479](https://github.com/googleapis/nodejs-pubsub/pull/479))
+- docs: update contributing path in README ([#471](https://github.com/googleapis/nodejs-pubsub/pull/471))
+- chore: move CONTRIBUTING.md to root ([#470](https://github.com/googleapis/nodejs-pubsub/pull/470))
+- docs: make mention of message change in changelog ([#469](https://github.com/googleapis/nodejs-pubsub/pull/469))
+- docs: add lint/fix example to contributing guide ([#464](https://github.com/googleapis/nodejs-pubsub/pull/464))
+- fix(sample): fix retry codes in retry sample code ([#458](https://github.com/googleapis/nodejs-pubsub/pull/458))
+
+### Internal / Testing Changes
+- refactor(typescript): noImplicityAny for Topic test file ([#487](https://github.com/googleapis/nodejs-pubsub/pull/487))
+- refactor(ts): noImplicitAny for subscription test file ([#489](https://github.com/googleapis/nodejs-pubsub/pull/489))
+- build: use linkinator for docs test ([#477](https://github.com/googleapis/nodejs-pubsub/pull/477))
+- build: create docs test npm scripts ([#474](https://github.com/googleapis/nodejs-pubsub/pull/474))
+- build: test using @grpc/grpc-js in CI ([#472](https://github.com/googleapis/nodejs-pubsub/pull/472))
+- test: update code style of smoke test ([#463](https://github.com/googleapis/nodejs-pubsub/pull/463))
+- test: make smoke test spam less ([#459](https://github.com/googleapis/nodejs-pubsub/pull/459))
+
 ## v0.24.1
 
 01-29-2019 13:17 PST
