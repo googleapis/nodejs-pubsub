@@ -8,13 +8,17 @@
 
 02-20-2019 10:35 PST
 
+### Implementation Changes
+- fix: throw on invalid credentials and update retry config ([#476](https://github.com/googleapis/nodejs-pubsub/pull/476))
+
+The retry logic for **all** methods has changed. It is possible that this could go unnoticed, however if you suddenly start seeing errors in places that were previously quiet, this might account for said errors.
+
 ### New Features
 - refactor(ts): improve TypeScript types ([#482](https://github.com/googleapis/nodejs-pubsub/pull/482))
 - refactor(typescript): noImplicityAny for snapshot.ts and publisher.ts ([#457](https://github.com/googleapis/nodejs-pubsub/pull/457))
 
 ### Bug Fixes
 - fix: ignore messages that come in after close ([#485](https://github.com/googleapis/nodejs-pubsub/pull/485))
-- fix: throw on invalid credentials and update retry config ([#476](https://github.com/googleapis/nodejs-pubsub/pull/476))
 
 ### Dependencies
 - chore(deps): update dependency mocha to v6 ([#488](https://github.com/googleapis/nodejs-pubsub/pull/488))
