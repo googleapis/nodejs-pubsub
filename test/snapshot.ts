@@ -19,8 +19,8 @@ import * as assert from 'assert';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
-import {google} from '../proto/pubsub';
-import {PubSub, RequestCallback, RequestConfig, Subscription} from '../src';
+import {PubSub, RequestConfig, Subscription} from '../src';
+import * as snapTypes from '../src/snapshot';
 import * as util from '../src/util';
 
 let promisified = false;
@@ -34,17 +34,17 @@ const fakePromisify = Object.assign({}, pfy, {
 });
 
 describe('Snapshot', () => {
-  // tslint:disable-next-line variable-name no-any
-  let Snapshot: any;
+  // tslint:disable-next-line variable-name
+  let Snapshot: typeof snapTypes.Snapshot;
 
-  let snapshot: typeof Snapshot;
+  let snapshot: snapTypes.Snapshot;
 
   const SNAPSHOT_NAME = 'a';
   const PROJECT_ID = 'grape-spaceship-123';
 
   const PUBSUB = {
     projectId: PROJECT_ID,
-  };
+  } as {} as PubSub;
 
   const SUBSCRIPTION = {
     projectId: PROJECT_ID,
@@ -52,7 +52,7 @@ describe('Snapshot', () => {
     api: {},
     createSnapshot() {},
     seek() {},
-  };
+  } as {} as Subscription;
 
 
   before(() => {
@@ -69,7 +69,7 @@ describe('Snapshot', () => {
 
   describe('initialization', () => {
     const FULL_SNAPSHOT_NAME = 'a/b/c/d';
-    let formatName_: Function;
+    let formatName_: (projectId: string, name: string) => string;
 
     before(() => {
       formatName_ = Snapshot.formatName_;
@@ -183,25 +183,22 @@ describe('Snapshot', () => {
 
   describe('delete', () => {
     it('should make the correct request', done => {
-      snapshot.parent.request =
-          (config: RequestConfig,
-           callback: RequestCallback<google.protobuf.Empty>) => {
-            assert.strictEqual(config.client, 'SubscriberClient');
-            assert.strictEqual(config.method, 'deleteSnapshot');
-            assert.deepStrictEqual(config.reqOpts, {snapshot: snapshot.name});
-            callback();  // the done fn
-          };
+      snapshot.parent.request = (config: RequestConfig, callback: Function) => {
+        assert.strictEqual(config.client, 'SubscriberClient');
+        assert.strictEqual(config.method, 'deleteSnapshot');
+        assert.deepStrictEqual(config.reqOpts, {snapshot: snapshot.name});
+        callback();  // the done fn
+      };
 
       snapshot.delete(done);
     });
 
     it('should optionally accept a callback', done => {
       sandbox.stub(util, 'noop').callsFake(done);
-      snapshot.parent.request =
-          (config: RequestConfig,
-           callback: RequestCallback<google.protobuf.Empty>) => {
-            callback();  // the done fn
-          };
+
+      snapshot.parent.request = (config: RequestConfig, callback: Function) => {
+        callback();  // the done fn
+      };
       snapshot.delete();
     });
   });

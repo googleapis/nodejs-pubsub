@@ -20,14 +20,13 @@ import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {PassThrough} from 'stream';
 import * as uuid from 'uuid';
-
-import {google} from '../proto/pubsub';
-import {PubSub, Subscription} from '../src';
+import {Subscription} from '../src';
 import {HistogramOptions} from '../src/histogram';
 import {FlowControlOptions} from '../src/lease-manager';
 import {BatchOptions} from '../src/message-queues';
 import {MessageStreamOptions} from '../src/message-stream';
 import * as s from '../src/subscriber';
+
 
 const stubs = new Map();
 
@@ -41,10 +40,17 @@ interface ClientCallback {
   (error: null|Error, client: FakeClient): void;
 }
 
+class FakePubSub {
+  client = new FakeClient();
+  getClient_(options: ClientOptions, callback: ClientCallback): void {
+    callback(null, this.client);
+  }
+}
+
 class FakeSubscription {
   name = uuid.v4();
   projectId = uuid.v4();
-  pubsub = new PubSub();
+  pubsub = new FakePubSub();
 }
 
 class FakeHistogram {
@@ -124,8 +130,8 @@ describe('Subscriber', () => {
 
   const fakeProjectify = {replaceProjectIdToken: sandbox.stub()};
 
-  // tslint:disable-next-line no-any
-  let subscription: FakeSubscription;
+
+  let subscription: Subscription;
 
   // tslint:disable-next-line variable-name
   let Message: typeof s.Message;
@@ -149,8 +155,8 @@ describe('Subscriber', () => {
   });
 
   beforeEach(() => {
-    subscription = new FakeSubscription();
-    subscriber = new Subscriber(subscription as Subscription);
+    subscription = new FakeSubscription() as {} as Subscription;
+    subscriber = new Subscriber(subscription);
     message = new Message(subscriber, RECEIVED_MESSAGE);
     subscriber.open();
   });
@@ -166,14 +172,14 @@ describe('Subscriber', () => {
     });
 
     it('should set isOpen to false', () => {
-      const s = new Subscriber(subscription as Subscription);
+      const s = new Subscriber(subscription);
       assert.strictEqual(s.isOpen, false);
     });
 
     it('should set any options passed in', () => {
       const stub = sandbox.stub(Subscriber.prototype, 'setOptions');
       const fakeOptions = {};
-      const sub = new Subscriber(subscription as Subscription, fakeOptions);
+      const sub = new Subscriber(subscription, fakeOptions);
 
       const [options] = stub.lastCall.args;
       assert.strictEqual(options, fakeOptions);
@@ -281,7 +287,7 @@ describe('Subscriber', () => {
 
   describe('close', () => {
     it('should noop if not open', () => {
-      const s = new Subscriber(subscription as Subscription);
+      const s = new Subscriber(subscription);
       const stream: FakeMessageStream = stubs.get('messageStream');
 
       sandbox.stub(stream, 'destroy')
@@ -371,13 +377,12 @@ describe('Subscriber', () => {
 
   describe('getClient', () => {
     it('should get a subscriber client', async () => {
-      const pubsub = subscription.pubsub;
+      const pubsub = subscription.pubsub as {} as FakePubSub;
       const spy = sandbox.spy(pubsub, 'getClient_');
       const client = await subscriber.getClient();
-
       const [options] = spy.lastCall.args;
       assert.deepStrictEqual(options, {client: 'SubscriberClient'});
-      // assert.strictEqual(client, pubsub);
+      assert.strictEqual(client, pubsub.client);
     });
   });
 
