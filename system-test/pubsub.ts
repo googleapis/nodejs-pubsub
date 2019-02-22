@@ -205,8 +205,6 @@ describe('pubsub', () => {
       topic.subscription(SUB_NAMES[1], {ackDeadline: 60}),
     ];
 
-    const DEBUG = {'ack': [], 'nack': [], 'flow': []};
-
     before(async () => {
       await topic.create();
       await Promise.all(SUBSCRIPTIONS.map(s => s.create()));
@@ -218,14 +216,6 @@ describe('pubsub', () => {
 
     after(() => {
       // Delete subscriptions
-      console.log('Called callbacks:');
-      for (const [key, values] of Object.entries(DEBUG)) {
-        console.log(key);
-        for (const value of values) {
-          console.log(' ', value);
-        }
-      }
-      console.log('End of callbacks');
       return Promise.all(SUBSCRIPTIONS.map(async s => {
         try {
           await s.delete();
@@ -421,36 +411,24 @@ describe('pubsub', () => {
     it('should ack the message', done => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
-      const done1 = (err) => {
-        // @ts-ignore
-        DEBUG.ack.push(err);
-        done(err);
-      };
-
-      subscription.on('error', done1);
+      subscription.on('error', done);
       subscription.on('message', ack);
 
       function ack(message) {
         message.ack();
-        subscription.close(done1);
+        subscription.close(done);
       }
     });
 
     it('should nack the message', done => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
-      const done1 = (err) => {
-        // @ts-ignore
-        DEBUG.nack.push(err);
-        done(err);
-      };
-
-      subscription.on('error', done1);
+      subscription.on('error', done);
       subscription.on('message', nack);
 
       function nack(message) {
         message.nack();
-        subscription.close(done1);
+        subscription.close(done);
       }
     });
 
@@ -458,24 +436,19 @@ describe('pubsub', () => {
       const maxMessages = 3;
       let messageCount = 0;
 
-      const done1 = (err) => {
-        // @ts-ignore
-        DEBUG.flow.push(err);
-        done(err);
-      };
-
       const subscription = topic.subscription(
           SUB_NAMES[0],
           {flowControl: {maxMessages, allowExcessMessages: false}});
 
-      subscription.on('error', done1);
+      subscription.on('error', done);
       subscription.on('message', onMessage);
 
-      function onMessage(msg) {
+      function onMessage() {
         if (++messageCount < maxMessages) {
           return;
         }
-        subscription.close(done1);
+
+        subscription.close(done);
       }
     });
 
