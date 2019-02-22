@@ -416,7 +416,10 @@ describe('pubsub', () => {
 
       function ack(message) {
         message.ack();
-        subscription.close(() => { console.log('ack close', new Error().stack); done(); });
+        subscription.close(() => {
+          console.log('ack close', new Error().stack);
+          done();
+        });
       }
     });
 
@@ -428,7 +431,10 @@ describe('pubsub', () => {
 
       function nack(message) {
         message.nack();
-        subscription.close(() => { console.log('nack close', new Error().stack); done(); });
+        subscription.close(() => {
+          console.log('nack close', new Error().stack);
+          done();
+        });
       }
     });
 
@@ -448,7 +454,10 @@ describe('pubsub', () => {
           return;
         }
         console.log('onMessage', msg);
-        subscription.close(() => { console.log('flow close', new Error().stack); done(); });
+        subscription.close(() => {
+          console.log('flow close', new Error().stack);
+          done();
+        });
       }
     });
 
