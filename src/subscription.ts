@@ -301,7 +301,16 @@ export class Subscription extends EventEmitter {
   close(): Promise<void>;
   close(callback: RequestCallback<void>): void;
   close(callback?: RequestCallback<void>): void|Promise<void> {
-    this._subscriber.close().then(() => callback!(), callback);
+    console.log('calling subscription.close');
+    this._subscriber.close().then(
+        () => {
+          console.log('close promise resolved');
+          callback!();
+        },
+        (err) => {
+          console.log('close promise failed');
+          callback!(err);
+        });
   }
   /**
    * @typedef {array} CreateSnapshotResponse
