@@ -257,7 +257,11 @@ function listenForMessages(subscriptionName, timeout) {
   // Listen for new messages until timeout is hit
   subscription.on(`message`, messageHandler);
 
+  const startDate = new Date();
   setTimeout(() => {
+    const endDate = new Date();
+    const diff = endDate - startDate;
+    console.log(`[1] diff: ${diff} out of ${timeout * 1000}`);
     subscription.removeListener('message', messageHandler);
     console.log(`${messageCount} message(s) received.`);
   }, timeout * 1000);
@@ -299,7 +303,11 @@ async function synchronousPull(projectName, subscriptionName) {
   function worker(message) {
     console.log(`Processing "${message.message.data}"...`);
 
+    const startDate = new Date();
     setTimeout(() => {
+      const endDate = new Date();
+      const diff = endDate - startDate;
+      console.log(`[2] diff: ${diff} out of 30000`);
       console.log(`Finished procesing "${message.message.data}".`);
       isProcessed = true;
     }, 30000);
@@ -383,7 +391,14 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
 
   // Listen for new messages until timeout is hit
   subscription.on(`message`, messageHandler);
+  
+  const startDate = new Date();
   await new Promise(r => setTimeout(r, timeout * 1000));
+  
+  const endDate = new Date();
+  const diff = endDate - startDate;
+  console.log(`[3] diff: ${diff} out of ${timeout * 1000}`);
+  
   subscription.removeListener(`message`, messageHandler);
 
   // Pub/Sub messages are unordered, so here we manually order messages by
@@ -456,7 +471,12 @@ async function listenForErrors(subscriptionName, timeout) {
   subscription.on(`message`, messageHandler);
   subscription.on(`error`, errorHandler);
 
+  const startDate = new Date();
   setTimeout(() => {
+    const endDate = new Date();
+    const diff = endDate - startDate;
+    console.log(`[4] diff: ${diff} out of ${timeout * 1000}`);
+
     subscription.removeListener(`message`, messageHandler);
     subscription.removeListener(`error`, errorHandler);
   }, timeout * 1000);
