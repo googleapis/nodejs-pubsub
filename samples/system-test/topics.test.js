@@ -169,8 +169,8 @@ describe('topics', () => {
     const receivedMessage = await _pullOneMessage(subscription);
 
     const publishTime = Date.parse(receivedMessage.publishTime);
-    // publishTime contains whole seconds (ends with 000), 
-    // so we allow the difference to be up to 1 second less 
+    // publishTime contains whole seconds (ends with 000),
+    // so we allow the difference to be up to 1 second less
     // than we expect.
     const actualWait = publishTime - startTime;
     const expectedWait = waitTime - 1000;
