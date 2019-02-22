@@ -416,7 +416,7 @@ describe('pubsub', () => {
 
       function ack(message) {
         message.ack();
-				console.log('ack', message);
+        console.log('ack', message);
         subscription.close(done);
       }
     });
@@ -448,7 +448,7 @@ describe('pubsub', () => {
         if (++messageCount < maxMessages) {
           return;
         }
-				console.log('onMessage', JSON.stringify(msg));
+        console.log('onMessage', JSON.stringify(msg));
         subscription.close(done);
       }
     });
