@@ -261,7 +261,7 @@ function listenForMessages(subscriptionName, timeout) {
   setTimeout(() => {
     const endDate = new Date();
     const diff = endDate - startDate;
-    console.log(`[1] diff: ${diff} out of ${timeout * 1000}`);
+    console.warn(`[1] diff: ${diff} out of ${timeout * 1000}`);
     subscription.removeListener('message', messageHandler);
     console.log(`${messageCount} message(s) received.`);
   }, timeout * 1000);
@@ -307,7 +307,7 @@ async function synchronousPull(projectName, subscriptionName) {
     setTimeout(() => {
       const endDate = new Date();
       const diff = endDate - startDate;
-      console.log(`[2] diff: ${diff} out of 30000`);
+      console.warn(`[2] diff: ${diff} out of 30000`);
       console.log(`Finished procesing "${message.message.data}".`);
       isProcessed = true;
     }, 30000);
@@ -382,6 +382,7 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
 
   // Create an event handler to handle messages
   const messageHandler = function(message) {
+	  console.warn(`handled message ${message.attributes.counterId}`);
     // Buffer the message in an object (for later ordering)
     outstandingMessages[message.attributes.counterId] = message;
 
@@ -394,10 +395,9 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
   
   const startDate = new Date();
   await new Promise(r => setTimeout(r, timeout * 1000));
-  
   const endDate = new Date();
   const diff = endDate - startDate;
-  console.log(`[3] diff: ${diff} out of ${timeout * 1000}`);
+  console.warn(`[3] diff: ${diff} out of ${timeout * 1000}`);
   
   subscription.removeListener(`message`, messageHandler);
 
@@ -407,17 +407,20 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
     Number(counterId, 10)
   );
   outstandingIds.sort();
+	console.warn(`outstanding ids: ${outstandingIds});
 
   outstandingIds.forEach(counterId => {
     const counter = getSubscribeCounterValue();
     const message = outstandingMessages[counterId];
 
     if (counterId < counter) {
+		  console.warn(`already processed message ${counterId}, counter = ${counter}`);
       // The message has already been processed
       message.ack();
       delete outstandingMessages[counterId];
     } else if (counterId === counter) {
       // Process the message
+			console.warn(`process message ${counterId}, counter = ${counter}`);
       console.log(
         `* %d %j %j`,
         message.id,
@@ -428,6 +431,7 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
       message.ack();
       delete outstandingMessages[counterId];
     } else {
+		  console.warn(`need to skip message ${counterId} for now, counter = ${counter}`);
       // Have not yet processed the message on which this message is dependent
       return false;
     }
@@ -475,7 +479,7 @@ async function listenForErrors(subscriptionName, timeout) {
   setTimeout(() => {
     const endDate = new Date();
     const diff = endDate - startDate;
-    console.log(`[4] diff: ${diff} out of ${timeout * 1000}`);
+    console.warn(`[4] diff: ${diff} out of ${timeout * 1000}`);
 
     subscription.removeListener(`message`, messageHandler);
     subscription.removeListener(`error`, errorHandler);

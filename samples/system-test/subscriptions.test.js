@@ -139,11 +139,13 @@ describe('subscriptions', () => {
     await topicTwo.subscription(subscriptionNameThree).get({autoCreate: true});
 
     let result = await topicTwo.publish(expectedBuffer, {counterId: '3'});
+		console.warn('published message 3');
     publishedMessageIds.push(result);
     await subscriptions.listenForOrderedMessages(
       subscriptionNameThree,
       timeout
     );
+		console.warn(spy.calls);
     assert.strictEqual(spy.calls.length, 0);
 
     result = await topicTwo.publish(expectedBuffer, {counterId: '1'});
