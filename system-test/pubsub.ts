@@ -416,8 +416,7 @@ describe('pubsub', () => {
 
       function ack(message) {
         message.ack();
-        console.log('ack', message);
-        subscription.close(done);
+        subscription.close(() => { console.log('ack close', new Error().stack); done(); });
       }
     });
 
@@ -429,7 +428,7 @@ describe('pubsub', () => {
 
       function nack(message) {
         message.nack();
-        subscription.close(done);
+        subscription.close(() => { console.log('nack close', new Error().stack); done(); });
       }
     });
 
@@ -449,7 +448,7 @@ describe('pubsub', () => {
           return;
         }
         console.log('onMessage', msg);
-        subscription.close(done);
+        subscription.close(() => { console.log('flow close', new Error().stack); done(); });
       }
     });
 
