@@ -156,6 +156,7 @@ async function publishBatchedMessages(
 
   // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
   const dataBuffer = Buffer.from(data);
+	console.warn(`maxWaitTime: ${maxWaitTime}`);
 
   const [messageId] = await pubsub
     .topic(topicName, {
@@ -165,7 +166,7 @@ async function publishBatchedMessages(
       },
     })
     .publish(dataBuffer);
-  console.log(`Message ${messageId} published.`);
+  console.warn(`Message ${messageId} published.`);
 
   // [END pubsub_publisher_batch_settings]
 }
@@ -406,6 +407,7 @@ const cli = require(`yargs`)
       },
     },
     opts => {
+		  console.warn('call!', opts);
       publishBatchedMessages(
         opts.topicName,
         opts.message,

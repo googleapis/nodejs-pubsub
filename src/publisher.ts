@@ -188,6 +188,7 @@ export class Publisher {
     }
 
     const opts = this.settings!.batching!;
+    console.warn('[p opts]', opts);
     // if this message puts us over the maxBytes option, then let's ship
     // what we have and add it to the next batch
     if (this.inventory_.bytes > 0 &&

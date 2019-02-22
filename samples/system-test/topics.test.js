@@ -22,6 +22,7 @@ const uuid = require('uuid');
 
 describe('topics', () => {
   const exec = async cmd => (await execa.shell(cmd)).stdout;
+  const execzz = async cmd => await execa.shell(cmd);
   const projectId = process.env.GCLOUD_PROJECT;
   const pubsub = new PubSub({projectId});
   const topicNameOne = `nodejs-docs-samples-test-${uuid.v4()}`;
@@ -161,11 +162,12 @@ describe('topics', () => {
       .subscription(subscriptionNameThree)
       .get({autoCreate: true});
     const startTime = Date.now();
-    await exec(
+    const proc = await execzz(
       `${cmd} publish-batch ${topicNameOne} "${
         expectedMessage.data
       }" -w ${waitTime}`
     );
+		console.log(proc.stderr);
     const receivedMessage = await _pullOneMessage(subscription);
 
     const publishTime = Date.parse(receivedMessage.publishTime);
