@@ -205,6 +205,8 @@ describe('pubsub', () => {
       topic.subscription(SUB_NAMES[1], {ackDeadline: 60}),
     ];
 
+    const DEBUG = {'ack': [], 'nack': [], 'flow': []};
+
     before(async () => {
       await topic.create();
       await Promise.all(SUBSCRIPTIONS.map(s => s.create()));
@@ -216,6 +218,14 @@ describe('pubsub', () => {
 
     after(() => {
       // Delete subscriptions
+      console.log('Called callbacks:');
+      for (const [key, values] of Object.entries(DEBUG)) {
+        console.log(key);
+        for (const value of values) {
+          console.log(' ', value);
+        }
+      }
+      console.log('End of callbacks');
       return Promise.all(SUBSCRIPTIONS.map(async s => {
         try {
           await s.delete();
@@ -412,7 +422,8 @@ describe('pubsub', () => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
       const done1 = (err) => {
-        console.log('ack done called with', err);
+				// @ts-ignore
+        DEBUG.ack.push(err);
         done(err);
       };
 
@@ -429,7 +440,8 @@ describe('pubsub', () => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
       const done1 = (err) => {
-        console.log('nack done called with', err);
+				// @ts-ignore
+        DEBUG.nack.push(err);
         done(err);
       };
 
@@ -447,7 +459,8 @@ describe('pubsub', () => {
       let messageCount = 0;
 
       const done1 = (err) => {
-        console.log('flow done called with', err);
+				// @ts-ignore
+        DEBUG.flow.push(err);
         done(err);
       };
 
