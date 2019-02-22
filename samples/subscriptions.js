@@ -407,7 +407,7 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
     Number(counterId, 10)
   );
   outstandingIds.sort();
-	console.warn(`outstanding ids: ${outstandingIds});
+	console.warn(`outstanding ids: ${outstandingIds}`);
 
   outstandingIds.forEach(counterId => {
     const counter = getSubscribeCounterValue();
