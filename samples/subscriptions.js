@@ -382,7 +382,7 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
 
   // Create an event handler to handle messages
   const messageHandler = function(message) {
-	  console.warn(`handled message ${message.attributes.counterId}`);
+    console.warn(`handled message ${message.attributes.counterId}`);
     // Buffer the message in an object (for later ordering)
     outstandingMessages[message.attributes.counterId] = message;
 
@@ -392,13 +392,13 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
 
   // Listen for new messages until timeout is hit
   subscription.on(`message`, messageHandler);
-  
+
   const startDate = new Date();
   await new Promise(r => setTimeout(r, timeout * 1000));
   const endDate = new Date();
   const diff = endDate - startDate;
   console.warn(`[3] diff: ${diff} out of ${timeout * 1000}`);
-  
+
   subscription.removeListener(`message`, messageHandler);
 
   // Pub/Sub messages are unordered, so here we manually order messages by
@@ -407,20 +407,22 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
     Number(counterId, 10)
   );
   outstandingIds.sort();
-	console.warn(`outstanding ids: ${outstandingIds}`);
+  console.warn(`outstanding ids: ${outstandingIds}`);
 
   outstandingIds.forEach(counterId => {
     const counter = getSubscribeCounterValue();
     const message = outstandingMessages[counterId];
 
     if (counterId < counter) {
-		  console.warn(`already processed message ${counterId}, counter = ${counter}`);
+      console.warn(
+        `already processed message ${counterId}, counter = ${counter}`
+      );
       // The message has already been processed
       message.ack();
       delete outstandingMessages[counterId];
     } else if (counterId === counter) {
       // Process the message
-			console.warn(`process message ${counterId}, counter = ${counter}`);
+      console.warn(`process message ${counterId}, counter = ${counter}`);
       console.log(
         `* %d %j %j`,
         message.id,
@@ -431,7 +433,9 @@ async function listenForOrderedMessages(subscriptionName, timeout) {
       message.ack();
       delete outstandingMessages[counterId];
     } else {
-		  console.warn(`need to skip message ${counterId} for now, counter = ${counter}`);
+      console.warn(
+        `need to skip message ${counterId} for now, counter = ${counter}`
+      );
       // Have not yet processed the message on which this message is dependent
       return false;
     }
