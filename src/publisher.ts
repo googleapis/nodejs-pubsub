@@ -205,8 +205,14 @@ export class Publisher {
     }
     // otherwise let's set a timeout to send the next batch
     if (!this.timeoutHandle_) {
-      this.timeoutHandle_ =
-          setTimeout(this.publish_.bind(this), opts.maxMilliseconds!);
+      const startDate = new Date();
+      this.timeoutHandle_ = setTimeout(() => {
+        const endDate = new Date();
+        // @ts-ignore
+        const diff = endDate - startDate;
+        console.warn(`[p] diff: ${diff} out of ${opts.maxMilliseconds!}`);
+        this.publish_.bind(this);
+      }, opts.maxMilliseconds!);
     }
   }
   /**
