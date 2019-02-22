@@ -411,24 +411,34 @@ describe('pubsub', () => {
     it('should ack the message', done => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
-      subscription.on('error', done);
+      const done1 = (err) => {
+        console.log('ack done called with', err);
+        done(err);
+      };
+
+      subscription.on('error', done1);
       subscription.on('message', ack);
 
       function ack(message) {
         message.ack();
-        subscription.close(done);
+        subscription.close(done1);
       }
     });
 
     it('should nack the message', done => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
-      subscription.on('error', done);
+      const done1 = (err) => {
+        console.log('nack done called with', err);
+        done(err);
+      };
+
+      subscription.on('error', done1);
       subscription.on('message', nack);
 
       function nack(message) {
         message.nack();
-        subscription.close(done);
+        subscription.close(done1);
       }
     });
 
@@ -437,7 +447,7 @@ describe('pubsub', () => {
       let messageCount = 0;
 
       const done1 = (err) => {
-        console.log('done called with', err);
+        console.log('flow done called with', err);
         done(err);
       };
 
@@ -452,7 +462,6 @@ describe('pubsub', () => {
         if (++messageCount < maxMessages) {
           return;
         }
-        console.log('onMessage', msg);
         subscription.close(done1);
       }
     });
