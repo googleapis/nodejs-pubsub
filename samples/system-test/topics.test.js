@@ -167,14 +167,18 @@ describe('topics', () => {
         expectedMessage.data
       }" -w ${waitTime}`
     );
-		console.log(proc.stderr);
+    console.log(proc.stderr);
     const receivedMessage = await _pullOneMessage(subscription);
 
+    console.log(`startTime: ${startTime}`);
     const publishTime = Date.parse(receivedMessage.publishTime);
+    console.log(`publishTime: ${publishTime}`);
     const actualWait = publishTime - startTime;
+    console.log(`actualWait: ${actualWait}`);
     // setTimeout isn't so reliable to publish messages EXACTLY at 1000ms,
     // so we should consider anything above 900 as passing.
     const expectedWait = waitTime - 100;
+    console.log(`expectedWait: ${expectedWait}`);
 
     assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
     assert(actualWait >= expectedWait);
