@@ -448,7 +448,7 @@ describe('pubsub', () => {
         if (++messageCount < maxMessages) {
           return;
         }
-        console.log('onMessage', JSON.stringify(msg));
+        console.log('onMessage', msg);
         subscription.close(done);
       }
     });
