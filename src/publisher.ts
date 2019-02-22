@@ -193,6 +193,8 @@ export class Publisher {
     // what we have and add it to the next batch
     if (this.inventory_.bytes > 0 &&
         this.inventory_.bytes + data.length > opts.maxBytes!) {
+      console.warn(`[p1] publish now: ib=${this.inventory_.bytes} dl=${
+          data.length} mb=${opts.maxBytes!}`);
       this.publish_();
     }
     // add it to the queue!
@@ -201,6 +203,8 @@ export class Publisher {
     // hit the max byte limit
     const hasMaxMessages = this.inventory_.queued.length === opts.maxMessages;
     if (this.inventory_.bytes >= opts.maxBytes! || hasMaxMessages) {
+      console.warn(`[p2] publish now: ib=${this.inventory_.bytes} mb=${
+          opts.maxBytes!} hasmax=${hasMaxMessages}`);
       this.publish_();
       return;
     }
@@ -250,6 +254,7 @@ export class Publisher {
    * @private
    */
   publish_() {
+    console.warn(`publish_! ts=${(new Date()).getTime()}`);
     const callbacks = this.inventory_.callbacks;
     const messages = this.inventory_.queued;
     this.inventory_.callbacks = [];
