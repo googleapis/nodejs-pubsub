@@ -207,11 +207,12 @@ export class Publisher {
     if (!this.timeoutHandle_) {
       const startDate = new Date();
       this.timeoutHandle_ = setTimeout(() => {
+        const func = this.publish_.bind(this);
         const endDate = new Date();
         // @ts-ignore
         const diff = endDate - startDate;
         console.warn(`[p] diff: ${diff} out of ${opts.maxMilliseconds!}`);
-        this.publish_.bind(this);
+        func();
       }, opts.maxMilliseconds!);
     }
   }
