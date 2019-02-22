@@ -422,7 +422,7 @@ describe('pubsub', () => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
       const done1 = (err) => {
-				// @ts-ignore
+        // @ts-ignore
         DEBUG.ack.push(err);
         done(err);
       };
@@ -440,7 +440,7 @@ describe('pubsub', () => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
       const done1 = (err) => {
-				// @ts-ignore
+        // @ts-ignore
         DEBUG.nack.push(err);
         done(err);
       };
@@ -459,7 +459,7 @@ describe('pubsub', () => {
       let messageCount = 0;
 
       const done1 = (err) => {
-				// @ts-ignore
+        // @ts-ignore
         DEBUG.flow.push(err);
         done(err);
       };
