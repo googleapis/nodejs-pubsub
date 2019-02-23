@@ -36,6 +36,8 @@ The retry logic for **all** methods has changed. It is possible that this could 
 - fix(sample): fix retry codes in retry sample code ([#458](https://github.com/googleapis/nodejs-pubsub/pull/458))
 
 ### Internal / Testing Changes
+- test(samples): correctly handle publishTime value ([#495](https://github.com/googleapis/nodejs-pubsub/pull/495))
+- test: fix publishTime issues ([#494](https://github.com/googleapis/nodejs-pubsub/pull/494))
 - refactor(typescript): noImplicityAny for Topic test file ([#487](https://github.com/googleapis/nodejs-pubsub/pull/487))
 - refactor(ts): noImplicitAny for subscription test file ([#489](https://github.com/googleapis/nodejs-pubsub/pull/489))
 - build: use linkinator for docs test ([#477](https://github.com/googleapis/nodejs-pubsub/pull/477))
