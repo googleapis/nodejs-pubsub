@@ -20,8 +20,13 @@ const {assert} = require('chai');
 const execa = require('execa');
 const uuid = require('uuid');
 
+async function exec(cmd) {
+  const promise = execa.shell(cmd);
+  promise.stdout.pipe(process.stdout);
+  return (await promise).stdout;
+}
+
 describe('topics', () => {
-  const exec = async cmd => (await execa.shell(cmd)).stdout;
   const projectId = process.env.GCLOUD_PROJECT;
   const pubsub = new PubSub({projectId});
   const topicNameOne = `nodejs-docs-samples-test-${uuid.v4()}`;
@@ -155,7 +160,7 @@ describe('topics', () => {
   });
 
   it('should publish with specific batch settings', async () => {
-    const waitTime = 1000;
+    const waitTime = 5000;
     const [subscription] = await pubsub
       .topic(topicNameOne)
       .subscription(subscriptionNameThree)
@@ -166,16 +171,12 @@ describe('topics', () => {
         expectedMessage.data
       }" -w ${waitTime}`
     );
-    const receivedMessage = await _pullOneMessage(subscription);
 
-    const publishTime = Date.parse(receivedMessage.publishTime);
-    const actualWait = publishTime - startTime;
-    // setTimeout isn't so reliable to publish messages EXACTLY at 1000ms,
-    // so we should consider anything above 900 as passing.
-    const expectedWait = waitTime - 100;
+    const {data, publishTime} = await _pullOneMessage(subscription);
+    const actualWait = publishTime.getTime() - startTime;
 
-    assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
-    assert(actualWait >= expectedWait);
+    assert.strictEqual(data.toString(), expectedMessage.data);
+    assert(actualWait >= waitTime);
   });
 
   it('should publish with retry settings', async () => {

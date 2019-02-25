@@ -20,12 +20,13 @@ import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {PassThrough} from 'stream';
 import * as uuid from 'uuid';
-
+import {Subscription} from '../src';
 import {HistogramOptions} from '../src/histogram';
 import {FlowControlOptions} from '../src/lease-manager';
 import {BatchOptions} from '../src/message-queues';
 import {MessageStreamOptions} from '../src/message-stream';
 import * as s from '../src/subscriber';
+
 
 const stubs = new Map();
 
@@ -129,7 +130,8 @@ describe('Subscriber', () => {
 
   const fakeProjectify = {replaceProjectIdToken: sandbox.stub()};
 
-  let subscription;
+
+  let subscription: Subscription;
 
   // tslint:disable-next-line variable-name
   let Message: typeof s.Message;
@@ -153,7 +155,7 @@ describe('Subscriber', () => {
   });
 
   beforeEach(() => {
-    subscription = new FakeSubscription();
+    subscription = new FakeSubscription() as {} as Subscription;
     subscriber = new Subscriber(subscription);
     message = new Message(subscriber, RECEIVED_MESSAGE);
     subscriber.open();
@@ -375,10 +377,9 @@ describe('Subscriber', () => {
 
   describe('getClient', () => {
     it('should get a subscriber client', async () => {
-      const pubsub = subscription.pubsub;
+      const pubsub = subscription.pubsub as {} as FakePubSub;
       const spy = sandbox.spy(pubsub, 'getClient_');
       const client = await subscriber.getClient();
-
       const [options] = spy.lastCall.args;
       assert.deepStrictEqual(options, {client: 'SubscriberClient'});
       assert.strictEqual(client, pubsub.client);
