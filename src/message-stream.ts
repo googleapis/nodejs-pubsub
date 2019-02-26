@@ -197,7 +197,16 @@ export class MessageStream extends PassThrough {
       stream.cancel();
     }
 
-    return destroy(this, err);
+    if (typeof super.destroy === 'function') {
+      return super.destroy(err);
+    }
+
+    process.nextTick(() => {
+      if (err) {
+        this.emit('error', err);
+      }
+      this.emit('close');
+    });
   }
   /**
    * Adds a StreamingPull stream to the combined stream.
@@ -329,7 +338,6 @@ export class MessageStream extends PassThrough {
    */
   private _onStatus(stream: PullStream, status: StatusObject): void {
     if (this.destroyed) {
-      destroy(stream);
       return;
     }
 
