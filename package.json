@@ -13,8 +13,6 @@
   "files": [
     "build/protos",
     "build/src",
-    "!**/*.d.ts",
-    "!**/*.js.map",
     "AUTHORS",
     "CONTRIBUTORS",
     "LICENSE"
