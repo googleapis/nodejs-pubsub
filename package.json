@@ -41,7 +41,7 @@
     "fix": "eslint --fix '**/*.js' && gts fix",
     "generate-scaffolding": "repo-tools generate all && repo-tools generate lib_samples_readme -l samples/ --config ../.cloud-repo-tools.json",
     "clean": "gts clean",
-    "compile": "tsc -p . && cp -r src/v1 build/src/ && cp -r ./{proto,protos} build/ && cp smoke-test/*.js build/system-test && cp test/*.js build/test",
+    "compile": "tsc -p . && cp -r src/v1 build/src/ && cp -r protos build/ && cp -r proto build/ && cp smoke-test/*.js build/system-test && cp test/*.js build/test",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "proto": "npm run proto:pubsub",
