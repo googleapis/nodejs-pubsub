@@ -66,7 +66,7 @@ export interface PullResponse {
  *   //   data: Buffer.from('Hello, world!),
  *   //   id: '1551297743043',
  *   //   publishTime: new PreciseDate('2019-02-27T20:02:19.029534186Z'),
- *   //   received: 1551297743043
+ *   //   received: 1551297743043,
  *   //   length: 13
  *   // }
  * });
