@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
@@ -61,7 +62,7 @@ export class Message {
   attributes: {};
   data: Buffer;
   id: string;
-  publishTime: Date;
+  publishTime: PreciseDate;
   received: number;
   private _handled: boolean;
   private _length: number;
@@ -71,7 +72,7 @@ export class Message {
     this.attributes = message.attributes || {};
     this.data = message.data;
     this.id = message.messageId;
-    this.publishTime = Message.formatTimestamp(message.publishTime);
+    this.publishTime = new PreciseDate(message.publishTime as DateStruct);
     this.received = Date.now();
     this._handled = false;
     this._length = this.data.length;
@@ -120,19 +121,6 @@ export class Message {
       this._handled = true;
       this._subscriber.nack(this, delay);
     }
-  }
-  /**
-   * Formats the protobuf timestamp into a JavaScript date.
-   *
-   * @private
-   *
-   * @param {object} timestamp The protobuf timestamp.
-   * @return {date}
-   */
-  static formatTimestamp({nanos = 0, seconds = 0}: protobuf.ITimestamp): Date {
-    const ms: number = Number(nanos) / 1e6;
-    const s: number = Number(seconds) * 1000;
-    return new Date(ms + s);
   }
 }
 
