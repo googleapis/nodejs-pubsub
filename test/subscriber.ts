@@ -612,7 +612,8 @@ describe('Subscriber', () => {
         const timestamp = m.publishTime as unknown as FakePreciseDate;
 
         assert(timestamp instanceof FakePreciseDate);
-        assert.strictEqual(timestamp.value, RECEIVED_MESSAGE.message.publishTime);
+        assert.strictEqual(
+            timestamp.value, RECEIVED_MESSAGE.message.publishTime);
       });
 
       it('should localize recieved time', () => {
