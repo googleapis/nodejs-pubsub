@@ -136,10 +136,9 @@ describe('MessageStream', () => {
   let messageStream;
 
   before(() => {
-    MessageStream =
-        proxyquire('../src/message-stream.js', {
-          'stream': {Duplex: FakeDuplex, PassThrough: FakePassThrough}
-        }).MessageStream;
+    MessageStream = proxyquire('../src/message-stream.js', {
+                      'stream': {PassThrough: FakePassThrough}
+                    }).MessageStream;
   });
 
   beforeEach(() => {
@@ -257,7 +256,7 @@ describe('MessageStream', () => {
 
   describe('destroy', () => {
     it('should noop if already destroyed', done => {
-      const stub = sandbox.stub(FakeDuplex.prototype, 'destroy')
+      const stub = sandbox.stub(FakePassThrough.prototype, 'destroy')
                        .callsFake(function(this: Duplex) {
                          if (this === messageStream) {
                            done();
@@ -309,13 +308,13 @@ describe('MessageStream', () => {
       let destroy;
 
       before(() => {
-        destroy = FakeDuplex.prototype.destroy;
+        destroy = FakePassThrough.prototype.destroy;
         // tslint:disable-next-line no-any
-        FakeDuplex.prototype.destroy = (false as any);
+        FakePassThrough.prototype.destroy = (false as any);
       });
 
       after(() => {
-        FakeDuplex.prototype.destroy = destroy;
+        FakePassThrough.prototype.destroy = destroy;
       });
 
       it('should emit close', done => {
@@ -446,20 +445,6 @@ describe('MessageStream', () => {
     });
 
     describe('on status', () => {
-      it('should destroy the stream if the message stream is destroyed',
-         done => {
-           const [stream] = client.streams;
-           const stub = sandbox.stub(FakeDuplex.prototype, 'destroy')
-                            .callsFake(function(this: Duplex) {
-                              if (this === stream) {
-                                done();
-                              }
-                            });
-
-           messageStream.destroy();
-           stream.emit('status', {});
-         });
-
       it('should wait for end to fire before creating a new stream', done => {
         const [stream] = client.streams;
         const expectedCount = stream.listenerCount('end') + 1;

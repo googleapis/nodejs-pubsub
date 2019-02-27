@@ -19,7 +19,7 @@ import {Gaxios} from 'gaxios';
 import {ClientStub} from 'google-gax';
 import {ClientDuplexStream, Metadata, ServiceError, status, StatusObject} from 'grpc';
 import * as isStreamEnded from 'is-stream-ended';
-import {Duplex, PassThrough} from 'stream';
+import {PassThrough} from 'stream';
 
 import {PullResponse, Subscriber} from './subscriber';
 
@@ -107,29 +107,6 @@ export class ChannelError extends Error implements ServiceError {
     super(`Failed to connect to channel. Reason: ${err.message}`);
     this.code = err.message.includes('deadline') ? DEADLINE : UNKNOWN;
   }
-}
-
-/**
- * Ponyfill for destroying streams.
- *
- * @private
- *
- * @param {stream} stream The stream to destroy.
- * @param {error?} err Error to emit.
- */
-export function destroy(stream: Duplex, err?: Error): void {
-  const nativeDestroy = Duplex.prototype.destroy;
-
-  if (typeof nativeDestroy === 'function') {
-    return nativeDestroy.call(stream, err);
-  }
-
-  process.nextTick(() => {
-    if (err) {
-      stream.emit('error', err);
-    }
-    stream.emit('close');
-  });
 }
 
 /**
