@@ -41,20 +41,17 @@ interface StreamOptions {
   highWaterMark?: number;
 }
 
-class FakeDuplex extends Duplex {
-  destroy(err?: Error): void {
-    if (super.destroy) {
-      return super.destroy(err);
-    }
-    destroy(this, err);
-  }
-}
-
 class FakePassThrough extends PassThrough {
   options: StreamOptions;
   constructor(options: StreamOptions) {
     super(options);
     this.options = options;
+  }
+  destroy(err?: Error): void {
+    if (super.destroy) {
+      return super.destroy(err);
+    }
+    destroy(this, err);
   }
 }
 
