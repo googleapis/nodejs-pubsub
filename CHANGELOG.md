@@ -10,7 +10,7 @@
 
 ### BREAKING: `message.publishTime` is now represented by a [`PreciseDate`](https://github.com/googleapis/nodejs-precise-date) object. ([#503](https://github.com/googleapis/nodejs-pubsub/pull/503))
 
-The `PreciseDate` class extends the native Date object, so most users should be uneffected by this change. The notable differences between PreciseDate and Date objects are:
+The `PreciseDate` class extends the native Date object, so most users should be unaffected by this change. The notable differences between PreciseDate and Date objects are:
 
 - `toISOString()` now returns as a RFC 3339 formatted string.
 - Nano and microsecond data is available via `date.getNanoseconds()` and `date.getMicroseconds()` respectively.
