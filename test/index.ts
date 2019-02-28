@@ -62,8 +62,8 @@ function Subscription(
 
 let promisified = false;
 const fakePromisify = Object.assign({}, promisify, {
-  // tslint:disable-next-line variable-name
   promisifyAll(
+      // tslint:disable-next-line variable-name
       Class: typeof pubsubTypes.PubSub,
       options: promisify.PromisifyAllOptions) {
     if (Class.name !== 'PubSub') {
@@ -134,8 +134,8 @@ let v1ClientOverrides: any = {};
 
 function defineOverridableClient(clientName: string) {
   function DefaultClient() {}
-  /** @type {never[]} */
-  DefaultClient.scopes = [];
+  // tslint:disable-next-line no-any
+  (DefaultClient as any).scopes = [];
 
   Object.defineProperty(v1Override, clientName, {
     get() {
@@ -320,13 +320,34 @@ describe('PubSub', () => {
           };
     });
 
+    it('should throw if no Topic is provided', () => {
+      assert.throws(() => {
+        // tslint:disable-next-line no-any
+        (pubsub as any).createSubscription();
+      }, /A Topic is required for a new subscription\./);
+    });
+
+    it('should throw if no subscription name is provided', () => {
+      assert.throws(() => {
+        // tslint:disable-next-line no-any
+        (pubsub as any).createSubscription(TOPIC_NAME);
+      }, /A subscription name is required./);
+    });
+
     it('should not require configuration options', done => {
-      pubsub.request =
-          (config: pubsubTypes.RequestConfig, callback: Function) => {
-            callback(null, apiResponse);
-          };
+      pubsub.request = (config, callback: Function) => {
+        callback(null, apiResponse);
+      };
 
       pubsub.createSubscription(TOPIC, SUB_NAME, done);
+    });
+
+    it('should allow undefined/optional configuration options', done => {
+      pubsub.request = (config, callback: Function) => {
+        callback(null, apiResponse);
+      };
+      // tslint:disable-next-line no-any
+      (pubsub as any).createSubscription(TOPIC, SUB_NAME, undefined, done);
     });
 
     it('should create a Subscription', done => {
@@ -334,20 +355,19 @@ describe('PubSub', () => {
 
       pubsub.request = util.noop;
 
-      pubsub.subscription =
-          (subName: string, options: pubsubTypes.CreateSubscriptionOptions) => {
-            assert.strictEqual(subName, SUB_NAME);
-            assert.deepStrictEqual(options, opts);
-            setImmediate(done);
-            return SUBSCRIPTION as subby.Subscription;
-          };
+      pubsub.subscription = (subName, options) => {
+        assert.strictEqual(subName, SUB_NAME);
+        assert.deepStrictEqual(options, opts);
+        setImmediate(done);
+        return SUBSCRIPTION as subby.Subscription;
+      };
       pubsub.createSubscription(TOPIC, SUB_NAME, opts, assert.ifError);
     });
 
     it('should create a Topic object from a string', done => {
       pubsub.request = util.noop;
 
-      pubsub.topic = (topicName: string) => {
+      pubsub.topic = topicName => {
         assert.strictEqual(topicName, TOPIC_NAME);
         setImmediate(done);
         return TOPIC;
@@ -366,7 +386,7 @@ describe('PubSub', () => {
           name: topicName,
         } as pubsubTypes.Topic;
       };
-      pubsub.subscription = (subName: string) => {
+      pubsub.subscription = subName => {
         return {
           name: subName,
         } as pubsubTypes.Subscription;
@@ -375,7 +395,7 @@ describe('PubSub', () => {
 
       const reqOpts = {topic: TOPIC.name, name: SUB_NAME};
 
-      pubsub.request = (config: pubsubTypes.RequestConfig) => {
+      pubsub.request = config => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'createSubscription');
         assert.deepStrictEqual(config.reqOpts, reqOpts);
@@ -408,7 +428,7 @@ describe('PubSub', () => {
       };
 
 
-      pubsub.request = (config: pubsubTypes.RequestConfig) => {
+      pubsub.request = config => {
         assert.notStrictEqual(config.reqOpts, options);
         assert.deepStrictEqual(config.reqOpts, expectedBody);
         done();
@@ -439,7 +459,7 @@ describe('PubSub', () => {
         } as pubsubTypes.Subscription;
       };
 
-      pubsub.request = (config: pubsubTypes.RequestConfig) => {
+      pubsub.request = config => {
         assert.notStrictEqual(config.reqOpts, options);
         assert.deepStrictEqual(config.reqOpts, expectedBody);
         done();
@@ -473,17 +493,15 @@ describe('PubSub', () => {
       const apiResponse = {name: SUB_NAME};
 
       beforeEach(() => {
-        pubsub.request =
-            (config: pubsubTypes.RequestConfig, callback: Function) => {
-              callback(error, apiResponse);
-            };
+        pubsub.request = (config, callback: Function) => {
+          callback(error, apiResponse);
+        };
       });
 
       it('should return error & API response to the callback', done => {
-        pubsub.request =
-            (config: pubsubTypes.RequestConfig, callback: Function) => {
-              callback(error, apiResponse);
-            };
+        pubsub.request = (config, callback: Function) => {
+          callback(error, apiResponse);
+        };
 
         function callback(
             err?: Error|null, sub?: subby.Subscription|null,
@@ -502,10 +520,9 @@ describe('PubSub', () => {
       const apiResponse = {name: SUB_NAME};
 
       beforeEach(() => {
-        pubsub.request =
-            (config: pubsubTypes.RequestConfig, callback: Function) => {
-              callback(null, apiResponse);
-            };
+        pubsub.request = (config, callback: Function) => {
+          callback(null, apiResponse);
+        };
       });
 
       it('should return Subscription & resp to the callback', done => {
@@ -514,10 +531,9 @@ describe('PubSub', () => {
           return subscription as pubsubTypes.Subscription;
         };
 
-        pubsub.request =
-            (config: pubsubTypes.RequestConfig, callback: Function) => {
-              callback(null, apiResponse);
-            };
+        pubsub.request = (config, callback: Function) => {
+          callback(null, apiResponse);
+        };
 
         function callback(
             err?: Error|null, sub?: subby.Subscription|null,
@@ -540,7 +556,7 @@ describe('PubSub', () => {
       const formattedName = 'formatted-name';
       const gaxOpts = {};
 
-      pubsub.topic = (name: string) => {
+      pubsub.topic = name => {
         assert.strictEqual(name, topicName);
 
         return {
@@ -550,7 +566,7 @@ describe('PubSub', () => {
 
 
 
-      pubsub.request = (config: pubsubTypes.RequestConfig) => {
+      pubsub.request = config => {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'createTopic');
         assert.deepStrictEqual(config.reqOpts, {name: formattedName});
@@ -566,22 +582,18 @@ describe('PubSub', () => {
       const apiResponse = {};
 
       beforeEach(() => {
-        pubsub.request =
-            (config: pubsubTypes.RequestConfig, callback: Function) => {
-              callback(error, apiResponse);
-            };
+        pubsub.request = (config, callback: Function) => {
+          callback(error, apiResponse);
+        };
       });
 
       it('should return an error & API response', done => {
-        pubsub.createTopic(
-            'new-topic',
-            (err?: Error|null, topic?: pubsubTypes.Topic|null,
-             apiResponse_?: google.pubsub.v1.ITopic) => {
-              assert.strictEqual(err, error);
-              assert.strictEqual(topic, null);
-              assert.strictEqual(apiResponse_, apiResponse);
-              done();
-            });
+        pubsub.createTopic('new-topic', (err, topic, apiResponse_) => {
+          assert.strictEqual(err, error);
+          assert.strictEqual(topic, null);
+          assert.strictEqual(apiResponse_, apiResponse);
+          done();
+        });
       });
     });
 
@@ -589,38 +601,33 @@ describe('PubSub', () => {
       const apiResponse = {};
 
       beforeEach(() => {
-        pubsub.request =
-            (config: pubsubTypes.RequestConfig, callback: Function) => {
-              callback(null, apiResponse);
-            };
+        pubsub.request = (config, callback: Function) => {
+          callback(null, apiResponse);
+        };
       });
 
       it('should return a Topic object', done => {
         const topicName = 'new-topic';
         const topicInstance = {};
 
-        pubsub.topic = (name: string) => {
+        pubsub.topic = name => {
           assert.strictEqual(name, topicName);
           return topicInstance as pubsubTypes.Topic;
         };
 
-        pubsub.createTopic(
-            topicName, (err?: Error|null, topic?: pubsubTypes.Topic|null) => {
-              assert.ifError(err);
-              assert.strictEqual(topic, topicInstance);
-              done();
-            });
+        pubsub.createTopic(topicName, (err, topic) => {
+          assert.ifError(err);
+          assert.strictEqual(topic, topicInstance);
+          done();
+        });
       });
 
       it('should pass apiResponse to callback', done => {
-        pubsub.createTopic(
-            'new-topic',
-            (err?: Error|null, topic?: pubsubTypes.Topic|null,
-             apiResponse_?: google.pubsub.v1.ITopic) => {
-              assert.ifError(err);
-              assert.strictEqual(apiResponse_, apiResponse);
-              done();
-            });
+        pubsub.createTopic('new-topic', (err, topic, apiResponse_) => {
+          assert.ifError(err);
+          assert.strictEqual(apiResponse_, apiResponse);
+          done();
+        });
       });
     });
   });
@@ -699,10 +706,9 @@ describe('PubSub', () => {
     const apiResponse = {snapshots: [{name: SNAPSHOT_NAME}]};
 
     beforeEach(() => {
-      pubsub.request =
-          (config: pubsubTypes.RequestConfig, callback: Function) => {
-            callback(null, apiResponse.snapshots, {}, apiResponse);
-          };
+      pubsub.request = (config, callback: Function) => {
+        callback(null, apiResponse.snapshots, {}, apiResponse);
+      };
     });
 
     it('should accept a query and a callback', done => {
@@ -736,7 +742,7 @@ describe('PubSub', () => {
       delete expectedOptions.gaxOpts;
       delete expectedOptions.autoPaginate;
 
-      pubsub.request = (config: pubsubTypes.RequestConfig) => {
+      pubsub.request = config => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'listSnapshots');
         assert.deepStrictEqual(config.reqOpts, expectedOptions);
@@ -750,12 +756,12 @@ describe('PubSub', () => {
     it('should return Snapshot instances with metadata', done => {
       const snapshot = {};
 
-      sandbox.stub(pubsub, 'snapshot').callsFake((name: string) => {
+      sandbox.stub(pubsub, 'snapshot').callsFake(name => {
         assert.strictEqual(name, SNAPSHOT_NAME);
         return snapshot as Snapshot;
       });
 
-      pubsub.getSnapshots((err?: Error|null, snapshots?: Snapshot[]|null) => {
+      pubsub.getSnapshots((err, snapshots) => {
         assert.ifError(err);
         assert.strictEqual(snapshots![0], snapshot);
         assert.strictEqual(snapshots![0].metadata, apiResponse.snapshots[0]);
@@ -769,19 +775,16 @@ describe('PubSub', () => {
       const nextQuery_ = {};
       const apiResponse_ = {};
 
-      pubsub.request =
-          (config: pubsubTypes.RequestConfig, callback: Function) => {
-            callback(err_, snapshots_, nextQuery_, apiResponse_);
-          };
+      pubsub.request = (config, callback: Function) => {
+        callback(err_, snapshots_, nextQuery_, apiResponse_);
+      };
 
-      pubsub.getSnapshots(
-          (err?: Error|null, snapshots?: Snapshot[]|null,
-           apiResponse?: google.pubsub.v1.ISnapshot) => {
-            assert.strictEqual(err, err_);
-            assert.deepStrictEqual(snapshots, snapshots_);
-            assert.strictEqual(apiResponse, nextQuery_);
-            done();
-          });
+      pubsub.getSnapshots((err, snapshots, apiResponse) => {
+        assert.strictEqual(err, err_);
+        assert.deepStrictEqual(snapshots, snapshots_);
+        assert.strictEqual(apiResponse, nextQuery_);
+        done();
+      });
     });
   });
 
@@ -789,10 +792,9 @@ describe('PubSub', () => {
     const apiResponse = {subscriptions: [{name: 'fake-subscription'}]};
 
     beforeEach(() => {
-      pubsub.request =
-          (config: pubsubTypes.RequestConfig, callback: Function) => {
-            callback(null, apiResponse.subscriptions, {}, apiResponse);
-          };
+      pubsub.request = (config, callback: Function) => {
+        callback(null, apiResponse.subscriptions, {}, apiResponse);
+      };
     });
 
     it('should accept a query and a callback', done => {
@@ -819,7 +821,7 @@ describe('PubSub', () => {
 
       const project = 'projects/' + pubsub.projectId;
 
-      pubsub.request = (config: pubsubTypes.RequestConfig) => {
+      pubsub.request = config => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'listSubscriptions');
         assert.deepStrictEqual(config.reqOpts, {project});
@@ -833,7 +835,7 @@ describe('PubSub', () => {
     it('should pass options to API request', done => {
       const opts = {pageSize: 10, pageToken: 'abc'};
 
-      pubsub.request = (config: pubsubTypes.RequestConfig) => {
+      pubsub.request = config => {
         const reqOpts = config.reqOpts;
         const expectedOptions = Object.assign({}, opts, {
           project: 'projects/' + pubsub.projectId,
@@ -846,12 +848,11 @@ describe('PubSub', () => {
     });
 
     it('should return Subscription instances', done => {
-      pubsub.getSubscriptions(
-          (err?: Error|null, subscriptions?: subby.Subscription[]|null) => {
-            assert.ifError(err);
-            assert(subscriptions![0] instanceof subscriptionCached);
-            done();
-          });
+      pubsub.getSubscriptions((err, subscriptions) => {
+        assert.ifError(err);
+        assert(subscriptions![0] instanceof subscriptionCached);
+        done();
+      });
     });
 
     it('should pass back all params', done => {
@@ -861,19 +862,16 @@ describe('PubSub', () => {
       const apiResponse_ = {};
 
 
-      pubsub.request =
-          (config: pubsubTypes.RequestConfig, callback: Function) => {
-            callback(err_, subs_, nextQuery_, apiResponse_);
-          };
+      pubsub.request = (config, callback: Function) => {
+        callback(err_, subs_, nextQuery_, apiResponse_);
+      };
 
-      pubsub.getSubscriptions(
-          (err?: Error|null, subs?: subby.Subscription[]|null,
-           apiResponse?: google.pubsub.v1.ISubscription) => {
-            assert.strictEqual(err, err_);
-            assert.deepStrictEqual(subs, subs_);
-            assert.strictEqual(apiResponse, nextQuery_);
-            done();
-          });
+      pubsub.getSubscriptions((err, subs, apiResponse) => {
+        assert.strictEqual(err, err_);
+        assert.deepStrictEqual(subs, subs_);
+        assert.strictEqual(apiResponse, nextQuery_);
+        done();
+      });
     });
 
     describe('with topic', () => {
@@ -921,10 +919,9 @@ describe('PubSub', () => {
     const apiResponse = {topics: [{name: topicName}]};
 
     beforeEach(() => {
-      pubsub.request =
-          (config: pubsubTypes.RequestConfig, callback: Function) => {
-            callback(null, apiResponse.topics, {}, apiResponse);
-          };
+      pubsub.request = (config, callback: Function) => {
+        callback(null, apiResponse.topics, {}, apiResponse);
+      };
     });
 
     it('should accept a query and a callback', done => {
@@ -958,7 +955,7 @@ describe('PubSub', () => {
       delete expectedOptions.gaxOpts;
       delete expectedOptions.autoPaginate;
 
-      pubsub.request = (config: pubsubTypes.RequestConfig) => {
+      pubsub.request = config => {
         assert.strictEqual(config.client, 'PublisherClient');
         assert.strictEqual(config.method, 'listTopics');
         assert.deepStrictEqual(config.reqOpts, expectedOptions);
@@ -972,19 +969,18 @@ describe('PubSub', () => {
     it('should return Topic instances with metadata', done => {
       const topic = {};
 
-      pubsub.topic = (name: string) => {
+      pubsub.topic = name => {
         assert.strictEqual(name, topicName);
         return topic as pubsubTypes.Topic;
       };
 
 
-      pubsub.getTopics(
-          (err?: Error|null, topics?: pubsubTypes.Topic[]|null) => {
-            assert.ifError(err);
-            assert.strictEqual(topics![0], topic);
-            assert.strictEqual(topics![0].metadata, apiResponse.topics[0]);
-            done();
-          });
+      pubsub.getTopics((err, topics) => {
+        assert.ifError(err);
+        assert.strictEqual(topics![0], topic);
+        assert.strictEqual(topics![0].metadata, apiResponse.topics[0]);
+        done();
+      });
     });
 
     it('should pass back all params', done => {
@@ -993,19 +989,16 @@ describe('PubSub', () => {
       const nextQuery_ = {};
       const apiResponse_ = {};
 
-      pubsub.request =
-          (config: pubsubTypes.RequestConfig, callback: Function) => {
-            callback(err_, topics_, nextQuery_, apiResponse_);
-          };
+      pubsub.request = (config, callback: Function) => {
+        callback(err_, topics_, nextQuery_, apiResponse_);
+      };
 
-      pubsub.getTopics(
-          (err?: Error|null, topics?: pubsubTypes.Topic[]|null,
-           apiResponse?: google.pubsub.v1.ITopic) => {
-            assert.strictEqual(err, err_);
-            assert.deepStrictEqual(topics, topics_);
-            assert.strictEqual(apiResponse, nextQuery_);
-            done();
-          });
+      pubsub.getTopics((err, topics, apiResponse) => {
+        assert.strictEqual(err, err_);
+        assert.deepStrictEqual(topics, topics_);
+        assert.strictEqual(apiResponse, nextQuery_);
+        done();
+      });
     });
   });
 
@@ -1034,7 +1027,7 @@ describe('PubSub', () => {
     });
 
     it('should call getClient_ with the correct config', done => {
-      pubsub.getClient_ = (config: pubsubTypes.RequestConfig) => {
+      pubsub.getClient_ = config => {
         assert.strictEqual(config, CONFIG);
         done();
       };
@@ -1044,12 +1037,11 @@ describe('PubSub', () => {
 
     it('should return error from getClient_', done => {
       const expectedError = new Error('some error');
-      pubsub.getClient_ =
-          (config: pubsubTypes.RequestConfig, callback: Function) => {
-            callback(expectedError);
-          };
+      pubsub.getClient_ = (config, callback: Function) => {
+        callback(expectedError);
+      };
 
-      pubsub.request(CONFIG, (err?: Error|null) => {
+      pubsub.request(CONFIG, err => {
         assert.strictEqual(expectedError, err);
         done();
       });
@@ -1063,10 +1055,9 @@ describe('PubSub', () => {
         assert.deepStrictEqual(CONFIG.gaxOpts, gaxOpts);
         done();
       };
-      pubsub.getClient_ =
-          (config: pubsubTypes.RequestConfig, callback: Function) => {
-            callback(null, fakeClient);
-          };
+      pubsub.getClient_ = (config, callback: Function) => {
+        callback(null, fakeClient);
+      };
       pubsub.request(CONFIG, assert.ifError);
     });
 
@@ -1108,7 +1099,7 @@ describe('PubSub', () => {
         });
 
 
-        pubsub.getClient_(CONFIG, (err?: Error|null) => {
+        pubsub.getClient_(CONFIG, err => {
           assert.ifError(err);
           assert.strictEqual(pubsub.projectId, PROJECT_ID);
           assert.strictEqual(pubsub.options.projectId, PROJECT_ID);
@@ -1130,12 +1121,11 @@ describe('PubSub', () => {
 
       it('should return errors to the callback', done => {
         const error = new Error('err');
-        sandbox.stub(pubsub.auth, 'getProjectId')
-            .callsFake((callback: Function) => {
-              callback(error);
-            });
+        sandbox.stub(pubsub.auth, 'getProjectId').callsFake(callback => {
+          callback(error);
+        });
 
-        pubsub.getClient_(CONFIG, (err?: Error|null) => {
+        pubsub.getClient_(CONFIG, err => {
           assert.strictEqual(err, error);
           done();
         });
@@ -1173,11 +1163,11 @@ describe('PubSub', () => {
         return FAKE_CLIENT_INSTANCE;
       };
 
-      pubsub.getClient_(CONFIG, (err?: Error|null) => {
+      pubsub.getClient_(CONFIG, err => {
         assert.ifError(err);
         assert.strictEqual(pubsub.api.FakeClient, FAKE_CLIENT_INSTANCE);
 
-        pubsub.getClient_(CONFIG, (err?: Error|null) => {
+        pubsub.getClient_(CONFIG, err => {
           assert.ifError(err);
           assert.strictEqual(numTimesFakeClientInstantiated, 1);
           done();
@@ -1193,7 +1183,7 @@ describe('PubSub', () => {
         return FAKE_CLIENT_INSTANCE;
       };
 
-      pubsub.getClient_(CONFIG, (err?: Error|null, client?: gax.ClientStub) => {
+      pubsub.getClient_(CONFIG, (err, client) => {
         assert.ifError(err);
         assert.strictEqual(client, FAKE_CLIENT_INSTANCE);
         done();
@@ -1219,14 +1209,13 @@ describe('PubSub', () => {
         return reqOpts;
       };
 
-      pubsub.getClient_ =
-          (config: pubsubTypes.RequestConfig, callback: Function) => {
-            callback(null, FAKE_CLIENT_INSTANCE);
-          };
+      pubsub.getClient_ = (config, callback: Function) => {
+        callback(null, FAKE_CLIENT_INSTANCE);
+      };
     });
     afterEach(() => sandbox.restore());
     it('should get the client', done => {
-      pubsub.getClient_ = (config: pubsubTypes.GetClientConfig) => {
+      pubsub.getClient_ = config => {
         assert.strictEqual(config, CONFIG);
         done();
       };
@@ -1237,12 +1226,11 @@ describe('PubSub', () => {
     it('should return error from getting the client', done => {
       const error = new Error('Error.');
 
-      pubsub.getClient_ =
-          (config: pubsubTypes.GetClientConfig, callback: Function) => {
-            callback(error);
-          };
+      pubsub.getClient_ = (config, callback) => {
+        callback(error);
+      };
 
-      pubsub.request(CONFIG, (err?: Error|null) => {
+      pubsub.request(CONFIG, err => {
         assert.strictEqual(err, error);
         done();
       });
@@ -1281,10 +1269,9 @@ describe('PubSub', () => {
         },
       };
 
-      pubsub.getClient_ =
-          (config: pubsubTypes.GetClientConfig, callback: Function) => {
-            callback(null, fakeClient);
-          };
+      pubsub.getClient_ = (config, callback: Function) => {
+        callback(null, fakeClient);
+      };
 
       pubsub.request(CONFIG, assert.ifError);
     });
