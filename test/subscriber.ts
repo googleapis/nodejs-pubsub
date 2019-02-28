@@ -16,6 +16,7 @@
 
 import * as assert from 'assert';
 import {EventEmitter} from 'events';
+import {common as protobuf} from 'protobufjs';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {PassThrough} from 'stream';
@@ -115,6 +116,13 @@ class FakeMessageStream extends PassThrough {
   destroy(error?: Error): void {}
 }
 
+class FakePreciseDate {
+  value: protobuf.ITimestamp;
+  constructor(date: protobuf.ITimestamp) {
+    this.value = date;
+  }
+}
+
 const RECEIVED_MESSAGE = {
   ackId: uuid.v4(),
   message: {
@@ -142,6 +150,7 @@ describe('Subscriber', () => {
 
   before(() => {
     const s = proxyquire('../src/subscriber.js', {
+      '@google-cloud/precise-date': {PreciseDate: FakePreciseDate},
       '@google-cloud/projectify': fakeProjectify,
       './histogram': {Histogram: FakeHistogram},
       './lease-manager': {LeaseManager: FakeLeaseManager},
@@ -599,15 +608,12 @@ describe('Subscriber', () => {
       });
 
       it('should localize publishTime', () => {
-        const fakeDate = new Date();
-
-        sandbox.stub(Message, 'formatTimestamp')
-            .withArgs(RECEIVED_MESSAGE.message.publishTime)
-            .returns(fakeDate);
-
         const m = new Message(subscriber, RECEIVED_MESSAGE);
+        const timestamp = m.publishTime as unknown as FakePreciseDate;
 
-        assert.strictEqual(m.publishTime, fakeDate);
+        assert(timestamp instanceof FakePreciseDate);
+        assert.strictEqual(
+            timestamp.value, RECEIVED_MESSAGE.message.publishTime);
       });
 
       it('should localize recieved time', () => {
@@ -698,19 +704,6 @@ describe('Subscriber', () => {
         message.nack(delay);
 
         assert.strictEqual(stub.callCount, 0);
-      });
-    });
-
-    describe('formatTimestamp', () => {
-      it('should format the timestamp object', () => {
-        const publishTime = RECEIVED_MESSAGE.message.publishTime;
-        const actual = Message.formatTimestamp(publishTime);
-
-        const ms = publishTime.nanos / 1e6;
-        const s = publishTime.seconds * 1000;
-        const expectedDate = new Date(ms + s);
-
-        assert.deepStrictEqual(actual, expectedDate);
       });
     });
   });
