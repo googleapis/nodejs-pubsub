@@ -51,14 +51,6 @@ import {noop} from './util';
  */
 
 /**
- * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions#PushConfig
- */
-export interface PushConfig {
-  pushEndpoint: string;
-  attributes?: {[key: string]: string;};
-}
-
-/**
  * @see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration
  */
 export interface Duration {
@@ -72,7 +64,7 @@ export interface Duration {
 export interface TSubscriptionMetadata {
   name: string;
   topic: string;
-  pushConfig?: PushConfig;
+  pushConfig?: google.pubsub.v1.IPushConfig;
   ackDeadlineSeconds?: number;
   retainAckedMessages?: boolean;
   labels?: {[key: string]: string;};
@@ -675,16 +667,16 @@ export class Subscription extends EventEmitter {
    *   const apiResponse = data[0];
    * });
    */
-  modifyPushConfig(config: PushConfig, gaxOpts?: CallOptions):
+  modifyPushConfig(config: google.pubsub.v1.IPushConfig, gaxOpts?: CallOptions):
       Promise<google.protobuf.Empty>;
   modifyPushConfig(
-      config: PushConfig,
+      config: google.pubsub.v1.IPushConfig,
       callback: RequestCallback<google.protobuf.Empty>): void;
   modifyPushConfig(
-      config: PushConfig, gaxOpts: CallOptions,
+      config: google.pubsub.v1.IPushConfig, gaxOpts: CallOptions,
       callback: RequestCallback<google.protobuf.Empty>): void;
   modifyPushConfig(
-      config: PushConfig,
+      config: google.pubsub.v1.IPushConfig,
       gaxOptsOrCallback?: CallOptions|RequestCallback<google.protobuf.Empty>,
       callback?: RequestCallback<google.protobuf.Empty>):
       void|Promise<google.protobuf.Empty> {
