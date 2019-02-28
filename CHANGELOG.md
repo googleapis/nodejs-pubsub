@@ -4,6 +4,25 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.26.0
+
+02-28-2019 05:42 PST
+
+### BREAKING: `message.publishTime` is now represented by a [`PreciseDate`](https://github.com/googleapis/nodejs-precise-date) object. ([#503](https://github.com/googleapis/nodejs-pubsub/pull/503))
+
+The `PreciseDate` class extends the native Date object, so most users should be uneffected by this change. The notable differences between PreciseDate and Date objects are:
+
+- `toISOString()` now returns as a RFC 3339 formatted string.
+- Nano and microsecond data is available via `date.getNanoseconds()` and `date.getMicroseconds()` respectively.
+
+### New Features
+- feat(typescript): ship typescript declaration files ([#498](https://github.com/googleapis/nodejs-pubsub/pull/498))
+- feat(subscription): support push config auth methods ([#504](https://github.com/googleapis/nodejs-pubsub/pull/504))
+
+### Internal / Testing Changes
+- refactor(typescript): noImplicitAny for snapshot and subscriber test file ([#490](https://github.com/googleapis/nodejs-pubsub/pull/490))
+- fix(messageStream): remove call to destroy grpc stream ([#499](https://github.com/googleapis/nodejs-pubsub/pull/499))
+
 ## v0.25.0
 
 02-20-2019 10:35 PST
