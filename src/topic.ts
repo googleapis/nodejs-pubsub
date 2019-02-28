@@ -328,14 +328,8 @@ export class Topic {
         callback!(null, true);
         return;
       }
-      let code = 0;
-      if (err.hasOwnProperty('code')) {
-        code =
-            (Object.getOwnPropertyDescriptor(err, 'code') as PropertyDescriptor)
-                .value;
-      }
-      if (code === 5) {
-        callback!(null, false);
+      if (err.code === 5) {
+        callback(null, false);
         return;
       }
       callback!(err);
@@ -397,13 +391,7 @@ export class Topic {
         callback!(null, this, apiResponse!);
         return;
       }
-      let code = 0;
-      if (err.hasOwnProperty('code')) {
-        code =
-            (Object.getOwnPropertyDescriptor(err, 'code') as PropertyDescriptor)
-                .value;
-      }
-      if (code !== 5 || !autoCreate) {
+      if (err.code !== 5 || !autoCreate) {
         callback!(err, null, apiResponse!);
         return;
       }
