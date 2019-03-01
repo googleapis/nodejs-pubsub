@@ -176,7 +176,7 @@ export class IAM {
     this.id = id;
   }
 
-  getPolicy(gaxOpts?: CallOptions): Promise<GetPolicyCallback>;
+  getPolicy(gaxOpts?: CallOptions): Promise<GetPolicyResponse>;
   getPolicy(callback: GetPolicyCallback): void;
   getPolicy(gaxOpts: CallOptions, callback: GetPolicyCallback): void;
   /**
@@ -211,7 +211,7 @@ export class IAM {
    */
   getPolicy(
       gaxOptsOrCallback?: CallOptions|GetPolicyCallback,
-      callback?: GetPolicyCallback): Promise<GetPolicyCallback>|void {
+      callback?: GetPolicyCallback): Promise<GetPolicyResponse>|void {
     const gaxOpts =
         typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
     callback =
