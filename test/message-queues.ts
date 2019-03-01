@@ -16,16 +16,24 @@
 
 import * as assert from 'assert';
 import {EventEmitter} from 'events';
+import {CallOptions} from 'google-gax';
 import {Metadata, ServiceError} from 'grpc';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import * as uuid from 'uuid';
 
+import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
+import {Message, Subscriber} from '../src/subscriber';
 
 class FakeClient {
-  async acknowledge(reqOpts, callOptions): Promise<void> {}
-  async modifyAckDeadline(reqOpts, callOptions): Promise<void> {}
+  async acknowledge(
+      reqOpts: {subscription: string, ackIds: string[]},
+      callOptions: CallOptions): Promise<void> {}
+  async modifyAckDeadline(
+      reqOpts:
+          {subscription: string, ackIds: string[], ackDeadlineSeconds: number},
+      callOptions: CallOptions): Promise<void> {}
 }
 
 class FakeSubscriber extends EventEmitter {
@@ -52,14 +60,14 @@ class FakeMessage {
 describe('MessageQueues', () => {
   const sandbox = sinon.createSandbox();
 
-  let subscriber;
+  let subscriber: FakeSubscriber;
 
+  // tslint:disable-next-line variable-name no-any
+  let MessageQueue: any;
   // tslint:disable-next-line variable-name
-  let MessageQueue;
+  let AckQueue: typeof messageTypes.AckQueue;
   // tslint:disable-next-line variable-name
-  let AckQueue;
-  // tslint:disable-next-line variable-name
-  let ModAckQueue;
+  let ModAckQueue: typeof messageTypes.ModAckQueue;
 
   before(() => {
     const queues = proxyquire('../src/message-queues.js', {});
@@ -84,7 +92,7 @@ describe('MessageQueues', () => {
   afterEach(() => sandbox.restore());
 
   describe('MessageQueue', () => {
-    let messageQueue;
+    let messageQueue: typeof MessageQueue;
 
     beforeEach(() => {
       messageQueue = new MessageQueue(subscriber);
@@ -116,7 +124,7 @@ describe('MessageQueues', () => {
 
     describe('add', () => {
       it('should increase the number of pending requests', () => {
-        messageQueue.add(new FakeMessage());
+        messageQueue.add(new FakeMessage() as Message);
         assert.strictEqual(messageQueue.numPendingRequests, 1);
       });
 
@@ -124,7 +132,7 @@ describe('MessageQueues', () => {
         const stub = sandbox.stub(messageQueue, 'flush');
 
         messageQueue.setOptions({maxMessages: 1});
-        messageQueue.add(new FakeMessage());
+        messageQueue.add(new FakeMessage() as Message);
 
         assert.strictEqual(stub.callCount, 1);
       });
@@ -135,7 +143,7 @@ describe('MessageQueues', () => {
         const delay = 1000;
 
         messageQueue.setOptions({maxMilliseconds: delay});
-        messageQueue.add(new FakeMessage());
+        messageQueue.add(new FakeMessage() as Message);
 
         assert.strictEqual(stub.callCount, 0);
         clock.tick(delay);
@@ -150,7 +158,7 @@ describe('MessageQueues', () => {
         const delay = 1000;
 
         messageQueue.setOptions({maxMilliseconds: delay});
-        messageQueue.add(new FakeMessage());
+        messageQueue.add(new FakeMessage() as Message);
         messageQueue.flush();
         clock.tick(delay);
 
@@ -158,7 +166,7 @@ describe('MessageQueues', () => {
       });
 
       it('should remove the messages from the queue', () => {
-        messageQueue.add(new FakeMessage());
+        messageQueue.add(new FakeMessage() as Message);
         messageQueue.flush();
 
         assert.strictEqual(messageQueue.numPendingRequests, 0);
@@ -168,7 +176,7 @@ describe('MessageQueues', () => {
         const message = new FakeMessage();
         const deadline = 10;
 
-        messageQueue.add(message, deadline);
+        messageQueue.add(message as Message, deadline);
         messageQueue.flush();
 
         const expectedBatch = [[message.ackId, deadline]];
@@ -263,10 +271,10 @@ describe('MessageQueues', () => {
   });
 
   describe('AckQueue', () => {
-    let ackQueue;
+    let ackQueue: messageTypes.AckQueue;
 
     beforeEach(() => {
-      ackQueue = new AckQueue(subscriber);
+      ackQueue = new AckQueue(subscriber as {} as Subscriber);
     });
 
     it('should send batches via Client#acknowledge', async () => {
@@ -282,7 +290,7 @@ describe('MessageQueues', () => {
         ackIds: messages.map(({ackId}) => ackId),
       };
 
-      messages.forEach(message => ackQueue.add(message));
+      messages.forEach(message => ackQueue.add(message as Message));
       await ackQueue.flush();
 
       const [reqOpts] = stub.lastCall.args;
@@ -326,16 +334,16 @@ describe('MessageQueues', () => {
         done();
       });
 
-      messages.forEach(message => ackQueue.add(message));
+      messages.forEach(message => ackQueue.add(message as Message));
       ackQueue.flush();
     });
   });
 
   describe('ModAckQueue', () => {
-    let modAckQueue;
+    let modAckQueue: messageTypes.ModAckQueue;
 
     beforeEach(() => {
-      modAckQueue = new ModAckQueue(subscriber);
+      modAckQueue = new ModAckQueue(subscriber as {} as Subscriber);
     });
 
     it('should send batches via Client#modifyAckDeadline', async () => {
@@ -355,7 +363,8 @@ describe('MessageQueues', () => {
         ackIds: messages.map(({ackId}) => ackId),
       };
 
-      messages.forEach(message => modAckQueue.add(message, deadline));
+      messages.forEach(
+          message => modAckQueue.add(message as Message, deadline));
       await modAckQueue.flush();
 
       const [reqOpts] = stub.lastCall.args;
@@ -386,8 +395,10 @@ describe('MessageQueues', () => {
         ackIds: messages2.map(({ackId}) => ackId),
       };
 
-      messages1.forEach(message => modAckQueue.add(message, deadline1));
-      messages2.forEach(message => modAckQueue.add(message, deadline2));
+      messages1.forEach(
+          message => modAckQueue.add(message as Message, deadline1));
+      messages2.forEach(
+          message => modAckQueue.add(message as Message, deadline2));
       await modAckQueue.flush();
 
       const [reqOpts1] = stub.getCall(0).args;
@@ -403,7 +414,7 @@ describe('MessageQueues', () => {
           sandbox.stub(subscriber.client, 'modifyAckDeadline').resolves();
 
       modAckQueue.setOptions({callOptions: fakeCallOptions});
-      modAckQueue.add(new FakeMessage(), 10);
+      modAckQueue.add(new FakeMessage() as Message, 10);
       await modAckQueue.flush();
 
       const [, callOptions] = stub.lastCall.args;
@@ -436,7 +447,7 @@ describe('MessageQueues', () => {
         done();
       });
 
-      messages.forEach(message => modAckQueue.add(message));
+      messages.forEach(message => modAckQueue.add(message as Message));
       modAckQueue.flush();
     });
   });
