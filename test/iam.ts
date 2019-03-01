@@ -88,16 +88,16 @@ describe('IAM', () => {
 
   describe('getPolicy', () => {
     it('should make the correct API request', done => {
-      iam.request = (config, callback) => {
+      iam.request = (config) => {
         const reqOpts = {resource: iam.id};
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'getIamPolicy');
         assert.deepStrictEqual(config.reqOpts, reqOpts);
 
-        callback();  // done()
+        done();
       };
 
-      iam.getPolicy(done);
+      iam.getPolicy(assert.ifError);
     });
 
     it('should accept gax options', done => {
@@ -113,7 +113,7 @@ describe('IAM', () => {
   });
 
   describe('setPolicy', () => {
-    const policy = {etag: 'ACAB', bindings: []} as iamTypes.Policy;
+    const policy: iamTypes.Policy = {etag: 'ACAB', bindings: []};
 
     it('should throw an error if a policy is not supplied', () => {
       assert.throws(() => {
@@ -123,16 +123,16 @@ describe('IAM', () => {
     });
 
     it('should make the correct API request', done => {
-      iam.request = (config, callback) => {
+      iam.request = (config) => {
         const reqOpts = {resource: iam.id, policy};
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'setIamPolicy');
         assert.deepStrictEqual(config.reqOpts, reqOpts);
 
-        callback();  // done()
+        done();
       };
 
-      iam.setPolicy(policy, done);
+      iam.setPolicy(policy, assert.ifError);
     });
 
     it('should accept gax options', done => {

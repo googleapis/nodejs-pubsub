@@ -368,15 +368,12 @@ describe('pubsub', () => {
           .then(() => {
             return subscription.getMetadata();
           })
-          .then(data => {
-            const metadata = data[0];
+          .then(([metadata]) => {
+            const {seconds, nanos} = metadata.messageRetentionDuration!;
 
             assert.strictEqual(metadata.retainAckedMessages, true);
-            assert.strictEqual(
-                Number(metadata.messageRetentionDuration.seconds),
-                threeDaysInSeconds);
-            assert.strictEqual(
-                Number(metadata.messageRetentionDuration.nanos), 0);
+            assert.strictEqual(Number(seconds), threeDaysInSeconds);
+            assert.strictEqual(Number(nanos), 0);
           });
     });
 

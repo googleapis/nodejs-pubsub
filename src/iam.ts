@@ -21,22 +21,20 @@
 import {promisifyAll} from '@google-cloud/promisify';
 import * as arrify from 'arrify';
 import {CallOptions} from 'google-gax';
-import {PubSub} from '.';
 
-export interface GetPolicyCallback {
-  (err?: Error|null, acl?: Policy|null): void;
-}
+import {google} from '../proto/iam';
 
-export interface SetPolicyCallback {
-  (err?: Error|null, acl?: Policy|null): void;
-}
+import {Omit, PubSub, RequestCallback, ResourceCallback} from '.';
+
+export type Policy = {
+  etag?: string|Buffer
+}&Omit<google.iam.v1.IPolicy, 'etag'>;
+
+export type GetPolicyCallback = RequestCallback<Policy>;
+export type SetPolicyCallback = RequestCallback<Policy>;
 
 export type SetPolicyResponse = [Policy];
 export type GetPolicyResponse = [Policy];
-
-export interface PermissionsResponse {
-  permissions: string|string[];
-}
 
 /**
  * Shows which IAM permissions is allowed.
@@ -47,43 +45,10 @@ export type IamPermissionsMap = {
   [key: string]: boolean
 };
 
-export type TestIamPermissionsResponse = [PermissionsResponse];
-
-export interface TestIamPermissionsCallback {
-  (err?: Error|null, permissions?: IamPermissionsMap|null,
-   apiResponse?: PermissionsResponse): void;
-}
-
-/**
- * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/Policy#Expr
- */
-export interface Expr {
-  expression: string;
-  title: string;
-  description: string;
-  location: string;
-}
-
-/**
- * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/Policy#Binding
- */
-export interface Binding {
-  role: string;
-  members: string[];
-  condition?: Expr;
-}
-
-/**
- * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/Policy
- */
-export interface Policy {
-  /**
-   * @deprecated
-   */
-  version?: number;
-  etag?: string;
-  bindings: Binding[];
-}
+export type TestIamPermissionsResponse =
+    [IamPermissionsMap, google.iam.v1.ITestIamPermissionsResponse];
+export type TestIamPermissionsCallback = ResourceCallback<
+    IamPermissionsMap, google.iam.v1.ITestIamPermissionsResponse>;
 
 /**
  * [IAM (Identity and Access
@@ -282,7 +247,7 @@ export class IAM {
       policy,
     };
 
-    this.request(
+    this.request<Policy>(
         {
           client: 'SubscriberClient',
           method: 'setIamPolicy',
@@ -394,7 +359,7 @@ export class IAM {
       permissions: arrify(permissions),
     };
 
-    this.request<PermissionsResponse>(
+    this.request<google.iam.v1.ITestIamPermissionsResponse>(
         {
           client: 'SubscriberClient',
           method: 'testIamPermissions',
@@ -408,7 +373,7 @@ export class IAM {
           }
 
           const availablePermissions = arrify(resp!.permissions);
-          const permissionHash =
+          const permissionHash: IamPermissionsMap =
               (permissions as string[]).reduce((acc, permission) => {
                 acc[permission] = availablePermissions.indexOf(permission) > -1;
                 return acc;

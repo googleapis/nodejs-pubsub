@@ -748,7 +748,7 @@ describe('PubSub', () => {
 
     it('should pass back all parameters', done => {
       const err_ = new Error('abc');
-      const snapshots_ = null;
+      const snapshots_ = undefined;
       const nextQuery_ = {};
       const apiResponse_ = {};
 
@@ -833,7 +833,7 @@ describe('PubSub', () => {
 
     it('should pass back all params', done => {
       const err_ = new Error('err');
-      const subs_ = false;
+      const subs_ = undefined;
       const nextQuery_ = {};
       const apiResponse_ = {};
 
@@ -860,12 +860,12 @@ describe('PubSub', () => {
           topic,
         };
 
-        topic.getSubscriptions = (options, callback) => {
+        topic.getSubscriptions = (options) => {
           assert.strictEqual(options, opts);
-          callback();  // the done fn
+          done();
         };
 
-        pubsub.getSubscriptions(opts, done);
+        pubsub.getSubscriptions(opts, assert.ifError);
       });
 
       it('should create a topic instance from a name', done => {
@@ -874,9 +874,9 @@ describe('PubSub', () => {
         };
 
         const fakeTopic = {
-          getSubscriptions(options, callback) {
+          getSubscriptions(options) {
             assert.strictEqual(options, opts);
-            callback();  // the done fn
+            done();
           },
         };
 
@@ -885,7 +885,7 @@ describe('PubSub', () => {
           return fakeTopic;
         };
 
-        pubsub.getSubscriptions(opts, done);
+        pubsub.getSubscriptions(opts, assert.ifError);
       });
     });
   });
@@ -960,7 +960,7 @@ describe('PubSub', () => {
 
     it('should pass back all params', done => {
       const err_ = new Error('err');
-      const topics_ = false;
+      const topics_ = undefined;
       const nextQuery_ = {};
       const apiResponse_ = {};
 
@@ -1232,10 +1232,10 @@ describe('PubSub', () => {
       };
 
       const fakeClient = {
-        fakeMethod(reqOpts, gaxOpts, callback) {
+        fakeMethod(reqOpts, gaxOpts) {
           assert.strictEqual(reqOpts, replacedReqOpts);
           assert.strictEqual(gaxOpts, CONFIG.gaxOpts);
-          callback();  // done()
+          done();
         },
       };
 
@@ -1243,7 +1243,7 @@ describe('PubSub', () => {
         callback(null, fakeClient);
       };
 
-      pubsub.request(CONFIG, done);
+      pubsub.request(CONFIG, assert.ifError);
     });
   });
 
