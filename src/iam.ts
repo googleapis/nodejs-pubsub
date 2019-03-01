@@ -23,45 +23,21 @@ import * as arrify from 'arrify';
 import {CallOptions} from 'google-gax';
 import {PubSub} from '.';
 
-/**
- * @callback GetPolicyCallback
- * @param {?Error} err Request error, if any.
- * @param {object} acl The policy.
- */
+
 export interface GetPolicyCallback {
   (err?: Error|null, acl?: Policy|null): void;
 }
 
-/**
- * @callback SetPolicyCallback
- * @param {?Error} err Request error, if any.
- * @param {object} acl The policy.
- */
 export interface SetPolicyCallback {
   (err?: Error|null, acl?: Policy|null): void;
 }
 
-/**
- * @typedef {array} SetPolicyResponse
- * @property {object} 0 The policy.
- */
 export type SetPolicyResponse = [Policy];
-
-/**
- * @typedef {array} GetPolicyResponse
- * @property {object} 0 The policy.
- */
 export type GetPolicyResponse = [Policy];
 
-/**
- * @typedef {string[]} PermissionsResponse
- * A subset of TestPermissionsRequest.permissions that the caller is allowed.
- * @see https://cloud.google.com/pubsub/docs/reference/rpc/google.iam.v1#google.iam.v1.TestIamPermissionsRequest
- */
 export interface PermissionsResponse {
   permissions: string|string[];
 }
-
 
 /**
  * Shows which IAM permissions is allowed.
@@ -72,19 +48,8 @@ export type IamPermissionsMap = {
   [key: string]: boolean
 };
 
-/**
- * @typedef {array} TestIamPermissionsResponse
- * @property {object[]} 0 A subset of permissions that the caller is allowed.
- * @property {PermissionsResponse} 1 The full API response.
- */
 export type TestIamPermissionsResponse = [PermissionsResponse];
 
-/**
- * @callback TestIamPermissionsCallback
- * @param {?Error} err Request error, if any.
- * @param {TestIamPermissionsAPIResponse} permissions A subset of permissions that the caller is allowed.
- * @param {PermissionsResponse} apiResponse The full API response.
- */
 export interface TestIamPermissionsCallback {
   (err?: Error|null, permissions?: IamPermissionsMap|null,
    apiResponse?: PermissionsResponse): void;
@@ -180,6 +145,15 @@ export class IAM {
   getPolicy(callback: GetPolicyCallback): void;
   getPolicy(gaxOpts: CallOptions, callback: GetPolicyCallback): void;
   /**
+   * @typedef {array} GetPolicyResponse
+   * @property {object} 0 The policy.
+   */
+  /**
+   * @callback GetPolicyCallback
+   * @param {?Error} err Request error, if any.
+   * @param {object} acl The policy.
+   */
+  /**
    * Get the IAM policy
    *
    * @param {object} [gaxOptions] Request configuration options, outlined
@@ -235,6 +209,15 @@ export class IAM {
   setPolicy(policy: Policy, gaxOpts: CallOptions, callback: SetPolicyCallback):
       void;
   setPolicy(policy: Policy, callback: SetPolicyCallback): void;
+  /**
+   * @typedef {array} SetPolicyResponse
+   * @property {object} 0 The policy.
+   */
+  /**
+   * @callback SetPolicyCallback
+   * @param {?Error} err Request error, if any.
+   * @param {object} acl The policy.
+   */
   /**
    * Set the IAM policy
    *
@@ -317,6 +300,22 @@ export class IAM {
       callback: TestIamPermissionsCallback): void;
   testPermissions(
       permissions: string|string[], callback: TestIamPermissionsCallback): void;
+  /**
+   * @callback TestIamPermissionsCallback
+   * @param {?Error} err Request error, if any.
+   * @param {TestIamPermissionsAPIResponse} permissions A subset of permissions that the caller is allowed.
+   * @param {PermissionsResponse} apiResponse The full API response.
+   */
+  /**
+   * @typedef {array} TestIamPermissionsResponse
+   * @property {object[]} 0 A subset of permissions that the caller is allowed.
+   * @property {PermissionsResponse} 1 The full API response.
+   */
+  /**
+   * @typedef {string[]} PermissionsResponse
+   * A subset of TestPermissionsRequest.permissions that the caller is allowed.
+   * @see https://cloud.google.com/pubsub/docs/reference/rpc/google.iam.v1#google.iam.v1.TestIamPermissionsRequest
+   */
   /**
    * Test a set of permissions for a resource.
    *

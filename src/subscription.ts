@@ -29,27 +29,6 @@ import {Snapshot} from './snapshot';
 import {Subscriber, SubscriberOptions} from './subscriber';
 import {noop} from './util';
 
-
-/**
- * @typedef {object} ExpirationPolicy
- * A policy that specifies the conditions for this subscription's expiration. A
- * subscription is considered active as long as any connected subscriber is
- * successfully consuming messages from the subscription or is issuing
- * operations on the subscription. If expirationPolicy is not set, a default
- * policy with ttl of 31 days will be used. The minimum allowed value for
- * expirationPolicy.ttl is 1 day. BETA: This feature is part of a beta release.
- * This API might be changed in backward-incompatible ways and is not
- * recommended for production use. It is not subject to any SLA or deprecation
- * policy.
- * @property {string} ttl Specifies the "time-to-live" duration for an associated
- * resource. The resource expires if it is not active for a period of ttl. The
- * eeedefinition of "activity" depends on the type of the associated resource.
- * The minimum and maximum allowed values for ttl depend on the type of the
- * associated resource, as well. If ttl is not set, the associated resource
- * never expires. A duration in seconds with up to nine fractional digits,
- * terminated by 's'. Example: "3.5s".
- */
-
 /**
  * @see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration
  */
@@ -83,6 +62,25 @@ export interface SubscriptionMetadata extends TSubscriptionMetadata {
   messageRetentionDuration?: Duration;
 }
 
+/**
+ * @typedef {object} ExpirationPolicy
+ * A policy that specifies the conditions for this subscription's expiration. A
+ * subscription is considered active as long as any connected subscriber is
+ * successfully consuming messages from the subscription or is issuing
+ * operations on the subscription. If expirationPolicy is not set, a default
+ * policy with ttl of 31 days will be used. The minimum allowed value for
+ * expirationPolicy.ttl is 1 day. BETA: This feature is part of a beta release.
+ * This API might be changed in backward-incompatible ways and is not
+ * recommended for production use. It is not subject to any SLA or deprecation
+ * policy.
+ * @property {string} ttl Specifies the "time-to-live" duration for an associated
+ * resource. The resource expires if it is not active for a period of ttl. The
+ * eeedefinition of "activity" depends on the type of the associated resource.
+ * The minimum and maximum allowed values for ttl depend on the type of the
+ * associated resource, as well. If ttl is not set, the associated resource
+ * never expires. A duration in seconds with up to nine fractional digits,
+ * terminated by 's'. Example: "3.5s".
+ */
 /**
  * A Subscription object will give you access to your Cloud Pub/Sub
  * subscription.
@@ -256,6 +254,7 @@ export class Subscription extends EventEmitter {
 
     this._listen();
   }
+
   /**
    * Indicates if the Subscription is open and receiving messages.
    *
@@ -264,12 +263,16 @@ export class Subscription extends EventEmitter {
   get isOpen(): boolean {
     return !!(this._subscriber && this._subscriber.isOpen);
   }
+
   /**
    * @type {string}
    */
   get projectId(): string {
     return this.pubsub && this.pubsub.projectId || '{{projectId}}';
   }
+
+  close(): Promise<void>;
+  close(callback: RequestCallback<void>): void;
   /**
    * Closes the Subscription, once this is called you will no longer receive
    * message events unless you call {Subscription#open} or add new message
@@ -289,12 +292,16 @@ export class Subscription extends EventEmitter {
    * // If the callback is omitted a Promise will be returned.
    * subscription.close().then(() => {});
    */
-
-  close(): Promise<void>;
-  close(callback: RequestCallback<void>): void;
   close(callback?: RequestCallback<void>): void|Promise<void> {
     this._subscriber.close().then(() => callback!(), callback);
   }
+
+  createSnapshot(name: string, callback: CreateSnapshotCallback): void;
+  createSnapshot(name: string, gaxOpts?: CallOptions):
+      Promise<CreateSnapshotResponse>;
+  createSnapshot(
+      name: string, gaxOpts: CallOptions,
+      callback: CreateSnapshotCallback): void;
   /**
    * @typedef {array} CreateSnapshotResponse
    * @property {Snapshot} 0 The new {@link Snapshot}.
@@ -338,12 +345,6 @@ export class Subscription extends EventEmitter {
    *   const apiResponse = data[1];
    * });
    */
-  createSnapshot(name: string, callback: CreateSnapshotCallback): void;
-  createSnapshot(name: string, gaxOpts?: CallOptions):
-      Promise<CreateSnapshotResponse>;
-  createSnapshot(
-      name: string, gaxOpts: CallOptions,
-      callback: CreateSnapshotCallback): void;
   createSnapshot(
       name: string, gaxOptsOrCallback?: CallOptions|CreateSnapshotCallback,
       callback?: CreateSnapshotCallback): void|Promise<CreateSnapshotResponse> {
@@ -376,6 +377,12 @@ export class Subscription extends EventEmitter {
           callback!(null, snapshot, resp!);
         });
   }
+
+  delete(callback: RequestCallback<google.protobuf.Empty>): void;
+  delete(gaxOpts?: CallOptions): Promise<google.protobuf.Empty>;
+  delete(
+      gaxOpts: CallOptions,
+      callback: RequestCallback<google.protobuf.Empty>): void;
   /**
    * Delete the subscription. Pull requests from the current subscription will
    * be errored once unsubscription is complete.
@@ -405,13 +412,6 @@ export class Subscription extends EventEmitter {
    *   const apiResponse = data[0];
    * });
    */
-
-
-  delete(callback: RequestCallback<google.protobuf.Empty>): void;
-  delete(gaxOpts?: CallOptions): Promise<google.protobuf.Empty>;
-  delete(
-      gaxOpts: CallOptions,
-      callback: RequestCallback<google.protobuf.Empty>): void;
   delete(
       gaxOptsOrCallback?: CallOptions|RequestCallback<google.protobuf.Empty>,
       callback?: RequestCallback<google.protobuf.Empty>):
@@ -440,6 +440,9 @@ export class Subscription extends EventEmitter {
         },
         callback);
   }
+
+  exists(): Promise<boolean>;
+  exists(callback: ExistsCallback): void;
   /**
    * @typedef {array} SubscriptionExistsResponse
    * @property {boolean} 0 Whether the subscription exists
@@ -471,8 +474,6 @@ export class Subscription extends EventEmitter {
    *   const exists = data[0];
    * });
    */
-  exists(): Promise<boolean>;
-  exists(callback: ExistsCallback): void;
   exists(callback?: ExistsCallback): void|Promise<boolean> {
     this.getMetadata(err => {
       if (!err) {
@@ -487,6 +488,10 @@ export class Subscription extends EventEmitter {
       callback!(err);
     });
   }
+
+  get(callback: CreateSubscriptionCallback): void;
+  get(gaxOpts?: GetCallOptions): Promise<CreateSubscriptionResponse>;
+  get(gaxOpts: GetCallOptions, callback: CreateSubscriptionCallback): void;
   /**
    * @typedef {array} GetSubscriptionResponse
    * @property {Subscription} 0 The {@link Subscription}.
@@ -527,9 +532,6 @@ export class Subscription extends EventEmitter {
    *   const apiResponse = data[1];
    * });
    */
-  get(callback: CreateSubscriptionCallback): void;
-  get(gaxOpts?: GetCallOptions): Promise<CreateSubscriptionResponse>;
-  get(gaxOpts: GetCallOptions, callback: CreateSubscriptionCallback): void;
   get(gaxOptsOrCallback?: GetCallOptions|CreateSubscriptionCallback,
       callback?: CreateSubscriptionCallback):
       void|Promise<CreateSubscriptionResponse> {
@@ -553,6 +555,11 @@ export class Subscription extends EventEmitter {
       this.create(gaxOpts, callback);
     });
   }
+
+  getMetadata(gaxOpts?: CallOptions): Promise<google.pubsub.v1.ISubscription>;
+  getMetadata(callback: GetSubscriptionMetadataCallback): void;
+  getMetadata(gaxOpts: CallOptions, callback: GetSubscriptionMetadataCallback):
+      void;
   /**
    * @typedef {array} GetSubscriptionMetadataResponse
    * @property {object} 0 The full API response.
@@ -590,10 +597,6 @@ export class Subscription extends EventEmitter {
    *   const apiResponse = data[0];
    * });
    */
-  getMetadata(gaxOpts?: CallOptions): Promise<google.pubsub.v1.ISubscription>;
-  getMetadata(callback: GetSubscriptionMetadataCallback): void;
-  getMetadata(gaxOpts: CallOptions, callback: GetSubscriptionMetadataCallback):
-      void;
   getMetadata(
       gaxOptsOrCallback?: CallOptions|GetSubscriptionMetadataCallback,
       callback?: GetSubscriptionMetadataCallback):
@@ -619,6 +622,15 @@ export class Subscription extends EventEmitter {
           callback!(err!, apiResponse);
         });
   }
+
+  modifyPushConfig(config: google.pubsub.v1.IPushConfig, gaxOpts?: CallOptions):
+      Promise<google.protobuf.Empty>;
+  modifyPushConfig(
+      config: google.pubsub.v1.IPushConfig,
+      callback: RequestCallback<google.protobuf.Empty>): void;
+  modifyPushConfig(
+      config: google.pubsub.v1.IPushConfig, gaxOpts: CallOptions,
+      callback: RequestCallback<google.protobuf.Empty>): void;
   /**
    * @typedef {array} ModifyPushConfigResponse
    * @property {object} 0 The full API response.
@@ -667,14 +679,6 @@ export class Subscription extends EventEmitter {
    *   const apiResponse = data[0];
    * });
    */
-  modifyPushConfig(config: google.pubsub.v1.IPushConfig, gaxOpts?: CallOptions):
-      Promise<google.protobuf.Empty>;
-  modifyPushConfig(
-      config: google.pubsub.v1.IPushConfig,
-      callback: RequestCallback<google.protobuf.Empty>): void;
-  modifyPushConfig(
-      config: google.pubsub.v1.IPushConfig, gaxOpts: CallOptions,
-      callback: RequestCallback<google.protobuf.Empty>): void;
   modifyPushConfig(
       config: google.pubsub.v1.IPushConfig,
       gaxOptsOrCallback?: CallOptions|RequestCallback<google.protobuf.Empty>,
@@ -697,6 +701,7 @@ export class Subscription extends EventEmitter {
         },
         callback!);
   }
+
   /**
    * Opens the Subscription to receive messages. In general this method
    * shouldn't need to be called, unless you wish to receive messages after
@@ -723,6 +728,12 @@ export class Subscription extends EventEmitter {
       this._subscriber.open();
     }
   }
+
+  seek(snapshot: string|Date, gaxOpts?: CallOptions):
+      Promise<google.pubsub.v1.ISeekResponse>;
+  seek(snapshot: string|Date, callback: SeekCallback): void;
+  seek(snapshot: string|Date, gaxOpts: CallOptions, callback: SeekCallback):
+      void;
   /**
    * @typedef {array} SeekResponse
    * @property {object} 0 The full API response.
@@ -760,11 +771,6 @@ export class Subscription extends EventEmitter {
    *
    * subscription.seek(date, callback);
    */
-  seek(snapshot: string|Date, gaxOpts?: CallOptions):
-      Promise<google.pubsub.v1.ISeekResponse>;
-  seek(snapshot: string|Date, callback: SeekCallback): void;
-  seek(snapshot: string|Date, gaxOpts: CallOptions, callback: SeekCallback):
-      void;
   seek(
       snapshot: string|Date, gaxOptsOrCallback?: CallOptions|SeekCallback,
       callback?: SeekCallback): void|Promise<google.pubsub.v1.ISeekResponse> {
@@ -801,6 +807,15 @@ export class Subscription extends EventEmitter {
         },
         callback!);
   }
+
+  setMetadata(metadata: Metadata, gaxOpts?: CallOptions):
+      Promise<google.pubsub.v1.ISubscription>;
+  setMetadata(
+      metadata: Metadata,
+      callback: RequestCallback<google.pubsub.v1.ISubscription>): void;
+  setMetadata(
+      metadata: Metadata, gaxOpts: CallOptions,
+      callback: RequestCallback<google.pubsub.v1.ISubscription>): void;
   /**
    * @typedef {array} SetSubscriptionMetadataResponse
    * @property {object} 0 The full API response.
@@ -837,14 +852,6 @@ export class Subscription extends EventEmitter {
    *   const apiResponse = data[0];
    * });
    */
-  setMetadata(metadata: Metadata, gaxOpts?: CallOptions):
-      Promise<google.pubsub.v1.ISubscription>;
-  setMetadata(
-      metadata: Metadata,
-      callback: RequestCallback<google.pubsub.v1.ISubscription>): void;
-  setMetadata(
-      metadata: Metadata, gaxOpts: CallOptions,
-      callback: RequestCallback<google.pubsub.v1.ISubscription>): void;
   setMetadata(
       metadata: Metadata,
       gaxOptsOrCallback?: CallOptions|
