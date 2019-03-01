@@ -23,7 +23,6 @@ import * as arrify from 'arrify';
 import {CallOptions} from 'google-gax';
 import {PubSub} from '.';
 
-
 export interface GetPolicyCallback {
   (err?: Error|null, acl?: Policy|null): void;
 }
