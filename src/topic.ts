@@ -121,6 +121,10 @@ export class Topic {
      */
     this.iam = new IAM(pubsub, this.name);
   }
+
+  create(gaxOpts?: CallOptions): Promise<CreateTopicResponse>;
+  create(callback: CreateTopicCallback): void;
+  create(gaxOpts: CallOptions, callback: CreateTopicCallback): void;
   /**
    * Create a topic.
    *
@@ -149,9 +153,6 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  create(gaxOpts?: CallOptions): Promise<CreateTopicResponse>;
-  create(callback: CreateTopicCallback): void;
-  create(gaxOpts: CallOptions, callback: CreateTopicCallback): void;
   create(
       gaxOptsOrCallback?: CallOptions|CreateTopicCallback,
       callback?: CreateTopicCallback): Promise<CreateTopicResponse>|void {
@@ -162,6 +163,13 @@ export class Topic {
 
     this.pubsub.createTopic(this.name, gaxOpts, callback);
   }
+
+  createSubscription(name: string, callback: CreateSubscriptionCallback): void;
+  createSubscription(name: string, options?: CreateSubscriptionOptions):
+      Promise<CreateSubscriptionResponse>;
+  createSubscription(
+      name: string, options: CreateSubscriptionOptions,
+      callback: CreateSubscriptionCallback): void;
   /**
    * Create a subscription to this topic.
    *
@@ -199,12 +207,6 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  createSubscription(name: string, callback: CreateSubscriptionCallback): void;
-  createSubscription(name: string, options?: CreateSubscriptionOptions):
-      Promise<CreateSubscriptionResponse>;
-  createSubscription(
-      name: string, options: CreateSubscriptionOptions,
-      callback: CreateSubscriptionCallback): void;
   createSubscription(
       name: string,
       optionsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
@@ -218,6 +220,12 @@ export class Topic {
     this.pubsub.createSubscription(
         this, name, options as CreateSubscriptionOptions, callback!);
   }
+
+  delete(callback: RequestCallback<google.protobuf.Empty>): void;
+  delete(gaxOpts?: CallOptions): Promise<google.protobuf.Empty>;
+  delete(
+      gaxOpts: CallOptions,
+      callback: RequestCallback<google.protobuf.Empty>): void;
   /**
    * Delete the topic. This will not delete subscriptions to this topic.
    *
@@ -245,11 +253,6 @@ export class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  delete(callback: RequestCallback<google.protobuf.Empty>): void;
-  delete(gaxOpts?: CallOptions): Promise<google.protobuf.Empty>;
-  delete(
-      gaxOpts: CallOptions,
-      callback: RequestCallback<google.protobuf.Empty>): void;
   delete(
       gaxOptsOrCallback?: CallOptions|RequestCallback<google.protobuf.Empty>,
       callback?: RequestCallback<google.protobuf.Empty>):
@@ -272,6 +275,7 @@ export class Topic {
         },
         callback);
   }
+
   /**
    * @typedef {array} TopicExistsResponse
    * @property {boolean} 0 Whether the topic exists
@@ -321,6 +325,10 @@ export class Topic {
       callback(err);
     });
   }
+
+  get(callback: CreateTopicCallback): void;
+  get(gaxOpts?: GetCallOptions): Promise<Topic>;
+  get(gaxOpts: GetCallOptions, callback: CreateTopicCallback): void;
   /**
    * @typedef {array} GetTopicResponse
    * @property {Topic} 0 The {@link Topic}.
@@ -360,9 +368,6 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  get(callback: CreateTopicCallback): void;
-  get(gaxOpts?: GetCallOptions): Promise<Topic>;
-  get(gaxOpts: GetCallOptions, callback: CreateTopicCallback): void;
   get(gaxOptsOrCallback?: GetCallOptions|CreateTopicCallback,
       callback?: CreateTopicCallback): void|Promise<Topic> {
     const gaxOpts =
@@ -389,6 +394,10 @@ export class Topic {
       this.create(gaxOpts, callback!);
     });
   }
+
+  getMetadata(callback: GetTopicMetadataCallback): void;
+  getMetadata(gaxOpts: CallOptions, callback: GetTopicMetadataCallback): void;
+  getMetadata(gaxOpts?: CallOptions): Promise<google.pubsub.v1.ITopic>;
   /**
    * @typedef {array} GetTopicMetadataResponse
    * @property {object} 0 The full API response.
@@ -423,9 +432,6 @@ export class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  getMetadata(callback: GetTopicMetadataCallback): void;
-  getMetadata(gaxOpts: CallOptions, callback: GetTopicMetadataCallback): void;
-  getMetadata(gaxOpts?: CallOptions): Promise<google.pubsub.v1.ITopic>;
   getMetadata(
       gaxOptsOrCallback?: CallOptions|GetTopicMetadataCallback,
       callback?: GetTopicMetadataCallback):
@@ -451,6 +457,14 @@ export class Topic {
           callback!(err, apiResponse);
         });
   }
+
+  getSubscriptions(callback: RequestCallback<Subscription[]>): void;
+  getSubscriptions(
+      options: SubscriptionCallOptions,
+      callback: RequestCallback<Subscription[]>): void;
+  getSubscriptions(
+      options?: SubscriptionCallOptions,
+      ): Promise<Subscription[]>;
   /**
    * Get a list of the subscriptions registered to this topic. You may
    * optionally provide a query object as the first argument to customize the
@@ -487,13 +501,6 @@ export class Topic {
    *   const subscriptions = data[0];
    * });
    */
-  getSubscriptions(callback: RequestCallback<Subscription[]>): void;
-  getSubscriptions(
-      options: SubscriptionCallOptions,
-      callback: RequestCallback<Subscription[]>): void;
-  getSubscriptions(
-      options?: SubscriptionCallOptions,
-      ): Promise<Subscription[]>;
   getSubscriptions(
       optionsOrCallback?: SubscriptionCallOptions|
       RequestCallback<Subscription[]>,
@@ -536,6 +543,11 @@ export class Topic {
           callback!(...args);
         });
   }
+
+  publish(data: Buffer, attributes?: Attributes): Promise<string>;
+  publish(data: Buffer, callback: PublishCallback): void;
+  publish(data: Buffer, attributes: Attributes, callback: PublishCallback):
+      void;
   /**
    * Publish the provided message.
    *
@@ -578,10 +590,6 @@ export class Topic {
    * //-
    * topic.publish(data).then((messageId) => {});
    */
-  publish(data: Buffer, attributes?: Attributes): Promise<string>;
-  publish(data: Buffer, callback: PublishCallback): void;
-  publish(data: Buffer, attributes: Attributes, callback: PublishCallback):
-      void;
   publish(
       data: Buffer, attributesOrCallback?: Attributes|PublishCallback,
       callback?: PublishCallback): Promise<string>|void {
@@ -592,6 +600,11 @@ export class Topic {
         callback;
     return this.publisher.publish(data, attributes, callback!);
   }
+
+  publishJSON(json: object, attributes?: Attributes): Promise<string>;
+  publishJSON(json: object, callback: PublishCallback): void;
+  publishJSON(json: object, attributes: Attributes, callback: PublishCallback):
+      void;
   /**
    * Publish the provided JSON. It should be noted that all messages published
    * are done so in the form of a Buffer. This is simply a convenience method
@@ -640,10 +653,6 @@ export class Topic {
    * //-
    * topic.publishJSON(data).then((messageId) => {});
    */
-  publishJSON(json: object, attributes?: Attributes): Promise<string>;
-  publishJSON(json: object, callback: PublishCallback): void;
-  publishJSON(json: object, attributes: Attributes, callback: PublishCallback):
-      void;
   publishJSON(
       json: object, attributesOrCallback?: Attributes|PublishCallback,
       callback?: PublishCallback): Promise<string>|void {
@@ -659,6 +668,7 @@ export class Topic {
     const data = Buffer.from(JSON.stringify(json));
     return this.publish(data, attributes, callback!);
   }
+
   /**
    * Set the publisher options.
    *
@@ -679,6 +689,7 @@ export class Topic {
   setPublishOptions(options: PublishOptions): void {
     this.publisher.setOptions(options);
   }
+
   /**
    * Create a Subscription object. This command by itself will not run any API
    * requests. You will receive a {module:pubsub/subscription} object,
@@ -723,6 +734,7 @@ export class Topic {
     options.topic = this;
     return this.pubsub.subscription(name, options);
   }
+
   /**
    * Format the name of a topic. A Topic's full name is in the format of
    * 'projects/{projectId}/topics/{topicName}'.

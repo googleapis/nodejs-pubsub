@@ -101,6 +101,8 @@ export class Snapshot {
     this.name = Snapshot.formatName_(parent.projectId, name);
   }
 
+  delete(): Promise<google.protobuf.Empty>;
+  delete(callback: RequestCallback<google.protobuf.Empty>): void;
   /**
    * Delete the snapshot.
    *
@@ -120,8 +122,6 @@ export class Snapshot {
    *   const apiResponse = data[0];
    * });
    */
-  delete(): Promise<google.protobuf.Empty>;
-  delete(callback: RequestCallback<google.protobuf.Empty>): void;
   delete(callback?: RequestCallback<google.protobuf.Empty>):
       void|Promise<google.protobuf.Empty> {
     const reqOpts = {
@@ -136,6 +136,7 @@ export class Snapshot {
         },
         callback);
   }
+
   /*@
    * Format the name of a snapshot. A snapshot's full name is in the format of
    * projects/{projectId}/snapshots/{snapshotName}
@@ -146,6 +147,9 @@ export class Snapshot {
     return 'projects/' + projectId + '/snapshots/' + name.split('/').pop();
   }
 
+  create(gaxOpts?: CallOptions): Promise<CreateSnapshotResponse>;
+  create(callback: CreateSnapshotCallback): void;
+  create(gaxOpts: CallOptions, callback: CreateSnapshotCallback): void;
   /**
    * Create a snapshot with the given name.
    *
@@ -181,9 +185,6 @@ export class Snapshot {
    *   const apiResponse = data[1];
    * });
    */
-  create(gaxOpts?: CallOptions): Promise<CreateSnapshotResponse>;
-  create(callback: CreateSnapshotCallback): void;
-  create(gaxOpts: CallOptions, callback: CreateSnapshotCallback): void;
   create(
       gaxOpts?: CallOptions|CreateSnapshotCallback,
       callback?: CreateSnapshotCallback): void|Promise<CreateSnapshotResponse> {
@@ -195,6 +196,9 @@ export class Snapshot {
         .createSnapshot(this.name, gaxOpts! as CallOptions, callback!);
   }
 
+  seek(gaxOpts?: CallOptions): Promise<google.pubsub.v1.ISeekResponse>;
+  seek(callback: SeekCallback): void;
+  seek(gaxOpts: CallOptions, callback: SeekCallback): void;
   /**
    * Seeks an existing subscription to the snapshot.
    *
@@ -220,9 +224,6 @@ export class Snapshot {
    *   const apiResponse = data[0];
    * });
    */
-  seek(gaxOpts?: CallOptions): Promise<google.pubsub.v1.ISeekResponse>;
-  seek(callback: SeekCallback): void;
-  seek(gaxOpts: CallOptions, callback: SeekCallback): void;
   seek(gaxOpts?: CallOptions|SeekCallback, callback?: SeekCallback):
       void|Promise<google.pubsub.v1.ISeekResponse> {
     if (!(this.parent instanceof Subscription)) {

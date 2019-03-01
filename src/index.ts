@@ -109,7 +109,6 @@ export interface Attributes {
   [key: string]: string;
 }
 
-
 export interface SubscriptionCallOptions {
   flowControl?: FlowControlOptions;
   maxConnections?: number;
@@ -120,24 +119,11 @@ export interface SubscriptionCallOptions {
   batching?: BatchPublishOptions;
 }
 
-
-
-/**
- * @callback CreateSnapshotCallback
- * @param {?Error} err Request error, if any.
- * @param {Snapshot} snapshot
- * @param {object} apiResponse The full API response.
- */
 export interface CreateSnapshotCallback {
   (err: Error|null, snapshot?: Snapshot|null,
    apiResponse?: google.pubsub.v1.ISnapshot): void;
 }
 
-/**
- * @typedef {array} CreateSnapshotResponse
- * @property {Snapshot}.
- * @property {object} 1 The full API response.
- */
 export type CreateSnapshotResponse = [Snapshot, google.pubsub.v1.ISnapshot];
 
 /**
@@ -150,30 +136,13 @@ const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
 // tslint:disable-next-line:no-any
 export type Metadata = any;
 
-/**
- * @typedef {array} CreateTopicResponse
- * @property {Topic} 0 The new {@link Topic}.
- * @property {object} 1 The full API response.
- */
 export type CreateTopicResponse = [Topic, google.pubsub.v1.ITopic];
 
-/**
- * @callback CreateTopicCallback
- * @param {?Error} err Request error, if any.
- * @param {Topic} topic The new {@link Topic}.
- * @param {object} apiResponse The full API response.
- */
 export interface CreateTopicCallback {
   (err?: Error|null, topic?: Topic|null,
    apiResponse?: google.pubsub.v1.ITopic): void;
 }
 
-/**
- * @callback CreateSubscriptionCallback
- * @param {?Error} err Request error, if any.
- * @param {Subscription} Subscription
- * @param {object} apiResponse The full API response.
- */
 export interface CreateSubscriptionCallback {
   (err?: Error|null, subscription?: Subscription|null,
    apiResponse?: google.pubsub.v1.ISubscription): void;
@@ -197,11 +166,6 @@ export interface RequestCallback<TResponse> {
   (err?: Error|null, res?: TResponse|null): void;
 }
 
-/**
- * @typedef {array} CreateSubscriptionResponse
- * @property {Subscription} 0 The new {@link Subscription}.
- * @property {object} 1 The full API response.
- */
 export type CreateSubscriptionResponse =
     [Subscription, google.pubsub.v1.ISubscription];
 
@@ -346,6 +310,17 @@ export class PubSub {
       topic: Topic|string, name: string,
       callback: CreateSubscriptionCallback): void;
   /**
+   * @typedef {array} CreateSubscriptionResponse
+   * @property {Subscription} 0 The new {@link Subscription}.
+   * @property {object} 1 The full API response.
+   */
+  /**
+   * @callback CreateSubscriptionCallback
+   * @param {?Error} err Request error, if any.
+   * @param {Subscription} Subscription
+   * @param {object} apiResponse The full API response.
+   */
+  /**
    * Options for creating a subscription.
    *
    * See a [Subscription
@@ -470,6 +445,17 @@ export class PubSub {
   createTopic(
       name: string, gaxOpts: CallOptions, callback?: CreateTopicCallback): void;
   createTopic(name: string, callback: CreateTopicCallback): void;
+  /**
+   * @typedef {array} CreateTopicResponse
+   * @property {Topic} 0 The new {@link Topic}.
+   * @property {object} 1 The full API response.
+   */
+  /**
+   * @callback CreateTopicCallback
+   * @param {?Error} err Request error, if any.
+   * @param {Topic} topic The new {@link Topic}.
+   * @param {object} apiResponse The full API response.
+   */
   /**
    * Create a topic with the given name.
    *
