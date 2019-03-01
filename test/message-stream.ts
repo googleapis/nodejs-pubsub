@@ -15,11 +15,13 @@
  */
 
 import * as assert from 'assert';
-import {Metadata} from 'grpc';
+import {Metadata, ServiceError} from 'grpc';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {Duplex, PassThrough} from 'stream';
 import * as uuid from 'uuid';
+import * as messageTypes from '../src/message-stream';
+import {Subscriber} from '../src/subscriber';
 
 // just need this for unit tests.. we have a ponyfill for destroy on
 // MessageStream and gax streams use Duplexify
@@ -112,7 +114,7 @@ class FakeSubscriber {
   name: string;
   ackDeadline: number;
   client: FakeGaxClient;
-  constructor(client) {
+  constructor(client: FakeGaxClient) {
     this.name = uuid.v4();
     this.ackDeadline = Math.floor(Math.random() * 600);
     this.client = client;
@@ -129,8 +131,8 @@ describe('MessageStream', () => {
   let subscriber: FakeSubscriber;
 
   // tslint:disable-next-line variable-name
-  let MessageStream;
-  let messageStream;
+  let MessageStream: typeof messageTypes.MessageStream;
+  let messageStream: messageTypes.MessageStream;
 
   before(() => {
     MessageStream = proxyquire('../src/message-stream.js', {
@@ -142,7 +144,7 @@ describe('MessageStream', () => {
     const gaxClient = new FakeGaxClient();
     client = gaxClient.client;  // we hit the grpc client directly
     subscriber = new FakeSubscriber(gaxClient);
-    messageStream = new MessageStream(subscriber);
+    messageStream = new MessageStream(subscriber as {} as Subscriber);
   });
 
   afterEach(() => {
@@ -156,20 +158,21 @@ describe('MessageStream', () => {
         objectMode: true,
         highWaterMark: 0,
       };
-
-      assert.deepStrictEqual(messageStream.options, expectedOptions);
+      // tslint:disable-next-line no-any
+      assert.deepStrictEqual((messageStream as any).options, expectedOptions);
     });
 
     it('should respect the highWaterMark option', () => {
       const highWaterMark = 3;
-      const ms = new MessageStream(subscriber, {highWaterMark});
+      const ms =
+          new MessageStream(subscriber as {} as Subscriber, {highWaterMark});
 
       const expectedOptions = {
         objectMode: true,
         highWaterMark,
       };
-
-      assert.deepStrictEqual(ms.options, expectedOptions);
+      // tslint:disable-next-line no-any
+      assert.deepStrictEqual((ms as any).options, expectedOptions);
     });
 
     it('should set destroyed to false', () => {
@@ -193,7 +196,7 @@ describe('MessageStream', () => {
           const now = Date.now();
 
           sandbox.stub(global.Date, 'now').returns(now);
-          messageStream = new MessageStream(subscriber);
+          messageStream = new MessageStream(subscriber as {} as Subscriber);
 
           setImmediate(() => {
             assert.strictEqual(client.deadline, now + timeout);
@@ -212,7 +215,8 @@ describe('MessageStream', () => {
         it('should respect the highWaterMark option', done => {
           const highWaterMark = 3;
 
-          messageStream = new MessageStream(subscriber, {highWaterMark});
+          messageStream = new MessageStream(
+              subscriber as {} as Subscriber, {highWaterMark});
 
           setImmediate(() => {
             assert.strictEqual(client.streams.length, 5);
@@ -227,7 +231,8 @@ describe('MessageStream', () => {
         it('should respect the maxStreams option', done => {
           const maxStreams = 3;
 
-          messageStream = new MessageStream(subscriber, {maxStreams});
+          messageStream =
+              new MessageStream(subscriber as {} as Subscriber, {maxStreams});
 
           setImmediate(() => {
             assert.strictEqual(client.streams.length, maxStreams);
@@ -240,7 +245,8 @@ describe('MessageStream', () => {
           const now = Date.now();
 
           sandbox.stub(global.Date, 'now').returns(now);
-          messageStream = new MessageStream(subscriber, {timeout});
+          messageStream =
+              new MessageStream(subscriber as {} as Subscriber, {timeout});
 
           setImmediate(() => {
             assert.strictEqual(client.deadline, now + timeout);
@@ -302,7 +308,7 @@ describe('MessageStream', () => {
     });
 
     describe('without native destroy', () => {
-      let destroy;
+      let destroy: (err?: Error) => void;
 
       before(() => {
         destroy = FakePassThrough.prototype.destroy;
@@ -364,7 +370,7 @@ describe('MessageStream', () => {
 
         sandbox.stub(subscriber, 'getClient').rejects(fakeError);
 
-        const ms = new MessageStream(subscriber);
+        const ms = new MessageStream(subscriber as {} as Subscriber);
 
         ms.on('error', err => {
           assert.strictEqual(err, fakeError);
@@ -375,11 +381,11 @@ describe('MessageStream', () => {
 
       it('should destroy the stream if unable to connect to channel', done => {
         const stub = sandbox.stub(client, 'waitForReady');
-        const ms = new MessageStream(subscriber);
+        const ms = new MessageStream(subscriber as {} as Subscriber);
         const fakeError = new Error('err');
         const expectedMessage = `Failed to connect to channel. Reason: err`;
 
-        ms.on('error', err => {
+        ms.on('error', (err: ServiceError) => {
           assert.strictEqual(err.code, 2);
           assert.strictEqual(err.message, expectedMessage);
           assert.strictEqual(ms.destroyed, true);
@@ -394,10 +400,10 @@ describe('MessageStream', () => {
 
       it('should give a deadline error if waitForReady times out', done => {
         const stub = sandbox.stub(client, 'waitForReady');
-        const ms = new MessageStream(subscriber);
+        const ms = new MessageStream(subscriber as {} as Subscriber);
         const fakeError = new Error('Failed to connect before the deadline');
 
-        ms.on('error', err => {
+        ms.on('error', (err: ServiceError) => {
           assert.strictEqual(err.code, 4);
           done();
         });
@@ -483,7 +489,7 @@ describe('MessageStream', () => {
           details: 'Err',
         };
 
-        messageStream.on('error', err => {
+        messageStream.on('error', (err: ServiceError) => {
           assert(err instanceof Error);
           assert.strictEqual(err.code, fakeStatus.code);
           assert.strictEqual(err.message, fakeStatus.details);
