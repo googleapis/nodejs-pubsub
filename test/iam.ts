@@ -18,7 +18,7 @@ import * as promisify from '@google-cloud/promisify';
 import * as assert from 'assert';
 import * as proxyquire from 'proxyquire';
 
-import {PubSub, RequestConfig} from '../src';
+import {PubSub, RequestConfig} from '../src/pubsub';
 import * as iamTypes from '../src/iam';
 import * as util from '../src/util';
 

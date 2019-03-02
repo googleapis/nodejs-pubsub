@@ -21,7 +21,7 @@ import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {PassThrough} from 'stream';
 import * as uuid from 'uuid';
-import {Subscription} from '../src';
+import {Subscription} from '../src/subscription';
 import {HistogramOptions} from '../src/histogram';
 import {FlowControlOptions} from '../src/lease-manager';
 import {BatchOptions} from '../src/message-queues';

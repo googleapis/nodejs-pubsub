@@ -23,7 +23,7 @@ import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
 import {google} from '../proto/pubsub';
-import {ExistsCallback, RequestCallback, RequestConfig} from '../src';
+import {ExistsCallback, RequestCallback, RequestConfig} from '../src/pubsub';
 import {SeekCallback, Snapshot} from '../src/snapshot';
 import {Message, SubscriberOptions} from '../src/subscriber';
 import {CreateSubscriptionCallback, CreateSubscriptionOptions, GetSubscriptionMetadataCallback, Subscription, SubscriptionMetadata} from '../src/subscription';

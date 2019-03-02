@@ -24,7 +24,7 @@ import {CallOptions} from 'google-gax';
 
 import {google} from '../proto/iam';
 
-import {Omit, PubSub, RequestCallback, ResourceCallback} from '.';
+import {Omit, PubSub, RequestCallback, ResourceCallback} from './pubsub';
 
 export type Policy = {
   etag?: string|Buffer

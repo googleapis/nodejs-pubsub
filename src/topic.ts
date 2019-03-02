@@ -22,7 +22,7 @@ import {Readable} from 'stream';
 
 import {google} from '../proto/pubsub';
 
-import {EmptyCallback, EmptyResponse, ExistsCallback, ExistsResponse, ObjectStream, PagedResponse, PageOptions, PubSub, RequestCallback, ResourceCallback} from '.';
+import {EmptyCallback, EmptyResponse, ExistsCallback, ExistsResponse, ObjectStream, PagedResponse, PageOptions, PubSub, RequestCallback, ResourceCallback} from './pubsub';
 import {IAM} from './iam';
 import {Attributes, PublishCallback, Publisher, PublishOptions} from './publisher';
 import {CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, Subscription, SubscriptionOptions} from './subscription';

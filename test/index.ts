@@ -149,7 +149,7 @@ describe('PubSub', () => {
 
   before(() => {
     delete process.env.PUBSUB_EMULATOR_HOST;
-    PubSub = proxyquire('../src', {
+    PubSub = proxyquire('../src/pubsub', {
                '@google-cloud/paginator': {
                  paginator: fakePaginator,
                },
