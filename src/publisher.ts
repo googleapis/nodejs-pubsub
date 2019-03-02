@@ -21,7 +21,6 @@ import {google} from '../proto/pubsub';
 
 const each = require('async-each');
 import * as extend from 'extend';
-import * as is from 'is';
 import {Topic} from './topic';
 import {Attributes} from '.';
 import {ServiceError} from 'grpc';
@@ -181,7 +180,7 @@ export class Publisher {
     // Ensure the `attributes` object only has string values
     for (const key of Object.keys(attributes)) {
       const value = attributes[key];
-      if (!is.string(value)) {
+      if (typeof value !== 'string') {
         throw new TypeError(`All attributes must be in the form of a string.
 \nInvalid value of type "${typeof value}" provided for "${key}".`);
       }

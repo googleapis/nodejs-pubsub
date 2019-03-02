@@ -15,12 +15,10 @@
  */
 
 import {promisify} from '@google-cloud/promisify';
-import {Gaxios} from 'gaxios';
 import {ClientStub} from 'google-gax';
 import {ClientDuplexStream, Metadata, ServiceError, status, StatusObject} from 'grpc';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
-
 import {PullResponse, Subscriber} from './subscriber';
 
 /*!

@@ -17,7 +17,10 @@
 import * as assert from 'assert';
 import * as defer from 'p-defer';
 import * as uuid from 'uuid';
+
 import {PubSub, Subscription, Topic} from '../src';
+import {Snapshot} from '../src/snapshot';
+import {Message} from '../src/subscriber';
 
 const pubsub = new PubSub();
 
@@ -52,7 +55,7 @@ describe('pubsub', () => {
     return topic.name.split('/').pop();
   }
 
-  async function publishPop(message, options = {}) {
+  async function publishPop(message: Buffer, options = {}) {
     const topic = pubsub.topic(generateTopicName());
     const subscription = topic.subscription(generateSubName());
     await topic.create();
@@ -60,7 +63,7 @@ describe('pubsub', () => {
     for (let i = 0; i < 6; i++) {
       await topic.publish(Buffer.from(message), options);
     }
-    return new Promise((resolve, reject) => {
+    return new Promise<Message>((resolve, reject) => {
       subscription.on('error', reject);
       subscription.once('message', resolve);
     });
@@ -93,23 +96,15 @@ describe('pubsub', () => {
     });
 
     it('should list topics in a stream', done => {
-      // tslint:disable-next-line no-any
-      const topicsEmitted: any[] = [];
-
-      // tslint:disable-next-line no-any
-      (pubsub as any)
-          .getTopicsStream()
+      const topicsEmitted: Topic[] = [];
+      pubsub.getTopicsStream()
           .on('error', done)
-          .on('data',
-              topic => {
-                topicsEmitted.push(topic);
-              })
+          .on('data', topic => topicsEmitted.push(topic))
           .on('end', () => {
             const results = topicsEmitted.filter(topic => {
               const name = getTopicName(topic);
               return TOPIC_FULL_NAMES.indexOf(name) !== -1;
             });
-
             assert.strictEqual(results.length, TOPIC_NAMES.length);
             done();
           });
@@ -178,8 +173,7 @@ describe('pubsub', () => {
       const attrs = {
         customAttribute: 'value',
       };
-      // tslint:disable-next-line no-any
-      const message: any = await publishPop(data, attrs);
+      const message = await publishPop(data, attrs);
       assert.deepStrictEqual(message.data, data);
       assert.deepStrictEqual(message.attributes, attrs);
     });
@@ -613,15 +607,10 @@ describe('pubsub', () => {
     });
 
     it('should get a list of snapshots as a stream', done => {
-      // tslint:disable-next-line no-any
-      const snapshots: any[] = [];
-
+      const snapshots = new Array<Snapshot>();
       pubsub.getSnapshotsStream()
           .on('error', done)
-          .on('data',
-              snapshot => {
-                snapshots.push(snapshot);
-              })
+          .on('data', snapshot => snapshots.push(snapshot))
           .on('end', () => {
             assert(snapshots.length > 0);
             const names = snapshots.map(getSnapshotName);

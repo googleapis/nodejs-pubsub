@@ -26,8 +26,7 @@ import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
-import * as gax from 'google-gax';
-import * as is from 'is';
+import {ClientStub, GrpcClient} from 'google-gax';
 
 const PKG = require('../../package.json');
 const v1 = require('./v1');
@@ -42,8 +41,7 @@ import {ServiceError, ChannelCredentials} from 'grpc';
 import {FlowControlOptions} from './lease-manager';
 import {BatchPublishOptions} from './publisher';
 
-const opts = {} as gax.GrpcClientOptions;
-const {grpc} = new gax.GrpcClient(opts);
+const {grpc} = new GrpcClient();
 
 export interface GetTopicMetadataCallback {
   (err?: ServiceError|null, res?: google.pubsub.v1.ITopic|null): void;
@@ -87,6 +85,7 @@ export interface GetSubscriptionsCallback {
 }
 
 export interface GetTopicsOptions extends Options {}
+export type GetTopicsResponse = [Topic[], object];
 export interface GetTopicsCallback {
   (err?: Error|null, topics?: Topic[]|null, apiResponse?: object): void;
 }
@@ -190,8 +189,7 @@ interface GetClientCallback {
    * @param gaxClient - The gax client specified in RequestConfig.client.
    *                    Typed any since it's importing Javascript source.
    */
-  // tslint:disable-next-line:no-any
-  (err: Error|null, gaxClient?: gax.ClientStub): void;
+  (err: Error|null, gaxClient?: ClientStub): void;
 }
 
 /**
@@ -255,7 +253,7 @@ interface GetClientCallback {
 export class PubSub {
   options: ClientConfig;
   isEmulator: boolean;
-  api: {[key: string]: gax.ClientStub};
+  api: {[key: string]: ClientStub};
   auth: GoogleAuth;
   projectId: string;
   // tslint:disable-next-line variable-name
@@ -386,23 +384,22 @@ export class PubSub {
    */
   createSubscription(
       topic: Topic|string, name: string,
-      optionsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
+      optsOrCb?: CreateSubscriptionOptions|CreateSubscriptionCallback,
       callback?: CreateSubscriptionCallback):
       Promise<CreateSubscriptionResponse>|void {
-    if (!is.string(topic) && !(topic instanceof Topic)) {
+    if (typeof topic !== 'string' && !(topic instanceof Topic)) {
       throw new Error('A Topic is required for a new subscription.');
     }
-    if (!is.string(name)) {
+    if (typeof name !== 'string') {
       throw new Error('A subscription name is required.');
     }
     if (typeof topic === 'string') {
       topic = this.topic(topic);
     }
-    let options = typeof optionsOrCallback === 'object' ?
-        optionsOrCallback :
+    let options = typeof optsOrCb === 'object' ?
+        optsOrCb :
         {} as CreateSubscriptionOptions;
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+    callback = typeof optsOrCb === 'function' ? optsOrCb : callback;
 
     // Make a deep copy of options to not pollute caller object.
     options = extend(true, {}, options);
@@ -590,14 +587,12 @@ export class PubSub {
   getSnapshots(option: GetSnapshotsOptions, callback: GetSnapshotsCallback):
       void;
   getSnapshots(
-      optionsOrCallback?: GetSnapshotsOptions|GetSnapshotsCallback,
+      optsOrCb?: GetSnapshotsOptions|GetSnapshotsCallback,
       callback?: GetSnapshotsCallback):
       void|Promise<google.pubsub.v1.IListSnapshotsResponse> {
     const self = this;
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+    const options = typeof optsOrCb === 'object' ? optsOrCb : {};
+    callback = typeof optsOrCb === 'function' ? optsOrCb : callback;
     const reqOpts = Object.assign(
         {
           project: 'projects/' + this.projectId,
@@ -693,14 +688,12 @@ export class PubSub {
       options: GetSubscriptionsOptions,
       callback: GetSubscriptionsCallback): void;
   getSubscriptions(
-      optionsOrCallback?: GetSubscriptionsOptions|GetSubscriptionsCallback,
+      optsOrCb?: GetSubscriptionsOptions|GetSubscriptionsCallback,
       callback?: GetSubscriptionsCallback):
       void|Promise<google.pubsub.v1.IListSubscriptionsResponse> {
     const self = this;
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+    const options = typeof optsOrCb === 'object' ? optsOrCb : {};
+    callback = typeof optsOrCb === 'function' ? optsOrCb : callback;
 
     let topic = options.topic;
     if (topic) {
@@ -793,20 +786,14 @@ export class PubSub {
    *   const topics = data[0];
    * });
    */
-  getTopics(options: GetTopicsOptions):
-      Promise<google.pubsub.v1.IListTopicsResponse>;
+  getTopics(options?: GetTopicsOptions): Promise<GetTopicsResponse>;
   getTopics(callback: GetTopicsCallback): void;
   getTopics(options: GetTopicsOptions, callback: GetTopicsCallback): void;
   getTopics(
-      optionsOrCallback?: GetTopicsOptions|GetTopicsCallback,
-      callback?: GetTopicsCallback):
-      void|Promise<google.pubsub.v1.IListTopicsResponse> {
-    const self = this;
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
-
+      optsOrCb?: GetTopicsOptions|GetTopicsCallback,
+      cb?: GetTopicsCallback): void|Promise<GetTopicsResponse> {
+    const options = typeof optsOrCb === 'object' ? optsOrCb : {};
+    const callback = typeof optsOrCb === 'function' ? optsOrCb : cb;
     const reqOpts = Object.assign(
         {
           project: 'projects/' + this.projectId,
@@ -830,7 +817,7 @@ export class PubSub {
           const topics = args[1];
           if (topics) {
             args[1] = topics.map((topic: Topic) => {
-              const topicInstance = self.topic(topic.name);
+              const topicInstance = this.topic(topic.name);
               topicInstance.metadata = topic;
               return topicInstance;
             });
@@ -868,7 +855,7 @@ export class PubSub {
     let gaxClient = this.api[config.client];
     if (!gaxClient) {
       // Lazily instantiate client.
-      gaxClient = new v1[config.client](this.options) as gax.ClientStub;
+      gaxClient = new v1[config.client](this.options);
       this.api[config.client] = gaxClient;
     }
     callback(null, gaxClient);
@@ -888,14 +875,13 @@ export class PubSub {
   // tslint:disable-next-line:no-any
   request<TResponse = any>(
       config: RequestConfig, callback: RequestCallback<TResponse>) {
-    const self = this;
     this.getClient_(config, (err, client) => {
       if (err) {
         callback(err);
         return;
       }
       let reqOpts = extend(true, {}, config.reqOpts);
-      reqOpts = replaceProjectIdToken(reqOpts, self.projectId);
+      reqOpts = replaceProjectIdToken(reqOpts, this.projectId);
       client![config.method](reqOpts, config.gaxOpts, callback);
     });
   }
@@ -915,7 +901,7 @@ export class PubSub {
    * const snapshot = pubsub.snapshot('my-snapshot');
    */
   snapshot(name: string) {
-    if (!is.string(name)) {
+    if (typeof name !== 'string') {
       throw new Error('You must supply a valid name for the snapshot.');
     }
     return new Snapshot(this, name);

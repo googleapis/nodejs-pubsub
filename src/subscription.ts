@@ -18,11 +18,8 @@ import {promisifyAll} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
-import * as is from 'is';
 import * as snakeCase from 'lodash.snakecase';
-
 import {google} from '../proto/pubsub';
-
 import {CreateSnapshotCallback, CreateSnapshotResponse, CreateSubscriptionCallback, CreateSubscriptionResponse, ExistsCallback, GetCallOptions, GetSubscriptionMetadataCallback, Metadata, PubSub, RequestCallback, SeekCallback, SubscriptionCallOptions} from '.';
 import {IAM} from './iam';
 import {Snapshot} from './snapshot';
@@ -197,14 +194,10 @@ export class Subscription extends EventEmitter {
   private _subscriber: Subscriber;
   constructor(pubsub: PubSub, name: string, options?: SubscriptionCallOptions) {
     super();
-
     options = options || {};
-
     this.pubsub = pubsub;
-    // tslint:disable-next-line no-any
-    this.request = pubsub.request.bind(pubsub) as any;
+    this.request = pubsub.request.bind(pubsub);
     this.name = Subscription.formatName_(this.projectId, name);
-
     if (options.topic) {
       this.create = pubsub.createSubscription.bind(pubsub, options.topic, name);
     }
@@ -346,15 +339,13 @@ export class Subscription extends EventEmitter {
    * });
    */
   createSnapshot(
-      name: string, gaxOptsOrCallback?: CallOptions|CreateSnapshotCallback,
+      name: string, optsOrCb?: CallOptions|CreateSnapshotCallback,
       callback?: CreateSnapshotCallback): void|Promise<CreateSnapshotResponse> {
-    if (!is.string(name)) {
+    if (typeof name !== 'string') {
       throw new Error('A name is required to create a snapshot.');
     }
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts = typeof optsOrCb === 'object' ? optsOrCb : {};
+    callback = typeof optsOrCb === 'function' ? optsOrCb : callback;
 
     const snapshot = this.snapshot(name);
     const reqOpts = {
@@ -539,7 +530,8 @@ export class Subscription extends EventEmitter {
         typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
     callback =
         typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
-    const autoCreate = !!gaxOpts.autoCreate && is.fn(this.create);
+    const autoCreate =
+        !!gaxOpts.autoCreate && typeof this.create === 'function';
     delete gaxOpts.autoCreate;
     this.getMetadata(gaxOpts, (err, apiResponse) => {
       if (!err) {
@@ -790,11 +782,8 @@ export class Subscription extends EventEmitter {
 
     if (typeof snapshot === 'string') {
       reqOpts.snapshot = Snapshot.formatName_(this.pubsub.projectId, snapshot);
-
-
-
-    } else if (is.date(snapshot)) {
-      reqOpts.time = snapshot as Date;
+    } else if (snapshot instanceof Date) {
+      reqOpts.time = snapshot;
     } else {
       throw new Error('Either a snapshot name or Date is needed to seek to.');
     }

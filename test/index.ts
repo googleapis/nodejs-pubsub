@@ -964,7 +964,7 @@ describe('PubSub', () => {
       const nextQuery_ = {};
       const apiResponse_ = {};
 
-      pubsub.request = (config, callback) => {
+      pubsub.request = (_, callback) => {
         callback(err_, topics_, nextQuery_, apiResponse_);
       };
 

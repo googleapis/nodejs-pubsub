@@ -17,11 +17,8 @@
 import {paginator} from '@google-cloud/paginator';
 import {promisifyAll} from '@google-cloud/promisify';
 import {CallOptions} from 'google-gax';
-import * as is from 'is';
 import {Readable} from 'stream';
-
 import {google} from '../proto/pubsub';
-
 import {Attributes, CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, CreateTopicCallback, CreateTopicResponse, ExistsCallback, GetCallOptions, GetTopicMetadataCallback, Metadata, PubSub, RequestCallback, SubscriptionCallOptions} from '.';
 import {IAM} from './iam';
 import {PublishCallback, Publisher, PublishOptions} from './publisher';
@@ -76,8 +73,7 @@ export class Topic {
      * @type {PubSub}
      */
     this.parent = this.pubsub = pubsub;
-    // tslint:disable-next-line no-any
-    this.request = pubsub.request.bind(pubsub) as any;
+    this.request = pubsub.request.bind(pubsub);
     /**
      * [IAM (Identity and Access
      * Management)](https://cloud.google.com/pubsub/access_control) allows you
@@ -209,13 +205,11 @@ export class Topic {
    */
   createSubscription(
       name: string,
-      optionsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
+      optsOrCb?: CreateSubscriptionOptions|CreateSubscriptionCallback,
       callback?: CreateSubscriptionCallback):
       void|Promise<CreateSubscriptionResponse> {
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+    const options = typeof optsOrCb === 'object' ? optsOrCb : {};
+    callback = typeof optsOrCb === 'function' ? optsOrCb : callback;
 
     this.pubsub.createSubscription(
         this, name, options as CreateSubscriptionOptions, callback!);
@@ -502,15 +496,12 @@ export class Topic {
    * });
    */
   getSubscriptions(
-      optionsOrCallback?: SubscriptionCallOptions|
-      RequestCallback<Subscription[]>,
+      optsOrCb?: SubscriptionCallOptions|RequestCallback<Subscription[]>,
       callback?: RequestCallback<Subscription[]>):
       void|Promise<Subscription[]> {
     const self = this;
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+    const options = typeof optsOrCb === 'object' ? optsOrCb : {};
+    callback = typeof optsOrCb === 'function' ? optsOrCb : callback;
 
     const reqOpts = Object.assign(
         {
@@ -656,7 +647,7 @@ export class Topic {
   publishJSON(
       json: object, attributesOrCallback?: Attributes|PublishCallback,
       callback?: PublishCallback): Promise<string>|void {
-    if (!is.object(json)) {
+    if (!json || typeof json !== 'object') {
       throw new Error('First parameter should be an object.');
     }
     const attributes =
