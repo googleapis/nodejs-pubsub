@@ -329,9 +329,10 @@ describe('Subscription', () => {
       setImmediate(callback, fakeErr, null, fakeResponse);
     });
 
-    it('should update the subscription metadata', done => {
-      const fakeResponse = {};
+    it('should update the subscription', done => {
       const stub = sandbox.stub(PUBSUB, 'createSubscription');
+      const fakeSub = new Subscription(PUBSUB, SUB_FULL_NAME);
+      const fakeResponse = {};
 
       subscription.create(err => {
         assert.ifError(err);
@@ -340,7 +341,8 @@ describe('Subscription', () => {
       });
 
       const callback = stub.lastCall.args[3];
-      setImmediate(callback, null, null, fakeResponse);
+      fakeSub.metadata = fakeResponse;
+      setImmediate(callback, null, fakeSub, fakeResponse);
     });
 
     it('should pass back all the things', done => {
