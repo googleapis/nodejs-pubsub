@@ -127,15 +127,55 @@ describe('Snapshot', () => {
         pubsub = new PubSub(PUBSUB);
         subscription = pubsub.subscription('test');
       });
-      it('should include the create method', done => {
-        sandbox.stub(subscription, 'createSnapshot')
-            .callsFake((name: string) => {
-              assert.strictEqual(name, FULL_SNAPSHOT_NAME);
-              done();
-            });
 
-        const snapshot = new Snapshot(subscription, SNAPSHOT_NAME);
-        snapshot.create(assert.ifError);
+      describe('create', () => {
+        beforeEach(() => {
+          snapshot = new Snapshot(subscription, SNAPSHOT_NAME);
+        });
+
+        it('should call createSnapshot', done => {
+          const fakeOpts = {};
+          sandbox.stub(subscription, 'createSnapshot')
+              .callsFake((name, options) => {
+                assert.strictEqual(name, FULL_SNAPSHOT_NAME);
+                assert.strictEqual(options, fakeOpts);
+                done();
+              });
+
+          snapshot.create(fakeOpts, assert.ifError);
+        });
+
+        it('should return any request errors', done => {
+          const fakeError = new Error('err');
+          const fakeResponse = {};
+          const stub = sandbox.stub(subscription, 'createSnapshot');
+
+          snapshot.create((err, snap, resp) => {
+            assert.strictEqual(err, fakeError);
+            assert.strictEqual(snap, null);
+            assert.strictEqual(resp, fakeResponse);
+            done();
+          });
+
+          const callback = stub.lastCall.args[2];
+          setImmediate(callback, fakeError, null, fakeResponse);
+        });
+
+        it('should return the correct snapshot', done => {
+          const fakeSnapshot = new Snapshot(SUBSCRIPTION, SNAPSHOT_NAME);
+          const fakeResponse = {};
+          const stub = sandbox.stub(subscription, 'createSnapshot');
+
+          snapshot.create((err, snap, resp) => {
+            assert.ifError(err);
+            assert.strictEqual(snap, snapshot);
+            assert.strictEqual(resp, fakeResponse);
+            done();
+          });
+
+          const callback = stub.lastCall.args[2];
+          setImmediate(callback, null, fakeSnapshot, fakeResponse);
+        });
       });
 
       it('should call the seek method', done => {

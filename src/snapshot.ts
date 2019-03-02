@@ -199,6 +199,10 @@ export class Snapshot {
       throw new Error(
           `This is only available if you accessed this object through Subscription#snapshot`);
     }
+
+    const options = typeof gaxOpts === 'function' ? {} : gaxOpts;
+    callback = typeof gaxOpts === 'function' ? gaxOpts : callback;
+
     return this.parent.createSnapshot(
         this.name, gaxOpts! as CallOptions, (err, snapshot, resp) => {
           if (err) {
