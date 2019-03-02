@@ -1278,6 +1278,13 @@ describe('PubSub', () => {
   });
 
   describe('snapshot', () => {
+    it('should throw if a name is not provided', () => {
+      assert.throws(() => {
+        // tslint:disable-next-line no-any
+        (pubsub as any).snapshot();
+      }, /You must supply a valid name for the snapshot\./);
+    });
+
     it('should return a Snapshot object', () => {
       const SNAPSHOT_NAME = 'new-snapshot';
       const snapshot = pubsub.snapshot(SNAPSHOT_NAME);
@@ -1320,9 +1327,23 @@ describe('PubSub', () => {
       };
       pubsub.subscription(SUB_NAME, CONFIG);
     });
+
+    it('should throw if a name is not provided', () => {
+      assert.throws(() => {
+        // tslint:disable-next-line no-any
+        return (pubsub as any).subscription();
+      }, /A name must be specified for a subscription\./);
+    });
   });
 
   describe('topic', () => {
+    it('should throw if a name is not provided', () => {
+      assert.throws(() => {
+        // tslint:disable-next-line no-any
+        (pubsub as any).topic();
+      }, /A name must be specified for a topic\./);
+    });
+
     it('should return a Topic object', () => {
       assert(pubsub.topic('new-topic') instanceof FakeTopic);
     });
