@@ -346,8 +346,10 @@ export class Subscription extends EventEmitter {
     callback =
         typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
 
+    const name = this.name.split('/').pop();
+
     this.pubsub.createSubscription(
-        this.topic, this.name, options, (err, sub, resp) => {
+        this.topic, name!, options, (err, sub, resp) => {
           if (err) {
             callback!(err, null, resp);
             return;

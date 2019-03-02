@@ -300,7 +300,7 @@ describe('Subscription', () => {
 
       const [topic, name, options] = stub.lastCall.args;
       assert.strictEqual(topic, TOPIC_NAME);
-      assert.strictEqual(name, SUB_FULL_NAME);
+      assert.strictEqual(name, SUB_NAME);
       assert.strictEqual(options, fakeOptions);
     });
 
