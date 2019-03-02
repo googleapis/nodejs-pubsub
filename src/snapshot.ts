@@ -209,7 +209,7 @@ export class Snapshot {
             callback!(err, null, resp);
             return;
           }
-          this.metadata = resp!;
+          Object.assign(this, snapshot);
           callback!(null, this, resp);
         });
   }

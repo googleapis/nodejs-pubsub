@@ -333,7 +333,7 @@ export class Subscription extends EventEmitter {
    * Promise.</caption> const [sub, apiResponse] = await subscription.create();
    */
   create(
-      optionsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
+      optsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
       callback?: CreateSubscriptionCallback):
       void|Promise<CreateSubscriptionResponse> {
     if (!this.topic) {
@@ -341,12 +341,9 @@ export class Subscription extends EventEmitter {
           'Subscriptions can only be created when accessed through Topics');
     }
 
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
-
     const name = this.name.split('/').pop();
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     this.pubsub.createSubscription(
         this.topic, name!, options, (err, sub, resp) => {
@@ -354,7 +351,7 @@ export class Subscription extends EventEmitter {
             callback!(err, null, resp);
             return;
           }
-          this.metadata = resp!;
+          Object.assign(this, sub);
           callback!(null, this, resp);
         });
   }
