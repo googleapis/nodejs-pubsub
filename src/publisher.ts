@@ -23,7 +23,7 @@ const each = require('async-each');
 import * as extend from 'extend';
 import * as is from 'is';
 import {Topic} from './topic';
-import {Attributes} from '.';
+import {RequestCallback} from '.';
 import {ServiceError} from 'grpc';
 
 interface Inventory {
@@ -32,10 +32,10 @@ interface Inventory {
   bytes: number;
 }
 
-export interface PublishCallback {
-  (err?: ServiceError|null, messageId?: string|null): void;
-}
-
+export type Attributes = {
+  [key: string]: string
+};
+export type PublishCallback = RequestCallback<string>;
 
 /**
  * @typedef BatchPublishOptions
