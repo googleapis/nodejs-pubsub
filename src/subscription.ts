@@ -23,9 +23,9 @@ import * as snakeCase from 'lodash.snakecase';
 
 import {google} from '../proto/pubsub';
 
-import {EmptyCallback, EmptyResponse, ExistsCallback, ExistsResponse, Omit, PubSub, RequestCallback, ResourceCallback} from '.';
 import {IAM} from './iam';
 import {FlowControlOptions} from './lease-manager';
+import {EmptyCallback, EmptyResponse, ExistsCallback, ExistsResponse, Omit, PubSub, RequestCallback, ResourceCallback} from './pubsub';
 import {CreateSnapshotCallback, CreateSnapshotResponse, SeekCallback, SeekResponse, Snapshot} from './snapshot';
 import {Message, Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';

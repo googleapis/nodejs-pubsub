@@ -19,8 +19,8 @@ import {CallOptions} from 'google-gax';
 
 import {google} from '../proto/pubsub';
 
-import {EmptyCallback, EmptyResponse, RequestCallback, ResourceCallback} from '.';
 import {PubSub} from './index';
+import {EmptyCallback, EmptyResponse, RequestCallback, ResourceCallback} from './pubsub';
 import {Subscription} from './subscription';
 import * as util from './util';
 

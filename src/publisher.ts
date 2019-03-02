@@ -23,7 +23,7 @@ const each = require('async-each');
 import * as extend from 'extend';
 import * as is from 'is';
 import {Topic} from './topic';
-import {RequestCallback} from '.';
+import {RequestCallback} from './pubsub';
 import {ServiceError} from 'grpc';
 
 interface Inventory {

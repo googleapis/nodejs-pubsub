@@ -19,8 +19,9 @@ import * as assert from 'assert';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
-import {PubSub, RequestConfig, Subscription} from '../src';
+import {PubSub, RequestConfig} from '../src/pubsub';
 import * as snapTypes from '../src/snapshot';
+import {Subscription} from '../src/subscription';
 import * as util from '../src/util';
 
 let promisified = false;
