@@ -22,11 +22,12 @@ import {Readable} from 'stream';
 
 import {google} from '../proto/pubsub';
 
-import {Attributes, CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, CreateTopicCallback, CreateTopicResponse, ExistsCallback, GetCallOptions, GetTopicMetadataCallback, Metadata, PubSub, RequestCallback, SubscriptionCallOptions} from '.';
+import {Attributes, CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, CreateTopicCallback, CreateTopicResponse, ExistsCallback, GetCallOptions, GetTopicMetadataCallback, GetSubscriptionsOptions, Metadata, PubSub, RequestCallback, } from '.';
 import {IAM} from './iam';
 import {PublishCallback, Publisher, PublishOptions} from './publisher';
 import {Subscription} from './subscription';
 import * as util from './util';
+import { SubscriberOptions } from './subscriber';
 
 /**
  * A Topic object allows you to interact with a Cloud Pub/Sub topic.
@@ -460,10 +461,10 @@ export class Topic {
 
   getSubscriptions(callback: RequestCallback<Subscription[]>): void;
   getSubscriptions(
-      options: SubscriptionCallOptions,
+      options: GetSubscriptionsOptions,
       callback: RequestCallback<Subscription[]>): void;
   getSubscriptions(
-      options?: SubscriptionCallOptions,
+      options?: GetSubscriptionsOptions,
       ): Promise<Subscription[]>;
   /**
    * Get a list of the subscriptions registered to this topic. You may
@@ -502,7 +503,7 @@ export class Topic {
    * });
    */
   getSubscriptions(
-      optionsOrCallback?: SubscriptionCallOptions|
+      optionsOrCallback?: GetSubscriptionsOptions|
       RequestCallback<Subscription[]>,
       callback?: RequestCallback<Subscription[]>):
       void|Promise<Subscription[]> {
@@ -516,7 +517,7 @@ export class Topic {
         {
           topic: this.name,
         },
-        options as SubscriptionCallOptions);
+        options);
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
     const gaxOpts = Object.assign(
@@ -708,8 +709,8 @@ export class Topic {
    * @param {number} [options.flowControl.maxMessages=Infinity] The maximum number
    *     of un-acked messages to allow before the subscription pauses incoming
    *     messages.
-   * @param {number} [options.maxConnections=5] Use this to limit the number of
-   *     connections to be used when sending and receiving messages.
+   * @param {number} [options.streamingOptions.maxStreams=5] Use this to limit the
+   *     number of connections to be used when sending and receiving messages.
    * @return {Subscription}
    *
    * @example
@@ -729,10 +730,15 @@ export class Topic {
    *   // message.publishTime = Timestamp when Pub/Sub received the message.
    * });
    */
-  subscription(name: string, options?: SubscriptionCallOptions): Subscription {
-    options = options || {};
-    options.topic = this;
-    return this.pubsub.subscription(name, options);
+  subscription(name: string, options: SubscriberOptions = {}): Subscription {
+    const subscriptionOptions = Object.assign(
+      {},
+      options,
+      {
+        topic: this,
+      },
+    );
+    return this.pubsub.subscription(name, subscriptionOptions);
   }
 
   /**

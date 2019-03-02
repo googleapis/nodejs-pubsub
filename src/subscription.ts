@@ -247,7 +247,7 @@ export class Subscription extends EventEmitter {
      */
     this.iam = new IAM(pubsub, this.name);
 
-    this._subscriber = new Subscriber(this, options as SubscriberOptions);
+    this._subscriber = new Subscriber(this, options);
     this._subscriber.on('error', err => this.emit('error', err))
         .on('message', message => this.emit('message', message))
         .on('close', () => this.emit('close'));

@@ -33,6 +33,7 @@ const PKG = require('../../package.json');
 const v1 = require('./v1');
 
 import {Snapshot} from './snapshot';
+import {SubscriberOptions} from './subscriber';
 import {Subscription, SubscriptionMetadataRaw} from './subscription';
 import {Topic, PublishOptions} from './topic';
 import {CallOptions} from 'google-gax';
@@ -109,14 +110,8 @@ export interface Attributes {
   [key: string]: string;
 }
 
-export interface SubscriptionCallOptions {
-  flowControl?: FlowControlOptions;
-  maxConnections?: number;
+export interface SubscriptionCallOptions extends SubscriberOptions {
   topic?: Topic;
-  ackDeadline?: number;
-  autoPaginate?: boolean;
-  gaxOpts?: CallOptions;
-  batching?: BatchPublishOptions;
 }
 
 export interface CreateSnapshotCallback {
@@ -928,7 +923,7 @@ export class PubSub {
    * @throws {Error} If subscription name is omitted.
    *
    * @param {string} name Name of the subscription.
-   * @param {SubscriberOptions} [options] Subscription options.
+   * @param {SubscriptionCallOptions} [options] Subscription options.
    * @returns {Subscription} A {@link Subscription} instance.
    *
    * @example

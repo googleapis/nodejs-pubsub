@@ -232,7 +232,7 @@ export class Subscriber extends EventEmitter {
   private _options!: SubscriberOptions;
   private _stream!: MessageStream;
   private _subscription: Subscription;
-  constructor(subscription: Subscription, options = {}) {
+  constructor(subscription: Subscription, options: SubscriberOptions = {}) {
     super();
 
     this.ackDeadline = 10;

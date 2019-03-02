@@ -637,7 +637,9 @@ describe('Topic', () => {
       topic.parent.subscription =
           (name: string, options: SubscriptionCallOptions) => {
             assert.strictEqual(name, subscriptionName);
-            assert.deepStrictEqual(options, opts);
+            for (const key of Object.keys(opts)) {
+              assert.deepStrictEqual(options[key], opts[key]);
+            }
             done();
           };
 
