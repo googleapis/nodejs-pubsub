@@ -23,8 +23,8 @@ import * as sinon from 'sinon';
 
 import {google} from '../proto/pubsub';
 import {ExistsCallback, RequestCallback, RequestConfig} from '../src/pubsub';
-import {CreateSubscriptionCallback, CreateSubscriptionOptions, Subscription, SubscriptionOptions} from '../src/subscription';
-import {CreateTopicCallback, GetTopicMetadataCallback, Topic} from '../src/topic';
+import {CreateSubscriptionOptions, Subscription, SubscriptionOptions} from '../src/subscription';
+import {GetTopicMetadataCallback, Topic} from '../src/topic';
 import * as util from '../src/util';
 
 let promisified = false;
@@ -41,26 +41,20 @@ const fakePromisify = Object.assign({}, pfy, {
 });
 
 class FakeIAM {
-  // tslint:disable-next-line no-any
-  calledWith_: any[];
-  // tslint:disable-next-line no-any
-  constructor(...args: any[]) {
+  calledWith_: Array<{}>;
+  constructor(...args: Array<{}>) {
     this.calledWith_ = args;
   }
 }
 
 class FakePublisher {
-  // tslint:disable-next-line no-any
-  calledWith_: any[];
-  // tslint:disable-next-line no-any
-  published_!: any[];
+  calledWith_: Array<{}>;
+  published_!: Array<{}>;
   options_!: object;
-  // tslint:disable-next-line no-any
-  constructor(...args: any[]) {
+  constructor(...args: Array<{}>) {
     this.calledWith_ = args;
   }
-  // tslint:disable-next-line no-any
-  publish(...args: any[]) {
+  publish(...args: Array<{}>) {
     this.published_ = args;
   }
   setOptions(options: object) {
@@ -70,12 +64,10 @@ class FakePublisher {
 
 let extended = false;
 const fakePaginator = {
-  // tslint:disable-next-line variable-name
-  extend(Class: Function, methods: string[]) {
-    if (Class.name !== 'Topic') {
+  extend(klass: Function, methods: string[]) {
+    if (klass.name !== 'Topic') {
       return;
     }
-
     assert.deepStrictEqual(methods, ['getSubscriptions']);
     extended = true;
   },
