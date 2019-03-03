@@ -4,6 +4,25 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.26.1
+
+03-03-2019 11:42 PST
+
+### Bug Fixes
+- refactor: clean up unused packages ([#517](https://github.com/googleapis/nodejs-pubsub/pull/517))
+- fix(typescript): export all the types ([#516](https://github.com/googleapis/nodejs-pubsub/pull/516))
+- refactor(typescript): various fixes/refactors to types ([#515](https://github.com/googleapis/nodejs-pubsub/pull/515))
+- fix(ts): fix getPolicy promise return signature ([#511](https://github.com/googleapis/nodejs-pubsub/pull/511))
+
+### Documentation
+- docs: update comments on protos ([#509](https://github.com/googleapis/nodejs-pubsub/pull/509))
+- fix(docs): ensure docs are not removed by typescript ([#512](https://github.com/googleapis/nodejs-pubsub/pull/512))
+
+### Internal / Testing Changes
+- refactor(ts): enable noImplicitAny for Histogram and Message_queues test file ([#510](https://github.com/googleapis/nodejs-pubsub/pull/510))
+- refactor(ts): enable noImplicitAny for lease-manager test file ([#508](https://github.com/googleapis/nodejs-pubsub/pull/508))
+- refactor(ts): enable noImplicitAny for IAM test file ([#501](https://github.com/googleapis/nodejs-pubsub/pull/501))
+
 ## v0.26.0
 
 02-28-2019 05:42 PST
