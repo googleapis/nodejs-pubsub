@@ -599,7 +599,7 @@ describe('pubsub', () => {
       const snapshots = new Array<Snapshot>();
       pubsub.getSnapshotsStream()
           .on('error', done)
-          .on('data', snapshots.push)
+          .on('data', snapshot => snapshots.push(snapshot))
           .on('end', () => {
             assert(snapshots.length > 0);
             const names = snapshots.map(getSnapshotName);
