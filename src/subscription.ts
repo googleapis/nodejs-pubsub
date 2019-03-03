@@ -15,10 +15,10 @@
  */
 
 import {promisifyAll} from '@google-cloud/promisify';
+import is from '@sindresorhus/is';
 import {EventEmitter} from 'events';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
-import * as is from 'is';
 import * as snakeCase from 'lodash.snakecase';
 
 import {google} from '../proto/pubsub';
@@ -27,7 +27,7 @@ import {IAM} from './iam';
 import {FlowControlOptions} from './lease-manager';
 import {EmptyCallback, EmptyResponse, ExistsCallback, ExistsResponse, Omit, PubSub, RequestCallback, ResourceCallback} from './pubsub';
 import {CreateSnapshotCallback, CreateSnapshotResponse, SeekCallback, SeekResponse, Snapshot} from './snapshot';
-import {Message, Subscriber, SubscriberOptions} from './subscriber';
+import {Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';
 import {noop} from './util';
 
@@ -202,8 +202,7 @@ export class Subscription extends EventEmitter {
     options = options || {};
 
     this.pubsub = pubsub;
-    // tslint:disable-next-line no-any
-    this.request = pubsub.request.bind(pubsub) as any;
+    this.request = pubsub.request.bind(pubsub);
     this.name = Subscription.formatName_(this.projectId, name);
     this.topic = options.topic;
 

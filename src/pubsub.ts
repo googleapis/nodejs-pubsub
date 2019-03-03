@@ -18,10 +18,10 @@
 import {paginator} from '@google-cloud/paginator';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisifyAll} from '@google-cloud/promisify';
+import is from '@sindresorhus/is';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
-import * as is from 'is';
 
 const PKG = require('../../package.json');
 const v1 = require('./v1');
@@ -34,8 +34,6 @@ import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
 import {google} from '../proto/pubsub';
 import {ServiceError, ChannelCredentials} from 'grpc';
-import {FlowControlOptions} from './lease-manager';
-import {BatchPublishOptions} from './publisher';
 
 const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
@@ -697,7 +695,7 @@ export class PubSub {
         });
   }
 
-  getTopics(options: PageOptions): Promise<GetTopicsResponse>;
+  getTopics(options?: PageOptions): Promise<GetTopicsResponse>;
   getTopics(callback: GetTopicsCallback): void;
   getTopics(options: PageOptions, callback: GetTopicsCallback): void;
   /**

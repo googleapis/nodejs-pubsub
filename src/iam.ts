@@ -100,8 +100,7 @@ export class IAM {
       this.Promise = pubsub.Promise;
     }
     this.pubsub = pubsub;
-    // tslint:disable-next-line no-any
-    this.request = pubsub.request.bind(pubsub) as any;
+    this.request = pubsub.request.bind(pubsub);
     this.id = id;
   }
 

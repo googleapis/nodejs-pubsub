@@ -16,9 +16,8 @@
 
 import {paginator} from '@google-cloud/paginator';
 import {promisifyAll} from '@google-cloud/promisify';
+import is from '@sindresorhus/is';
 import {CallOptions} from 'google-gax';
-import * as is from 'is';
-import {Readable} from 'stream';
 
 import {google} from '../proto/pubsub';
 
@@ -95,8 +94,7 @@ export class Topic {
      * @type {PubSub}
      */
     this.parent = this.pubsub = pubsub;
-    // tslint:disable-next-line no-any
-    this.request = pubsub.request.bind(pubsub) as any;
+    this.request = pubsub.request.bind(pubsub);
     /**
      * [IAM (Identity and Access
      * Management)](https://cloud.google.com/pubsub/access_control) allows you
