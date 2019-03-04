@@ -4,6 +4,31 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.27.0
+
+03-04-2019 08:42 PST
+
+
+### Bug Fixes
+- refactor(typescript): various fixes/refactors to types ([#515](https://github.com/googleapis/nodejs-pubsub/pull/515))
+- fix(ts): fix getPolicy promise return signature ([#511](https://github.com/googleapis/nodejs-pubsub/pull/511))
+- fix(typescript): export all the types ([#516](https://github.com/googleapis/nodejs-pubsub/pull/516))
+
+### Dependencies
+- refactor: clean up unused packages ([#517](https://github.com/googleapis/nodejs-pubsub/pull/517))
+
+### Documentation
+- fix(docs): ensure docs are not removed by typescript ([#512](https://github.com/googleapis/nodejs-pubsub/pull/512))
+- docs: update comments on protos ([#509](https://github.com/googleapis/nodejs-pubsub/pull/509))
+
+### Internal / Testing Changes
+- refactor(typescript):noImplicitAny for index test file ([#502](https://github.com/googleapis/nodejs-pubsub/pull/502))
+- refactor(ts): enable noImplicitAny for IAM test file ([#501](https://github.com/googleapis/nodejs-pubsub/pull/501))
+- refactor(ts): enable noImplicitAny for lease-manager test file ([#508](https://github.com/googleapis/nodejs-pubsub/pull/508))
+- refactor(ts): enable noImplicitAny for Histogram and Message_queues test file ([#510](https://github.com/googleapis/nodejs-pubsub/pull/510))
+- refactor(ts): enable noImplicitAny for pubsub system test file ([#519](https://github.com/googleapis/nodejs-pubsub/pull/519))
+- refactor(ts): noImplicitAny for publisher test file ([#520](https://github.com/googleapis/nodejs-pubsub/pull/520))
+
 ## v0.26.0
 
 02-28-2019 05:42 PST
