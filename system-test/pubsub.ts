@@ -18,7 +18,8 @@ import * as assert from 'assert';
 import * as defer from 'p-defer';
 import * as uuid from 'uuid';
 
-import {Message, PubSub, Snapshot, Subscription, Topic} from '../src';
+import {Message, PubSub, ServiceError, Snapshot, Subscription, Topic} from '../src';
+import {Policy} from '../src/iam';
 
 const pubsub = new PubSub();
 
@@ -53,7 +54,7 @@ describe('pubsub', () => {
     return topic.name.split('/').pop();
   }
 
-  async function publishPop(message, options = {}) {
+  async function publishPop(message: Buffer, options = {}) {
     const topic = pubsub.topic(generateTopicName());
     const subscription = topic.subscription(generateSubName());
     await topic.create();
@@ -256,11 +257,12 @@ describe('pubsub', () => {
     });
 
     it('should list all subscriptions regardless of topic', done => {
-      pubsub.getSubscriptions((err, subscriptions) => {
-        assert.ifError(err);
-        assert(subscriptions instanceof Array);
-        done();
-      });
+      pubsub.getSubscriptions(
+          (err: ServiceError|null, subscriptions?: Subscription[]|null) => {
+            assert.ifError(err);
+            assert(subscriptions instanceof Array);
+            done();
+          });
     });
 
     it('should list all subscriptions as a stream', done => {
@@ -397,7 +399,7 @@ describe('pubsub', () => {
       subscription.on('error', done);
       subscription.on('message', ack);
 
-      function ack(message) {
+      function ack(message: Message) {
         message.ack();
         subscription.close(done);
       }
@@ -409,7 +411,7 @@ describe('pubsub', () => {
       subscription.on('error', done);
       subscription.on('message', nack);
 
-      function nack(message) {
+      function nack(message: Message) {
         message.nack();
         subscription.close(done);
       }
@@ -456,8 +458,9 @@ describe('pubsub', () => {
 
       return deferred.promise;
 
-      function onmessage(message) {
-        const testid = message.attributes.testid;
+      function onmessage(message: Message) {
+        // tslint:disable-next-line no-any
+        const testid = (message.attributes as any).testid;
 
         if (!testid) {
           return;
@@ -492,7 +495,7 @@ describe('pubsub', () => {
         });
       }
 
-      function publish(messageCount) {
+      function publish(messageCount: number) {
         const data = Buffer.from('Hello, world!');
         const promises: Array<Promise<string>> = [];
 
@@ -536,11 +539,12 @@ describe('pubsub', () => {
         ],
       };
 
-      topic.iam.setPolicy(policy, (err, newPolicy) => {
-        assert.ifError(err);
-        assert.deepStrictEqual(newPolicy.bindings, policy.bindings);
-        done();
-      });
+      topic.iam.setPolicy(
+          policy, (err: ServiceError|null, newPolicy?: Policy|null) => {
+            assert.ifError(err);
+            assert.deepStrictEqual(newPolicy!.bindings, policy.bindings);
+            done();
+          });
     });
 
     it('should test the iam permissions', done => {
@@ -561,11 +565,11 @@ describe('pubsub', () => {
   describe('Snapshot', () => {
     const SNAPSHOT_NAME = generateSnapshotName();
 
-    let topic;
-    let subscription;
-    let snapshot;
+    let topic: Topic;
+    let subscription: Subscription;
+    let snapshot: Snapshot;
 
-    function getSnapshotName({name}) {
+    function getSnapshotName({name}: {name: string}) {
       return name.split('/').pop();
     }
 
@@ -609,8 +613,8 @@ describe('pubsub', () => {
     });
 
     describe('seeking', () => {
-      let subscription;
-      let messageId;
+      let subscription: Subscription;
+      let messageId: string;
 
       beforeEach(() => {
         subscription = topic.subscription(generateSubName());
@@ -641,7 +645,7 @@ describe('pubsub', () => {
             message.ack();
 
             if (++messageCount === 1) {
-              snapshot.seek(err => {
+              snapshot!.seek(err => {
                 assert.ifError(err);
               });
               return;
@@ -665,7 +669,7 @@ describe('pubsub', () => {
           message.ack();
 
           if (++messageCount === 1) {
-            subscription.seek(message.publishTime, err => {
+            subscription.seek(message.publishTime, (err: ServiceError|null) => {
               assert.ifError(err);
             });
             return;
