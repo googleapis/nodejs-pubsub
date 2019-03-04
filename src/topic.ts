@@ -329,7 +329,7 @@ export class Topic {
         return;
       }
       if (err.code === 5) {
-        callback(null, false);
+        callback!(null, false);
         return;
       }
       callback!(err);

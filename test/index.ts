@@ -19,14 +19,15 @@ import * as promisify from '@google-cloud/promisify';
 import * as arrify from 'arrify';
 import * as assert from 'assert';
 import * as gax from 'google-gax';
-import {CallOptions} from 'grpc';
+import {CallOptions, ServiceError} from 'grpc';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
 import {google} from '../proto/pubsub';
-import * as pubsubTypes from '../src';
+import * as pubsubTypes from '../src/pubsub';
 import {Snapshot} from '../src/snapshot';
 import * as subby from '../src/subscription';
+import {Topic} from '../src/topic';
 import * as util from '../src/util';
 
 
@@ -55,7 +56,7 @@ let subscriptionOverride: any;
 
 function Subscription(
     pubsub: pubsubTypes.PubSub, name: string,
-    options: pubsubTypes.SubscriptionCallOptions) {
+    options: subby.SubscriptionOptions) {
   const overrideFn = subscriptionOverride || subscriptionCached;
   return new overrideFn(pubsub, name, options);
 }
@@ -300,7 +301,7 @@ describe('PubSub', () => {
     pubsub = new pubsubTypes.PubSub({});
     const TOPIC = Object.assign(new FakeTopic(), {
       name: 'projects/' + PROJECT_ID + '/topics/' + TOPIC_NAME,
-    }) as {} as pubsubTypes.Topic;
+    }) as {} as Topic;
 
     const SUB_NAME = 'subscription';
     const SUBSCRIPTION = {
@@ -315,7 +316,7 @@ describe('PubSub', () => {
 
     beforeEach(() => {
       (Subscription as {} as typeof subby.Subscription).formatMetadata_ =
-          (metadata: subby.SubscriptionMetadataRaw) => {
+          (metadata: subby.SubscriptionMetadata) => {
             return Object.assign({}, metadata) as subby.SubscriptionMetadata;
           };
     });
@@ -351,7 +352,7 @@ describe('PubSub', () => {
     });
 
     it('should create a Subscription', done => {
-      const opts = {a: 'b', c: 'd'} as pubsubTypes.CreateSubscriptionOptions;
+      const opts = {a: 'b', c: 'd'} as subby.CreateSubscriptionOptions;
 
       pubsub.request = util.noop;
 
@@ -384,12 +385,12 @@ describe('PubSub', () => {
       pubsub.topic = topicName => {
         return {
           name: topicName,
-        } as pubsubTypes.Topic;
+        } as Topic;
       };
       pubsub.subscription = subName => {
         return {
           name: subName,
-        } as pubsubTypes.Subscription;
+        } as subby.Subscription;
       };
 
 
@@ -418,13 +419,13 @@ describe('PubSub', () => {
       pubsub.topic = () => {
         return {
           name: TOPIC_NAME,
-        } as pubsubTypes.Topic;
+        } as Topic;
       };
 
       pubsub.subscription = () => {
         return {
           name: SUB_NAME,
-        } as pubsubTypes.Subscription;
+        } as subby.Subscription;
       };
 
 
@@ -450,13 +451,13 @@ describe('PubSub', () => {
       pubsub.topic = () => {
         return {
           name: TOPIC_NAME,
-        } as pubsubTypes.Topic;
+        } as Topic;
       };
 
       pubsub.subscription = () => {
         return {
           name: SUB_NAME,
-        } as pubsubTypes.Subscription;
+        } as subby.Subscription;
       };
 
       pubsub.request = config => {
@@ -475,7 +476,7 @@ describe('PubSub', () => {
       };
 
       (Subscription as {} as typeof subby.Subscription).formatMetadata_ =
-          (metadata: subby.SubscriptionMetadataRaw) => {
+          (metadata: subby.SubscriptionMetadata) => {
             assert.deepStrictEqual(metadata, fakeMetadata);
             return formatted as {} as subby.SubscriptionMetadata;
           };
@@ -505,7 +506,7 @@ describe('PubSub', () => {
 
         function callback(
             err?: Error|null, sub?: subby.Subscription|null,
-            resp?: google.pubsub.v1.ISubscription) {
+            resp?: google.pubsub.v1.ISubscription|null) {
           assert.strictEqual(err, error);
           assert.strictEqual(sub, null);
           assert.strictEqual(resp, apiResponse);
@@ -528,7 +529,7 @@ describe('PubSub', () => {
       it('should return Subscription & resp to the callback', done => {
         const subscription = {};
         pubsub.subscription = () => {
-          return subscription as pubsubTypes.Subscription;
+          return subscription as subby.Subscription;
         };
 
         pubsub.request = (config, callback: Function) => {
@@ -537,7 +538,7 @@ describe('PubSub', () => {
 
         function callback(
             err?: Error|null, sub?: subby.Subscription|null,
-            resp?: google.pubsub.v1.ISubscription) {
+            resp?: google.pubsub.v1.ISubscription|null) {
           assert.ifError(err);
           assert.strictEqual(sub, subscription);
           assert.strictEqual(resp, apiResponse);
@@ -561,7 +562,7 @@ describe('PubSub', () => {
 
         return {
           name: formattedName,
-        } as pubsubTypes.Topic;
+        } as Topic;
       };
 
 
@@ -612,7 +613,7 @@ describe('PubSub', () => {
 
         pubsub.topic = name => {
           assert.strictEqual(name, topicName);
-          return topicInstance as pubsubTypes.Topic;
+          return topicInstance as Topic;
         };
 
         pubsub.createTopic(topicName, (err, topic) => {
@@ -727,7 +728,7 @@ describe('PubSub', () => {
           e: 'f',
         },
         autoPaginate: false,
-      } as {} as pubsubTypes.GetSnapshotsOptions;
+      } as {} as pubsubTypes.PageOptions;
 
       const expectedOptions = Object.assign({}, options, {
         project: 'projects/' + pubsub.projectId,
@@ -811,7 +812,7 @@ describe('PubSub', () => {
           a: 'b',
         },
         autoPaginate: false,
-      } as {} as pubsubTypes.SubscriptionCallOptions;
+      } as {} as pubsubTypes.GetSubscriptionsOptions;
 
       const expectedGaxOpts = Object.assign(
           {
@@ -848,11 +849,13 @@ describe('PubSub', () => {
     });
 
     it('should return Subscription instances', done => {
-      pubsub.getSubscriptions((err, subscriptions) => {
-        assert.ifError(err);
-        assert(subscriptions![0] instanceof subscriptionCached);
-        done();
-      });
+      pubsub.getSubscriptions(
+          (err: ServiceError|null,
+           subscriptions?: subby.Subscription[]|null) => {
+            assert.ifError(err);
+            assert(subscriptions![0] instanceof subscriptionCached);
+            done();
+          });
     });
 
     it('should pass back all params', done => {
@@ -866,12 +869,14 @@ describe('PubSub', () => {
         callback(err_, subs_, nextQuery_, apiResponse_);
       };
 
-      pubsub.getSubscriptions((err, subs, apiResponse) => {
-        assert.strictEqual(err, err_);
-        assert.deepStrictEqual(subs, subs_);
-        assert.strictEqual(apiResponse, nextQuery_);
-        done();
-      });
+      pubsub.getSubscriptions(
+          (err: ServiceError|null, subs?: subby.Subscription[]|null,
+           apiResponse?: google.pubsub.v1.IListSubscriptionsResponse|null) => {
+            assert.strictEqual(err, err_);
+            assert.deepStrictEqual(subs, subs_);
+            assert.strictEqual(apiResponse, nextQuery_);
+            done();
+          });
     });
 
     describe('with topic', () => {
@@ -882,9 +887,9 @@ describe('PubSub', () => {
 
         const opts = {
           topic,
-        } as {} as pubsubTypes.SubscriptionCallOptions;
+        } as {} as pubsubTypes.GetSubscriptionsOptions;
 
-        topic.getSubscriptions = (options) => {
+        topic.getSubscriptions = (options: pubsubTypes.PageOptions) => {
           assert.strictEqual(options, opts);
           done();
         };
@@ -895,10 +900,10 @@ describe('PubSub', () => {
       it('should create a topic instance from a name', done => {
         const opts = {
           topic: TOPIC_NAME,
-        } as {} as pubsubTypes.SubscriptionCallOptions;
+        } as {} as pubsubTypes.GetSubscriptionsOptions;
 
         const fakeTopic = {
-          getSubscriptions(options) {
+          getSubscriptions(options: pubsubTypes.PageOptions) {
             assert.strictEqual(options, opts);
             done();
           },
@@ -906,7 +911,7 @@ describe('PubSub', () => {
 
         pubsub.topic = (name: string) => {
           assert.strictEqual(name, TOPIC_NAME);
-          return fakeTopic as pubsubTypes.Topic;
+          return fakeTopic as Topic;
         };
 
         pubsub.getSubscriptions(opts, assert.ifError);
@@ -940,7 +945,7 @@ describe('PubSub', () => {
           e: 'f',
         },
         autoPaginate: false,
-      } as {} as pubsubTypes.GetTopicsOptions;
+      } as {} as pubsubTypes.PageOptions;
 
       const expectedOptions = Object.assign({}, options, {
         project: 'projects/' + pubsub.projectId,
@@ -971,7 +976,7 @@ describe('PubSub', () => {
 
       pubsub.topic = name => {
         assert.strictEqual(name, topicName);
-        return topic as pubsubTypes.Topic;
+        return topic as Topic;
       };
 
 
@@ -1041,7 +1046,7 @@ describe('PubSub', () => {
         callback(expectedError);
       };
 
-      pubsub.request(CONFIG, err => {
+      pubsub.request(CONFIG, (err: ServiceError|null) => {
         assert.strictEqual(expectedError, err);
         done();
       });
@@ -1230,7 +1235,7 @@ describe('PubSub', () => {
         callback(error);
       };
 
-      pubsub.request(CONFIG, err => {
+      pubsub.request(CONFIG, (err: ServiceError|null) => {
         assert.strictEqual(err, error);
         done();
       });
@@ -1262,7 +1267,8 @@ describe('PubSub', () => {
       };
 
       const fakeClient = {
-        fakeMethod(reqOpts, gaxOpts) {
+        // tslint:disable-next-line no-any
+        fakeMethod(reqOpts: any, gaxOpts: CallOptions) {
           assert.strictEqual(reqOpts, replacedReqOpts);
           assert.strictEqual(gaxOpts, CONFIG.gaxOpts);
           done();
@@ -1321,7 +1327,7 @@ describe('PubSub', () => {
       // tslint:disable-next-line only-arrow-functions
       subscriptionOverride = function(
           pubsub: pubsubTypes.PubSub, name: string,
-          options: pubsubTypes.CreateSubscriptionOptions) {
+          options: subby.SubscriptionOptions) {
         assert.strictEqual(options, CONFIG);
         done();
       };
