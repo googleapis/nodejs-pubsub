@@ -15,11 +15,13 @@
  */
 
 import * as assert from 'assert';
-import {Metadata} from 'grpc';
+import {Metadata, ServiceError} from 'grpc';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {Duplex, PassThrough} from 'stream';
 import * as uuid from 'uuid';
+import * as messageTypes from '../src/message-stream';
+import {Subscriber} from '../src/subscriber';
 
 // just need this for unit tests.. we have a ponyfill for destroy on
 // MessageStream and gax streams use Duplexify
@@ -112,7 +114,7 @@ class FakeSubscriber {
   name: string;
   ackDeadline: number;
   client: FakeGaxClient;
-  constructor(client) {
+  constructor(client: FakeGaxClient) {
     this.name = uuid.v4();
     this.ackDeadline = Math.floor(Math.random() * 600);
     this.client = client;
@@ -126,11 +128,11 @@ describe('MessageStream', () => {
   const sandbox = sinon.createSandbox();
 
   let client: FakeGrpcClient;
-  let subscriber: FakeSubscriber;
+  let subscriber: Subscriber;
 
   // tslint:disable-next-line variable-name
-  let MessageStream;
-  let messageStream;
+  let MessageStream: typeof messageTypes.MessageStream;
+  let messageStream: messageTypes.MessageStream;
 
   before(() => {
     MessageStream = proxyquire('../src/message-stream.js', {
@@ -141,7 +143,7 @@ describe('MessageStream', () => {
   beforeEach(() => {
     const gaxClient = new FakeGaxClient();
     client = gaxClient.client;  // we hit the grpc client directly
-    subscriber = new FakeSubscriber(gaxClient);
+    subscriber = new FakeSubscriber(gaxClient) as {} as Subscriber;
     messageStream = new MessageStream(subscriber);
   });
 
@@ -156,8 +158,8 @@ describe('MessageStream', () => {
         objectMode: true,
         highWaterMark: 0,
       };
-
-      assert.deepStrictEqual(messageStream.options, expectedOptions);
+      assert.deepStrictEqual(
+          (messageStream as {} as FakePassThrough).options, expectedOptions);
     });
 
     it('should respect the highWaterMark option', () => {
@@ -169,7 +171,8 @@ describe('MessageStream', () => {
         highWaterMark,
       };
 
-      assert.deepStrictEqual(ms.options, expectedOptions);
+      assert.deepStrictEqual(
+          (ms as {} as FakePassThrough).options, expectedOptions);
     });
 
     it('should set destroyed to false', () => {
@@ -302,7 +305,7 @@ describe('MessageStream', () => {
     });
 
     describe('without native destroy', () => {
-      let destroy;
+      let destroy: (err?: Error) => void;
 
       before(() => {
         destroy = FakePassThrough.prototype.destroy;
@@ -338,7 +341,7 @@ describe('MessageStream', () => {
         const fakeResponses = [{}, {}, {}, {}, {}];
         const received: object[] = [];
 
-        messageStream.on('data', chunk => received.push(chunk))
+        messageStream.on('data', (chunk: Buffer) => received.push(chunk))
             .on('end', () => {
               assert.deepStrictEqual(received, fakeResponses);
               done();
@@ -379,7 +382,7 @@ describe('MessageStream', () => {
         const fakeError = new Error('err');
         const expectedMessage = `Failed to connect to channel. Reason: err`;
 
-        ms.on('error', err => {
+        ms.on('error', (err: ServiceError) => {
           assert.strictEqual(err.code, 2);
           assert.strictEqual(err.message, expectedMessage);
           assert.strictEqual(ms.destroyed, true);
@@ -397,7 +400,7 @@ describe('MessageStream', () => {
         const ms = new MessageStream(subscriber);
         const fakeError = new Error('Failed to connect before the deadline');
 
-        ms.on('error', err => {
+        ms.on('error', (err: ServiceError) => {
           assert.strictEqual(err.code, 4);
           done();
         });
@@ -483,7 +486,7 @@ describe('MessageStream', () => {
           details: 'Err',
         };
 
-        messageStream.on('error', err => {
+        messageStream.on('error', (err: ServiceError) => {
           assert(err instanceof Error);
           assert.strictEqual(err.code, fakeStatus.code);
           assert.strictEqual(err.message, fakeStatus.details);
