@@ -249,10 +249,10 @@ export class PubSub {
       topic: Topic|string, name: string,
       options?: CreateSubscriptionOptions): Promise<CreateSubscriptionResponse>;
   createSubscription(
-      topic: Topic|string, name: string, options: CreateSubscriptionOptions,
+      topic: Topic|string, name: string,
       callback: CreateSubscriptionCallback): void;
   createSubscription(
-      topic: Topic|string, name: string,
+      topic: Topic|string, name: string, options: CreateSubscriptionOptions,
       callback: CreateSubscriptionCallback): void;
   /**
    * @typedef {array} CreateSubscriptionResponse
@@ -386,10 +386,11 @@ export class PubSub {
         });
   }
 
-  createTopic(name: string, gaxOpts: CallOptions): Promise<CreateTopicResponse>;
-  createTopic(
-      name: string, gaxOpts: CallOptions, callback?: CreateTopicCallback): void;
+  createTopic(name: string, gaxOpts?: CallOptions):
+      Promise<CreateTopicResponse>;
   createTopic(name: string, callback: CreateTopicCallback): void;
+  createTopic(
+      name: string, gaxOpts: CallOptions, callback: CreateTopicCallback): void;
   /**
    * @typedef {array} CreateTopicResponse
    * @property {Topic} 0 The new {@link Topic}.
@@ -484,9 +485,9 @@ export class PubSub {
     this.isEmulator = true;
   }
 
-  getSnapshots(option?: PageOptions): Promise<GetSnapshotsResponse>;
+  getSnapshots(options?: PageOptions): Promise<GetSnapshotsResponse>;
   getSnapshots(callback: GetSnapshotsCallback): void;
-  getSnapshots(option: PageOptions, callback: GetSnapshotsCallback): void;
+  getSnapshots(options: PageOptions, callback: GetSnapshotsCallback): void;
   /**
    * Query object for listing snapshots.
    *
