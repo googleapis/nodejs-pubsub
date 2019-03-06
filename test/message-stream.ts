@@ -336,11 +336,11 @@ describe('MessageStream', () => {
     describe('initialization', () => {
       it('should pipe to the message stream', done => {
         const fakeResponses = [{}, {}, {}, {}, {}];
-        const recieved: object[] = [];
+        const received: object[] = [];
 
-        messageStream.on('data', chunk => recieved.push(chunk))
+        messageStream.on('data', chunk => received.push(chunk))
             .on('end', () => {
-              assert.deepStrictEqual(recieved, fakeResponses);
+              assert.deepStrictEqual(received, fakeResponses);
               done();
             });
 

@@ -127,7 +127,7 @@ export class Message {
     /**
      * The time at which the message was recieved by the subscription.
      *
-     * @name Message#recieved
+     * @name Message#received
      * @type {number}
      */
     this.received = Date.now();
