@@ -233,14 +233,5 @@ describe('Snapshot', () => {
 
       snapshot.delete(done);
     });
-
-    it('should optionally accept a callback', done => {
-      sandbox.stub(util, 'noop').callsFake(done);
-
-      snapshot.parent.request = (config: RequestConfig, callback: Function) => {
-        callback();  // the done fn
-      };
-      snapshot.delete();
-    });
   });
 });
