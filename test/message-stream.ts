@@ -128,7 +128,7 @@ describe('MessageStream', () => {
   const sandbox = sinon.createSandbox();
 
   let client: FakeGrpcClient;
-  let subscriber: FakeSubscriber;
+  let subscriber: Subscriber;
 
   // tslint:disable-next-line variable-name
   let MessageStream: typeof messageTypes.MessageStream;
@@ -143,8 +143,8 @@ describe('MessageStream', () => {
   beforeEach(() => {
     const gaxClient = new FakeGaxClient();
     client = gaxClient.client;  // we hit the grpc client directly
-    subscriber = new FakeSubscriber(gaxClient);
-    messageStream = new MessageStream(subscriber as {} as Subscriber);
+    subscriber = new FakeSubscriber(gaxClient) as {} as Subscriber;
+    messageStream = new MessageStream(subscriber);
   });
 
   afterEach(() => {
@@ -158,21 +158,21 @@ describe('MessageStream', () => {
         objectMode: true,
         highWaterMark: 0,
       };
-      // tslint:disable-next-line no-any
-      assert.deepStrictEqual((messageStream as any).options, expectedOptions);
+      assert.deepStrictEqual(
+          (messageStream as {} as FakePassThrough).options, expectedOptions);
     });
 
     it('should respect the highWaterMark option', () => {
       const highWaterMark = 3;
-      const ms =
-          new MessageStream(subscriber as {} as Subscriber, {highWaterMark});
+      const ms = new MessageStream(subscriber, {highWaterMark});
 
       const expectedOptions = {
         objectMode: true,
         highWaterMark,
       };
-      // tslint:disable-next-line no-any
-      assert.deepStrictEqual((ms as any).options, expectedOptions);
+
+      assert.deepStrictEqual(
+          (ms as {} as FakePassThrough).options, expectedOptions);
     });
 
     it('should set destroyed to false', () => {
@@ -196,7 +196,7 @@ describe('MessageStream', () => {
           const now = Date.now();
 
           sandbox.stub(global.Date, 'now').returns(now);
-          messageStream = new MessageStream(subscriber as {} as Subscriber);
+          messageStream = new MessageStream(subscriber);
 
           setImmediate(() => {
             assert.strictEqual(client.deadline, now + timeout);
@@ -215,8 +215,7 @@ describe('MessageStream', () => {
         it('should respect the highWaterMark option', done => {
           const highWaterMark = 3;
 
-          messageStream = new MessageStream(
-              subscriber as {} as Subscriber, {highWaterMark});
+          messageStream = new MessageStream(subscriber, {highWaterMark});
 
           setImmediate(() => {
             assert.strictEqual(client.streams.length, 5);
@@ -231,8 +230,7 @@ describe('MessageStream', () => {
         it('should respect the maxStreams option', done => {
           const maxStreams = 3;
 
-          messageStream =
-              new MessageStream(subscriber as {} as Subscriber, {maxStreams});
+          messageStream = new MessageStream(subscriber, {maxStreams});
 
           setImmediate(() => {
             assert.strictEqual(client.streams.length, maxStreams);
@@ -245,8 +243,7 @@ describe('MessageStream', () => {
           const now = Date.now();
 
           sandbox.stub(global.Date, 'now').returns(now);
-          messageStream =
-              new MessageStream(subscriber as {} as Subscriber, {timeout});
+          messageStream = new MessageStream(subscriber, {timeout});
 
           setImmediate(() => {
             assert.strictEqual(client.deadline, now + timeout);
@@ -344,7 +341,7 @@ describe('MessageStream', () => {
         const fakeResponses = [{}, {}, {}, {}, {}];
         const received: object[] = [];
 
-        messageStream.on('data', chunk => received.push(chunk))
+        messageStream.on('data', (chunk: Buffer) => received.push(chunk))
             .on('end', () => {
               assert.deepStrictEqual(received, fakeResponses);
               done();
@@ -370,7 +367,7 @@ describe('MessageStream', () => {
 
         sandbox.stub(subscriber, 'getClient').rejects(fakeError);
 
-        const ms = new MessageStream(subscriber as {} as Subscriber);
+        const ms = new MessageStream(subscriber);
 
         ms.on('error', err => {
           assert.strictEqual(err, fakeError);
@@ -381,7 +378,7 @@ describe('MessageStream', () => {
 
       it('should destroy the stream if unable to connect to channel', done => {
         const stub = sandbox.stub(client, 'waitForReady');
-        const ms = new MessageStream(subscriber as {} as Subscriber);
+        const ms = new MessageStream(subscriber);
         const fakeError = new Error('err');
         const expectedMessage = `Failed to connect to channel. Reason: err`;
 
@@ -400,7 +397,7 @@ describe('MessageStream', () => {
 
       it('should give a deadline error if waitForReady times out', done => {
         const stub = sandbox.stub(client, 'waitForReady');
-        const ms = new MessageStream(subscriber as {} as Subscriber);
+        const ms = new MessageStream(subscriber);
         const fakeError = new Error('Failed to connect before the deadline');
 
         ms.on('error', (err: ServiceError) => {
