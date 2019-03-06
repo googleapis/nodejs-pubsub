@@ -617,7 +617,7 @@ describe('Subscriber', () => {
             timestamp.value, RECEIVED_MESSAGE.message.publishTime);
       });
 
-      it('should localize recieved time', () => {
+      it('should localize received time', () => {
         const now = Date.now();
 
         sandbox.stub(global.Date, 'now').returns(now);
