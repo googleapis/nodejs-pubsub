@@ -178,7 +178,7 @@ export class Topic {
     callback =
         typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
 
-    this.pubsub.createTopic(this.name, gaxOpts, callback);
+    this.pubsub.createTopic(this.name, gaxOpts, callback!);
   }
 
   createSubscription(name: string, callback: CreateSubscriptionCallback): void;

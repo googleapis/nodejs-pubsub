@@ -53,7 +53,7 @@ export type CreateSubscriptionResponse = SubscriptionResponse;
 
 export type GetSubscriptionOptions = CallOptions&{autoCreate?: boolean};
 export type GetSubscriptionCallback = SubscriptionCallback;
-export type GetSubscriptionResponse = SubscriptionCallback;
+export type GetSubscriptionResponse = SubscriptionResponse;
 
 type MetadataCallback = RequestCallback<google.pubsub.v1.ISubscription>;
 type MetadataResponse = [google.pubsub.v1.ISubscription];
@@ -355,9 +355,9 @@ export class Subscription extends EventEmitter {
         });
   }
 
-  createSnapshot(name: string, callback: CreateSnapshotCallback): void;
   createSnapshot(name: string, gaxOpts?: CallOptions):
       Promise<CreateSnapshotResponse>;
+  createSnapshot(name: string, callback: CreateSnapshotCallback): void;
   createSnapshot(
       name: string, gaxOpts: CallOptions,
       callback: CreateSnapshotCallback): void;
@@ -437,8 +437,8 @@ export class Subscription extends EventEmitter {
         });
   }
 
-  delete(callback: EmptyCallback): void;
   delete(gaxOpts?: CallOptions): Promise<EmptyResponse>;
+  delete(callback: EmptyCallback): void;
   delete(gaxOpts: CallOptions, callback: EmptyCallback): void;
   /**
    * Delete the subscription. Pull requests from the current subscription will
@@ -545,8 +545,8 @@ export class Subscription extends EventEmitter {
     });
   }
 
-  get(callback: GetSubscriptionCallback): void;
   get(gaxOpts?: GetSubscriptionOptions): Promise<GetSubscriptionResponse>;
+  get(callback: GetSubscriptionCallback): void;
   get(gaxOpts: GetSubscriptionOptions, callback: GetSubscriptionCallback): void;
   /**
    * @typedef {array} GetSubscriptionResponse
