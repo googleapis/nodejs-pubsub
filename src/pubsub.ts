@@ -432,17 +432,15 @@ export class PubSub {
    * });
    */
   createTopic(
-      name: string, gaxOptsOrCallback?: CallOptions|CreateTopicCallback,
+      name: string, optsOrCallback?: CallOptions|CreateTopicCallback,
       callback?: CreateTopicCallback): Promise<CreateTopicResponse>|void {
     const topic = this.topic(name);
     const reqOpts = {
       name: topic.name,
     };
 
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     this.request<google.pubsub.v1.ITopic>(
         {
@@ -535,25 +533,26 @@ export class PubSub {
    * });
    */
   getSnapshots(
-      optionsOrCallback?: PageOptions|GetSnapshotsCallback,
+      optsOrCallback?: PageOptions|GetSnapshotsCallback,
       callback?: GetSnapshotsCallback): void|Promise<GetSnapshotsResponse> {
-    const self = this;
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
+
     const reqOpts = Object.assign(
         {
           project: 'projects/' + this.projectId,
         },
         options);
+
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
+
     const gaxOpts = Object.assign(
         {
           autoPaginate: options.autoPaginate,
         },
         options.gaxOpts);
+
     this.request<
         google.pubsub.v1.ISnapshot, google.pubsub.v1.IListSnapshotsResponse>(
         {
@@ -567,7 +566,7 @@ export class PubSub {
 
           if (rawSnapshots) {
             snapshots = rawSnapshots.map(snapshot => {
-              const snapshotInstance = self.snapshot(snapshot.name!);
+              const snapshotInstance = this.snapshot(snapshot.name!);
               snapshotInstance.metadata = snapshot;
               return snapshotInstance;
             });
@@ -578,7 +577,7 @@ export class PubSub {
   }
 
   getSubscriptions(options?: GetSubscriptionsOptions):
-      Promise<google.pubsub.v1.IListSubscriptionsResponse>;
+      Promise<GetSubscriptionsResponse>;
   getSubscriptions(callback: GetSubscriptionsCallback): void;
   getSubscriptions(
       options: GetSubscriptionsOptions,
@@ -641,14 +640,11 @@ export class PubSub {
    * });
    */
   getSubscriptions(
-      optionsOrCallback?: GetSubscriptionsOptions|GetSubscriptionsCallback,
+      optsOrCallback?: GetSubscriptionsOptions|GetSubscriptionsCallback,
       callback?: GetSubscriptionsCallback):
-      void|Promise<google.pubsub.v1.IListSubscriptionsResponse> {
-    const self = this;
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+      void|Promise<GetSubscriptionsResponse> {
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     let topic = options.topic;
     if (topic) {
@@ -685,7 +681,7 @@ export class PubSub {
 
           if (rawSubs) {
             subscriptions = rawSubs.map(sub => {
-              const subscriptionInstance = self.subscription(sub.name!);
+              const subscriptionInstance = this.subscription(sub.name!);
               subscriptionInstance.metadata = sub;
               return subscriptionInstance;
             });
@@ -756,26 +752,26 @@ export class PubSub {
    * });
    */
   getTopics(
-      optionsOrCallback?: PageOptions|GetTopicsCallback,
+      optsOrCallback?: PageOptions|GetTopicsCallback,
       callback?: GetTopicsCallback): void|Promise<GetTopicsResponse> {
-    const self = this;
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const reqOpts = Object.assign(
         {
           project: 'projects/' + this.projectId,
         },
         options);
+
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
+
     const gaxOpts = Object.assign(
         {
           autoPaginate: options.autoPaginate,
         },
         options.gaxOpts);
+
     this.request<google.pubsub.v1.Topic, google.pubsub.v1.IListTopicsResponse>(
         {
           client: 'PublisherClient',
@@ -788,7 +784,7 @@ export class PubSub {
 
           if (rawTopics) {
             topics = rawTopics.map(topic => {
-              const topicInstance = self.topic(topic.name);
+              const topicInstance = this.topic(topic.name);
               topicInstance.metadata = topic;
               return topicInstance;
             });
@@ -853,14 +849,13 @@ export class PubSub {
    * @param {function} [callback] The callback function.
    */
   request<T, R = void>(config: RequestConfig, callback: RequestCallback<T, R>) {
-    const self = this;
     this.getClient_(config, (err, client) => {
       if (err) {
         callback(err);
         return;
       }
       let reqOpts = extend(true, {}, config.reqOpts);
-      reqOpts = replaceProjectIdToken(reqOpts, self.projectId);
+      reqOpts = replaceProjectIdToken(reqOpts, this.projectId);
       client![config.method](reqOpts, config.gaxOpts, callback);
     });
   }

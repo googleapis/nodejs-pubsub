@@ -171,12 +171,10 @@ export class Topic {
    * });
    */
   create(
-      gaxOptsOrCallback?: CallOptions|CreateTopicCallback,
+      optsOrCallback?: CallOptions|CreateTopicCallback,
       callback?: CreateTopicCallback): Promise<CreateTopicResponse>|void {
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     this.pubsub.createTopic(this.name, gaxOpts, callback!);
   }
@@ -226,13 +224,11 @@ export class Topic {
    */
   createSubscription(
       name: string,
-      optionsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
+      optsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
       callback?: CreateSubscriptionCallback):
       void|Promise<CreateSubscriptionResponse> {
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     this.pubsub.createSubscription(
         this, name, options as CreateSubscriptionOptions, callback!);
@@ -268,18 +264,15 @@ export class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  delete(
-      gaxOptsOrCallback?: CallOptions|EmptyCallback,
-      callback?: EmptyCallback): void|Promise<EmptyResponse> {
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+  delete(optsOrCallback?: CallOptions|EmptyCallback, callback?: EmptyCallback):
+      void|Promise<EmptyResponse> {
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
-    callback = callback || util.noop;
     const reqOpts = {
       topic: this.name,
     };
+
     this.request<google.protobuf.IEmpty>(
         {
           client: 'PublisherClient',
@@ -287,7 +280,7 @@ export class Topic {
           reqOpts,
           gaxOpts: gaxOpts as CallOptions,
         },
-        callback);
+        callback!);
   }
 
   exists(): Promise<ExistsResponse>;
@@ -378,14 +371,14 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  get(gaxOptsOrCallback?: GetTopicOptions|GetTopicCallback,
+  get(optsOrCallback?: GetTopicOptions|GetTopicCallback,
       callback?: GetTopicCallback): void|Promise<GetTopicResponse> {
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
+
     const autoCreate = !!gaxOpts.autoCreate;
     delete gaxOpts.autoCreate;
+
     this.getMetadata(gaxOpts, (err, apiResponse) => {
       if (!err) {
         callback!(null, this, apiResponse!);
@@ -437,16 +430,16 @@ export class Topic {
    * });
    */
   getMetadata(
-      gaxOptsOrCallback?: CallOptions|GetTopicMetadataCallback,
+      optsOrCallback?: CallOptions|GetTopicMetadataCallback,
       callback?: GetTopicMetadataCallback):
       void|Promise<GetTopicMetadataResponse> {
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
+
     const reqOpts = {
       topic: this.name,
     };
+
     this.request<google.pubsub.v1.ITopic>(
         {
           client: 'PublisherClient',
@@ -504,14 +497,11 @@ export class Topic {
    * });
    */
   getSubscriptions(
-      optionsOrCallback?: PageOptions|GetTopicSubscriptionsCallback,
+      optsOrCallback?: PageOptions|GetTopicSubscriptionsCallback,
       callback?: GetTopicSubscriptionsCallback):
       void|Promise<GetTopicSubscriptionsResponse> {
-    const self = this;
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const reqOpts: google.pubsub.v1.IListTopicSubscriptionsRequest =
         Object.assign(
@@ -594,13 +584,10 @@ export class Topic {
    * topic.publish(data).then((messageId) => {});
    */
   publish(
-      data: Buffer, attributesOrCallback?: Attributes|PublishCallback,
+      data: Buffer, attrsOrCb?: Attributes|PublishCallback,
       callback?: PublishCallback): Promise<string>|void {
-    const attributes =
-        typeof attributesOrCallback === 'object' ? attributesOrCallback : {};
-    callback = typeof attributesOrCallback === 'function' ?
-        attributesOrCallback :
-        callback;
+    const attributes = typeof attrsOrCb === 'object' ? attrsOrCb : {};
+    callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
     return this.publisher.publish(data, attributes, callback!);
   }
 
@@ -657,16 +644,13 @@ export class Topic {
    * topic.publishJSON(data).then((messageId) => {});
    */
   publishJSON(
-      json: object, attributesOrCallback?: Attributes|PublishCallback,
+      json: object, attrsOrCb?: Attributes|PublishCallback,
       callback?: PublishCallback): Promise<string>|void {
     if (!is.object(json)) {
       throw new Error('First parameter should be an object.');
     }
-    const attributes =
-        typeof attributesOrCallback === 'object' ? attributesOrCallback : {};
-    callback = typeof attributesOrCallback === 'function' ?
-        attributesOrCallback :
-        callback;
+    const attributes = typeof attrsOrCb === 'object' ? attrsOrCb : {};
+    callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
 
     const data = Buffer.from(JSON.stringify(json));
     return this.publish(data, attributes, callback!);

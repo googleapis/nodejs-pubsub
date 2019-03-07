@@ -28,8 +28,8 @@ export type CreateSnapshotCallback =
     ResourceCallback<Snapshot, google.pubsub.v1.ISnapshot>;
 export type CreateSnapshotResponse = [Snapshot, google.pubsub.v1.ISnapshot];
 
-export type SeekCallback = RequestCallback<google.pubsub.v1.ISnapshot>;
-export type SeekResponse = [google.pubsub.v1.ISnapshot];
+export type SeekCallback = RequestCallback<google.pubsub.v1.ISeekResponse>;
+export type SeekResponse = [google.pubsub.v1.ISeekResponse];
 
 /**
  * A Snapshot object will give you access to your Cloud Pub/Sub snapshot.
@@ -134,14 +134,14 @@ export class Snapshot {
     const reqOpts = {
       snapshot: this.name,
     };
-    callback = callback || util.noop;
+
     this.parent.request<google.protobuf.Empty>(
         {
           client: 'SubscriberClient',
           method: 'deleteSnapshot',
           reqOpts,
         },
-        callback);
+        callback!);
   }
 
   /*@
@@ -193,18 +193,18 @@ export class Snapshot {
    * });
    */
   create(
-      gaxOpts?: CallOptions|CreateSnapshotCallback,
+      optsOrCallback?: CallOptions|CreateSnapshotCallback,
       callback?: CreateSnapshotCallback): void|Promise<CreateSnapshotResponse> {
     if (!(this.parent instanceof Subscription)) {
       throw new Error(
           `This is only available if you accessed this object through Subscription#snapshot`);
     }
 
-    const options = typeof gaxOpts === 'function' ? {} : gaxOpts;
-    callback = typeof gaxOpts === 'function' ? gaxOpts : callback;
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     return this.parent.createSnapshot(
-        this.name, gaxOpts! as CallOptions, (err, snapshot, resp) => {
+        this.name, options, (err, snapshot, resp) => {
           if (err) {
             callback!(err, null, resp);
             return;

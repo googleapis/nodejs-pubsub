@@ -241,16 +241,6 @@ describe('Topic', () => {
 
       topic.delete(options, assert.ifError);
     });
-
-    it('should optionally accept a callback', done => {
-      topic.request =
-          (config: RequestConfig,
-           callback: RequestCallback<google.protobuf.Empty>) => {
-            assert.strictEqual(typeof callback, 'function');
-            done();
-          };
-      topic.delete();
-    });
   });
 
   describe('get', () => {

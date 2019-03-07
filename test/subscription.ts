@@ -491,15 +491,6 @@ describe('Subscription', () => {
             };
       });
 
-      it('should optionally accept a callback', done => {
-        sandbox.stub(util, 'noop').callsFake((err?, resp?) => {
-          assert.ifError(err);
-          assert.strictEqual(resp, apiResponse);
-          done();
-        });
-        subscription.delete();
-      });
-
       it('should return the api response', done => {
         subscription.delete((err: Error, resp: google.protobuf.Empty) => {
           assert.ifError(err);

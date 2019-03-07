@@ -147,12 +147,10 @@ export class IAM {
    * });
    */
   getPolicy(
-      gaxOptsOrCallback?: CallOptions|GetPolicyCallback,
+      optsOrCallback?: CallOptions|GetPolicyCallback,
       callback?: GetPolicyCallback): Promise<GetPolicyResponse>|void {
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const reqOpts = {
       resource: this.id,
@@ -230,16 +228,14 @@ export class IAM {
    * });
    */
   setPolicy(
-      policy: Policy, gaxOptsOrCallback?: CallOptions|SetPolicyCallback,
+      policy: Policy, optsOrCallback?: CallOptions|SetPolicyCallback,
       callback?: SetPolicyCallback): Promise<SetPolicyResponse>|void {
     if (!(typeof policy === 'object')) {
       throw new Error('A policy object is required.');
     }
 
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const reqOpts = {
       resource: this.id,
@@ -341,17 +337,15 @@ export class IAM {
    */
   testPermissions(
       permissions: string|string[],
-      gaxOptsOrCallback?: CallOptions|TestIamPermissionsCallback,
+      optsOrCallback?: CallOptions|TestIamPermissionsCallback,
       callback?: TestIamPermissionsCallback):
       Promise<TestIamPermissionsResponse>|void {
     if (!Array.isArray(permissions) && !(typeof permissions === 'string')) {
       throw new Error('Permissions are required.');
     }
 
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const reqOpts = {
       resource: this.id,
