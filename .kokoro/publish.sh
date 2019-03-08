@@ -29,21 +29,3 @@ echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
 
 npm install
 npm publish --access=public
-
-
-# Publish docs using docuploader
-npm run docs
-
-python3.6 -m pip install gcp-docuploader
-
-python3.6 -m docuploader create-metadata \
-			--name pubsub \
-			--version 0.27.0 \
-			--language node \
-			--distribution-name @google-cloud/pubsub \
-			--product-page https://cloud.google.com/pubsub/docs/ \
-			--github-repository https://github.com/googleapis/nodejs-pubsub \
-			--issue-tracker https://github.com/googleapis/nodejs-pubsub/issues
-			docs/docs.metadata 
-
-python3.6 -m docuploader upload docs
