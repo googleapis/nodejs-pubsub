@@ -92,7 +92,7 @@ describe('Histogram', () => {
   });
 
   describe('percentile', () => {
-    function range(a, b) {
+    function range(a: number, b: number) {
       const result: number[] = [];
 
       for (; a < b; a++) {
