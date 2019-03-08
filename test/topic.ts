@@ -593,6 +593,55 @@ describe('Topic', () => {
     });
   });
 
+  describe('setMetadata', () => {
+    const METADATA = {
+      labels: {yee: 'haw'},
+    };
+
+    let requestStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      requestStub = sandbox.stub(topic, 'request');
+    });
+
+    it('should call the correct rpc', () => {
+      topic.setMetadata(METADATA, assert.ifError);
+
+      const [{client, method}] = requestStub.lastCall.args;
+      assert.strictEqual(client, 'PublisherClient');
+      assert.strictEqual(method, 'updateTopic');
+    });
+
+    it('should send the correct request options', () => {
+      topic.setMetadata(METADATA, assert.ifError);
+
+      const expectedTopic = Object.assign({name: topic.name}, METADATA);
+      const expectedUpdateMask = {paths: ['labels']};
+
+      const [{reqOpts}] = requestStub.lastCall.args;
+      assert.deepStrictEqual(reqOpts.topic, expectedTopic);
+      assert.deepStrictEqual(reqOpts.updateMask, expectedUpdateMask);
+    });
+
+    it('should accept call options', () => {
+      const callOptions = {};
+
+      topic.setMetadata(METADATA, callOptions, assert.ifError);
+
+      const [{gaxOpts}] = requestStub.lastCall.args;
+      assert.strictEqual(gaxOpts, callOptions);
+    });
+
+    it('should pass the user callback to request', () => {
+      const spy = sandbox.spy();
+
+      topic.setMetadata(METADATA, spy);
+
+      const [, callback] = requestStub.lastCall.args;
+      assert.strictEqual(callback, spy);
+    });
+  });
+
   describe('setPublishOptions', () => {
     it('should call through to Publisher#setOptions', () => {
       const fakeOptions = {};
