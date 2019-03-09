@@ -27,8 +27,10 @@ import {EmptyCallback, EmptyResponse, ExistsCallback, ExistsResponse, ObjectStre
 import {CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, Subscription, SubscriptionOptions} from './subscription';
 import * as util from './util';
 
-type TopicCallback = ResourceCallback<Topic, google.pubsub.v1.ITopic>;
-type TopicResponse = [Topic, google.pubsub.v1.ITopic];
+export type TopicMetadata = google.pubsub.v1.ITopic;
+
+type TopicCallback = ResourceCallback<Topic, TopicMetadata>;
+type TopicResponse = [Topic, TopicMetadata];
 
 export type CreateTopicCallback = TopicCallback;
 export type CreateTopicResponse = TopicResponse;
@@ -38,8 +40,14 @@ export type GetTopicResponse = TopicResponse;
 
 export type GetTopicOptions = CallOptions&{autoCreate?: boolean};
 
-export type GetTopicMetadataCallback = RequestCallback<google.pubsub.v1.ITopic>;
-export type GetTopicMetadataResponse = [google.pubsub.v1.ITopic];
+type MetadataCallback = RequestCallback<TopicMetadata>;
+type MetadataResponse = [TopicMetadata];
+
+export type GetTopicMetadataCallback = MetadataCallback;
+export type GetTopicMetadataResponse = MetadataResponse;
+
+export type SetTopicMetadataCallback = MetadataCallback;
+export type SetTopicMetadataResponse = MetadataResponse;
 
 export type GetTopicSubscriptionsCallback = RequestCallback<
     Subscription, google.pubsub.v1.IListTopicSubscriptionsResponse>;
@@ -67,7 +75,7 @@ export class Topic {
   pubsub: PubSub;
   request: typeof PubSub.prototype.request;
   iam: IAM;
-  metadata?: google.pubsub.v1.ITopic;
+  metadata?: TopicMetadata;
   publisher: Publisher;
   getSubscriptionsStream = paginator.streamify('getSubscriptions') as() =>
                                ObjectStream<Subscription>;
@@ -440,7 +448,7 @@ export class Topic {
       topic: this.name,
     };
 
-    this.request<google.pubsub.v1.ITopic>(
+    this.request<TopicMetadata>(
         {
           client: 'PublisherClient',
           method: 'getTopic',
@@ -654,6 +662,78 @@ export class Topic {
 
     const data = Buffer.from(JSON.stringify(json));
     return this.publish(data, attributes, callback!);
+  }
+
+  setMetadata(options: TopicMetadata, gaxOpts?: CallOptions):
+      Promise<SetTopicMetadataResponse>;
+  setMetadata(options: TopicMetadata, callback: SetTopicMetadataCallback): void;
+  setMetadata(
+      options: TopicMetadata, gaxOpts: CallOptions,
+      callback: SetTopicMetadataCallback): void;
+  /**
+   * @typedef {array} SetTopicMetadataResponse
+   * @property {object} 0 The full API response.
+   */
+  /**
+   * @callback SetTopicMetadataCallback
+   * @param {?Error} err Request error, if any.
+   * @param {object} apiResponse The full API response.
+   */
+  /**
+   * Updates the topic.
+   *
+   * @see [UpdateTopicRequest API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/UpdateTopicRequest}
+   *
+   * @param {object} metadata The fields to update. This should be structured
+   *     like a {@link
+   * https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics#Topic|Topic
+   * object}.
+   * @param {object} [gaxOpts] Request configuration options, outlined
+   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   * @param {SetTopicMetadataCallback} [callback] Callback function.
+   * @returns {Promise<SetTopicMetadataResponse>}
+   *
+   * @example
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * const topic = pubsub.topic('my-topic');
+   * const metadata = {
+   *   labels: {foo: 'bar'}
+   * };
+   *
+   * topic.setMetadata(metadata, err => {
+   *   if (err) {
+   *     // Error handling omitted.
+   *   }
+   * });
+   *
+   * @example <caption>If the callback is omitted, we'll return a
+   * Promise.</caption>
+   * topic.setMetadata(metadata).then((data) => {
+   *   const apiResponse = data[0];
+   * });
+   */
+  setMetadata(
+      options: TopicMetadata,
+      optsOrCallback?: CallOptions|SetTopicMetadataCallback,
+      callback?: SetTopicMetadataCallback):
+      void|Promise<SetTopicMetadataResponse> {
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
+
+    const topic = Object.assign({name: this.name}, options);
+    const updateMask = {paths: Object.keys(options)};
+    const reqOpts = {topic, updateMask};
+
+    this.request<TopicMetadata>(
+        {
+          client: 'PublisherClient',
+          method: 'updateTopic',
+          reqOpts,
+          gaxOpts,
+        },
+        callback!);
   }
 
   /**
