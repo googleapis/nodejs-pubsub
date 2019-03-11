@@ -4,6 +4,17 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.28.1
+
+03-11-2019 15:36 PDT
+
+### Bug Fixes
+- fix(typescript): correctly import long ([#541](https://github.com/googleapis/nodejs-pubsub/pull/541))
+
+### Internal / Testing Changes
+- testing: set skipLibCheck to false for ts install test ([#543](https://github.com/googleapis/nodejs-pubsub/pull/543))
+- refactor: fix/simplify proto gen scripts ([#542](https://github.com/googleapis/nodejs-pubsub/pull/542))
+
 ## v0.28.0
 
 03-11-2019 09:11 PDT
