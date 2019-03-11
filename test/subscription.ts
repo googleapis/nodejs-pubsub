@@ -622,15 +622,11 @@ describe('Subscription', () => {
     });
 
     describe('error', () => {
-      afterEach(() => sandbox.restore());
       it('should pass back errors when not auto-creating', done => {
         const error = {code: 4} as ServiceError;
         const apiResponse = {};
         sandbox.stub(subscription, 'getMetadata')
-            .callsFake((gaxOpts, callback) => {
-              callback(error, apiResponse);
-            });
-
+            .callsArgWith(1, error, apiResponse);
 
         subscription.get((err, sub, resp) => {
           assert.strictEqual(err, error);
@@ -644,9 +640,7 @@ describe('Subscription', () => {
         const error = {code: 5} as ServiceError;
         const apiResponse = {};
         sandbox.stub(subscription, 'getMetadata')
-            .callsFake((gaxOpts, callback) => {
-              callback(error, apiResponse);
-            });
+            .callsArgWith(1, error, apiResponse);
 
         subscription.get((err, sub, resp) => {
           assert.strictEqual(err, error);
@@ -660,10 +654,7 @@ describe('Subscription', () => {
         const error = {code: 5} as ServiceError;
         const apiResponse = {};
         sandbox.stub(subscription, 'getMetadata')
-            .callsFake((gaxOpts, callback) => {
-              callback(error, apiResponse);
-            });
-
+            .callsArgWith(1, error, apiResponse);
 
         delete subscription.create;
 
@@ -683,9 +674,7 @@ describe('Subscription', () => {
           autoCreate: true,
         };
         sandbox.stub(subscription, 'getMetadata')
-            .callsFake((gaxOpts, callback) => {
-              callback(error, apiResponse);
-            });
+            .callsArgWith(1, error, apiResponse);
 
         sandbox.stub(subscription, 'create').callsFake((options) => {
           assert.strictEqual(options.gaxOpts, fakeOptions);
