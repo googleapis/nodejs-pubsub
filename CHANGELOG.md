@@ -4,6 +4,21 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.28.0
+
+03-11-2019 09:11 PDT
+
+### New Features
+- feat(topic): create setMetadata method ([#537](https://github.com/googleapis/nodejs-pubsub/pull/537))
+
+### Dependencies
+- fix(deps): update dependency @google-cloud/paginator to ^0.2.0
+
+### Internal / Testing Changes
+- build: Add docuploader credentials to node publish jobs ([#533](https://github.com/googleapis/nodejs-pubsub/pull/533))
+- test: add missing packages and install test ([#536](https://github.com/googleapis/nodejs-pubsub/pull/536))
+- refactor(typescript): noImplicitAny for Subscription test file ([#534](https://github.com/googleapis/nodejs-pubsub/pull/534))
+
 ## v0.27.1
 
 03-06-2019 20:11 PST
