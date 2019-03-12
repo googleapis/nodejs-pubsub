@@ -4,6 +4,134 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+## v0.28.1
+
+03-11-2019 15:36 PDT
+
+### Bug Fixes
+- fix(typescript): correctly import long ([#541](https://github.com/googleapis/nodejs-pubsub/pull/541))
+
+### Internal / Testing Changes
+- testing: set skipLibCheck to false for ts install test ([#543](https://github.com/googleapis/nodejs-pubsub/pull/543))
+- refactor: fix/simplify proto gen scripts ([#542](https://github.com/googleapis/nodejs-pubsub/pull/542))
+
+## v0.28.0
+
+03-11-2019 09:11 PDT
+
+### New Features
+- feat(topic): create setMetadata method ([#537](https://github.com/googleapis/nodejs-pubsub/pull/537))
+
+### Dependencies
+- fix(deps): update dependency @google-cloud/paginator to ^0.2.0
+
+### Internal / Testing Changes
+- build: Add docuploader credentials to node publish jobs ([#533](https://github.com/googleapis/nodejs-pubsub/pull/533))
+- test: add missing packages and install test ([#536](https://github.com/googleapis/nodejs-pubsub/pull/536))
+- refactor(typescript): noImplicitAny for Subscription test file ([#534](https://github.com/googleapis/nodejs-pubsub/pull/534))
+
+## v0.27.1
+
+03-06-2019 20:11 PST
+
+### Bug Fixes
+- fix(typescript): correct response type of `Subscription.get` ([#525](https://github.com/googleapis/nodejs-pubsub/pull/525))
+
+### Documentation
+- fix(typo): correct typo: recieved => received ([#527](https://github.com/googleapis/nodejs-pubsub/pull/527))
+
+### Internal / Testing Changes
+- build: update release configuration
+- refactor(typescript): noImplicitAny for message-stream test file ([#522](https://github.com/googleapis/nodejs-pubsub/pull/522))
+- build: use node10 to run samples-test, system-test etc ([#529](https://github.com/googleapis/nodejs-pubsub/pull/529))
+- refactor: type fixes and some light housekeeping ([#528](https://github.com/googleapis/nodejs-pubsub/pull/528))
+
+## v0.27.0
+
+03-04-2019 08:42 PST
+
+
+### Bug Fixes
+- refactor(typescript): various fixes/refactors to types ([#515](https://github.com/googleapis/nodejs-pubsub/pull/515))
+- fix(ts): fix getPolicy promise return signature ([#511](https://github.com/googleapis/nodejs-pubsub/pull/511))
+- fix(typescript): export all the types ([#516](https://github.com/googleapis/nodejs-pubsub/pull/516))
+
+### Dependencies
+- refactor: clean up unused packages ([#517](https://github.com/googleapis/nodejs-pubsub/pull/517))
+
+### Documentation
+- fix(docs): ensure docs are not removed by typescript ([#512](https://github.com/googleapis/nodejs-pubsub/pull/512))
+- docs: update comments on protos ([#509](https://github.com/googleapis/nodejs-pubsub/pull/509))
+
+### Internal / Testing Changes
+- refactor(typescript):noImplicitAny for index test file ([#502](https://github.com/googleapis/nodejs-pubsub/pull/502))
+- refactor(ts): enable noImplicitAny for IAM test file ([#501](https://github.com/googleapis/nodejs-pubsub/pull/501))
+- refactor(ts): enable noImplicitAny for lease-manager test file ([#508](https://github.com/googleapis/nodejs-pubsub/pull/508))
+- refactor(ts): enable noImplicitAny for Histogram and Message_queues test file ([#510](https://github.com/googleapis/nodejs-pubsub/pull/510))
+- refactor(ts): enable noImplicitAny for pubsub system test file ([#519](https://github.com/googleapis/nodejs-pubsub/pull/519))
+- refactor(ts): noImplicitAny for publisher test file ([#520](https://github.com/googleapis/nodejs-pubsub/pull/520))
+
+## v0.26.0
+
+02-28-2019 05:42 PST
+
+### BREAKING: `message.publishTime` is now represented by a [`PreciseDate`](https://github.com/googleapis/nodejs-precise-date) object. ([#503](https://github.com/googleapis/nodejs-pubsub/pull/503))
+
+The `PreciseDate` class extends the native Date object, so most users should be unaffected by this change. The notable differences between PreciseDate and Date objects are:
+
+- `toISOString()` now returns as a RFC 3339 formatted string.
+- Nano and microsecond data is available via `date.getNanoseconds()` and `date.getMicroseconds()` respectively.
+
+### New Features
+- feat(typescript): ship typescript declaration files ([#498](https://github.com/googleapis/nodejs-pubsub/pull/498))
+- feat(subscription): support push config auth methods ([#504](https://github.com/googleapis/nodejs-pubsub/pull/504))
+
+### Internal / Testing Changes
+- refactor(typescript): noImplicitAny for snapshot and subscriber test file ([#490](https://github.com/googleapis/nodejs-pubsub/pull/490))
+- fix(messageStream): remove call to destroy grpc stream ([#499](https://github.com/googleapis/nodejs-pubsub/pull/499))
+
+## v0.25.0
+
+02-20-2019 10:35 PST
+
+### Implementation Changes
+- fix: throw on invalid credentials and update retry config ([#476](https://github.com/googleapis/nodejs-pubsub/pull/476))
+
+The retry logic for **all** methods has changed. It is possible that this could go unnoticed, however if you suddenly start seeing errors in places that were previously quiet, this might account for said errors.
+
+### New Features
+- refactor(ts): improve TypeScript types ([#482](https://github.com/googleapis/nodejs-pubsub/pull/482))
+- refactor(typescript): noImplicityAny for snapshot.ts and publisher.ts ([#457](https://github.com/googleapis/nodejs-pubsub/pull/457))
+
+### Bug Fixes
+- fix: ignore messages that come in after close ([#485](https://github.com/googleapis/nodejs-pubsub/pull/485))
+
+### Dependencies
+- chore(deps): update dependency mocha to v6 ([#488](https://github.com/googleapis/nodejs-pubsub/pull/488))
+- fix(deps): update dependency @google-cloud/promisify to ^0.4.0 ([#478](https://github.com/googleapis/nodejs-pubsub/pull/478))
+- fix(deps): update dependency yargs to v13 ([#475](https://github.com/googleapis/nodejs-pubsub/pull/475))
+- fix(deps): update dependency duplexify to v4 ([#462](https://github.com/googleapis/nodejs-pubsub/pull/462))
+- fix(deps): update dependency google-gax to ^0.25.0 ([#456](https://github.com/googleapis/nodejs-pubsub/pull/456))
+
+### Documentation
+- docs: update links in contrib guide ([#479](https://github.com/googleapis/nodejs-pubsub/pull/479))
+- docs: update contributing path in README ([#471](https://github.com/googleapis/nodejs-pubsub/pull/471))
+- chore: move CONTRIBUTING.md to root ([#470](https://github.com/googleapis/nodejs-pubsub/pull/470))
+- docs: make mention of message change in changelog ([#469](https://github.com/googleapis/nodejs-pubsub/pull/469))
+- docs: add lint/fix example to contributing guide ([#464](https://github.com/googleapis/nodejs-pubsub/pull/464))
+- fix(sample): fix retry codes in retry sample code ([#458](https://github.com/googleapis/nodejs-pubsub/pull/458))
+
+### Internal / Testing Changes
+- test(samples): correctly handle publishTime value ([#495](https://github.com/googleapis/nodejs-pubsub/pull/495))
+- test: fix publishTime issues ([#494](https://github.com/googleapis/nodejs-pubsub/pull/494))
+- refactor(typescript): noImplicityAny for Topic test file ([#487](https://github.com/googleapis/nodejs-pubsub/pull/487))
+- refactor(ts): noImplicitAny for subscription test file ([#489](https://github.com/googleapis/nodejs-pubsub/pull/489))
+- build: use linkinator for docs test ([#477](https://github.com/googleapis/nodejs-pubsub/pull/477))
+- build: create docs test npm scripts ([#474](https://github.com/googleapis/nodejs-pubsub/pull/474))
+- build: test using @grpc/grpc-js in CI ([#472](https://github.com/googleapis/nodejs-pubsub/pull/472))
+- test: update code style of smoke test ([#463](https://github.com/googleapis/nodejs-pubsub/pull/463))
+- test: make smoke test spam less ([#459](https://github.com/googleapis/nodejs-pubsub/pull/459))
+
 ## v0.24.1
 
 01-29-2019 13:17 PST

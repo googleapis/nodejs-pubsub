@@ -15,11 +15,10 @@
  */
 
 import {promisify} from '@google-cloud/promisify';
-import {Gaxios} from 'gaxios';
 import {ClientStub} from 'google-gax';
 import {ClientDuplexStream, Metadata, ServiceError, status, StatusObject} from 'grpc';
 import * as isStreamEnded from 'is-stream-ended';
-import {Duplex, PassThrough} from 'stream';
+import {PassThrough} from 'stream';
 
 import {PullResponse, Subscriber} from './subscriber';
 
@@ -110,29 +109,6 @@ export class ChannelError extends Error implements ServiceError {
 }
 
 /**
- * Ponyfill for destroying streams.
- *
- * @private
- *
- * @param {stream} stream The stream to destroy.
- * @param {error?} err Error to emit.
- */
-export function destroy(stream: Duplex, err?: Error): void {
-  const nativeDestroy = Duplex.prototype.destroy;
-
-  if (typeof nativeDestroy === 'function') {
-    return nativeDestroy.call(stream, err);
-  }
-
-  process.nextTick(() => {
-    if (err) {
-      stream.emit('error', err);
-    }
-    stream.emit('close');
-  });
-}
-
-/**
  * @typedef {object} MessageStreamOptions
  * @property {number} [highWaterMark=0] Configures the Buffer level for all
  *     underlying streams. See
@@ -197,7 +173,16 @@ export class MessageStream extends PassThrough {
       stream.cancel();
     }
 
-    return destroy(this, err);
+    if (typeof super.destroy === 'function') {
+      return super.destroy(err);
+    }
+
+    process.nextTick(() => {
+      if (err) {
+        this.emit('error', err);
+      }
+      this.emit('close');
+    });
   }
   /**
    * Adds a StreamingPull stream to the combined stream.
@@ -329,7 +314,6 @@ export class MessageStream extends PassThrough {
    */
   private _onStatus(stream: PullStream, status: StatusObject): void {
     if (this.destroyed) {
-      destroy(stream);
       return;
     }
 

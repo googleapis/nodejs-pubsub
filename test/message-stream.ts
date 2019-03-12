@@ -15,11 +15,13 @@
  */
 
 import * as assert from 'assert';
-import {Metadata} from 'grpc';
+import {Metadata, ServiceError} from 'grpc';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {Duplex, PassThrough} from 'stream';
 import * as uuid from 'uuid';
+import * as messageTypes from '../src/message-stream';
+import {Subscriber} from '../src/subscriber';
 
 // just need this for unit tests.. we have a ponyfill for destroy on
 // MessageStream and gax streams use Duplexify
@@ -41,20 +43,17 @@ interface StreamOptions {
   highWaterMark?: number;
 }
 
-class FakeDuplex extends Duplex {
-  destroy(err?: Error): void {
-    if (super.destroy) {
-      return super.destroy(err);
-    }
-    destroy(this, err);
-  }
-}
-
 class FakePassThrough extends PassThrough {
   options: StreamOptions;
   constructor(options: StreamOptions) {
     super(options);
     this.options = options;
+  }
+  destroy(err?: Error): void {
+    if (super.destroy) {
+      return super.destroy(err);
+    }
+    destroy(this, err);
   }
 }
 
@@ -115,7 +114,7 @@ class FakeSubscriber {
   name: string;
   ackDeadline: number;
   client: FakeGaxClient;
-  constructor(client) {
+  constructor(client: FakeGaxClient) {
     this.name = uuid.v4();
     this.ackDeadline = Math.floor(Math.random() * 600);
     this.client = client;
@@ -129,23 +128,22 @@ describe('MessageStream', () => {
   const sandbox = sinon.createSandbox();
 
   let client: FakeGrpcClient;
-  let subscriber: FakeSubscriber;
+  let subscriber: Subscriber;
 
   // tslint:disable-next-line variable-name
-  let MessageStream;
-  let messageStream;
+  let MessageStream: typeof messageTypes.MessageStream;
+  let messageStream: messageTypes.MessageStream;
 
   before(() => {
-    MessageStream =
-        proxyquire('../src/message-stream.js', {
-          'stream': {Duplex: FakeDuplex, PassThrough: FakePassThrough}
-        }).MessageStream;
+    MessageStream = proxyquire('../src/message-stream.js', {
+                      'stream': {PassThrough: FakePassThrough}
+                    }).MessageStream;
   });
 
   beforeEach(() => {
     const gaxClient = new FakeGaxClient();
     client = gaxClient.client;  // we hit the grpc client directly
-    subscriber = new FakeSubscriber(gaxClient);
+    subscriber = new FakeSubscriber(gaxClient) as {} as Subscriber;
     messageStream = new MessageStream(subscriber);
   });
 
@@ -160,8 +158,8 @@ describe('MessageStream', () => {
         objectMode: true,
         highWaterMark: 0,
       };
-
-      assert.deepStrictEqual(messageStream.options, expectedOptions);
+      assert.deepStrictEqual(
+          (messageStream as {} as FakePassThrough).options, expectedOptions);
     });
 
     it('should respect the highWaterMark option', () => {
@@ -173,7 +171,8 @@ describe('MessageStream', () => {
         highWaterMark,
       };
 
-      assert.deepStrictEqual(ms.options, expectedOptions);
+      assert.deepStrictEqual(
+          (ms as {} as FakePassThrough).options, expectedOptions);
     });
 
     it('should set destroyed to false', () => {
@@ -257,7 +256,7 @@ describe('MessageStream', () => {
 
   describe('destroy', () => {
     it('should noop if already destroyed', done => {
-      const stub = sandbox.stub(FakeDuplex.prototype, 'destroy')
+      const stub = sandbox.stub(FakePassThrough.prototype, 'destroy')
                        .callsFake(function(this: Duplex) {
                          if (this === messageStream) {
                            done();
@@ -306,16 +305,16 @@ describe('MessageStream', () => {
     });
 
     describe('without native destroy', () => {
-      let destroy;
+      let destroy: (err?: Error) => void;
 
       before(() => {
-        destroy = FakeDuplex.prototype.destroy;
+        destroy = FakePassThrough.prototype.destroy;
         // tslint:disable-next-line no-any
-        FakeDuplex.prototype.destroy = (false as any);
+        FakePassThrough.prototype.destroy = (false as any);
       });
 
       after(() => {
-        FakeDuplex.prototype.destroy = destroy;
+        FakePassThrough.prototype.destroy = destroy;
       });
 
       it('should emit close', done => {
@@ -340,11 +339,11 @@ describe('MessageStream', () => {
     describe('initialization', () => {
       it('should pipe to the message stream', done => {
         const fakeResponses = [{}, {}, {}, {}, {}];
-        const recieved: object[] = [];
+        const received: object[] = [];
 
-        messageStream.on('data', chunk => recieved.push(chunk))
+        messageStream.on('data', (chunk: Buffer) => received.push(chunk))
             .on('end', () => {
-              assert.deepStrictEqual(recieved, fakeResponses);
+              assert.deepStrictEqual(received, fakeResponses);
               done();
             });
 
@@ -383,7 +382,7 @@ describe('MessageStream', () => {
         const fakeError = new Error('err');
         const expectedMessage = `Failed to connect to channel. Reason: err`;
 
-        ms.on('error', err => {
+        ms.on('error', (err: ServiceError) => {
           assert.strictEqual(err.code, 2);
           assert.strictEqual(err.message, expectedMessage);
           assert.strictEqual(ms.destroyed, true);
@@ -401,7 +400,7 @@ describe('MessageStream', () => {
         const ms = new MessageStream(subscriber);
         const fakeError = new Error('Failed to connect before the deadline');
 
-        ms.on('error', err => {
+        ms.on('error', (err: ServiceError) => {
           assert.strictEqual(err.code, 4);
           done();
         });
@@ -446,20 +445,6 @@ describe('MessageStream', () => {
     });
 
     describe('on status', () => {
-      it('should destroy the stream if the message stream is destroyed',
-         done => {
-           const [stream] = client.streams;
-           const stub = sandbox.stub(FakeDuplex.prototype, 'destroy')
-                            .callsFake(function(this: Duplex) {
-                              if (this === stream) {
-                                done();
-                              }
-                            });
-
-           messageStream.destroy();
-           stream.emit('status', {});
-         });
-
       it('should wait for end to fire before creating a new stream', done => {
         const [stream] = client.streams;
         const expectedCount = stream.listenerCount('end') + 1;
@@ -501,7 +486,7 @@ describe('MessageStream', () => {
           details: 'Err',
         };
 
-        messageStream.on('error', err => {
+        messageStream.on('error', (err: ServiceError) => {
           assert(err instanceof Error);
           assert.strictEqual(err.code, fakeStatus.code);
           assert.strictEqual(err.message, fakeStatus.details);

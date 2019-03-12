@@ -21,47 +21,20 @@
 import {promisifyAll} from '@google-cloud/promisify';
 import * as arrify from 'arrify';
 import {CallOptions} from 'google-gax';
-import {PubSub} from '.';
 
-/**
- * @callback GetPolicyCallback
- * @param {?Error} err Request error, if any.
- * @param {object} acl The policy.
- */
-export interface GetPolicyCallback {
-  (err?: Error|null, acl?: Policy|null): void;
-}
+import {google} from '../proto/iam';
 
-/**
- * @callback SetPolicyCallback
- * @param {?Error} err Request error, if any.
- * @param {object} acl The policy.
- */
-export interface SetPolicyCallback {
-  (err?: Error|null, acl?: Policy|null): void;
-}
+import {Omit, PubSub, RequestCallback, ResourceCallback} from './pubsub';
 
-/**
- * @typedef {array} SetPolicyResponse
- * @property {object} 0 The policy.
- */
+export type Policy = {
+  etag?: string|Buffer
+}&Omit<google.iam.v1.IPolicy, 'etag'>;
+
+export type GetPolicyCallback = RequestCallback<Policy>;
+export type SetPolicyCallback = RequestCallback<Policy>;
+
 export type SetPolicyResponse = [Policy];
-
-/**
- * @typedef {array} GetPolicyResponse
- * @property {object} 0 The policy.
- */
 export type GetPolicyResponse = [Policy];
-
-/**
- * @typedef {string[]} PermissionsResponse
- * A subset of TestPermissionsRequest.permissions that the caller is allowed.
- * @see https://cloud.google.com/pubsub/docs/reference/rpc/google.iam.v1#google.iam.v1.TestIamPermissionsRequest
- */
-export interface PermissionsResponse {
-  permissions: string|string[];
-}
-
 
 /**
  * Shows which IAM permissions is allowed.
@@ -72,54 +45,10 @@ export type IamPermissionsMap = {
   [key: string]: boolean
 };
 
-/**
- * @typedef {array} TestIamPermissionsResponse
- * @property {object[]} 0 A subset of permissions that the caller is allowed.
- * @property {PermissionsResponse} 1 The full API response.
- */
-export type TestIamPermissionsResponse = [PermissionsResponse];
-
-/**
- * @callback TestIamPermissionsCallback
- * @param {?Error} err Request error, if any.
- * @param {TestIamPermissionsAPIResponse} permissions A subset of permissions that the caller is allowed.
- * @param {PermissionsResponse} apiResponse The full API response.
- */
-export interface TestIamPermissionsCallback {
-  (err?: Error|null, permissions?: IamPermissionsMap|null,
-   apiResponse?: PermissionsResponse): void;
-}
-
-/**
- * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/Policy#Expr
- */
-export interface Expr {
-  expression: string;
-  title: string;
-  description: string;
-  location: string;
-}
-
-/**
- * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/Policy#Binding
- */
-export interface Binding {
-  role: string;
-  members: string[];
-  condition?: Expr;
-}
-
-/**
- * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/Policy
- */
-export interface Policy {
-  /**
-   * @deprecated
-   */
-  version?: number;
-  etag?: string;
-  bindings: Binding[];
-}
+export type TestIamPermissionsResponse =
+    [IamPermissionsMap, google.iam.v1.ITestIamPermissionsResponse];
+export type TestIamPermissionsCallback = ResourceCallback<
+    IamPermissionsMap, google.iam.v1.ITestIamPermissionsResponse>;
 
 /**
  * [IAM (Identity and Access
@@ -171,14 +100,22 @@ export class IAM {
       this.Promise = pubsub.Promise;
     }
     this.pubsub = pubsub;
-    // tslint:disable-next-line no-any
-    this.request = pubsub.request.bind(pubsub) as any;
+    this.request = pubsub.request.bind(pubsub);
     this.id = id;
   }
 
-  getPolicy(gaxOpts?: CallOptions): Promise<GetPolicyCallback>;
+  getPolicy(gaxOpts?: CallOptions): Promise<GetPolicyResponse>;
   getPolicy(callback: GetPolicyCallback): void;
   getPolicy(gaxOpts: CallOptions, callback: GetPolicyCallback): void;
+  /**
+   * @typedef {array} GetPolicyResponse
+   * @property {object} 0 The policy.
+   */
+  /**
+   * @callback GetPolicyCallback
+   * @param {?Error} err Request error, if any.
+   * @param {object} acl The policy.
+   */
   /**
    * Get the IAM policy
    *
@@ -210,12 +147,10 @@ export class IAM {
    * });
    */
   getPolicy(
-      gaxOptsOrCallback?: CallOptions|GetPolicyCallback,
-      callback?: GetPolicyCallback): Promise<GetPolicyCallback>|void {
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+      optsOrCallback?: CallOptions|GetPolicyCallback,
+      callback?: GetPolicyCallback): Promise<GetPolicyResponse>|void {
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const reqOpts = {
       resource: this.id,
@@ -235,6 +170,15 @@ export class IAM {
   setPolicy(policy: Policy, gaxOpts: CallOptions, callback: SetPolicyCallback):
       void;
   setPolicy(policy: Policy, callback: SetPolicyCallback): void;
+  /**
+   * @typedef {array} SetPolicyResponse
+   * @property {object} 0 The policy.
+   */
+  /**
+   * @callback SetPolicyCallback
+   * @param {?Error} err Request error, if any.
+   * @param {object} acl The policy.
+   */
   /**
    * Set the IAM policy
    *
@@ -284,23 +228,21 @@ export class IAM {
    * });
    */
   setPolicy(
-      policy: Policy, gaxOptsOrCallback?: CallOptions|SetPolicyCallback,
+      policy: Policy, optsOrCallback?: CallOptions|SetPolicyCallback,
       callback?: SetPolicyCallback): Promise<SetPolicyResponse>|void {
     if (!(typeof policy === 'object')) {
       throw new Error('A policy object is required.');
     }
 
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const reqOpts = {
       resource: this.id,
       policy,
     };
 
-    this.request(
+    this.request<Policy>(
         {
           client: 'SubscriberClient',
           method: 'setIamPolicy',
@@ -317,6 +259,22 @@ export class IAM {
       callback: TestIamPermissionsCallback): void;
   testPermissions(
       permissions: string|string[], callback: TestIamPermissionsCallback): void;
+  /**
+   * @callback TestIamPermissionsCallback
+   * @param {?Error} err Request error, if any.
+   * @param {TestIamPermissionsAPIResponse} permissions A subset of permissions that the caller is allowed.
+   * @param {PermissionsResponse} apiResponse The full API response.
+   */
+  /**
+   * @typedef {array} TestIamPermissionsResponse
+   * @property {object[]} 0 A subset of permissions that the caller is allowed.
+   * @property {PermissionsResponse} 1 The full API response.
+   */
+  /**
+   * @typedef {string[]} PermissionsResponse
+   * A subset of TestPermissionsRequest.permissions that the caller is allowed.
+   * @see https://cloud.google.com/pubsub/docs/reference/rpc/google.iam.v1#google.iam.v1.TestIamPermissionsRequest
+   */
   /**
    * Test a set of permissions for a resource.
    *
@@ -379,24 +337,22 @@ export class IAM {
    */
   testPermissions(
       permissions: string|string[],
-      gaxOptsOrCallback?: CallOptions|TestIamPermissionsCallback,
+      optsOrCallback?: CallOptions|TestIamPermissionsCallback,
       callback?: TestIamPermissionsCallback):
       Promise<TestIamPermissionsResponse>|void {
     if (!Array.isArray(permissions) && !(typeof permissions === 'string')) {
       throw new Error('Permissions are required.');
     }
 
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const reqOpts = {
       resource: this.id,
       permissions: arrify(permissions),
     };
 
-    this.request<PermissionsResponse>(
+    this.request<google.iam.v1.ITestIamPermissionsResponse>(
         {
           client: 'SubscriberClient',
           method: 'testIamPermissions',
@@ -410,7 +366,7 @@ export class IAM {
           }
 
           const availablePermissions = arrify(resp!.permissions);
-          const permissionHash =
+          const permissionHash: IamPermissionsMap =
               (permissions as string[]).reduce((acc, permission) => {
                 acc[permission] = availablePermissions.indexOf(permission) > -1;
                 return acc;

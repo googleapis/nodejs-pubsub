@@ -21,10 +21,9 @@ import {google} from '../proto/pubsub';
 
 const each = require('async-each');
 import * as extend from 'extend';
-import * as is from 'is';
+import is from '@sindresorhus/is';
 import {Topic} from './topic';
-import {Attributes} from '.';
-import {ServiceError} from 'grpc';
+import {RequestCallback} from './pubsub';
 
 interface Inventory {
   callbacks: PublishCallback[];
@@ -32,10 +31,10 @@ interface Inventory {
   bytes: number;
 }
 
-export interface PublishCallback {
-  (err?: ServiceError|null, messageId?: string|null): void;
-}
-
+export type Attributes = {
+  [key: string]: string
+};
+export type PublishCallback = RequestCallback<string>;
 
 /**
  * @typedef BatchPublishOptions
