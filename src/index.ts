@@ -41,6 +41,7 @@ import {google} from '../proto/pubsub';
 import {ServiceError, ChannelCredentials} from 'grpc';
 import {FlowControlOptions} from './lease-manager';
 import {BatchPublishOptions} from './publisher';
+import {MessageStreamOptions} from './message-stream';
 
 const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
@@ -74,22 +75,38 @@ interface Options {
 
 export interface GetSnapshotsOptions extends Options {}
 export interface GetSnapshotsCallback {
-  (err?: Error|null, snapshots?: Snapshot[]|null, apiResponse?: object): void;
+  (err?: Error|null, snapshots?: Snapshot[]|null,
+   request?: google.pubsub.v1.IListSnapshotsRequest,
+   apiResponse?: google.pubsub.v1.IListSnapshotsResponse): void;
 }
+export type GetSnapshotsResponse = [
+  Snapshot, google.pubsub.v1.IListSnapshotsRequest,
+  google.pubsub.v1.IListSnapshotsResponse
+];
 
 export interface GetSubscriptionsOptions extends Options {
   topic?: Topic;
-  project?: string;
 }
 export interface GetSubscriptionsCallback {
   (err?: Error|null, subscriptions?: Subscription[]|null,
-   apiResponse?: object): void;
+   request?: google.pubsub.v1.IListSubscriptionsRequest|null,
+   apiResponse?: google.pubsub.v1.IListSubscriptionsResponse): void;
 }
+export type GetSubscriptionsResponse = [
+  Subscription[], google.pubsub.v1.IListSubscriptionsRequest,
+  google.pubsub.v1.IListSubscriptionsResponse
+];
 
 export interface GetTopicsOptions extends Options {}
 export interface GetTopicsCallback {
-  (err?: Error|null, topics?: Topic[]|null, apiResponse?: object): void;
+  (err?: Error|null, topics?: Topic[]|null,
+   request?: google.pubsub.v1.IListSnapshotsRequest|null,
+   apiResponse?: google.pubsub.v1.IListSnapshotsResponse): void;
 }
+export type GetTopicsResponse = [
+  Topic[], google.pubsub.v1.IListSnapshotsRequest,
+  google.pubsub.v1.IListSnapshotsResponse
+];
 
 export type SeekCallback = RequestCallback<google.pubsub.v1.ISeekResponse>;
 
@@ -118,6 +135,7 @@ export interface SubscriptionCallOptions {
   autoPaginate?: boolean;
   gaxOpts?: CallOptions;
   batching?: BatchPublishOptions;
+  streamingOptions?: MessageStreamOptions;
 }
 
 
@@ -598,15 +616,13 @@ export class PubSub {
    *   const snapshots = data[0];
    * });
    */
-  getSnapshots(option?: GetSnapshotsOptions):
-      Promise<google.pubsub.v1.IListSnapshotsResponse>;
+  getSnapshots(option?: GetSnapshotsOptions): Promise<GetSnapshotsResponse>;
   getSnapshots(callback: GetSnapshotsCallback): void;
   getSnapshots(option: GetSnapshotsOptions, callback: GetSnapshotsCallback):
       void;
   getSnapshots(
       optionsOrCallback?: GetSnapshotsOptions|GetSnapshotsCallback,
-      callback?: GetSnapshotsCallback):
-      void|Promise<google.pubsub.v1.IListSnapshotsResponse> {
+      callback?: GetSnapshotsCallback): void|Promise<GetSnapshotsResponse> {
     const self = this;
     const options =
         typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
@@ -701,7 +717,7 @@ export class PubSub {
    * });
    */
   getSubscriptions(options?: GetSubscriptionsOptions):
-      Promise<google.pubsub.v1.IListSubscriptionsResponse>;
+      Promise<GetSubscriptionsResponse>;
   getSubscriptions(callback: GetSubscriptionsCallback): void;
   getSubscriptions(
       options: GetSubscriptionsOptions,
@@ -709,7 +725,7 @@ export class PubSub {
   getSubscriptions(
       optionsOrCallback?: GetSubscriptionsOptions|GetSubscriptionsCallback,
       callback?: GetSubscriptionsCallback):
-      void|Promise<google.pubsub.v1.IListSubscriptionsResponse> {
+      void|Promise<GetSubscriptionsResponse> {
     const self = this;
     const options =
         typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
@@ -723,8 +739,11 @@ export class PubSub {
       }
       return topic.getSubscriptions(options, callback!);
     }
-    const reqOpts = Object.assign({}, options);
-    reqOpts.project = 'projects/' + this.projectId;
+    const reqOpts = Object.assign(
+        {
+          project: 'projects/' + this.projectId,
+        },
+        options);
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
     const gaxOpts = Object.assign(
@@ -807,14 +826,12 @@ export class PubSub {
    *   const topics = data[0];
    * });
    */
-  getTopics(options: GetTopicsOptions):
-      Promise<google.pubsub.v1.IListTopicsResponse>;
+  getTopics(options?: GetTopicsOptions): Promise<GetTopicsResponse>;
   getTopics(callback: GetTopicsCallback): void;
   getTopics(options: GetTopicsOptions, callback: GetTopicsCallback): void;
   getTopics(
       optionsOrCallback?: GetTopicsOptions|GetTopicsCallback,
-      callback?: GetTopicsCallback):
-      void|Promise<google.pubsub.v1.IListTopicsResponse> {
+      callback?: GetTopicsCallback): void|Promise<GetTopicsResponse> {
     const self = this;
     const options =
         typeof optionsOrCallback === 'object' ? optionsOrCallback : {};

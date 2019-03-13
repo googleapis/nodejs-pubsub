@@ -22,7 +22,7 @@ import {Readable} from 'stream';
 
 import {google} from '../proto/pubsub';
 
-import {Attributes, CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, CreateTopicCallback, CreateTopicResponse, ExistsCallback, GetCallOptions, GetTopicMetadataCallback, Metadata, PubSub, RequestCallback, SubscriptionCallOptions} from '.';
+import {Attributes, CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, CreateTopicCallback, CreateTopicResponse, ExistsCallback, GetCallOptions, GetSubscriptionsCallback, GetSubscriptionsOptions, GetTopicMetadataCallback, Metadata, PubSub, RequestCallback, SubscriptionCallOptions} from '.';
 import {IAM} from './iam';
 import {PublishCallback, Publisher, PublishOptions} from './publisher';
 import {Subscription} from './subscription';
@@ -487,21 +487,20 @@ export class Topic {
    *   const subscriptions = data[0];
    * });
    */
-  getSubscriptions(callback: RequestCallback<Subscription[]>): void;
+  getSubscriptions(callback: GetSubscriptionsCallback): void;
   getSubscriptions(
-      options: SubscriptionCallOptions,
-      callback: RequestCallback<Subscription[]>): void;
+      options: GetSubscriptionsOptions,
+      callback: GetSubscriptionsCallback): void;
   getSubscriptions(
-      options?: SubscriptionCallOptions,
+      options?: GetSubscriptionsOptions,
       ): Promise<Subscription[]>;
   getSubscriptions(
-      optionsOrCallback?: SubscriptionCallOptions|
-      RequestCallback<Subscription[]>,
-      callback?: RequestCallback<Subscription[]>):
-      void|Promise<Subscription[]> {
+      optionsOrCallback?: GetSubscriptionsOptions|GetSubscriptionsCallback,
+      callback?: GetSubscriptionsCallback): void|Promise<Subscription[]> {
     const self = this;
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
+    const options = typeof optionsOrCallback === 'object' ?
+        optionsOrCallback as GetSubscriptionsOptions :
+        {};
     callback =
         typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
 
@@ -509,7 +508,7 @@ export class Topic {
         {
           topic: this.name,
         },
-        options as SubscriptionCallOptions);
+        options);
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
     const gaxOpts = Object.assign(
