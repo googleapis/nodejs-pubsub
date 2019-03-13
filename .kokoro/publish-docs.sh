@@ -25,9 +25,11 @@ npm run docs
 # Publish documentation with docuploader.
 python3.6 -m pip install gcp-docuploader
 
+VERSION=$(npm view @google-cloud/pubsub version)
+
 python3.6 -m docuploader create-metadata \
 			--name pubsub \
-			--version 0.27.0 \
+			--version ${VERSION}\
 			--language node \
 			--distribution-name @google-cloud/pubsub \
 			--product-page https://cloud.google.com/pubsub/docs/ \
