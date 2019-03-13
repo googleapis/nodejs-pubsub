@@ -18,7 +18,7 @@ import * as assert from 'assert';
 import {Histogram} from '../src/histogram.js';
 
 describe('Histogram', () => {
-  let histogram;
+  let histogram: Histogram;
 
   const MIN_VALUE = 10000;
   const MAX_VALUE = 600000;
@@ -92,7 +92,7 @@ describe('Histogram', () => {
   });
 
   describe('percentile', () => {
-    function range(a, b) {
+    function range(a: number, b: number) {
       const result: number[] = [];
 
       for (; a < b; a++) {

@@ -19,9 +19,17 @@ import {CallOptions} from 'google-gax';
 
 import {google} from '../proto/pubsub';
 
-import {CreateSnapshotCallback, CreateSnapshotResponse, RequestCallback, SeekCallback, Subscription} from '.';
 import {PubSub} from './index';
+import {EmptyCallback, EmptyResponse, RequestCallback, ResourceCallback} from './pubsub';
+import {Subscription} from './subscription';
 import * as util from './util';
+
+export type CreateSnapshotCallback =
+    ResourceCallback<Snapshot, google.pubsub.v1.ISnapshot>;
+export type CreateSnapshotResponse = [Snapshot, google.pubsub.v1.ISnapshot];
+
+export type SeekCallback = RequestCallback<google.pubsub.v1.ISeekResponse>;
+export type SeekResponse = [google.pubsub.v1.ISeekResponse];
 
 /**
  * A Snapshot object will give you access to your Cloud Pub/Sub snapshot.
@@ -92,7 +100,7 @@ export class Snapshot {
   name: string;
   // tslint:disable-next-line variable-name
   Promise?: PromiseConstructor;
-  metadata!: google.pubsub.v1.ISnapshot;
+  metadata?: google.pubsub.v1.ISnapshot;
   constructor(parent: Subscription|PubSub, name: string) {
     if (parent instanceof PubSub) {
       this.Promise = parent.Promise;
@@ -101,6 +109,8 @@ export class Snapshot {
     this.name = Snapshot.formatName_(parent.projectId, name);
   }
 
+  delete(): Promise<EmptyResponse>;
+  delete(callback: EmptyCallback): void;
   /**
    * Delete the snapshot.
    *
@@ -120,22 +130,20 @@ export class Snapshot {
    *   const apiResponse = data[0];
    * });
    */
-  delete(): Promise<google.protobuf.Empty>;
-  delete(callback: RequestCallback<google.protobuf.Empty>): void;
-  delete(callback?: RequestCallback<google.protobuf.Empty>):
-      void|Promise<google.protobuf.Empty> {
+  delete(callback?: EmptyCallback): void|Promise<EmptyResponse> {
     const reqOpts = {
       snapshot: this.name,
     };
-    callback = callback || util.noop;
+
     this.parent.request<google.protobuf.Empty>(
         {
           client: 'SubscriberClient',
           method: 'deleteSnapshot',
           reqOpts,
         },
-        callback);
+        callback!);
   }
+
   /*@
    * Format the name of a snapshot. A snapshot's full name is in the format of
    * projects/{projectId}/snapshots/{snapshotName}
@@ -146,6 +154,9 @@ export class Snapshot {
     return 'projects/' + projectId + '/snapshots/' + name.split('/').pop();
   }
 
+  create(gaxOpts?: CallOptions): Promise<CreateSnapshotResponse>;
+  create(callback: CreateSnapshotCallback): void;
+  create(gaxOpts: CallOptions, callback: CreateSnapshotCallback): void;
   /**
    * Create a snapshot with the given name.
    *
@@ -181,20 +192,31 @@ export class Snapshot {
    *   const apiResponse = data[1];
    * });
    */
-  create(gaxOpts?: CallOptions): Promise<CreateSnapshotResponse>;
-  create(callback: CreateSnapshotCallback): void;
-  create(gaxOpts: CallOptions, callback: CreateSnapshotCallback): void;
   create(
-      gaxOpts?: CallOptions|CreateSnapshotCallback,
+      optsOrCallback?: CallOptions|CreateSnapshotCallback,
       callback?: CreateSnapshotCallback): void|Promise<CreateSnapshotResponse> {
     if (!(this.parent instanceof Subscription)) {
       throw new Error(
           `This is only available if you accessed this object through Subscription#snapshot`);
     }
-    return (this.parent as Subscription)
-        .createSnapshot(this.name, gaxOpts! as CallOptions, callback!);
+
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
+
+    return this.parent.createSnapshot(
+        this.name, options, (err, snapshot, resp) => {
+          if (err) {
+            callback!(err, null, resp);
+            return;
+          }
+          Object.assign(this, snapshot);
+          callback!(null, this, resp);
+        });
   }
 
+  seek(gaxOpts?: CallOptions): Promise<SeekResponse>;
+  seek(callback: SeekCallback): void;
+  seek(gaxOpts: CallOptions, callback: SeekCallback): void;
   /**
    * Seeks an existing subscription to the snapshot.
    *
@@ -220,17 +242,13 @@ export class Snapshot {
    *   const apiResponse = data[0];
    * });
    */
-  seek(gaxOpts?: CallOptions): Promise<google.pubsub.v1.ISeekResponse>;
-  seek(callback: SeekCallback): void;
-  seek(gaxOpts: CallOptions, callback: SeekCallback): void;
   seek(gaxOpts?: CallOptions|SeekCallback, callback?: SeekCallback):
-      void|Promise<google.pubsub.v1.ISeekResponse> {
+      void|Promise<SeekResponse> {
     if (!(this.parent instanceof Subscription)) {
       throw new Error(
           `This is only available if you accessed this object through Subscription#snapshot`);
     }
-    return (this.parent as Subscription)
-        .seek(this.name, gaxOpts! as CallOptions, callback!);
+    return this.parent.seek(this.name, gaxOpts! as CallOptions, callback!);
   }
 }
 

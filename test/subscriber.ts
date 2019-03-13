@@ -16,6 +16,7 @@
 
 import * as assert from 'assert';
 import {EventEmitter} from 'events';
+import {common as protobuf} from 'protobufjs';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {PassThrough} from 'stream';
@@ -26,6 +27,8 @@ import {FlowControlOptions} from '../src/lease-manager';
 import {BatchOptions} from '../src/message-queues';
 import {MessageStreamOptions} from '../src/message-stream';
 import * as s from '../src/subscriber';
+import {Subscription} from '../src/subscription';
+
 
 const stubs = new Map();
 
@@ -114,6 +117,13 @@ class FakeMessageStream extends PassThrough {
   destroy(error?: Error): void {}
 }
 
+class FakePreciseDate {
+  value: protobuf.ITimestamp;
+  constructor(date: protobuf.ITimestamp) {
+    this.value = date;
+  }
+}
+
 const RECEIVED_MESSAGE = {
   ackId: uuid.v4(),
   message: {
@@ -129,7 +139,8 @@ describe('Subscriber', () => {
 
   const fakeProjectify = {replaceProjectIdToken: sandbox.stub()};
 
-  let subscription;
+
+  let subscription: Subscription;
 
   // tslint:disable-next-line variable-name
   let Message: typeof s.Message;
@@ -140,6 +151,7 @@ describe('Subscriber', () => {
 
   before(() => {
     const s = proxyquire('../src/subscriber.js', {
+      '@google-cloud/precise-date': {PreciseDate: FakePreciseDate},
       '@google-cloud/projectify': fakeProjectify,
       './histogram': {Histogram: FakeHistogram},
       './lease-manager': {LeaseManager: FakeLeaseManager},
@@ -153,7 +165,7 @@ describe('Subscriber', () => {
   });
 
   beforeEach(() => {
-    subscription = new FakeSubscription();
+    subscription = new FakeSubscription() as {} as Subscription;
     subscriber = new Subscriber(subscription);
     message = new Message(subscriber, RECEIVED_MESSAGE);
     subscriber.open();
@@ -375,10 +387,9 @@ describe('Subscriber', () => {
 
   describe('getClient', () => {
     it('should get a subscriber client', async () => {
-      const pubsub = subscription.pubsub;
+      const pubsub = subscription.pubsub as {} as FakePubSub;
       const spy = sandbox.spy(pubsub, 'getClient_');
       const client = await subscriber.getClient();
-
       const [options] = spy.lastCall.args;
       assert.deepStrictEqual(options, {client: 'SubscriberClient'});
       assert.strictEqual(client, pubsub.client);
@@ -598,18 +609,15 @@ describe('Subscriber', () => {
       });
 
       it('should localize publishTime', () => {
-        const fakeDate = new Date();
-
-        sandbox.stub(Message, 'formatTimestamp')
-            .withArgs(RECEIVED_MESSAGE.message.publishTime)
-            .returns(fakeDate);
-
         const m = new Message(subscriber, RECEIVED_MESSAGE);
+        const timestamp = m.publishTime as unknown as FakePreciseDate;
 
-        assert.strictEqual(m.publishTime, fakeDate);
+        assert(timestamp instanceof FakePreciseDate);
+        assert.strictEqual(
+            timestamp.value, RECEIVED_MESSAGE.message.publishTime);
       });
 
-      it('should localize recieved time', () => {
+      it('should localize received time', () => {
         const now = Date.now();
 
         sandbox.stub(global.Date, 'now').returns(now);
@@ -697,19 +705,6 @@ describe('Subscriber', () => {
         message.nack(delay);
 
         assert.strictEqual(stub.callCount, 0);
-      });
-    });
-
-    describe('formatTimestamp', () => {
-      it('should format the timestamp object', () => {
-        const publishTime = RECEIVED_MESSAGE.message.publishTime;
-        const actual = Message.formatTimestamp(publishTime);
-
-        const ms = publishTime.nanos / 1e6;
-        const s = publishTime.seconds * 1000;
-        const expectedDate = new Date(ms + s);
-
-        assert.deepStrictEqual(actual, expectedDate);
       });
     });
   });

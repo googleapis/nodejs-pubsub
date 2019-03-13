@@ -22,7 +22,9 @@ import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
 import {google} from '../proto/pubsub';
-import {CreateSubscriptionCallback, CreateSubscriptionOptions, CreateTopicCallback, ExistsCallback, GetCallOptions, GetTopicMetadataCallback, Metadata, RequestCallback, RequestConfig, Subscription, SubscriptionCallOptions, Topic} from '../src';
+import {ExistsCallback, RequestCallback, RequestConfig} from '../src/pubsub';
+import {CreateSubscriptionOptions, Subscription, SubscriptionOptions} from '../src/subscription';
+import {GetTopicMetadataCallback, Topic} from '../src/topic';
 import * as util from '../src/util';
 
 let promisified = false;
@@ -39,26 +41,20 @@ const fakePromisify = Object.assign({}, pfy, {
 });
 
 class FakeIAM {
-  // tslint:disable-next-line no-any
-  calledWith_: any[];
-  // tslint:disable-next-line no-any
-  constructor(...args: any[]) {
+  calledWith_: Array<{}>;
+  constructor(...args: Array<{}>) {
     this.calledWith_ = args;
   }
 }
 
 class FakePublisher {
-  // tslint:disable-next-line no-any
-  calledWith_: any[];
-  // tslint:disable-next-line no-any
-  published_!: any[];
+  calledWith_: Array<{}>;
+  published_!: Array<{}>;
   options_!: object;
-  // tslint:disable-next-line no-any
-  constructor(...args: any[]) {
+  constructor(...args: Array<{}>) {
     this.calledWith_ = args;
   }
-  // tslint:disable-next-line no-any
-  publish(...args: any[]) {
+  publish(...args: Array<{}>) {
     this.published_ = args;
   }
   setOptions(options: object) {
@@ -68,12 +64,10 @@ class FakePublisher {
 
 let extended = false;
 const fakePaginator = {
-  // tslint:disable-next-line variable-name
-  extend(Class: Function, methods: string[]) {
-    if (Class.name !== 'Topic') {
+  extend(klass: Function, methods: string[]) {
+    if (klass.name !== 'Topic') {
       return;
     }
-
     assert.deepStrictEqual(methods, ['getSubscriptions']);
     extended = true;
   },
@@ -168,12 +162,12 @@ describe('Topic', () => {
     });
 
     it('should localize the request function', done => {
-      PUBSUB.request = (callback: RequestCallback<google.protobuf.Empty>) => {
-        callback();  // the done fn
+      PUBSUB.request = () => {
+        done();
       };
 
       const topic = new Topic(PUBSUB, TOPIC_NAME);
-      topic.request(done);
+      topic.request(assert.ifError);
     });
 
     it('should create an iam object', () => {
@@ -198,15 +192,13 @@ describe('Topic', () => {
     it('should call the parent createTopic method', done => {
       const options_ = {};
 
-      PUBSUB.createTopic =
-          (name: string, options: CallOptions,
-           callback: CreateTopicCallback) => {
-            assert.strictEqual(name, topic.name);
-            assert.strictEqual(options, options_);
-            callback();  // the done fn
-          };
+      PUBSUB.createTopic = (name: string, options: CallOptions) => {
+        assert.strictEqual(name, topic.name);
+        assert.strictEqual(options, options_);
+        done();
+      };
 
-      topic.create(options_, done);
+      topic.create(options_, assert.ifError);
     });
   });
 
@@ -216,53 +208,38 @@ describe('Topic', () => {
       const OPTIONS = {a: 'a'};
 
       PUBSUB.createSubscription =
-          (topic_: Topic, name: string, options: CreateSubscriptionOptions,
-           callback: CreateSubscriptionCallback) => {
+          (topic_: Topic, name: string, options: CreateSubscriptionOptions) => {
             assert.strictEqual(topic_, topic);
             assert.strictEqual(name, NAME);
             assert.strictEqual(options, OPTIONS);
-            callback();  // the done fn
+            done();
           };
 
-      topic.createSubscription(NAME, OPTIONS, done);
+      topic.createSubscription(NAME, OPTIONS, assert.ifError);
     });
   });
 
   describe('delete', () => {
     it('should make the proper request', done => {
-      topic.request =
-          (config: RequestConfig,
-           callback: RequestCallback<google.protobuf.Empty>) => {
-            assert.strictEqual(config.client, 'PublisherClient');
-            assert.strictEqual(config.method, 'deleteTopic');
-            assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
-            callback();  // the done fn
-          };
+      topic.request = (config: RequestConfig) => {
+        assert.strictEqual(config.client, 'PublisherClient');
+        assert.strictEqual(config.method, 'deleteTopic');
+        assert.deepStrictEqual(config.reqOpts, {topic: topic.name});
+        done();
+      };
 
-      topic.delete(done);
+      topic.delete(assert.ifError);
     });
 
     it('should optionally accept gax options', done => {
       const options = {};
 
-      topic.request =
-          (config: RequestConfig,
-           callback: RequestCallback<google.protobuf.Empty>) => {
-            assert.strictEqual(config.gaxOpts, options);
-            callback();  // the done fn
-          };
+      topic.request = (config: RequestConfig) => {
+        assert.strictEqual(config.gaxOpts, options);
+        done();
+      };
 
-      topic.delete(options, done);
-    });
-
-    it('should optionally accept a callback', done => {
-      sandbox.stub(util, 'noop').callsFake(done);
-      topic.request =
-          (config: RequestConfig,
-           callback: RequestCallback<google.protobuf.Empty>) => {
-            callback();  // the done fn
-          };
-      topic.delete();
+      topic.delete(options, assert.ifError);
     });
   });
 
@@ -273,9 +250,10 @@ describe('Topic', () => {
         a: 'a',
       };
 
-      topic.getMetadata = (gaxOpts: GetCallOptions) => {
+      topic.getMetadata = (gaxOpts: CallOptions) => {
         assert.strictEqual(gaxOpts, options);
-        assert.strictEqual(gaxOpts.autoCreate, undefined);
+        // tslint:disable-next-line no-any
+        assert.strictEqual((gaxOpts as any).autoCreate, undefined);
         done();
       };
 
@@ -287,7 +265,7 @@ describe('Topic', () => {
 
       beforeEach(() => {
         topic.getMetadata =
-            (gaxOpts: GetCallOptions,
+            (gaxOpts: CallOptions,
              callback: RequestCallback<google.pubsub.v1.ITopic>) => {
               callback(null, fakeMetadata);
             };
@@ -306,13 +284,12 @@ describe('Topic', () => {
       it('should optionally accept options', done => {
         const options = {};
 
-        topic.getMetadata =
-            (gaxOpts: GetCallOptions, callback: RequestCallback<Topic>) => {
-              assert.strictEqual(gaxOpts, options);
-              callback();  // the done fn
-            };
+        topic.getMetadata = (gaxOpts: CallOptions) => {
+          assert.strictEqual(gaxOpts, options);
+          done();
+        };
 
-        topic.get(options, done);
+        topic.get(options, assert.ifError);
       });
     });
 
@@ -322,7 +299,7 @@ describe('Topic', () => {
         const apiResponse = {} as Topic;
 
         topic.getMetadata =
-            (gaxOpts: GetCallOptions, callback: GetTopicMetadataCallback) => {
+            (gaxOpts: CallOptions, callback: GetTopicMetadataCallback) => {
               callback(error, apiResponse);
             };
 
@@ -340,7 +317,7 @@ describe('Topic', () => {
         const apiResponse = {} as Topic;
 
         topic.getMetadata =
-            (gaxOpts: GetCallOptions, callback: GetTopicMetadataCallback) => {
+            (gaxOpts: CallOptions, callback: GetTopicMetadataCallback) => {
               callback(error, apiResponse);
             };
 
@@ -362,17 +339,16 @@ describe('Topic', () => {
         };
 
         topic.getMetadata =
-            (gaxOpts: GetCallOptions, callback: GetTopicMetadataCallback) => {
+            (gaxOpts: CallOptions, callback: GetTopicMetadataCallback) => {
               callback(error, apiResponse);
             };
 
-        topic.create =
-            (options: CallOptions, callback: CreateTopicCallback) => {
-              assert.strictEqual(options, fakeOptions);
-              callback();  // the done fn
-            };
+        topic.create = (options: CallOptions) => {
+          assert.strictEqual(options, fakeOptions);
+          done();
+        };
 
-        topic.get(fakeOptions, done);
+        topic.get(fakeOptions, assert.ifError);
       });
     });
   });
@@ -548,7 +524,7 @@ describe('Topic', () => {
 
     it('should pass all params to the callback', done => {
       const err_ = new Error('err');
-      const subs_ = false;
+      const subs_ = undefined;
       const nextQuery_ = {};
       const apiResponse_ = {};
 
@@ -617,6 +593,55 @@ describe('Topic', () => {
     });
   });
 
+  describe('setMetadata', () => {
+    const METADATA = {
+      labels: {yee: 'haw'},
+    };
+
+    let requestStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      requestStub = sandbox.stub(topic, 'request');
+    });
+
+    it('should call the correct rpc', () => {
+      topic.setMetadata(METADATA, assert.ifError);
+
+      const [{client, method}] = requestStub.lastCall.args;
+      assert.strictEqual(client, 'PublisherClient');
+      assert.strictEqual(method, 'updateTopic');
+    });
+
+    it('should send the correct request options', () => {
+      topic.setMetadata(METADATA, assert.ifError);
+
+      const expectedTopic = Object.assign({name: topic.name}, METADATA);
+      const expectedUpdateMask = {paths: ['labels']};
+
+      const [{reqOpts}] = requestStub.lastCall.args;
+      assert.deepStrictEqual(reqOpts.topic, expectedTopic);
+      assert.deepStrictEqual(reqOpts.updateMask, expectedUpdateMask);
+    });
+
+    it('should accept call options', () => {
+      const callOptions = {};
+
+      topic.setMetadata(METADATA, callOptions, assert.ifError);
+
+      const [{gaxOpts}] = requestStub.lastCall.args;
+      assert.strictEqual(gaxOpts, callOptions);
+    });
+
+    it('should pass the user callback to request', () => {
+      const spy = sandbox.spy();
+
+      topic.setMetadata(METADATA, spy);
+
+      const [, callback] = requestStub.lastCall.args;
+      assert.strictEqual(callback, spy);
+    });
+  });
+
   describe('setPublishOptions', () => {
     it('should call through to Publisher#setOptions', () => {
       const fakeOptions = {};
@@ -635,7 +660,7 @@ describe('Topic', () => {
       const opts = {};
 
       topic.parent.subscription =
-          (name: string, options: SubscriptionCallOptions) => {
+          (name: string, options: SubscriptionOptions) => {
             assert.strictEqual(name, subscriptionName);
             assert.deepStrictEqual(options, opts);
             done();
@@ -646,7 +671,7 @@ describe('Topic', () => {
 
     it('should attach the topic instance to the options', done => {
       topic.parent.subscription =
-          (name: string, options: SubscriptionCallOptions) => {
+          (name: string, options: SubscriptionOptions) => {
             assert.strictEqual(options.topic, topic);
             done();
           };

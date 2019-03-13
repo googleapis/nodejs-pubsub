@@ -18,12 +18,14 @@ import * as promisify from '@google-cloud/promisify';
 import * as assert from 'assert';
 import * as proxyquire from 'proxyquire';
 
+import * as iamTypes from '../src/iam';
+import {PubSub, RequestConfig} from '../src/pubsub';
 import * as util from '../src/util';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, promisify, {
   // tslint:disable-next-line variable-name
-  promisifyAll(Class) {
+  promisifyAll(Class: typeof iamTypes.IAM) {
     if (Class.name === 'IAM') {
       promisified = true;
     }
@@ -31,14 +33,14 @@ const fakePromisify = Object.assign({}, promisify, {
 });
 
 describe('IAM', () => {
-  let IAM;
-  let iam;
+  let IAM: typeof iamTypes.IAM;
+  let iam: iamTypes.IAM;
 
   const PUBSUB = {
     options: {},
     Promise: {},
     request: util.noop,
-  };
+  } as {} as PubSub;
   const ID = 'id';
 
   before(() => {
@@ -64,12 +66,12 @@ describe('IAM', () => {
       const fakeRequest = () => {};
       const fakePubsub = {
         request: {
-          bind(context) {
+          bind(context: PubSub) {
             assert.strictEqual(context, fakePubsub);
             return fakeRequest;
           },
         },
-      };
+      } as {} as PubSub;
       const iam = new IAM(fakePubsub, ID);
 
       assert.strictEqual(iam.request, fakeRequest);
@@ -86,15 +88,16 @@ describe('IAM', () => {
 
   describe('getPolicy', () => {
     it('should make the correct API request', done => {
-      iam.request = (config, callback) => {
+      iam.request = (config) => {
+        const reqOpts = {resource: iam.id};
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'getIamPolicy');
-        assert.strictEqual(config.reqOpts.resource, iam.id);
+        assert.deepStrictEqual(config.reqOpts, reqOpts);
 
-        callback();  // done()
+        done();
       };
 
-      iam.getPolicy(done);
+      iam.getPolicy(assert.ifError);
     });
 
     it('should accept gax options', done => {
@@ -110,31 +113,32 @@ describe('IAM', () => {
   });
 
   describe('setPolicy', () => {
-    const policy = {etag: 'ACAB'};
+    const policy: iamTypes.Policy = {etag: 'ACAB', bindings: []};
 
     it('should throw an error if a policy is not supplied', () => {
       assert.throws(() => {
-        iam.setPolicy(util.noop);
+        // tslint:disable-next-line no-any
+        (iam as any).setPolicy(util.noop);
       }, /A policy object is required\./);
     });
 
     it('should make the correct API request', done => {
-      iam.request = (config, callback) => {
+      iam.request = (config) => {
+        const reqOpts = {resource: iam.id, policy};
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'setIamPolicy');
-        assert.strictEqual(config.reqOpts.resource, iam.id);
-        assert.strictEqual(config.reqOpts.policy, policy);
+        assert.deepStrictEqual(config.reqOpts, reqOpts);
 
-        callback();  // done()
+        done();
       };
 
-      iam.setPolicy(policy, done);
+      iam.setPolicy(policy, assert.ifError);
     });
 
     it('should accept gax options', done => {
       const gaxOpts = {};
 
-      iam.request = config => {
+      iam.request = (config: RequestConfig) => {
         assert.strictEqual(config.gaxOpts, gaxOpts);
         done();
       };
@@ -146,18 +150,19 @@ describe('IAM', () => {
   describe('testPermissions', () => {
     it('should throw an error if permissions are missing', () => {
       assert.throws(() => {
-        iam.testPermissions(util.noop);
+        // tslint:disable-next-line no-any
+        (iam as any).testPermissions(util.noop);
       }, /Permissions are required\./);
     });
 
     it('should make the correct API request', done => {
       const permissions = 'storage.bucket.list';
+      const reqOpts = {resource: iam.id, permissions: [permissions]};
 
       iam.request = config => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'testIamPermissions');
-        assert.strictEqual(config.reqOpts.resource, iam.id);
-        assert.deepStrictEqual(config.reqOpts.permissions, [permissions]);
+        assert.deepStrictEqual(config.reqOpts, reqOpts);
 
         done();
       };
@@ -182,7 +187,7 @@ describe('IAM', () => {
       const error = new Error('Error.');
       const apiResponse = {};
 
-      iam.request = (config, callback) => {
+      iam.request = (config, callback: Function) => {
         callback(error, apiResponse);
       };
 
@@ -200,7 +205,7 @@ describe('IAM', () => {
         permissions: ['storage.bucket.consume'],
       };
 
-      iam.request = (config, callback) => {
+      iam.request = (config, callback: Function) => {
         callback(null, apiResponse);
       };
 

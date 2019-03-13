@@ -16,17 +16,43 @@
 
 import {paginator} from '@google-cloud/paginator';
 import {promisifyAll} from '@google-cloud/promisify';
+import is from '@sindresorhus/is';
 import {CallOptions} from 'google-gax';
-import * as is from 'is';
-import {Readable} from 'stream';
 
 import {google} from '../proto/pubsub';
 
-import {Attributes, CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, CreateTopicCallback, CreateTopicResponse, ExistsCallback, GetCallOptions, GetTopicMetadataCallback, Metadata, PubSub, RequestCallback, SubscriptionCallOptions} from '.';
 import {IAM} from './iam';
-import {PublishCallback, Publisher, PublishOptions} from './publisher';
-import {Subscription} from './subscription';
+import {Attributes, PublishCallback, Publisher, PublishOptions} from './publisher';
+import {EmptyCallback, EmptyResponse, ExistsCallback, ExistsResponse, ObjectStream, PagedResponse, PageOptions, PubSub, RequestCallback, ResourceCallback} from './pubsub';
+import {CreateSubscriptionCallback, CreateSubscriptionOptions, CreateSubscriptionResponse, Subscription, SubscriptionOptions} from './subscription';
 import * as util from './util';
+
+export type TopicMetadata = google.pubsub.v1.ITopic;
+
+type TopicCallback = ResourceCallback<Topic, TopicMetadata>;
+type TopicResponse = [Topic, TopicMetadata];
+
+export type CreateTopicCallback = TopicCallback;
+export type CreateTopicResponse = TopicResponse;
+
+export type GetTopicCallback = TopicCallback;
+export type GetTopicResponse = TopicResponse;
+
+export type GetTopicOptions = CallOptions&{autoCreate?: boolean};
+
+type MetadataCallback = RequestCallback<TopicMetadata>;
+type MetadataResponse = [TopicMetadata];
+
+export type GetTopicMetadataCallback = MetadataCallback;
+export type GetTopicMetadataResponse = MetadataResponse;
+
+export type SetTopicMetadataCallback = MetadataCallback;
+export type SetTopicMetadataResponse = MetadataResponse;
+
+export type GetTopicSubscriptionsCallback = RequestCallback<
+    Subscription, google.pubsub.v1.IListTopicSubscriptionsResponse>;
+export type GetTopicSubscriptionsResponse = PagedResponse<
+    Subscription, google.pubsub.v1.IListTopicSubscriptionsResponse>;
 
 /**
  * A Topic object allows you to interact with a Cloud Pub/Sub topic.
@@ -49,10 +75,10 @@ export class Topic {
   pubsub: PubSub;
   request: typeof PubSub.prototype.request;
   iam: IAM;
-  metadata: Metadata;
+  metadata?: TopicMetadata;
   publisher: Publisher;
   getSubscriptionsStream = paginator.streamify('getSubscriptions') as() =>
-                               Readable;
+                               ObjectStream<Subscription>;
 
   constructor(pubsub: PubSub, name: string, options?: PublishOptions) {
     if (pubsub.Promise) {
@@ -76,8 +102,7 @@ export class Topic {
      * @type {PubSub}
      */
     this.parent = this.pubsub = pubsub;
-    // tslint:disable-next-line no-any
-    this.request = pubsub.request.bind(pubsub) as any;
+    this.request = pubsub.request.bind(pubsub);
     /**
      * [IAM (Identity and Access
      * Management)](https://cloud.google.com/pubsub/access_control) allows you
@@ -121,6 +146,10 @@ export class Topic {
      */
     this.iam = new IAM(pubsub, this.name);
   }
+
+  create(gaxOpts?: CallOptions): Promise<CreateTopicResponse>;
+  create(callback: CreateTopicCallback): void;
+  create(gaxOpts: CallOptions, callback: CreateTopicCallback): void;
   /**
    * Create a topic.
    *
@@ -149,19 +178,21 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  create(gaxOpts?: CallOptions): Promise<CreateTopicResponse>;
-  create(callback: CreateTopicCallback): void;
-  create(gaxOpts: CallOptions, callback: CreateTopicCallback): void;
   create(
-      gaxOptsOrCallback?: CallOptions|CreateTopicCallback,
+      optsOrCallback?: CallOptions|CreateTopicCallback,
       callback?: CreateTopicCallback): Promise<CreateTopicResponse>|void {
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
-    this.pubsub.createTopic(this.name, gaxOpts, callback);
+    this.pubsub.createTopic(this.name, gaxOpts, callback!);
   }
+
+  createSubscription(name: string, callback: CreateSubscriptionCallback): void;
+  createSubscription(name: string, options?: CreateSubscriptionOptions):
+      Promise<CreateSubscriptionResponse>;
+  createSubscription(
+      name: string, options: CreateSubscriptionOptions,
+      callback: CreateSubscriptionCallback): void;
   /**
    * Create a subscription to this topic.
    *
@@ -199,25 +230,21 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  createSubscription(name: string, callback: CreateSubscriptionCallback): void;
-  createSubscription(name: string, options?: CreateSubscriptionOptions):
-      Promise<CreateSubscriptionResponse>;
-  createSubscription(
-      name: string, options: CreateSubscriptionOptions,
-      callback: CreateSubscriptionCallback): void;
   createSubscription(
       name: string,
-      optionsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
+      optsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
       callback?: CreateSubscriptionCallback):
       void|Promise<CreateSubscriptionResponse> {
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     this.pubsub.createSubscription(
         this, name, options as CreateSubscriptionOptions, callback!);
   }
+
+  delete(callback: EmptyCallback): void;
+  delete(gaxOpts?: CallOptions): Promise<EmptyResponse>;
+  delete(gaxOpts: CallOptions, callback: EmptyCallback): void;
   /**
    * Delete the topic. This will not delete subscriptions to this topic.
    *
@@ -245,33 +272,27 @@ export class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  delete(callback: RequestCallback<google.protobuf.Empty>): void;
-  delete(gaxOpts?: CallOptions): Promise<google.protobuf.Empty>;
-  delete(
-      gaxOpts: CallOptions,
-      callback: RequestCallback<google.protobuf.Empty>): void;
-  delete(
-      gaxOptsOrCallback?: CallOptions|RequestCallback<google.protobuf.Empty>,
-      callback?: RequestCallback<google.protobuf.Empty>):
-      void|Promise<google.protobuf.Empty> {
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+  delete(optsOrCallback?: CallOptions|EmptyCallback, callback?: EmptyCallback):
+      void|Promise<EmptyResponse> {
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
-    callback = callback || util.noop;
     const reqOpts = {
       topic: this.name,
     };
-    this.request(
+
+    this.request<google.protobuf.IEmpty>(
         {
           client: 'PublisherClient',
           method: 'deleteTopic',
           reqOpts,
           gaxOpts: gaxOpts as CallOptions,
         },
-        callback);
+        callback!);
   }
+
+  exists(): Promise<ExistsResponse>;
+  exists(callback: ExistsCallback): void;
   /**
    * @typedef {array} TopicExistsResponse
    * @property {boolean} 0 Whether the topic exists
@@ -302,25 +323,23 @@ export class Topic {
    *   const exists = data[0];
    * });
    */
-  exists(callback: ExistsCallback) {
+  exists(callback?: ExistsCallback): void|Promise<ExistsResponse> {
     this.getMetadata((err) => {
       if (!err) {
-        callback(null, true);
+        callback!(null, true);
         return;
       }
-      let code = 0;
-      if (err.hasOwnProperty('code')) {
-        code =
-            (Object.getOwnPropertyDescriptor(err, 'code') as PropertyDescriptor)
-                .value;
-      }
-      if (code === 5) {
-        callback(null, false);
+      if (err.code === 5) {
+        callback!(null, false);
         return;
       }
-      callback(err);
+      callback!(err);
     });
   }
+
+  get(callback: GetTopicCallback): void;
+  get(gaxOpts?: GetTopicOptions): Promise<GetTopicResponse>;
+  get(gaxOpts: GetTopicOptions, callback: GetTopicCallback): void;
   /**
    * @typedef {array} GetTopicResponse
    * @property {Topic} 0 The {@link Topic}.
@@ -360,35 +379,30 @@ export class Topic {
    *   const apiResponse = data[1];
    * });
    */
-  get(callback: CreateTopicCallback): void;
-  get(gaxOpts?: GetCallOptions): Promise<Topic>;
-  get(gaxOpts: GetCallOptions, callback: CreateTopicCallback): void;
-  get(gaxOptsOrCallback?: GetCallOptions|CreateTopicCallback,
-      callback?: CreateTopicCallback): void|Promise<Topic> {
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+  get(optsOrCallback?: GetTopicOptions|GetTopicCallback,
+      callback?: GetTopicCallback): void|Promise<GetTopicResponse> {
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
+
     const autoCreate = !!gaxOpts.autoCreate;
     delete gaxOpts.autoCreate;
+
     this.getMetadata(gaxOpts, (err, apiResponse) => {
       if (!err) {
         callback!(null, this, apiResponse!);
         return;
       }
-      let code = 0;
-      if (err.hasOwnProperty('code')) {
-        code =
-            (Object.getOwnPropertyDescriptor(err, 'code') as PropertyDescriptor)
-                .value;
-      }
-      if (code !== 5 || !autoCreate) {
+      if (err.code !== 5 || !autoCreate) {
         callback!(err, null, apiResponse!);
         return;
       }
       this.create(gaxOpts, callback!);
     });
   }
+
+  getMetadata(callback: GetTopicMetadataCallback): void;
+  getMetadata(gaxOpts: CallOptions, callback: GetTopicMetadataCallback): void;
+  getMetadata(gaxOpts?: CallOptions): Promise<GetTopicMetadataResponse>;
   /**
    * @typedef {array} GetTopicMetadataResponse
    * @property {object} 0 The full API response.
@@ -423,21 +437,18 @@ export class Topic {
    *   const apiResponse = data[0];
    * });
    */
-  getMetadata(callback: GetTopicMetadataCallback): void;
-  getMetadata(gaxOpts: CallOptions, callback: GetTopicMetadataCallback): void;
-  getMetadata(gaxOpts?: CallOptions): Promise<google.pubsub.v1.ITopic>;
   getMetadata(
-      gaxOptsOrCallback?: CallOptions|GetTopicMetadataCallback,
+      optsOrCallback?: CallOptions|GetTopicMetadataCallback,
       callback?: GetTopicMetadataCallback):
-      void|Promise<google.pubsub.v1.ITopic> {
-    const gaxOpts =
-        typeof gaxOptsOrCallback === 'object' ? gaxOptsOrCallback : {};
-    callback =
-        typeof gaxOptsOrCallback === 'function' ? gaxOptsOrCallback : callback;
+      void|Promise<GetTopicMetadataResponse> {
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
+
     const reqOpts = {
       topic: this.name,
     };
-    this.request<google.pubsub.v1.ITopic>(
+
+    this.request<TopicMetadata>(
         {
           client: 'PublisherClient',
           method: 'getTopic',
@@ -446,11 +457,17 @@ export class Topic {
         },
         (err, apiResponse) => {
           if (!err) {
-            this.metadata = apiResponse;
+            this.metadata = apiResponse!;
           }
-          callback!(err, apiResponse);
+          callback!(err, apiResponse!);
         });
   }
+
+  getSubscriptions(callback: GetTopicSubscriptionsCallback): void;
+  getSubscriptions(
+      options: PageOptions, callback: GetTopicSubscriptionsCallback): void;
+  getSubscriptions(options?: PageOptions):
+      Promise<GetTopicSubscriptionsResponse>;
   /**
    * Get a list of the subscriptions registered to this topic. You may
    * optionally provide a query object as the first argument to customize the
@@ -487,55 +504,51 @@ export class Topic {
    *   const subscriptions = data[0];
    * });
    */
-  getSubscriptions(callback: RequestCallback<Subscription[]>): void;
   getSubscriptions(
-      options: SubscriptionCallOptions,
-      callback: RequestCallback<Subscription[]>): void;
-  getSubscriptions(
-      options?: SubscriptionCallOptions,
-      ): Promise<Subscription[]>;
-  getSubscriptions(
-      optionsOrCallback?: SubscriptionCallOptions|
-      RequestCallback<Subscription[]>,
-      callback?: RequestCallback<Subscription[]>):
-      void|Promise<Subscription[]> {
-    const self = this;
-    const options =
-        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+      optsOrCallback?: PageOptions|GetTopicSubscriptionsCallback,
+      callback?: GetTopicSubscriptionsCallback):
+      void|Promise<GetTopicSubscriptionsResponse> {
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
-    const reqOpts = Object.assign(
-        {
-          topic: this.name,
-        },
-        options as SubscriptionCallOptions);
-    delete reqOpts.gaxOpts;
-    delete reqOpts.autoPaginate;
+    const reqOpts: google.pubsub.v1.IListTopicSubscriptionsRequest =
+        Object.assign(
+            {
+              topic: this.name,
+            },
+            options as SubscriptionOptions);
+
+    delete (reqOpts as PageOptions).gaxOpts;
+    delete (reqOpts as PageOptions).autoPaginate;
+
     const gaxOpts = Object.assign(
         {
           autoPaginate: options.autoPaginate,
         },
         options.gaxOpts);
-    this.request(
+
+    this.request<string, google.pubsub.v1.IListTopicSubscriptionsResponse>(
         {
           client: 'PublisherClient',
           method: 'listTopicSubscriptions',
           reqOpts,
           gaxOpts,
         },
-        // tslint:disable-next-line no-any
-        (...args: any[]) => {
-          const subscriptions = args[1];
-          if (subscriptions) {
-            args[1] = subscriptions.map((sub: string) => {
-              // ListTopicSubscriptions only returns sub names
-              return self.subscription(sub);
-            });
+        (err, subNames, ...args) => {
+          let subscriptions: Subscription[];
+
+          if (subNames) {
+            subscriptions = subNames.map(sub => this.subscription(sub));
           }
-          callback!(...args);
+
+          callback!(err, subscriptions!, ...args);
         });
   }
+
+  publish(data: Buffer, attributes?: Attributes): Promise<string>;
+  publish(data: Buffer, callback: PublishCallback): void;
+  publish(data: Buffer, attributes: Attributes, callback: PublishCallback):
+      void;
   /**
    * Publish the provided message.
    *
@@ -578,20 +591,18 @@ export class Topic {
    * //-
    * topic.publish(data).then((messageId) => {});
    */
-  publish(data: Buffer, attributes?: Attributes): Promise<string>;
-  publish(data: Buffer, callback: PublishCallback): void;
-  publish(data: Buffer, attributes: Attributes, callback: PublishCallback):
-      void;
   publish(
-      data: Buffer, attributesOrCallback?: Attributes|PublishCallback,
+      data: Buffer, attrsOrCb?: Attributes|PublishCallback,
       callback?: PublishCallback): Promise<string>|void {
-    const attributes =
-        typeof attributesOrCallback === 'object' ? attributesOrCallback : {};
-    callback = typeof attributesOrCallback === 'function' ?
-        attributesOrCallback :
-        callback;
+    const attributes = typeof attrsOrCb === 'object' ? attrsOrCb : {};
+    callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
     return this.publisher.publish(data, attributes, callback!);
   }
+
+  publishJSON(json: object, attributes?: Attributes): Promise<string>;
+  publishJSON(json: object, callback: PublishCallback): void;
+  publishJSON(json: object, attributes: Attributes, callback: PublishCallback):
+      void;
   /**
    * Publish the provided JSON. It should be noted that all messages published
    * are done so in the form of a Buffer. This is simply a convenience method
@@ -640,25 +651,91 @@ export class Topic {
    * //-
    * topic.publishJSON(data).then((messageId) => {});
    */
-  publishJSON(json: object, attributes?: Attributes): Promise<string>;
-  publishJSON(json: object, callback: PublishCallback): void;
-  publishJSON(json: object, attributes: Attributes, callback: PublishCallback):
-      void;
   publishJSON(
-      json: object, attributesOrCallback?: Attributes|PublishCallback,
+      json: object, attrsOrCb?: Attributes|PublishCallback,
       callback?: PublishCallback): Promise<string>|void {
     if (!is.object(json)) {
       throw new Error('First parameter should be an object.');
     }
-    const attributes =
-        typeof attributesOrCallback === 'object' ? attributesOrCallback : {};
-    callback = typeof attributesOrCallback === 'function' ?
-        attributesOrCallback :
-        callback;
+    const attributes = typeof attrsOrCb === 'object' ? attrsOrCb : {};
+    callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
 
     const data = Buffer.from(JSON.stringify(json));
     return this.publish(data, attributes, callback!);
   }
+
+  setMetadata(options: TopicMetadata, gaxOpts?: CallOptions):
+      Promise<SetTopicMetadataResponse>;
+  setMetadata(options: TopicMetadata, callback: SetTopicMetadataCallback): void;
+  setMetadata(
+      options: TopicMetadata, gaxOpts: CallOptions,
+      callback: SetTopicMetadataCallback): void;
+  /**
+   * @typedef {array} SetTopicMetadataResponse
+   * @property {object} 0 The full API response.
+   */
+  /**
+   * @callback SetTopicMetadataCallback
+   * @param {?Error} err Request error, if any.
+   * @param {object} apiResponse The full API response.
+   */
+  /**
+   * Updates the topic.
+   *
+   * @see [UpdateTopicRequest API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/UpdateTopicRequest}
+   *
+   * @param {object} metadata The fields to update. This should be structured
+   *     like a {@link
+   * https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics#Topic|Topic
+   * object}.
+   * @param {object} [gaxOpts] Request configuration options, outlined
+   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   * @param {SetTopicMetadataCallback} [callback] Callback function.
+   * @returns {Promise<SetTopicMetadataResponse>}
+   *
+   * @example
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * const topic = pubsub.topic('my-topic');
+   * const metadata = {
+   *   labels: {foo: 'bar'}
+   * };
+   *
+   * topic.setMetadata(metadata, err => {
+   *   if (err) {
+   *     // Error handling omitted.
+   *   }
+   * });
+   *
+   * @example <caption>If the callback is omitted, we'll return a
+   * Promise.</caption>
+   * topic.setMetadata(metadata).then((data) => {
+   *   const apiResponse = data[0];
+   * });
+   */
+  setMetadata(
+      options: TopicMetadata,
+      optsOrCallback?: CallOptions|SetTopicMetadataCallback,
+      callback?: SetTopicMetadataCallback):
+      void|Promise<SetTopicMetadataResponse> {
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
+
+    const topic = Object.assign({name: this.name}, options);
+    const updateMask = {paths: Object.keys(options)};
+    const reqOpts = {topic, updateMask};
+
+    this.request<TopicMetadata>(
+        {
+          client: 'PublisherClient',
+          method: 'updateTopic',
+          reqOpts,
+          gaxOpts,
+        },
+        callback!);
+  }
+
   /**
    * Set the publisher options.
    *
@@ -679,6 +756,7 @@ export class Topic {
   setPublishOptions(options: PublishOptions): void {
     this.publisher.setOptions(options);
   }
+
   /**
    * Create a Subscription object. This command by itself will not run any API
    * requests. You will receive a {module:pubsub/subscription} object,
@@ -718,11 +796,12 @@ export class Topic {
    *   // message.publishTime = Timestamp when Pub/Sub received the message.
    * });
    */
-  subscription(name: string, options?: SubscriptionCallOptions): Subscription {
+  subscription(name: string, options?: SubscriptionOptions): Subscription {
     options = options || {};
     options.topic = this;
     return this.pubsub.subscription(name, options);
   }
+
   /**
    * Format the name of a topic. A Topic's full name is in the format of
    * 'projects/{projectId}/topics/{topicName}'.

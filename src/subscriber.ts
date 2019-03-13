@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
@@ -47,32 +48,90 @@ export interface PullResponse {
 }
 
 /**
+ * Date object with nanosecond precision. Supports all standard Date arguments
+ * in addition to several custom types.
+ *
+ * @external PreciseDate
+ * @see {@link https://github.com/googleapis/nodejs-precise-date|PreciseDate}
+ */
+/**
  * Message objects provide a simple interface for users to get message data and
  * acknowledge the message.
  *
- * @private
- * @class
- *
- * @param {Subscriber} sub The parent subscriber.
- * @param {object} message The raw message response.
+ * @example
+ * subscription.on('message', message => {
+ *   // {
+ *   //   ackId: 'RUFeQBJMJAxESVMrQwsqWBFOBCEhPjA',
+ *   //   attributes: {key: 'value'},
+ *   //   data: Buffer.from('Hello, world!),
+ *   //   id: '1551297743043',
+ *   //   publishTime: new PreciseDate('2019-02-27T20:02:19.029534186Z'),
+ *   //   received: 1551297743043,
+ *   //   length: 13
+ *   // }
+ * });
  */
 export class Message {
   ackId: string;
   attributes: {};
   data: Buffer;
   id: string;
-  publishTime: Date;
+  publishTime: PreciseDate;
   received: number;
   private _handled: boolean;
   private _length: number;
   private _subscriber: Subscriber;
+  /**
+   * @hideconstructor
+   *
+   * @param {Subscriber} sub The parent subscriber.
+   * @param {object} message The raw message response.
+   */
   constructor(sub: Subscriber, {ackId, message}: ReceivedMessage) {
+    /**
+     * This ID is used to acknowledge the message.
+     *
+     * @name Message#ackId
+     * @type {string}
+     */
     this.ackId = ackId;
+    /**
+     * Optional attributes for this message.
+     *
+     * @name Message#attributes
+     * @type {object}
+     */
     this.attributes = message.attributes || {};
+    /**
+     * The message data as a Buffer.
+     *
+     * @name Message#data
+     * @type {Buffer}
+     */
     this.data = message.data;
+    /**
+     * ID of the message, assigned by the server when the message is published.
+     * Guaranteed to be unique within the topic.
+     *
+     * @name Message#id
+     * @type {string}
+     */
     this.id = message.messageId;
-    this.publishTime = Message.formatTimestamp(message.publishTime);
+    /**
+     * The time at which the message was published.
+     *
+     * @name Message#publishTime
+     * @type {external:PreciseDate}
+     */
+    this.publishTime = new PreciseDate(message.publishTime as DateStruct);
+    /**
+     * The time at which the message was recieved by the subscription.
+     *
+     * @name Message#received
+     * @type {number}
+     */
     this.received = Date.now();
+
     this._handled = false;
     this._length = this.data.length;
     this._subscriber = sub;
@@ -81,14 +140,17 @@ export class Message {
    * The length of the message data.
    *
    * @type {number}
-   * @private
    */
   get length() {
     return this._length;
   }
   /**
    * Acknowledges the message.
-   * @private
+   *
+   * @example
+   * subscription.on('message', message => {
+   *   message.ack();
+   * });
    */
   ack(): void {
     if (!this._handled) {
@@ -113,26 +175,22 @@ export class Message {
    *
    * @param {number} [delay=0] The desired time to wait before the
    *     redelivery occurs.
-   * @private
+   *
+   * @example
+   * subscription.on('message', message => {
+   *   message.nack();
+   * });
+   *
+   * @example <caption>Specify a delay to redeliver the message</caption>
+   * subscription.on('message', message => {
+   *   message.nack(60); // redeliver in 1 minute
+   * });
    */
   nack(delay?: number): void {
     if (!this._handled) {
       this._handled = true;
       this._subscriber.nack(this, delay);
     }
-  }
-  /**
-   * Formats the protobuf timestamp into a JavaScript date.
-   *
-   * @private
-   *
-   * @param {object} timestamp The protobuf timestamp.
-   * @return {date}
-   */
-  static formatTimestamp({nanos = 0, seconds = 0}: protobuf.ITimestamp): Date {
-    const ms: number = Number(nanos) / 1e6;
-    const s: number = Number(seconds) * 1000;
-    return new Date(ms + s);
   }
 }
 
