@@ -34,7 +34,7 @@ python3 -m docuploader create-metadata \
 			--distribution-name @google-cloud/pubsub \
 			--product-page https://cloud.google.com/pubsub/docs/ \
 			--github-repository https://github.com/googleapis/nodejs-pubsub \
-			--issue-tracker https://github.com/googleapis/nodejs-pubsub/issues
+			--issue-tracker https://github.com/googleapis/nodejs-pubsub/issues \
 			docs/docs.metadata 
 
 python3 -m docuploader upload docs
