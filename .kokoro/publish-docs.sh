@@ -23,7 +23,7 @@ npm install
 npm run docs
 
 # Publish documentation with docuploader.
-python3 -m pip install gcp-docuploader
+python3 -m pip install --user gcp-docuploader
 
 VERSION=$(npm view @google-cloud/pubsub version)
 
