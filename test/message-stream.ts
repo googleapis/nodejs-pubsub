@@ -23,6 +23,19 @@ import * as uuid from 'uuid';
 import * as messageTypes from '../src/message-stream';
 import {Subscriber} from '../src/subscriber';
 
+const FAKE_STREAMING_PULL_TIMEOUT = 123456789;
+const FAKE_CLIENT_CONFIG = {
+  interfaces: {
+    'google.pubsub.v1.Subscriber': {
+      methods: {
+        StreamingPull: {
+          timeout_millis: FAKE_STREAMING_PULL_TIMEOUT,
+        }
+      }
+    }
+  }
+};
+
 // just need this for unit tests.. we have a ponyfill for destroy on
 // MessageStream and gax streams use Duplexify
 function destroy(stream: Duplex, err?: Error): void {
@@ -43,6 +56,10 @@ interface StreamOptions {
   highWaterMark?: number;
 }
 
+interface StreamingPullOptions {
+  deadline: number;
+}
+
 class FakePassThrough extends PassThrough {
   options: StreamOptions;
   constructor(options: StreamOptions) {
@@ -58,9 +75,11 @@ class FakePassThrough extends PassThrough {
 }
 
 class FakeGrpcStream extends Duplex {
+  options: StreamingPullOptions;
   _readableState!: StreamState;
-  constructor() {
+  constructor(options: StreamingPullOptions) {
     super({objectMode: true});
+    this.options = options;
   }
   cancel(): void {
     const status = {
@@ -99,8 +118,8 @@ class FakeGaxClient {
 class FakeGrpcClient {
   deadline?: number;
   streams = ([] as FakeGrpcStream[]);
-  streamingPull(): FakeGrpcStream {
-    const stream = new FakeGrpcStream();
+  streamingPull(options: StreamingPullOptions): FakeGrpcStream {
+    const stream = new FakeGrpcStream(options);
     this.streams.push(stream);
     return stream;
   }
@@ -134,13 +153,19 @@ describe('MessageStream', () => {
   let MessageStream: typeof messageTypes.MessageStream;
   let messageStream: messageTypes.MessageStream;
 
+  let now: number;
+
   before(() => {
     MessageStream = proxyquire('../src/message-stream.js', {
-                      'stream': {PassThrough: FakePassThrough}
+                      'stream': {PassThrough: FakePassThrough},
+                      './v1/subscriber_client_config.json': FAKE_CLIENT_CONFIG,
                     }).MessageStream;
   });
 
   beforeEach(() => {
+    now = Date.now();
+    sandbox.stub(global.Date, 'now').returns(now);
+
     const gaxClient = new FakeGaxClient();
     client = gaxClient.client;  // we hit the grpc client directly
     subscriber = new FakeSubscriber(gaxClient) as {} as Subscriber;
@@ -191,17 +216,18 @@ describe('MessageStream', () => {
           assert.strictEqual(client.streams.length, 5);
         });
 
-        it('should default timeout to 5 minutes', done => {
-          const timeout = 60000 * 5;
-          const now = Date.now();
+        it('should pull pullDeadlines default from config file', () => {
+          const expectedDeadline = now + FAKE_STREAMING_PULL_TIMEOUT;
 
-          sandbox.stub(global.Date, 'now').returns(now);
-          messageStream = new MessageStream(subscriber);
-
-          setImmediate(() => {
-            assert.strictEqual(client.deadline, now + timeout);
-            done();
+          client.streams.forEach(stream => {
+            const deadline = stream.options.deadline;
+            assert.strictEqual(deadline, expectedDeadline);
           });
+        });
+
+        it('should default timeout to 5 minutes', () => {
+          const expectedTimeout = now + 60000 * 5;
+          assert.strictEqual(client.deadline, expectedTimeout);
         });
       });
 
@@ -238,11 +264,25 @@ describe('MessageStream', () => {
           });
         });
 
+        it('should respect the pullDeadline option', done => {
+          const pullDeadline = 1234;
+          const expectedDeadline = now + pullDeadline;
+
+          messageStream = new MessageStream(subscriber, {pullDeadline});
+
+          setImmediate(() => {
+            client.streams.forEach(stream => {
+              const deadline = stream.options.deadline;
+              assert.strictEqual(deadline, expectedDeadline);
+            });
+            done();
+          });
+        });
+
         it('should respect the timeout option', done => {
           const timeout = 12345;
-          const now = Date.now();
+          const expectedDeadline = now + timeout;
 
-          sandbox.stub(global.Date, 'now').returns(now);
           messageStream = new MessageStream(subscriber, {timeout});
 
           setImmediate(() => {
