@@ -55,9 +55,9 @@ const RETRY_CODES: status[] = [
 /*!
  * Deadline for the stream.
  */
-const PULL_DEADLINE = require('./v1/subscriber_client_config.json')
-                          .interfaces['google.pubsub.v1.Subscriber']
-                          .methods.StreamingPull.timeout_millis;
+const PULL_TIMEOUT = require('./v1/subscriber_client_config.json')
+                         .interfaces['google.pubsub.v1.Subscriber']
+                         .methods.StreamingPull.timeout_millis;
 
 /*!
  * default stream options
@@ -65,7 +65,7 @@ const PULL_DEADLINE = require('./v1/subscriber_client_config.json')
 const DEFAULT_OPTIONS: MessageStreamOptions = {
   highWaterMark: 0,
   maxStreams: 5,
-  pullDeadline: PULL_DEADLINE,
+  pullTimeout: PULL_TIMEOUT,
   timeout: 300000,
 };
 
@@ -123,7 +123,7 @@ export class ChannelError extends Error implements ServiceError {
  *     {@link https://nodejs.org/en/docs/guides/backpressuring-in-streams/} for
  *     more details.
  * @property {number} [maxStreams=5] Number of streaming connections to make.
- * @property {number} [pullDeadline=900000] Deadline to be applied to each
+ * @property {number} [pullTimeout=900000] Timeout to be applied to each
  *     underlying stream. Essentially this just closes a `StreamingPull` request
  *     after the specified time.
  * @property {number} [timeout=300000] Timeout for establishing a connection.
@@ -131,7 +131,7 @@ export class ChannelError extends Error implements ServiceError {
 export interface MessageStreamOptions {
   highWaterMark?: number;
   maxStreams?: number;
-  pullDeadline?: number;
+  pullTimeout?: number;
   timeout?: number;
 }
 
@@ -234,7 +234,7 @@ export class MessageStream extends PassThrough {
       return;
     }
 
-    const deadline = Date.now() + this._options.pullDeadline!;
+    const deadline = Date.now() + this._options.pullTimeout!;
     const request: StreamingPullRequest = {
       subscription: this._subscriber.name,
       streamAckDeadlineSeconds: this._subscriber.ackDeadline,

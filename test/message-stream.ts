@@ -216,7 +216,7 @@ describe('MessageStream', () => {
           assert.strictEqual(client.streams.length, 5);
         });
 
-        it('should pull pullDeadlines default from config file', () => {
+        it('should pull pullTimeouts default from config file', () => {
           const expectedDeadline = now + FAKE_STREAMING_PULL_TIMEOUT;
 
           client.streams.forEach(stream => {
@@ -264,11 +264,11 @@ describe('MessageStream', () => {
           });
         });
 
-        it('should respect the pullDeadline option', done => {
-          const pullDeadline = 1234;
-          const expectedDeadline = now + pullDeadline;
+        it('should respect the pullTimeout option', done => {
+          const pullTimeout = 1234;
+          const expectedDeadline = now + pullTimeout;
 
-          messageStream = new MessageStream(subscriber, {pullDeadline});
+          messageStream = new MessageStream(subscriber, {pullTimeout});
 
           setImmediate(() => {
             client.streams.forEach(stream => {
