@@ -16,7 +16,7 @@
 
 import {CallOptions} from 'google-gax';
 import {Metadata, ServiceError, status} from 'grpc';
-import * as defer from 'p-defer';
+import defer, {DeferredPromise} from 'p-defer';
 
 import {Message, Subscriber} from './subscriber';
 
@@ -71,7 +71,7 @@ export class BatchError extends Error implements ServiceError {
  */
 export abstract class MessageQueue {
   numPendingRequests: number;
-  protected _onFlush?: defer.DeferredPromise<void>;
+  protected _onFlush?: DeferredPromise<void>;
   protected _options!: BatchOptions;
   protected _requests: QueuedMessages;
   protected _subscriber: Subscriber;

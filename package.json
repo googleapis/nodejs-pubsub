@@ -58,7 +58,6 @@
     "@sindresorhus/is": "^0.15.0",
     "@types/duplexify": "^3.6.0",
     "@types/long": "^4.0.0",
-    "@types/p-defer": "^1.0.3",
     "arrify": "^1.0.0",
     "async-each": "^1.0.1",
     "extend": "^3.0.1",
@@ -67,7 +66,7 @@
     "is-stream-ended": "^0.1.4",
     "lodash.merge": "^4.6.0",
     "lodash.snakecase": "^4.1.1",
-    "p-defer": "^1.0.0",
+    "p-defer": "^2.0.1",
     "protobufjs": "^6.8.1"
   },
   "devDependencies": {
