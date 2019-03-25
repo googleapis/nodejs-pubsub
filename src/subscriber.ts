@@ -29,7 +29,6 @@ import {AckQueue, BatchOptions, ModAckQueue} from './message-queues';
 import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
 
-type ReceivedMessage = google.pubsub.v1.IReceivedMessage;
 export type PullResponse = google.pubsub.v1.IPullResponse;
 
 /**
@@ -74,7 +73,8 @@ export class Message {
    * @param {Subscriber} sub The parent subscriber.
    * @param {object} message The raw message response.
    */
-  constructor(sub: Subscriber, {ackId, message}: ReceivedMessage) {
+  constructor(sub: Subscriber, {ackId,
+                                message}: google.pubsub.v1.IReceivedMessage) {
     /**
      * This ID is used to acknowledge the message.
      *
