@@ -130,6 +130,7 @@ const RECEIVED_MESSAGE = {
     attributes: {},
     data: Buffer.from('Hello, world!'),
     messageId: uuid.v4(),
+    orderingKey: 'ordering-key',
     publishTime: {seconds: 12, nanos: 32}
   }
 };
@@ -606,6 +607,11 @@ describe('Subscriber', () => {
 
       it('should localize id', () => {
         assert.strictEqual(message.id, RECEIVED_MESSAGE.message.messageId);
+      });
+
+      it('should localize orderingKey', () => {
+        assert.strictEqual(
+            message.orderingKey, RECEIVED_MESSAGE.message.orderingKey);
       });
 
       it('should localize publishTime', () => {
