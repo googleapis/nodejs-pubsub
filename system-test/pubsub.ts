@@ -15,7 +15,7 @@
  */
 
 import * as assert from 'assert';
-import * as defer from 'p-defer';
+import defer from 'p-defer';
 import * as uuid from 'uuid';
 
 import {Message, PubSub, ServiceError, Snapshot, Subscription, Topic} from '../src';
