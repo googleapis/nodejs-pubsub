@@ -767,6 +767,9 @@ export namespace google {
 
                 /** PubsubMessage publishTime */
                 publishTime?: (google.protobuf.ITimestamp|null);
+
+                /** PubsubMessage orderingKey */
+                orderingKey?: (string|null);
             }
 
             /** Represents a PubsubMessage. */
@@ -789,6 +792,9 @@ export namespace google {
 
                 /** PubsubMessage publishTime. */
                 public publishTime?: (google.protobuf.ITimestamp|null);
+
+                /** PubsubMessage orderingKey. */
+                public orderingKey: string;
 
                 /**
                  * Creates a new PubsubMessage instance using the specified properties.
@@ -1941,6 +1947,9 @@ export namespace google {
                 /** Subscription labels */
                 labels?: ({ [k: string]: string }|null);
 
+                /** Subscription enableMessageOrdering */
+                enableMessageOrdering?: (boolean|null);
+
                 /** Subscription expirationPolicy */
                 expirationPolicy?: (google.pubsub.v1.IExpirationPolicy|null);
             }
@@ -1974,6 +1983,9 @@ export namespace google {
 
                 /** Subscription labels. */
                 public labels: { [k: string]: string };
+
+                /** Subscription enableMessageOrdering. */
+                public enableMessageOrdering: boolean;
 
                 /** Subscription expirationPolicy. */
                 public expirationPolicy?: (google.pubsub.v1.IExpirationPolicy|null);

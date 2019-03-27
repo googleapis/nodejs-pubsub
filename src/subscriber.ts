@@ -21,31 +21,15 @@ import {EventEmitter} from 'events';
 import {ClientStub} from 'google-gax';
 import {common as protobuf} from 'protobufjs';
 
+import {google} from '../proto/pubsub';
+
 import {Histogram} from './histogram';
 import {FlowControlOptions, LeaseManager} from './lease-manager';
 import {AckQueue, BatchOptions, ModAckQueue} from './message-queues';
 import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
 
-/**
- * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/pull#ReceivedMessage
- */
-interface ReceivedMessage {
-  ackId: string;
-  message: {
-    attributes: {},
-    data: Buffer,
-    messageId: string,
-    publishTime: protobuf.ITimestamp
-  };
-}
-
-/**
- * @see https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/pull#body.PullResponse
- */
-export interface PullResponse {
-  receivedMessages: ReceivedMessage[];
-}
+export type PullResponse = google.pubsub.v1.IPullResponse;
 
 /**
  * Date object with nanosecond precision. Supports all standard Date arguments
@@ -65,6 +49,7 @@ export interface PullResponse {
  *   //   attributes: {key: 'value'},
  *   //   data: Buffer.from('Hello, world!),
  *   //   id: '1551297743043',
+ *   //   orderingKey: 'ordering-key',
  *   //   publishTime: new PreciseDate('2019-02-27T20:02:19.029534186Z'),
  *   //   received: 1551297743043,
  *   //   length: 13
@@ -76,6 +61,7 @@ export class Message {
   attributes: {};
   data: Buffer;
   id: string;
+  orderingKey?: string;
   publishTime: PreciseDate;
   received: number;
   private _handled: boolean;
@@ -87,28 +73,29 @@ export class Message {
    * @param {Subscriber} sub The parent subscriber.
    * @param {object} message The raw message response.
    */
-  constructor(sub: Subscriber, {ackId, message}: ReceivedMessage) {
+  constructor(sub: Subscriber, {ackId,
+                                message}: google.pubsub.v1.IReceivedMessage) {
     /**
      * This ID is used to acknowledge the message.
      *
      * @name Message#ackId
      * @type {string}
      */
-    this.ackId = ackId;
+    this.ackId = ackId!;
     /**
      * Optional attributes for this message.
      *
      * @name Message#attributes
      * @type {object}
      */
-    this.attributes = message.attributes || {};
+    this.attributes = message!.attributes || {};
     /**
      * The message data as a Buffer.
      *
      * @name Message#data
      * @type {Buffer}
      */
-    this.data = message.data;
+    this.data = message!.data as Buffer;
     /**
      * ID of the message, assigned by the server when the message is published.
      * Guaranteed to be unique within the topic.
@@ -116,14 +103,29 @@ export class Message {
      * @name Message#id
      * @type {string}
      */
-    this.id = message.messageId;
+    this.id = message!.messageId!;
+    /**
+     * Identifies related messages for which publish order should be respected.
+     * If a `Subscription` has `enableMessageOrdering` set to `true`, messages
+     * published with the same `orderingKey` value will be delivered to
+     * subscribers in the order in which they are received by the Pub/Sub
+     * system.
+     *
+     * **EXPERIMENTAL:** This feature is part of a closed alpha release. This
+     * API might be changed in backward-incompatible ways and is not recommended
+     * for production use. It is not subject to any SLA or deprecation policy.
+     *
+     * @name Message#orderingKey
+     * @type {string}
+     */
+    this.orderingKey = message!.orderingKey!;
     /**
      * The time at which the message was published.
      *
      * @name Message#publishTime
      * @type {external:PreciseDate}
      */
-    this.publishTime = new PreciseDate(message.publishTime as DateStruct);
+    this.publishTime = new PreciseDate(message!.publishTime as DateStruct);
     /**
      * The time at which the message was recieved by the subscription.
      *
@@ -424,7 +426,7 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   private _onData({receivedMessages}: PullResponse): void {
-    for (const data of receivedMessages) {
+    for (const data of receivedMessages!) {
       const message = new Message(this, data);
 
       if (this.isOpen) {
