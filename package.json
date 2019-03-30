@@ -101,7 +101,7 @@
     "sinon": "^7.1.1",
     "source-map-support": "^0.5.9",
     "through2": "^3.0.0",
-    "typescript": "~3.3.0",
+    "typescript": "~3.4.0",
     "uuid": "^3.1.0"
   }
 }
