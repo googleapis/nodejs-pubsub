@@ -17,8 +17,10 @@
 
 const {PubSub} = require('@google-cloud/pubsub');
 const {assert} = require('chai');
-const {execSync} = require('child_process');
+const cp = require('child_process');
 const uuid = require('uuid');
+
+const execSync = (cmd) => cp.execSync(cmd, {encoding: 'utf-8'});
 
 async function exec(cmd) {
   const promise = execa.shell(cmd);
