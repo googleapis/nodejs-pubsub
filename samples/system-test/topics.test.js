@@ -17,7 +17,7 @@
 
 const {PubSub} = require('@google-cloud/pubsub');
 const {assert} = require('chai');
-const execa = require('execa');
+const {execSync} = require('child_process');
 const uuid = require('uuid');
 
 async function exec(cmd) {
@@ -80,14 +80,14 @@ describe('topics', () => {
   };
 
   it('should create a topic', async () => {
-    const output = await exec(`${cmd} create ${topicNameOne}`);
+    const output = execSync(`${cmd} create ${topicNameOne}`);
     assert.strictEqual(output, `Topic ${topicNameOne} created.`);
     const [topics] = await pubsub.getTopics();
     assert(topics.some(t => t.name === fullTopicNameOne));
   });
 
   it('should list topics', async () => {
-    const output = await exec(`${cmd} list`);
+    const output = execSync(`${cmd} list`);
     assert.match(output, /Topics:/);
     assert.match(output, new RegExp(fullTopicNameOne));
   });
@@ -211,7 +211,7 @@ describe('topics', () => {
 
   it('should get the IAM policy for a topic', async () => {
     const [policy] = await pubsub.topic(topicNameOne).iam.getPolicy();
-    const output = await exec(`${cmd} get-policy ${topicNameOne}`);
+    const output = execSync(`${cmd} get-policy ${topicNameOne}`);
     assert.strictEqual(
       output,
       `Policy for topic: ${JSON.stringify(policy.bindings)}.`
@@ -219,12 +219,12 @@ describe('topics', () => {
   });
 
   it('should test permissions for a topic', async () => {
-    const output = await exec(`${cmd} test-permissions ${topicNameOne}`);
+    const output = execSync(`${cmd} test-permissions ${topicNameOne}`);
     assert.match(output, /Tested permissions for topic/);
   });
 
   it('should delete a topic', async () => {
-    const output = await exec(`${cmd} delete ${topicNameOne}`);
+    const output = execSync(`${cmd} delete ${topicNameOne}`);
     assert.strictEqual(output, `Topic ${topicNameOne} deleted.`);
     const [topics] = await pubsub.getTopics();
     assert(topics.every(s => s.name !== fullTopicNameOne));

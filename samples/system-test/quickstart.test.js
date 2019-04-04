@@ -17,7 +17,7 @@
 
 const {PubSub} = require('@google-cloud/pubsub');
 const {assert} = require('chai');
-const execa = require('execa');
+const {execSync} = require('child_process');
 const uuid = require('uuid');
 
 describe('quickstart', () => {
@@ -30,7 +30,7 @@ describe('quickstart', () => {
   });
 
   it('should run the quickstart', async () => {
-    const {stdout} = await execa.shell(
+    const stdout = execSync(
       `node quickstart ${projectId} ${topicName}`
     );
     assert.match(stdout, /^Topic .* created.$/);
