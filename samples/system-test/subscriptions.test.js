@@ -58,7 +58,10 @@ describe('subscriptions', () => {
     const output = execSync(
       `${cmd} create ${topicNameOne} ${subscriptionNameOne}`
     );
-    assert.include(output, `Subscription ${subscriptionNameOne} created.`);
+    assert.include(
+      output,
+      `Subscription ${subscriptionNameOne} created.`,
+    );
     const [subscriptions] = await pubsub.topic(topicNameOne).getSubscriptions();
     assert.strictEqual(subscriptions[0].name, fullSubscriptionNameOne);
   });
@@ -67,7 +70,10 @@ describe('subscriptions', () => {
     const output = execSync(
       `${cmd} create-push ${topicNameOne} ${subscriptionNameTwo}`
     );
-    assert.include(output, `Subscription ${subscriptionNameTwo} created.`);
+    assert.include(
+      output,
+      `Subscription ${subscriptionNameTwo} created.`,
+    );
     const [subscriptions] = await pubsub.topic(topicNameOne).getSubscriptions();
     assert(subscriptions.some(s => s.name === fullSubscriptionNameTwo));
   });
@@ -78,7 +84,7 @@ describe('subscriptions', () => {
     );
     assert.include(
       output,
-      `Modified push config for subscription ${subscriptionNameTwo}.`
+      `Modified push config for subscription ${subscriptionNameTwo}.`,
     );
   });
 
@@ -226,7 +232,10 @@ describe('subscriptions', () => {
 
   it('should delete a subscription', async () => {
     const output = execSync(`${cmd} delete ${subscriptionNameOne}`);
-    assert.include(output, `Subscription ${subscriptionNameOne} deleted.`);
+    assert.include(
+      output,
+      `Subscription ${subscriptionNameOne} deleted.`,
+    );
     const [subscriptions] = await pubsub.getSubscriptions();
     assert.ok(subscriptions);
     assert(subscriptions.every(s => s.name !== fullSubscriptionNameOne));
@@ -238,7 +247,7 @@ describe('subscriptions', () => {
     );
     assert.include(
       output,
-      `Subscription ${fullSubscriptionNameFour} created with a maximum of 5 unprocessed messages.`
+      `Subscription ${fullSubscriptionNameFour} created with a maximum of 5 unprocessed messages.`,
     );
     const [subscriptions] = await pubsub.topic(topicNameTwo).getSubscriptions();
     assert(subscriptions.some(s => s.name === fullSubscriptionNameFour));
