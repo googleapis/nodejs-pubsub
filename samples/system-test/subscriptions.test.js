@@ -58,7 +58,10 @@ describe('subscriptions', () => {
     const output = execSync(
       `${cmd} create ${topicNameOne} ${subscriptionNameOne}`
     );
-    assert.strictEqual(output, `Subscription ${subscriptionNameOne} created.`);
+    assert.match(
+      output,
+      new RegExp(`Subscription ${subscriptionNameOne} created.`)
+    );
     const [subscriptions] = await pubsub.topic(topicNameOne).getSubscriptions();
     assert.strictEqual(subscriptions[0].name, fullSubscriptionNameOne);
   });
@@ -67,7 +70,10 @@ describe('subscriptions', () => {
     const output = execSync(
       `${cmd} create-push ${topicNameOne} ${subscriptionNameTwo}`
     );
-    assert.strictEqual(output, `Subscription ${subscriptionNameTwo} created.`);
+    assert.match(
+      output,
+      new RegExp(`Subscription ${subscriptionNameTwo} created.`)
+    );
     const [subscriptions] = await pubsub.topic(topicNameOne).getSubscriptions();
     assert(subscriptions.some(s => s.name === fullSubscriptionNameTwo));
   });
@@ -76,20 +82,23 @@ describe('subscriptions', () => {
     const output = execSync(
       `${cmd} modify-config ${topicNameTwo} ${subscriptionNameTwo}`
     );
-    assert.strictEqual(
+    assert.match(
       output,
-      `Modified push config for subscription ${subscriptionNameTwo}.`
+      new RegExp(
+        `Modified push config for subscription ${subscriptionNameTwo}.`
+      )
     );
   });
 
   it('should get metadata for a subscription', async () => {
     const output = execSync(`${cmd} get ${subscriptionNameOne}`);
-    const expected =
+    const expected = new RegExp(
       `Subscription: ${fullSubscriptionNameOne}` +
-      `\nTopic: ${fullTopicNameOne}` +
-      `\nPush config: ` +
-      `\nAck deadline: 10s`;
-    assert.strictEqual(output, expected);
+        `\nTopic: ${fullTopicNameOne}` +
+        `\nPush config: ` +
+        `\nAck deadline: 10s`
+    );
+    assert.match(output, expected);
   });
 
   it('should list all subscriptions', async () => {
@@ -212,9 +221,11 @@ describe('subscriptions', () => {
       .subscription(subscriptionNameOne)
       .iam.getPolicy();
     const output = execSync(`${cmd} get-policy ${subscriptionNameOne}`);
-    assert.strictEqual(
+    assert.match(
       output,
-      `Policy for subscription: ${JSON.stringify(results[0].bindings)}.`
+      new RegExp(
+        `Policy for subscription: ${JSON.stringify(results[0].bindings)}.`
+      )
     );
   });
 
@@ -225,7 +236,10 @@ describe('subscriptions', () => {
 
   it('should delete a subscription', async () => {
     const output = execSync(`${cmd} delete ${subscriptionNameOne}`);
-    assert.strictEqual(output, `Subscription ${subscriptionNameOne} deleted.`);
+    assert.match(
+      output,
+      new RegExp(`Subscription ${subscriptionNameOne} deleted.`)
+    );
     const [subscriptions] = await pubsub.getSubscriptions();
     assert.ok(subscriptions);
     assert(subscriptions.every(s => s.name !== fullSubscriptionNameOne));
@@ -235,9 +249,11 @@ describe('subscriptions', () => {
     const output = execSync(
       `${cmd} create-flow ${topicNameTwo} ${subscriptionNameFour} -m 5 -b 1024`
     );
-    assert.strictEqual(
+    assert.match(
       output,
-      `Subscription ${fullSubscriptionNameFour} created with a maximum of 5 unprocessed messages.`
+      new RegExp(
+        `Subscription ${fullSubscriptionNameFour} created with a maximum of 5 unprocessed messages.`
+      )
     );
     const [subscriptions] = await pubsub.topic(topicNameTwo).getSubscriptions();
     assert(subscriptions.some(s => s.name === fullSubscriptionNameFour));
