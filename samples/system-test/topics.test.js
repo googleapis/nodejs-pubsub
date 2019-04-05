@@ -210,7 +210,7 @@ describe('topics', () => {
     const output = execSync(`${cmd} get-policy ${topicNameOne}`);
     assert.include(
       output,
-      `Policy for topic: ${JSON.stringify(policy.bindings)}.`,
+      `Policy for topic: ${JSON.stringify(policy.bindings)}.`
     );
   });
 
