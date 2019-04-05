@@ -22,12 +22,6 @@ const uuid = require('uuid');
 
 const execSync = cmd => cp.execSync(cmd, {encoding: 'utf-8'});
 
-async function exec(cmd) {
-  const promise = execa.shell(cmd);
-  promise.stdout.pipe(process.stdout);
-  return (await promise).stdout;
-}
-
 describe('subscriptions', () => {
   const projectId = process.env.GCLOUD_PROJECT;
   const pubsub = new PubSub({projectId});
@@ -190,14 +184,13 @@ describe('subscriptions', () => {
   });
 
   it('should listen for error messages', async () => {
-    const {stderr} = await execa.shell(
-      `${cmd} listen-errors nonexistent-subscription`
-    );
-    assert.match(stderr, /Resource not found/);
+    assert.throws(() => {
+      execSync(`${cmd} listen-errors nonexistent-subscription`);
+    }, /Resource not found/);
   });
 
   it('should set the IAM policy for a subscription', async () => {
-    await exec(`${cmd} set-policy ${subscriptionNameOne}`);
+    execSync(`${cmd} set-policy ${subscriptionNameOne}`);
     const results = await pubsub
       .subscription(subscriptionNameOne)
       .iam.getPolicy();

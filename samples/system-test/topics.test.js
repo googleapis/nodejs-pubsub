@@ -22,12 +22,6 @@ const uuid = require('uuid');
 
 const execSync = cmd => cp.execSync(cmd, {encoding: 'utf-8'});
 
-async function exec(cmd) {
-  const promise = execa.shell(cmd);
-  promise.stdout.pipe(process.stdout);
-  return (await promise).stdout;
-}
-
 describe('topics', () => {
   const projectId = process.env.GCLOUD_PROJECT;
   const pubsub = new PubSub({projectId});
@@ -99,7 +93,7 @@ describe('topics', () => {
       .topic(topicNameOne)
       .subscription(subscriptionNameOne)
       .get({autoCreate: true});
-    await exec(`${cmd} publish ${topicNameOne} "${expectedMessage.data}"`);
+    execSync(`${cmd} publish ${topicNameOne} "${expectedMessage.data}"`);
     const receivedMessage = await _pullOneMessage(subscription);
     assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
   });
@@ -109,7 +103,7 @@ describe('topics', () => {
       .topic(topicNameOne)
       .subscription(subscriptionNameOne)
       .get({autoCreate: true});
-    await exec(`${cmd} publish ${topicNameOne} "${expectedMessage.data}"`);
+    execSync(`${cmd} publish ${topicNameOne} "${expectedMessage.data}"`);
     const receivedMessage = await _pullOneMessage(subscription);
     assert.deepStrictEqual(
       receivedMessage.data.toString(),
@@ -122,7 +116,7 @@ describe('topics', () => {
       .topic(topicNameOne)
       .subscription(subscriptionNameOne)
       .get({autoCreate: true});
-    await exec(
+    execSync(
       `${cmd} publish-attributes ${topicNameOne} "${expectedMessage.data}"`
     );
     const receivedMessage = await _pullOneMessage(subscription);
@@ -168,7 +162,7 @@ describe('topics', () => {
       .subscription(subscriptionNameThree)
       .get({autoCreate: true});
     const startTime = Date.now();
-    await exec(
+    execSync(
       `${cmd} publish-batch ${topicNameOne} "${
         expectedMessage.data
       }" -w ${waitTime}`
@@ -186,7 +180,7 @@ describe('topics', () => {
       .topic(topicNameOne)
       .subscription(subscriptionNameFour)
       .get({autoCreate: true});
-    await exec(
+    execSync(
       `${cmd} publish-retry ${projectId} ${topicNameOne} "${
         expectedMessage.data
       }"`
@@ -196,7 +190,7 @@ describe('topics', () => {
   });
 
   it('should set the IAM policy for a topic', async () => {
-    await exec(`${cmd} set-policy ${topicNameOne}`);
+    execSync(`${cmd} set-policy ${topicNameOne}`);
     const results = await pubsub.topic(topicNameOne).iam.getPolicy();
     const [policy] = results;
     assert.deepStrictEqual(policy.bindings, [
