@@ -20,7 +20,7 @@ const {assert} = require('chai');
 const cp = require('child_process');
 const uuid = require('uuid');
 
-const execSync = (cmd) => cp.execSync(cmd, {encoding: 'utf-8'});
+const execSync = cmd => cp.execSync(cmd, {encoding: 'utf-8'});
 
 describe('quickstart', () => {
   const projectId = process.env.GCLOUD_PROJECT;
