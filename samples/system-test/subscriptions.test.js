@@ -58,9 +58,9 @@ describe('subscriptions', () => {
     const output = execSync(
       `${cmd} create ${topicNameOne} ${subscriptionNameOne}`
     );
-    assert.match(
+    assert.include(
       output,
-      new RegExp(`Subscription ${subscriptionNameOne} created.`)
+      `Subscription ${subscriptionNameOne} created.`,
     );
     const [subscriptions] = await pubsub.topic(topicNameOne).getSubscriptions();
     assert.strictEqual(subscriptions[0].name, fullSubscriptionNameOne);
@@ -70,9 +70,9 @@ describe('subscriptions', () => {
     const output = execSync(
       `${cmd} create-push ${topicNameOne} ${subscriptionNameTwo}`
     );
-    assert.match(
+    assert.include(
       output,
-      new RegExp(`Subscription ${subscriptionNameTwo} created.`)
+      `Subscription ${subscriptionNameTwo} created.`,
     );
     const [subscriptions] = await pubsub.topic(topicNameOne).getSubscriptions();
     assert(subscriptions.some(s => s.name === fullSubscriptionNameTwo));
@@ -82,11 +82,9 @@ describe('subscriptions', () => {
     const output = execSync(
       `${cmd} modify-config ${topicNameTwo} ${subscriptionNameTwo}`
     );
-    assert.match(
+    assert.include(
       output,
-      new RegExp(
-        `Modified push config for subscription ${subscriptionNameTwo}.`
-      )
+      `Modified push config for subscription ${subscriptionNameTwo}.`,
     );
   });
 
@@ -234,9 +232,9 @@ describe('subscriptions', () => {
 
   it('should delete a subscription', async () => {
     const output = execSync(`${cmd} delete ${subscriptionNameOne}`);
-    assert.match(
+    assert.include(
       output,
-      new RegExp(`Subscription ${subscriptionNameOne} deleted.`)
+      `Subscription ${subscriptionNameOne} deleted.`,
     );
     const [subscriptions] = await pubsub.getSubscriptions();
     assert.ok(subscriptions);
@@ -247,11 +245,9 @@ describe('subscriptions', () => {
     const output = execSync(
       `${cmd} create-flow ${topicNameTwo} ${subscriptionNameFour} -m 5 -b 1024`
     );
-    assert.match(
+    assert.include(
       output,
-      new RegExp(
-        `Subscription ${fullSubscriptionNameFour} created with a maximum of 5 unprocessed messages.`
-      )
+      `Subscription ${fullSubscriptionNameFour} created with a maximum of 5 unprocessed messages.`,
     );
     const [subscriptions] = await pubsub.topic(topicNameTwo).getSubscriptions();
     assert(subscriptions.some(s => s.name === fullSubscriptionNameFour));
