@@ -15,7 +15,7 @@
  */
 
 import {promisifyAll} from '@google-cloud/promisify';
-import * as arrify from 'arrify';
+import arrify = require('arrify');
 import {CallOptions} from 'google-gax';
 import {google} from '../proto/pubsub';
 
@@ -264,7 +264,7 @@ export class Publisher {
           gaxOpts: this.settings!.gaxOpts!,
         },
         (err, resp) => {
-          const messageIds = arrify(resp && resp.messageIds);
+          const messageIds = arrify(resp! && resp!.messageIds!);
           each(callbacks, (callback: PublishCallback, next: Function) => {
             const messageId = messageIds[callbacks.indexOf(callback)];
             callback(err, messageId);
