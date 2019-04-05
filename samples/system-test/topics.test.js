@@ -208,9 +208,9 @@ describe('topics', () => {
   it('should get the IAM policy for a topic', async () => {
     const [policy] = await pubsub.topic(topicNameOne).iam.getPolicy();
     const output = execSync(`${cmd} get-policy ${topicNameOne}`);
-    assert.match(
+    assert.include(
       output,
-      new RegExp(`Policy for topic: ${JSON.stringify(policy.bindings)}.`)
+      `Policy for topic: ${JSON.stringify(policy.bindings)}.`,
     );
   });
 

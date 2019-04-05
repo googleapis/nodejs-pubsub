@@ -221,11 +221,9 @@ describe('subscriptions', () => {
       .subscription(subscriptionNameOne)
       .iam.getPolicy();
     const output = execSync(`${cmd} get-policy ${subscriptionNameOne}`);
-    assert.match(
+    assert.include(
       output,
-      new RegExp(
-        `Policy for subscription: ${JSON.stringify(results[0].bindings)}.`
-      )
+      `Policy for subscription: ${JSON.stringify(results[0].bindings)}.`
     );
   });
 
