@@ -19,7 +19,7 @@
  */
 
 import {promisifyAll} from '@google-cloud/promisify';
-import * as arrify from 'arrify';
+import arrify = require('arrify');
 import {CallOptions} from 'google-gax';
 
 import {google} from '../proto/iam';
@@ -365,7 +365,7 @@ export class IAM {
             return;
           }
 
-          const availablePermissions = arrify(resp!.permissions);
+          const availablePermissions = arrify(resp!.permissions!);
           const permissionHash: IamPermissionsMap =
               (permissions as string[]).reduce((acc, permission) => {
                 acc[permission] = availablePermissions.indexOf(permission) > -1;
