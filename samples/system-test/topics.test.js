@@ -77,15 +77,15 @@ describe('topics', () => {
 
   it('should create a topic', async () => {
     const output = execSync(`${cmd} create ${topicNameOne}`);
-    assert.match(output, new RegExp(`Topic ${topicNameOne} created.`));
+    assert.include(output, `Topic ${topicNameOne} created.`);
     const [topics] = await pubsub.getTopics();
     assert(topics.some(t => t.name === fullTopicNameOne));
   });
 
   it('should list topics', async () => {
     const output = execSync(`${cmd} list`);
-    assert.match(output, /Topics:/);
-    assert.match(output, new RegExp(fullTopicNameOne));
+    assert.include(output, 'Topics:');
+    assert.include(output, fullTopicNameOne);
   });
 
   it('should publish a simple message', async () => {
@@ -208,20 +208,20 @@ describe('topics', () => {
   it('should get the IAM policy for a topic', async () => {
     const [policy] = await pubsub.topic(topicNameOne).iam.getPolicy();
     const output = execSync(`${cmd} get-policy ${topicNameOne}`);
-    assert.match(
+    assert.include(
       output,
-      new RegExp(`Policy for topic: ${JSON.stringify(policy.bindings)}.`)
+      `Policy for topic: ${JSON.stringify(policy.bindings)}.`
     );
   });
 
   it('should test permissions for a topic', async () => {
     const output = execSync(`${cmd} test-permissions ${topicNameOne}`);
-    assert.match(output, /Tested permissions for topic/);
+    assert.include(output, 'Tested permissions for topic');
   });
 
   it('should delete a topic', async () => {
     const output = execSync(`${cmd} delete ${topicNameOne}`);
-    assert.match(output, new RegExp(`Topic ${topicNameOne} deleted.`));
+    assert.include(output, `Topic ${topicNameOne} deleted.`);
     const [topics] = await pubsub.getTopics();
     assert(topics.every(s => s.name !== fullTopicNameOne));
   });
