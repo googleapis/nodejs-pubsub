@@ -191,7 +191,7 @@ describe('subscriptions', () => {
   });
 
   it('should set the IAM policy for a subscription', async () => {
-    await execSync(`${cmd} set-policy ${subscriptionNameOne}`);
+    execSync(`${cmd} set-policy ${subscriptionNameOne}`);
     const results = await pubsub
       .subscription(subscriptionNameOne)
       .iam.getPolicy();
