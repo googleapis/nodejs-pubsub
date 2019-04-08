@@ -19,8 +19,15 @@ const {PubSub} = require('@google-cloud/pubsub');
 const {assert} = require('chai');
 const cp = require('child_process');
 const uuid = require('uuid');
+const execa = require('execa');
 
 const execSync = cmd => cp.execSync(cmd, {encoding: 'utf-8'});
+
+async function exec(cmd) {
+  const promise = execa.shell(cmd);
+  promise.stdout.pipe(process.stdout);
+  return (await promise).stdout;
+}
 
 describe('subscriptions', () => {
   const projectId = process.env.GCLOUD_PROJECT;
@@ -117,7 +124,7 @@ describe('subscriptions', () => {
 
   it('should listen for messages synchronously', async () => {
     pubsub.topic(topicNameOne).publish(Buffer.from(`Hello, world!`));
-    const output = execSync(
+    const output = await exec(
       `${cmd} sync-pull ${projectId} ${subscriptionNameOne}`
     );
     assert.match(output, /Done./);
