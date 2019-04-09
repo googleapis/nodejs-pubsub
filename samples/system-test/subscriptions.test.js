@@ -16,20 +16,21 @@
 'use strict';
 
 const {PubSub} = require('@google-cloud/pubsub');
+const assertRejects = require('assert').rejects;
 const {assert} = require('chai');
 const cp = require('child_process');
 const uuid = require('uuid');
 
-const execSync = (cmd) => cp.execSync(cmd, {encoding: 'utf-8'});
-const execPromise = (cmd) =>
+const execSync = cmd => cp.execSync(cmd, {encoding: 'utf-8'});
+const execPromise = cmd =>
   new Promise((resolve, reject) => {
-    cp.exec(cmd, { encoding: 'utf-8' }, (err, stdout, stderr) => {
+    cp.exec(cmd, {encoding: 'utf-8'}, (err, stdout, stderr) => {
       if (err) {
-        err.stdout = stdout;
+        err.stderr = stderr;
         return reject(err);
       }
       resolve(stdout);
-    })
+    });
   });
 
 describe('subscriptions', () => {
@@ -128,7 +129,7 @@ describe('subscriptions', () => {
   it('should listen for messages synchronously', async () => {
     pubsub.topic(topicNameOne).publish(Buffer.from(`Hello, world!`));
     const output = await execPromise(
-      `${cmd} sync-pull ${projectId} ${subscriptionNameOne}`,
+      `${cmd} sync-pull ${projectId} ${subscriptionNameOne}`
     );
     console.log(output);
     assert.match(output, /Done./);
@@ -196,9 +197,10 @@ describe('subscriptions', () => {
   });
 
   it('should listen for error messages', async () => {
-    assert.throws(() => {
-      execSync(`${cmd} listen-errors nonexistent-subscription`);
-    }, /Resource not found/);
+    assertRejects(
+      () => execPromise(`${cmd} listen-errors nonexistent-subscription`),
+      /Resource not found/
+    );
   });
 
   it('should set the IAM policy for a subscription', async () => {
