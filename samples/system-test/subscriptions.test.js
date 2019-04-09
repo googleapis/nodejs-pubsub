@@ -95,13 +95,12 @@ describe('subscriptions', () => {
 
   it('should get metadata for a subscription', async () => {
     const output = execSync(`${cmd} get ${subscriptionNameOne}`);
-    const expected = new RegExp(
+    const expected =
       `Subscription: ${fullSubscriptionNameOne}` +
-        `\nTopic: ${fullTopicNameOne}` +
-        `\nPush config: ` +
-        `\nAck deadline: 10s`
-    );
-    assert.match(output, expected);
+      `\nTopic: ${fullTopicNameOne}` +
+      `\nPush config: ` +
+      `\nAck deadline: 10s`;
+    assert.include(output, expected);
   });
 
   it('should list all subscriptions', async () => {
@@ -131,7 +130,6 @@ describe('subscriptions', () => {
     const output = await execPromise(
       `${cmd} sync-pull ${projectId} ${subscriptionNameOne}`
     );
-    console.log(output);
     assert.match(output, /Done./);
   });
 
