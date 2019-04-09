@@ -21,7 +21,7 @@ const cp = require('child_process');
 const uuid = require('uuid');
 
 const execSync = (cmd) => cp.execSync(cmd, {encoding: 'utf-8'});
-const execPromise = (cmd) => {
+const execPromise = (cmd) =>
   new Promise((resolve, reject) => {
     cp.exec(cmd, { encoding: 'utf-8' }, (err, stdout, stderr) => {
       if (err) {
@@ -31,7 +31,6 @@ const execPromise = (cmd) => {
       resolve(stdout);
     })
   });
-}
 
 describe('subscriptions', () => {
   const projectId = process.env.GCLOUD_PROJECT;
@@ -131,6 +130,7 @@ describe('subscriptions', () => {
     const output = await execPromise(
       `${cmd} sync-pull ${projectId} ${subscriptionNameOne}`,
     );
+    console.log(output);
     assert.match(output, /Done./);
   });
 
