@@ -175,7 +175,7 @@ export class Message {
    * Removes the message from our inventory and schedules it to be redelivered.
    * If the delay parameter is unset, it will be redelivered immediately.
    *
-   * @param {number} [delay=0] The desired time to wait before the
+   * @param {number} [delay=0] The desired seconds to wait before the
    *     redelivery occurs.
    *
    * @example
@@ -350,7 +350,7 @@ export class Subscriber extends EventEmitter {
    * it from our inventory.
    *
    * @param {Message} message The message.
-   * @param {number} [delay=0] Delay to wait before redelivery.
+   * @param {number} [delay=0] seconds to wait before redelivery.
    * @return {Promise}
    * @private
    */
