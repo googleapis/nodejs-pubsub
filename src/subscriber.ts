@@ -20,16 +20,19 @@ import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
 import {ClientStub} from 'google-gax';
 import {common as protobuf} from 'protobufjs';
+import {Readable} from 'stream';
 
 import {google} from '../proto/pubsub';
 
 import {Histogram} from './histogram';
 import {FlowControlOptions, LeaseManager} from './lease-manager';
 import {AckQueue, BatchOptions, ModAckQueue} from './message-queues';
-import {MessageStream, MessageStreamOptions} from './message-stream';
+import {MessagePollingOptions, MessageStream, MessageStreamOptions, PollingMessageStream} from './message-stream';
 import {Subscription} from './subscription';
 
 export type PullResponse = google.pubsub.v1.IPullResponse;
+
+const MAX_MESSAGES = 100;
 
 /**
  * Date object with nanosecond precision. Supports all standard Date arguments
@@ -205,12 +208,18 @@ export class Message {
  *     99th percentile time it takes to acknowledge a message.
  * @property {BatchingOptions} [batching] Request batching options.
  * @property {FlowControlOptions} [flowControl] Flow control options.
+ * @property {boolean} [poll=false] Explicitly tell the Subscriber to use the
+ *     polling strategy. If `pollingOptions` are present this will automatically
+ *     be set to `true`.
+ * @property {MessagePollingOptions} [pollingOptions] Message polling options.
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
  */
 export interface SubscriberOptions {
   ackDeadline?: number;
   batching?: BatchOptions;
   flowControl?: FlowControlOptions;
+  poll?: boolean;
+  pollingOptions?: MessagePollingOptions;
   streamingOptions?: MessageStreamOptions;
 }
 
@@ -234,7 +243,7 @@ export class Subscriber extends EventEmitter {
   private _modAcks!: ModAckQueue;
   private _name!: string;
   private _options!: SubscriberOptions;
-  private _stream!: MessageStream;
+  private _stream!: Readable;
   private _subscription: Subscription;
   constructor(subscription: Subscription, options = {}) {
     super();
@@ -365,12 +374,18 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   open(): void {
-    const {batching, flowControl, streamingOptions} = this._options;
+    const {batching, flowControl, pollingOptions, streamingOptions} =
+        this._options;
 
     this._acks = new AckQueue(this, batching);
     this._modAcks = new ModAckQueue(this, batching);
     this._inventory = new LeaseManager(this, flowControl);
-    this._stream = new MessageStream(this, streamingOptions);
+
+    if (pollingOptions) {
+      this._stream = new PollingMessageStream(this, pollingOptions);
+    } else {
+      this._stream = new MessageStream(this, streamingOptions);
+    }
 
     this._stream
       .on('error', err => this.emit('error', err))
@@ -402,7 +417,7 @@ export class Subscriber extends EventEmitter {
     // it doesn't really make sense to open 5 streams if the user only wants
     // 1 message at a time.
     if (options.flowControl) {
-      const {maxMessages = 100} = options.flowControl;
+      const {maxMessages = MAX_MESSAGES} = options.flowControl;
 
       if (!options.streamingOptions) {
         options.streamingOptions = {} as MessageStreamOptions;
@@ -410,6 +425,14 @@ export class Subscriber extends EventEmitter {
 
       const {maxStreams = 5} = options.streamingOptions;
       options.streamingOptions.maxStreams = Math.min(maxStreams, maxMessages);
+    }
+
+    if (options.poll || options.pollingOptions) {
+      const {maxMessages = MAX_MESSAGES} = options.flowControl || {};
+
+      options.poll = true;
+      options.pollingOptions =
+          Object.assign({batchSize: maxMessages}, options.pollingOptions);
     }
   }
   /**

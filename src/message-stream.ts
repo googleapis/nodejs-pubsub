@@ -24,7 +24,7 @@ import {
   StatusObject,
 } from 'grpc';
 import * as isStreamEnded from 'is-stream-ended';
-import {PassThrough} from 'stream';
+import {PassThrough, Readable} from 'stream';
 
 import {PullRetry} from './pull-retry';
 import {Subscriber} from './subscriber';
@@ -57,7 +57,9 @@ interface StreamState {
 }
 
 type StreamingPullRequest = google.pubsub.v1.IStreamingPullRequest;
+type PullRequest = google.pubsub.v1.IPullRequest;
 type PullResponse = google.pubsub.v1.IPullResponse;
+
 type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse> & {
   _readableState: StreamState;
 };
@@ -378,5 +380,106 @@ export class MessageStream extends PassThrough {
     } catch (e) {
       throw new ChannelError(e);
     }
+  }
+}
+
+/**
+ * @typedef {object} MessagePollingOptions
+ * @property {number} [batchSize=100] Desired number of messages per batch.
+ *     Defaults to {@link FlowControlOptions} `maxMessages` value (100).
+ * @property {number} [highWaterMark=0] Configures the Buffer level. See
+ *     {@link https://nodejs.org/en/docs/guides/backpressuring-in-streams/} for
+ *     more details.
+ */
+export interface MessagePollingOptions {
+  batchSize?: number;
+  highWaterMark?: number;
+}
+
+/**
+ * Streaming class used to manually pull messages. This should only be preferred
+ * to the {@link BidiMessageStream} when high throughput is not needed and the
+ * client is expected to process messages slowly.
+ *
+ * @private
+ * @class
+ *
+ * @param {Subscriber} sub The parent subscriber.
+ * @param {MessagePollingOptions} [options] The message stream options.
+ */
+export class PollingMessageStream extends Readable {
+  destroyed: boolean;
+  private _options: MessagePollingOptions;
+  private _subscriber: Subscriber;
+  private _reading: boolean;
+  constructor(subscriber: Subscriber, options: MessagePollingOptions) {
+    const {highWaterMark = 0} = options;
+    super({highWaterMark, objectMode: true});
+
+    this.destroyed = false;
+    this._options = options;
+    this._subscriber = subscriber;
+    this._reading = false;
+  }
+  /**
+   * Destroys the stream and any underlying streams.
+   *
+   * @param {error?} err An error to emit, if any.
+   * @private
+   */
+  destroy(err?: Error): void {
+    if (this.destroyed) {
+      return;
+    }
+
+    this.destroyed = true;
+
+    if (typeof super.destroy === 'function') {
+      return super.destroy(err);
+    }
+
+    process.nextTick(() => {
+      if (err) {
+        this.emit('error', err);
+      }
+      this.emit('close');
+    });
+  }
+  /**
+   * Pulls messages and pushes them into the stream.
+   *
+   * @private
+   */
+  async _read() {
+    if (this._reading) {
+      return;
+    }
+
+    this._reading = true;
+
+    const client = await this._subscriber.getClient();
+    const request: PullRequest = {
+      subscription: this._subscriber.name,
+      maxMessages: this._options.batchSize,
+    };
+
+    let more = true;
+
+    while (more) {
+      if (this.destroyed) {
+        break;
+      }
+
+      try {
+        const [resp] = await client.pull(request);
+        more = this.push(resp);
+      } catch (e) {
+        if (!RETRY_CODES.includes(e.code)) {
+          this.destroy(e);
+        }
+      }
+    }
+
+    this._reading = false;
   }
 }
