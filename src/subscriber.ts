@@ -27,7 +27,8 @@ import {google} from '../proto/pubsub';
 import {Histogram} from './histogram';
 import {FlowControlOptions, LeaseManager} from './lease-manager';
 import {AckQueue, BatchOptions, ModAckQueue} from './message-queues';
-import {MessagePollingOptions, MessageStream, MessageStreamOptions, PollingMessageStream} from './message-stream';
+import {MessageStream, MessageStreamOptions} from './message-stream';
+import {MessagePollingOptions, PollingMessageStream} from './polling-message-stream';
 import {Subscription} from './subscription';
 
 export type PullResponse = google.pubsub.v1.IPullResponse;
