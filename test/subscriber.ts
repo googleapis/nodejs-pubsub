@@ -26,6 +26,7 @@ import {HistogramOptions} from '../src/histogram';
 import {FlowControlOptions} from '../src/lease-manager';
 import {BatchOptions} from '../src/message-queues';
 import {MessageStreamOptions} from '../src/message-stream';
+import {MessagePollingOptions} from '../src/polling-message-stream';
 import * as s from '../src/subscriber';
 import {Subscription} from '../src/subscription';
 
@@ -116,6 +117,15 @@ class FakeMessageStream extends PassThrough {
   destroy(error?: Error): void {}
 }
 
+class FakePollingMessageStream extends PassThrough {
+  options: MessagePollingOptions;
+  constructor(sub: s.Subscriber, options: MessagePollingOptions) {
+    super({objectMode: true});
+    this.options = options;
+    stubs.set('pollingMessageStream', this);
+  }
+}
+
 class FakePreciseDate {
   value: protobuf.ITimestamp;
   constructor(date: protobuf.ITimestamp) {
@@ -159,6 +169,8 @@ describe('Subscriber', () => {
         ModAckQueue: FakeModAckQueue,
       },
       './message-stream': {MessageStream: FakeMessageStream},
+      './polling-message-stream':
+          {PollingMessageStream: FakePollingMessageStream},
     });
 
     Message = s.Message;
@@ -501,6 +513,18 @@ describe('Subscriber', () => {
       assert.strictEqual(stream.options, streamingOptions);
     });
 
+    it('should pass in polling options', () => {
+      const pollingOptions = {batchSize: 44};
+
+      subscriber.setOptions({pollingOptions});
+      subscriber.open();
+
+      const stream: FakePollingMessageStream =
+          stubs.get('pollingMessageStream');
+
+      assert.deepStrictEqual(stream.options, pollingOptions);
+    });
+
     it('should emit stream errors', done => {
       subscriber.open();
 
@@ -597,6 +621,16 @@ describe('Subscriber', () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
 
       assert.strictEqual(stream.options.maxStreams, maxMessages);
+    });
+
+    it('should should default the pollingOptions if poll is true', () => {
+      subscriber.setOptions({poll: true});
+      subscriber.open();
+
+      const stream: FakePollingMessageStream =
+          stubs.get('pollingMessageStream');
+
+      assert.strictEqual(stream.options.batchSize, 100);
     });
   });
 
