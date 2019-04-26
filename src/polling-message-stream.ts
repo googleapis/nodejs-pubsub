@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import {CancellablePromise} from 'google-gax';
 import {Readable} from 'stream';
 
 import {google} from '../proto/pubsub';
@@ -49,6 +50,7 @@ export interface MessagePollingOptions {
  */
 export class PollingMessageStream extends Readable {
   destroyed: boolean;
+  private _activeRequest?: CancellablePromise;
   private _options: MessagePollingOptions;
   private _subscriber: Subscriber;
   private _reading: boolean;
@@ -62,28 +64,18 @@ export class PollingMessageStream extends Readable {
     this._reading = false;
   }
   /**
-   * Destroys the stream and any underlying streams.
+   * Cancels any active requests once the stream is destroyed.
    *
-   * @param {error?} err An error to emit, if any.
    * @private
    */
-  destroy(err?: Error): void {
-    if (this.destroyed) {
-      return;
-    }
-
+  _destroy(err: null|Error, callback: (err?: null|Error) => void) {
     this.destroyed = true;
 
-    if (typeof super.destroy === 'function') {
-      return super.destroy(err);
+    if (this._activeRequest) {
+      this._activeRequest.cancel();
     }
 
-    process.nextTick(() => {
-      if (err) {
-        this.emit('error', err);
-      }
-      this.emit('close');
-    });
+    super._destroy(err, callback);
   }
   /**
    * Pulls messages and pushes them into the stream.
@@ -111,7 +103,8 @@ export class PollingMessageStream extends Readable {
       }
 
       try {
-        const [resp] = await client.pull(request);
+        this._activeRequest = client.pull(request);
+        const [resp] = await this._activeRequest;
         more = this.push(resp);
       } catch (e) {
         if (!RETRY_CODES.includes(e.code)) {
