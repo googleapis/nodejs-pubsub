@@ -78,10 +78,69 @@ module.exports.v1 = require('./v1');
 
 export {CallOptions} from 'google-gax';
 export {ServiceError} from 'grpc';
-export {Policy, GetPolicyCallback, SetPolicyCallback, SetPolicyResponse, GetPolicyResponse, IamPermissionsMap, TestIamPermissionsResponse, TestIamPermissionsCallback, IAM} from './iam';
+export {
+  Policy,
+  GetPolicyCallback,
+  SetPolicyCallback,
+  SetPolicyResponse,
+  GetPolicyResponse,
+  IamPermissionsMap,
+  TestIamPermissionsResponse,
+  TestIamPermissionsCallback,
+  IAM,
+} from './iam';
 export {Attributes, PublishCallback} from './publisher';
-export {PageOptions, GetSnapshotsCallback, GetSnapshotsResponse, GetSubscriptionsCallback, GetSubscriptionsResponse, GetTopicsCallback, GetTopicsResponse, EmptyCallback, EmptyResponse, ExistsCallback, ExistsResponse, PubSub} from './pubsub';
-export {CreateSnapshotCallback, CreateSnapshotResponse, SeekCallback, SeekResponse, Snapshot} from './snapshot';
+export {
+  PageOptions,
+  GetSnapshotsCallback,
+  GetSnapshotsResponse,
+  GetSubscriptionsCallback,
+  GetSubscriptionsResponse,
+  GetTopicsCallback,
+  GetTopicsResponse,
+  EmptyCallback,
+  EmptyResponse,
+  ExistsCallback,
+  ExistsResponse,
+  PubSub,
+} from './pubsub';
+export {
+  CreateSnapshotCallback,
+  CreateSnapshotResponse,
+  SeekCallback,
+  SeekResponse,
+  Snapshot,
+} from './snapshot';
 export {Message} from './subscriber';
-export {PushConfig, SubscriptionMetadata, SubscriptionOptions, SubscriptionCloseCallback, CreateSubscriptionOptions, CreateSubscriptionCallback, CreateSubscriptionResponse, GetSubscriptionOptions, GetSubscriptionCallback, GetSubscriptionResponse, GetSubscriptionMetadataCallback, GetSubscriptionMetadataResponse, SetSubscriptionMetadataCallback, SetSubscriptionMetadataResponse, Subscription} from './subscription';
-export {CreateTopicCallback, CreateTopicResponse, GetTopicCallback, GetTopicResponse, GetTopicOptions, GetTopicMetadataCallback, GetTopicMetadataResponse, GetTopicSubscriptionsCallback, GetTopicSubscriptionsResponse, SetTopicMetadataCallback, SetTopicMetadataResponse, Topic, TopicMetadata} from './topic';
+export {
+  PushConfig,
+  SubscriptionMetadata,
+  SubscriptionOptions,
+  SubscriptionCloseCallback,
+  CreateSubscriptionOptions,
+  CreateSubscriptionCallback,
+  CreateSubscriptionResponse,
+  GetSubscriptionOptions,
+  GetSubscriptionCallback,
+  GetSubscriptionResponse,
+  GetSubscriptionMetadataCallback,
+  GetSubscriptionMetadataResponse,
+  SetSubscriptionMetadataCallback,
+  SetSubscriptionMetadataResponse,
+  Subscription,
+} from './subscription';
+export {
+  CreateTopicCallback,
+  CreateTopicResponse,
+  GetTopicCallback,
+  GetTopicResponse,
+  GetTopicOptions,
+  GetTopicMetadataCallback,
+  GetTopicMetadataResponse,
+  GetTopicSubscriptionsCallback,
+  GetTopicSubscriptionsResponse,
+  SetTopicMetadataCallback,
+  SetTopicMetadataResponse,
+  Topic,
+  TopicMetadata,
+} from './topic';

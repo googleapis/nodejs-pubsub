@@ -26,11 +26,15 @@ import * as util from '../src/util';
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
   promisifyAll(
-      // tslint:disable-next-line variable-name
-      Class: typeof publishTypes.Publisher, options: pfy.PromisifyAllOptions) {
+    // tslint:disable-next-line variable-name
+    Class: typeof publishTypes.Publisher,
+    options: pfy.PromisifyAllOptions
+  ) {
     if (Class.name === 'Publisher') {
-      assert.deepStrictEqual(
-          options, {singular: true, exclude: ['setOptions']});
+      assert.deepStrictEqual(options, {
+        singular: true,
+        exclude: ['setOptions'],
+      });
       promisified = true;
     }
   },
@@ -46,16 +50,16 @@ describe('Publisher', () => {
 
   const TOPIC_NAME = 'test-topic';
 
-  const TOPIC = {
+  const TOPIC = ({
     name: TOPIC_NAME,
     Promise: {},
     request: util.noop,
-  } as {} as Topic;
+  } as {}) as Topic;
 
   before(() => {
     Publisher = proxyquire('../src/publisher.js', {
-                  '@google-cloud/promisify': fakePromisify,
-                }).Publisher;
+      '@google-cloud/promisify': fakePromisify,
+    }).Publisher;
   });
 
   beforeEach(() => {
@@ -147,23 +151,25 @@ describe('Publisher', () => {
     });
 
     it('should queue the data', done => {
-      sandbox.stub(publisher, 'queue_')
-          .callsFake((data, attrs, callback: Function) => {
-            assert.strictEqual(data, DATA);
-            assert.strictEqual(attrs, ATTRS);
-            callback();  // the done fn
-          });
+      sandbox
+        .stub(publisher, 'queue_')
+        .callsFake((data, attrs, callback: Function) => {
+          assert.strictEqual(data, DATA);
+          assert.strictEqual(attrs, ATTRS);
+          callback(); // the done fn
+        });
 
       publisher.publish(DATA, ATTRS, done);
     });
 
     it('should optionally accept attributes', done => {
-      sandbox.stub(publisher, 'queue_')
-          .callsFake((data, attrs, callback: Function) => {
-            assert.strictEqual(data, DATA);
-            assert.deepStrictEqual(attrs, {});
-            callback();  // the done fn
-          });
+      sandbox
+        .stub(publisher, 'queue_')
+        .callsFake((data, attrs, callback: Function) => {
+          assert.strictEqual(data, DATA);
+          assert.deepStrictEqual(attrs, {});
+          callback(); // the done fn
+        });
       publisher.publish(DATA, done);
     });
 
@@ -175,43 +181,43 @@ describe('Publisher', () => {
         publisher.inventory_.bytes = 0;
       };
 
-      sandbox.stub(publisher, 'queue_')
-          .callsFake((data, attrs, callback: Function) => {
-            assert.strictEqual(publisher.inventory_.bytes, 0);
-            queueCalled = true;
-            callback();  // the done fn
-          });
+      sandbox
+        .stub(publisher, 'queue_')
+        .callsFake((data, attrs, callback: Function) => {
+          assert.strictEqual(publisher.inventory_.bytes, 0);
+          queueCalled = true;
+          callback(); // the done fn
+        });
 
       publisher.inventory_.bytes = batchOpts.maxBytes! - 1;
       publisher.publish(DATA, done);
     });
 
-    it('should not attempt to publish empty payload if data puts payload above size cap',
-       done => {
-         const pushRequests: Array<{}> = [];
-         publisher.settings.batching!.maxBytes = 2;
-         publisher.inventory_.bytes = 0;
+    it('should not attempt to publish empty payload if data puts payload above size cap', done => {
+      const pushRequests: Array<{}> = [];
+      publisher.settings.batching!.maxBytes = 2;
+      publisher.inventory_.bytes = 0;
 
-         publisher.publish_ = () => {
-           assert.notStrictEqual(publisher.inventory_.queued.length, 0);
-           pushRequests.push(publisher.inventory_.queued);
-           publisher.inventory_.callbacks.forEach((callback: Function) => {
-             callback();
-           });
-         };
+      publisher.publish_ = () => {
+        assert.notStrictEqual(publisher.inventory_.queued.length, 0);
+        pushRequests.push(publisher.inventory_.queued);
+        publisher.inventory_.callbacks.forEach((callback: Function) => {
+          callback();
+        });
+      };
 
-         publisher.publish(DATA, () => {
-           assert.deepStrictEqual(pushRequests, [
-             [
-               {
-                 data: DATA,
-                 attributes: {},
-               },
-             ],
-           ]);
-           done();
-         });
-       });
+      publisher.publish(DATA, () => {
+        assert.deepStrictEqual(pushRequests, [
+          [
+            {
+              data: DATA,
+              attributes: {},
+            },
+          ],
+        ]);
+        done();
+      });
+    });
 
     it('should publish if data puts payload at size cap', done => {
       sandbox.stub(publisher, 'queue_').callsFake(() => {
@@ -245,13 +251,13 @@ describe('Publisher', () => {
 
       // tslint:disable-next-line no-any
       (global as any).setTimeout =
-          // tslint:disable-next-line no-any
-          (callback: (...args: any[]) => void, duration: number) => {
-            assert.strictEqual(duration, batchOpts.maxMilliseconds);
-            global.setTimeout = globalSetTimeout;
-            setImmediate(callback);
-            return fakeTimeoutHandle;
-          };
+        // tslint:disable-next-line no-any
+        (callback: (...args: any[]) => void, duration: number) => {
+          assert.strictEqual(duration, batchOpts.maxMilliseconds);
+          global.setTimeout = globalSetTimeout;
+          setImmediate(callback);
+          return fakeTimeoutHandle;
+        };
 
       publisher.publish_ = done;
       publisher.publish(DATA, util.noop);

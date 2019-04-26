@@ -28,12 +28,17 @@ import {Message, Subscriber} from '../src/subscriber';
 
 class FakeClient {
   async acknowledge(
-      reqOpts: {subscription: string, ackIds: string[]},
-      callOptions: CallOptions): Promise<void> {}
+    reqOpts: {subscription: string; ackIds: string[]},
+    callOptions: CallOptions
+  ): Promise<void> {}
   async modifyAckDeadline(
-      reqOpts:
-          {subscription: string, ackIds: string[], ackDeadlineSeconds: number},
-      callOptions: CallOptions): Promise<void> {}
+    reqOpts: {
+      subscription: string;
+      ackIds: string[];
+      ackDeadlineSeconds: number;
+    },
+    callOptions: CallOptions
+  ): Promise<void> {}
 }
 
 class FakeSubscriber extends EventEmitter {
@@ -78,7 +83,7 @@ describe('MessageQueues', () => {
     type QueuedMessages = Array<[string, number?]>;
 
     MessageQueue = class MessageQueue extends queues.MessageQueue {
-      batches = ([] as QueuedMessages[]);
+      batches = [] as QueuedMessages[];
       protected async _sendBatch(batch: QueuedMessages): Promise<void> {
         this.batches.push(batch);
       }
@@ -274,7 +279,7 @@ describe('MessageQueues', () => {
     let ackQueue: messageTypes.AckQueue;
 
     beforeEach(() => {
-      ackQueue = new AckQueue(subscriber as {} as Subscriber);
+      ackQueue = new AckQueue((subscriber as {}) as Subscriber);
     });
 
     it('should send batches via Client#acknowledge', async () => {
@@ -321,8 +326,7 @@ describe('MessageQueues', () => {
       fakeError.code = 2;
       fakeError.metadata = new Metadata();
 
-      const expectedMessage =
-          `Failed to "acknowledge" for 3 message(s). Reason: Err.`;
+      const expectedMessage = `Failed to "acknowledge" for 3 message(s). Reason: Err.`;
 
       sandbox.stub(subscriber.client, 'acknowledge').rejects(fakeError);
 
@@ -343,7 +347,7 @@ describe('MessageQueues', () => {
     let modAckQueue: messageTypes.ModAckQueue;
 
     beforeEach(() => {
-      modAckQueue = new ModAckQueue(subscriber as {} as Subscriber);
+      modAckQueue = new ModAckQueue((subscriber as {}) as Subscriber);
     });
 
     it('should send batches via Client#modifyAckDeadline', async () => {
@@ -354,8 +358,9 @@ describe('MessageQueues', () => {
         new FakeMessage(),
       ];
 
-      const stub =
-          sandbox.stub(subscriber.client, 'modifyAckDeadline').resolves();
+      const stub = sandbox
+        .stub(subscriber.client, 'modifyAckDeadline')
+        .resolves();
 
       const expectedReqOpts = {
         subscription: subscriber.name,
@@ -363,8 +368,9 @@ describe('MessageQueues', () => {
         ackIds: messages.map(({ackId}) => ackId),
       };
 
-      messages.forEach(
-          message => modAckQueue.add(message as Message, deadline));
+      messages.forEach(message =>
+        modAckQueue.add(message as Message, deadline)
+      );
       await modAckQueue.flush();
 
       const [reqOpts] = stub.lastCall.args;
@@ -375,13 +381,20 @@ describe('MessageQueues', () => {
       const deadline1 = 600;
       const deadline2 = 1000;
 
-      const messages1 =
-          [new FakeMessage(), new FakeMessage(), new FakeMessage()];
-      const messages2 =
-          [new FakeMessage(), new FakeMessage(), new FakeMessage()];
+      const messages1 = [
+        new FakeMessage(),
+        new FakeMessage(),
+        new FakeMessage(),
+      ];
+      const messages2 = [
+        new FakeMessage(),
+        new FakeMessage(),
+        new FakeMessage(),
+      ];
 
-      const stub =
-          sandbox.stub(subscriber.client, 'modifyAckDeadline').resolves();
+      const stub = sandbox
+        .stub(subscriber.client, 'modifyAckDeadline')
+        .resolves();
 
       const expectedReqOpts1 = {
         subscription: subscriber.name,
@@ -395,10 +408,12 @@ describe('MessageQueues', () => {
         ackIds: messages2.map(({ackId}) => ackId),
       };
 
-      messages1.forEach(
-          message => modAckQueue.add(message as Message, deadline1));
-      messages2.forEach(
-          message => modAckQueue.add(message as Message, deadline2));
+      messages1.forEach(message =>
+        modAckQueue.add(message as Message, deadline1)
+      );
+      messages2.forEach(message =>
+        modAckQueue.add(message as Message, deadline2)
+      );
       await modAckQueue.flush();
 
       const [reqOpts1] = stub.getCall(0).args;
@@ -410,8 +425,9 @@ describe('MessageQueues', () => {
 
     it('should send call options', async () => {
       const fakeCallOptions = {timeout: 10000};
-      const stub =
-          sandbox.stub(subscriber.client, 'modifyAckDeadline').resolves();
+      const stub = sandbox
+        .stub(subscriber.client, 'modifyAckDeadline')
+        .resolves();
 
       modAckQueue.setOptions({callOptions: fakeCallOptions});
       modAckQueue.add(new FakeMessage() as Message, 10);
@@ -434,8 +450,7 @@ describe('MessageQueues', () => {
       fakeError.code = 2;
       fakeError.metadata = new Metadata();
 
-      const expectedMessage =
-          `Failed to "modifyAckDeadline" for 3 message(s). Reason: Err.`;
+      const expectedMessage = `Failed to "modifyAckDeadline" for 3 message(s). Reason: Err.`;
 
       sandbox.stub(subscriber.client, 'modifyAckDeadline').rejects(fakeError);
 

@@ -187,7 +187,7 @@ export class LeaseManager extends EventEmitter {
       allowExcessMessages: true,
       maxBytes: freemem() * 0.2,
       maxExtension: Infinity,
-      maxMessages: 100
+      maxMessages: 100,
     };
 
     this._options = Object.assign(defaults, options);
