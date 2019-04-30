@@ -106,15 +106,15 @@ class SubscriberClient {
     // identifiers to uniquely identify resources within the API.
     // Create useful helper objects for these.
     this._pathTemplates = {
+      projectPathTemplate: new gax.PathTemplate('projects/{project}'),
+      snapshotPathTemplate: new gax.PathTemplate(
+        'projects/{project}/snapshots/{snapshot}'
+      ),
       subscriptionPathTemplate: new gax.PathTemplate(
         'projects/{project}/subscriptions/{subscription}'
       ),
       topicPathTemplate: new gax.PathTemplate(
         'projects/{project}/topics/{topic}'
-      ),
-      projectPathTemplate: new gax.PathTemplate('projects/{project}'),
-      snapshotPathTemplate: new gax.PathTemplate(
-        'projects/{project}/snapshots/{snapshot}'
       ),
     };
 
@@ -1759,6 +1759,32 @@ class SubscriberClient {
   // --------------------
 
   /**
+   * Return a fully-qualified project resource name string.
+   *
+   * @param {String} project
+   * @returns {String}
+   */
+  projectPath(project) {
+    return this._pathTemplates.projectPathTemplate.render({
+      project: project,
+    });
+  }
+
+  /**
+   * Return a fully-qualified snapshot resource name string.
+   *
+   * @param {String} project
+   * @param {String} snapshot
+   * @returns {String}
+   */
+  snapshotPath(project, snapshot) {
+    return this._pathTemplates.snapshotPathTemplate.render({
+      project: project,
+      snapshot: snapshot,
+    });
+  }
+
+  /**
    * Return a fully-qualified subscription resource name string.
    *
    * @param {String} project
@@ -1787,29 +1813,37 @@ class SubscriberClient {
   }
 
   /**
-   * Return a fully-qualified project resource name string.
+   * Parse the projectName from a project resource.
    *
-   * @param {String} project
-   * @returns {String}
+   * @param {String} projectName
+   *   A fully-qualified path representing a project resources.
+   * @returns {String} - A string representing the project.
    */
-  projectPath(project) {
-    return this._pathTemplates.projectPathTemplate.render({
-      project: project,
-    });
+  matchProjectFromProjectName(projectName) {
+    return this._pathTemplates.projectPathTemplate.match(projectName).project;
   }
 
   /**
-   * Return a fully-qualified snapshot resource name string.
+   * Parse the snapshotName from a snapshot resource.
    *
-   * @param {String} project
-   * @param {String} snapshot
-   * @returns {String}
+   * @param {String} snapshotName
+   *   A fully-qualified path representing a snapshot resources.
+   * @returns {String} - A string representing the project.
    */
-  snapshotPath(project, snapshot) {
-    return this._pathTemplates.snapshotPathTemplate.render({
-      project: project,
-      snapshot: snapshot,
-    });
+  matchProjectFromSnapshotName(snapshotName) {
+    return this._pathTemplates.snapshotPathTemplate.match(snapshotName).project;
+  }
+
+  /**
+   * Parse the snapshotName from a snapshot resource.
+   *
+   * @param {String} snapshotName
+   *   A fully-qualified path representing a snapshot resources.
+   * @returns {String} - A string representing the snapshot.
+   */
+  matchSnapshotFromSnapshotName(snapshotName) {
+    return this._pathTemplates.snapshotPathTemplate.match(snapshotName)
+      .snapshot;
   }
 
   /**
@@ -1856,40 +1890,6 @@ class SubscriberClient {
    */
   matchTopicFromTopicName(topicName) {
     return this._pathTemplates.topicPathTemplate.match(topicName).topic;
-  }
-
-  /**
-   * Parse the projectName from a project resource.
-   *
-   * @param {String} projectName
-   *   A fully-qualified path representing a project resources.
-   * @returns {String} - A string representing the project.
-   */
-  matchProjectFromProjectName(projectName) {
-    return this._pathTemplates.projectPathTemplate.match(projectName).project;
-  }
-
-  /**
-   * Parse the snapshotName from a snapshot resource.
-   *
-   * @param {String} snapshotName
-   *   A fully-qualified path representing a snapshot resources.
-   * @returns {String} - A string representing the project.
-   */
-  matchProjectFromSnapshotName(snapshotName) {
-    return this._pathTemplates.snapshotPathTemplate.match(snapshotName).project;
-  }
-
-  /**
-   * Parse the snapshotName from a snapshot resource.
-   *
-   * @param {String} snapshotName
-   *   A fully-qualified path representing a snapshot resources.
-   * @returns {String} - A string representing the snapshot.
-   */
-  matchSnapshotFromSnapshotName(snapshotName) {
-    return this._pathTemplates.snapshotPathTemplate.match(snapshotName)
-      .snapshot;
   }
 }
 
