@@ -1059,7 +1059,6 @@ describe('PubSub', () => {
       };
 
       pubsub.request(CONFIG, (err: ServiceError | null) => {
-        console.log(err!.stack);
         assert.strictEqual(expectedError, err);
         done();
       });

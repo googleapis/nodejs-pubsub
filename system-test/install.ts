@@ -20,7 +20,7 @@ import {ncp} from 'ncp';
 import * as tmp from 'tmp';
 import {promisify} from 'util';
 
-const keep = true;
+const keep = false;
 const mvp = (promisify(mv) as {}) as (...args: string[]) => Promise<void>;
 const ncpp = promisify(ncp);
 const stagingDir = tmp.dirSync({keep, unsafeCleanup: true});
