@@ -69,7 +69,7 @@ export class PollingMessageStream extends Readable {
    *
    * @private
    */
-  _destroy(err: null|Error, callback: (err?: null|Error) => void) {
+  _destroy(err: null | Error, callback: (err?: null | Error) => void) {
     this.destroyed = true;
 
     if (this._activeRequest) {

@@ -169,8 +169,9 @@ describe('Subscriber', () => {
         ModAckQueue: FakeModAckQueue,
       },
       './message-stream': {MessageStream: FakeMessageStream},
-      './polling-message-stream':
-          {PollingMessageStream: FakePollingMessageStream},
+      './polling-message-stream': {
+        PollingMessageStream: FakePollingMessageStream,
+      },
     });
 
     Message = s.Message;
@@ -519,8 +520,9 @@ describe('Subscriber', () => {
       subscriber.setOptions({pollingOptions});
       subscriber.open();
 
-      const stream: FakePollingMessageStream =
-          stubs.get('pollingMessageStream');
+      const stream: FakePollingMessageStream = stubs.get(
+        'pollingMessageStream'
+      );
 
       assert.deepStrictEqual(stream.options, pollingOptions);
     });
@@ -627,8 +629,9 @@ describe('Subscriber', () => {
       subscriber.setOptions({poll: true});
       subscriber.open();
 
-      const stream: FakePollingMessageStream =
-          stubs.get('pollingMessageStream');
+      const stream: FakePollingMessageStream = stubs.get(
+        'pollingMessageStream'
+      );
 
       assert.strictEqual(stream.options.batchSize, 100);
     });

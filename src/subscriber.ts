@@ -28,7 +28,10 @@ import {Histogram} from './histogram';
 import {FlowControlOptions, LeaseManager} from './lease-manager';
 import {AckQueue, BatchOptions, ModAckQueue} from './message-queues';
 import {MessageStream, MessageStreamOptions} from './message-stream';
-import {MessagePollingOptions, PollingMessageStream} from './polling-message-stream';
+import {
+  MessagePollingOptions,
+  PollingMessageStream,
+} from './polling-message-stream';
 import {Subscription} from './subscription';
 
 export type PullResponse = google.pubsub.v1.IPullResponse;
@@ -375,8 +378,12 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   open(): void {
-    const {batching, flowControl, pollingOptions, streamingOptions} =
-        this._options;
+    const {
+      batching,
+      flowControl,
+      pollingOptions,
+      streamingOptions,
+    } = this._options;
 
     this._acks = new AckQueue(this, batching);
     this._modAcks = new ModAckQueue(this, batching);
@@ -432,8 +439,10 @@ export class Subscriber extends EventEmitter {
       const {maxMessages = MAX_MESSAGES} = options.flowControl || {};
 
       options.poll = true;
-      options.pollingOptions =
-          Object.assign({batchSize: maxMessages}, options.pollingOptions);
+      options.pollingOptions = Object.assign(
+        {batchSize: maxMessages},
+        options.pollingOptions
+      );
     }
   }
   /**

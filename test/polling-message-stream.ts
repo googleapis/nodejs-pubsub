@@ -79,13 +79,13 @@ describe('PollingMessageStream', () => {
 
   before(() => {
     PollingMessageStream = proxyquire('../src/polling-message-stream.js', {
-                             'stream': {Readable: FakeReadable}
-                           }).PollingMessageStream;
+      stream: {Readable: FakeReadable},
+    }).PollingMessageStream;
   });
 
   beforeEach(() => {
     client = new FakeClient();
-    subscriber = new FakeSubscriber(client) as {} as Subscriber;
+    subscriber = (new FakeSubscriber(client) as {}) as Subscriber;
     stream = new PollingMessageStream(subscriber, OPTIONS);
   });
 
@@ -96,8 +96,10 @@ describe('PollingMessageStream', () => {
 
   describe('instantiation', () => {
     it('should pass the correct options to the Readable ctor', () => {
-      const {highWaterMark, objectMode} =
-          (stream as {} as FakeReadable).options;
+      const {
+        highWaterMark,
+        objectMode,
+      } = ((stream as {}) as FakeReadable).options;
 
       assert.strictEqual(highWaterMark, 0);
       assert.strictEqual(objectMode, true);
@@ -105,7 +107,7 @@ describe('PollingMessageStream', () => {
 
     it('should accept a highWaterMark value', () => {
       stream = new PollingMessageStream(subscriber, {highWaterMark: 10});
-      const {highWaterMark} = (stream as {} as FakeReadable).options;
+      const {highWaterMark} = ((stream as {}) as FakeReadable).options;
       assert.strictEqual(highWaterMark, 10);
     });
 
@@ -133,8 +135,9 @@ describe('PollingMessageStream', () => {
       const fakeError = new Error('err');
       const fakeCallback = () => {};
 
-      const stub = sandbox.stub(FakeReadable.prototype, '_destroy')
-                       .withArgs(fakeError, fakeCallback);
+      const stub = sandbox
+        .stub(FakeReadable.prototype, '_destroy')
+        .withArgs(fakeError, fakeCallback);
 
       stream._destroy(fakeError, fakeCallback);
 
@@ -145,7 +148,7 @@ describe('PollingMessageStream', () => {
   describe('_read', () => {
     it('should make the correct pull request', done => {
       // tslint:disable-next-line no-any
-      const name = (subscriber as any).name = 'sub-name';
+      const name = ((subscriber as any).name = 'sub-name');
       const spy = sandbox.spy(client, 'pull');
 
       stream.on('error', done).on('data', () => {
@@ -192,14 +195,13 @@ describe('PollingMessageStream', () => {
       sandbox.stub(client, 'pull').returns(cancelify(promise));
 
       stream
-          .on('error',
-              err => {
-                assert.strictEqual(err, fakeStatus);
-                done();
-              })
-          .on('data', () => {
-            done(new Error('Should not have recieved data.'));
-          });
+        .on('error', err => {
+          assert.strictEqual(err, fakeStatus);
+          done();
+        })
+        .on('data', () => {
+          done(new Error('Should not have recieved data.'));
+        });
     });
 
     it('should stop making requests if the stream is full', done => {
