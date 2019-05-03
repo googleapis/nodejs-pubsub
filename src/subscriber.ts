@@ -73,8 +73,10 @@ export class Message {
    * @param {Subscriber} sub The parent subscriber.
    * @param {object} message The raw message response.
    */
-  constructor(sub: Subscriber, {ackId,
-                                message}: google.pubsub.v1.IReceivedMessage) {
+  constructor(
+    sub: Subscriber,
+    {ackId, message}: google.pubsub.v1.IReceivedMessage
+  ) {
     /**
      * This ID is used to acknowledge the message.
      *
@@ -323,7 +325,7 @@ export class Subscriber extends EventEmitter {
   async getClient(): Promise<ClientStub> {
     const pubsub = this._subscription.pubsub;
     const [client] = await promisify(pubsub.getClient_).call(pubsub, {
-      client: 'SubscriberClient'
+      client: 'SubscriberClient',
     });
 
     return client;
@@ -370,12 +372,14 @@ export class Subscriber extends EventEmitter {
     this._inventory = new LeaseManager(this, flowControl);
     this._stream = new MessageStream(this, streamingOptions);
 
-    this._stream.on('error', err => this.emit('error', err))
-        .on('data', (data: PullResponse) => this._onData(data))
-        .once('close', () => this.close());
+    this._stream
+      .on('error', err => this.emit('error', err))
+      .on('data', (data: PullResponse) => this._onData(data))
+      .once('close', () => this.close());
 
-    this._inventory.on('full', () => this._stream.pause())
-        .on('free', () => this._stream.resume());
+    this._inventory
+      .on('full', () => this._stream.pause())
+      .on('free', () => this._stream.resume());
 
     this.isOpen = true;
   }

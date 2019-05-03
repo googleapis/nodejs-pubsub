@@ -52,8 +52,11 @@ export class BatchError extends Error implements ServiceError {
   metadata: Metadata;
   details: string;
   constructor(err: ServiceError, ackIds: string[], rpc: string) {
-    super(`Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${
-        err.message}`);
+    super(
+      `Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${
+        err.message
+      }`
+    );
 
     this.ackIds = ackIds;
     this.code = err.code;
@@ -215,17 +218,18 @@ export class ModAckQueue extends MessageQueue {
     const client = await this._subscriber.getClient();
     const subscription = this._subscriber.name;
     const modAckTable: {[index: string]: string[]} = batch.reduce(
-        (table: {[index: string]: string[]}, [ackId, deadline]) => {
-          if (!table[deadline!]) {
-            table[deadline!] = [];
-          }
+      (table: {[index: string]: string[]}, [ackId, deadline]) => {
+        if (!table[deadline!]) {
+          table[deadline!] = [];
+        }
 
-          table[deadline!].push(ackId);
-          return table;
-        },
-        {});
+        table[deadline!].push(ackId);
+        return table;
+      },
+      {}
+    );
 
-    const modAckRequests = Object.keys(modAckTable).map(async (deadline) => {
+    const modAckRequests = Object.keys(modAckTable).map(async deadline => {
       const ackIds = modAckTable[deadline];
       const ackDeadlineSeconds = Number(deadline);
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};

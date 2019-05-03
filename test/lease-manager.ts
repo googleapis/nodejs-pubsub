@@ -24,7 +24,7 @@ import {Message, Subscriber} from '../src/subscriber';
 
 const FREE_MEM = 9376387072;
 const fakeos = {
-  freemem: () => FREE_MEM
+  freemem: () => FREE_MEM,
 };
 
 class FakeSubscriber extends EventEmitter {
@@ -54,14 +54,13 @@ describe('LeaseManager', () => {
 
   before(() => {
     LeaseManager = proxyquire('../src/lease-manager.js', {
-                     'os': fakeos,
-                     '../src/subscriber':
-                         {Subscriber: FakeSubscriber, Message: FakeMessage}
-                   }).LeaseManager;
+      os: fakeos,
+      '../src/subscriber': {Subscriber: FakeSubscriber, Message: FakeMessage},
+    }).LeaseManager;
   });
 
   beforeEach(() => {
-    subscriber = new FakeSubscriber() as {} as Subscriber;
+    subscriber = (new FakeSubscriber() as {}) as Subscriber;
     leaseManager = new LeaseManager(subscriber);
   });
 
@@ -189,15 +188,16 @@ describe('LeaseManager', () => {
         sandbox.stub(global.Math, 'random').returns(random);
         clock = sandbox.useFakeTimers();
         expectedTimeout =
-            ((subscriber.ackDeadline * 1000) * 0.9 - subscriber.modAckLatency) *
-            random;
+          (subscriber.ackDeadline * 1000 * 0.9 - subscriber.modAckLatency) *
+          random;
         halfway = expectedTimeout / 2;
       });
 
       it('should schedule a lease extension', () => {
         const message = new FakeMessage() as Message;
-        const stub =
-            sandbox.stub(message, 'modAck').withArgs(subscriber.ackDeadline);
+        const stub = sandbox
+          .stub(message, 'modAck')
+          .withArgs(subscriber.ackDeadline);
 
         leaseManager.add(message);
         clock.tick(expectedTimeout);
@@ -253,8 +253,9 @@ describe('LeaseManager', () => {
 
       it('should continuously extend the deadlines', () => {
         const message = new FakeMessage();
-        const stub =
-            sandbox.stub(message, 'modAck').withArgs(subscriber.ackDeadline);
+        const stub = sandbox
+          .stub(message, 'modAck')
+          .withArgs(subscriber.ackDeadline);
 
         leaseManager.add(message as Message);
         clock.tick(expectedTimeout);

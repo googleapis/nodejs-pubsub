@@ -31,10 +31,10 @@ const FAKE_CLIENT_CONFIG = {
       methods: {
         StreamingPull: {
           timeout_millis: FAKE_STREAMING_PULL_TIMEOUT,
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 };
 
 // just need this for unit tests.. we have a ponyfill for destroy on
@@ -118,7 +118,7 @@ class FakeGaxClient {
 
 class FakeGrpcClient {
   deadline?: number;
-  streams = ([] as FakeGrpcStream[]);
+  streams = [] as FakeGrpcStream[];
   streamingPull(options: StreamingPullOptions): FakeGrpcStream {
     const stream = new FakeGrpcStream(options);
     this.streams.push(stream);
@@ -158,9 +158,9 @@ describe('MessageStream', () => {
 
   before(() => {
     MessageStream = proxyquire('../src/message-stream.js', {
-                      'stream': {PassThrough: FakePassThrough},
-                      './v1/subscriber_client_config.json': FAKE_CLIENT_CONFIG,
-                    }).MessageStream;
+      stream: {PassThrough: FakePassThrough},
+      './v1/subscriber_client_config.json': FAKE_CLIENT_CONFIG,
+    }).MessageStream;
   });
 
   beforeEach(() => {
@@ -168,8 +168,8 @@ describe('MessageStream', () => {
     sandbox.stub(global.Date, 'now').returns(now);
 
     const gaxClient = new FakeGaxClient();
-    client = gaxClient.client;  // we hit the grpc client directly
-    subscriber = new FakeSubscriber(gaxClient) as {} as Subscriber;
+    client = gaxClient.client; // we hit the grpc client directly
+    subscriber = (new FakeSubscriber(gaxClient) as {}) as Subscriber;
     messageStream = new MessageStream(subscriber);
   });
 
@@ -185,7 +185,9 @@ describe('MessageStream', () => {
         highWaterMark: 0,
       };
       assert.deepStrictEqual(
-          (messageStream as {} as FakePassThrough).options, expectedOptions);
+        ((messageStream as {}) as FakePassThrough).options,
+        expectedOptions
+      );
     });
 
     it('should respect the highWaterMark option', () => {
@@ -198,7 +200,9 @@ describe('MessageStream', () => {
       };
 
       assert.deepStrictEqual(
-          (ms as {} as FakePassThrough).options, expectedOptions);
+        ((ms as {}) as FakePassThrough).options,
+        expectedOptions
+      );
     });
 
     it('should set destroyed to false', () => {
@@ -248,7 +252,9 @@ describe('MessageStream', () => {
             assert.strictEqual(client.streams.length, 5);
             client.streams.forEach(stream => {
               assert.strictEqual(
-                  stream._readableState.highWaterMark, highWaterMark);
+                stream._readableState.highWaterMark,
+                highWaterMark
+              );
             });
             done();
           });
@@ -297,12 +303,13 @@ describe('MessageStream', () => {
 
   describe('destroy', () => {
     it('should noop if already destroyed', done => {
-      const stub = sandbox.stub(FakePassThrough.prototype, 'destroy')
-                       .callsFake(function(this: Duplex) {
-                         if (this === messageStream) {
-                           done();
-                         }
-                       });
+      const stub = sandbox
+        .stub(FakePassThrough.prototype, 'destroy')
+        .callsFake(function(this: Duplex) {
+          if (this === messageStream) {
+            done();
+          }
+        });
 
       messageStream.destroy();
       messageStream.destroy();
@@ -321,7 +328,7 @@ describe('MessageStream', () => {
       });
 
       messageStream.destroy();
-      clock.tick(frequency * 2);  // for good measure
+      clock.tick(frequency * 2); // for good measure
 
       stubs.forEach(stub => {
         assert.strictEqual(stub.callCount, 0);
@@ -351,7 +358,7 @@ describe('MessageStream', () => {
       before(() => {
         destroy = FakePassThrough.prototype.destroy;
         // tslint:disable-next-line no-any
-        FakePassThrough.prototype.destroy = (false as any);
+        FakePassThrough.prototype.destroy = false as any;
       });
 
       after(() => {
@@ -382,20 +389,23 @@ describe('MessageStream', () => {
         const fakeResponses = [{}, {}, {}, {}, {}];
         const received: object[] = [];
 
-        messageStream.on('data', (chunk: Buffer) => received.push(chunk))
-            .on('end', () => {
-              assert.deepStrictEqual(received, fakeResponses);
-              done();
-            });
+        messageStream
+          .on('data', (chunk: Buffer) => received.push(chunk))
+          .on('end', () => {
+            assert.deepStrictEqual(received, fakeResponses);
+            done();
+          });
 
         client.streams.forEach((stream, i) => stream.push(fakeResponses[i]));
         setImmediate(() => messageStream.end());
       });
 
       it('should not end the message stream', done => {
-        messageStream.on('data', () => {}).on('end', () => {
-          done(new Error('Should not be called.'));
-        });
+        messageStream
+          .on('data', () => {})
+          .on('end', () => {
+            done(new Error('Should not be called.'));
+          });
 
         client.streams.forEach(stream => stream.push(null));
         setImmediate(done);

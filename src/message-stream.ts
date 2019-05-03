@@ -15,7 +15,13 @@
  */
 
 import {promisify} from '@google-cloud/promisify';
-import {ClientDuplexStream, Metadata, ServiceError, status, StatusObject} from '@grpc/grpc-js';
+import {
+  ClientDuplexStream,
+  Metadata,
+  ServiceError,
+  status,
+  StatusObject,
+} from '@grpc/grpc-js';
 import {ClientStub} from 'google-gax';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
@@ -41,23 +47,23 @@ const UNKNOWN: status = 2;
  * codes to retry streams
  */
 const RETRY_CODES: status[] = [
-  0,   // ok
-  1,   // canceled
-  2,   // unknown
-  4,   // deadline exceeded
-  8,   // resource exhausted
-  10,  // aborted
-  13,  // internal error
-  14,  // unavailable
-  15,  // dataloss
+  0, // ok
+  1, // canceled
+  2, // unknown
+  4, // deadline exceeded
+  8, // resource exhausted
+  10, // aborted
+  13, // internal error
+  14, // unavailable
+  15, // dataloss
 ];
 
 /*!
  * Deadline for the stream.
  */
-const PULL_TIMEOUT = require('./v1/subscriber_client_config.json')
-                         .interfaces['google.pubsub.v1.Subscriber']
-                         .methods.StreamingPull.timeout_millis;
+const PULL_TIMEOUT = require('./v1/subscriber_client_config.json').interfaces[
+  'google.pubsub.v1.Subscriber'
+].methods.StreamingPull.timeout_millis;
 
 /*!
  * default stream options
@@ -81,8 +87,9 @@ interface StreamingPullRequest {
   streamAckDeadlineSeconds?: number;
 }
 
-type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse>&
-    {_readableState: StreamState};
+type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse> & {
+  _readableState: StreamState;
+};
 
 /**
  * Error wrapper for gRPC status objects.
@@ -168,8 +175,10 @@ export class MessageStream extends PassThrough {
 
     this._fillStreamPool();
 
-    this._keepAliveHandle =
-        setInterval(() => this._keepAlive(), KEEP_ALIVE_INTERVAL);
+    this._keepAliveHandle = setInterval(
+      () => this._keepAlive(),
+      KEEP_ALIVE_INTERVAL
+    );
     this._keepAliveHandle.unref();
   }
   /**
@@ -213,9 +222,13 @@ export class MessageStream extends PassThrough {
     this._setHighWaterMark(stream);
     this._streams.set(stream, false);
 
-    stream.on('error', err => this._onError(stream, err))
-        .once('status', status => this._onStatus(stream, status))
-        .pipe(this, {end: false});
+    stream
+      .on('error', err => this._onError(stream, err))
+      .once('status', status => this._onStatus(stream, status))
+      .pipe(
+        this,
+        {end: false}
+      );
   }
   /**
    * Attempts to create and cache the desired number of StreamingPull requests.
