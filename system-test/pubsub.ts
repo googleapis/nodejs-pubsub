@@ -18,7 +18,14 @@ import * as assert from 'assert';
 import defer from 'p-defer';
 import * as uuid from 'uuid';
 
-import {Message, PubSub, ServiceError, Snapshot, Subscription, Topic} from '../src';
+import {
+  Message,
+  PubSub,
+  ServiceError,
+  Snapshot,
+  Subscription,
+  Topic,
+} from '../src';
 import {Policy} from '../src/iam';
 
 const pubsub = new PubSub();
@@ -91,21 +98,21 @@ describe('pubsub', () => {
 
     it('should list topics in a stream', done => {
       const topicsEmitted = new Array<Topic>();
-      pubsub.getTopicsStream()
-          .on('error', done)
-          .on('data',
-              topic => {
-                topicsEmitted.push(topic);
-              })
-          .on('end', () => {
-            const results = topicsEmitted.filter(topic => {
-              const name = getTopicName(topic);
-              return TOPIC_FULL_NAMES.indexOf(name) !== -1;
-            });
-
-            assert.strictEqual(results.length, TOPIC_NAMES.length);
-            done();
+      pubsub
+        .getTopicsStream()
+        .on('error', done)
+        .on('data', topic => {
+          topicsEmitted.push(topic);
+        })
+        .on('end', () => {
+          const results = topicsEmitted.filter(topic => {
+            const name = getTopicName(topic);
+            return TOPIC_FULL_NAMES.indexOf(name) !== -1;
           });
+
+          assert.strictEqual(results.length, TOPIC_NAMES.length);
+          done();
+        });
     });
 
     it('should allow manual paging', async () => {
@@ -203,13 +210,15 @@ describe('pubsub', () => {
 
     after(() => {
       // Delete subscriptions
-      return Promise.all(SUBSCRIPTIONS.map(async s => {
-        try {
-          await s.delete();
-        } catch (e) {
-          await topic.delete();
-        }
-      }));
+      return Promise.all(
+        SUBSCRIPTIONS.map(async s => {
+          try {
+            await s.delete();
+          } catch (e) {
+            await topic.delete();
+          }
+        })
+      );
     });
 
     it('should return error if creating an existing subscription', done => {
@@ -243,41 +252,41 @@ describe('pubsub', () => {
 
     it('should list all topic subscriptions as a stream', done => {
       const subscriptionsEmitted: Array<{}> = [];
-      topic.getSubscriptionsStream()
-          .on('error', done)
-          .on('data',
-              subscription => {
-                subscriptionsEmitted.push(subscription);
-              })
-          .on('end', () => {
-            assert.strictEqual(
-                subscriptionsEmitted.length, SUBSCRIPTIONS.length);
-            done();
-          });
+      topic
+        .getSubscriptionsStream()
+        .on('error', done)
+        .on('data', subscription => {
+          subscriptionsEmitted.push(subscription);
+        })
+        .on('end', () => {
+          assert.strictEqual(subscriptionsEmitted.length, SUBSCRIPTIONS.length);
+          done();
+        });
     });
 
     it('should list all subscriptions regardless of topic', done => {
       pubsub.getSubscriptions(
-          (err: ServiceError|null, subscriptions?: Subscription[]|null) => {
-            assert.ifError(err);
-            assert(subscriptions instanceof Array);
-            done();
-          });
+        (err: ServiceError | null, subscriptions?: Subscription[] | null) => {
+          assert.ifError(err);
+          assert(subscriptions instanceof Array);
+          done();
+        }
+      );
     });
 
     it('should list all subscriptions as a stream', done => {
       let subscriptionEmitted = false;
 
-      pubsub.getSubscriptionsStream()
-          .on('error', done)
-          .on('data',
-              subscription => {
-                subscriptionEmitted = subscription instanceof Subscription;
-              })
-          .on('end', () => {
-            assert.strictEqual(subscriptionEmitted, true);
-            done();
-          });
+      pubsub
+        .getSubscriptionsStream()
+        .on('error', done)
+        .on('data', subscription => {
+          subscriptionEmitted = subscription instanceof Subscription;
+        })
+        .on('end', () => {
+          assert.strictEqual(subscriptionEmitted, true);
+          done();
+        });
     });
 
     it('should allow creation and deletion of a subscription', done => {
@@ -321,9 +330,8 @@ describe('pubsub', () => {
       const callOptions = {
         messageRetentionDuration: threeDaysInSeconds,
         topic: '',
-        name: ''
+        name: '',
       };
-
 
       topic.createSubscription(subName, callOptions, (err, sub) => {
         assert.ifError(err);
@@ -333,10 +341,13 @@ describe('pubsub', () => {
 
           assert.strictEqual(metadata!.retainAckedMessages, true);
           assert.strictEqual(
-              Number(metadata!.messageRetentionDuration!.seconds),
-              threeDaysInSeconds);
+            Number(metadata!.messageRetentionDuration!.seconds),
+            threeDaysInSeconds
+          );
           assert.strictEqual(
-              Number(metadata!.messageRetentionDuration!.nanos), 0);
+            Number(metadata!.messageRetentionDuration!.nanos),
+            0
+          );
 
           sub!.delete(done);
         });
@@ -347,22 +358,23 @@ describe('pubsub', () => {
       const subscription = topic.subscription(generateSubName());
       const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
-      return subscription.create()
-          .then(() => {
-            return subscription.setMetadata({
-              messageRetentionDuration: threeDaysInSeconds,
-            });
-          })
-          .then(() => {
-            return subscription.getMetadata();
-          })
-          .then(([metadata]) => {
-            const {seconds, nanos} = metadata.messageRetentionDuration!;
-
-            assert.strictEqual(metadata.retainAckedMessages, true);
-            assert.strictEqual(Number(seconds), threeDaysInSeconds);
-            assert.strictEqual(Number(nanos), 0);
+      return subscription
+        .create()
+        .then(() => {
+          return subscription.setMetadata({
+            messageRetentionDuration: threeDaysInSeconds,
           });
+        })
+        .then(() => {
+          return subscription.getMetadata();
+        })
+        .then(([metadata]) => {
+          const {seconds, nanos} = metadata.messageRetentionDuration!;
+
+          assert.strictEqual(metadata.retainAckedMessages, true);
+          assert.strictEqual(Number(seconds), threeDaysInSeconds);
+          assert.strictEqual(Number(nanos), 0);
+        });
     });
 
     it('should error when using a non-existent subscription', done => {
@@ -421,9 +433,9 @@ describe('pubsub', () => {
       const maxMessages = 3;
       let messageCount = 0;
 
-      const subscription = topic.subscription(
-          SUB_NAMES[0],
-          {flowControl: {maxMessages, allowExcessMessages: false}});
+      const subscription = topic.subscription(SUB_NAMES[0], {
+        flowControl: {maxMessages, allowExcessMessages: false},
+      });
 
       subscription.on('error', done);
       subscription.on('message', onMessage);
@@ -438,6 +450,7 @@ describe('pubsub', () => {
     });
 
     // can be ran manually to test options/memory usage/etc.
+    // tslint:disable-next-line ban
     it.skip('should handle a large volume of messages', async function() {
       const MESSAGES = 200000;
 
@@ -540,11 +553,13 @@ describe('pubsub', () => {
       };
 
       topic.iam.setPolicy(
-          policy, (err: ServiceError|null, newPolicy?: Policy|null) => {
-            assert.ifError(err);
-            assert.deepStrictEqual(newPolicy!.bindings, policy.bindings);
-            done();
-          });
+        policy,
+        (err: ServiceError | null, newPolicy?: Policy | null) => {
+          assert.ifError(err);
+          assert.deepStrictEqual(newPolicy!.bindings, policy.bindings);
+          done();
+        }
+      );
     });
 
     it('should test the iam permissions', done => {
@@ -601,15 +616,16 @@ describe('pubsub', () => {
 
     it('should get a list of snapshots as a stream', done => {
       const snapshots = new Array<Snapshot>();
-      pubsub.getSnapshotsStream()
-          .on('error', done)
-          .on('data', snapshot => snapshots.push(snapshot))
-          .on('end', () => {
-            assert(snapshots.length > 0);
-            const names = snapshots.map(getSnapshotName);
-            assert(names.includes(SNAPSHOT_NAME));
-            done();
-          });
+      pubsub
+        .getSnapshotsStream()
+        .on('error', done)
+        .on('data', snapshot => snapshots.push(snapshot))
+        .on('end', () => {
+          assert(snapshots.length > 0);
+          const names = snapshots.map(getSnapshotName);
+          assert(names.includes(SNAPSHOT_NAME));
+          done();
+        });
     });
 
     describe('seeking', () => {
@@ -619,13 +635,14 @@ describe('pubsub', () => {
       beforeEach(() => {
         subscription = topic.subscription(generateSubName());
 
-        return subscription.create()
-            .then(() => {
-              return topic.publish(Buffer.from('Hello, world!'));
-            })
-            .then(_messageId => {
-              messageId = _messageId;
-            });
+        return subscription
+          .create()
+          .then(() => {
+            return topic.publish(Buffer.from('Hello, world!'));
+          })
+          .then(_messageId => {
+            messageId = _messageId;
+          });
       });
 
       it('should seek to a snapshot', done => {
@@ -669,9 +686,12 @@ describe('pubsub', () => {
           message.ack();
 
           if (++messageCount === 1) {
-            subscription.seek(message.publishTime, (err: ServiceError|null) => {
-              assert.ifError(err);
-            });
+            subscription.seek(
+              message.publishTime,
+              (err: ServiceError | null) => {
+                assert.ifError(err);
+              }
+            );
             return;
           }
 

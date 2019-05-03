@@ -43,23 +43,22 @@ describe('Snapshot', () => {
   const SNAPSHOT_NAME = 'a';
   const PROJECT_ID = 'grape-spaceship-123';
 
-  const PUBSUB = {
+  const PUBSUB = ({
     projectId: PROJECT_ID,
-  } as {} as PubSub;
+  } as {}) as PubSub;
 
-  const SUBSCRIPTION = {
+  const SUBSCRIPTION = ({
     projectId: PROJECT_ID,
     pubsub: PUBSUB,
     api: {},
     createSnapshot() {},
     seek() {},
-  } as {} as Subscription;
-
+  } as {}) as Subscription;
 
   before(() => {
     Snapshot = proxyquire('../src/snapshot', {
-                 '@google-cloud/promisify': fakePromisify,
-               }).Snapshot;
+      '@google-cloud/promisify': fakePromisify,
+    }).Snapshot;
   });
 
   const sandbox = sinon.createSandbox();
@@ -136,12 +135,13 @@ describe('Snapshot', () => {
 
         it('should call createSnapshot', done => {
           const fakeOpts = {};
-          sandbox.stub(subscription, 'createSnapshot')
-              .callsFake((name, options) => {
-                assert.strictEqual(name, FULL_SNAPSHOT_NAME);
-                assert.strictEqual(options, fakeOpts);
-                done();
-              });
+          sandbox
+            .stub(subscription, 'createSnapshot')
+            .callsFake((name, options) => {
+              assert.strictEqual(name, FULL_SNAPSHOT_NAME);
+              assert.strictEqual(options, fakeOpts);
+              done();
+            });
 
           snapshot.create(fakeOpts, assert.ifError);
         });
@@ -180,7 +180,7 @@ describe('Snapshot', () => {
       });
 
       it('should call the seek method', done => {
-        sandbox.stub(subscription, 'seek').callsFake((snapshot) => {
+        sandbox.stub(subscription, 'seek').callsFake(snapshot => {
           assert.strictEqual(snapshot, FULL_SNAPSHOT_NAME);
           done();
         });
@@ -196,14 +196,16 @@ describe('Snapshot', () => {
 
       it('should throw on create method', () => {
         assert.throws(
-            () => snapshot.create(),
-            /This is only available if you accessed this object through Subscription#snapshot/);
+          () => snapshot.create(),
+          /This is only available if you accessed this object through Subscription#snapshot/
+        );
       });
 
       it('should throw on seek method', () => {
         assert.throws(
-            () => snapshot.seek(),
-            /This is only available if you accessed this object through Subscription#snapshot/);
+          () => snapshot.seek(),
+          /This is only available if you accessed this object through Subscription#snapshot/
+        );
       });
     });
   });
@@ -228,7 +230,7 @@ describe('Snapshot', () => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'deleteSnapshot');
         assert.deepStrictEqual(config.reqOpts, {snapshot: snapshot.name});
-        callback();  // the done fn
+        callback(); // the done fn
       };
 
       snapshot.delete(done);

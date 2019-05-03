@@ -31,9 +31,9 @@ interface Inventory {
   bytes: number;
 }
 
-export type Attributes = {
-  [key: string]: string
-};
+export interface Attributes {
+  [key: string]: string;
+}
 export type PublishCallback = RequestCallback<string>;
 
 /**
@@ -163,20 +163,26 @@ export class Publisher {
    */
   publish(data: Buffer, attributes?: Attributes): Promise<string>;
   publish(data: Buffer, callback: PublishCallback): void;
-  publish(data: Buffer, attributes: Attributes, callback: PublishCallback):
-      void;
   publish(
-      data: Buffer, attributesOrCallback?: Attributes|PublishCallback,
-      callback?: PublishCallback): Promise<string>|void {
+    data: Buffer,
+    attributes: Attributes,
+    callback: PublishCallback
+  ): void;
+  publish(
+    data: Buffer,
+    attributesOrCallback?: Attributes | PublishCallback,
+    callback?: PublishCallback
+  ): Promise<string> | void {
     if (!(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
     }
 
     const attributes =
-        typeof attributesOrCallback === 'object' ? attributesOrCallback : {};
-    callback = typeof attributesOrCallback === 'function' ?
-        attributesOrCallback :
-        callback;
+      typeof attributesOrCallback === 'object' ? attributesOrCallback : {};
+    callback =
+      typeof attributesOrCallback === 'function'
+        ? attributesOrCallback
+        : callback;
     // Ensure the `attributes` object only has string values
     for (const key of Object.keys(attributes)) {
       const value = attributes[key];
@@ -189,8 +195,10 @@ export class Publisher {
     const opts = this.settings!.batching!;
     // if this message puts us over the maxBytes option, then let's ship
     // what we have and add it to the next batch
-    if (this.inventory_.bytes > 0 &&
-        this.inventory_.bytes + data.length > opts.maxBytes!) {
+    if (
+      this.inventory_.bytes > 0 &&
+      this.inventory_.bytes + data.length > opts.maxBytes!
+    ) {
       this.publish_();
     }
     // add it to the queue!
@@ -204,8 +212,10 @@ export class Publisher {
     }
     // otherwise let's set a timeout to send the next batch
     if (!this.timeoutHandle_) {
-      this.timeoutHandle_ =
-          setTimeout(this.publish_.bind(this), opts.maxMilliseconds!);
+      this.timeoutHandle_ = setTimeout(
+        this.publish_.bind(this),
+        opts.maxMilliseconds!
+      );
     }
   }
   /**
@@ -257,20 +267,21 @@ export class Publisher {
       messages,
     };
     this.topic.request<google.pubsub.v1.IPublishResponse>(
-        {
-          client: 'PublisherClient',
-          method: 'publish',
-          reqOpts,
-          gaxOpts: this.settings!.gaxOpts!,
-        },
-        (err, resp) => {
-          const messageIds = arrify(resp! && resp!.messageIds!);
-          each(callbacks, (callback: PublishCallback, next: Function) => {
-            const messageId = messageIds[callbacks.indexOf(callback)];
-            callback(err, messageId);
-            next();
-          });
+      {
+        client: 'PublisherClient',
+        method: 'publish',
+        reqOpts,
+        gaxOpts: this.settings!.gaxOpts!,
+      },
+      (err, resp) => {
+        const messageIds = arrify(resp! && resp!.messageIds!);
+        each(callbacks, (callback: PublishCallback, next: Function) => {
+          const messageId = messageIds[callbacks.indexOf(callback)];
+          callback(err, messageId);
+          next();
         });
+      }
+    );
   }
   /**
    * Queues message to be sent to the server.
@@ -283,8 +294,11 @@ export class Publisher {
    */
   queue_(data: Buffer, attrs: Attributes): Promise<string>;
   queue_(data: Buffer, attrs: Attributes, callback: PublishCallback): void;
-  queue_(data: Buffer, attrs: Attributes, callback?: PublishCallback):
-      void|Promise<string> {
+  queue_(
+    data: Buffer,
+    attrs: Attributes,
+    callback?: PublishCallback
+  ): void | Promise<string> {
     this.inventory_.queued.push({
       data,
       attributes: attrs,
