@@ -23,6 +23,7 @@ import {RETRY_CODES} from './message-stream';
 import {Subscriber} from './subscriber';
 
 type PullRequest = google.pubsub.v1.IPullRequest;
+type PullResponse = google.pubsub.v1.IPullResponse;
 
 /**
  * @typedef {object} MessagePollingOptions
@@ -50,7 +51,7 @@ export interface MessagePollingOptions {
  */
 export class PollingMessageStream extends Readable {
   destroyed: boolean;
-  private _activeRequest?: CancellablePromise;
+  private _activeRequest?: CancellablePromise<[PullResponse]>;
   private _options: MessagePollingOptions;
   private _subscriber: Subscriber;
   private _reading: boolean;
@@ -104,7 +105,7 @@ export class PollingMessageStream extends Readable {
 
       try {
         this._activeRequest = client.pull(request);
-        const [resp] = await this._activeRequest;
+        const [resp] = await this._activeRequest!;
         more = this.push(resp);
       } catch (e) {
         if (!RETRY_CODES.includes(e.code)) {
