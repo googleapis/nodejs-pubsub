@@ -33,7 +33,7 @@ import {PublishOptions} from './publisher';
 import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
 import {google} from '../proto/pubsub';
-import {ServiceError, ChannelCredentials} from 'grpc';
+import {ServiceError, ChannelCredentials, status, Metadata} from '@grpc/grpc-js';
 
 const opts = {} as gax.GrpcClientOptions;
 const {grpc} = new gax.GrpcClient(opts);
@@ -51,7 +51,11 @@ export interface ClientConfig extends gax.GrpcClientOptions {
   apiEndpoint?: string;
   servicePath?: string;
   port?: string|number;
-  sslCreds?: ChannelCredentials;
+  // TODO: sslCreds is supposed to be of type ChannelCredentials.
+  // Using any until google-gax changes to @grpc/grpc-js by default.
+  // tslint:disable-next-line no-any
+  sslCreds?: any;
+  // sslCreds?: ChannelCredentials;
 }
 
 export interface PageOptions {
@@ -818,7 +822,10 @@ export class PubSub {
     if (!hasProjectId && !this.isEmulator) {
       this.auth.getProjectId((err, projectId) => {
         if (err) {
-          callback(err);
+          const serviceError = Object.assign(
+              err,
+              {code: status.UNKNOWN, metadata: new Metadata(), details: ''});
+          callback(serviceError);
           return;
         }
         this.projectId = projectId!;
@@ -851,7 +858,9 @@ export class PubSub {
   request<T, R = void>(config: RequestConfig, callback: RequestCallback<T, R>) {
     this.getClient_(config, (err, client) => {
       if (err) {
-        callback(err);
+        const serviceError = Object.assign(
+            err, {code: status.UNKNOWN, metadata: new Metadata(), details: ''});
+        callback(serviceError);
         return;
       }
       let reqOpts = extend(true, {}, config.reqOpts);

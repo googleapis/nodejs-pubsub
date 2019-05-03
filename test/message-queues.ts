@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+import {Metadata, ServiceError, status} from '@grpc/grpc-js';
 import * as assert from 'assert';
 import {EventEmitter} from 'events';
 import {CallOptions} from 'google-gax';
-import {Metadata, ServiceError} from 'grpc';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import * as uuid from 'uuid';
@@ -317,9 +317,9 @@ describe('MessageQueues', () => {
 
       const ackIds = messages.map(message => message.ackId);
 
-      const fakeError: ServiceError = new Error('Err.');
-      fakeError.code = 2;
-      fakeError.metadata = new Metadata();
+      const fakeError: ServiceError = Object.assign(
+          new Error('Err.'),
+          {code: status.UNKNOWN, metadata: new Metadata(), details: ''});
 
       const expectedMessage =
           `Failed to "acknowledge" for 3 message(s). Reason: Err.`;
@@ -430,9 +430,9 @@ describe('MessageQueues', () => {
 
       const ackIds = messages.map(message => message.ackId);
 
-      const fakeError: ServiceError = new Error('Err.');
-      fakeError.code = 2;
-      fakeError.metadata = new Metadata();
+      const fakeError: ServiceError = Object.assign(
+          new Error('Err.'),
+          {code: status.UNKNOWN, metadata: new Metadata(), details: ''});
 
       const expectedMessage =
           `Failed to "modifyAckDeadline" for 3 message(s). Reason: Err.`;

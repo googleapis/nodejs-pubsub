@@ -15,8 +15,8 @@
  */
 
 import {promisify} from '@google-cloud/promisify';
+import {ClientDuplexStream, Metadata, ServiceError, status, StatusObject} from '@grpc/grpc-js';
 import {ClientStub} from 'google-gax';
-import {ClientDuplexStream, Metadata, ServiceError, status, StatusObject} from 'grpc';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
@@ -92,12 +92,14 @@ type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse>&
  * @param {object} status The gRPC status object.
  */
 export class StatusError extends Error implements ServiceError {
-  code?: status;
-  metadata?: Metadata;
+  code: status;
+  metadata: Metadata;
+  details: string;
   constructor(status: StatusObject) {
     super(status.details);
     this.code = status.code;
     this.metadata = status.metadata;
+    this.details = status.details;
   }
 }
 
@@ -110,9 +112,13 @@ export class StatusError extends Error implements ServiceError {
  */
 export class ChannelError extends Error implements ServiceError {
   code: status;
+  metadata: Metadata;
+  details: string;
   constructor(err: Error) {
     super(`Failed to connect to channel. Reason: ${err.message}`);
     this.code = err.message.includes('deadline') ? DEADLINE : UNKNOWN;
+    this.metadata = new Metadata();
+    this.details = '';
   }
 }
 

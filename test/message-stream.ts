@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+import {Metadata, ServiceError} from '@grpc/grpc-js';
 import * as assert from 'assert';
-import {Metadata, ServiceError} from 'grpc';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {Duplex, PassThrough} from 'stream';
 import * as uuid from 'uuid';
+
 import * as messageTypes from '../src/message-stream';
 import {Subscriber} from '../src/subscriber';
 

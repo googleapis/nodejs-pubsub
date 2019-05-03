@@ -19,7 +19,7 @@ import * as promisify from '@google-cloud/promisify';
 import arrify = require('arrify');
 import * as assert from 'assert';
 import * as gax from 'google-gax';
-import {CallOptions, ServiceError} from 'grpc';
+import {CallOptions, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
@@ -1047,6 +1047,7 @@ describe('PubSub', () => {
       };
 
       pubsub.request(CONFIG, (err: ServiceError|null) => {
+        console.log(err!.stack);
         assert.strictEqual(expectedError, err);
         done();
       });

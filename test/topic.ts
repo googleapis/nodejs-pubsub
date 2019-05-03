@@ -15,9 +15,9 @@
  */
 
 import * as pfy from '@google-cloud/promisify';
+import {Metadata, ServiceError, status} from '@grpc/grpc-js';
 import * as assert from 'assert';
 import {CallOptions} from 'google-gax';
-import {ServiceError} from 'grpc';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
@@ -418,7 +418,9 @@ describe('Topic', () => {
     });
 
     it('should pass back any errors that occur', done => {
-      const error = new Error('err');
+      const error = Object.assign(
+          new Error('err'),
+          {code: status.UNKNOWN, metadata: new Metadata(), details: ''});
       const apiResponse = {};
 
       topic.request =

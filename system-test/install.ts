@@ -20,7 +20,7 @@ import {ncp} from 'ncp';
 import * as tmp from 'tmp';
 import {promisify} from 'util';
 
-const keep = false;
+const keep = true;
 const mvp = promisify(mv) as {} as (...args: string[]) => Promise<void>;
 const ncpp = promisify(ncp);
 const stagingDir = tmp.dirSync({keep, unsafeCleanup: true});
@@ -32,7 +32,7 @@ describe('📦 pack and install', () => {
    * Create a staging directory with temp fixtures used to test on a fresh
    * application.
    */
-  it('should be able to use the d.ts', async () => {
+  it.only('should be able to use the d.ts', async () => {
     await execa('npm', ['pack', '--unsafe-perm']);
     const tarball = `google-cloud-pubsub-${pkg.version}.tgz`;
     await mvp(tarball, `${stagingPath}/pubsub.tgz`);
