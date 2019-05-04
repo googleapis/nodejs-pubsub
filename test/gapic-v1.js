@@ -39,8 +39,10 @@ describe('PublisherClient', () => {
 
       // Mock response
       const name2 = 'name2-1052831874';
+      const kmsKeyName = 'kmsKeyName2094986649';
       const expectedResponse = {
         name: name2,
+        kmsKeyName: kmsKeyName,
       };
 
       // Mock Grpc layer
@@ -101,8 +103,10 @@ describe('PublisherClient', () => {
 
       // Mock response
       const name = 'name3373707';
+      const kmsKeyName = 'kmsKeyName2094986649';
       const expectedResponse = {
         name: name,
+        kmsKeyName: kmsKeyName,
       };
 
       // Mock Grpc layer
@@ -236,8 +240,10 @@ describe('PublisherClient', () => {
 
       // Mock response
       const name = 'name3373707';
+      const kmsKeyName = 'kmsKeyName2094986649';
       const expectedResponse = {
         name: name,
+        kmsKeyName: kmsKeyName,
       };
 
       // Mock Grpc layer
