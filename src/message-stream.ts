@@ -27,6 +27,7 @@ import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
 import {PullResponse, Subscriber} from './subscriber';
+import {clearTimeout} from 'timers';
 
 /*!
  * Frequency to ping streams.
@@ -160,6 +161,7 @@ export class MessageStream extends PassThrough {
   private _retries: number;
   private _timeSinceFirstError: number;
   private _pendingStreamCreation: boolean;
+  private _fillPoolTimeout: NodeJS.Timer | undefined;
 
   constructor(sub: Subscriber, options = {} as MessageStreamOptions) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -193,6 +195,10 @@ export class MessageStream extends PassThrough {
 
     this.destroyed = true;
     clearInterval(this._keepAliveHandle);
+
+    if (this._fillPoolTimeout) {
+      clearTimeout(this._fillPoolTimeout);
+    }
 
     for (const stream of this._streams.keys()) {
       this._removeStream(stream);
@@ -316,6 +322,14 @@ export class MessageStream extends PassThrough {
       this._fillStreamPool();
     } else if (!this._streams.size) {
       this.destroy(new StatusError(status));
+    } else if (!this._fillPoolTimeout) {
+      this._fillPoolTimeout = setTimeout(() => {
+        clearTimeout(this._fillPoolTimeout!);
+        if (this._streams.size) {
+          this._pendingStreamCreation = true;
+          this._fillStreamPool();
+        }
+      }, this._options.timeout!);
     }
   }
   /**

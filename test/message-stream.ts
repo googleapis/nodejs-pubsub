@@ -662,6 +662,46 @@ describe('MessageStream', () => {
           done();
         });
       });
+
+      it('should fill up stream pool if there are stream failure over time and couldnt fill up bcz of max retry', done => {
+        const streams: FakeGrpcStream[] = [];
+        let initialFill = false;
+        let failCount = 0;
+        const stub = sandbox
+          .stub(client, 'streamingPull')
+          .callsFake(options => {
+            const stream = new FakeGrpcStream(options);
+            streams.push(stream);
+            if (!initialFill && streams.length === 5) {
+              initialFill = true;
+              streams.shift()!.emit('status', {code: 16});
+              return stream;
+            }
+            if (initialFill) {
+              failCount++;
+              if (failCount < 3) {
+                streams.shift()!.emit('status', {code: 16});
+              } else if (failCount === 3) {
+                streams.shift()!.emit('status', {code: 16});
+                streams.shift()!.emit('status', {code: 16});
+                streams.shift()!.emit('status', {code: 16});
+              } else if (failCount === 6) {
+                setImmediate(() =>
+                  streams.forEach(stream => stream.emit('status', {code: 16}))
+                );
+              }
+            }
+            return stream;
+          });
+        const messageStream = new MessageStream(subscriber, {
+          maxRetries: 3,
+          timeout: 5000,
+        });
+        messageStream.on('error', err => {
+          assert.strictEqual(stub.callCount, 11);
+          done();
+        });
+      });
     });
 
     describe('keeping streams alive', () => {
