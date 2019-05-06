@@ -132,7 +132,7 @@ export class StatusError extends Error implements ServiceError {
  *     after the specified time.
  * @property {number} [timeout=30000] Timeout for establishing a connection or
  *     give up while retrying for max retrying in this timeout.
- * @property {number} [maxRetries=maxStreams+3] Maximum number of times to retry.
+ * @property {number} [maxRetries=3] Maximum number of times to retry.
  */
 export interface MessageStreamOptions {
   highWaterMark?: number;
