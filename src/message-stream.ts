@@ -159,6 +159,7 @@ export class MessageStream extends PassThrough {
   private _subscriber: Subscriber;
   private _retries: number;
   private _timeSinceFirstError: number;
+  private _pendingStreamCreation: boolean;
 
   constructor(sub: Subscriber, options = {} as MessageStreamOptions) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -171,6 +172,7 @@ export class MessageStream extends PassThrough {
     this._subscriber = sub;
     this._retries = 0;
     this._timeSinceFirstError = Date.now();
+    this._pendingStreamCreation = true;
     this._fillStreamPool();
     this._keepAliveHandle = setInterval(
       () => this._keepAlive(),
@@ -261,6 +263,7 @@ export class MessageStream extends PassThrough {
       this._addStream(stream);
       stream.write(request);
     }
+    this._pendingStreamCreation = false;
   }
   /**
    * It is critical that we keep as few `PullResponse` objects in memory as
@@ -302,10 +305,14 @@ export class MessageStream extends PassThrough {
       this._retries = 0;
       this._timeSinceFirstError = Date.now();
     }
+    if (this._pendingStreamCreation) {
+      return;
+    }
     if (
       RETRY_CODES.includes(status.code) &&
       this._retries++ < this._options.maxRetries!
     ) {
+      this._pendingStreamCreation = true;
       this._fillStreamPool();
     } else if (!this._streams.size) {
       this.destroy(new StatusError(status));
