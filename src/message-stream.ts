@@ -16,13 +16,7 @@
 
 import {promisify} from '@google-cloud/promisify';
 import {ClientStub} from 'google-gax';
-import {
-  ClientDuplexStream,
-  Metadata,
-  ServiceError,
-  status,
-  StatusObject,
-} from 'grpc';
+import {ClientDuplexStream, Metadata, ServiceError, status, StatusObject,} from 'grpc';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
@@ -57,24 +51,24 @@ const RESET_RETRIES_COUNT_TIME_MS = 30000;
  * codes to retry streams
  */
 const RETRY_CODES: status[] = [
-  0, // ok
-  1, // canceled
-  2, // unknown
-  4, // deadline exceeded
-  8, // resource exhausted
-  10, // aborted
-  13, // internal error
-  14, // unavailable
-  15, // dataloss
+  0,   // ok
+  1,   // canceled
+  2,   // unknown
+  4,   // deadline exceeded
+  8,   // resource exhausted
+  10,  // aborted
+  13,  // internal error
+  14,  // unavailable
+  15,  // dataloss
   16,  // unauthorized
 ];
 
 /*!
  * Deadline for the stream.
  */
-const PULL_TIMEOUT = require('./v1/subscriber_client_config.json').interfaces[
-  'google.pubsub.v1.Subscriber'
-].methods.StreamingPull.timeout_millis;
+const PULL_TIMEOUT = require('./v1/subscriber_client_config.json')
+                         .interfaces['google.pubsub.v1.Subscriber']
+                         .methods.StreamingPull.timeout_millis;
 
 /*!
  * default stream options
@@ -99,7 +93,7 @@ interface StreamingPullRequest {
   streamAckDeadlineSeconds?: number;
 }
 
-type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse> & {
+type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse>&{
   _readableState: StreamState;
 };
 
@@ -217,13 +211,9 @@ export class MessageStream extends PassThrough {
     this._setHighWaterMark(stream);
     this._streams.set(stream, false);
 
-    stream
-      .on('error', err => this._onError(stream, err))
-      .once('status', status => this._onStatus(stream, status))
-      .pipe(
-        this,
-        {end: false}
-      );
+    stream.on('error', err => this._onError(stream, err))
+        .once('status', status => this._onStatus(stream, status))
+        .pipe(this, {end: false});
   }
   /**
    * Attempts to create and cache the desired number of StreamingPull requests.
