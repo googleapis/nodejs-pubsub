@@ -44,6 +44,16 @@ const DEADLINE: status = 4;
 const UNKNOWN: status = 2;
 
 /*!
+ * Max number of retries
+ */
+const DEFAULT_MAX_RETRIES = 3;
+
+/*!
+ * Time to reset retries counter.
+ */
+const RESET_RETRIES_COUNT_TIME_MS = 30000;
+
+/*!
  * codes to retry streams
  */
 const RETRY_CODES: status[] = [
@@ -56,6 +66,7 @@ const RETRY_CODES: status[] = [
   13, // internal error
   14, // unavailable
   15, // dataloss
+  16,  // unauthorized
 ];
 
 /*!
@@ -72,7 +83,8 @@ const DEFAULT_OPTIONS: MessageStreamOptions = {
   highWaterMark: 0,
   maxStreams: 5,
   pullTimeout: PULL_TIMEOUT,
-  timeout: 300000,
+  timeout: RESET_RETRIES_COUNT_TIME_MS,
+  maxRetries: DEFAULT_MAX_RETRIES,
 };
 
 interface StreamState {
@@ -109,21 +121,6 @@ export class StatusError extends Error implements ServiceError {
 }
 
 /**
- * Error thrown when we fail to open a channel for the message stream.
- *
- * @class
- *
- * @param {Error} err The original error.
- */
-export class ChannelError extends Error implements ServiceError {
-  code: status;
-  constructor(err: Error) {
-    super(`Failed to connect to channel. Reason: ${err.message}`);
-    this.code = err.message.includes('deadline') ? DEADLINE : UNKNOWN;
-  }
-}
-
-/**
  * @typedef {object} MessageStreamOptions
  * @property {number} [highWaterMark=0] Configures the Buffer level for all
  *     underlying streams. See
@@ -133,13 +130,16 @@ export class ChannelError extends Error implements ServiceError {
  * @property {number} [pullTimeout=900000] Timeout to be applied to each
  *     underlying stream. Essentially this just closes a `StreamingPull` request
  *     after the specified time.
- * @property {number} [timeout=300000] Timeout for establishing a connection.
+ * @property {number} [timeout=30000] Timeout for establishing a connection or
+ *     give up while retrying for max retrying in this timeout.
+ * @property {number} [maxRetries=maxStreams+3] Maximum number of times to retry.
  */
 export interface MessageStreamOptions {
   highWaterMark?: number;
   maxStreams?: number;
   pullTimeout?: number;
   timeout?: number;
+  maxRetries?: number;
 }
 
 /**
@@ -157,6 +157,9 @@ export class MessageStream extends PassThrough {
   private _options: MessageStreamOptions;
   private _streams: Map<PullStream, boolean>;
   private _subscriber: Subscriber;
+  private _retries: number;
+  private _timeSinceFirstError: number;
+
   constructor(sub: Subscriber, options = {} as MessageStreamOptions) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
 
@@ -166,13 +169,11 @@ export class MessageStream extends PassThrough {
     this._options = options;
     this._streams = new Map();
     this._subscriber = sub;
-
+    this._retries = 0;
+    this._timeSinceFirstError = Date.now();
     this._fillStreamPool();
-
-    this._keepAliveHandle = setInterval(
-      () => this._keepAlive(),
-      KEEP_ALIVE_INTERVAL
-    );
+    this._keepAliveHandle =
+        setInterval(() => this._keepAlive(), KEEP_ALIVE_INTERVAL);
     this._keepAliveHandle.unref();
   }
   /**
@@ -258,12 +259,6 @@ export class MessageStream extends PassThrough {
       this._addStream(stream);
       stream.write(request);
     }
-
-    try {
-      await this._waitForClientReady(client);
-    } catch (e) {
-      this.destroy(e);
-    }
   }
   /**
    * It is critical that we keep as few `PullResponse` objects in memory as
@@ -301,8 +296,12 @@ export class MessageStream extends PassThrough {
    */
   private _onEnd(stream: PullStream, status: StatusObject): void {
     this._removeStream(stream);
-
-    if (RETRY_CODES.includes(status.code)) {
+    if (Date.now() - this._timeSinceFirstError > this._options.timeout!) {
+      this._retries = 0;
+      this._timeSinceFirstError = Date.now();
+    }
+    if (RETRY_CODES.includes(status.code) &&
+        this._retries++ < this._options.maxRetries!) {
       this._fillStreamPool();
     } else if (!this._streams.size) {
       this.destroy(new StatusError(status));
@@ -378,22 +377,5 @@ export class MessageStream extends PassThrough {
    */
   private _setHighWaterMark(stream: PullStream): void {
     stream._readableState.highWaterMark = this._options.highWaterMark!;
-  }
-  /**
-   * Promisified version of gRPCs Client#waitForReady function.
-   *
-   * @private
-   *
-   * @param {object} client The gRPC client to wait for.
-   * @returns {Promise}
-   */
-  private async _waitForClientReady(client: ClientStub): Promise<void> {
-    const deadline = Date.now() + this._options.timeout!;
-
-    try {
-      await promisify(client.waitForReady).call(client, deadline);
-    } catch (e) {
-      throw new ChannelError(e);
-    }
   }
 }
