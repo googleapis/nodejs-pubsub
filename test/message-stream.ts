@@ -157,9 +157,9 @@ describe('MessageStream', () => {
 
   before(() => {
     MessageStream = proxyquire('../src/message-stream.js', {
-                      stream: {PassThrough: FakePassThrough},
-                      './v1/subscriber_client_config.json': FAKE_CLIENT_CONFIG,
-                    }).MessageStream;
+      stream: {PassThrough: FakePassThrough},
+      './v1/subscriber_client_config.json': FAKE_CLIENT_CONFIG,
+    }).MessageStream;
   });
 
   beforeEach(() => {
@@ -167,7 +167,7 @@ describe('MessageStream', () => {
     sandbox.stub(global.Date, 'now').callsFake(() => now);
 
     const gaxClient = new FakeGaxClient();
-    client = gaxClient.client;  // we hit the grpc client directly
+    client = gaxClient.client; // we hit the grpc client directly
     subscriber = (new FakeSubscriber(gaxClient) as {}) as Subscriber;
     messageStream = new MessageStream(subscriber);
   });
@@ -184,7 +184,9 @@ describe('MessageStream', () => {
         highWaterMark: 0,
       };
       assert.deepStrictEqual(
-          ((messageStream as {}) as FakePassThrough).options, expectedOptions);
+        ((messageStream as {}) as FakePassThrough).options,
+        expectedOptions
+      );
     });
 
     it('should respect the highWaterMark option', () => {
@@ -197,7 +199,9 @@ describe('MessageStream', () => {
       };
 
       assert.deepStrictEqual(
-          ((ms as {}) as FakePassThrough).options, expectedOptions);
+        ((ms as {}) as FakePassThrough).options,
+        expectedOptions
+      );
     });
 
     it('should set destroyed to false', () => {
@@ -232,16 +236,18 @@ describe('MessageStream', () => {
 
         it('should default maxRetries to 3', done => {
           let failCount = 0;
-          const stub =
-              sandbox.stub(client, 'streamingPull').callsFake(options => {
-                const stream = new FakeGrpcStream(options);
-                setImmediate(() => stream.emit('status', {code: 16}));
-                if (++failCount === 3) {
-                  client.streams.forEach(
-                      stream => stream.emit('status', {code: 16}));
-                }
-                return stream;
-              });
+          const stub = sandbox
+            .stub(client, 'streamingPull')
+            .callsFake(options => {
+              const stream = new FakeGrpcStream(options);
+              setImmediate(() => stream.emit('status', {code: 16}));
+              if (++failCount === 3) {
+                client.streams.forEach(stream =>
+                  stream.emit('status', {code: 16})
+                );
+              }
+              return stream;
+            });
           messageStream.on('error', err => {
             assert.strictEqual(stub.callCount, 3);
             done();
@@ -266,7 +272,9 @@ describe('MessageStream', () => {
             assert.strictEqual(client.streams.length, 5);
             client.streams.forEach(stream => {
               assert.strictEqual(
-                  stream._readableState.highWaterMark, highWaterMark);
+                stream._readableState.highWaterMark,
+                highWaterMark
+              );
             });
             done();
           });
@@ -288,24 +296,24 @@ describe('MessageStream', () => {
           const streams: FakeGrpcStream[] = [];
           let initialFill = false;
           let failCount = 0;
-          const stub =
-              sandbox.stub(client, 'streamingPull').callsFake(options => {
-                const stream = new FakeGrpcStream(options);
-                streams.push(stream);
-                if (!initialFill && streams.length === 5) {
-                  initialFill = true;
-                  streams.shift()!.emit('status', {code: 16});
-                  return stream;
-                }
-                if (initialFill) {
-                  setImmediate(() => stream.emit('status', {code: 16}));
-                  if (++failCount === maxRetries) {
-                    streams.forEach(
-                        stream => stream.emit('status', {code: 16}));
-                  }
-                }
+          const stub = sandbox
+            .stub(client, 'streamingPull')
+            .callsFake(options => {
+              const stream = new FakeGrpcStream(options);
+              streams.push(stream);
+              if (!initialFill && streams.length === 5) {
+                initialFill = true;
+                streams.shift()!.emit('status', {code: 16});
                 return stream;
-              });
+              }
+              if (initialFill) {
+                setImmediate(() => stream.emit('status', {code: 16}));
+                if (++failCount === maxRetries) {
+                  streams.forEach(stream => stream.emit('status', {code: 16}));
+                }
+              }
+              return stream;
+            });
           const messageStream = new MessageStream(subscriber, {maxRetries});
           messageStream.on('error', err => {
             assert.strictEqual(stub.callCount, 10);
@@ -333,12 +341,13 @@ describe('MessageStream', () => {
 
   describe('destroy', () => {
     it('should noop if already destroyed', done => {
-      const stub = sandbox.stub(FakePassThrough.prototype, 'destroy')
-                       .callsFake(function(this: Duplex) {
-                         if (this === messageStream) {
-                           done();
-                         }
-                       });
+      const stub = sandbox
+        .stub(FakePassThrough.prototype, 'destroy')
+        .callsFake(function(this: Duplex) {
+          if (this === messageStream) {
+            done();
+          }
+        });
 
       messageStream.destroy();
       messageStream.destroy();
@@ -357,7 +366,7 @@ describe('MessageStream', () => {
       });
 
       messageStream.destroy();
-      clock.tick(frequency * 2);  // for good measure
+      clock.tick(frequency * 2); // for good measure
 
       stubs.forEach(stub => {
         assert.strictEqual(stub.callCount, 0);
@@ -418,20 +427,23 @@ describe('MessageStream', () => {
         const fakeResponses = [{}, {}, {}, {}, {}];
         const received: object[] = [];
 
-        messageStream.on('data', (chunk: Buffer) => received.push(chunk))
-            .on('end', () => {
-              assert.deepStrictEqual(received, fakeResponses);
-              done();
-            });
+        messageStream
+          .on('data', (chunk: Buffer) => received.push(chunk))
+          .on('end', () => {
+            assert.deepStrictEqual(received, fakeResponses);
+            done();
+          });
 
         client.streams.forEach((stream, i) => stream.push(fakeResponses[i]));
         setImmediate(() => messageStream.end());
       });
 
       it('should not end the message stream', done => {
-        messageStream.on('data', () => {}).on('end', () => {
-          done(new Error('Should not be called.'));
-        });
+        messageStream
+          .on('data', () => {})
+          .on('end', () => {
+            done(new Error('Should not be called.'));
+          });
 
         client.streams.forEach(stream => stream.push(null));
         setImmediate(done);
@@ -542,74 +554,74 @@ describe('MessageStream', () => {
         });
       });
 
-      it('should reset retries if error occured after more than default(30s) timeout from first error',
-         done => {
-           const streams: FakeGrpcStream[] = [];
-           let initialFill = false;
-           let failCount = 0;
-           const stub =
-               sandbox.stub(client, 'streamingPull').callsFake(options => {
-                 const stream = new FakeGrpcStream(options);
-                 streams.push(stream);
-                 if (!initialFill && streams.length === 5) {
-                   initialFill = true;
-                   streams.shift()!.emit('status', {code: 16});
-                   return stream;
-                 }
-                 if (initialFill) {
-                   setImmediate(() => stream.emit('status', {code: 16}));
-                   failCount++;
-                   if (failCount === 3) {
-                     now = now + 31000;
-                   }
-                   if (failCount === 6) {
-                     streams.forEach(
-                         stream => stream.emit('status', {code: 16}));
-                   }
-                 }
-                 return stream;
-               });
-           const messageStream = new MessageStream(subscriber, {maxRetries: 3});
-           messageStream.on('error', err => {
-             assert.strictEqual(stub.callCount, 11);
-             done();
-           });
-         });
+      it('should reset retries if error occured after more than default(30s) timeout from first error', done => {
+        const streams: FakeGrpcStream[] = [];
+        let initialFill = false;
+        let failCount = 0;
+        const stub = sandbox
+          .stub(client, 'streamingPull')
+          .callsFake(options => {
+            const stream = new FakeGrpcStream(options);
+            streams.push(stream);
+            if (!initialFill && streams.length === 5) {
+              initialFill = true;
+              streams.shift()!.emit('status', {code: 16});
+              return stream;
+            }
+            if (initialFill) {
+              setImmediate(() => stream.emit('status', {code: 16}));
+              failCount++;
+              if (failCount === 3) {
+                now = now + 31000;
+              }
+              if (failCount === 6) {
+                streams.forEach(stream => stream.emit('status', {code: 16}));
+              }
+            }
+            return stream;
+          });
+        const messageStream = new MessageStream(subscriber, {maxRetries: 3});
+        messageStream.on('error', err => {
+          assert.strictEqual(stub.callCount, 11);
+          done();
+        });
+      });
 
-      it('should reset retries if error occured after more than specified timeout from first error',
-         done => {
-           const streams: FakeGrpcStream[] = [];
-           let initialFill = false;
-           let failCount = 0;
-           const stub =
-               sandbox.stub(client, 'streamingPull').callsFake(options => {
-                 const stream = new FakeGrpcStream(options);
-                 streams.push(stream);
-                 if (!initialFill && streams.length === 5) {
-                   initialFill = true;
-                   streams.shift()!.emit('status', {code: 16});
-                   return stream;
-                 }
-                 if (initialFill) {
-                   setImmediate(() => stream.emit('status', {code: 16}));
-                   failCount++;
-                   if (failCount === 3) {
-                     now = now + 11000;
-                   }
-                   if (failCount === 6) {
-                     streams.forEach(
-                         stream => stream.emit('status', {code: 16}));
-                   }
-                 }
-                 return stream;
-               });
-           const messageStream =
-               new MessageStream(subscriber, {maxRetries: 3, timeout: 10000});
-           messageStream.on('error', err => {
-             assert.strictEqual(stub.callCount, 11);
-             done();
-           });
-         });
+      it('should reset retries if error occured after more than specified timeout from first error', done => {
+        const streams: FakeGrpcStream[] = [];
+        let initialFill = false;
+        let failCount = 0;
+        const stub = sandbox
+          .stub(client, 'streamingPull')
+          .callsFake(options => {
+            const stream = new FakeGrpcStream(options);
+            streams.push(stream);
+            if (!initialFill && streams.length === 5) {
+              initialFill = true;
+              streams.shift()!.emit('status', {code: 16});
+              return stream;
+            }
+            if (initialFill) {
+              setImmediate(() => stream.emit('status', {code: 16}));
+              failCount++;
+              if (failCount === 3) {
+                now = now + 11000;
+              }
+              if (failCount === 6) {
+                streams.forEach(stream => stream.emit('status', {code: 16}));
+              }
+            }
+            return stream;
+          });
+        const messageStream = new MessageStream(subscriber, {
+          maxRetries: 3,
+          timeout: 10000,
+        });
+        messageStream.on('error', err => {
+          assert.strictEqual(stub.callCount, 11);
+          done();
+        });
+      });
     });
 
     describe('keeping streams alive', () => {
