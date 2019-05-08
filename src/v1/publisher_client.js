@@ -310,6 +310,14 @@ class PublisherClient {
    *   response, then no constraints are in effect.
    *
    *   This object should have the same structure as [MessageStoragePolicy]{@link google.pubsub.v1.MessageStoragePolicy}
+   * @param {string} [request.kmsKeyName]
+   *   The resource name of the Cloud KMS CryptoKey to be used to protect access
+   *   to messages published on this topic.
+   *
+   *   The expected format is `projects/* /locations/* /keyRings/* /cryptoKeys/*`.
+   *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+   *   API might be changed in backward-incompatible ways and is not recommended
+   *   for production use. It is not subject to any SLA or deprecation policy.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/global.html#CallOptions} for the details.

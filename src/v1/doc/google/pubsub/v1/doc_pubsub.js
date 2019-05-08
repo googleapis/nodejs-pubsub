@@ -57,6 +57,15 @@ const MessageStoragePolicy = {
  *
  *   This object should have the same structure as [MessageStoragePolicy]{@link google.pubsub.v1.MessageStoragePolicy}
  *
+ * @property {string} kmsKeyName
+ *   The resource name of the Cloud KMS CryptoKey to be used to protect access
+ *   to messages published on this topic.
+ *
+ *   The expected format is `projects/* /locations/* /keyRings/* /cryptoKeys/*`.
+ *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+ *   API might be changed in backward-incompatible ways and is not recommended
+ *   for production use. It is not subject to any SLA or deprecation policy.
+ *
  * @typedef Topic
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.Topic definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
@@ -274,10 +283,7 @@ const ListTopicSubscriptionsResponse = {
 };
 
 /**
- * Request for the `ListTopicSnapshots` method. <br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the `ListTopicSnapshots` method.
  *
  * @property {string} topic
  *   The name of the topic that snapshots are attached to.
@@ -300,10 +306,7 @@ const ListTopicSnapshotsRequest = {
 };
 
 /**
- * Response for the `ListTopicSnapshots` method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Response for the `ListTopicSnapshots` method.
  *
  * @property {string[]} snapshots
  *   The names of the snapshots that match the request.
@@ -390,10 +393,6 @@ const DeleteTopicRequest = {
  *   <a
  *   href="https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time">
  *   Seek to a timestamp</a>.
- *   <br><br>
- *   <b>BETA:</b> This feature is part of a beta release. This API might be
- *   changed in backward-incompatible ways and is not recommended for production
- *   use. It is not subject to any SLA or deprecation policy.
  *
  * @property {Object} messageRetentionDuration
  *   How long to retain unacknowledged messages in the subscription's backlog,
@@ -401,10 +400,7 @@ const DeleteTopicRequest = {
  *   If `retain_acked_messages` is true, then this also configures the retention
  *   of acknowledged messages, and thus configures how far back in time a `Seek`
  *   can be done. Defaults to 7 days. Cannot be more than 7 days or less than 10
- *   minutes.<br><br>
- *   <b>BETA:</b> This feature is part of a beta release. This API might be
- *   changed in backward-incompatible ways and is not recommended for production
- *   use. It is not subject to any SLA or deprecation policy.
+ *   minutes.
  *
  *   This object should have the same structure as [Duration]{@link google.protobuf.Duration}
  *
@@ -428,9 +424,6 @@ const DeleteTopicRequest = {
  *   operations on the subscription. If `expiration_policy` is not set, a
  *   *default policy* with `ttl` of 31 days will be used. The minimum allowed
  *   value for `expiration_policy.ttl` is 1 day.
- *   <b>BETA:</b> This feature is part of a beta release. This API might be
- *   changed in backward-incompatible ways and is not recommended for production
- *   use. It is not subject to any SLA or deprecation policy.
  *
  *   This object should have the same structure as [ExpirationPolicy]{@link google.pubsub.v1.ExpirationPolicy}
  *
@@ -516,9 +509,8 @@ const PushConfig = {
    *   [Service account
    *   email](https://cloud.google.com/iam/docs/service-accounts)
    *   to be used for generating the OIDC token. The caller (for
-   *   CreateSubscription, UpdateSubscription, and ModifyPushConfig calls) must
+   *   CreateSubscription, UpdateSubscription, and ModifyPushConfig RPCs) must
    *   have the iam.serviceAccounts.actAs permission for the service account.
-   *   See https://cloud.google.com/iam/docs/understanding-roles#service-accounts-roles.
    *
    * @property {string} audience
    *   Audience to be used when generating OIDC token. The audience claim
@@ -838,10 +830,7 @@ const StreamingPullResponse = {
 };
 
 /**
- * Request for the `CreateSnapshot` method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the `CreateSnapshot` method.
  *
  * @property {string} name
  *   Optional user-provided name for this snapshot.
@@ -876,10 +865,7 @@ const CreateSnapshotRequest = {
 };
 
 /**
- * Request for the UpdateSnapshot method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the UpdateSnapshot method.
  *
  * @property {Object} snapshot
  *   The updated snapshot object.
@@ -906,10 +892,7 @@ const UpdateSnapshotRequest = {
  * operations, which allow
  * you to manage message acknowledgments in bulk. That is, you can set the
  * acknowledgment state of messages in an existing subscription to the state
- * captured by a snapshot.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * captured by a snapshot.
  *
  * @property {string} name
  *   The name of the snapshot.
@@ -944,10 +927,7 @@ const Snapshot = {
 };
 
 /**
- * Request for the GetSnapshot method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the GetSnapshot method.
  *
  * @property {string} snapshot
  *   The name of the snapshot to get.
@@ -962,10 +942,7 @@ const GetSnapshotRequest = {
 };
 
 /**
- * Request for the `ListSnapshots` method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the `ListSnapshots` method.
  *
  * @property {string} project
  *   The name of the project in which to list snapshots.
@@ -988,10 +965,7 @@ const ListSnapshotsRequest = {
 };
 
 /**
- * Response for the `ListSnapshots` method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Response for the `ListSnapshots` method.
  *
  * @property {Object[]} snapshots
  *   The resulting snapshots.
@@ -1011,10 +985,7 @@ const ListSnapshotsResponse = {
 };
 
 /**
- * Request for the `DeleteSnapshot` method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the `DeleteSnapshot` method.
  *
  * @property {string} snapshot
  *   The name of the snapshot to delete.
@@ -1029,10 +1000,7 @@ const DeleteSnapshotRequest = {
 };
 
 /**
- * Request for the `Seek` method. <br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the `Seek` method.
  *
  * @property {string} subscription
  *   The subscription to affect.
