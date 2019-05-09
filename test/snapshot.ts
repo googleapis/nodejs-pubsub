@@ -124,7 +124,7 @@ describe('Snapshot', () => {
       let pubsub: PubSub;
       let subscription: Subscription;
       before(() => {
-        pubsub = new PubSub(PUBSUB);
+        pubsub = new PubSub({projectId: PROJECT_ID});
         subscription = pubsub.subscription('test');
       });
 
