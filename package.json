@@ -51,7 +51,7 @@
     "predocs-test": "npm run docs"
   },
   "dependencies": {
-    "@google-cloud/paginator": "^0.2.0",
+    "@google-cloud/paginator": "^1.0.0",
     "@google-cloud/precise-date": "^0.1.0",
     "@google-cloud/projectify": "^1.0.0",
     "@google-cloud/promisify": "^1.0.0",
@@ -85,7 +85,7 @@
     "eslint-plugin-prettier": "^3.0.0",
     "gts": "^1.0.0",
     "intelli-espower-loader": "^1.0.1",
-    "jsdoc": "^3.5.5",
+    "jsdoc": "3.5.5",
     "jsdoc-baseline": "git+https://github.com/hegemonic/jsdoc-baseline.git",
     "linkinator": "^1.1.2",
     "mkdirp": "^0.5.1",

@@ -345,20 +345,13 @@ class SubscriberClient {
    *   <a
    *   href="https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time">
    *   Seek to a timestamp</a>.
-   *   <br><br>
-   *   <b>BETA:</b> This feature is part of a beta release. This API might be
-   *   changed in backward-incompatible ways and is not recommended for production
-   *   use. It is not subject to any SLA or deprecation policy.
    * @param {Object} [request.messageRetentionDuration]
    *   How long to retain unacknowledged messages in the subscription's backlog,
    *   from the moment a message is published.
    *   If `retain_acked_messages` is true, then this also configures the retention
    *   of acknowledged messages, and thus configures how far back in time a `Seek`
    *   can be done. Defaults to 7 days. Cannot be more than 7 days or less than 10
-   *   minutes.<br><br>
-   *   <b>BETA:</b> This feature is part of a beta release. This API might be
-   *   changed in backward-incompatible ways and is not recommended for production
-   *   use. It is not subject to any SLA or deprecation policy.
+   *   minutes.
    *
    *   This object should have the same structure as [Duration]{@link google.protobuf.Duration}
    * @param {Object.<string, string>} [request.labels]
@@ -379,9 +372,6 @@ class SubscriberClient {
    *   operations on the subscription. If `expiration_policy` is not set, a
    *   *default policy* with `ttl` of 31 days will be used. The minimum allowed
    *   value for `expiration_policy.ttl` is 1 day.
-   *   <b>BETA:</b> This feature is part of a beta release. This API might be
-   *   changed in backward-incompatible ways and is not recommended for production
-   *   use. It is not subject to any SLA or deprecation policy.
    *
    *   This object should have the same structure as [ExpirationPolicy]{@link google.pubsub.v1.ExpirationPolicy}
    * @param {Object} [options]
@@ -1081,10 +1071,7 @@ class SubscriberClient {
    * operations, which allow
    * you to manage message acknowledgments in bulk. That is, you can set the
    * acknowledgment state of messages in an existing subscription to the state
-   * captured by a snapshot.<br><br>
-   * <b>BETA:</b> This feature is part of a beta release. This API might be
-   * changed in backward-incompatible ways and is not recommended for production
-   * use. It is not subject to any SLA or deprecation policy.
+   * captured by a snapshot.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1248,11 +1235,7 @@ class SubscriberClient {
    * you to manage message acknowledgments in bulk. That is, you can set the
    * acknowledgment state of messages in an existing subscription to the state
    * captured by a snapshot.
-   * <br><br>
-   * <b>BETA:</b> This feature is part of a beta release. This API might be
-   * changed in backward-incompatible ways and is not recommended for production
-   * use. It is not subject to any SLA or deprecation policy.<br><br>
-   * If the snapshot already exists, returns `ALREADY_EXISTS`.
+   * <br><br>If the snapshot already exists, returns `ALREADY_EXISTS`.
    * If the requested subscription doesn't exist, returns `NOT_FOUND`.
    * If the backlog in the subscription is too old -- and the resulting snapshot
    * would expire in less than 1 hour -- then `FAILED_PRECONDITION` is returned.
@@ -1345,11 +1328,7 @@ class SubscriberClient {
    * operations, which allow
    * you to manage message acknowledgments in bulk. That is, you can set the
    * acknowledgment state of messages in an existing subscription to the state
-   * captured by a snapshot.<br><br>
-   * <b>BETA:</b> This feature is part of a beta release. This API might be
-   * changed in backward-incompatible ways and is not recommended for production
-   * use. It is not subject to any SLA or deprecation policy.
-   * Note that certain properties of a snapshot are not modifiable.
+   * captured by a snapshot.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1430,9 +1409,6 @@ class SubscriberClient {
    * you to manage message acknowledgments in bulk. That is, you can set the
    * acknowledgment state of messages in an existing subscription to the state
    * captured by a snapshot.<br><br>
-   * <b>BETA:</b> This feature is part of a beta release. This API might be
-   * changed in backward-incompatible ways and is not recommended for production
-   * use. It is not subject to any SLA or deprecation policy.
    * When the snapshot is deleted, all messages retained in the snapshot
    * are immediately dropped. After a snapshot is deleted, a new one may be
    * created with the same name, but the new one has no association with the old
@@ -1489,10 +1465,7 @@ class SubscriberClient {
    * you to manage message acknowledgments in bulk. That is, you can set the
    * acknowledgment state of messages in an existing subscription to the state
    * captured by a snapshot. Note that both the subscription and the snapshot
-   * must be on the same topic.<br><br>
-   * <b>BETA:</b> This feature is part of a beta release. This API might be
-   * changed in backward-incompatible ways and is not recommended for production
-   * use. It is not subject to any SLA or deprecation policy.
+   * must be on the same topic.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1570,8 +1543,7 @@ class SubscriberClient {
    *   The request object that will be sent.
    * @param {string} request.resource
    *   REQUIRED: The resource for which the policy is being specified.
-   *   `resource` is usually specified as a path. For example, a Project
-   *   resource is specified as `projects/{project}`.
+   *   See the operation documentation for the appropriate value for this field.
    * @param {Object} request.policy
    *   REQUIRED: The complete policy to be applied to the `resource`. The size of
    *   the policy is limited to a few 10s of KB. An empty policy is a
@@ -1639,8 +1611,7 @@ class SubscriberClient {
    *   The request object that will be sent.
    * @param {string} request.resource
    *   REQUIRED: The resource for which the policy is being requested.
-   *   `resource` is usually specified as a path. For example, a Project
-   *   resource is specified as `projects/{project}`.
+   *   See the operation documentation for the appropriate value for this field.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/global.html#CallOptions} for the details.
@@ -1692,12 +1663,15 @@ class SubscriberClient {
    * If the resource does not exist, this will return an empty set of
    * permissions, not a NOT_FOUND error.
    *
+   * Note: This operation is designed to be used for building permission-aware
+   * UIs and command-line tools, not for authorization checking. This operation
+   * may "fail open" without warning.
+   *
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.resource
    *   REQUIRED: The resource for which the policy detail is being requested.
-   *   `resource` is usually specified as a path. For example, a Project
-   *   resource is specified as `projects/{project}`.
+   *   See the operation documentation for the appropriate value for this field.
    * @param {string[]} request.permissions
    *   The set of permissions to check for the `resource`. Permissions with
    *   wildcards (such as '*' or 'storage.*') are not allowed. For more
