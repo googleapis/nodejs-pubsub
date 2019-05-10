@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@google-cloud/paginator": "^1.0.0",
-    "@google-cloud/precise-date": "^0.1.0",
+    "@google-cloud/precise-date": "^1.0.0",
     "@google-cloud/projectify": "^1.0.0",
     "@google-cloud/promisify": "^1.0.0",
     "@sindresorhus/is": "^0.15.0",
@@ -62,7 +62,7 @@
     "async-each": "^1.0.1",
     "extend": "^3.0.1",
     "google-auth-library": "^3.0.0",
-    "google-gax": "^0.26.0",
+    "google-gax": "^1.0.0",
     "is-stream-ended": "^0.1.4",
     "lodash.merge": "^4.6.0",
     "lodash.snakecase": "^4.1.1",
