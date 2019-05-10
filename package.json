@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@google-cloud/paginator": "^1.0.0",
-    "@google-cloud/precise-date": "^0.1.0",
+    "@google-cloud/precise-date": "^1.0.0",
     "@google-cloud/projectify": "^1.0.0",
     "@google-cloud/promisify": "^1.0.0",
     "@sindresorhus/is": "^0.15.0",
