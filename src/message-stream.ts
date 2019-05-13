@@ -26,37 +26,14 @@ import {
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
-import {PullResponse, Subscriber} from './subscriber';
+import {PullRetry} from './pull-retry';
+import {Subscriber} from './subscriber';
+import {google} from '../proto/pubsub';
 
 /*!
  * Frequency to ping streams.
  */
 const KEEP_ALIVE_INTERVAL = 30000;
-
-/*!
- * Deadline Exceeded status code
- */
-const DEADLINE: status = 4;
-
-/*!
- * Unknown status code
- */
-const UNKNOWN: status = 2;
-
-/*!
- * codes to retry streams
- */
-const RETRY_CODES: status[] = [
-  0, // ok
-  1, // canceled
-  2, // unknown
-  4, // deadline exceeded
-  8, // resource exhausted
-  10, // aborted
-  13, // internal error
-  14, // unavailable
-  15, // dataloss
-];
 
 /*!
  * Deadline for the stream.
@@ -79,14 +56,8 @@ interface StreamState {
   highWaterMark: number;
 }
 
-interface StreamingPullRequest {
-  subscription?: string;
-  ackIds?: string[];
-  modifyDeadlineSeconds?: number[];
-  modifyDeadlineAckIds?: string[];
-  streamAckDeadlineSeconds?: number;
-}
-
+type StreamingPullRequest = google.pubsub.v1.IStreamingPullRequest;
+type PullResponse = google.pubsub.v1.IPullResponse;
 type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse> & {
   _readableState: StreamState;
 };
@@ -105,21 +76,6 @@ export class StatusError extends Error implements ServiceError {
     super(status.details);
     this.code = status.code;
     this.metadata = status.metadata;
-  }
-}
-
-/**
- * Error thrown when we fail to open a channel for the message stream.
- *
- * @class
- *
- * @param {Error} err The original error.
- */
-export class ChannelError extends Error implements ServiceError {
-  code: status;
-  constructor(err: Error) {
-    super(`Failed to connect to channel. Reason: ${err.message}`);
-    this.code = err.message.includes('deadline') ? DEADLINE : UNKNOWN;
   }
 }
 
@@ -154,7 +110,9 @@ export interface MessageStreamOptions {
 export class MessageStream extends PassThrough {
   destroyed: boolean;
   private _keepAliveHandle: NodeJS.Timer;
+  private _fillHandle?: NodeJS.Timer;
   private _options: MessageStreamOptions;
+  private _retrier: PullRetry;
   private _streams: Map<PullStream, boolean>;
   private _subscriber: Subscriber;
   constructor(sub: Subscriber, options = {} as MessageStreamOptions) {
@@ -164,6 +122,7 @@ export class MessageStream extends PassThrough {
 
     this.destroyed = false;
     this._options = options;
+    this._retrier = new PullRetry({maxTimeout: options.timeout!});
     this._streams = new Map();
     this._subscriber = sub;
 
@@ -181,7 +140,7 @@ export class MessageStream extends PassThrough {
    * @param {error?} err An error to emit, if any.
    * @private
    */
-  destroy(err?: Error): void {
+  _destroy(err: null | Error, callback: (err?: null | Error) => void) {
     if (this.destroyed) {
       return;
     }
@@ -189,21 +148,17 @@ export class MessageStream extends PassThrough {
     this.destroyed = true;
     clearInterval(this._keepAliveHandle);
 
+    if (this._fillHandle) {
+      clearTimeout(this._fillHandle);
+      delete this._fillHandle;
+    }
+
     for (const stream of this._streams.keys()) {
       this._removeStream(stream);
       stream.cancel();
     }
 
-    if (typeof super.destroy === 'function') {
-      return super.destroy(err);
-    }
-
-    process.nextTick(() => {
-      if (err) {
-        this.emit('error', err);
-      }
-      this.emit('close');
-    });
+    return super._destroy(err, callback);
   }
   /**
    * Adds a StreamingPull stream to the combined stream.
@@ -259,11 +214,7 @@ export class MessageStream extends PassThrough {
       stream.write(request);
     }
 
-    try {
-      await this._waitForClientReady(client);
-    } catch (e) {
-      this.destroy(e);
-    }
+    delete this._fillHandle;
   }
   /**
    * It is critical that we keep as few `PullResponse` objects in memory as
@@ -302,8 +253,13 @@ export class MessageStream extends PassThrough {
   private _onEnd(stream: PullStream, status: StatusObject): void {
     this._removeStream(stream);
 
-    if (RETRY_CODES.includes(status.code)) {
-      this._fillStreamPool();
+    if (this._fillHandle) {
+      return;
+    }
+
+    if (this._retrier.retry(status)) {
+      const delay = this._retrier.createTimeout();
+      this._fillHandle = setTimeout(() => this._fillStreamPool(), delay);
     } else if (!this._streams.size) {
       this.destroy(new StatusError(status));
     }
@@ -378,22 +334,5 @@ export class MessageStream extends PassThrough {
    */
   private _setHighWaterMark(stream: PullStream): void {
     stream._readableState.highWaterMark = this._options.highWaterMark!;
-  }
-  /**
-   * Promisified version of gRPCs Client#waitForReady function.
-   *
-   * @private
-   *
-   * @param {object} client The gRPC client to wait for.
-   * @returns {Promise}
-   */
-  private async _waitForClientReady(client: ClientStub): Promise<void> {
-    const deadline = Date.now() + this._options.timeout!;
-
-    try {
-      await promisify(client.waitForReady).call(client, deadline);
-    } catch (e) {
-      throw new ChannelError(e);
-    }
   }
 }
