@@ -80,6 +80,21 @@ export class StatusError extends Error implements ServiceError {
 }
 
 /**
+ * Error thrown when we fail to open a channel for the message stream.
+ *
+ * @class
+ *
+ * @param {Error} err The original error.
+ */
+export class ChannelError extends Error implements ServiceError {
+  code: status;
+  constructor(err: Error) {
+    super(`Failed to connect to channel. Reason: ${err.message}`);
+    this.code = err.message.includes('deadline') ? DEADLINE : UNKNOWN;
+  }
+}
+
+/**
  * @typedef {object} MessageStreamOptions
  * @property {number} [highWaterMark=0] Configures the Buffer level for all
  *     underlying streams. See
@@ -122,7 +137,7 @@ export class MessageStream extends PassThrough {
 
     this.destroyed = false;
     this._options = options;
-    this._retrier = new PullRetry({maxTimeout: options.timeout!});
+    this._retrier = new PullRetry();
     this._streams = new Map();
     this._subscriber = sub;
 
@@ -208,13 +223,19 @@ export class MessageStream extends PassThrough {
       streamAckDeadlineSeconds: this._subscriber.ackDeadline,
     };
 
+    delete this._fillHandle;
+
     for (let i = this._streams.size; i < this._options.maxStreams!; i++) {
       const stream: PullStream = client.streamingPull({deadline});
       this._addStream(stream);
       stream.write(request);
     }
 
-    delete this._fillHandle;
+    try {
+      await this._waitForClientReady(client);
+    } catch (e) {
+      this.destroy(e);
+    }
   }
   /**
    * It is critical that we keep as few `PullResponse` objects in memory as
@@ -334,5 +355,22 @@ export class MessageStream extends PassThrough {
    */
   private _setHighWaterMark(stream: PullStream): void {
     stream._readableState.highWaterMark = this._options.highWaterMark!;
+  }
+  /**
+   * Promisified version of gRPCs Client#waitForReady function.
+   *
+   * @private
+   *
+   * @param {object} client The gRPC client to wait for.
+   * @returns {Promise}
+   */
+  private async _waitForClientReady(client: ClientStub): Promise<void> {
+    const deadline = Date.now() + this._options.timeout!;
+
+    try {
+      await promisify(client.waitForReady).call(client, deadline);
+    } catch (e) {
+      throw new ChannelError(e);
+    }
   }
 }
