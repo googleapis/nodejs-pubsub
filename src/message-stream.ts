@@ -90,7 +90,9 @@ export class ChannelError extends Error implements ServiceError {
   code: status;
   constructor(err: Error) {
     super(`Failed to connect to channel. Reason: ${err.message}`);
-    this.code = err.message.includes('deadline') ? DEADLINE : UNKNOWN;
+    this.code = err.message.includes('deadline')
+      ? status.DEADLINE_EXCEEDED
+      : status.UNKNOWN;
   }
 }
 
@@ -155,18 +157,10 @@ export class MessageStream extends PassThrough {
    * @param {error?} err An error to emit, if any.
    * @private
    */
-  _destroy(err: null | Error, callback: (err?: null | Error) => void) {
-    if (this.destroyed) {
-      return;
-    }
-
+  _destroy(err: null | Error, callback: (err: null | Error) => void) {
     this.destroyed = true;
-    clearInterval(this._keepAliveHandle);
 
-    if (this._fillHandle) {
-      clearTimeout(this._fillHandle);
-      delete this._fillHandle;
-    }
+    clearInterval(this._keepAliveHandle);
 
     for (const stream of this._streams.keys()) {
       this._removeStream(stream);
@@ -326,7 +320,6 @@ export class MessageStream extends PassThrough {
       this._onEnd(stream, status);
     } else {
       stream.once('end', () => this._onEnd(stream, status));
-      stream.push(null);
     }
   }
   /**

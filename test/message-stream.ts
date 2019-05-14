@@ -36,17 +36,6 @@ const FAKE_CLIENT_CONFIG = {
   },
 };
 
-// just need this for unit tests.. we have a ponyfill for destroy on
-// MessageStream and gax streams use Duplexify
-function destroy(stream: Duplex, err?: Error): void {
-  process.nextTick(() => {
-    if (err) {
-      stream.emit('error', err);
-    }
-    stream.emit('close');
-  });
-}
-
 interface StreamState {
   highWaterMark: number;
 }
@@ -65,12 +54,6 @@ class FakePassThrough extends PassThrough {
   constructor(options: StreamOptions) {
     super(options);
     this.options = options;
-  }
-  destroy(err?: Error): void {
-    if (super.destroy) {
-      return super.destroy(err);
-    }
-    destroy(this, err);
   }
 }
 
@@ -92,12 +75,6 @@ class FakeGrpcStream extends Duplex {
       this.emit('status', status);
       this.end();
     });
-  }
-  destroy(err?: Error): void {
-    if (super.destroy) {
-      return super.destroy(err);
-    }
-    destroy(this, err);
   }
   _write(chunk: object, encoding: string, callback: Function): void {
     callback();
@@ -301,19 +278,6 @@ describe('MessageStream', () => {
   });
 
   describe('destroy', () => {
-    it('should noop if already destroyed', done => {
-      const stub = sandbox
-        .stub(FakePassThrough.prototype, 'destroy')
-        .callsFake(function(this: Duplex) {
-          if (this === messageStream) {
-            done();
-          }
-        });
-
-      messageStream.destroy();
-      messageStream.destroy();
-    });
-
     it('should set destroyed to true', () => {
       messageStream.destroy();
       assert.strictEqual(messageStream.destroyed, true);
@@ -348,36 +312,6 @@ describe('MessageStream', () => {
 
       stubs.forEach(stub => {
         assert.strictEqual(stub.callCount, 1);
-      });
-    });
-
-    describe('without native destroy', () => {
-      let destroy: (err?: Error) => void;
-
-      before(() => {
-        destroy = FakePassThrough.prototype.destroy;
-        // tslint:disable-next-line no-any
-        FakePassThrough.prototype.destroy = false as any;
-      });
-
-      after(() => {
-        FakePassThrough.prototype.destroy = destroy;
-      });
-
-      it('should emit close', done => {
-        messageStream.on('close', done);
-        messageStream.destroy();
-      });
-
-      it('should emit an error if present', done => {
-        const fakeError = new Error('err');
-
-        messageStream.on('error', err => {
-          assert.strictEqual(err, fakeError);
-          done();
-        });
-
-        messageStream.destroy(fakeError);
       });
     });
   });
@@ -506,7 +440,7 @@ describe('MessageStream', () => {
 
         stream.push(null);
         setImmediate(() => {
-          assert.strictEqual(client.streams.length, 6);
+          assert.strictEqual(client.streams.length, 5);
           done();
         });
       });
@@ -524,7 +458,7 @@ describe('MessageStream', () => {
           assert.strictEqual(stream.listenerCount('end'), count);
 
           setImmediate(() => {
-            assert.strictEqual(client.streams.length, 6);
+            assert.strictEqual(client.streams.length, 5);
             done();
           });
         });
