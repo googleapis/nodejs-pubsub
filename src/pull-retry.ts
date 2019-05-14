@@ -39,8 +39,7 @@ export const RETRY_CODES: status[] = [
  */
 export class PullRetry {
   private failures = 0;
-  private lastError?: StatusObject;
-  private maxTimeout: number;
+  private lastError = {code: 0} as StatusObject;
   /**
    * Generates a timeout that can be used for applying a backoff based on the
    * current number of failed requests.
@@ -86,6 +85,6 @@ export class PullRetry {
       return true;
     }
 
-    return RETRY_CODES.includes(s.code);
+    return RETRY_CODES.includes(err.code);
   }
 }
