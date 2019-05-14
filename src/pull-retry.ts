@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import {StatusObject, status} from 'grpc';
-
-export interface PullRetryOptions {
-  maxTimeout: number;
-}
 
 /*!
  * retryable status codes
  */
-const RETRY_CODES: status[] = [
+export const RETRY_CODES: status[] = [
   status.OK,
   status.CANCELLED,
   status.UNKNOWN,
@@ -44,15 +39,13 @@ const RETRY_CODES: status[] = [
  */
 export class PullRetry {
   private failures = 0;
-  private lastSuccess = Date.now();
+  private lastError?: StatusObject;
   private maxTimeout: number;
-  constructor(options = {} as PullRetryOptions) {
-    this.maxTimeout = options.maxTimeout;
-  }
   /**
    * Generates a timeout that can be used for applying a backoff based on the
    * current number of failed requests.
    *
+   * @see {@link https://cloud.google.com/iot/docs/how-tos/exponential-backoff}
    * @private
    * @returns {number}
    */
@@ -70,25 +63,29 @@ export class PullRetry {
    * how long the stream should stay open. Because of this, it is virtually
    * impossible to determine whether or not a deadline error is the result of
    * the server closing the stream or if we timed out waiting for a connection.
-   * Typically we might use something like grpc's waitForReady, but there is an
-   * open issue that prevents this from working with channel pooling.
    *
    * @private
    * @param {object} status The request status.
    * @returns {boolean}
    */
-  retry(s: StatusObject): boolean {
-    if (s.code === status.OK || s.code === status.DEADLINE_EXCEEDED) {
-      this.lastSuccess = Date.now();
+  retry(err: StatusObject): boolean {
+    const lastError = this.lastError;
+
+    this.lastError = err;
+
+    if (err.code === status.OK || err.code === status.DEADLINE_EXCEEDED) {
       this.failures = 0;
     } else {
       this.failures += 1;
     }
 
-    if (!RETRY_CODES.includes(s.code)) {
-      return false;
+    if (
+      err.code === status.UNAUTHENTICATED &&
+      lastError.code !== status.UNAUTHENTICATED
+    ) {
+      return true;
     }
 
-    return Date.now() - this.lastSuccess < this.maxTimeout;
+    return RETRY_CODES.includes(s.code);
   }
 }
