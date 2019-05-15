@@ -19,7 +19,8 @@ import * as promisify from '@google-cloud/promisify';
 import arrify = require('arrify');
 import * as assert from 'assert';
 import * as gax from 'google-gax';
-import {CallOptions, ServiceError} from 'grpc';
+import * as grpc from 'grpc';
+import {CallOptions, ServiceError, ChannelCredentials} from 'grpc';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
@@ -32,21 +33,9 @@ import * as util from '../src/util';
 
 const PKG = require('../../package.json');
 const sandbox = sinon.createSandbox();
-const fakeCreds = {};
-const fakeGoogleGax = {
-  GrpcClient: class extends gax.GrpcClient {
-    constructor(opts: gax.GrpcClientOptions) {
-      super(opts);
-      this.grpc = {
-        credentials: {
-          createInsecure() {
-            return fakeCreds;
-          },
-        },
-      } as gax.GrpcModule;
-    }
-  },
-};
+
+const fakeCreds = {} as ChannelCredentials;
+sandbox.stub(grpc.credentials, 'createInsecure').returns(fakeCreds);
 
 const subscriptionCached = subby.Subscription;
 
@@ -177,7 +166,7 @@ describe('PubSub', () => {
       'google-auth-library': {
         GoogleAuth: fakeGoogleAuth,
       },
-      'google-gax': fakeGoogleGax,
+      grpc,
       './snapshot': {Snapshot: FakeSnapshot},
       './subscription': {Subscription},
       './topic': {Topic: FakeTopic},
@@ -200,6 +189,7 @@ describe('PubSub', () => {
 
   describe('instantiation', () => {
     const DEFAULT_OPTIONS = {
+      grpc,
       'grpc.keepalive_time_ms': 300000,
       'grpc.max_send_message_length': -1,
       'grpc.max_receive_message_length': 20000001,
