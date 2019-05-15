@@ -21,6 +21,7 @@ import is from '@sindresorhus/is';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
+import * as grpc from 'grpc';
 
 const PKG = require('../../package.json');
 const v1 = require('./v1');
@@ -48,7 +49,6 @@ import {google} from '../proto/pubsub';
 import {ServiceError, ChannelCredentials} from 'grpc';
 
 const opts = {} as gax.GrpcClientOptions;
-const {grpc} = new gax.GrpcClient(opts);
 
 /**
  * Project ID placeholder.
@@ -263,6 +263,7 @@ export class PubSub {
     }
     this.options = Object.assign(
       {
+        grpc,
         'grpc.keepalive_time_ms': 300000,
         'grpc.max_send_message_length': -1,
         'grpc.max_receive_message_length': 20000001,
