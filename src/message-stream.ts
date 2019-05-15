@@ -26,37 +26,14 @@ import {
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
-import {PullResponse, Subscriber} from './subscriber';
+import {PullRetry} from './pull-retry';
+import {Subscriber} from './subscriber';
+import {google} from '../proto/pubsub';
 
 /*!
  * Frequency to ping streams.
  */
 const KEEP_ALIVE_INTERVAL = 30000;
-
-/*!
- * Deadline Exceeded status code
- */
-const DEADLINE: status = 4;
-
-/*!
- * Unknown status code
- */
-const UNKNOWN: status = 2;
-
-/*!
- * codes to retry streams
- */
-const RETRY_CODES: status[] = [
-  0, // ok
-  1, // canceled
-  2, // unknown
-  4, // deadline exceeded
-  8, // resource exhausted
-  10, // aborted
-  13, // internal error
-  14, // unavailable
-  15, // dataloss
-];
 
 /*!
  * Deadline for the stream.
@@ -79,14 +56,8 @@ interface StreamState {
   highWaterMark: number;
 }
 
-interface StreamingPullRequest {
-  subscription?: string;
-  ackIds?: string[];
-  modifyDeadlineSeconds?: number[];
-  modifyDeadlineAckIds?: string[];
-  streamAckDeadlineSeconds?: number;
-}
-
+type StreamingPullRequest = google.pubsub.v1.IStreamingPullRequest;
+type PullResponse = google.pubsub.v1.IPullResponse;
 type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse> & {
   _readableState: StreamState;
 };
@@ -119,7 +90,9 @@ export class ChannelError extends Error implements ServiceError {
   code: status;
   constructor(err: Error) {
     super(`Failed to connect to channel. Reason: ${err.message}`);
-    this.code = err.message.includes('deadline') ? DEADLINE : UNKNOWN;
+    this.code = err.message.includes('deadline')
+      ? status.DEADLINE_EXCEEDED
+      : status.UNKNOWN;
   }
 }
 
@@ -154,7 +127,9 @@ export interface MessageStreamOptions {
 export class MessageStream extends PassThrough {
   destroyed: boolean;
   private _keepAliveHandle: NodeJS.Timer;
+  private _fillHandle?: NodeJS.Timer;
   private _options: MessageStreamOptions;
+  private _retrier: PullRetry;
   private _streams: Map<PullStream, boolean>;
   private _subscriber: Subscriber;
   constructor(sub: Subscriber, options = {} as MessageStreamOptions) {
@@ -164,6 +139,7 @@ export class MessageStream extends PassThrough {
 
     this.destroyed = false;
     this._options = options;
+    this._retrier = new PullRetry();
     this._streams = new Map();
     this._subscriber = sub;
 
@@ -253,6 +229,8 @@ export class MessageStream extends PassThrough {
       streamAckDeadlineSeconds: this._subscriber.ackDeadline,
     };
 
+    delete this._fillHandle;
+
     for (let i = this._streams.size; i < this._options.maxStreams!; i++) {
       const stream: PullStream = client.streamingPull({deadline});
       this._addStream(stream);
@@ -302,8 +280,13 @@ export class MessageStream extends PassThrough {
   private _onEnd(stream: PullStream, status: StatusObject): void {
     this._removeStream(stream);
 
-    if (RETRY_CODES.includes(status.code)) {
-      this._fillStreamPool();
+    if (this._fillHandle) {
+      return;
+    }
+
+    if (this._retrier.retry(status)) {
+      const delay = this._retrier.createTimeout();
+      this._fillHandle = setTimeout(() => this._fillStreamPool(), delay);
     } else if (!this._streams.size) {
       this.destroy(new StatusError(status));
     }

@@ -506,7 +506,7 @@ describe('MessageStream', () => {
 
         stream.push(null);
         setImmediate(() => {
-          assert.strictEqual(client.streams.length, 6);
+          assert.strictEqual(client.streams.length, 5);
           done();
         });
       });
@@ -524,7 +524,7 @@ describe('MessageStream', () => {
           assert.strictEqual(stream.listenerCount('end'), count);
 
           setImmediate(() => {
-            assert.strictEqual(client.streams.length, 6);
+            assert.strictEqual(client.streams.length, 5);
             done();
           });
         });
