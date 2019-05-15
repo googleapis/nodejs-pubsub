@@ -78,6 +78,9 @@ export class PullRetry {
       this.failures += 1;
     }
 
+    // If a subscriber is open long enough it is possible that our auth expires
+    // and results in an error. If that does happen, re-trying the request
+    // should resolve the error and allow us to continue pulling.
     if (
       err.code === status.UNAUTHENTICATED &&
       lastError.code !== status.UNAUTHENTICATED
