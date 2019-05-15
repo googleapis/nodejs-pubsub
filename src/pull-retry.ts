@@ -39,7 +39,6 @@ export const RETRY_CODES: status[] = [
  */
 export class PullRetry {
   private failures = 0;
-  private lastError = {code: 0} as StatusObject;
   /**
    * Generates a timeout that can be used for applying a backoff based on the
    * current number of failed requests.
@@ -68,24 +67,10 @@ export class PullRetry {
    * @returns {boolean}
    */
   retry(err: StatusObject): boolean {
-    const lastError = this.lastError;
-
-    this.lastError = err;
-
     if (err.code === status.OK || err.code === status.DEADLINE_EXCEEDED) {
       this.failures = 0;
     } else {
       this.failures += 1;
-    }
-
-    // If a subscriber is open long enough it is possible that our auth expires
-    // and results in an error. If that does happen, re-trying the request
-    // should resolve the error and allow us to continue pulling.
-    if (
-      err.code === status.UNAUTHENTICATED &&
-      lastError.code !== status.UNAUTHENTICATED
-    ) {
-      return true;
     }
 
     return RETRY_CODES.includes(err.code);

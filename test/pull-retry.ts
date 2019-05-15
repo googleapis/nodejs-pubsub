@@ -93,12 +93,5 @@ describe('PullRetry', () => {
 
       assert.strictEqual(retrier.createTimeout(), 0);
     });
-
-    it('should retry an UNAUTHENTICATED error one time', () => {
-      const err = {code: status.UNAUTHENTICATED} as StatusObject;
-
-      assert.strictEqual(retrier.retry(err), true);
-      assert.strictEqual(retrier.retry(err), false);
-    });
   });
 });
