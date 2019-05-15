@@ -157,9 +157,12 @@ export class MessageStream extends PassThrough {
    * @param {error?} err An error to emit, if any.
    * @private
    */
-  _destroy(err: null | Error, callback: (err: null | Error) => void) {
-    this.destroyed = true;
+  destroy(err?: Error): void {
+    if (this.destroyed) {
+      return;
+    }
 
+    this.destroyed = true;
     clearInterval(this._keepAliveHandle);
 
     for (const stream of this._streams.keys()) {
@@ -167,7 +170,16 @@ export class MessageStream extends PassThrough {
       stream.cancel();
     }
 
-    return super._destroy(err, callback);
+    if (typeof super.destroy === 'function') {
+      return super.destroy(err);
+    }
+
+    process.nextTick(() => {
+      if (err) {
+        this.emit('error', err);
+      }
+      this.emit('close');
+    });
   }
   /**
    * Adds a StreamingPull stream to the combined stream.
@@ -320,6 +332,7 @@ export class MessageStream extends PassThrough {
       this._onEnd(stream, status);
     } else {
       stream.once('end', () => this._onEnd(stream, status));
+      stream.push(null);
     }
   }
   /**
