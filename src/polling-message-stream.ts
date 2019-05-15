@@ -19,7 +19,7 @@ import {Readable} from 'stream';
 
 import {google} from '../proto/pubsub';
 
-import {RETRY_CODES} from './message-stream';
+import {RETRY_CODES} from './pull-retry';
 import {Subscriber} from './subscriber';
 
 type PullRequest = google.pubsub.v1.IPullRequest;
