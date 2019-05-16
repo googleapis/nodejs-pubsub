@@ -74,7 +74,7 @@
  * @property {constructor} SubscriberClient
  *     Reference to {@link v1.SubscriberClient}.
  */
-import v1 = require('./v1');
+const v1 = require('./v1');
 export {v1};
 
 export {CallOptions} from 'google-gax';
