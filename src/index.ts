@@ -74,7 +74,8 @@
  * @property {constructor} SubscriberClient
  *     Reference to {@link v1.SubscriberClient}.
  */
-module.exports.v1 = require('./v1');
+const v1 = require('./v1');
+export {v1};
 
 export {CallOptions} from 'google-gax';
 export {ServiceError} from 'grpc';
