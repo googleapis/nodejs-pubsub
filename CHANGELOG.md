@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
 
+### [0.29.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.29.0...v0.29.1) (2019-05-18)
+
+
+### Bug Fixes
+
+* use typescript import/export for gapics ([#611](https://www.github.com/googleapis/nodejs-pubsub/issues/611)) ([e882e1a](https://www.github.com/googleapis/nodejs-pubsub/commit/e882e1a))
+
 ## [0.29.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.28.1...v0.29.0) (2019-05-15)
 
 
