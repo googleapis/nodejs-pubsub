@@ -48,7 +48,6 @@ const PULL_TIMEOUT = require('./v1/subscriber_client_config.json').interfaces[
 const DEFAULT_OPTIONS: MessageStreamOptions = {
   highWaterMark: 0,
   maxStreams: 5,
-  pullTimeout: PULL_TIMEOUT,
   timeout: 300000,
 };
 
@@ -103,15 +102,11 @@ export class ChannelError extends Error implements ServiceError {
  *     {@link https://nodejs.org/en/docs/guides/backpressuring-in-streams/} for
  *     more details.
  * @property {number} [maxStreams=5] Number of streaming connections to make.
- * @property {number} [pullTimeout=900000] Timeout to be applied to each
- *     underlying stream. Essentially this just closes a `StreamingPull` request
- *     after the specified time.
  * @property {number} [timeout=300000] Timeout for establishing a connection.
  */
 export interface MessageStreamOptions {
   highWaterMark?: number;
   maxStreams?: number;
-  pullTimeout?: number;
   timeout?: number;
 }
 
@@ -223,7 +218,7 @@ export class MessageStream extends PassThrough {
       return;
     }
 
-    const deadline = Date.now() + this._options.pullTimeout!;
+    const deadline = Date.now() + PULL_TIMEOUT;
     const request: StreamingPullRequest = {
       subscription: this._subscriber.name,
       streamAckDeadlineSeconds: this._subscriber.ackDeadline,

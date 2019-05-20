@@ -270,21 +270,6 @@ describe('MessageStream', () => {
           });
         });
 
-        it('should respect the pullTimeout option', done => {
-          const pullTimeout = 1234;
-          const expectedDeadline = now + pullTimeout;
-
-          messageStream = new MessageStream(subscriber, {pullTimeout});
-
-          setImmediate(() => {
-            client.streams.forEach(stream => {
-              const deadline = stream.options.deadline;
-              assert.strictEqual(deadline, expectedDeadline);
-            });
-            done();
-          });
-        });
-
         it('should respect the timeout option', done => {
           const timeout = 12345;
           const expectedDeadline = now + timeout;
