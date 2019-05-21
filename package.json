@@ -65,7 +65,6 @@
     "google-gax": "^1.0.0",
     "grpc": "^1.20.3",
     "is-stream-ended": "^0.1.4",
-    "lodash.merge": "^4.6.0",
     "lodash.snakecase": "^4.1.1",
     "p-defer": "^2.0.1",
     "protobufjs": "^6.8.1"
