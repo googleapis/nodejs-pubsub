@@ -328,6 +328,7 @@ describe('pubsub', () => {
       const subName = generateSubName();
       const threeDaysInSeconds = 3 * 24 * 60 * 60;
       const callOptions = {
+        retainAckedMessages: true,
         messageRetentionDuration: threeDaysInSeconds,
         topic: '',
         name: '',
@@ -339,7 +340,7 @@ describe('pubsub', () => {
         sub!.getMetadata((err, metadata) => {
           assert.ifError(err);
 
-          assert.strictEqual(metadata!.retainAckedMessages, true);
+          assert.strictEqual(metadata!.retainAckedMessages, false);
           assert.strictEqual(
             Number(metadata!.messageRetentionDuration!.seconds),
             threeDaysInSeconds
@@ -354,6 +355,36 @@ describe('pubsub', () => {
       });
     });
 
+    it('should create a subscription without message retention', done => {
+      const subName = generateSubName();
+      const threeDaysInSeconds = 3 * 24 * 60 * 60;
+      const callOptions = {
+        messageRetentionDuration: threeDaysInSeconds,
+        topic: '',
+        name: '',
+      };
+
+      topic.createSubscription(subName, callOptions, (err, sub) => {
+        assert.ifError(err);
+
+        sub!.getMetadata((err, metadata) => {
+          assert.ifError(err);
+
+          assert.strictEqual(metadata!.retainAckedMessages, false);
+          assert.strictEqual(
+            Number(metadata!.messageRetentionDuration!.seconds),
+            threeDaysInSeconds
+          );
+          assert.strictEqual(
+            Number(metadata!.messageRetentionDuration!.nanos),
+            0
+          );
+
+          sub!.delete(done);
+        });
+      });
+    });
+    
     it('should set metadata for a subscription', () => {
       const subscription = topic.subscription(generateSubName());
       const threeDaysInSeconds = 3 * 24 * 60 * 60;
@@ -362,6 +393,7 @@ describe('pubsub', () => {
         .create()
         .then(() => {
           return subscription.setMetadata({
+            retainAckedMessages: true,
             messageRetentionDuration: threeDaysInSeconds,
           });
         })
