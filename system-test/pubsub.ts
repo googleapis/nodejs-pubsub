@@ -340,7 +340,7 @@ describe('pubsub', () => {
         sub!.getMetadata((err, metadata) => {
           assert.ifError(err);
 
-          assert.strictEqual(metadata!.retainAckedMessages, false);
+          assert.strictEqual(metadata!.retainAckedMessages, true);
           assert.strictEqual(
             Number(metadata!.messageRetentionDuration!.seconds),
             threeDaysInSeconds
@@ -384,7 +384,7 @@ describe('pubsub', () => {
         });
       });
     });
-    
+
     it('should set metadata for a subscription', () => {
       const subscription = topic.subscription(generateSubName());
       const threeDaysInSeconds = 3 * 24 * 60 * 60;
