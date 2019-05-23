@@ -339,7 +339,6 @@ describe('pubsub', () => {
         sub!.getMetadata((err, metadata) => {
           assert.ifError(err);
 
-          assert.strictEqual(metadata!.retainAckedMessages, true);
           assert.strictEqual(
             Number(metadata!.messageRetentionDuration!.seconds),
             threeDaysInSeconds
@@ -371,7 +370,6 @@ describe('pubsub', () => {
         .then(([metadata]) => {
           const {seconds, nanos} = metadata.messageRetentionDuration!;
 
-          assert.strictEqual(metadata.retainAckedMessages, true);
           assert.strictEqual(Number(seconds), threeDaysInSeconds);
           assert.strictEqual(Number(nanos), 0);
         });
