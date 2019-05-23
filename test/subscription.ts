@@ -227,7 +227,6 @@ describe('Subscription', () => {
 
       const formatted = Subscription.formatMetadata_(metadata);
 
-      assert.strictEqual(formatted.retainAckedMessages, true);
       assert.strictEqual(formatted.messageRetentionDuration!.nanos, 0);
 
       assert.strictEqual(
