@@ -50,6 +50,7 @@ export type PushConfig = google.pubsub.v1.IPushConfig;
 
 export type SubscriptionMetadata = {
   messageRetentionDuration?: google.protobuf.IDuration | number;
+  retainAckedMessages?: boolean;
   pushEndpoint?: string;
 } & Omit<google.pubsub.v1.ISubscription, 'messageRetentionDuration'>;
 
