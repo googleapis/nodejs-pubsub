@@ -1026,7 +1026,6 @@ export class Subscription extends EventEmitter {
     const formatted = extend(true, {}, metadata);
 
     if (typeof metadata.messageRetentionDuration === 'number') {
-      formatted.retainAckedMessages = true;
       (formatted as google.pubsub.v1.ISubscription).messageRetentionDuration = {
         seconds: metadata.messageRetentionDuration,
         nanos: 0,
