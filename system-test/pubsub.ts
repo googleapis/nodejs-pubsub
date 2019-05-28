@@ -31,6 +31,8 @@ import {Policy} from '../src/iam';
 const pubsub = new PubSub();
 
 describe('pubsub', () => {
+  const TESTS_PREFIX = `pubsub-tests-${shortUUID()}`;
+
   const TOPIC_NAMES = [
     generateTopicName(),
     generateTopicName(),
@@ -45,20 +47,62 @@ describe('pubsub', () => {
 
   const TOPIC_FULL_NAMES = TOPICS.map(getTopicName);
 
+  function shortUUID() {
+    return uuid
+      .v1()
+      .split('-')
+      .shift();
+  }
+
   function generateSnapshotName() {
-    return 'test-snapshot-' + uuid.v4();
+    return `${TESTS_PREFIX}-snapshot-${uuid.v4()}`;
   }
 
   function generateSubName() {
-    return 'test-subscription-' + uuid.v4();
+    return `${TESTS_PREFIX}-subscription-${uuid.v4()}`;
   }
 
   function generateTopicName() {
-    return 'test-topic-' + uuid.v4();
+    return `${TESTS_PREFIX}-topic-${uuid.v4()}`;
   }
 
   function getTopicName(topic: Topic) {
     return topic.name.split('/').pop();
+  }
+
+  function deleteTestResource(resource: Topic | Subscription | Snapshot) {
+    if (resource.name.indexOf(TESTS_PREFIX) > -1) {
+      resource.delete();
+    }
+  }
+
+  async function deleteAllTopics() {
+    const stream = pubsub.getTopicsStream().on('data', deleteTestResource);
+
+    return new Promise<Topic>((resolve, reject) => {
+      stream.on('error', resolve);
+      stream.on('end', resolve);
+    });
+  }
+
+  async function deleteAllSubscriptions() {
+    const stream = pubsub
+      .getSubscriptionsStream()
+      .on('data', deleteTestResource);
+
+    return new Promise<Subscription>((resolve, reject) => {
+      stream.on('error', resolve);
+      stream.on('end', resolve);
+    });
+  }
+
+  async function deleteAllSnapshots() {
+    const stream = pubsub.getSnapshotsStream().on('data', deleteTestResource);
+
+    return new Promise<Message>((resolve, reject) => {
+      stream.on('error', resolve);
+      stream.on('end', resolve);
+    });
   }
 
   async function publishPop(message: Buffer, options = {}) {
@@ -81,8 +125,12 @@ describe('pubsub', () => {
   });
 
   after(() => {
-    // Delete topics
-    return Promise.all(TOPICS.map(t => t.delete()));
+    // cleanup all created resources
+    return Promise.all([
+      deleteAllSubscriptions(),
+      deleteAllTopics(),
+      deleteAllSnapshots(),
+    ]);
   });
 
   describe('Topic', () => {
@@ -134,7 +182,10 @@ describe('pubsub', () => {
     it('should honor the autoCreate option', done => {
       const topic = pubsub.topic(generateTopicName());
 
-      topic.get({autoCreate: true}, done);
+      topic.get({autoCreate: true}, (err, _topic, _apiResponse) => {
+        assert.ifError(err);
+        done();
+      });
     });
 
     it('should confirm if a topic exists', done => {
@@ -301,7 +352,10 @@ describe('pubsub', () => {
     it('should honor the autoCreate option', done => {
       const sub = topic.subscription(generateSubName());
 
-      sub.get({autoCreate: true}, done);
+      sub.get({autoCreate: true}, (err, _sub, _apiResponse) => {
+        assert.ifError(err);
+        done();
+      });
     });
 
     it('should confirm if a sub exists', done => {
