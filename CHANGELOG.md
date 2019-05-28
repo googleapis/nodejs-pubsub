@@ -4,6 +4,26 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [1.0.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.29.1...v1.0.0) (2019-05-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **subscription:** decouple retainAckedMessages from messageRetentionDuration (#625)
+* remove pullTimeout subscriber option (#618)
+
+### Bug Fixes
+
+* **deps:** update dependency @sindresorhus/is to ^0.17.0 ([#591](https://www.github.com/googleapis/nodejs-pubsub/issues/591)) ([06fae6e](https://www.github.com/googleapis/nodejs-pubsub/commit/06fae6e))
+* **subscription:** decouple retainAckedMessages from messageRetentionDuration ([#625](https://www.github.com/googleapis/nodejs-pubsub/issues/625)) ([3431e7c](https://www.github.com/googleapis/nodejs-pubsub/commit/3431e7c))
+* **typescript:** pin grpc to previous working version ([#624](https://www.github.com/googleapis/nodejs-pubsub/issues/624)) ([2167536](https://www.github.com/googleapis/nodejs-pubsub/commit/2167536))
+* update rpc timeout settings ([#628](https://www.github.com/googleapis/nodejs-pubsub/issues/628)) ([2a1a430](https://www.github.com/googleapis/nodejs-pubsub/commit/2a1a430))
+
+
+### Reverts
+
+* remove pullTimeout subscriber option ([#618](https://www.github.com/googleapis/nodejs-pubsub/issues/618)) ([4fc9724](https://www.github.com/googleapis/nodejs-pubsub/commit/4fc9724))
+
 ### [0.29.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.29.0...v0.29.1) (2019-05-18)
 
 
