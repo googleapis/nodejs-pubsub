@@ -134,6 +134,12 @@ export type SetSubscriptionMetadataResponse = MetadataResponse;
  * nack of such message when the processing is done. **Note:** message
  * redelivery is still possible.
  *
+ * By default each {@link PubSub} instance can handle 100 open streams, with
+ * default options this translates to 20 Subscriptions per PubSub instance.
+ * If you desire to use more than 20 Subscriptions you can either create
+ * multiple PubSub instances or lower the `options.streamingOptions.maxStreams`
+ * value.
+ *
  * @class
  *
  * @param {PubSub} pubsub PubSub object.
