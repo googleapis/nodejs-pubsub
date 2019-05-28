@@ -138,7 +138,7 @@ export type SetSubscriptionMetadataResponse = MetadataResponse;
  * default options this translates to less than 20 Subscriptions per PubSub
  * instance. If you wish to create more Subscriptions than that, you can either
  * create multiple PubSub instances or lower the
- * `options.streamingOptions.maxStreams` value.
+ * `options.streamingOptions.maxStreams` value on each Subscription object.
  *
  * @class
  *
