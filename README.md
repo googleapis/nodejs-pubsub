@@ -30,7 +30,7 @@ Google APIs Client Libraries, in [Client Libraries Explained][explained].
 * [Quickstart](#quickstart)
   * [Before you begin](#before-you-begin)
   * [Installing the client library](#installing-the-client-library)
-
+  * [Using the client library](#using-the-client-library)
 * [Samples](#samples)
 * [Versioning](#versioning)
 * [Contributing](#contributing)
@@ -53,6 +53,26 @@ npm install @google-cloud/pubsub
 ```
 
 
+### Using the client library
+
+```javascript
+// Imports the Google Cloud client library
+const {PubSub} = require('@google-cloud/pubsub');
+
+async function quickstart(
+  projectId = 'your-project-id', // Your Google Cloud Platform project ID
+  topicName = 'my-topic' // Name for the new topic to create
+) {
+  // Instantiates a client
+  const pubsub = new PubSub({projectId});
+
+  // Creates the new topic
+  const [topic] = await pubsub.createTopic(topicName);
+  console.log(`Topic ${topic.name} created.`);
+}
+
+```
+
 
 
 ## Samples
@@ -62,6 +82,7 @@ has instructions for running the samples.
 
 | Sample                      | Source Code                       | Try it |
 | --------------------------- | --------------------------------- | ------ |
+| Quickstart | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/quickstart.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/quickstart.js,samples/README.md) |
 | Subscriptions | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/subscriptions.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/subscriptions.js,samples/README.md) |
 | Topics | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/topics.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/topics.js,samples/README.md) |
 

@@ -6,13 +6,6 @@ extends:
 plugins:
   - node
   - prettier
-# TODO: we should make an effort to fix this in the
-# upstream protos.
-overrides:
-  - files: ["src/v1/subscriber_client.js"]
-    rules:
-      no-unreachable: off
-      no-undef: off
 rules:
   prettier/prettier: error
   block-scoped-var: error
