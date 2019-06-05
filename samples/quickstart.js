@@ -15,7 +15,7 @@
 
 'use strict';
 
-// [START pubsub_quickstart]
+// [START pubsub_quickstart_create_topic]
 // Imports the Google Cloud client library
 const {PubSub} = require('@google-cloud/pubsub');
 
@@ -30,7 +30,7 @@ async function quickstart(
   const [topic] = await pubsub.createTopic(topicName);
   console.log(`Topic ${topic.name} created.`);
 }
-// [END pubsub_quickstart]
+// [END pubsub_quickstart_create_topic]
 
 const args = process.argv.slice(2);
 quickstart(...args).catch(console.error);
