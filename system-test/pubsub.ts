@@ -28,11 +28,23 @@ import {
 } from '../src';
 import {Policy} from '../src/iam';
 
+type Resource = Topic | Subscription | Snapshot;
+
+const RUN_ID = shortUUID();
+const PREFIX = 'gcloud-tests';
+const PREFIX_WITH_RUNID = `${PREFIX}-${RUN_ID}`;
+const CURRENT_TIME = Math.round(Date.now() / 1000).toString();
+
 const pubsub = new PubSub();
 
-describe('pubsub', () => {
-  const TESTS_PREFIX = `pubsub-tests-${shortUUID()}`;
+function shortUUID() {
+  return uuid
+    .v1()
+    .split('-')
+    .shift();
+}
 
+describe('pubsub', () => {
   const TOPIC_NAMES = [
     generateTopicName(),
     generateTopicName(),
@@ -47,62 +59,65 @@ describe('pubsub', () => {
 
   const TOPIC_FULL_NAMES = TOPICS.map(getTopicName);
 
-  function shortUUID() {
-    return uuid
-      .v1()
-      .split('-')
-      .shift();
+  function generateName(name: string) {
+    return [PREFIX_WITH_RUNID, name, shortUUID(), CURRENT_TIME].join('-');
   }
 
   function generateSnapshotName() {
-    return `${TESTS_PREFIX}-snapshot-${uuid.v4()}`;
+    return generateName('snapshot');
   }
 
   function generateSubName() {
-    return `${TESTS_PREFIX}-subscription-${uuid.v4()}`;
+    return generateName('subscription');
   }
 
   function generateTopicName() {
-    return `${TESTS_PREFIX}-topic-${uuid.v4()}`;
+    return generateName('topic');
   }
 
   function getTopicName(topic: Topic) {
     return topic.name.split('/').pop();
   }
 
-  function deleteTestResource(resource: Topic | Subscription | Snapshot) {
-    if (resource.name.indexOf(TESTS_PREFIX) > -1) {
+  function deleteTestResource(resource: Resource) {
+    // Delete resource from current test run.
+    if (resource.name.includes(PREFIX_WITH_RUNID)) {
+      resource.delete();
+      return;
+    }
+
+    // Delete left over resources which is older then 1 hour.
+    if (!resource.name.includes(PREFIX)) {
+      return;
+    }
+
+    const createdAt = Number(resource.name.split('-').pop());
+    const timeDiff = (Math.round(Date.now() / 1000) - createdAt) / (60 * 60);
+
+    if (timeDiff > 1) {
       resource.delete();
     }
   }
 
-  async function deleteAllTopics() {
-    const stream = pubsub.getTopicsStream().on('data', deleteTestResource);
-
-    return new Promise<Topic>((resolve, reject) => {
-      stream.on('error', resolve);
-      stream.on('end', resolve);
-    });
-  }
-
-  async function deleteAllSubscriptions() {
-    const stream = pubsub
+  async function deleteTestResources(): Promise<Resource[]> {
+    const topicStream = pubsub.getTopicsStream().on('data', deleteTestResource);
+    const subscriptionStream = pubsub
       .getSubscriptionsStream()
       .on('data', deleteTestResource);
+    const snapshotStream = pubsub
+      .getSnapshotsStream()
+      .on('data', deleteTestResource);
 
-    return new Promise<Subscription>((resolve, reject) => {
-      stream.on('error', resolve);
-      stream.on('end', resolve);
-    });
-  }
+    const streams = [topicStream, subscriptionStream, snapshotStream].map(
+      stream => {
+        return new Promise<Resource>((resolve, reject) => {
+          stream.on('error', reject);
+          stream.on('end', resolve);
+        });
+      }
+    );
 
-  async function deleteAllSnapshots() {
-    const stream = pubsub.getSnapshotsStream().on('data', deleteTestResource);
-
-    return new Promise<Message>((resolve, reject) => {
-      stream.on('error', resolve);
-      stream.on('end', resolve);
-    });
+    return Promise.all(streams);
   }
 
   async function publishPop(message: Buffer, options = {}) {
@@ -119,18 +134,16 @@ describe('pubsub', () => {
     });
   }
 
-  before(() => {
-    // create all needed topics
-    return Promise.all(TOPICS.map(t => t.create()));
+  before(async () => {
+    await deleteTestResources();
+
+    // create all needed topics with metadata
+    await Promise.all(TOPICS.map(t => t.create()));
   });
 
   after(() => {
-    // cleanup all created resources
-    return Promise.all([
-      deleteAllSubscriptions(),
-      deleteAllTopics(),
-      deleteAllSnapshots(),
-    ]);
+    // Delete all created test resources
+    return deleteTestResources();
   });
 
   describe('Topic', () => {
