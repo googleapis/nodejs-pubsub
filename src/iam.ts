@@ -47,7 +47,7 @@ export interface IamPermissionsMap {
 
 export type TestIamPermissionsResponse = [
   IamPermissionsMap,
-  google.iam.v1.ITestIamPermissionsResponse
+  google.iam.v1.ITestIamPermissionsResponse,
 ];
 export type TestIamPermissionsCallback = ResourceCallback<
   IamPermissionsMap,
