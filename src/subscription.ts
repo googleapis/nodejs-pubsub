@@ -134,6 +134,12 @@ export type SetSubscriptionMetadataResponse = MetadataResponse;
  * nack of such message when the processing is done. **Note:** message
  * redelivery is still possible.
  *
+ * By default each {@link PubSub} instance can handle 100 open streams, with
+ * default options this translates to less than 20 Subscriptions per PubSub
+ * instance. If you wish to create more Subscriptions than that, you can either
+ * create multiple PubSub instances or lower the
+ * `options.streamingOptions.maxStreams` value on each Subscription object.
+ *
  * @class
  *
  * @param {PubSub} pubsub PubSub object.
@@ -1026,7 +1032,6 @@ export class Subscription extends EventEmitter {
     const formatted = extend(true, {}, metadata);
 
     if (typeof metadata.messageRetentionDuration === 'number') {
-      formatted.retainAckedMessages = true;
       (formatted as google.pubsub.v1.ISubscription).messageRetentionDuration = {
         seconds: metadata.messageRetentionDuration,
         nanos: 0,

@@ -2,7 +2,7 @@
 
 [npm history][1]
 
-[1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
+[1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
 ### [0.29.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.29.0...v0.29.1) (2019-05-18)
 
