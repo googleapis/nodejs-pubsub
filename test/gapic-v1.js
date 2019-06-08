@@ -24,6 +24,27 @@ const error = new Error();
 error.code = FAKE_STATUS_CODE;
 
 describe('PublisherClient', () => {
+  it('has servicePath', () => {
+    const servicePath = pubsubModule.v1.PublisherClient.servicePath;
+    assert(servicePath);
+  });
+
+  it('has apiEndpoint', () => {
+    const apiEndpoint = pubsubModule.v1.PublisherClient.apiEndpoint;
+    assert(apiEndpoint);
+  });
+
+  it('has port', () => {
+    const port = pubsubModule.v1.PublisherClient.port;
+    assert(port);
+    assert(typeof port === 'number');
+  });
+
+  it('should create a client with no options', () => {
+    const client = new pubsubModule.v1.PublisherClient();
+    assert(client);
+  });
+
   describe('createTopic', () => {
     it('invokes createTopic without error', done => {
       const client = new pubsubModule.v1.PublisherClient({
@@ -656,6 +677,27 @@ describe('PublisherClient', () => {
   });
 });
 describe('SubscriberClient', () => {
+  it('has servicePath', () => {
+    const servicePath = pubsubModule.v1.SubscriberClient.servicePath;
+    assert(servicePath);
+  });
+
+  it('has apiEndpoint', () => {
+    const apiEndpoint = pubsubModule.v1.SubscriberClient.apiEndpoint;
+    assert(apiEndpoint);
+  });
+
+  it('has port', () => {
+    const port = pubsubModule.v1.SubscriberClient.port;
+    assert(port);
+    assert(typeof port === 'number');
+  });
+
+  it('should create a client with no options', () => {
+    const client = new pubsubModule.v1.SubscriberClient();
+    assert(client);
+  });
+
   describe('createSubscription', () => {
     it('invokes createSubscription without error', done => {
       const client = new pubsubModule.v1.SubscriberClient({
