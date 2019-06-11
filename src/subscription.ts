@@ -146,45 +146,34 @@ export type SetSubscriptionMetadataResponse = MetadataResponse;
  * @param {string} name The name of the subscription.
  * @param {SubscriberOptions} [options] Options for handling messages.
  *
- * @example
+ * @example <caption>From {@link PubSub#getSubscriptions}</caption>
  * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
- * //-
- * // From {@link PubSub#getSubscriptions}:
- * //-
  * pubsub.getSubscriptions((err, subscriptions) => {
  *   // `subscriptions` is an array of Subscription objects.
  * });
  *
- * //-
- * // From {@link Topic#getSubscriptions}:
- * //-
+ * @example <caption>From {@link Topic#getSubscriptions}</caption>
  * const topic = pubsub.topic('my-topic');
  * topic.getSubscriptions((err, subscriptions) => {
  *   // `subscriptions` is an array of Subscription objects.
  * });
  *
- * //-
- * // From {@link Topic#createSubscription}:
- * //-
+ * @example <caption>{@link Topic#createSubscription}</caption>
  * const topic = pubsub.topic('my-topic');
  * topic.createSubscription('new-subscription', (err, subscription) => {
  *   // `subscription` is a Subscription object.
  * });
  *
- * //-
- * // From {@link Topic#subscription}:
- * //-
+ * @example <caption>{@link Topic#subscription}</caption>
  * const topic = pubsub.topic('my-topic');
  * const subscription = topic.subscription('my-subscription');
  * // `subscription` is a Subscription object.
  *
- * //-
- * // Once you have obtained a subscription object, you may begin to register
- * // listeners. This will automatically trigger pulling for messages.
- * //-
- *
+ * @example <caption>Once you have obtained a subscription object, you may begin
+ * to register listeners. This will automatically trigger pulling for messages.
+ * </caption>
  * // Register an error handler.
  * subscription.on('error', (err) => {});
  *
@@ -212,6 +201,16 @@ export type SetSubscriptionMetadataResponse = MetadataResponse;
  *
  * // Remove the listener from receiving `message` events.
  * subscription.removeListener('message', onMessage);
+ *
+ * @example <caption>To apply a fine level of flow control, consider the
+ * following configuration</caption>
+ * const subscription = topic.subscription('my-sub', {
+ *   flowControl: {
+ *     maxMessages: 1,
+ *     // this tells the client to manage and lock any excess messages
+ *     allowExcessMessages: false
+ *   }
+ * });
  */
 export class Subscription extends EventEmitter {
   pubsub: PubSub;
