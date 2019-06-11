@@ -193,10 +193,7 @@ describe('pubsub', () => {
     it('should honor the autoCreate option', done => {
       const topic = pubsub.topic(generateTopicName());
 
-      topic.get({autoCreate: true}, (err, _topic, _apiResponse) => {
-        assert.ifError(err);
-        done();
-      });
+      topic.get({autoCreate: true}, done);
     });
 
     it('should confirm if a topic exists', done => {
@@ -363,10 +360,7 @@ describe('pubsub', () => {
     it('should honor the autoCreate option', done => {
       const sub = topic.subscription(generateSubName());
 
-      sub.get({autoCreate: true}, (err, _sub, _apiResponse) => {
-        assert.ifError(err);
-        done();
-      });
+      sub.get({autoCreate: true}, done);
     });
 
     it('should confirm if a sub exists', done => {
