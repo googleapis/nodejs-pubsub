@@ -28,7 +28,19 @@ import {
 } from '../src';
 import {Policy} from '../src/iam';
 
+type Resource = Topic | Subscription | Snapshot;
+
+const PREFIX = 'gcloud-tests';
+const CURRENT_TIME = Date.now();
+
 const pubsub = new PubSub();
+
+function shortUUID() {
+  return uuid
+    .v1()
+    .split('-')
+    .shift();
+}
 
 describe('pubsub', () => {
   const TOPIC_NAMES = [
@@ -45,20 +57,65 @@ describe('pubsub', () => {
 
   const TOPIC_FULL_NAMES = TOPICS.map(getTopicName);
 
+  function generateName(name: string) {
+    return [PREFIX, name, shortUUID(), CURRENT_TIME].join('-');
+  }
+
   function generateSnapshotName() {
-    return 'test-snapshot-' + uuid.v4();
+    return generateName('snapshot');
   }
 
   function generateSubName() {
-    return 'test-subscription-' + uuid.v4();
+    return generateName('subscription');
   }
 
   function generateTopicName() {
-    return 'test-topic-' + uuid.v4();
+    return generateName('topic');
   }
 
   function getTopicName(topic: Topic) {
     return topic.name.split('/').pop();
+  }
+
+  function deleteTestResource(resource: Resource) {
+    // Delete resource from current test run.
+    if (resource.name.includes(CURRENT_TIME.toString())) {
+      resource.delete();
+      return;
+    }
+
+    // Delete left over resources which is older then 1 hour.
+    if (!resource.name.includes(PREFIX)) {
+      return;
+    }
+
+    const createdAt = Number(resource.name.split('-').pop());
+    const timeDiff = (Date.now() - createdAt) / (1000 * 60 * 60);
+
+    if (timeDiff > 1) {
+      resource.delete();
+    }
+  }
+
+  async function deleteTestResources(): Promise<Resource[]> {
+    const topicStream = pubsub.getTopicsStream().on('data', deleteTestResource);
+    const subscriptionStream = pubsub
+      .getSubscriptionsStream()
+      .on('data', deleteTestResource);
+    const snapshotStream = pubsub
+      .getSnapshotsStream()
+      .on('data', deleteTestResource);
+
+    const streams = [topicStream, subscriptionStream, snapshotStream].map(
+      stream => {
+        return new Promise<Resource>((resolve, reject) => {
+          stream.on('error', reject);
+          stream.on('end', resolve);
+        });
+      }
+    );
+
+    return Promise.all(streams);
   }
 
   async function publishPop(message: Buffer, options = {}) {
@@ -75,14 +132,16 @@ describe('pubsub', () => {
     });
   }
 
-  before(() => {
-    // create all needed topics
-    return Promise.all(TOPICS.map(t => t.create()));
+  before(async () => {
+    await deleteTestResources();
+
+    // create all needed topics with metadata
+    await Promise.all(TOPICS.map(t => t.create()));
   });
 
   after(() => {
-    // Delete topics
-    return Promise.all(TOPICS.map(t => t.delete()));
+    // Delete all created test resources
+    return deleteTestResources();
   });
 
   describe('Topic', () => {
