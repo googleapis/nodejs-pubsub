@@ -30,10 +30,8 @@ import {Policy} from '../src/iam';
 
 type Resource = Topic | Subscription | Snapshot;
 
-const RUN_ID = shortUUID();
 const PREFIX = 'gcloud-tests';
-const PREFIX_WITH_RUNID = `${PREFIX}-${RUN_ID}`;
-const CURRENT_TIME = Math.round(Date.now() / 1000).toString();
+const CURRENT_TIME = Date.now();
 
 const pubsub = new PubSub();
 
@@ -60,7 +58,7 @@ describe('pubsub', () => {
   const TOPIC_FULL_NAMES = TOPICS.map(getTopicName);
 
   function generateName(name: string) {
-    return [PREFIX_WITH_RUNID, name, shortUUID(), CURRENT_TIME].join('-');
+    return [PREFIX, name, shortUUID(), CURRENT_TIME].join('-');
   }
 
   function generateSnapshotName() {
@@ -81,7 +79,7 @@ describe('pubsub', () => {
 
   function deleteTestResource(resource: Resource) {
     // Delete resource from current test run.
-    if (resource.name.includes(PREFIX_WITH_RUNID)) {
+    if (resource.name.includes(CURRENT_TIME.toString())) {
       resource.delete();
       return;
     }
@@ -92,7 +90,7 @@ describe('pubsub', () => {
     }
 
     const createdAt = Number(resource.name.split('-').pop());
-    const timeDiff = (Math.round(Date.now() / 1000) - createdAt) / (60 * 60);
+    const timeDiff = (Date.now() - createdAt) / (1000 * 60 * 60);
 
     if (timeDiff > 1) {
       resource.delete();
