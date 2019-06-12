@@ -84,7 +84,7 @@ const Topic = {
  * <a href="https://cloud.google.com/pubsub/quotas">Quotas and limits</a>
  * for more information about message limits.
  *
- * @property {string} data
+ * @property {Buffer} data
  *   The message data field. If this field is empty, the message must contain
  *   at least one attribute.
  *
