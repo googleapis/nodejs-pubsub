@@ -15,7 +15,7 @@
  */
 
 import * as assert from 'assert';
-import defer from 'p-defer';
+import defer = require('p-defer');
 import * as uuid from 'uuid';
 
 import {
