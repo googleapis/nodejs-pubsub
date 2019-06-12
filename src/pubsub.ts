@@ -332,9 +332,10 @@ export class PubSub {
    *     messages.
    * @property {object} [gaxOpts] Request configuration options, outlined
    *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
-   * @property {number|date} [messageRetentionDuration] Set this to override
-   *     the default duration of 7 days. This value is expected in seconds.
-   *     Acceptable values are in the range of 10 minutes and 7 days.
+   * @property {number|google.protobuf.Duration} [messageRetentionDuration] Set
+   *     this to override the default duration of 7 days. This value is expected
+   *     in seconds. Acceptable values are in the range of 10 minutes and 7
+   *     days.
    * @property {string} [pushEndpoint] A URL to a custom endpoint that
    *     messages should be pushed to.
    * @property {boolean} [retainAckedMessages=false] If set, acked messages
