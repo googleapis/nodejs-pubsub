@@ -65,7 +65,7 @@
     "grpc": "1.21.1",
     "is-stream-ended": "^0.1.4",
     "lodash.snakecase": "^4.1.1",
-    "p-defer": "^2.0.1",
+    "p-defer": "^3.0.0",
     "protobufjs": "^6.8.1"
   },
   "devDependencies": {
