@@ -470,7 +470,7 @@ class PublisherClient {
    * });
    *
    * const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
-   * const data = '';
+   * const data = Buffer.from('');
    * const messagesElement = {
    *   data: data,
    * };
