@@ -19,7 +19,7 @@ import is from '@sindresorhus/is';
 import {EventEmitter} from 'events';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
-import * as snakeCase from 'lodash.snakecase';
+import snakeCase = require('lodash.snakecase');
 
 import {google} from '../proto/pubsub';
 
