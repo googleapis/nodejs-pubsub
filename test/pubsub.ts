@@ -189,10 +189,6 @@ describe('PubSub', () => {
 
   describe('instantiation', () => {
     const DEFAULT_OPTIONS = {
-      grpc,
-      'grpc.keepalive_time_ms': 300000,
-      'grpc.max_send_message_length': -1,
-      'grpc.max_receive_message_length': 20000001,
       libName: 'gccl',
       libVersion: PKG.version,
       scopes: [],
