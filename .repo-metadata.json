@@ -2,7 +2,7 @@
   "name": "pubsub",
   "name_pretty": "Google Cloud Pub/Sub",
   "product_documentation": "https://cloud.google.com/pubsub/docs/",
-  "client_documentation": "https://cloud.google.com/nodejs/docs/reference/pubsub/latest/",
+  "client_documentation": "https://googleapis.dev/nodejs/pubsub/latest",
   "issue_tracker": "https://issuetracker.google.com/savedsearches/559741",
   "release_level": "beta",
   "language": "nodejs",
