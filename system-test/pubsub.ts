@@ -514,16 +514,14 @@ describe('pubsub', () => {
       topic.publish(buf, (err, messageId) => {
         assert.ifError(err);
 
-        subscription
-          .on('error', done)
-          .on('message', ({id, data}: Message) => {
-            if (id !== messageId) {
-              return;
-            }
+        subscription.on('error', done).on('message', ({id, data}: Message) => {
+          if (id !== messageId) {
+            return;
+          }
 
-            assert.deepStrictEqual(data, buf);
-            subscription.close(done);
-          });
+          assert.deepStrictEqual(data, buf);
+          subscription.close(done);
+        });
       });
     });
 
