@@ -20,7 +20,7 @@ import arrify = require('arrify');
 import * as assert from 'assert';
 import * as gax from 'google-gax';
 import * as grpc from '@grpc/grpc-js';
-import {CallOptions, ChannelCredentials} from '@grpc/grpc-js';
+import {CallOptions, ChannelCredentials, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
@@ -847,7 +847,7 @@ describe('PubSub', () => {
     it('should return Subscription instances', done => {
       pubsub.getSubscriptions(
         (
-          err: pubsubTypes.ServiceError | null,
+          err: ServiceError | null,
           subscriptions?: subby.Subscription[] | null
         ) => {
           assert.ifError(err);
@@ -869,7 +869,7 @@ describe('PubSub', () => {
 
       pubsub.getSubscriptions(
         (
-          err: pubsubTypes.ServiceError | null,
+          err: ServiceError | null,
           subs?: subby.Subscription[] | null,
           apiResponse?: google.pubsub.v1.IListSubscriptionsResponse | null
         ) => {
@@ -1048,7 +1048,7 @@ describe('PubSub', () => {
         callback(expectedError);
       };
 
-      pubsub.request(CONFIG, (err: pubsubTypes.ServiceError | null) => {
+      pubsub.request(CONFIG, (err: ServiceError | null) => {
         assert.strictEqual(expectedError, err);
         done();
       });
@@ -1237,7 +1237,7 @@ describe('PubSub', () => {
         callback(error);
       };
 
-      pubsub.request(CONFIG, (err: pubsubTypes.ServiceError | null) => {
+      pubsub.request(CONFIG, (err: ServiceError | null) => {
         assert.strictEqual(err, error);
         done();
       });

@@ -15,13 +15,12 @@
  */
 
 import * as assert from 'assert';
-import {Metadata} from '@grpc/grpc-js';
+import {Metadata, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {Duplex, PassThrough} from 'stream';
 import * as uuid from 'uuid';
 import * as messageTypes from '../src/message-stream';
-import {ServiceError} from '../src/pubsub';
 import {Subscriber} from '../src/subscriber';
 
 const FAKE_STREAMING_PULL_TIMEOUT = 123456789;

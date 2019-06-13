@@ -15,10 +15,9 @@
  */
 
 import {CallOptions} from 'google-gax';
-import {Metadata, status} from '@grpc/grpc-js';
+import {Metadata, ServiceError, status} from '@grpc/grpc-js';
 import defer = require('p-defer');
 
-import {ServiceError} from './pubsub';
 import {Message, Subscriber} from './subscriber';
 
 type QueuedMessages = Array<[string, number?]>;
@@ -49,8 +48,9 @@ export interface BatchOptions {
  */
 export class BatchError extends Error implements ServiceError {
   ackIds: string[];
-  code?: status;
-  metadata?: Metadata;
+  code: status;
+  details: string;
+  metadata: Metadata;
   constructor(err: ServiceError, ackIds: string[], rpc: string) {
     super(
       `Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${err.message}`
@@ -58,6 +58,7 @@ export class BatchError extends Error implements ServiceError {
 
     this.ackIds = ackIds;
     this.code = err.code;
+    this.details = err.details;
     this.metadata = err.metadata;
   }
 }

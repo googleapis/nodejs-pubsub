@@ -17,14 +17,13 @@
 import * as assert from 'assert';
 import {EventEmitter} from 'events';
 import {CallOptions} from 'google-gax';
-import {Metadata} from '@grpc/grpc-js';
+import {Metadata, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import * as uuid from 'uuid';
 
 import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
-import {ServiceError} from '../src/pubsub';
 import {Message, Subscriber} from '../src/subscriber';
 
 class FakeClient {

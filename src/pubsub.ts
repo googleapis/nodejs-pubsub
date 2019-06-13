@@ -22,6 +22,7 @@ import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
 import * as grpc from '@grpc/grpc-js';
+import {ServiceError, ChannelCredentials} from '@grpc/grpc-js';
 
 const PKG = require('../../package.json');
 const v1 = require('./v1');
@@ -56,14 +57,13 @@ const opts = {} as gax.GrpcClientOptions;
  */
 const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
 
-export type ServiceError = Error & Partial<grpc.StatusObject>;
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 export interface ClientConfig extends gax.GrpcClientOptions {
   apiEndpoint?: string;
   servicePath?: string;
   port?: string | number;
-  sslCreds?: grpc.ChannelCredentials;
+  sslCreds?: ChannelCredentials;
 }
 
 export interface PageOptions {
@@ -928,7 +928,7 @@ export class PubSub {
   request<T, R = void>(config: RequestConfig, callback: RequestCallback<T, R>) {
     this.getClient_(config, (err, client) => {
       if (err) {
-        callback(err);
+        callback(err as ServiceError);
         return;
       }
       let reqOpts = extend(true, {}, config.reqOpts);
