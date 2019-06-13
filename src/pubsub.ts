@@ -21,7 +21,7 @@ import is from '@sindresorhus/is';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
-import * as grpc from 'grpc';
+import * as grpc from '@grpc/grpc-js';
 
 const PKG = require('../../package.json');
 const v1 = require('./v1');
@@ -46,7 +46,6 @@ import {PublishOptions} from './publisher';
 import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
 import {google} from '../proto/pubsub';
-import {ServiceError, ChannelCredentials} from 'grpc';
 
 const opts = {} as gax.GrpcClientOptions;
 
@@ -57,13 +56,14 @@ const opts = {} as gax.GrpcClientOptions;
  */
 const PROJECT_ID_PLACEHOLDER = '{{projectId}}';
 
+export type ServiceError = Error & Partial<grpc.StatusObject>;
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 export interface ClientConfig extends gax.GrpcClientOptions {
   apiEndpoint?: string;
   servicePath?: string;
   port?: string | number;
-  sslCreds?: ChannelCredentials;
+  sslCreds?: grpc.ChannelCredentials;
 }
 
 export interface PageOptions {
@@ -263,10 +263,6 @@ export class PubSub {
     }
     this.options = Object.assign(
       {
-        grpc,
-        'grpc.keepalive_time_ms': 300000,
-        'grpc.max_send_message_length': -1,
-        'grpc.max_receive_message_length': 20000001,
         libName: 'gccl',
         libVersion: PKG.version,
         scopes: Object.keys(allScopes),

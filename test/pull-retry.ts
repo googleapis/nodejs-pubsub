@@ -16,7 +16,7 @@
 
 import assert = require('assert');
 import sinon = require('sinon');
-import {StatusObject, status} from 'grpc';
+import {StatusObject, status} from '@grpc/grpc-js';
 import {PullRetry} from '../src/pull-retry';
 
 describe('PullRetry', () => {

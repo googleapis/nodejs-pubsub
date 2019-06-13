@@ -78,7 +78,6 @@ const v1 = require('./v1');
 export {v1};
 
 export {CallOptions} from 'google-gax';
-export {ServiceError} from 'grpc';
 export {
   Policy,
   GetPolicyCallback,
@@ -104,6 +103,7 @@ export {
   ExistsCallback,
   ExistsResponse,
   PubSub,
+  ServiceError,
 } from './pubsub';
 export {
   CreateSnapshotCallback,

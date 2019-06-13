@@ -15,9 +15,10 @@
  */
 
 import {CallOptions} from 'google-gax';
-import {Metadata, ServiceError, status} from 'grpc';
+import {Metadata, status} from '@grpc/grpc-js';
 import defer = require('p-defer');
 
+import {ServiceError} from './pubsub';
 import {Message, Subscriber} from './subscriber';
 
 type QueuedMessages = Array<[string, number?]>;

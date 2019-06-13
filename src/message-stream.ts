@@ -19,13 +19,13 @@ import {ClientStub} from 'google-gax';
 import {
   ClientDuplexStream,
   Metadata,
-  ServiceError,
   status,
   StatusObject,
-} from 'grpc';
+} from '@grpc/grpc-js';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
+import {ServiceError} from './pubsub';
 import {PullRetry} from './pull-retry';
 import {Subscriber} from './subscriber';
 import {google} from '../proto/pubsub';
