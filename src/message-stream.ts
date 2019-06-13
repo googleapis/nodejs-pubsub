@@ -266,6 +266,9 @@ export class MessageStream extends PassThrough {
    */
   private _keepAlive(): void {
     this._streams.forEach((receivedStatus, stream) => {
+      // its possible that a status event fires off (signaling the rpc being
+      // closed) but the stream hasn't drained yet, writing to this stream will
+      // result in a `write after end` error
       if (!receivedStatus) {
         stream.write({});
       }
