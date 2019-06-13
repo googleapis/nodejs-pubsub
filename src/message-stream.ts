@@ -265,9 +265,11 @@ export class MessageStream extends PassThrough {
    * @private
    */
   private _keepAlive(): void {
-    for (const stream of this._streams.keys()) {
-      stream.write({});
-    }
+    this._streams.forEach((receivedStatus, stream) => {
+      if (!receivedStatus) {
+        stream.write({});
+      }
+    });
   }
   /**
    * Once the stream has nothing left to read, we'll remove it and attempt to
