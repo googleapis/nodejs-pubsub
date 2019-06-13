@@ -119,7 +119,7 @@ Apache Version 2.0
 
 See [LICENSE](https://github.com/googleapis/nodejs-pubsub/blob/master/LICENSE)
 
-[client-docs]: https://cloud.google.com/nodejs/docs/reference/pubsub/latest/
+[client-docs]: https://googleapis.dev/nodejs/pubsub/latest
 [product-docs]: https://cloud.google.com/pubsub/docs/
 [shell_img]: https://gstatic.com/cloudssh/images/open-btn.png
 [projects]: https://console.cloud.google.com/project
