@@ -15,6 +15,7 @@
  */
 
 import * as assert from 'assert';
+import * as crypto from 'crypto';
 import defer = require('p-defer');
 import * as uuid from 'uuid';
 
@@ -504,6 +505,26 @@ describe('pubsub', () => {
 
         subscription.close(done);
       }
+    });
+
+    it('should send and receive large messages', done => {
+      const subscription = topic.subscription(SUB_NAMES[0]);
+      const buf = crypto.randomBytes(9000000); // 9mb
+
+      topic.publish(buf, (err, messageId) => {
+        assert.ifError(err);
+
+        subscription
+          .on('error', done)
+          .on('message', ({id, data}: Message) => {
+            if (id !== messageId) {
+              return;
+            }
+
+            assert.deepStrictEqual(data, buf);
+            subscription.close(done);
+          });
+      });
     });
 
     // can be ran manually to test options/memory usage/etc.
