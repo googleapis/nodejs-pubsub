@@ -77,8 +77,8 @@
 const v1 = require('./v1');
 export {v1};
 
+export {ServiceError} from '@grpc/grpc-js';
 export {CallOptions} from 'google-gax';
-export {ServiceError} from 'grpc';
 export {
   Policy,
   GetPolicyCallback,

@@ -17,7 +17,7 @@
 import * as assert from 'assert';
 import {EventEmitter} from 'events';
 import {CallOptions} from 'google-gax';
-import {Metadata, ServiceError} from 'grpc';
+import {Metadata, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import * as uuid from 'uuid';
@@ -322,7 +322,7 @@ describe('MessageQueues', () => {
 
       const ackIds = messages.map(message => message.ackId);
 
-      const fakeError: ServiceError = new Error('Err.');
+      const fakeError = new Error('Err.') as ServiceError;
       fakeError.code = 2;
       fakeError.metadata = new Metadata();
 
@@ -446,7 +446,7 @@ describe('MessageQueues', () => {
 
       const ackIds = messages.map(message => message.ackId);
 
-      const fakeError: ServiceError = new Error('Err.');
+      const fakeError = new Error('Err.') as ServiceError;
       fakeError.code = 2;
       fakeError.metadata = new Metadata();
 

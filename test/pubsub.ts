@@ -19,8 +19,8 @@ import * as promisify from '@google-cloud/promisify';
 import arrify = require('arrify');
 import * as assert from 'assert';
 import * as gax from 'google-gax';
-import * as grpc from 'grpc';
-import {CallOptions, ServiceError, ChannelCredentials} from 'grpc';
+import * as grpc from '@grpc/grpc-js';
+import {CallOptions, ChannelCredentials, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
@@ -189,10 +189,6 @@ describe('PubSub', () => {
 
   describe('instantiation', () => {
     const DEFAULT_OPTIONS = {
-      grpc,
-      'grpc.keepalive_time_ms': 300000,
-      'grpc.max_send_message_length': -1,
-      'grpc.max_receive_message_length': 20000001,
       libName: 'gccl',
       libVersion: PKG.version,
       scopes: [],

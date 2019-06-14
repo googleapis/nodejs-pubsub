@@ -21,7 +21,8 @@ import is from '@sindresorhus/is';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
-import * as grpc from 'grpc';
+import * as grpc from '@grpc/grpc-js';
+import {ServiceError, ChannelCredentials} from '@grpc/grpc-js';
 
 const PKG = require('../../package.json');
 const v1 = require('./v1');
@@ -46,7 +47,6 @@ import {PublishOptions} from './publisher';
 import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
 import {google} from '../proto/pubsub';
-import {ServiceError, ChannelCredentials} from 'grpc';
 
 const opts = {} as gax.GrpcClientOptions;
 
@@ -263,10 +263,6 @@ export class PubSub {
     }
     this.options = Object.assign(
       {
-        grpc,
-        'grpc.keepalive_time_ms': 300000,
-        'grpc.max_send_message_length': -1,
-        'grpc.max_receive_message_length': 20000001,
         libName: 'gccl',
         libVersion: PKG.version,
         scopes: Object.keys(allScopes),
@@ -932,7 +928,7 @@ export class PubSub {
   request<T, R = void>(config: RequestConfig, callback: RequestCallback<T, R>) {
     this.getClient_(config, (err, client) => {
       if (err) {
-        callback(err);
+        callback(err as ServiceError);
         return;
       }
       let reqOpts = extend(true, {}, config.reqOpts);
