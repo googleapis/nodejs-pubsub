@@ -15,7 +15,7 @@
  */
 
 import * as assert from 'assert';
-import {Metadata, ServiceError} from 'grpc';
+import {Metadata, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {Duplex, PassThrough} from 'stream';

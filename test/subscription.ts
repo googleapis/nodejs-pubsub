@@ -17,7 +17,7 @@
 import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
 import {EventEmitter} from 'events';
-import {ServiceError} from 'grpc';
+import {ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
@@ -506,7 +506,7 @@ describe('Subscription', () => {
     });
 
     describe('error', () => {
-      const error = new Error('err');
+      const error = new Error('err') as ServiceError;
 
       beforeEach(() => {
         subscription.request = (config, callback) => {

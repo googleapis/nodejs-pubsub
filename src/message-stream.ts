@@ -22,7 +22,7 @@ import {
   ServiceError,
   status,
   StatusObject,
-} from 'grpc';
+} from '@grpc/grpc-js';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
@@ -69,11 +69,13 @@ type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse> & {
  * @param {object} status The gRPC status object.
  */
 export class StatusError extends Error implements ServiceError {
-  code?: status;
-  metadata?: Metadata;
+  code: status;
+  details: string;
+  metadata: Metadata;
   constructor(status: StatusObject) {
     super(status.details);
     this.code = status.code;
+    this.details = status.details;
     this.metadata = status.metadata;
   }
 }
@@ -87,11 +89,15 @@ export class StatusError extends Error implements ServiceError {
  */
 export class ChannelError extends Error implements ServiceError {
   code: status;
+  details: string;
+  metadata: Metadata;
   constructor(err: Error) {
     super(`Failed to connect to channel. Reason: ${err.message}`);
     this.code = err.message.includes('deadline')
       ? status.DEADLINE_EXCEEDED
       : status.UNKNOWN;
+    this.details = err.message;
+    this.metadata = new Metadata();
   }
 }
 
@@ -259,9 +265,14 @@ export class MessageStream extends PassThrough {
    * @private
    */
   private _keepAlive(): void {
-    for (const stream of this._streams.keys()) {
-      stream.write({});
-    }
+    this._streams.forEach((receivedStatus, stream) => {
+      // its possible that a status event fires off (signaling the rpc being
+      // closed) but the stream hasn't drained yet, writing to this stream will
+      // result in a `write after end` error
+      if (!receivedStatus) {
+        stream.write({});
+      }
+    });
   }
   /**
    * Once the stream has nothing left to read, we'll remove it and attempt to
