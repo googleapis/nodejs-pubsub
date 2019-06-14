@@ -36,6 +36,17 @@ export interface Attributes {
 }
 export type PublishCallback = RequestCallback<string>;
 
+export interface BatchPublishOptions {
+  maxBytes?: number;
+  maxMessages?: number;
+  maxMilliseconds?: number;
+}
+
+export interface PublishOptions {
+  batching?: BatchPublishOptions;
+  gaxOpts?: CallOptions;
+}
+
 /**
  * @typedef BatchPublishOptions
  * @property {number} [maxBytes=1024^2 * 5] The maximum number of bytes to
@@ -45,23 +56,12 @@ export type PublishCallback = RequestCallback<string>;
  * @property {number} [maxMilliseconds=100] The maximum duration to wait before
  *     sending a payload.
  */
-export interface BatchPublishOptions {
-  maxBytes?: number;
-  maxMessages?: number;
-  maxMilliseconds?: number;
-}
-
 /**
  * @typedef PublishOptions
  * @property {BatchPublishOptions} [batching] Batching settings.
  * @property {object} [gaxOpts] Request configuration options, outlined
  *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
  */
-export interface PublishOptions {
-  batching?: BatchPublishOptions;
-  gaxOpts?: CallOptions;
-}
-
 /**
  * A Publisher object allows you to publish messages to a specific topic.
  *
