@@ -53,7 +53,9 @@ export class BatchError extends Error implements ServiceError {
   metadata: Metadata;
   constructor(err: ServiceError, ackIds: string[], rpc: string) {
     super(
-      `Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${err.message}`
+      `Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${
+        err.message
+      }`
     );
 
     this.ackIds = ackIds;
