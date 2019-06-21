@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [0.30.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.0...v0.30.1) (2019-06-21)
+
+
+### Bug Fixes
+
+* **deps:** include missing @grpc/grpc-js dependency ([#665](https://www.github.com/googleapis/nodejs-pubsub/issues/665)) ([5f42f60](https://www.github.com/googleapis/nodejs-pubsub/commit/5f42f60))
+
 ## [0.30.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.29.1...v0.30.0) (2019-06-17)
 
 
