@@ -1,7 +1,7 @@
 {
   "name": "@google-cloud/pubsub",
   "description": "Cloud Pub/Sub Client Library for Node.js",
-  "version": "0.29.1",
+  "version": "0.30.1",
   "license": "Apache-2.0",
   "author": "Google Inc.",
   "engines": {
@@ -54,6 +54,7 @@
     "@google-cloud/precise-date": "^1.0.0",
     "@google-cloud/projectify": "^1.0.0",
     "@google-cloud/promisify": "^1.0.0",
+    "@grpc/grpc-js": "^0.4.3",
     "@sindresorhus/is": "^0.17.1",
     "@types/duplexify": "^3.6.0",
     "@types/long": "^4.0.0",
@@ -82,7 +83,7 @@
     "@types/uuid": "^3.4.4",
     "codecov": "^3.0.0",
     "eslint": "^5.0.0",
-    "eslint-config-prettier": "^4.0.0",
+    "eslint-config-prettier": "^5.0.0",
     "eslint-plugin-node": "^9.0.0",
     "eslint-plugin-prettier": "^3.0.0",
     "gts": "^1.0.0",
