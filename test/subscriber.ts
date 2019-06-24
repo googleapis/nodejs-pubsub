@@ -709,22 +709,20 @@ describe('Subscriber', () => {
 
     describe('nack', () => {
       it('should nack the message', () => {
-        const fakeDelay = 10;
         const stub = sandbox.stub(subscriber, 'modAck');
 
-        message.nack(fakeDelay);
+        message.nack();
 
         const [msg, delay] = stub.lastCall.args;
         assert.strictEqual(msg, message);
-        assert.strictEqual(delay, fakeDelay);
+        assert.strictEqual(delay, 0);
       });
 
       it('should not nack the message if its been handled', () => {
-        const delay = 10;
         const stub = sandbox.stub(subscriber, 'modAck');
 
         message.ack();
-        message.nack(delay);
+        message.nack();
 
         assert.strictEqual(stub.callCount, 0);
       });
