@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [0.30.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.1...v0.30.2) (2019-06-27)
+
+
+### Bug Fixes
+
+* **docs:** reference docs should link to section of googleapis.dev with API reference ([#670](https://www.github.com/googleapis/nodejs-pubsub/issues/670)) ([c92a09a](https://www.github.com/googleapis/nodejs-pubsub/commit/c92a09a))
+
 ### [0.30.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.0...v0.30.1) (2019-06-21)
 
 
