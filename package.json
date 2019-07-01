@@ -46,7 +46,7 @@
     "proto": "mkdirp proto && npm run proto:pubsub && npm run proto:iam",
     "proto:pubsub": "pbjs -t static-module -w commonjs -p protos google/pubsub/v1/pubsub.proto | pbts -o proto/pubsub.d.ts -",
     "proto:iam": "pbjs -t static-module -w commonjs -p protos google/iam/v1/iam_policy.proto | pbts -o proto/iam.d.ts -",
-    "docs-test": "linkinator docs -r --skip www.googleapis.com",
+    "docs-test": "linkinator docs",
     "predocs-test": "npm run docs"
   },
   "dependencies": {
@@ -90,7 +90,7 @@
     "intelli-espower-loader": "^1.0.1",
     "jsdoc": "^3.6.2",
     "jsdoc-baseline": "^0.1.0",
-    "linkinator": "^1.1.2",
+    "linkinator": "^1.5.0",
     "mkdirp": "^0.5.1",
     "mocha": "^6.0.0",
     "mv": "^2.1.1",
