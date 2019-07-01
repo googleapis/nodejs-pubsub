@@ -175,25 +175,16 @@ export class Message {
   }
   /**
    * Removes the message from our inventory and schedules it to be redelivered.
-   * If the delay parameter is unset, it will be redelivered immediately.
-   *
-   * @param {number} [delay=0] The desired time to wait before the
-   *     redelivery occurs.
    *
    * @example
    * subscription.on('message', message => {
    *   message.nack();
    * });
-   *
-   * @example <caption>Specify a delay to redeliver the message</caption>
-   * subscription.on('message', message => {
-   *   message.nack(60); // redeliver in 1 minute
-   * });
    */
-  nack(delay?: number): void {
+  nack(): void {
     if (!this._handled) {
       this._handled = true;
-      this._subscriber.nack(this, delay);
+      this._subscriber.nack(this);
     }
   }
 }
@@ -352,12 +343,11 @@ export class Subscriber extends EventEmitter {
    * it from our inventory.
    *
    * @param {Message} message The message.
-   * @param {number} [delay=0] Delay to wait before redelivery.
    * @return {Promise}
    * @private
    */
-  async nack(message: Message, delay = 0): Promise<void> {
-    await this.modAck(message, delay);
+  async nack(message: Message): Promise<void> {
+    await this.modAck(message, 0);
     this._inventory.remove(message);
   }
   /**
