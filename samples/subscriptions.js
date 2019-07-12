@@ -605,7 +605,7 @@ const cli = require(`yargs`)
   )
   .command(
     `listen-flow-control <subscriptionName>`,
-    `Listen to messages with flow control settings, which don't persist at the subscription level on the server.`,
+    `Listen to messages with flow control settings, which are properties of the client/listener instance.`,
     {
       maxInProgress: {
         alias: 'm',
