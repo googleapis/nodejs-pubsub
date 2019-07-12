@@ -82,7 +82,6 @@ async function createSubscription(topicName, subscriptionName) {
 }
 
 async function subscribeWithFlowControlSettings(
-  topicName,
   subscriptionName,
   maxInProgress,
   timeout,
@@ -97,28 +96,27 @@ async function subscribeWithFlowControlSettings(
   /**
    * TODO(developer): Uncomment the following lines to run the sample.
    */
-  // const topicName = 'my-topic';
   // const subscriptionName = 'my-sub';
   // const maxInProgress = 5;
   // const timeout = 10;
 
-  const topic = pubsub.topic(topicName);
-
-  const options = {
+  const subscriberOptions = {
     flowControl: {
       maxMessages: maxInProgress,
     },
   };
 
-  // Creates a reference to a subscription
-  // Note that flow control settings are not persistent
-  const subscription = topic.subscription(subscriptionName, options);
+  // References an existing subscription.
+  // Note that flow control settings are not persistent across subscri
+  const subscription = pubsub.subscription(subscriptionName, subscriberOptions);
 
   console.log(
-    `Subscription ${subscription.name} is ready to receive messages at a controlled volumn of ${maxInProgress} messages.`
+    `Subscriber to ${subscription.name} is ready to receive messages at a controlled volume of ${maxInProgress} messages.`
   );
 
   const messageHandler = function(message) {
+    console.log(`Received message: ${message.id}`);
+    console.log(`\tData: ${message.data}`);
     message.ack();
   };
 
@@ -606,7 +604,7 @@ const cli = require(`yargs`)
     opts => listenForMessages(opts.subscriptionName, opts.timeout)
   )
   .command(
-    `listen-flow-control <topicName> <subscriptionName>`,
+    `listen-flow-control <subscriptionName>`,
     `Listen to messages with flow control settings, which don't persist at the subscription level on the server.`,
     {
       maxInProgress: {
@@ -622,7 +620,6 @@ const cli = require(`yargs`)
     },
     opts =>
     subscribeWithFlowControlSettings(
-      opts.topicName,
       opts.subscriptionName,
       opts.maxInProgress,
       opts.timeout,
@@ -673,7 +670,7 @@ const cli = require(`yargs`)
   .example(`node $0 listen-messages my-subscription`)
   .example(`node $0 sync-pull my-project my-subscription`)
   .example(`node $0 listen-errors my-subscription`)
-  .example(`node $0 listen-flow-control my-topic worker-1 -m 5`)
+  .example(`node $0 listen-flow-control -m 5`)
   .example(`node $0 delete worker-1`)
   .example(`node $0 pull worker-1`)
   .example(`node $0 get-policy worker-1`)
