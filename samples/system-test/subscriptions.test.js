@@ -259,5 +259,4 @@ describe('subscriptions', () => {
     assert.ok(subscriptions);
     assert(subscriptions.every(s => s.name !== fullSubscriptionNameOne));
   });
-
 });

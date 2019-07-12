@@ -111,7 +111,9 @@ async function subscribeWithFlowControlSettings(
   const subscription = pubsub.subscription(subscriptionName, subscriberOptions);
 
   console.log(
-    `Subscriber to ${subscription.name} is ready to receive messages at a controlled volume of ${maxInProgress} messages.`
+    `Subscriber to ${
+      subscription.name
+    } is ready to receive messages at a controlled volume of ${maxInProgress} messages.`
   );
 
   const messageHandler = function(message) {
@@ -342,7 +344,9 @@ async function synchronousPull(projectName, subscriptionName) {
       await client.modifyAckDeadline(modifyAckRequest);
 
       console.log(
-        `Reset ack deadline for "${message.message.data}" for ${newAckDeadlineSeconds}s.`
+        `Reset ack deadline for "${
+          message.message.data
+        }" for ${newAckDeadlineSeconds}s.`
       );
     }
   }
@@ -616,14 +620,14 @@ const cli = require(`yargs`)
         alias: 't',
         type: 'number',
         default: 10,
-      }
+      },
     },
     opts =>
-    subscribeWithFlowControlSettings(
-      opts.subscriptionName,
-      opts.maxInProgress,
-      opts.timeout,
-    )
+      subscribeWithFlowControlSettings(
+        opts.subscriptionName,
+        opts.maxInProgress,
+        opts.timeout
+      )
   )
   .command(
     `sync-pull <projectName> <subscriptionName>`,
