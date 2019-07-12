@@ -107,11 +107,11 @@ async function subscribeWithFlowControlSettings(
   };
 
   // References an existing subscription.
-  // Note that flow control settings are not persistent across subscri
+  // Note that flow control settings are not persistent across subscribers.
   const subscription = pubsub.subscription(subscriptionName, subscriberOptions);
 
   console.log(
-    `Subscriber to ${subscription.name} is ready to receive messages at a controlled volume of ${maxInProgress} messages.`
+    `Subscriber to subscription ${subscription.name} is ready to receive messages at a controlled volume of ${maxInProgress} messages.`
   );
 
   const messageHandler = function(message) {
