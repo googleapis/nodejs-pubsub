@@ -84,7 +84,7 @@ async function createSubscription(topicName, subscriptionName) {
 async function subscribeWithFlowControlSettings(
   subscriptionName,
   maxInProgress,
-  timeout,
+  timeout
 ) {
   // [START pubsub_subscriber_flow_settings]
   // Imports the Google Cloud client library

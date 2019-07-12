@@ -1,5 +1,5 @@
 /**
- * Copyright 2017, Google, Inc.
+ * Copyright 2019, Google, LLC.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -144,11 +144,10 @@ describe('subscriptions', () => {
     );
     assert.include(
       output,
-      // `Subscriber to subscription ${fullSubscriptionNameFour} is ready to receive messages at a controlled volume of 5 messages.`
       `ready to receive messages at a controlled volume of 5 messages.`
     );
-    // const [subscriptions] = await pubsub.topic(topicNameTwo).getSubscriptions();
-    // assert(subscriptions.some(s => s.name === fullSubscriptionNameFour));
+    const [subscriptions] = await pubsub.topic(topicNameTwo).getSubscriptions();
+    assert(subscriptions.some(s => s.name === fullSubscriptionNameFour));
   });
 
   it('should listen for ordered messages', async () => {
