@@ -618,7 +618,7 @@ const cli = require(`yargs`)
       timeout: {
         alias: 't',
         type: 'number',
-        default: 10000,
+        default: 10,
       },
     },
     opts =>
