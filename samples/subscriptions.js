@@ -114,16 +114,19 @@ async function subscribeWithFlowControlSettings(
     `Subscriber to subscription ${subscription.name} is ready to receive messages at a controlled volume of ${maxInProgress} messages.`
   );
 
-  const messageHandler = function(message) {
+  const messageHandler = message => {
     console.log(`Received message: ${message.id}`);
     console.log(`\tData: ${message.data}`);
+    console.log(`\tAttributes: ${message.attributes}`);
+
+    // "Ack" (acknowledge receipt of) the message
     message.ack();
   };
 
   subscription.on(`message`, messageHandler);
 
   setTimeout(() => {
-    subscription.removeListener(`message`, messageHandler);
+    subscription.close();
   }, timeout * 1000);
 
   // [END pubsub_subscriber_flow_settings]
@@ -610,12 +613,12 @@ const cli = require(`yargs`)
       maxInProgress: {
         alias: 'm',
         type: 'number',
-        default: 0,
+        default: 1,
       },
       timeout: {
         alias: 't',
         type: 'number',
-        default: 10,
+        default: 10000,
       },
     },
     opts =>
@@ -670,7 +673,7 @@ const cli = require(`yargs`)
   .example(`node $0 listen-messages my-subscription`)
   .example(`node $0 sync-pull my-project my-subscription`)
   .example(`node $0 listen-errors my-subscription`)
-  .example(`node $0 listen-flow-control -m 5`)
+  .example(`node $0 listen-flow-control my-subscription -m 5`)
   .example(`node $0 delete worker-1`)
   .example(`node $0 pull worker-1`)
   .example(`node $0 get-policy worker-1`)
