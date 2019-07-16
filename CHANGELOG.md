@@ -4,6 +4,22 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [1.0.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.1...v1.0.0) (2019-07-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* **message:** remove nack delay parameter (#668)
+
+### Bug Fixes
+
+* **docs:** reference docs should link to section of googleapis.dev with API reference ([#670](https://www.github.com/googleapis/nodejs-pubsub/issues/670)) ([c92a09a](https://www.github.com/googleapis/nodejs-pubsub/commit/c92a09a))
+
+
+### Reverts
+
+* **message:** remove nack delay parameter ([#668](https://www.github.com/googleapis/nodejs-pubsub/issues/668)) ([ca8fe65](https://www.github.com/googleapis/nodejs-pubsub/commit/ca8fe65))
+
 ### [0.30.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.0...v0.30.1) (2019-06-21)
 
 
