@@ -827,18 +827,7 @@ export class Topic {
    * @throws {Error} If subscription name is omitted.
    *
    * @param {string} name Name of the subscription.
-   * @param {object} [options] Configuration object.
-   * @param {object} [options.flowControl] Flow control configurations for
-   *     receiving messages. Note that these options do not persist across
-   *     subscription instances.
-   * @param {number} [options.flowControl.maxBytes] The maximum number of bytes
-   *     in un-acked messages to allow before the subscription pauses incoming
-   *     messages. Defaults to 20% of free memory.
-   * @param {number} [options.flowControl.maxMessages=Infinity] The maximum number
-   *     of un-acked messages to allow before the subscription pauses incoming
-   *     messages.
-   * @param {number} [options.maxConnections=5] Use this to limit the number of
-   *     connections to be used when sending and receiving messages.
+   * @param {SubscriptionOptions} [options] Subscription options.
    * @return {Subscription}
    *
    * @example
