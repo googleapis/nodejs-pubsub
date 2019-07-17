@@ -106,11 +106,11 @@ export type SetSubscriptionMetadataResponse = MetadataResponse;
  *
  * - {@link Pubsub#getSubscriptions}
  * - {@link Topic#getSubscriptions}
- * - {@link Topic#createSubscription}
  *
  * Subscription objects may be created directly with:
  *
- * - {@link Topic#subscription}
+ * - {@link Pubsub#createSubscription}
+ * - {@link Topic#createSubscription}
  *
  * All Subscription objects are instances of an
  * [EventEmitter](http://nodejs.org/api/events.html). The subscription will pull
