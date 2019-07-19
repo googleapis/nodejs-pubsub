@@ -189,6 +189,13 @@ export class Message {
   }
 }
 
+export interface SubscriberOptions {
+  ackDeadline?: number;
+  batching?: BatchOptions;
+  flowControl?: FlowControlOptions;
+  streamingOptions?: MessageStreamOptions;
+}
+
 /**
  * @typedef {object} SubscriberOptions
  * @property {number} [ackDeadline=10] Acknowledge deadline in seconds. If left
@@ -198,13 +205,6 @@ export class Message {
  * @property {FlowControlOptions} [flowControl] Flow control options.
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
  */
-export interface SubscriberOptions {
-  ackDeadline?: number;
-  batching?: BatchOptions;
-  flowControl?: FlowControlOptions;
-  streamingOptions?: MessageStreamOptions;
-}
-
 /**
  * Subscriber class is used to manage all message related functionality.
  *
