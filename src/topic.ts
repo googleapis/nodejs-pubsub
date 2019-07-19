@@ -827,7 +827,7 @@ export class Topic {
    * @throws {Error} If subscription name is omitted.
    *
    * @param {string} name Name of the subscription.
-   * @param {SubscriptionOptions} [options] Subscription options.
+   * @param {SubscriberOptions} [options] Configuration object.
    * @return {Subscription}
    *
    * @example

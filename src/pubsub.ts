@@ -965,7 +965,7 @@ export class PubSub {
    * @throws {Error} If subscription name is omitted.
    *
    * @param {string} name Name of the subscription.
-   * @param {SubscriberOptions} [options] Subscription options.
+   * @param {SubscriberOptions} [options] Configuration object.
    * @returns {Subscription} A {@link Subscription} instance.
    *
    * @example
