@@ -104,12 +104,12 @@ export type SetSubscriptionMetadataResponse = MetadataResponse;
  *
  * Subscriptions are sometimes retrieved when using various methods:
  *
- * - {@link Pubsub#getSubscriptions}
+ * - {@link PubSub#getSubscriptions}
  * - {@link Topic#getSubscriptions}
  *
  * Subscription objects may be created directly with:
  *
- * - {@link Pubsub#createSubscription}
+ * - {@link PubSub#createSubscription}
  * - {@link Topic#createSubscription}
  *
  * All Subscription objects are instances of an
