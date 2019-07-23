@@ -15,7 +15,7 @@
 'use strict';
 
 const assert = require('assert');
-const {PassThrough} = require('stream');
+const through2 = require('through2');
 
 const pubsubModule = require('../src');
 
@@ -1941,16 +1941,13 @@ function mockSimpleGrpcMethod(expectedRequest, response, error) {
 
 function mockBidiStreamingGrpcMethod(expectedRequest, response, error) {
   return () => {
-    const mockStream = new PassThrough({
-      objectMode: true,
-      transform: (chunk, enc, callback) => {
-        assert.deepStrictEqual(chunk, expectedRequest);
-        if (error) {
-          callback(error);
-        } else {
-          callback(null, response);
-        }
-      },
+    const mockStream = through2.obj((chunk, enc, callback) => {
+      assert.deepStrictEqual(chunk, expectedRequest);
+      if (error) {
+        callback(error);
+      } else {
+        callback(null, response);
+      }
     });
     return mockStream;
   };
