@@ -218,14 +218,13 @@ interface GetClientCallback {
  * @example <caption>Import the client library</caption>
  * const {PubSub} = require('@google-cloud/pubsub');
  *
- * @example <caption>Create a client that uses <a
- * href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application
- * Default Credentials (ADC)</a>:</caption> const pubsub = new PubSub();
+ * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
+ * const pubsub = new PubSub();
  *
- * @example <caption>Create a client with <a
- * href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit
- * credentials</a>:</caption> const pubsub = new PubSub({ projectId:
- * 'your-project-id', keyFilename: '/path/to/keyfile.json'
+ * @example <caption>Create a client with <a href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit credentials</a>:</caption>
+ * const pubsub = new PubSub({
+ *   projectId: 'your-project-id',
+ *   keyFilename: '/path/to/keyfile.json'
  * });
  *
  * @example <caption>include:samples/quickstart.js</caption>
@@ -349,12 +348,9 @@ export class PubSub {
    * @throws {Error} If a Topic instance or topic name is not provided.
    * @throws {Error} If a subscription name is not provided.
    *
-   * @param {Topic|string} topic The Topic to create a
-   *     subscription to.
+   * @param {Topic|string} topic The Topic to create a subscription to.
    * @param {string} name The name of the subscription.
-   * @param {CreateSubscriptionRequest} [options] See a
-   *     [Subscription
-   * resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
+   * @param {CreateSubscriptionRequest} [options] See a [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
    * @param {CreateSubscriptionCallback} [callback] Callback function.
    * @returns {Promise<CreateSubscriptionResponse>}
    *
@@ -369,11 +365,12 @@ export class PubSub {
    *
    * pubsub.createSubscription(topic, name, callback);
    *
-   * @example <caption>If the callback is omitted, we'll return a
-   * Promise.</caption> pubsub.createSubscription(topic,
-   * name).then(function(data) { const subscription = data[0]; const apiResponse
-   * = data[1];
-   * });
+   * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
+   * pubsub.createSubscription(topic, name)
+   *   .then(function(data) {
+   *     const subscription = data[0];
+   *     const apiResponse = data[1];
+   *   });
    */
   createSubscription(
     topic: Topic | string,

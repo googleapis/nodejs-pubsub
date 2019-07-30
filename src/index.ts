@@ -31,21 +31,19 @@
  * @module {PubSub} @google-cloud/pubsub
  * @alias nodejs-pubsub
  *
- * @example <caption>Install the client library with <a
- * href="https://www.npmjs.com/">npm</a>:</caption> npm install --save
- * @google-cloud/pubsub
+ * @example <caption>Install the client library with <a href="https://www.npmjs.com/">npm</a>:</caption>
+ * npm install @google-cloud/pubsub
  *
  * @example <caption>Import the client library</caption>
  * const {PubSub} = require('@google-cloud/pubsub');
  *
- * @example <caption>Create a client that uses <a
- * href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application
- * Default Credentials (ADC)</a>:</caption> const pubsub = new PubSub();
+ * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
+ * const pubsub = new PubSub();
  *
- * @example <caption>Create a client with <a
- * href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit
- * credentials</a>:</caption> const pubsub = new PubSub({ projectId:
- * 'your-project-id', keyFilename: '/path/to/keyfile.json'
+ * @example <caption>Create a client with <a href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit credentials</a>:</caption>
+ * const pubsub = new PubSub({
+ *   projectId: 'your-project-id',
+ *   keyFilename: '/path/to/keyfile.json'
  * });
  *
  * @example <caption>include:samples/quickstart.js</caption>
