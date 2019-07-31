@@ -101,6 +101,12 @@ export class ChannelError extends Error implements ServiceError {
   }
 }
 
+export interface MessageStreamOptions {
+  highWaterMark?: number;
+  maxStreams?: number;
+  timeout?: number;
+}
+
 /**
  * @typedef {object} MessageStreamOptions
  * @property {number} [highWaterMark=0] Configures the Buffer level for all
@@ -110,12 +116,6 @@ export class ChannelError extends Error implements ServiceError {
  * @property {number} [maxStreams=5] Number of streaming connections to make.
  * @property {number} [timeout=300000] Timeout for establishing a connection.
  */
-export interface MessageStreamOptions {
-  highWaterMark?: number;
-  maxStreams?: number;
-  timeout?: number;
-}
-
 /**
  * Streaming class used to manage multiple StreamingPull requests.
  *

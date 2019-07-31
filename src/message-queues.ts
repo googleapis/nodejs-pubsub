@@ -22,16 +22,6 @@ import {Message, Subscriber} from './subscriber';
 
 type QueuedMessages = Array<[string, number?]>;
 
-/**
- * @typedef {object} BatchOptions
- * @property {object} [callOptions] Request configuration option, outlined
- *     here: {@link https://googleapis.github.io/gax-nodejs/CallSettings.html}.
- * @property {number} [maxMessages=3000] Maximum number of messages allowed in
- *     each batch sent.
- * @property {number} [maxMilliseconds=100] Maximum duration to wait before
- *     sending a batch. Batches can be sent earlier if the maxMessages option
- *     is met before the configured duration has passed.
- */
 export interface BatchOptions {
   callOptions?: CallOptions;
   maxMessages?: number;
@@ -63,6 +53,16 @@ export class BatchError extends Error implements ServiceError {
   }
 }
 
+/**
+ * @typedef {object} BatchOptions
+ * @property {object} [callOptions] Request configuration option, outlined
+ *     here: {@link https://googleapis.github.io/gax-nodejs/CallSettings.html}.
+ * @property {number} [maxMessages=3000] Maximum number of messages allowed in
+ *     each batch sent.
+ * @property {number} [maxMilliseconds=100] Maximum duration to wait before
+ *     sending a batch. Batches can be sent earlier if the maxMessages option
+ *     is met before the configured duration has passed.
+ */
 /**
  * Class for buffering ack/modAck requests.
  *

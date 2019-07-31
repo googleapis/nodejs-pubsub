@@ -19,6 +19,13 @@ import {freemem} from 'os';
 
 import {Message, Subscriber} from './subscriber';
 
+export interface FlowControlOptions {
+  allowExcessMessages?: boolean;
+  maxBytes?: number;
+  maxExtension?: number;
+  maxMessages?: number;
+}
+
 /**
  * @typedef {object} FlowControlOptions
  * @property {boolean} [allowExcessMessages=true] PubSub delivers messages in
@@ -38,13 +45,6 @@ import {Message, Subscriber} from './subscriber';
  *     any given message batch could contain a greater number of messages than
  *     the desired amount of messages.
  */
-export interface FlowControlOptions {
-  allowExcessMessages?: boolean;
-  maxBytes?: number;
-  maxExtension?: number;
-  maxMessages?: number;
-}
-
 /**
  * Manages a Subscribers inventory while auto-magically extending the message
  * deadlines.
