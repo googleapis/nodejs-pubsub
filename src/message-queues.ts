@@ -56,7 +56,7 @@ export class BatchError extends Error implements ServiceError {
 /**
  * @typedef {object} BatchOptions
  * @property {object} [callOptions] Request configuration option, outlined
- *     here: {@link https://googleapis.github.io/gax-nodejs/CallSettings.html}.
+ *     here: {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html}.
  * @property {number} [maxMessages=3000] Maximum number of messages allowed in
  *     each batch sent.
  * @property {number} [maxMilliseconds=100] Maximum duration to wait before
