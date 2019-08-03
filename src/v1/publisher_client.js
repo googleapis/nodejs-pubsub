@@ -306,12 +306,9 @@ class PublisherClient {
    *   See <a href="https://cloud.google.com/pubsub/docs/labels"> Creating and
    *   managing labels</a>.
    * @param {Object} [request.messageStoragePolicy]
-   *   Policy constraining how messages published to the topic may be stored. It
-   *   is determined when the topic is created based on the policy configured at
-   *   the project level. It must not be set by the caller in the request to
-   *   CreateTopic or to UpdateTopic. This field will be populated in the
-   *   responses for GetTopic, CreateTopic, and UpdateTopic: if not present in the
-   *   response, then no constraints are in effect.
+   *   Policy constraining the set of Google Cloud Platform regions where messages
+   *   published to the topic may be stored. If not present, then no constraints
+   *   are in effect.
    *
    *   This object should have the same structure as [MessageStoragePolicy]{@link google.pubsub.v1.MessageStoragePolicy}
    * @param {string} [request.kmsKeyName]
@@ -319,9 +316,6 @@ class PublisherClient {
    *   to messages published on this topic.
    *
    *   The expected format is `projects/* /locations/* /keyRings/* /cryptoKeys/*`.
-   *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
-   *   API might be changed in backward-incompatible ways and is not recommended
-   *   for production use. It is not subject to any SLA or deprecation policy.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.

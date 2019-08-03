@@ -17,12 +17,11 @@
 
 /**
  * @property {string[]} allowedPersistenceRegions
- *   The list of GCP region IDs where messages that are published to the topic
+ *   A list of IDs of GCP regions where messages that are published to the topic
  *   may be persisted in storage. Messages published by publishers running in
  *   non-allowed GCP regions (or running outside of GCP altogether) will be
- *   routed for storage in one of the allowed regions. An empty list indicates a
- *   misconfiguration at the project or organization level, which will result in
- *   all Publish operations failing.
+ *   routed for storage in one of the allowed regions. An empty list means that
+ *   no regions are allowed, and is not a valid configuration.
  *
  * @typedef MessageStoragePolicy
  * @memberof google.pubsub.v1
@@ -48,12 +47,9 @@ const MessageStoragePolicy = {
  *   managing labels</a>.
  *
  * @property {Object} messageStoragePolicy
- *   Policy constraining how messages published to the topic may be stored. It
- *   is determined when the topic is created based on the policy configured at
- *   the project level. It must not be set by the caller in the request to
- *   CreateTopic or to UpdateTopic. This field will be populated in the
- *   responses for GetTopic, CreateTopic, and UpdateTopic: if not present in the
- *   response, then no constraints are in effect.
+ *   Policy constraining the set of Google Cloud Platform regions where messages
+ *   published to the topic may be stored. If not present, then no constraints
+ *   are in effect.
  *
  *   This object should have the same structure as [MessageStoragePolicy]{@link google.pubsub.v1.MessageStoragePolicy}
  *
@@ -62,9 +58,6 @@ const MessageStoragePolicy = {
  *   to messages published on this topic.
  *
  *   The expected format is `projects/* /locations/* /keyRings/* /cryptoKeys/*`.
- *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
- *   API might be changed in backward-incompatible ways and is not recommended
- *   for production use. It is not subject to any SLA or deprecation policy.
  *
  * @typedef Topic
  * @memberof google.pubsub.v1
@@ -465,27 +458,27 @@ const ExpirationPolicy = {
  *   For example, a Webhook endpoint might use "https://example.com/push".
  *
  * @property {Object.<string, string>} attributes
- *   Endpoint configuration attributes.
+ *   Endpoint configuration attributes that can be used to control different
+ *   aspects of the message delivery.
  *
- *   Every endpoint has a set of API supported attributes that can be used to
- *   control different aspects of the message delivery.
- *
- *   The currently supported attribute is `x-goog-version`, which you can
+ *   The only currently supported attribute is `x-goog-version`, which you can
  *   use to change the format of the pushed message. This attribute
  *   indicates the version of the data expected by the endpoint. This
  *   controls the shape of the pushed message (i.e., its fields and metadata).
- *   The endpoint version is based on the version of the Pub/Sub API.
  *
  *   If not present during the `CreateSubscription` call, it will default to
- *   the version of the API used to make such call. If not present during a
+ *   the version of the Pub/Sub API used to make such call. If not present in a
  *   `ModifyPushConfig` call, its value will not be changed. `GetSubscription`
  *   calls will always return a valid version, even if the subscription was
  *   created without this attribute.
  *
- *   The possible values for this attribute are:
+ *   The only supported values for the `x-goog-version` attribute are:
  *
  *   * `v1beta1`: uses the push format defined in the v1beta1 Pub/Sub API.
  *   * `v1` or `v1beta2`: uses the push format defined in the v1 Pub/Sub API.
+ *
+ *   For example:
+ *   <pre><code>attributes { "x-goog-version": "v1" } </code></pre>
  *
  * @property {Object} oidcToken
  *   If specified, Pub/Sub will generate and attach an OIDC JWT token as an
