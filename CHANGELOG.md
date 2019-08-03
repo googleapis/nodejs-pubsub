@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [0.30.3](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.2...v0.30.3) (2019-08-03)
+
+
+### Bug Fixes
+
+* allow calls with no request, add JSON proto ([1e73a69](https://www.github.com/googleapis/nodejs-pubsub/commit/1e73a69))
+
 ### [0.30.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.1...v0.30.2) (2019-07-30)
 
 
