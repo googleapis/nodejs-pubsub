@@ -282,6 +282,23 @@ describe('PubSub', () => {
     it('should localize a Promise override', () => {
       assert.strictEqual(pubsub.Promise, OPTIONS.promise);
     });
+
+    describe('with PUBSUB_EMULATOR_HOST & GOOGLE_CLOUD_PROJECT environment vars', () => {
+      before(() => {
+        process.env.PUBSUB_EMULATOR_HOST = 'localhost:9090';
+        process.env.GOOGLE_CLOUD_PROJECT = 'some-google-cloud-project';
+      });
+
+      after(() => {
+        delete process.env.PUBSUB_EMULATOR_HOST;
+        delete process.env.GOOGLE_CLOUD_PROJECT;
+      });
+
+      it('should use the GOOGLE_CLOUD_PROJECT env var', () => {
+        const pubsub = new PubSub();
+        assert.strictEqual(pubsub.options.projectId, 'some-google-cloud-project');
+      });
+    });
   });
 
   describe('createSubscription', () => {

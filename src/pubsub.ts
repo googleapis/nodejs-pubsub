@@ -276,7 +276,12 @@ export class PubSub {
     this.determineBaseUrl_();
     this.api = {};
     this.auth = new GoogleAuth(this.options);
+
     this.projectId = this.options.projectId || PROJECT_ID_PLACEHOLDER;
+    if (!('projectId' in this.options) && process.env.PUBSUB_EMULATOR_HOST && process.env.GOOGLE_CLOUD_PROJECT) {
+      this.options.projectId = process.env.GOOGLE_CLOUD_PROJECT;
+    }
+
     if (this.options.promise) {
       this.Promise = this.options.promise;
     }
