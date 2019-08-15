@@ -143,3 +143,10 @@ export {
   Topic,
   TopicMetadata,
 } from './topic';
+
+if (process.env.DEBUG_GRPC) {
+  console.info('gRPC logging set to verbose');
+  const {setLogger, setLogVerbosity, logVerbosity} = require('@grpc/grpc-js');
+  setLogger(console);
+  setLogVerbosity(logVerbosity.DEBUG);
+}
