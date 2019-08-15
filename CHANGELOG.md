@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [0.31.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.3...v0.31.0) (2019-08-15)
+
+
+### Features
+
+* **debug:** capture stack trace in errors rather than message ([#718](https://www.github.com/googleapis/nodejs-pubsub/issues/718)) ([bfed3f1](https://www.github.com/googleapis/nodejs-pubsub/commit/bfed3f1))
+
 ### [0.30.3](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.2...v0.30.3) (2019-08-03)
 
 
