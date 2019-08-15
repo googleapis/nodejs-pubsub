@@ -92,7 +92,7 @@ export class ChannelError extends Error implements ServiceError {
   details: string;
   metadata: Metadata;
   constructor(err: Error) {
-    super(`Failed to connect to channel. Reason: ${err.message}`);
+    super(`Failed to connect to channel. Reason: ${err.stack}`);
     this.code = err.message.includes('deadline')
       ? status.DEADLINE_EXCEEDED
       : status.UNKNOWN;
