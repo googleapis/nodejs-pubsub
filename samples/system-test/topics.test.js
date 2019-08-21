@@ -156,7 +156,7 @@ describe('topics', () => {
   });
 
   it('should publish with specific batch settings', async () => {
-    const waitTime = 5000;
+    const waitTime = 1000;
     const [subscription] = await pubsub
       .topic(topicNameOne)
       .subscription(subscriptionNameThree)
@@ -170,7 +170,7 @@ describe('topics', () => {
     const actualWait = publishTime.getTime() - startTime;
 
     assert.strictEqual(data.toString(), expectedMessage.data);
-    assert(actualWait >= waitTime);
+    assert(actualWait <= waitTime);
   });
 
   it('should publish with retry settings', async () => {

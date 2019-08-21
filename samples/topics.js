@@ -157,16 +157,20 @@ async function publishBatchedMessages(
   // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
   const dataBuffer = Buffer.from(data);
 
-  const [messageId] = await pubsub
+  const batchPublisher = pubsub
     .topic(topicName, {
       batching: {
         maxMessages: maxMessages,
         maxMilliseconds: maxWaitTime,
       },
-    })
-    .publish(dataBuffer);
-  console.log(`Message ${messageId} published.`);
+    });
 
+  for(var i = 1; i < 11; i++) {
+    (async () => {
+      let messageId = await batchPublisher.publish(dataBuffer)
+      console.log(`Message ${messageId} published.`);
+    })();
+  }
   // [END pubsub_publisher_batch_settings]
 }
 
