@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Google Inc. All Rights Reserved.
+ * Copyright 2019 Google LLC. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,17 +158,16 @@ async function publishBatchedMessages(
   // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
   const dataBuffer = Buffer.from(data);
 
-  const batchPublisher = pubsub
-    .topic(topicName, {
-      batching: {
-        maxMessages: maxMessages,
-        maxMilliseconds: maxWaitTime,
-      },
-    });
+  const batchPublisher = pubsub.topic(topicName, {
+    batching: {
+      maxMessages: maxMessages,
+      maxMilliseconds: maxWaitTime,
+    },
+  });
 
-  for(var i = 1; i < 11; i++) {
+  for (let i = 1; i < 11; i++) {
     (async () => {
-      let messageId = await batchPublisher.publish(dataBuffer)
+      const messageId = await batchPublisher.publish(dataBuffer);
       console.log(`Message ${messageId} published.`);
     })();
   }
