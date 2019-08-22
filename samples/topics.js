@@ -163,7 +163,7 @@ async function publishBatchedMessages(
     },
   });
 
-  for (let i = 1; i < 11; i++) {
+  for (let i = 0; i < 10; i++) {
     (async () => {
       const messageId = await batchPublisher.publish(dataBuffer);
       console.log(`Message ${messageId} published.`);
