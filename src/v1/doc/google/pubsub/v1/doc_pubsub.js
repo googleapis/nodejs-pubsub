@@ -420,11 +420,67 @@ const DeleteTopicRequest = {
  *
  *   This object should have the same structure as [ExpirationPolicy]{@link google.pubsub.v1.ExpirationPolicy}
  *
+ * @property {Object} deadLetterPolicy
+ *   A policy that specifies the conditions for dead lettering messages in
+ *   this subscription. If dead_letter_policy is not set, dead lettering
+ *   is disabled.
+ *
+ *   The Cloud Pub/Sub service account associated with this subscriptions's
+ *   parent project (i.e.,
+ *   service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have
+ *   permission to Acknowledge() messages on this subscription.
+ *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+ *   API might be changed in backward-incompatible ways and is not recommended
+ *   for production use. It is not subject to any SLA or deprecation policy.
+ *
+ *   This object should have the same structure as [DeadLetterPolicy]{@link google.pubsub.v1.DeadLetterPolicy}
+ *
  * @typedef Subscription
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.Subscription definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
 const Subscription = {
+  // This is for documentation. Actual contents will be loaded by gRPC.
+};
+
+/**
+ * Dead lettering is done on a best effort basis. The same message might be
+ * dead lettered multiple times.
+ *
+ * If validation on any of the fields fails at subscription creation/updation,
+ * the create/update subscription request will fail.
+ *
+ * @property {string} deadLetterTopic
+ *   The name of the topic to which dead letter messages should be published.
+ *   Format is `projects/{project}/topics/{topic}`.The Cloud Pub/Sub service
+ *   account associated with the enclosing subscription's parent project (i.e.,
+ *   service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have
+ *   permission to Publish() to this topic.
+ *
+ *   The operation will fail if the topic does not exist.
+ *   Users should ensure that there is a subscription attached to this topic
+ *   since messages published to a topic with no subscriptions are lost.
+ *
+ * @property {number} maxDeliveryAttempts
+ *   The maximum number of delivery attempts for any message. The value must be
+ *   between 5 and 100.
+ *
+ *   The number of delivery attempts is defined as 1 + (the sum of number of
+ *   NACKs and number of times the acknowledgement deadline has been exceeded
+ *   for the message).
+ *
+ *   A NACK is any call to ModifyAckDeadline with a 0 deadline. Note that
+ *   client libraries may automatically extend ack_deadlines.
+ *
+ *   This field will be honored on a best effort basis.
+ *
+ *   If this parameter is 0, a default value of 5 is used.
+ *
+ * @typedef DeadLetterPolicy
+ * @memberof google.pubsub.v1
+ * @see [google.pubsub.v1.DeadLetterPolicy definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
+ */
+const DeadLetterPolicy = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -532,6 +588,24 @@ const PushConfig = {
  *   The message.
  *
  *   This object should have the same structure as [PubsubMessage]{@link google.pubsub.v1.PubsubMessage}
+ *
+ * @property {number} deliveryAttempt
+ *   Delivery attempt counter is 1 + (the sum of number of NACKs and number of
+ *   ack_deadline exceeds) for this message.
+ *
+ *   A NACK is any call to ModifyAckDeadline with a 0 deadline. An ack_deadline
+ *   exceeds event is whenever a message is not acknowledged within
+ *   ack_deadline. Note that ack_deadline is initially
+ *   Subscription.ackDeadlineSeconds, but may get extended automatically by
+ *   the client library.
+ *
+ *   The first delivery of a given message will have this value as 1. The value
+ *   is calculated at best effort and is approximate.
+ *
+ *   If a DeadLetterPolicy is not set on the subscription, this will be 0.
+ *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+ *   API might be changed in backward-incompatible ways and is not recommended
+ *   for production use. It is not subject to any SLA or deprecation policy.
  *
  * @typedef ReceivedMessage
  * @memberof google.pubsub.v1
@@ -676,8 +750,9 @@ const ModifyPushConfigRequest = {
  *   least one message is available, rather than returning no messages.
  *
  * @property {number} maxMessages
- *   The maximum number of messages returned for this request. The Pub/Sub
- *   system may return fewer than the number specified.
+ *   The maximum number of messages to return for this request. Must be a
+ *   positive integer. The Pub/Sub system may return fewer than the number
+ *   specified.
  *
  * @typedef PullRequest
  * @memberof google.pubsub.v1
