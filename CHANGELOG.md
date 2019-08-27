@@ -4,6 +4,14 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [0.31.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.31.0...v0.31.1) (2019-08-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency yargs to v14 ([b0ceb5e](https://www.github.com/googleapis/nodejs-pubsub/commit/b0ceb5e))
+* use process versions object for client header ([#722](https://www.github.com/googleapis/nodejs-pubsub/issues/722)) ([e65185b](https://www.github.com/googleapis/nodejs-pubsub/commit/e65185b))
+
 ## [0.31.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.3...v0.31.0) (2019-08-15)
 
 
