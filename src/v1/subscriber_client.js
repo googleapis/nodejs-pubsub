@@ -378,6 +378,20 @@ class SubscriberClient {
    *   value for `expiration_policy.ttl` is 1 day.
    *
    *   This object should have the same structure as [ExpirationPolicy]{@link google.pubsub.v1.ExpirationPolicy}
+   * @param {Object} [request.deadLetterPolicy]
+   *   A policy that specifies the conditions for dead lettering messages in
+   *   this subscription. If dead_letter_policy is not set, dead lettering
+   *   is disabled.
+   *
+   *   The Cloud Pub/Sub service account associated with this subscriptions's
+   *   parent project (i.e.,
+   *   service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have
+   *   permission to Acknowledge() messages on this subscription.
+   *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+   *   API might be changed in backward-incompatible ways and is not recommended
+   *   for production use. It is not subject to any SLA or deprecation policy.
+   *
+   *   This object should have the same structure as [DeadLetterPolicy]{@link google.pubsub.v1.DeadLetterPolicy}
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
@@ -910,8 +924,9 @@ class SubscriberClient {
    *   The subscription from which messages should be pulled.
    *   Format is `projects/{project}/subscriptions/{sub}`.
    * @param {number} request.maxMessages
-   *   The maximum number of messages returned for this request. The Pub/Sub
-   *   system may return fewer than the number specified.
+   *   The maximum number of messages to return for this request. Must be a
+   *   positive integer. The Pub/Sub system may return fewer than the number
+   *   specified.
    * @param {boolean} [request.returnImmediately]
    *   If this field set to true, the system will respond immediately even if
    *   it there are no messages available to return in the `Pull` response.

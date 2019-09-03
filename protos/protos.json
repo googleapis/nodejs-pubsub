@@ -441,6 +441,22 @@
                     "expirationPolicy": {
                       "type": "ExpirationPolicy",
                       "id": 11
+                    },
+                    "deadLetterPolicy": {
+                      "type": "DeadLetterPolicy",
+                      "id": 13
+                    }
+                  }
+                },
+                "DeadLetterPolicy": {
+                  "fields": {
+                    "deadLetterTopic": {
+                      "type": "string",
+                      "id": 1
+                    },
+                    "maxDeliveryAttempts": {
+                      "type": "int32",
+                      "id": 2
                     }
                   }
                 },
@@ -499,6 +515,10 @@
                     "message": {
                       "type": "PubsubMessage",
                       "id": 2
+                    },
+                    "deliveryAttempt": {
+                      "type": "int32",
+                      "id": 3
                     }
                   }
                 },
