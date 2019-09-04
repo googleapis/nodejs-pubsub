@@ -60,6 +60,16 @@ class SubscriberClient {
     opts = opts || {};
     this._descriptors = {};
 
+    if (global.isBrowser) {
+      // If we're in browser, we use gRPC fallback.
+      opts.fallback = true;
+    }
+
+    // If we are in browser, we are already using fallback because of the
+    // "browser" field in package.json.
+    // But if we were explicitly requested to use fallback, let's do it now.
+    const gaxModule = !global.isBrowser && opts.fallback ? gax.fallback : gax;
+
     const servicePath =
       opts.servicePath || opts.apiEndpoint || this.constructor.servicePath;
 
@@ -76,40 +86,55 @@ class SubscriberClient {
     // Create a `gaxGrpc` object, with any grpc-specific options
     // sent to the client.
     opts.scopes = this.constructor.scopes;
-    const gaxGrpc = new gax.GrpcClient(opts);
+    const gaxGrpc = new gaxModule.GrpcClient(opts);
 
     // Save the auth object to the client, for use by other methods.
     this.auth = gaxGrpc.auth;
 
     // Determine the client header string.
-    const clientHeader = [
-      `gl-node/${process.versions.node}`,
-      `grpc/${gaxGrpc.grpcVersion}`,
-      `gax/${gax.version}`,
-      `gapic/${VERSION}`,
-    ];
+    const clientHeader = [];
+
+    if (typeof process !== 'undefined' && 'versions' in process) {
+      clientHeader.push(`gl-node/${process.versions.node}`);
+    }
+    clientHeader.push(`gax/${gaxModule.version}`);
+    if (opts.fallback) {
+      clientHeader.push(`gl-web/${gaxModule.version}`);
+    } else {
+      clientHeader.push(`grpc/${gaxGrpc.grpcVersion}`);
+    }
+    clientHeader.push(`gapic/${VERSION}`);
     if (opts.libName && opts.libVersion) {
       clientHeader.push(`${opts.libName}/${opts.libVersion}`);
     }
 
     // Load the applicable protos.
+    // For Node.js, pass the path to JSON proto file.
+    // For browsers, pass the JSON content.
+
+    const nodejsProtoPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'protos',
+      'protos.json'
+    );
     const protos = gaxGrpc.loadProto(
-      path.join(__dirname, '..', '..', 'protos'),
-      ['google/iam/v1/iam_policy.proto', 'google/pubsub/v1/pubsub.proto']
+      opts.fallback ? require('../../protos/protos.json') : nodejsProtoPath
     );
 
     // This API contains "path templates"; forward-slash-separated
     // identifiers to uniquely identify resources within the API.
     // Create useful helper objects for these.
     this._pathTemplates = {
-      projectPathTemplate: new gax.PathTemplate('projects/{project}'),
-      snapshotPathTemplate: new gax.PathTemplate(
+      projectPathTemplate: new gaxModule.PathTemplate('projects/{project}'),
+      snapshotPathTemplate: new gaxModule.PathTemplate(
         'projects/{project}/snapshots/{snapshot}'
       ),
-      subscriptionPathTemplate: new gax.PathTemplate(
+      subscriptionPathTemplate: new gaxModule.PathTemplate(
         'projects/{project}/subscriptions/{subscription}'
       ),
-      topicPathTemplate: new gax.PathTemplate(
+      topicPathTemplate: new gaxModule.PathTemplate(
         'projects/{project}/topics/{topic}'
       ),
     };
@@ -118,12 +143,12 @@ class SubscriberClient {
     // (e.g. 50 results at a time, with tokens to get subsequent
     // pages). Denote the keys used for pagination and results.
     this._descriptors.page = {
-      listSubscriptions: new gax.PageDescriptor(
+      listSubscriptions: new gaxModule.PageDescriptor(
         'pageToken',
         'nextPageToken',
         'subscriptions'
       ),
-      listSnapshots: new gax.PageDescriptor(
+      listSnapshots: new gaxModule.PageDescriptor(
         'pageToken',
         'nextPageToken',
         'snapshots'
@@ -133,7 +158,9 @@ class SubscriberClient {
     // Some of the methods on this service provide streaming responses.
     // Provide descriptors for these.
     this._descriptors.stream = {
-      streamingPull: new gax.StreamDescriptor(gax.StreamType.BIDI_STREAMING),
+      streamingPull: new gaxModule.StreamDescriptor(
+        gax.StreamType.BIDI_STREAMING
+      ),
     };
 
     // Put together the default options sent with requests.
@@ -152,7 +179,9 @@ class SubscriberClient {
     // Put together the "service stub" for
     // google.iam.v1.IAMPolicy.
     const iamPolicyStub = gaxGrpc.createStub(
-      protos.google.iam.v1.IAMPolicy,
+      opts.fallback
+        ? protos.lookupService('google.iam.v1.IAMPolicy')
+        : protos.google.iam.v1.IAMPolicy,
       opts
     );
 
@@ -164,18 +193,16 @@ class SubscriberClient {
       'testIamPermissions',
     ];
     for (const methodName of iamPolicyStubMethods) {
-      this._innerApiCalls[methodName] = gax.createApiCall(
-        iamPolicyStub.then(
-          stub =>
-            function() {
-              const args = Array.prototype.slice.call(arguments, 0);
-              return stub[methodName].apply(stub, args);
-            },
-          err =>
-            function() {
-              throw err;
-            }
-        ),
+      const innerCallPromise = iamPolicyStub.then(
+        stub => (...args) => {
+          return stub[methodName].apply(stub, args);
+        },
+        err => () => {
+          throw err;
+        }
+      );
+      this._innerApiCalls[methodName] = gaxModule.createApiCall(
+        innerCallPromise,
         defaults[methodName],
         this._descriptors.page[methodName] ||
           this._descriptors.stream[methodName]
@@ -185,7 +212,9 @@ class SubscriberClient {
     // Put together the "service stub" for
     // google.pubsub.v1.Subscriber.
     const subscriberStub = gaxGrpc.createStub(
-      protos.google.pubsub.v1.Subscriber,
+      opts.fallback
+        ? protos.lookupService('google.pubsub.v1.Subscriber')
+        : protos.google.pubsub.v1.Subscriber,
       opts
     );
 
@@ -209,18 +238,16 @@ class SubscriberClient {
       'seek',
     ];
     for (const methodName of subscriberStubMethods) {
-      this._innerApiCalls[methodName] = gax.createApiCall(
-        subscriberStub.then(
-          stub =>
-            function() {
-              const args = Array.prototype.slice.call(arguments, 0);
-              return stub[methodName].apply(stub, args);
-            },
-          err =>
-            function() {
-              throw err;
-            }
-        ),
+      const innerCallPromise = subscriberStub.then(
+        stub => (...args) => {
+          return stub[methodName].apply(stub, args);
+        },
+        err => () => {
+          throw err;
+        }
+      );
+      this._innerApiCalls[methodName] = gaxModule.createApiCall(
+        innerCallPromise,
         defaults[methodName],
         this._descriptors.page[methodName] ||
           this._descriptors.stream[methodName]
