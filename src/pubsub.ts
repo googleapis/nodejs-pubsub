@@ -889,7 +889,7 @@ export class PubSub {
   getClient_(config: GetClientConfig, callback: GetClientCallback) {
     const hasProjectId =
       this.projectId && this.projectId !== PROJECT_ID_PLACEHOLDER;
-    if (!hasProjectId && !this.isEmulator) {
+    if (!hasProjectId) {
       this.auth.getProjectId((err, projectId) => {
         if (err) {
           callback(err);

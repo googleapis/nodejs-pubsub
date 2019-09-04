@@ -1142,16 +1142,6 @@ describe('PubSub', () => {
 
         pubsub.getClient_(CONFIG, assert.ifError);
       });
-
-      it('should not get the project ID if inside emulator', () => {
-        pubsub.isEmulator = true;
-
-        pubsub.auth.getProjectId = () => {
-          throw new Error('getProjectId should not be called.');
-        };
-
-        pubsub.getClient_(CONFIG, assert.ifError);
-      });
     });
 
     it('should cache the client', done => {
