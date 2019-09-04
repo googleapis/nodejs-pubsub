@@ -37,6 +37,11 @@ export interface PublishOptions {
   messageOrdering?: boolean;
 }
 
+export const BATCH_LIMITS: BatchPublishOptions = {
+  maxBytes: Math.pow(1024, 2) * 9,
+  maxMessages: 1000,
+};
+
 /**
  * A Publisher object allows you to publish messages to a specific topic.
  *
@@ -75,7 +80,7 @@ export class Publisher {
    *
    * @param {buffer} data The message data. This must come in the form of a
    *     Buffer object.
-   * @param {MessageOptions} [options] Options for this message.
+   * @param {PubsubMessage} [message] Options for this message.
    * @param {PublishCallback} [callback] Callback function.
    */
   publish(message: PubsubMessage, callback: PublishCallback): void {
@@ -153,8 +158,8 @@ export class Publisher {
 
     this.settings = {
       batching: {
-        maxBytes: Math.min(batching.maxBytes, Math.pow(1024, 2) * 9),
-        maxMessages: Math.min(batching.maxMessages, 1000),
+        maxBytes: Math.min(batching.maxBytes, BATCH_LIMITS.maxBytes!),
+        maxMessages: Math.min(batching.maxMessages, BATCH_LIMITS.maxMessages!),
         maxMilliseconds: batching.maxMilliseconds,
       },
       gaxOpts,

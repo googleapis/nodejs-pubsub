@@ -68,8 +68,8 @@ export class MessageBatch {
    * @param {object} message The message in question.
    * @returns {boolean}
    */
-  canFit({data}: PubsubMessage): boolean {
-    const {maxMessages, maxBytes} = this.options;
+  canFit({data}: PubsubMessage, options?: BatchPublishOptions): boolean {
+    const {maxMessages, maxBytes} = options || this.options;
     return (
       this.messages.length < maxMessages! &&
       this.bytes + data!.length <= maxBytes!

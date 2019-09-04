@@ -95,8 +95,8 @@ export type GetTopicSubscriptionsResponse = PagedResponse<
  *
  * const topic = pubsub.topic('my-topic');
  *
- * @example <caption>To enable message ordering, set `messageOrdering` to true.</caption>
- * const topic = pubsub.topic('ordered-topic', {messageOrdering: true});
+ * @example <caption>To enable message ordering, set `enableMessageOrdering` to true. Please note that this does not persist to an actual topic.</caption>
+ * const topic = pubsub.topic('ordered-topic', {enableMessageOrdering: true});
  */
 export class Topic {
   // tslint:disable-next-line variable-name

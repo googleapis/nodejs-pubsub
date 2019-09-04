@@ -32,7 +32,10 @@ type Resource = Topic | Subscription | Snapshot;
 const PREFIX = 'gcloud-tests';
 const CURRENT_TIME = Date.now();
 
-const pubsub = new PubSub();
+const pubsub = new PubSub({
+  apiEndpoint: 'localhost:8085',
+  projectId: 'boreal-physics-911'
+});
 
 function shortUUID() {
   return uuid
@@ -101,6 +104,8 @@ describe('pubsub', () => {
     const subscriptionStream = pubsub
       .getSubscriptionsStream()
       .on('data', deleteTestResource);
+    // TODO: uncomment this out. Snapshot API does not work in the emulator,
+    // which is needed to test ordering keys.
     // const snapshotStream = pubsub
     //   .getSnapshotsStream()
     //   .on('data', deleteTestResource);

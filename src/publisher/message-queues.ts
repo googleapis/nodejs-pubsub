@@ -19,7 +19,7 @@ import {EventEmitter} from 'events';
 
 import {BatchPublishOptions, MessageBatch} from './message-batch';
 import {PublishError} from './publish-error';
-import {Publisher, PubsubMessage, PublishCallback} from './';
+import {Publisher, PubsubMessage, PublishCallback, BATCH_LIMITS} from './';
 import {google} from '../../proto/pubsub';
 
 interface PublishDone {
@@ -183,18 +183,20 @@ export class OrderedQueue extends MessageQueue {
   add(message: PubsubMessage, callback: PublishCallback): void {
     let batch = this.batches[0];
 
-    if (!batch || !batch.canFit(message)) {
+    if (
+      !batch ||
+      (this.inFlight && !batch.canFit(message, BATCH_LIMITS)) ||
+      !batch.canFit(message)
+    ) {
       batch = new MessageBatch(this.batchOptions);
       this.batches.unshift(batch);
     }
 
     batch.add(message, callback);
 
-    if (this.inFlight || this.pending) {
-      return;
+    if (!this.inFlight && !this.pending) {
+      this.beginNextPublish();
     }
-
-    this.beginNextPublish();
   }
   /**
    * Prepares the next batch to be published. If the batch is full we will
@@ -228,9 +230,17 @@ export class OrderedQueue extends MessageQueue {
 
     const {messages, callbacks} = this.batches.pop()!;
 
+    if (messages.length > 1) {
+      const data = messages.map(m => m.data!.toString());
+      console.log(`publishing ${messages[0].orderingKey}`);
+      console.log(data);
+    }
+
     this._publish(messages, callbacks, (err: null | ServiceError) => {
       this.inFlight = false;
-
+      if (messages.length > 1) {
+        console.log(`done publishing ${messages[0].orderingKey}`);
+      }
       if (err) {
         this.error = new PublishError(this.key, err);
         this.rejectPending(this.error);
