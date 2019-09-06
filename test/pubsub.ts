@@ -125,9 +125,10 @@ const v1Override = {};
 let v1ClientOverrides: any = {};
 
 function defineOverridableClient(clientName: string) {
-  function DefaultClient() {}
-  // tslint:disable-next-line no-any
-  (DefaultClient as any).scopes = [];
+  class DefaultClient {
+    static scopes = [] as string[];
+    fakeMethod() {}
+  }
 
   Object.defineProperty(v1Override, clientName, {
     get() {
