@@ -1018,9 +1018,7 @@ describe('PubSub', () => {
       afterEach(() => sandbox.restore());
 
       sandbox.stub(pubsub, 'auth').value({
-        getProjectId: (callback: Function) => {
-          callback(null, PROJECT_ID);
-        },
+        getProjectId: () => Promise.resolve(PROJECT_ID),
       });
 
       // tslint:disable-next-line no-any
@@ -1075,7 +1073,7 @@ describe('PubSub', () => {
     });
   });
 
-  describe('getClient_', () => {
+  describe('getClientAsync_', () => {
     const FAKE_CLIENT_INSTANCE = class {};
     const CONFIG = ({
       client: 'FakeClient',
@@ -1083,68 +1081,68 @@ describe('PubSub', () => {
 
     beforeEach(() => {
       sandbox.stub(pubsub, 'auth').value({getProjectId: () => util.noop});
-
       v1ClientOverrides.FakeClient = FAKE_CLIENT_INSTANCE;
     });
+
     afterEach(() => sandbox.restore());
+
     describe('project ID', () => {
       beforeEach(() => {
         delete pubsub.projectId;
         pubsub.isEmulator = false;
       });
 
-      it('should get and cache the project ID', done => {
-        sandbox.stub(pubsub, 'auth').value({
-          getProjectId: (callback: Function) => {
-            assert.strictEqual(typeof callback, 'function');
-            callback(null, PROJECT_ID);
-          },
-        });
+      it('should get and cache the project ID', async () => {
+        sandbox.stub(pubsub.auth, 'getProjectId').resolves(PROJECT_ID);
 
-        pubsub.getClient_(CONFIG, err => {
-          assert.ifError(err);
-          assert.strictEqual(pubsub.projectId, PROJECT_ID);
-          assert.strictEqual(pubsub.options.projectId, PROJECT_ID);
-          done();
-        });
+        await pubsub.getClientAsync_(CONFIG);
+
+        assert.strictEqual(pubsub.projectId, PROJECT_ID);
+        assert.strictEqual(pubsub.options.projectId, PROJECT_ID);
       });
 
-      it('should get the project ID if placeholder', done => {
+      it('should get the project ID if placeholder', async () => {
         pubsub.projectId = '{{projectId}}';
+        sandbox.stub(pubsub.auth, 'getProjectId').resolves(PROJECT_ID);
 
-        sandbox.stub(pubsub, 'auth').value({
-          getProjectId: () => {
-            done();
-          },
-        });
+        await pubsub.getClientAsync_(CONFIG);
 
-        pubsub.getClient_(CONFIG, assert.ifError);
+        assert.strictEqual(pubsub.projectId, PROJECT_ID);
       });
 
-      it('should return errors to the callback', done => {
+      it('should return auth errors that occur', async () => {
         const error = new Error('err');
-        sandbox.stub(pubsub.auth, 'getProjectId').callsFake(callback => {
-          callback(error);
-        });
+        sandbox.stub(pubsub.auth, 'getProjectId').rejects(error);
 
-        pubsub.getClient_(CONFIG, err => {
-          assert.strictEqual(err, error);
-          done();
-        });
+        try {
+          await pubsub.getClientAsync_(CONFIG);
+          throw new Error('getClientAsync_ should have thrown an error');
+        } catch (e) {
+          assert.strictEqual(e, error);
+        }
       });
 
-      it('should not get the project ID if already known', () => {
+      it('should ignore auth errors when using the emulator', async () => {
+        pubsub.isEmulator = true;
+
+        const error = new Error('err');
+        sandbox.stub(pubsub.auth, 'getProjectId').rejects(error);
+
+        await pubsub.getClientAsync_(CONFIG);
+        assert.strictEqual(pubsub.projectId, '');
+      });
+
+      it('should not get the project ID if already known', async () => {
         pubsub.projectId = PROJECT_ID;
 
-        pubsub.auth.getProjectId = () => {
-          throw new Error('getProjectId should not be called.');
-        };
+        const error = new Error('getProjectId should not be called.');
+        sandbox.stub(pubsub.auth, 'getProjectId').rejects(error);
 
-        pubsub.getClient_(CONFIG, assert.ifError);
+        await pubsub.getClientAsync_(CONFIG);
       });
     });
 
-    it('should cache the client', done => {
+    it('should cache the client', async () => {
       delete pubsub.api.fakeClient;
 
       let numTimesFakeClientInstantiated = 0;
@@ -1155,19 +1153,14 @@ describe('PubSub', () => {
         return FAKE_CLIENT_INSTANCE;
       };
 
-      pubsub.getClient_(CONFIG, err => {
-        assert.ifError(err);
-        assert.strictEqual(pubsub.api.FakeClient, FAKE_CLIENT_INSTANCE);
+      await pubsub.getClientAsync_(CONFIG);
+      assert.strictEqual(pubsub.api.FakeClient, FAKE_CLIENT_INSTANCE);
 
-        pubsub.getClient_(CONFIG, err => {
-          assert.ifError(err);
-          assert.strictEqual(numTimesFakeClientInstantiated, 1);
-          done();
-        });
-      });
+      await pubsub.getClientAsync_(CONFIG);
+      assert.strictEqual(numTimesFakeClientInstantiated, 1);
     });
 
-    it('should return the correct client', done => {
+    it('should return the correct client', async () => {
       // tslint:disable-next-line only-arrow-functions no-any
       v1ClientOverrides.FakeClient = function(
         options: pubsubTypes.ClientConfig
@@ -1176,9 +1169,36 @@ describe('PubSub', () => {
         return FAKE_CLIENT_INSTANCE;
       };
 
+      const client = await pubsub.getClientAsync_(CONFIG);
+      assert.strictEqual(client, FAKE_CLIENT_INSTANCE);
+    });
+  });
+
+  describe('getClient_', () => {
+    const FAKE_CLIENT_INSTANCE = ({} as unknown) as gax.ClientStub;
+    const CONFIG = ({
+      client: 'FakeClient',
+    } as {}) as pubsubTypes.GetClientConfig;
+
+    it('should get the client', done => {
+      sandbox
+        .stub(pubsub, 'getClientAsync_')
+        .withArgs(CONFIG)
+        .resolves(FAKE_CLIENT_INSTANCE);
+
       pubsub.getClient_(CONFIG, (err, client) => {
         assert.ifError(err);
         assert.strictEqual(client, FAKE_CLIENT_INSTANCE);
+        done();
+      });
+    });
+
+    it('should pass back any errors', done => {
+      const error = new Error('err');
+      sandbox.stub(pubsub, 'getClientAsync_').rejects(error);
+
+      pubsub.getClient_(CONFIG, err => {
+        assert.strictEqual(err, error);
         done();
       });
     });
