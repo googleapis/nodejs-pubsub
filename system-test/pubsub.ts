@@ -632,7 +632,10 @@ describe('pubsub', () => {
         policy,
         (err: ServiceError | null, newPolicy?: Policy | null) => {
           assert.ifError(err);
-          assert.deepStrictEqual(newPolicy!.bindings, policy.bindings);
+          const expectedBindings = policy.bindings.map(binding =>
+            Object.assign({condition: null}, binding)
+          );
+          assert.deepStrictEqual(newPolicy!.bindings, expectedBindings);
           done();
         }
       );
