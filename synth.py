@@ -2,6 +2,7 @@ import synthtool as s
 import synthtool.gcp as gcp
 import logging
 import subprocess
+import os
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -50,7 +51,11 @@ s.replace('src/**/doc/google/protobuf/doc_timestamp.js',
         'toISOString)')
 # [END fix-dead-link]
 
+# No browser support for TypeScript libraries yet
+os.unlink('webpack.config.js')
+os.unlink('src/browser.js')
 
 # Node.js specific cleanup
 subprocess.run(['npm', 'install'])
 subprocess.run(['npm', 'run', 'fix'])
+subprocess.run(['npx', 'compileProtos', 'src'])

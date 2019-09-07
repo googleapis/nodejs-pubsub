@@ -45,6 +45,11 @@ describe('PublisherClient', () => {
     assert(client);
   });
 
+  it('should create a client with gRPC fallback', () => {
+    const client = new pubsubModule.v1.PublisherClient({fallback: true});
+    assert(client);
+  });
+
   describe('createTopic', () => {
     it('invokes createTopic without error', done => {
       const client = new pubsubModule.v1.PublisherClient({
@@ -695,6 +700,11 @@ describe('SubscriberClient', () => {
 
   it('should create a client with no options', () => {
     const client = new pubsubModule.v1.SubscriberClient();
+    assert(client);
+  });
+
+  it('should create a client with gRPC fallback', () => {
+    const client = new pubsubModule.v1.SubscriberClient({fallback: true});
     assert(client);
   });
 
