@@ -1,5 +1,4 @@
 import * as $protobuf from "protobufjs";
-import * as Long from "long";
 /** Namespace google. */
 export namespace google {
 
@@ -197,6 +196,9 @@ export namespace google {
 
                 /** GetIamPolicyRequest resource */
                 resource?: (string|null);
+
+                /** GetIamPolicyRequest options */
+                options?: (google.iam.v1.IGetPolicyOptions|null);
             }
 
             /** Represents a GetIamPolicyRequest. */
@@ -210,6 +212,9 @@ export namespace google {
 
                 /** GetIamPolicyRequest resource. */
                 public resource: string;
+
+                /** GetIamPolicyRequest options. */
+                public options?: (google.iam.v1.IGetPolicyOptions|null);
 
                 /**
                  * Creates a new GetIamPolicyRequest instance using the specified properties.
@@ -468,6 +473,96 @@ export namespace google {
                 public toJSON(): { [k: string]: any };
             }
 
+            /** Properties of a GetPolicyOptions. */
+            interface IGetPolicyOptions {
+
+                /** GetPolicyOptions requestedPolicyVersion */
+                requestedPolicyVersion?: (number|null);
+            }
+
+            /** Represents a GetPolicyOptions. */
+            class GetPolicyOptions implements IGetPolicyOptions {
+
+                /**
+                 * Constructs a new GetPolicyOptions.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.iam.v1.IGetPolicyOptions);
+
+                /** GetPolicyOptions requestedPolicyVersion. */
+                public requestedPolicyVersion: number;
+
+                /**
+                 * Creates a new GetPolicyOptions instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns GetPolicyOptions instance
+                 */
+                public static create(properties?: google.iam.v1.IGetPolicyOptions): google.iam.v1.GetPolicyOptions;
+
+                /**
+                 * Encodes the specified GetPolicyOptions message. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
+                 * @param message GetPolicyOptions message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.iam.v1.IGetPolicyOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified GetPolicyOptions message, length delimited. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
+                 * @param message GetPolicyOptions message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.iam.v1.IGetPolicyOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a GetPolicyOptions message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns GetPolicyOptions
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.GetPolicyOptions;
+
+                /**
+                 * Decodes a GetPolicyOptions message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns GetPolicyOptions
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.GetPolicyOptions;
+
+                /**
+                 * Verifies a GetPolicyOptions message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a GetPolicyOptions message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns GetPolicyOptions
+                 */
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.GetPolicyOptions;
+
+                /**
+                 * Creates a plain object from a GetPolicyOptions message. Also converts values to other types if specified.
+                 * @param message GetPolicyOptions
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.iam.v1.GetPolicyOptions, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this GetPolicyOptions to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
             /** Properties of a Policy. */
             interface IPolicy {
 
@@ -578,6 +673,9 @@ export namespace google {
 
                 /** Binding members */
                 members?: (string[]|null);
+
+                /** Binding condition */
+                condition?: (google.type.IExpr|null);
             }
 
             /** Represents a Binding. */
@@ -594,6 +692,9 @@ export namespace google {
 
                 /** Binding members. */
                 public members: string[];
+
+                /** Binding condition. */
+                public condition?: (google.type.IExpr|null);
 
                 /**
                  * Creates a new Binding instance using the specified properties.
@@ -671,6 +772,9 @@ export namespace google {
 
                 /** PolicyDelta bindingDeltas */
                 bindingDeltas?: (google.iam.v1.IBindingDelta[]|null);
+
+                /** PolicyDelta auditConfigDeltas */
+                auditConfigDeltas?: (google.iam.v1.IAuditConfigDelta[]|null);
             }
 
             /** Represents a PolicyDelta. */
@@ -684,6 +788,9 @@ export namespace google {
 
                 /** PolicyDelta bindingDeltas. */
                 public bindingDeltas: google.iam.v1.IBindingDelta[];
+
+                /** PolicyDelta auditConfigDeltas. */
+                public auditConfigDeltas: google.iam.v1.IAuditConfigDelta[];
 
                 /**
                  * Creates a new PolicyDelta instance using the specified properties.
@@ -767,6 +874,9 @@ export namespace google {
 
                 /** BindingDelta member */
                 member?: (string|null);
+
+                /** BindingDelta condition */
+                condition?: (google.type.IExpr|null);
             }
 
             /** Represents a BindingDelta. */
@@ -786,6 +896,9 @@ export namespace google {
 
                 /** BindingDelta member. */
                 public member: string;
+
+                /** BindingDelta condition. */
+                public condition?: (google.type.IExpr|null);
 
                 /**
                  * Creates a new BindingDelta instance using the specified properties.
@@ -859,6 +972,124 @@ export namespace google {
             }
 
             namespace BindingDelta {
+
+                /** Action enum. */
+                enum Action {
+                    ACTION_UNSPECIFIED = 0,
+                    ADD = 1,
+                    REMOVE = 2
+                }
+            }
+
+            /** Properties of an AuditConfigDelta. */
+            interface IAuditConfigDelta {
+
+                /** AuditConfigDelta action */
+                action?: (google.iam.v1.AuditConfigDelta.Action|null);
+
+                /** AuditConfigDelta service */
+                service?: (string|null);
+
+                /** AuditConfigDelta exemptedMember */
+                exemptedMember?: (string|null);
+
+                /** AuditConfigDelta logType */
+                logType?: (string|null);
+            }
+
+            /** Represents an AuditConfigDelta. */
+            class AuditConfigDelta implements IAuditConfigDelta {
+
+                /**
+                 * Constructs a new AuditConfigDelta.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.iam.v1.IAuditConfigDelta);
+
+                /** AuditConfigDelta action. */
+                public action: google.iam.v1.AuditConfigDelta.Action;
+
+                /** AuditConfigDelta service. */
+                public service: string;
+
+                /** AuditConfigDelta exemptedMember. */
+                public exemptedMember: string;
+
+                /** AuditConfigDelta logType. */
+                public logType: string;
+
+                /**
+                 * Creates a new AuditConfigDelta instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns AuditConfigDelta instance
+                 */
+                public static create(properties?: google.iam.v1.IAuditConfigDelta): google.iam.v1.AuditConfigDelta;
+
+                /**
+                 * Encodes the specified AuditConfigDelta message. Does not implicitly {@link google.iam.v1.AuditConfigDelta.verify|verify} messages.
+                 * @param message AuditConfigDelta message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.iam.v1.IAuditConfigDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified AuditConfigDelta message, length delimited. Does not implicitly {@link google.iam.v1.AuditConfigDelta.verify|verify} messages.
+                 * @param message AuditConfigDelta message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.iam.v1.IAuditConfigDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an AuditConfigDelta message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns AuditConfigDelta
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.AuditConfigDelta;
+
+                /**
+                 * Decodes an AuditConfigDelta message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns AuditConfigDelta
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.AuditConfigDelta;
+
+                /**
+                 * Verifies an AuditConfigDelta message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates an AuditConfigDelta message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns AuditConfigDelta
+                 */
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.AuditConfigDelta;
+
+                /**
+                 * Creates a plain object from an AuditConfigDelta message. Also converts values to other types if specified.
+                 * @param message AuditConfigDelta
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.iam.v1.AuditConfigDelta, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this AuditConfigDelta to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            namespace AuditConfigDelta {
 
                 /** Action enum. */
                 enum Action {
@@ -4070,6 +4301,118 @@ export namespace google {
                  */
                 public toJSON(): { [k: string]: any };
             }
+        }
+    }
+
+    /** Namespace type. */
+    namespace type {
+
+        /** Properties of an Expr. */
+        interface IExpr {
+
+            /** Expr expression */
+            expression?: (string|null);
+
+            /** Expr title */
+            title?: (string|null);
+
+            /** Expr description */
+            description?: (string|null);
+
+            /** Expr location */
+            location?: (string|null);
+        }
+
+        /** Represents an Expr. */
+        class Expr implements IExpr {
+
+            /**
+             * Constructs a new Expr.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: google.type.IExpr);
+
+            /** Expr expression. */
+            public expression: string;
+
+            /** Expr title. */
+            public title: string;
+
+            /** Expr description. */
+            public description: string;
+
+            /** Expr location. */
+            public location: string;
+
+            /**
+             * Creates a new Expr instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns Expr instance
+             */
+            public static create(properties?: google.type.IExpr): google.type.Expr;
+
+            /**
+             * Encodes the specified Expr message. Does not implicitly {@link google.type.Expr.verify|verify} messages.
+             * @param message Expr message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: google.type.IExpr, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified Expr message, length delimited. Does not implicitly {@link google.type.Expr.verify|verify} messages.
+             * @param message Expr message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: google.type.IExpr, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an Expr message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns Expr
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.type.Expr;
+
+            /**
+             * Decodes an Expr message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns Expr
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.type.Expr;
+
+            /**
+             * Verifies an Expr message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an Expr message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Expr
+             */
+            public static fromObject(object: { [k: string]: any }): google.type.Expr;
+
+            /**
+             * Creates a plain object from an Expr message. Also converts values to other types if specified.
+             * @param message Expr
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: google.type.Expr, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Expr to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
         }
     }
 }
