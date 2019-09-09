@@ -1866,6 +1866,9 @@
               },
               "nested": {
                 "IAMPolicy": {
+                  "options": {
+                    "(google.api.default_host)": "iam-meta-api.googleapis.com"
+                  },
                   "methods": {
                     "SetIamPolicy": {
                       "requestType": "SetIamPolicyRequest",
@@ -1910,6 +1913,10 @@
                     "resource": {
                       "type": "string",
                       "id": 1
+                    },
+                    "options": {
+                      "type": "google.iam.v1.GetPolicyOptions",
+                      "id": 2
                     }
                   }
                 },
@@ -1931,6 +1938,14 @@
                     "permissions": {
                       "rule": "repeated",
                       "type": "string",
+                      "id": 1
+                    }
+                  }
+                },
+                "GetPolicyOptions": {
+                  "fields": {
+                    "requestedPolicyVersion": {
+                      "type": "int32",
                       "id": 1
                     }
                   }
