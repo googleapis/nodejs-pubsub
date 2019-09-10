@@ -526,6 +526,7 @@ export class PubSub {
     if (!apiEndpoint && !process.env.PUBSUB_EMULATOR_HOST) {
       return;
     }
+
     const baseUrl = apiEndpoint || process.env.PUBSUB_EMULATOR_HOST;
     const leadingProtocol = new RegExp('^https*://');
     const trailingSlashes = new RegExp('/*$');
@@ -537,6 +538,10 @@ export class PubSub {
     this.options.port = baseUrlParts[1];
     this.options.sslCreds = grpc.credentials.createInsecure();
     this.isEmulator = true;
+
+    if (!this.options.projectId && process.env.PUBSUB_PROJECT_ID) {
+      this.options.projectId = process.env.PUBSUB_PROJECT_ID;
+    }
   }
 
   getSnapshots(options?: PageOptions): Promise<GetSnapshotsResponse>;
@@ -887,28 +892,48 @@ export class PubSub {
    * @param {function} [callback] The callback function.
    */
   getClient_(config: GetClientConfig, callback: GetClientCallback) {
-    const hasProjectId =
-      this.projectId && this.projectId !== PROJECT_ID_PLACEHOLDER;
-    if (!hasProjectId && !this.isEmulator) {
-      this.auth.getProjectId((err, projectId) => {
-        if (err) {
-          callback(err);
-          return;
-        }
-        this.projectId = projectId!;
-        this.options.projectId = projectId!;
+    this.getClientAsync_(config).then(
+      client => callback(null, client),
+      callback
+    );
+  }
+  /**
+   * Get the PubSub client object.
+   *
+   * @private
+   *
+   * @param {object} config Configuration object.
+   * @param {object} config.gaxOpts GAX options.
+   * @param {function} config.method The gax method to call.
+   * @param {object} config.reqOpts Request options.
+   * @returns {Promise}
+   */
+  async getClientAsync_(config: GetClientConfig): Promise<gax.ClientStub> {
+    if (!this.projectId || this.projectId === PROJECT_ID_PLACEHOLDER) {
+      let projectId;
 
-        this.getClient_(config, callback);
-      });
-      return;
+      try {
+        projectId = await this.auth.getProjectId();
+      } catch (e) {
+        if (!this.isEmulator) {
+          throw e;
+        }
+        projectId = '';
+      }
+
+      this.projectId = projectId!;
+      this.options.projectId = projectId!;
     }
+
     let gaxClient = this.api[config.client];
+
     if (!gaxClient) {
       // Lazily instantiate client.
       gaxClient = new v1[config.client](this.options) as gax.ClientStub;
       this.api[config.client] = gaxClient;
     }
-    callback(null, gaxClient);
+
+    return gaxClient;
   }
   /**
    * Funnel all API requests through this method, to be sure we have a project
