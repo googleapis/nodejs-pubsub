@@ -4,6 +4,21 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [0.32.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.31.1...v0.32.0) (2019-09-11)
+
+
+### Bug Fixes
+
+* pull projectId from auth client with emulator ([#731](https://www.github.com/googleapis/nodejs-pubsub/issues/731)) ([3840cad](https://www.github.com/googleapis/nodejs-pubsub/commit/3840cad))
+* update IAM protos ([#736](https://www.github.com/googleapis/nodejs-pubsub/issues/736)) ([055fa33](https://www.github.com/googleapis/nodejs-pubsub/commit/055fa33))
+
+
+### Features
+
+* introduces DeadLetterPolicy ([e24c545](https://www.github.com/googleapis/nodejs-pubsub/commit/e24c545))
+* load protos from JSON, grpc-fallback support ([#730](https://www.github.com/googleapis/nodejs-pubsub/issues/730)) ([2071954](https://www.github.com/googleapis/nodejs-pubsub/commit/2071954))
+* update IAM protos ([#734](https://www.github.com/googleapis/nodejs-pubsub/issues/734)) ([91fa2ef](https://www.github.com/googleapis/nodejs-pubsub/commit/91fa2ef))
+
 ### [0.31.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.31.0...v0.31.1) (2019-08-27)
 
 
