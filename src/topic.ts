@@ -803,7 +803,7 @@ export class Topic {
    * const orderingKey = 'foo';
    * const data = Buffer.from('Hello, order!');
    *
-   * topic.publish(data, {orderingKey}, err => {
+   * topic.publishMessage({data, orderingKey}, err => {
    *   if (err) {
    *     topic.resumePublishing(orderingKey);
    *   }
