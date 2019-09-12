@@ -81,6 +81,9 @@ export type GetTopicSubscriptionsResponse = PagedResponse<
   google.pubsub.v1.IListTopicSubscriptionsResponse
 >;
 
+// tslint:disable-next-line no-any
+export type MessageOptions = PubsubMessage & {json?: any};
+
 /**
  * A Topic object allows you to interact with a Cloud Pub/Sub topic.
  *
@@ -597,36 +600,24 @@ export class Topic {
     );
   }
 
-  publish(data: Buffer, options?: PubsubMessage): Promise<[string]>;
+  publish(data: Buffer, attributes?: Attributes): Promise<string>;
   publish(data: Buffer, callback: PublishCallback): void;
   publish(
     data: Buffer,
-    options: PubsubMessage,
+    attributes: Attributes,
     callback: PublishCallback
   ): void;
   /**
-   * @typedef {object} MessageOptions
-   * @property {object.<string, string>} [attributes] Message attributes.
-   * @property {string} [orderingKey] An ordering key.
-   */
-  /**
-   * @typedef {array} PublishResponse
-   * @property {string} 0 The id for the message.
-   */
-  /**
-   * @callback PublishCallback
-   * @param {?Error} err Request error, if any.
-   * @param {string} messageId The id for the message.
-   */
-  /**
    * Publish the provided message.
+   *
+   * @deprecated Please use {@link Topic#publishMessage}.
    *
    * @throws {TypeError} If data is not a Buffer object.
    * @throws {TypeError} If any value in `attributes` object is not a string.
    *
    * @param {buffer} data The message data. This must come in the form of a
    *     Buffer object.
-   * @param {MessageOptions} [options] Options for this message.
+   * @param {object.<string, string>} [attributes] Attributes for this message.
    * @param {PublishCallback} [callback] Callback function.
    * @returns {Promise<PublishResponse>}
    *
@@ -650,34 +641,26 @@ export class Topic {
    *   key: 'value'
    * };
    *
-   * topic.publish(data, {attributes}, callback);
-   *
-   * @example <caption>To publish messages in order, make sure message ordering is enabled and provide an ordering key</caption>
-   * const topic = pubsub.topic('ordered-topic', {messageOrdering: true});
-   * const orderingKey = 'my-key';
-   *
-   * topic.publish(data, {orderingKey}, callback);
+   * topic.publish(data, attributes, callback);
    *
    * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
-   * const [messageId] = await topic.publish(data);
+   * topic.publish(data).then((messageId) => {});
    */
   publish(
     data: Buffer,
-    optsOrCb?: PubsubMessage | PublishCallback,
+    attrsOrCb?: Attributes | PublishCallback,
     callback?: PublishCallback
-  ): Promise<[string]> | void {
-    const options = typeof optsOrCb === 'object' ? optsOrCb : {};
-    callback = typeof optsOrCb === 'function' ? optsOrCb : callback;
-
-    const message = Object.assign({data}, options) as PubsubMessage;
-    this.publisher.publish(message, callback!);
+  ): Promise<string> | void {
+    const attributes = typeof attrsOrCb === 'object' ? attrsOrCb : {};
+    callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
+    return this.publishMessage({data, attributes}, callback!);
   }
 
-  publishJSON(json: object, options?: PubsubMessage): Promise<[string]>;
+  publishJSON(json: object, attributes?: Attributes): Promise<string>;
   publishJSON(json: object, callback: PublishCallback): void;
   publishJSON(
     json: object,
-    options: PubsubMessage,
+    attributes: Attributes,
     callback: PublishCallback
   ): void;
   /**
@@ -687,12 +670,12 @@ export class Topic {
    * {@link Subscription} objects will always return message data in the form of
    * a Buffer, so any JSON published will require manual deserialization.
    *
-   * @see Topic#publish
+   * @deprecated Please use the `json` option via {@link Topic#publishMessage}.
    *
    * @throws {Error} If non-object data is provided.
    *
    * @param {object} json The JSON data to publish.
-   * @param {MessageOptions} [options] Options for this message.
+   * @param {object} [attributes] Attributes for this message.
    * @param {PublishCallback} [callback] Callback function.
    * @returns {Promise<PublishResponse>}
    *
@@ -718,31 +701,90 @@ export class Topic {
    *   key: 'value'
    * };
    *
-   * topic.publishJSON(data, {attributes}, callback);
+   * topic.publishJSON(data, attributes, callback);
+   *
+   * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
+   * topic.publishJSON(data).then((messageId) => {});
+   */
+  publishJSON(
+    json: object,
+    attrsOrCb?: Attributes | PublishCallback,
+    callback?: PublishCallback
+  ): Promise<string> | void {
+    if (!is.object(json)) {
+      throw new Error('First parameter should be an object.');
+    }
+    const attributes = typeof attrsOrCb === 'object' ? attrsOrCb : {};
+    callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
+
+    return this.publishMessage({json, attributes}, callback!);
+  }
+
+  publishMessage(message: MessageOptions): Promise<[string]>;
+  publishMessage(message: MessageOptions, callback: PublishCallback): void;
+  /**
+   * @typedef {object} MessageOptions
+   * @property {buffer} [data] The message data.
+   * @property {object} [json] Convenience property to publish JSON data. This
+   *     will transform the provided JSON into a Buffer before publishing.
+   *     {@link Subscription} objects will always return message data in the
+   *     form of a Buffer, so any JSON published will require manual
+   *     deserialization.
+   * @property {object.<string, string>} [attributes] Attributes for this
+   *     message.
+   * @property {string} [orderingKey] A message ordering key.
+   */
+  /**
+   * Publish the provided message.
+   *
+   * @throws {TypeError} If data is not a Buffer object.
+   * @throws {TypeError} If any value in `attributes` object is not a string.
+   *
+   * @param {MessageOptions} message Message object.
+   * @param {PublishCallback} [callback] Callback function.
+   * @returns {Promise<PublishResponse>}
+   *
+   * @example
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   * const topic = pubsub.topic('my-topic');
+   *
+   * const data = Buffer.from('Hello, world!');
+   *
+   * const callback = (err, messageId) => {
+   *   if (err) {
+   *     // Error handling omitted.
+   *   }
+   * };
+   *
+   * topic.publishMessage({data}, callback);
+   *
+   * @example <caption>Publish JSON message data.</caption>
+   * const json = {foo: 'bar'};
+   *
+   * topic.publishMessage({json}, callback);
    *
    * @example <caption>To publish messages in order, make sure message ordering is enabled and provide an ordering key</caption>
    * const topic = pubsub.topic('ordered-topic', {messageOrdering: true});
    * const orderingKey = 'my-key';
    *
-   * topic.publishJSON(data, {orderingKey}, callback);
+   * topic.publishMessage({data, orderingKey}, callback);
    *
    * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
-   * const [messageId] = await topic.publishJSON(data);
+   * const [messageId] = await topic.publishMessage({data});
    */
-  publishJSON(
-    json: object,
-    optsOrCb?: PubsubMessage | PublishCallback,
+  publishMessage(
+    message: MessageOptions,
     callback?: PublishCallback
   ): Promise<[string]> | void {
-    if (!is.object(json)) {
-      throw new Error('First parameter should be an object.');
+    message = Object.assign({}, message);
+
+    if (is.object(message.json)) {
+      message.data = Buffer.from(JSON.stringify(message.json));
+      delete message.json;
     }
 
-    const options = typeof optsOrCb === 'object' ? optsOrCb : {};
-    callback = typeof optsOrCb === 'function' ? optsOrCb : callback;
-
-    const data = Buffer.from(JSON.stringify(json));
-    this.publish(data, options, callback!);
+    this.publisher.publish(message, callback!);
   }
 
   /**

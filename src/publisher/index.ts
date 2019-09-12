@@ -70,6 +70,36 @@ export class Publisher {
     this.queue = new Queue(this);
     this.orderedQueues = new Map();
   }
+  publish(data: Buffer, attributes?: Attributes): Promise<string>;
+  publish(data: Buffer, callback: PublishCallback): void;
+  publish(
+    data: Buffer,
+    attributes: Attributes,
+    callback: PublishCallback
+  ): void;
+  /**
+   * Publish the provided message.
+   *
+   * @deprecated use {@link Publisher#publishMessage} instead.
+   *
+   * @private
+   * @see Publisher#publishMessage
+   *
+   * @param {buffer} data The message data. This must come in the form of a
+   *     Buffer object.
+   * @param {object.<string, string>} [attributes] Attributes for this message.
+   * @param {PublishCallback} [callback] Callback function.
+   * @returns {Promise<PublishResponse>}
+   */
+  publish(
+    data: Buffer,
+    attrsOrCb?: Attributes | PublishCallback,
+    callback?: PublishCallback
+  ): Promise<string> | void {
+    const attributes = typeof attrsOrCb === 'object' ? attrsOrCb : {};
+    callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
+    return this.publishMessage({data, attributes}, callback!);
+  }
   /**
    * Publish the provided message.
    *
@@ -83,7 +113,7 @@ export class Publisher {
    * @param {PubsubMessage} [message] Options for this message.
    * @param {PublishCallback} [callback] Callback function.
    */
-  publish(message: PubsubMessage, callback: PublishCallback): void {
+  publishMessage(message: PubsubMessage, callback: PublishCallback): void {
     const {data, attributes = {}} = message;
 
     if (!(data instanceof Buffer)) {
