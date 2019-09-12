@@ -230,17 +230,9 @@ export class OrderedQueue extends MessageQueue {
 
     const {messages, callbacks} = this.batches.pop()!;
 
-    if (messages.length > 1) {
-      const data = messages.map(m => m.data!.toString());
-      console.log(`publishing ${messages[0].orderingKey}`);
-      console.log(data);
-    }
-
     this._publish(messages, callbacks, (err: null | ServiceError) => {
       this.inFlight = false;
-      if (messages.length > 1) {
-        console.log(`done publishing ${messages[0].orderingKey}`);
-      }
+
       if (err) {
         this.error = new PublishError(this.key, err);
         this.rejectPending(this.error);
