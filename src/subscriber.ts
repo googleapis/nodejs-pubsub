@@ -201,7 +201,7 @@ export interface SubscriberOptions {
  * @property {number} [ackDeadline=10] Acknowledge deadline in seconds. If left
  *     unset the initial value will be 10 seconds, but it will evolve into the
  *     99th percentile time it takes to acknowledge a message.
- * @property {BatchingOptions} [batching] Request batching options.
+ * @property {BatchOptions} [batching] Request batching options.
  * @property {FlowControlOptions} [flowControl] Flow control options.
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
  */
