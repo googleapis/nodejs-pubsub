@@ -4,6 +4,17 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [1.0.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.32.1...v1.0.0) (2019-09-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* set release level to GA (#745)
+
+### Miscellaneous Chores
+
+* set release level to GA ([#745](https://www.github.com/googleapis/nodejs-pubsub/issues/745)) ([2e90c5b](https://www.github.com/googleapis/nodejs-pubsub/commit/2e90c5b))
+
 ### [0.32.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.32.0...v0.32.1) (2019-09-13)
 
 ### Updates
