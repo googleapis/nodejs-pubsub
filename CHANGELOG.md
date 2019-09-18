@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [1.0.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.0.0...v1.0.1) (2019-09-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @google-cloud/pubsub to v1 ([#750](https://www.github.com/googleapis/nodejs-pubsub/issues/750)) ([82305de](https://www.github.com/googleapis/nodejs-pubsub/commit/82305de))
+
 ## [1.0.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.32.1...v1.0.0) (2019-09-18)
 
 
