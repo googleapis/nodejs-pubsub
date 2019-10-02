@@ -17,12 +17,11 @@
 
 /**
  * @property {string[]} allowedPersistenceRegions
- *   The list of GCP region IDs where messages that are published to the topic
+ *   A list of IDs of GCP regions where messages that are published to the topic
  *   may be persisted in storage. Messages published by publishers running in
  *   non-allowed GCP regions (or running outside of GCP altogether) will be
- *   routed for storage in one of the allowed regions. An empty list indicates a
- *   misconfiguration at the project or organization level, which will result in
- *   all Publish operations failing.
+ *   routed for storage in one of the allowed regions. An empty list means that
+ *   no regions are allowed, and is not a valid configuration.
  *
  * @typedef MessageStoragePolicy
  * @memberof google.pubsub.v1
@@ -48,14 +47,17 @@ const MessageStoragePolicy = {
  *   managing labels</a>.
  *
  * @property {Object} messageStoragePolicy
- *   Policy constraining how messages published to the topic may be stored. It
- *   is determined when the topic is created based on the policy configured at
- *   the project level. It must not be set by the caller in the request to
- *   CreateTopic or to UpdateTopic. This field will be populated in the
- *   responses for GetTopic, CreateTopic, and UpdateTopic: if not present in the
- *   response, then no constraints are in effect.
+ *   Policy constraining the set of Google Cloud Platform regions where messages
+ *   published to the topic may be stored. If not present, then no constraints
+ *   are in effect.
  *
  *   This object should have the same structure as [MessageStoragePolicy]{@link google.pubsub.v1.MessageStoragePolicy}
+ *
+ * @property {string} kmsKeyName
+ *   The resource name of the Cloud KMS CryptoKey to be used to protect access
+ *   to messages published on this topic.
+ *
+ *   The expected format is `projects/* /locations/* /keyRings/* /cryptoKeys/*`.
  *
  * @typedef Topic
  * @memberof google.pubsub.v1
@@ -75,7 +77,7 @@ const Topic = {
  * <a href="https://cloud.google.com/pubsub/quotas">Quotas and limits</a>
  * for more information about message limits.
  *
- * @property {string} data
+ * @property {Buffer} data
  *   The message data field. If this field is empty, the message must contain
  *   at least one attribute.
  *
@@ -274,10 +276,7 @@ const ListTopicSubscriptionsResponse = {
 };
 
 /**
- * Request for the `ListTopicSnapshots` method. <br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the `ListTopicSnapshots` method.
  *
  * @property {string} topic
  *   The name of the topic that snapshots are attached to.
@@ -300,10 +299,7 @@ const ListTopicSnapshotsRequest = {
 };
 
 /**
- * Response for the `ListTopicSnapshots` method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Response for the `ListTopicSnapshots` method.
  *
  * @property {string[]} snapshots
  *   The names of the snapshots that match the request.
@@ -390,10 +386,6 @@ const DeleteTopicRequest = {
  *   <a
  *   href="https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time">
  *   Seek to a timestamp</a>.
- *   <br><br>
- *   <b>BETA:</b> This feature is part of a beta release. This API might be
- *   changed in backward-incompatible ways and is not recommended for production
- *   use. It is not subject to any SLA or deprecation policy.
  *
  * @property {Object} messageRetentionDuration
  *   How long to retain unacknowledged messages in the subscription's backlog,
@@ -401,10 +393,7 @@ const DeleteTopicRequest = {
  *   If `retain_acked_messages` is true, then this also configures the retention
  *   of acknowledged messages, and thus configures how far back in time a `Seek`
  *   can be done. Defaults to 7 days. Cannot be more than 7 days or less than 10
- *   minutes.<br><br>
- *   <b>BETA:</b> This feature is part of a beta release. This API might be
- *   changed in backward-incompatible ways and is not recommended for production
- *   use. It is not subject to any SLA or deprecation policy.
+ *   minutes.
  *
  *   This object should have the same structure as [Duration]{@link google.protobuf.Duration}
  *
@@ -428,17 +417,70 @@ const DeleteTopicRequest = {
  *   operations on the subscription. If `expiration_policy` is not set, a
  *   *default policy* with `ttl` of 31 days will be used. The minimum allowed
  *   value for `expiration_policy.ttl` is 1 day.
- *   <b>BETA:</b> This feature is part of a beta release. This API might be
- *   changed in backward-incompatible ways and is not recommended for production
- *   use. It is not subject to any SLA or deprecation policy.
  *
  *   This object should have the same structure as [ExpirationPolicy]{@link google.pubsub.v1.ExpirationPolicy}
+ *
+ * @property {Object} deadLetterPolicy
+ *   A policy that specifies the conditions for dead lettering messages in
+ *   this subscription. If dead_letter_policy is not set, dead lettering
+ *   is disabled.
+ *
+ *   The Cloud Pub/Sub service account associated with this subscriptions's
+ *   parent project (i.e.,
+ *   service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have
+ *   permission to Acknowledge() messages on this subscription.
+ *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+ *   API might be changed in backward-incompatible ways and is not recommended
+ *   for production use. It is not subject to any SLA or deprecation policy.
+ *
+ *   This object should have the same structure as [DeadLetterPolicy]{@link google.pubsub.v1.DeadLetterPolicy}
  *
  * @typedef Subscription
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.Subscription definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
 const Subscription = {
+  // This is for documentation. Actual contents will be loaded by gRPC.
+};
+
+/**
+ * Dead lettering is done on a best effort basis. The same message might be
+ * dead lettered multiple times.
+ *
+ * If validation on any of the fields fails at subscription creation/updation,
+ * the create/update subscription request will fail.
+ *
+ * @property {string} deadLetterTopic
+ *   The name of the topic to which dead letter messages should be published.
+ *   Format is `projects/{project}/topics/{topic}`.The Cloud Pub/Sub service
+ *   account associated with the enclosing subscription's parent project (i.e.,
+ *   service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have
+ *   permission to Publish() to this topic.
+ *
+ *   The operation will fail if the topic does not exist.
+ *   Users should ensure that there is a subscription attached to this topic
+ *   since messages published to a topic with no subscriptions are lost.
+ *
+ * @property {number} maxDeliveryAttempts
+ *   The maximum number of delivery attempts for any message. The value must be
+ *   between 5 and 100.
+ *
+ *   The number of delivery attempts is defined as 1 + (the sum of number of
+ *   NACKs and number of times the acknowledgement deadline has been exceeded
+ *   for the message).
+ *
+ *   A NACK is any call to ModifyAckDeadline with a 0 deadline. Note that
+ *   client libraries may automatically extend ack_deadlines.
+ *
+ *   This field will be honored on a best effort basis.
+ *
+ *   If this parameter is 0, a default value of 5 is used.
+ *
+ * @typedef DeadLetterPolicy
+ * @memberof google.pubsub.v1
+ * @see [google.pubsub.v1.DeadLetterPolicy definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
+ */
+const DeadLetterPolicy = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
@@ -472,27 +514,27 @@ const ExpirationPolicy = {
  *   For example, a Webhook endpoint might use "https://example.com/push".
  *
  * @property {Object.<string, string>} attributes
- *   Endpoint configuration attributes.
+ *   Endpoint configuration attributes that can be used to control different
+ *   aspects of the message delivery.
  *
- *   Every endpoint has a set of API supported attributes that can be used to
- *   control different aspects of the message delivery.
- *
- *   The currently supported attribute is `x-goog-version`, which you can
+ *   The only currently supported attribute is `x-goog-version`, which you can
  *   use to change the format of the pushed message. This attribute
  *   indicates the version of the data expected by the endpoint. This
  *   controls the shape of the pushed message (i.e., its fields and metadata).
- *   The endpoint version is based on the version of the Pub/Sub API.
  *
  *   If not present during the `CreateSubscription` call, it will default to
- *   the version of the API used to make such call. If not present during a
+ *   the version of the Pub/Sub API used to make such call. If not present in a
  *   `ModifyPushConfig` call, its value will not be changed. `GetSubscription`
  *   calls will always return a valid version, even if the subscription was
  *   created without this attribute.
  *
- *   The possible values for this attribute are:
+ *   The only supported values for the `x-goog-version` attribute are:
  *
  *   * `v1beta1`: uses the push format defined in the v1beta1 Pub/Sub API.
  *   * `v1` or `v1beta2`: uses the push format defined in the v1 Pub/Sub API.
+ *
+ *   For example:
+ *   <pre><code>attributes { "x-goog-version": "v1" } </code></pre>
  *
  * @property {Object} oidcToken
  *   If specified, Pub/Sub will generate and attach an OIDC JWT token as an
@@ -516,9 +558,8 @@ const PushConfig = {
    *   [Service account
    *   email](https://cloud.google.com/iam/docs/service-accounts)
    *   to be used for generating the OIDC token. The caller (for
-   *   CreateSubscription, UpdateSubscription, and ModifyPushConfig calls) must
+   *   CreateSubscription, UpdateSubscription, and ModifyPushConfig RPCs) must
    *   have the iam.serviceAccounts.actAs permission for the service account.
-   *   See https://cloud.google.com/iam/docs/understanding-roles#service-accounts-roles.
    *
    * @property {string} audience
    *   Audience to be used when generating OIDC token. The audience claim
@@ -547,6 +588,24 @@ const PushConfig = {
  *   The message.
  *
  *   This object should have the same structure as [PubsubMessage]{@link google.pubsub.v1.PubsubMessage}
+ *
+ * @property {number} deliveryAttempt
+ *   Delivery attempt counter is 1 + (the sum of number of NACKs and number of
+ *   ack_deadline exceeds) for this message.
+ *
+ *   A NACK is any call to ModifyAckDeadline with a 0 deadline. An ack_deadline
+ *   exceeds event is whenever a message is not acknowledged within
+ *   ack_deadline. Note that ack_deadline is initially
+ *   Subscription.ackDeadlineSeconds, but may get extended automatically by
+ *   the client library.
+ *
+ *   The first delivery of a given message will have this value as 1. The value
+ *   is calculated at best effort and is approximate.
+ *
+ *   If a DeadLetterPolicy is not set on the subscription, this will be 0.
+ *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+ *   API might be changed in backward-incompatible ways and is not recommended
+ *   for production use. It is not subject to any SLA or deprecation policy.
  *
  * @typedef ReceivedMessage
  * @memberof google.pubsub.v1
@@ -691,8 +750,9 @@ const ModifyPushConfigRequest = {
  *   least one message is available, rather than returning no messages.
  *
  * @property {number} maxMessages
- *   The maximum number of messages returned for this request. The Pub/Sub
- *   system may return fewer than the number specified.
+ *   The maximum number of messages to return for this request. Must be a
+ *   positive integer. The Pub/Sub system may return fewer than the number
+ *   specified.
  *
  * @typedef PullRequest
  * @memberof google.pubsub.v1
@@ -838,10 +898,7 @@ const StreamingPullResponse = {
 };
 
 /**
- * Request for the `CreateSnapshot` method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the `CreateSnapshot` method.
  *
  * @property {string} name
  *   Optional user-provided name for this snapshot.
@@ -876,10 +933,7 @@ const CreateSnapshotRequest = {
 };
 
 /**
- * Request for the UpdateSnapshot method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the UpdateSnapshot method.
  *
  * @property {Object} snapshot
  *   The updated snapshot object.
@@ -906,10 +960,7 @@ const UpdateSnapshotRequest = {
  * operations, which allow
  * you to manage message acknowledgments in bulk. That is, you can set the
  * acknowledgment state of messages in an existing subscription to the state
- * captured by a snapshot.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * captured by a snapshot.
  *
  * @property {string} name
  *   The name of the snapshot.
@@ -944,10 +995,7 @@ const Snapshot = {
 };
 
 /**
- * Request for the GetSnapshot method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the GetSnapshot method.
  *
  * @property {string} snapshot
  *   The name of the snapshot to get.
@@ -962,10 +1010,7 @@ const GetSnapshotRequest = {
 };
 
 /**
- * Request for the `ListSnapshots` method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the `ListSnapshots` method.
  *
  * @property {string} project
  *   The name of the project in which to list snapshots.
@@ -988,10 +1033,7 @@ const ListSnapshotsRequest = {
 };
 
 /**
- * Response for the `ListSnapshots` method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Response for the `ListSnapshots` method.
  *
  * @property {Object[]} snapshots
  *   The resulting snapshots.
@@ -1011,10 +1053,7 @@ const ListSnapshotsResponse = {
 };
 
 /**
- * Request for the `DeleteSnapshot` method.<br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the `DeleteSnapshot` method.
  *
  * @property {string} snapshot
  *   The name of the snapshot to delete.
@@ -1029,10 +1068,7 @@ const DeleteSnapshotRequest = {
 };
 
 /**
- * Request for the `Seek` method. <br><br>
- * <b>BETA:</b> This feature is part of a beta release. This API might be
- * changed in backward-incompatible ways and is not recommended for production
- * use. It is not subject to any SLA or deprecation policy.
+ * Request for the `Seek` method.
  *
  * @property {string} subscription
  *   The subscription to affect.

@@ -15,7 +15,7 @@
 'use strict';
 
 const assert = require('assert');
-const through2 = require('through2');
+const {PassThrough} = require('stream');
 
 const pubsubModule = require('../src');
 
@@ -24,6 +24,32 @@ const error = new Error();
 error.code = FAKE_STATUS_CODE;
 
 describe('PublisherClient', () => {
+  it('has servicePath', () => {
+    const servicePath = pubsubModule.v1.PublisherClient.servicePath;
+    assert(servicePath);
+  });
+
+  it('has apiEndpoint', () => {
+    const apiEndpoint = pubsubModule.v1.PublisherClient.apiEndpoint;
+    assert(apiEndpoint);
+  });
+
+  it('has port', () => {
+    const port = pubsubModule.v1.PublisherClient.port;
+    assert(port);
+    assert(typeof port === 'number');
+  });
+
+  it('should create a client with no options', () => {
+    const client = new pubsubModule.v1.PublisherClient();
+    assert(client);
+  });
+
+  it('should create a client with gRPC fallback', () => {
+    const client = new pubsubModule.v1.PublisherClient({fallback: true});
+    assert(client);
+  });
+
   describe('createTopic', () => {
     it('invokes createTopic without error', done => {
       const client = new pubsubModule.v1.PublisherClient({
@@ -39,8 +65,10 @@ describe('PublisherClient', () => {
 
       // Mock response
       const name2 = 'name2-1052831874';
+      const kmsKeyName = 'kmsKeyName2094986649';
       const expectedResponse = {
         name: name2,
+        kmsKeyName: kmsKeyName,
       };
 
       // Mock Grpc layer
@@ -101,8 +129,10 @@ describe('PublisherClient', () => {
 
       // Mock response
       const name = 'name3373707';
+      const kmsKeyName = 'kmsKeyName2094986649';
       const expectedResponse = {
         name: name,
+        kmsKeyName: kmsKeyName,
       };
 
       // Mock Grpc layer
@@ -236,8 +266,10 @@ describe('PublisherClient', () => {
 
       // Mock response
       const name = 'name3373707';
+      const kmsKeyName = 'kmsKeyName2094986649';
       const expectedResponse = {
         name: name,
+        kmsKeyName: kmsKeyName,
       };
 
       // Mock Grpc layer
@@ -650,6 +682,32 @@ describe('PublisherClient', () => {
   });
 });
 describe('SubscriberClient', () => {
+  it('has servicePath', () => {
+    const servicePath = pubsubModule.v1.SubscriberClient.servicePath;
+    assert(servicePath);
+  });
+
+  it('has apiEndpoint', () => {
+    const apiEndpoint = pubsubModule.v1.SubscriberClient.apiEndpoint;
+    assert(apiEndpoint);
+  });
+
+  it('has port', () => {
+    const port = pubsubModule.v1.SubscriberClient.port;
+    assert(port);
+    assert(typeof port === 'number');
+  });
+
+  it('should create a client with no options', () => {
+    const client = new pubsubModule.v1.SubscriberClient();
+    assert(client);
+  });
+
+  it('should create a client with gRPC fallback', () => {
+    const client = new pubsubModule.v1.SubscriberClient({fallback: true});
+    assert(client);
+  });
+
   describe('createSubscription', () => {
     it('invokes createSubscription without error', done => {
       const client = new pubsubModule.v1.SubscriberClient({
@@ -1893,13 +1951,16 @@ function mockSimpleGrpcMethod(expectedRequest, response, error) {
 
 function mockBidiStreamingGrpcMethod(expectedRequest, response, error) {
   return () => {
-    const mockStream = through2.obj((chunk, enc, callback) => {
-      assert.deepStrictEqual(chunk, expectedRequest);
-      if (error) {
-        callback(error);
-      } else {
-        callback(null, response);
-      }
+    const mockStream = new PassThrough({
+      objectMode: true,
+      transform: (chunk, enc, callback) => {
+        assert.deepStrictEqual(chunk, expectedRequest);
+        if (error) {
+          callback(error);
+        } else {
+          callback(null, response);
+        }
+      },
     });
     return mockStream;
   };

@@ -16,11 +16,19 @@
 
 import {promisify} from '@google-cloud/promisify';
 import {ClientStub} from 'google-gax';
-import {ClientDuplexStream, Metadata, ServiceError, status, StatusObject} from 'grpc';
+import {
+  ClientDuplexStream,
+  Metadata,
+  ServiceError,
+  status,
+  StatusObject,
+} from '@grpc/grpc-js';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
-import {PullResponse, Subscriber} from './subscriber';
+import {PullRetry} from './pull-retry';
+import {Subscriber} from './subscriber';
+import {google} from '../proto/pubsub';
 
 /*!
  * Frequency to ping streams.
@@ -28,36 +36,11 @@ import {PullResponse, Subscriber} from './subscriber';
 const KEEP_ALIVE_INTERVAL = 30000;
 
 /*!
- * Deadline Exceeded status code
- */
-const DEADLINE: status = 4;
-
-/*!
- * Unknown status code
- */
-const UNKNOWN: status = 2;
-
-/*!
- * codes to retry streams
- */
-const RETRY_CODES: status[] = [
-  0,   // ok
-  1,   // canceled
-  2,   // unknown
-  4,   // deadline exceeded
-  8,   // resource exhausted
-  10,  // aborted
-  13,  // internal error
-  14,  // unavailable
-  15,  // dataloss
-];
-
-/*!
  * Deadline for the stream.
  */
-const PULL_TIMEOUT = require('./v1/subscriber_client_config.json')
-                         .interfaces['google.pubsub.v1.Subscriber']
-                         .methods.StreamingPull.timeout_millis;
+const PULL_TIMEOUT = require('./v1/subscriber_client_config.json').interfaces[
+  'google.pubsub.v1.Subscriber'
+].methods.StreamingPull.timeout_millis;
 
 /*!
  * default stream options
@@ -65,7 +48,6 @@ const PULL_TIMEOUT = require('./v1/subscriber_client_config.json')
 const DEFAULT_OPTIONS: MessageStreamOptions = {
   highWaterMark: 0,
   maxStreams: 5,
-  pullTimeout: PULL_TIMEOUT,
   timeout: 300000,
 };
 
@@ -73,16 +55,11 @@ interface StreamState {
   highWaterMark: number;
 }
 
-interface StreamingPullRequest {
-  subscription?: string;
-  ackIds?: string[];
-  modifyDeadlineSeconds?: number[];
-  modifyDeadlineAckIds?: string[];
-  streamAckDeadlineSeconds?: number;
-}
-
-type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse>&
-    {_readableState: StreamState};
+type StreamingPullRequest = google.pubsub.v1.IStreamingPullRequest;
+type PullResponse = google.pubsub.v1.IPullResponse;
+type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse> & {
+  _readableState: StreamState;
+};
 
 /**
  * Error wrapper for gRPC status objects.
@@ -92,11 +69,13 @@ type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse>&
  * @param {object} status The gRPC status object.
  */
 export class StatusError extends Error implements ServiceError {
-  code?: status;
-  metadata?: Metadata;
+  code: status;
+  details: string;
+  metadata: Metadata;
   constructor(status: StatusObject) {
     super(status.details);
     this.code = status.code;
+    this.details = status.details;
     this.metadata = status.metadata;
   }
 }
@@ -110,10 +89,26 @@ export class StatusError extends Error implements ServiceError {
  */
 export class ChannelError extends Error implements ServiceError {
   code: status;
+  details: string;
+  metadata: Metadata;
   constructor(err: Error) {
-    super(`Failed to connect to channel. Reason: ${err.message}`);
-    this.code = err.message.includes('deadline') ? DEADLINE : UNKNOWN;
+    super(
+      `Failed to connect to channel. Reason: ${
+        process.env.DEBUG_GRPC ? err.stack : err.message
+      }`
+    );
+    this.code = err.message.includes('deadline')
+      ? status.DEADLINE_EXCEEDED
+      : status.UNKNOWN;
+    this.details = err.message;
+    this.metadata = new Metadata();
   }
+}
+
+export interface MessageStreamOptions {
+  highWaterMark?: number;
+  maxStreams?: number;
+  timeout?: number;
 }
 
 /**
@@ -123,18 +118,8 @@ export class ChannelError extends Error implements ServiceError {
  *     {@link https://nodejs.org/en/docs/guides/backpressuring-in-streams/} for
  *     more details.
  * @property {number} [maxStreams=5] Number of streaming connections to make.
- * @property {number} [pullTimeout=900000] Timeout to be applied to each
- *     underlying stream. Essentially this just closes a `StreamingPull` request
- *     after the specified time.
  * @property {number} [timeout=300000] Timeout for establishing a connection.
  */
-export interface MessageStreamOptions {
-  highWaterMark?: number;
-  maxStreams?: number;
-  pullTimeout?: number;
-  timeout?: number;
-}
-
 /**
  * Streaming class used to manage multiple StreamingPull requests.
  *
@@ -147,7 +132,9 @@ export interface MessageStreamOptions {
 export class MessageStream extends PassThrough {
   destroyed: boolean;
   private _keepAliveHandle: NodeJS.Timer;
+  private _fillHandle?: NodeJS.Timer;
   private _options: MessageStreamOptions;
+  private _retrier: PullRetry;
   private _streams: Map<PullStream, boolean>;
   private _subscriber: Subscriber;
   constructor(sub: Subscriber, options = {} as MessageStreamOptions) {
@@ -157,13 +144,16 @@ export class MessageStream extends PassThrough {
 
     this.destroyed = false;
     this._options = options;
+    this._retrier = new PullRetry();
     this._streams = new Map();
     this._subscriber = sub;
 
     this._fillStreamPool();
 
-    this._keepAliveHandle =
-        setInterval(() => this._keepAlive(), KEEP_ALIVE_INTERVAL);
+    this._keepAliveHandle = setInterval(
+      () => this._keepAlive(),
+      KEEP_ALIVE_INTERVAL
+    );
     this._keepAliveHandle.unref();
   }
   /**
@@ -207,9 +197,13 @@ export class MessageStream extends PassThrough {
     this._setHighWaterMark(stream);
     this._streams.set(stream, false);
 
-    stream.on('error', err => this._onError(stream, err))
-        .once('status', status => this._onStatus(stream, status))
-        .pipe(this, {end: false});
+    stream
+      .on('error', err => this._onError(stream, err))
+      .once('status', status => this._onStatus(stream, status))
+      .pipe(
+        this,
+        {end: false}
+      );
   }
   /**
    * Attempts to create and cache the desired number of StreamingPull requests.
@@ -234,11 +228,13 @@ export class MessageStream extends PassThrough {
       return;
     }
 
-    const deadline = Date.now() + this._options.pullTimeout!;
+    const deadline = Date.now() + PULL_TIMEOUT;
     const request: StreamingPullRequest = {
       subscription: this._subscriber.name,
       streamAckDeadlineSeconds: this._subscriber.ackDeadline,
     };
+
+    delete this._fillHandle;
 
     for (let i = this._streams.size; i < this._options.maxStreams!; i++) {
       const stream: PullStream = client.streamingPull({deadline});
@@ -273,9 +269,14 @@ export class MessageStream extends PassThrough {
    * @private
    */
   private _keepAlive(): void {
-    for (const stream of this._streams.keys()) {
-      stream.write({});
-    }
+    this._streams.forEach((receivedStatus, stream) => {
+      // its possible that a status event fires off (signaling the rpc being
+      // closed) but the stream hasn't drained yet, writing to this stream will
+      // result in a `write after end` error
+      if (!receivedStatus) {
+        stream.write({});
+      }
+    });
   }
   /**
    * Once the stream has nothing left to read, we'll remove it and attempt to
@@ -289,8 +290,13 @@ export class MessageStream extends PassThrough {
   private _onEnd(stream: PullStream, status: StatusObject): void {
     this._removeStream(stream);
 
-    if (RETRY_CODES.includes(status.code)) {
-      this._fillStreamPool();
+    if (this._fillHandle) {
+      return;
+    }
+
+    if (this._retrier.retry(status)) {
+      const delay = this._retrier.createTimeout();
+      this._fillHandle = setTimeout(() => this._fillStreamPool(), delay);
     } else if (!this._streams.size) {
       this.destroy(new StatusError(status));
     }

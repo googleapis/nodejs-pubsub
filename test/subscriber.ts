@@ -29,7 +29,6 @@ import {MessageStreamOptions} from '../src/message-stream';
 import * as s from '../src/subscriber';
 import {Subscription} from '../src/subscription';
 
-
 const stubs = new Map();
 
 class FakeClient {}
@@ -39,7 +38,7 @@ interface ClientOptions {
 }
 
 interface ClientCallback {
-  (error: null|Error, client: FakeClient): void;
+  (error: null | Error, client: FakeClient): void;
 }
 
 class FakePubSub {
@@ -131,15 +130,14 @@ const RECEIVED_MESSAGE = {
     data: Buffer.from('Hello, world!'),
     messageId: uuid.v4(),
     orderingKey: 'ordering-key',
-    publishTime: {seconds: 12, nanos: 32}
-  }
+    publishTime: {seconds: 12, nanos: 32},
+  },
 };
 
 describe('Subscriber', () => {
   const sandbox = sinon.createSandbox();
 
   const fakeProjectify = {replaceProjectIdToken: sandbox.stub()};
-
 
   let subscription: Subscription;
 
@@ -156,8 +154,10 @@ describe('Subscriber', () => {
       '@google-cloud/projectify': fakeProjectify,
       './histogram': {Histogram: FakeHistogram},
       './lease-manager': {LeaseManager: FakeLeaseManager},
-      './message-queues':
-          {AckQueue: FakeAckQueue, ModAckQueue: FakeModAckQueue},
+      './message-queues': {
+        AckQueue: FakeAckQueue,
+        ModAckQueue: FakeModAckQueue,
+      },
       './message-stream': {MessageStream: FakeMessageStream},
     });
 
@@ -166,7 +166,7 @@ describe('Subscriber', () => {
   });
 
   beforeEach(() => {
-    subscription = new FakeSubscription() as {} as Subscription;
+    subscription = (new FakeSubscription() as {}) as Subscription;
     subscriber = new Subscriber(subscription);
     message = new Message(subscriber, RECEIVED_MESSAGE);
     subscriber.open();
@@ -202,7 +202,10 @@ describe('Subscriber', () => {
       const latencies: FakeHistogram = stubs.get('latencies');
       const fakeLatency = 234;
 
-      sandbox.stub(latencies, 'percentile').withArgs(99).returns(fakeLatency);
+      sandbox
+        .stub(latencies, 'percentile')
+        .withArgs(99)
+        .returns(fakeLatency);
 
       const maxMilliseconds = stubs.get('modAckQueue').maxMilliseconds;
       const expectedLatency = fakeLatency * 1000 + maxMilliseconds;
@@ -216,8 +219,8 @@ describe('Subscriber', () => {
       const fakeName = 'abcd';
 
       fakeProjectify.replaceProjectIdToken
-          .withArgs(subscription.name, subscription.projectId)
-          .returns(fakeName);
+        .withArgs(subscription.name, subscription.projectId)
+        .returns(fakeName);
 
       const name = subscriber.name;
       assert.strictEqual(name, fakeName);
@@ -226,8 +229,8 @@ describe('Subscriber', () => {
     it('should cache the name', () => {
       const fakeName = 'abcd';
       const stub = fakeProjectify.replaceProjectIdToken
-                       .withArgs(subscription.name, subscription.projectId)
-                       .returns(fakeName);
+        .withArgs(subscription.name, subscription.projectId)
+        .returns(fakeName);
 
       const name = subscriber.name;
       assert.strictEqual(name, fakeName);
@@ -251,7 +254,10 @@ describe('Subscriber', () => {
 
       const fakeDeadline = 312123;
 
-      sandbox.stub(histogram, 'percentile').withArgs(99).returns(fakeDeadline);
+      sandbox
+        .stub(histogram, 'percentile')
+        .withArgs(99)
+        .returns(fakeDeadline);
 
       subscriber.ack(message);
 
@@ -287,10 +293,13 @@ describe('Subscriber', () => {
 
       const onFlushStub = sandbox.stub(ackQueue, 'onFlush').resolves();
 
-      sandbox.stub(inventory, 'remove').withArgs(message).callsFake(() => {
-        assert.strictEqual(onFlushStub.callCount, 1);
-        done();
-      });
+      sandbox
+        .stub(inventory, 'remove')
+        .withArgs(message)
+        .callsFake(() => {
+          assert.strictEqual(onFlushStub.callCount, 1);
+          done();
+        });
 
       subscriber.ack(message);
     });
@@ -301,8 +310,9 @@ describe('Subscriber', () => {
       const s = new Subscriber(subscription);
       const stream: FakeMessageStream = stubs.get('messageStream');
 
-      sandbox.stub(stream, 'destroy')
-          .rejects(new Error('should not be called.'));
+      sandbox
+        .stub(stream, 'destroy')
+        .rejects(new Error('should not be called.'));
 
       return s.close();
     });
@@ -388,7 +398,7 @@ describe('Subscriber', () => {
 
   describe('getClient', () => {
     it('should get a subscriber client', async () => {
-      const pubsub = subscription.pubsub as {} as FakePubSub;
+      const pubsub = (subscription.pubsub as {}) as FakePubSub;
       const spy = sandbox.spy(pubsub, 'getClient_');
       const client = await subscriber.getClient();
       const [options] = spy.lastCall.args;
@@ -598,7 +608,9 @@ describe('Subscriber', () => {
 
       it('should localize attributes', () => {
         assert.strictEqual(
-            message.attributes, RECEIVED_MESSAGE.message.attributes);
+          message.attributes,
+          RECEIVED_MESSAGE.message.attributes
+        );
       });
 
       it('should localize data', () => {
@@ -611,16 +623,20 @@ describe('Subscriber', () => {
 
       it('should localize orderingKey', () => {
         assert.strictEqual(
-            message.orderingKey, RECEIVED_MESSAGE.message.orderingKey);
+          message.orderingKey,
+          RECEIVED_MESSAGE.message.orderingKey
+        );
       });
 
       it('should localize publishTime', () => {
         const m = new Message(subscriber, RECEIVED_MESSAGE);
-        const timestamp = m.publishTime as unknown as FakePreciseDate;
+        const timestamp = (m.publishTime as unknown) as FakePreciseDate;
 
         assert(timestamp instanceof FakePreciseDate);
         assert.strictEqual(
-            timestamp.value, RECEIVED_MESSAGE.message.publishTime);
+          timestamp.value,
+          RECEIVED_MESSAGE.message.publishTime
+        );
       });
 
       it('should localize received time', () => {
@@ -693,22 +709,20 @@ describe('Subscriber', () => {
 
     describe('nack', () => {
       it('should nack the message', () => {
-        const fakeDelay = 10;
         const stub = sandbox.stub(subscriber, 'modAck');
 
-        message.nack(fakeDelay);
+        message.nack();
 
         const [msg, delay] = stub.lastCall.args;
         assert.strictEqual(msg, message);
-        assert.strictEqual(delay, fakeDelay);
+        assert.strictEqual(delay, 0);
       });
 
       it('should not nack the message if its been handled', () => {
-        const delay = 10;
         const stub = sandbox.stub(subscriber, 'modAck');
 
         message.ack();
-        message.nack(delay);
+        message.nack();
 
         assert.strictEqual(stub.callCount, 0);
       });

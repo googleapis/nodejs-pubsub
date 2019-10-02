@@ -73,8 +73,10 @@ export class Message {
    * @param {Subscriber} sub The parent subscriber.
    * @param {object} message The raw message response.
    */
-  constructor(sub: Subscriber, {ackId,
-                                message}: google.pubsub.v1.IReceivedMessage) {
+  constructor(
+    sub: Subscriber,
+    {ackId, message}: google.pubsub.v1.IReceivedMessage
+  ) {
     /**
      * This ID is used to acknowledge the message.
      *
@@ -173,38 +175,20 @@ export class Message {
   }
   /**
    * Removes the message from our inventory and schedules it to be redelivered.
-   * If the delay parameter is unset, it will be redelivered immediately.
-   *
-   * @param {number} [delay=0] The desired time to wait before the
-   *     redelivery occurs.
    *
    * @example
    * subscription.on('message', message => {
    *   message.nack();
    * });
-   *
-   * @example <caption>Specify a delay to redeliver the message</caption>
-   * subscription.on('message', message => {
-   *   message.nack(60); // redeliver in 1 minute
-   * });
    */
-  nack(delay?: number): void {
+  nack(): void {
     if (!this._handled) {
       this._handled = true;
-      this._subscriber.nack(this, delay);
+      this._subscriber.nack(this);
     }
   }
 }
 
-/**
- * @typedef {object} SubscriberOptions
- * @property {number} [ackDeadline=10] Acknowledge deadline in seconds. If left
- *     unset the initial value will be 10 seconds, but it will evolve into the
- *     99th percentile time it takes to acknowledge a message.
- * @property {BatchingOptions} [batching] Request batching options.
- * @property {FlowControlOptions} [flowControl] Flow control options.
- * @property {MessageStreamOptions} [streamingOptions] Streaming options.
- */
 export interface SubscriberOptions {
   ackDeadline?: number;
   batching?: BatchOptions;
@@ -212,6 +196,15 @@ export interface SubscriberOptions {
   streamingOptions?: MessageStreamOptions;
 }
 
+/**
+ * @typedef {object} SubscriberOptions
+ * @property {number} [ackDeadline=10] Acknowledge deadline in seconds. If left
+ *     unset the initial value will be 10 seconds, but it will evolve into the
+ *     99th percentile time it takes to acknowledge a message.
+ * @property {BatchOptions} [batching] Request batching options.
+ * @property {FlowControlOptions} [flowControl] Flow control options.
+ * @property {MessageStreamOptions} [streamingOptions] Streaming options.
+ */
 /**
  * Subscriber class is used to manage all message related functionality.
  *
@@ -323,7 +316,7 @@ export class Subscriber extends EventEmitter {
   async getClient(): Promise<ClientStub> {
     const pubsub = this._subscription.pubsub;
     const [client] = await promisify(pubsub.getClient_).call(pubsub, {
-      client: 'SubscriberClient'
+      client: 'SubscriberClient',
     });
 
     return client;
@@ -350,12 +343,11 @@ export class Subscriber extends EventEmitter {
    * it from our inventory.
    *
    * @param {Message} message The message.
-   * @param {number} [delay=0] Delay to wait before redelivery.
    * @return {Promise}
    * @private
    */
-  async nack(message: Message, delay = 0): Promise<void> {
-    await this.modAck(message, delay);
+  async nack(message: Message): Promise<void> {
+    await this.modAck(message, 0);
     this._inventory.remove(message);
   }
   /**
@@ -370,12 +362,14 @@ export class Subscriber extends EventEmitter {
     this._inventory = new LeaseManager(this, flowControl);
     this._stream = new MessageStream(this, streamingOptions);
 
-    this._stream.on('error', err => this.emit('error', err))
-        .on('data', (data: PullResponse) => this._onData(data))
-        .once('close', () => this.close());
+    this._stream
+      .on('error', err => this.emit('error', err))
+      .on('data', (data: PullResponse) => this._onData(data))
+      .once('close', () => this.close());
 
-    this._inventory.on('full', () => this._stream.pause())
-        .on('free', () => this._stream.resume());
+    this._inventory
+      .on('full', () => this._stream.pause())
+      .on('free', () => this._stream.resume());
 
     this.isOpen = true;
   }

@@ -15,23 +15,13 @@
  */
 
 import {CallOptions} from 'google-gax';
-import {Metadata, ServiceError, status} from 'grpc';
-import defer, {DeferredPromise} from 'p-defer';
+import {Metadata, ServiceError, status} from '@grpc/grpc-js';
+import defer = require('p-defer');
 
 import {Message, Subscriber} from './subscriber';
 
 type QueuedMessages = Array<[string, number?]>;
 
-/**
- * @typedef {object} BatchOptions
- * @property {object} [callOptions] Request configuration option, outlined
- *     here: {@link https://googleapis.github.io/gax-nodejs/CallSettings.html}.
- * @property {number} [maxMessages=3000] Maximum number of messages allowed in
- *     each batch sent.
- * @property {number} [maxMilliseconds=100] Maximum duration to wait before
- *     sending a batch. Batches can be sent earlier if the maxMessages option
- *     is met before the configured duration has passed.
- */
 export interface BatchOptions {
   callOptions?: CallOptions;
   maxMessages?: number;
@@ -48,18 +38,33 @@ export interface BatchOptions {
  */
 export class BatchError extends Error implements ServiceError {
   ackIds: string[];
-  code?: status;
-  metadata?: Metadata;
+  code: status;
+  details: string;
+  metadata: Metadata;
   constructor(err: ServiceError, ackIds: string[], rpc: string) {
-    super(`Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${
-        err.message}`);
+    super(
+      `Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${
+        process.env.DEBUG_GRPC ? err.stack : err.message
+      }`
+    );
 
     this.ackIds = ackIds;
     this.code = err.code;
+    this.details = err.details;
     this.metadata = err.metadata;
   }
 }
 
+/**
+ * @typedef {object} BatchOptions
+ * @property {object} [callOptions] Request configuration option, outlined
+ *     here: {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html}.
+ * @property {number} [maxMessages=3000] Maximum number of messages allowed in
+ *     each batch sent.
+ * @property {number} [maxMilliseconds=100] Maximum duration to wait before
+ *     sending a batch. Batches can be sent earlier if the maxMessages option
+ *     is met before the configured duration has passed.
+ */
 /**
  * Class for buffering ack/modAck requests.
  *
@@ -71,7 +76,7 @@ export class BatchError extends Error implements ServiceError {
  */
 export abstract class MessageQueue {
   numPendingRequests: number;
-  protected _onFlush?: DeferredPromise<void>;
+  protected _onFlush?: defer.DeferredPromise<void>;
   protected _options!: BatchOptions;
   protected _requests: QueuedMessages;
   protected _subscriber: Subscriber;
@@ -213,17 +218,18 @@ export class ModAckQueue extends MessageQueue {
     const client = await this._subscriber.getClient();
     const subscription = this._subscriber.name;
     const modAckTable: {[index: string]: string[]} = batch.reduce(
-        (table: {[index: string]: string[]}, [ackId, deadline]) => {
-          if (!table[deadline!]) {
-            table[deadline!] = [];
-          }
+      (table: {[index: string]: string[]}, [ackId, deadline]) => {
+        if (!table[deadline!]) {
+          table[deadline!] = [];
+        }
 
-          table[deadline!].push(ackId);
-          return table;
-        },
-        {});
+        table[deadline!].push(ackId);
+        return table;
+      },
+      {}
+    );
 
-    const modAckRequests = Object.keys(modAckTable).map(async (deadline) => {
+    const modAckRequests = Object.keys(modAckTable).map(async deadline => {
       const ackIds = modAckTable[deadline];
       const ackDeadlineSeconds = Number(deadline);
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};

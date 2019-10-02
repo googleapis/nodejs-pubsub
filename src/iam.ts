@@ -27,8 +27,8 @@ import {google} from '../proto/iam';
 import {Omit, PubSub, RequestCallback, ResourceCallback} from './pubsub';
 
 export type Policy = {
-  etag?: string|Buffer
-}&Omit<google.iam.v1.IPolicy, 'etag'>;
+  etag?: string | Buffer;
+} & Omit<google.iam.v1.IPolicy, 'etag'>;
 
 export type GetPolicyCallback = RequestCallback<Policy>;
 export type SetPolicyCallback = RequestCallback<Policy>;
@@ -41,14 +41,18 @@ export type GetPolicyResponse = [Policy];
  * The key to this object are the IAM permissions (string) and the values are
  * booleans, true if permissions are granted to the corresponding key.
  */
-export type IamPermissionsMap = {
-  [key: string]: boolean
-};
+export interface IamPermissionsMap {
+  [key: string]: boolean;
+}
 
-export type TestIamPermissionsResponse =
-    [IamPermissionsMap, google.iam.v1.ITestIamPermissionsResponse];
+export type TestIamPermissionsResponse = [
+  IamPermissionsMap,
+  google.iam.v1.ITestIamPermissionsResponse
+];
 export type TestIamPermissionsCallback = ResourceCallback<
-    IamPermissionsMap, google.iam.v1.ITestIamPermissionsResponse>;
+  IamPermissionsMap,
+  google.iam.v1.ITestIamPermissionsResponse
+>;
 
 /**
  * [IAM (Identity and Access
@@ -147,8 +151,9 @@ export class IAM {
    * });
    */
   getPolicy(
-      optsOrCallback?: CallOptions|GetPolicyCallback,
-      callback?: GetPolicyCallback): Promise<GetPolicyResponse>|void {
+    optsOrCallback?: CallOptions | GetPolicyCallback,
+    callback?: GetPolicyCallback
+  ): Promise<GetPolicyResponse> | void {
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
@@ -157,18 +162,22 @@ export class IAM {
     };
 
     this.request<Policy>(
-        {
-          client: 'SubscriberClient',
-          method: 'getIamPolicy',
-          reqOpts,
-          gaxOpts,
-        },
-        callback!);
+      {
+        client: 'SubscriberClient',
+        method: 'getIamPolicy',
+        reqOpts,
+        gaxOpts,
+      },
+      callback!
+    );
   }
 
   setPolicy(policy: Policy, gaxOpts?: CallOptions): Promise<SetPolicyResponse>;
-  setPolicy(policy: Policy, gaxOpts: CallOptions, callback: SetPolicyCallback):
-      void;
+  setPolicy(
+    policy: Policy,
+    gaxOpts: CallOptions,
+    callback: SetPolicyCallback
+  ): void;
   setPolicy(policy: Policy, callback: SetPolicyCallback): void;
   /**
    * @typedef {array} SetPolicyResponse
@@ -228,8 +237,10 @@ export class IAM {
    * });
    */
   setPolicy(
-      policy: Policy, optsOrCallback?: CallOptions|SetPolicyCallback,
-      callback?: SetPolicyCallback): Promise<SetPolicyResponse>|void {
+    policy: Policy,
+    optsOrCallback?: CallOptions | SetPolicyCallback,
+    callback?: SetPolicyCallback
+  ): Promise<SetPolicyResponse> | void {
     if (!(typeof policy === 'object')) {
       throw new Error('A policy object is required.');
     }
@@ -243,22 +254,29 @@ export class IAM {
     };
 
     this.request<Policy>(
-        {
-          client: 'SubscriberClient',
-          method: 'setIamPolicy',
-          reqOpts,
-          gaxOpts,
-        },
-        callback!);
+      {
+        client: 'SubscriberClient',
+        method: 'setIamPolicy',
+        reqOpts,
+        gaxOpts,
+      },
+      callback!
+    );
   }
 
-  testPermissions(permissions: string|string[], gaxOpts?: CallOptions):
-      Promise<TestIamPermissionsResponse>;
   testPermissions(
-      permissions: string|string[], gaxOpts: CallOptions,
-      callback: TestIamPermissionsCallback): void;
+    permissions: string | string[],
+    gaxOpts?: CallOptions
+  ): Promise<TestIamPermissionsResponse>;
   testPermissions(
-      permissions: string|string[], callback: TestIamPermissionsCallback): void;
+    permissions: string | string[],
+    gaxOpts: CallOptions,
+    callback: TestIamPermissionsCallback
+  ): void;
+  testPermissions(
+    permissions: string | string[],
+    callback: TestIamPermissionsCallback
+  ): void;
   /**
    * @callback TestIamPermissionsCallback
    * @param {?Error} err Request error, if any.
@@ -336,10 +354,10 @@ export class IAM {
    * });
    */
   testPermissions(
-      permissions: string|string[],
-      optsOrCallback?: CallOptions|TestIamPermissionsCallback,
-      callback?: TestIamPermissionsCallback):
-      Promise<TestIamPermissionsResponse>|void {
+    permissions: string | string[],
+    optsOrCallback?: CallOptions | TestIamPermissionsCallback,
+    callback?: TestIamPermissionsCallback
+  ): Promise<TestIamPermissionsResponse> | void {
     if (!Array.isArray(permissions) && !(typeof permissions === 'string')) {
       throw new Error('Permissions are required.');
     }
@@ -353,26 +371,29 @@ export class IAM {
     };
 
     this.request<google.iam.v1.ITestIamPermissionsResponse>(
-        {
-          client: 'SubscriberClient',
-          method: 'testIamPermissions',
-          reqOpts,
-          gaxOpts,
-        },
-        (err, resp) => {
-          if (err) {
-            callback!(err, null, resp!);
-            return;
-          }
+      {
+        client: 'SubscriberClient',
+        method: 'testIamPermissions',
+        reqOpts,
+        gaxOpts,
+      },
+      (err, resp) => {
+        if (err) {
+          callback!(err, null, resp!);
+          return;
+        }
 
-          const availablePermissions = arrify(resp!.permissions!);
-          const permissionHash: IamPermissionsMap =
-              (permissions as string[]).reduce((acc, permission) => {
-                acc[permission] = availablePermissions.indexOf(permission) > -1;
-                return acc;
-              }, {} as {[key: string]: boolean});
-          callback!(null, permissionHash, resp!);
-        });
+        const availablePermissions = arrify(resp!.permissions!);
+        const permissionHash: IamPermissionsMap = (permissions as string[]).reduce(
+          (acc, permission) => {
+            acc[permission] = availablePermissions.indexOf(permission) > -1;
+            return acc;
+          },
+          {} as {[key: string]: boolean}
+        );
+        callback!(null, permissionHash, resp!);
+      }
+    );
   }
 }
 

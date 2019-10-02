@@ -31,21 +31,19 @@
  * @module {PubSub} @google-cloud/pubsub
  * @alias nodejs-pubsub
  *
- * @example <caption>Install the client library with <a
- * href="https://www.npmjs.com/">npm</a>:</caption> npm install --save
- * @google-cloud/pubsub
+ * @example <caption>Install the client library with <a href="https://www.npmjs.com/">npm</a>:</caption>
+ * npm install @google-cloud/pubsub
  *
  * @example <caption>Import the client library</caption>
  * const {PubSub} = require('@google-cloud/pubsub');
  *
- * @example <caption>Create a client that uses <a
- * href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application
- * Default Credentials (ADC)</a>:</caption> const pubsub = new PubSub();
+ * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
+ * const pubsub = new PubSub();
  *
- * @example <caption>Create a client with <a
- * href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit
- * credentials</a>:</caption> const pubsub = new PubSub({ projectId:
- * 'your-project-id', keyFilename: '/path/to/keyfile.json'
+ * @example <caption>Create a client with <a href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit credentials</a>:</caption>
+ * const pubsub = new PubSub({
+ *   projectId: 'your-project-id',
+ *   keyFilename: '/path/to/keyfile.json'
  * });
  *
  * @example <caption>include:samples/quickstart.js</caption>
@@ -78,14 +76,81 @@
  * @property {constructor} SubscriberClient
  *     Reference to {@link v1.SubscriberClient}.
  */
-module.exports.v1 = require('./v1');
+const v1 = require('./v1');
+export {v1};
 
+export {ServiceError} from '@grpc/grpc-js';
 export {CallOptions} from 'google-gax';
-export {ServiceError} from 'grpc';
-export {Policy, GetPolicyCallback, SetPolicyCallback, SetPolicyResponse, GetPolicyResponse, IamPermissionsMap, TestIamPermissionsResponse, TestIamPermissionsCallback, IAM} from './iam';
+export {
+  Policy,
+  GetPolicyCallback,
+  SetPolicyCallback,
+  SetPolicyResponse,
+  GetPolicyResponse,
+  IamPermissionsMap,
+  TestIamPermissionsResponse,
+  TestIamPermissionsCallback,
+  IAM,
+} from './iam';
 export {Attributes, PublishCallback} from './publisher';
-export {PageOptions, GetSnapshotsCallback, GetSnapshotsResponse, GetSubscriptionsCallback, GetSubscriptionsResponse, GetTopicsCallback, GetTopicsResponse, EmptyCallback, EmptyResponse, ExistsCallback, ExistsResponse, PubSub} from './pubsub';
-export {CreateSnapshotCallback, CreateSnapshotResponse, SeekCallback, SeekResponse, Snapshot} from './snapshot';
+export {
+  PageOptions,
+  GetSnapshotsCallback,
+  GetSnapshotsResponse,
+  GetSubscriptionsCallback,
+  GetSubscriptionsResponse,
+  GetTopicsCallback,
+  GetTopicsResponse,
+  EmptyCallback,
+  EmptyResponse,
+  ExistsCallback,
+  ExistsResponse,
+  PubSub,
+} from './pubsub';
+export {
+  CreateSnapshotCallback,
+  CreateSnapshotResponse,
+  SeekCallback,
+  SeekResponse,
+  Snapshot,
+} from './snapshot';
 export {Message} from './subscriber';
-export {PushConfig, SubscriptionMetadata, SubscriptionOptions, SubscriptionCloseCallback, CreateSubscriptionOptions, CreateSubscriptionCallback, CreateSubscriptionResponse, GetSubscriptionOptions, GetSubscriptionCallback, GetSubscriptionResponse, GetSubscriptionMetadataCallback, GetSubscriptionMetadataResponse, SetSubscriptionMetadataCallback, SetSubscriptionMetadataResponse, Subscription} from './subscription';
-export {CreateTopicCallback, CreateTopicResponse, GetTopicCallback, GetTopicResponse, GetTopicOptions, GetTopicMetadataCallback, GetTopicMetadataResponse, GetTopicSubscriptionsCallback, GetTopicSubscriptionsResponse, SetTopicMetadataCallback, SetTopicMetadataResponse, Topic, TopicMetadata} from './topic';
+export {
+  PushConfig,
+  SubscriptionMetadata,
+  SubscriptionOptions,
+  SubscriptionCloseCallback,
+  CreateSubscriptionOptions,
+  CreateSubscriptionCallback,
+  CreateSubscriptionResponse,
+  GetSubscriptionOptions,
+  GetSubscriptionCallback,
+  GetSubscriptionResponse,
+  GetSubscriptionMetadataCallback,
+  GetSubscriptionMetadataResponse,
+  SetSubscriptionMetadataCallback,
+  SetSubscriptionMetadataResponse,
+  Subscription,
+} from './subscription';
+export {
+  CreateTopicCallback,
+  CreateTopicResponse,
+  GetTopicCallback,
+  GetTopicResponse,
+  GetTopicOptions,
+  GetTopicMetadataCallback,
+  GetTopicMetadataResponse,
+  GetTopicSubscriptionsCallback,
+  GetTopicSubscriptionsResponse,
+  SetTopicMetadataCallback,
+  SetTopicMetadataResponse,
+  Topic,
+  TopicMetadata,
+} from './topic';
+
+if (process.env.DEBUG_GRPC) {
+  console.info('gRPC logging set to verbose');
+  const {setLogger, setLogVerbosity, logVerbosity} = require('@grpc/grpc-js');
+  setLogger(console);
+  setLogVerbosity(logVerbosity.DEBUG);
+}

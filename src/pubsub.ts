@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import {paginator} from '@google-cloud/paginator';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisifyAll} from '@google-cloud/promisify';
@@ -22,21 +21,34 @@ import is from '@sindresorhus/is';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
+import * as grpc from '@grpc/grpc-js';
+import {ServiceError, ChannelCredentials} from '@grpc/grpc-js';
 
 const PKG = require('../../package.json');
 const v1 = require('./v1');
 
 import {Snapshot} from './snapshot';
-import {Subscription, SubscriptionMetadata, SubscriptionOptions, CreateSubscriptionOptions, CreateSubscriptionCallback, CreateSubscriptionResponse} from './subscription';
-import {Topic, GetTopicSubscriptionsCallback, GetTopicSubscriptionsResponse, CreateTopicCallback, CreateTopicResponse} from './topic';
+import {
+  Subscription,
+  SubscriptionMetadata,
+  SubscriptionOptions,
+  CreateSubscriptionOptions,
+  CreateSubscriptionCallback,
+  CreateSubscriptionResponse,
+} from './subscription';
+import {
+  Topic,
+  GetTopicSubscriptionsCallback,
+  GetTopicSubscriptionsResponse,
+  CreateTopicCallback,
+  CreateTopicResponse,
+} from './topic';
 import {PublishOptions} from './publisher';
 import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
 import {google} from '../proto/pubsub';
-import {ServiceError, ChannelCredentials} from 'grpc';
 
 const opts = {} as gax.GrpcClientOptions;
-const {grpc} = new gax.GrpcClient(opts);
 
 /**
  * Project ID placeholder.
@@ -50,7 +62,7 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export interface ClientConfig extends gax.GrpcClientOptions {
   apiEndpoint?: string;
   servicePath?: string;
-  port?: string|number;
+  port?: string | number;
   sslCreds?: ChannelCredentials;
 }
 
@@ -61,31 +73,45 @@ export interface PageOptions {
   autoPaginate?: boolean;
 }
 
-export type GetSnapshotsCallback =
-    RequestCallback<Snapshot, google.pubsub.v1.IListSnapshotsResponse>;
+export type GetSnapshotsCallback = RequestCallback<
+  Snapshot,
+  google.pubsub.v1.IListSnapshotsResponse
+>;
 
-export type GetSnapshotsResponse =
-    PagedResponse<Snapshot, google.pubsub.v1.IListSnapshotsResponse>;
+export type GetSnapshotsResponse = PagedResponse<
+  Snapshot,
+  google.pubsub.v1.IListSnapshotsResponse
+>;
 
-export type GetSubscriptionsOptions = PageOptions&{topic?: string | Topic};
+export type GetSubscriptionsOptions = PageOptions & {topic?: string | Topic};
 
-type GetAllSubscriptionsCallback =
-    RequestCallback<Subscription, google.pubsub.v1.IListSubscriptionsResponse>;
+type GetAllSubscriptionsCallback = RequestCallback<
+  Subscription,
+  google.pubsub.v1.IListSubscriptionsResponse
+>;
 
-type GetAllSubscriptionsResponse =
-    PagedResponse<Subscription, google.pubsub.v1.IListSubscriptionsResponse>;
+type GetAllSubscriptionsResponse = PagedResponse<
+  Subscription,
+  google.pubsub.v1.IListSubscriptionsResponse
+>;
 
 export type GetSubscriptionsCallback =
-    GetAllSubscriptionsCallback|GetTopicSubscriptionsCallback;
+  | GetAllSubscriptionsCallback
+  | GetTopicSubscriptionsCallback;
 
 export type GetSubscriptionsResponse =
-    GetAllSubscriptionsResponse|GetTopicSubscriptionsResponse;
+  | GetAllSubscriptionsResponse
+  | GetTopicSubscriptionsResponse;
 
-export type GetTopicsCallback =
-    RequestCallback<Topic, google.pubsub.v1.IListTopicsResponse>;
+export type GetTopicsCallback = RequestCallback<
+  Topic,
+  google.pubsub.v1.IListTopicsResponse
+>;
 
-export type GetTopicsResponse =
-    PagedResponse<Topic, google.pubsub.v1.IListTopicsResponse>;
+export type GetTopicsResponse = PagedResponse<
+  Topic,
+  google.pubsub.v1.IListTopicsResponse
+>;
 
 export type EmptyCallback = RequestCallback<google.protobuf.IEmpty>;
 export type EmptyResponse = [google.protobuf.IEmpty];
@@ -94,7 +120,7 @@ export type ExistsCallback = RequestCallback<boolean>;
 export type ExistsResponse = [boolean];
 
 export interface GetClientConfig {
-  client: 'PublisherClient'|'SubscriberClient';
+  client: 'PublisherClient' | 'SubscriberClient';
 }
 
 export interface RequestConfig extends GetClientConfig {
@@ -104,24 +130,33 @@ export interface RequestConfig extends GetClientConfig {
 }
 
 export interface ResourceCallback<Resource, Response> {
-  (err: ServiceError|null, resource?: Resource|null,
-   response?: Response|null): void;
+  (
+    err: ServiceError | null,
+    resource?: Resource | null,
+    response?: Response | null
+  ): void;
 }
 
-export type RequestCallback<T, R = void> =
-    R extends void ? NormalCallback<T>: PagedCallback<T, R>;
+export type RequestCallback<T, R = void> = R extends void
+  ? NormalCallback<T>
+  : PagedCallback<T, R>;
 
 export interface NormalCallback<TResponse> {
-  (err: ServiceError|null, res?: TResponse|null): void;
+  (err: ServiceError | null, res?: TResponse | null): void;
 }
 
 export interface PagedCallback<Item, Response> {
-  (err: ServiceError|null, results?: Item[]|null, nextQuery?: {}|null,
-   response?: Response|null): void;
+  (
+    err: ServiceError | null,
+    results?: Item[] | null,
+    nextQuery?: {} | null,
+    response?: Response | null
+  ): void;
 }
 
 export type PagedResponse<Item, Response> =
-    [Item[]]|[Item[], {} | null, Response];
+  | [Item[]]
+  | [Item[], {} | null, Response];
 
 export type ObjectStream<O> = {
   addListener(event: 'data', listener: (data: O) => void): ObjectStream<O>;
@@ -129,12 +164,14 @@ export type ObjectStream<O> = {
   on(event: 'data', listener: (data: O) => void): ObjectStream<O>;
   once(event: 'data', listener: (data: O) => void): ObjectStream<O>;
   prependListener(event: 'data', listener: (data: O) => void): ObjectStream<O>;
-  prependOnceListener(event: 'data', listener: (data: O) => void):
-      ObjectStream<O>;
-}&Transform;
+  prependOnceListener(
+    event: 'data',
+    listener: (data: O) => void
+  ): ObjectStream<O>;
+} & Transform;
 
 interface GetClientCallback {
-  (err: Error|null, gaxClient?: gax.ClientStub): void;
+  (err: Error | null, gaxClient?: gax.ClientStub): void;
 }
 
 /**
@@ -181,14 +218,13 @@ interface GetClientCallback {
  * @example <caption>Import the client library</caption>
  * const {PubSub} = require('@google-cloud/pubsub');
  *
- * @example <caption>Create a client that uses <a
- * href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application
- * Default Credentials (ADC)</a>:</caption> const pubsub = new PubSub();
+ * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
+ * const pubsub = new PubSub();
  *
- * @example <caption>Create a client with <a
- * href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit
- * credentials</a>:</caption> const pubsub = new PubSub({ projectId:
- * 'your-project-id', keyFilename: '/path/to/keyfile.json'
+ * @example <caption>Create a client with <a href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit credentials</a>:</caption>
+ * const pubsub = new PubSub({
+ *   projectId: 'your-project-id',
+ *   keyFilename: '/path/to/keyfile.json'
  * });
  *
  * @example <caption>include:samples/quickstart.js</caption>
@@ -203,12 +239,15 @@ export class PubSub {
   projectId: string;
   // tslint:disable-next-line variable-name
   Promise?: PromiseConstructor;
-  getSubscriptionsStream = paginator.streamify('getSubscriptions') as() =>
-                               ObjectStream<Subscription>;
-  getSnapshotsStream = paginator.streamify('getSnapshots') as() =>
-                           ObjectStream<Snapshot>;
-  getTopicsStream = paginator.streamify('getTopics') as() =>
-                        ObjectStream<Topic>;
+  getSubscriptionsStream = paginator.streamify(
+    'getSubscriptions'
+  ) as () => ObjectStream<Subscription>;
+  getSnapshotsStream = paginator.streamify(
+    'getSnapshots'
+  ) as () => ObjectStream<Snapshot>;
+  getTopicsStream = paginator.streamify('getTopics') as () => ObjectStream<
+    Topic
+  >;
 
   constructor(options?: ClientConfig) {
     options = options || {};
@@ -222,15 +261,13 @@ export class PubSub {
       }
     }
     this.options = Object.assign(
-        {
-          'grpc.keepalive_time_ms': 300000,
-          'grpc.max_send_message_length': -1,
-          'grpc.max_receive_message_length': 20000001,
-          libName: 'gccl',
-          libVersion: PKG.version,
-          scopes: Object.keys(allScopes),
-        },
-        options);
+      {
+        libName: 'gccl',
+        libVersion: PKG.version,
+        scopes: Object.keys(allScopes),
+      },
+      options
+    );
     /**
      * @name PubSub#isEmulator
      * @type {boolean}
@@ -246,14 +283,21 @@ export class PubSub {
   }
 
   createSubscription(
-      topic: Topic|string, name: string,
-      options?: CreateSubscriptionOptions): Promise<CreateSubscriptionResponse>;
+    topic: Topic | string,
+    name: string,
+    options?: CreateSubscriptionOptions
+  ): Promise<CreateSubscriptionResponse>;
   createSubscription(
-      topic: Topic|string, name: string,
-      callback: CreateSubscriptionCallback): void;
+    topic: Topic | string,
+    name: string,
+    callback: CreateSubscriptionCallback
+  ): void;
   createSubscription(
-      topic: Topic|string, name: string, options: CreateSubscriptionOptions,
-      callback: CreateSubscriptionCallback): void;
+    topic: Topic | string,
+    name: string,
+    options: CreateSubscriptionOptions,
+    callback: CreateSubscriptionCallback
+  ): void;
   /**
    * @typedef {array} CreateSubscriptionResponse
    * @property {Subscription} 0 The new {@link Subscription}.
@@ -283,9 +327,10 @@ export class PubSub {
    *     messages.
    * @property {object} [gaxOpts] Request configuration options, outlined
    *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
-   * @property {number|date} [messageRetentionDuration] Set this to override
-   *     the default duration of 7 days. This value is expected in seconds.
-   *     Acceptable values are in the range of 10 minutes and 7 days.
+   * @property {number|google.protobuf.Duration} [messageRetentionDuration] Set
+   *     this to override the default duration of 7 days. This value is expected
+   *     in seconds. Acceptable values are in the range of 10 minutes and 7
+   *     days.
    * @property {string} [pushEndpoint] A URL to a custom endpoint that
    *     messages should be pushed to.
    * @property {boolean} [retainAckedMessages=false] If set, acked messages
@@ -303,12 +348,9 @@ export class PubSub {
    * @throws {Error} If a Topic instance or topic name is not provided.
    * @throws {Error} If a subscription name is not provided.
    *
-   * @param {Topic|string} topic The Topic to create a
-   *     subscription to.
+   * @param {Topic|string} topic The Topic to create a subscription to.
    * @param {string} name The name of the subscription.
-   * @param {CreateSubscriptionRequest} [options] See a
-   *     [Subscription
-   * resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
+   * @param {CreateSubscriptionRequest} [options] See a [Subscription resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
    * @param {CreateSubscriptionCallback} [callback] Callback function.
    * @returns {Promise<CreateSubscriptionResponse>}
    *
@@ -323,17 +365,19 @@ export class PubSub {
    *
    * pubsub.createSubscription(topic, name, callback);
    *
-   * @example <caption>If the callback is omitted, we'll return a
-   * Promise.</caption> pubsub.createSubscription(topic,
-   * name).then(function(data) { const subscription = data[0]; const apiResponse
-   * = data[1];
-   * });
+   * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
+   * pubsub.createSubscription(topic, name)
+   *   .then(function(data) {
+   *     const subscription = data[0];
+   *     const apiResponse = data[1];
+   *   });
    */
   createSubscription(
-      topic: Topic|string, name: string,
-      optionsOrCallback?: CreateSubscriptionOptions|CreateSubscriptionCallback,
-      callback?: CreateSubscriptionCallback):
-      Promise<CreateSubscriptionResponse>|void {
+    topic: Topic | string,
+    name: string,
+    optionsOrCallback?: CreateSubscriptionOptions | CreateSubscriptionCallback,
+    callback?: CreateSubscriptionCallback
+  ): Promise<CreateSubscriptionResponse> | void {
     if (!is.string(topic) && !(topic instanceof Topic)) {
       throw new Error('A Topic is required for a new subscription.');
     }
@@ -343,11 +387,12 @@ export class PubSub {
     if (typeof topic === 'string') {
       topic = this.topic(topic);
     }
-    let options = typeof optionsOrCallback === 'object' ?
-        optionsOrCallback :
-        {} as CreateSubscriptionOptions;
+    let options =
+      typeof optionsOrCallback === 'object'
+        ? optionsOrCallback
+        : ({} as CreateSubscriptionOptions);
     callback =
-        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
+      typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
 
     // Make a deep copy of options to not pollute caller object.
     options = extend(true, {}, options);
@@ -357,8 +402,9 @@ export class PubSub {
     delete options.gaxOpts;
     delete options.flowControl;
 
-    const metadata =
-        Subscription.formatMetadata_(options as SubscriptionMetadata);
+    const metadata = Subscription.formatMetadata_(
+      options as SubscriptionMetadata
+    );
 
     let subscriptionCtorOptions = flowControl ? {flowControl} : {};
     subscriptionCtorOptions = Object.assign(subscriptionCtorOptions, metadata);
@@ -370,27 +416,33 @@ export class PubSub {
     });
 
     this.request<google.pubsub.v1.ISubscription>(
-        {
-          client: 'SubscriberClient',
-          method: 'createSubscription',
-          reqOpts,
-          gaxOpts,
-        },
-        (err, resp) => {
-          if (err) {
-            callback!(err, null, resp);
-            return;
-          }
-          subscription.metadata = resp!;
-          callback!(null, subscription, resp!);
-        });
+      {
+        client: 'SubscriberClient',
+        method: 'createSubscription',
+        reqOpts,
+        gaxOpts,
+      },
+      (err, resp) => {
+        if (err) {
+          callback!(err, null, resp);
+          return;
+        }
+        subscription.metadata = resp!;
+        callback!(null, subscription, resp!);
+      }
+    );
   }
 
-  createTopic(name: string, gaxOpts?: CallOptions):
-      Promise<CreateTopicResponse>;
+  createTopic(
+    name: string,
+    gaxOpts?: CallOptions
+  ): Promise<CreateTopicResponse>;
   createTopic(name: string, callback: CreateTopicCallback): void;
   createTopic(
-      name: string, gaxOpts: CallOptions, callback: CreateTopicCallback): void;
+    name: string,
+    gaxOpts: CallOptions,
+    callback: CreateTopicCallback
+  ): void;
   /**
    * @typedef {array} CreateTopicResponse
    * @property {Topic} 0 The new {@link Topic}.
@@ -432,8 +484,10 @@ export class PubSub {
    * });
    */
   createTopic(
-      name: string, optsOrCallback?: CallOptions|CreateTopicCallback,
-      callback?: CreateTopicCallback): Promise<CreateTopicResponse>|void {
+    name: string,
+    optsOrCallback?: CallOptions | CreateTopicCallback,
+    callback?: CreateTopicCallback
+  ): Promise<CreateTopicResponse> | void {
     const topic = this.topic(name);
     const reqOpts = {
       name: topic.name,
@@ -443,20 +497,21 @@ export class PubSub {
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     this.request<google.pubsub.v1.ITopic>(
-        {
-          client: 'PublisherClient',
-          method: 'createTopic',
-          reqOpts,
-          gaxOpts,
-        },
-        (err, resp) => {
-          if (err) {
-            callback!(err, null, resp);
-            return;
-          }
-          topic.metadata = resp!;
-          callback!(null, topic, resp!);
-        });
+      {
+        client: 'PublisherClient',
+        method: 'createTopic',
+        reqOpts,
+        gaxOpts,
+      },
+      (err, resp) => {
+        if (err) {
+          callback!(err, null, resp);
+          return;
+        }
+        topic.metadata = resp!;
+        callback!(null, topic, resp!);
+      }
+    );
   }
   /**
    * Determine the appropriate endpoint to use for API requests, first trying
@@ -471,16 +526,22 @@ export class PubSub {
     if (!apiEndpoint && !process.env.PUBSUB_EMULATOR_HOST) {
       return;
     }
+
     const baseUrl = apiEndpoint || process.env.PUBSUB_EMULATOR_HOST;
     const leadingProtocol = new RegExp('^https*://');
     const trailingSlashes = new RegExp('/*$');
-    const baseUrlParts = baseUrl!.replace(leadingProtocol, '')
-                             .replace(trailingSlashes, '')
-                             .split(':');
+    const baseUrlParts = baseUrl!
+      .replace(leadingProtocol, '')
+      .replace(trailingSlashes, '')
+      .split(':');
     this.options.servicePath = baseUrlParts[0];
     this.options.port = baseUrlParts[1];
     this.options.sslCreds = grpc.credentials.createInsecure();
     this.isEmulator = true;
+
+    if (!this.options.projectId && process.env.PUBSUB_PROJECT_ID) {
+      this.options.projectId = process.env.PUBSUB_PROJECT_ID;
+    }
   }
 
   getSnapshots(options?: PageOptions): Promise<GetSnapshotsResponse>;
@@ -533,55 +594,63 @@ export class PubSub {
    * });
    */
   getSnapshots(
-      optsOrCallback?: PageOptions|GetSnapshotsCallback,
-      callback?: GetSnapshotsCallback): void|Promise<GetSnapshotsResponse> {
+    optsOrCallback?: PageOptions | GetSnapshotsCallback,
+    callback?: GetSnapshotsCallback
+  ): void | Promise<GetSnapshotsResponse> {
     const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const reqOpts = Object.assign(
-        {
-          project: 'projects/' + this.projectId,
-        },
-        options);
+      {
+        project: 'projects/' + this.projectId,
+      },
+      options
+    );
 
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
 
     const gaxOpts = Object.assign(
-        {
-          autoPaginate: options.autoPaginate,
-        },
-        options.gaxOpts);
+      {
+        autoPaginate: options.autoPaginate,
+      },
+      options.gaxOpts
+    );
 
     this.request<
-        google.pubsub.v1.ISnapshot, google.pubsub.v1.IListSnapshotsResponse>(
-        {
-          client: 'SubscriberClient',
-          method: 'listSnapshots',
-          reqOpts,
-          gaxOpts,
-        },
-        (err, rawSnapshots, ...args) => {
-          let snapshots: Snapshot[];
+      google.pubsub.v1.ISnapshot,
+      google.pubsub.v1.IListSnapshotsResponse
+    >(
+      {
+        client: 'SubscriberClient',
+        method: 'listSnapshots',
+        reqOpts,
+        gaxOpts,
+      },
+      (err, rawSnapshots, ...args) => {
+        let snapshots: Snapshot[];
 
-          if (rawSnapshots) {
-            snapshots = rawSnapshots.map(snapshot => {
-              const snapshotInstance = this.snapshot(snapshot.name!);
-              snapshotInstance.metadata = snapshot;
-              return snapshotInstance;
-            });
-          }
+        if (rawSnapshots) {
+          snapshots = rawSnapshots.map(snapshot => {
+            const snapshotInstance = this.snapshot(snapshot.name!);
+            snapshotInstance.metadata = snapshot;
+            return snapshotInstance;
+          });
+        }
 
-          callback!(err, snapshots!, ...args);
-        });
+        callback!(err, snapshots!, ...args);
+      }
+    );
   }
 
-  getSubscriptions(options?: GetSubscriptionsOptions):
-      Promise<GetSubscriptionsResponse>;
+  getSubscriptions(
+    options?: GetSubscriptionsOptions
+  ): Promise<GetSubscriptionsResponse>;
   getSubscriptions(callback: GetSubscriptionsCallback): void;
   getSubscriptions(
-      options: GetSubscriptionsOptions,
-      callback: GetSubscriptionsCallback): void;
+    options: GetSubscriptionsOptions,
+    callback: GetSubscriptionsCallback
+  ): void;
   /**
    * Query object for listing subscriptions.
    *
@@ -640,9 +709,9 @@ export class PubSub {
    * });
    */
   getSubscriptions(
-      optsOrCallback?: GetSubscriptionsOptions|GetSubscriptionsCallback,
-      callback?: GetSubscriptionsCallback):
-      void|Promise<GetSubscriptionsResponse> {
+    optsOrCallback?: GetSubscriptionsOptions | GetSubscriptionsCallback,
+    callback?: GetSubscriptionsCallback
+  ): void | Promise<GetSubscriptionsResponse> {
     const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
@@ -652,44 +721,50 @@ export class PubSub {
         topic = this.topic(topic);
       }
       return topic.getSubscriptions(
-          options, callback as GetTopicSubscriptionsCallback);
+        options,
+        callback as GetTopicSubscriptionsCallback
+      );
     }
-    const reqOpts = Object.assign({}, options) as
-        google.pubsub.v1.IListSubscriptionsRequest;
+    const reqOpts = Object.assign(
+      {},
+      options
+    ) as google.pubsub.v1.IListSubscriptionsRequest;
     reqOpts.project = 'projects/' + this.projectId;
 
     delete (reqOpts as GetSubscriptionsOptions).gaxOpts;
     delete (reqOpts as GetSubscriptionsOptions).autoPaginate;
 
     const gaxOpts = Object.assign(
-        {
-          autoPaginate: options.autoPaginate,
-        },
-        options.gaxOpts);
+      {
+        autoPaginate: options.autoPaginate,
+      },
+      options.gaxOpts
+    );
 
     this.request<
-        google.pubsub.v1.ISubscription,
-        google.pubsub.v1.IListSubscriptionsResponse>(
-        {
-          client: 'SubscriberClient',
-          method: 'listSubscriptions',
-          reqOpts,
-          gaxOpts,
-        },
-        (err, rawSubs, ...args) => {
-          let subscriptions: Subscription[];
+      google.pubsub.v1.ISubscription,
+      google.pubsub.v1.IListSubscriptionsResponse
+    >(
+      {
+        client: 'SubscriberClient',
+        method: 'listSubscriptions',
+        reqOpts,
+        gaxOpts,
+      },
+      (err, rawSubs, ...args) => {
+        let subscriptions: Subscription[];
 
-          if (rawSubs) {
-            subscriptions = rawSubs.map(sub => {
-              const subscriptionInstance = this.subscription(sub.name!);
-              subscriptionInstance.metadata = sub;
-              return subscriptionInstance;
-            });
-          }
+        if (rawSubs) {
+          subscriptions = rawSubs.map(sub => {
+            const subscriptionInstance = this.subscription(sub.name!);
+            subscriptionInstance.metadata = sub;
+            return subscriptionInstance;
+          });
+        }
 
-          (callback as GetAllSubscriptionsCallback)(
-              err, subscriptions!, ...args);
-        });
+        (callback as GetAllSubscriptionsCallback)(err, subscriptions!, ...args);
+      }
+    );
   }
 
   getTopics(options?: PageOptions): Promise<GetTopicsResponse>;
@@ -752,46 +827,50 @@ export class PubSub {
    * });
    */
   getTopics(
-      optsOrCallback?: PageOptions|GetTopicsCallback,
-      callback?: GetTopicsCallback): void|Promise<GetTopicsResponse> {
+    optsOrCallback?: PageOptions | GetTopicsCallback,
+    callback?: GetTopicsCallback
+  ): void | Promise<GetTopicsResponse> {
     const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const reqOpts = Object.assign(
-        {
-          project: 'projects/' + this.projectId,
-        },
-        options);
+      {
+        project: 'projects/' + this.projectId,
+      },
+      options
+    );
 
     delete reqOpts.gaxOpts;
     delete reqOpts.autoPaginate;
 
     const gaxOpts = Object.assign(
-        {
-          autoPaginate: options.autoPaginate,
-        },
-        options.gaxOpts);
+      {
+        autoPaginate: options.autoPaginate,
+      },
+      options.gaxOpts
+    );
 
     this.request<google.pubsub.v1.Topic, google.pubsub.v1.IListTopicsResponse>(
-        {
-          client: 'PublisherClient',
-          method: 'listTopics',
-          reqOpts,
-          gaxOpts,
-        },
-        (err, rawTopics, ...args) => {
-          let topics: Topic[];
+      {
+        client: 'PublisherClient',
+        method: 'listTopics',
+        reqOpts,
+        gaxOpts,
+      },
+      (err, rawTopics, ...args) => {
+        let topics: Topic[];
 
-          if (rawTopics) {
-            topics = rawTopics.map(topic => {
-              const topicInstance = this.topic(topic.name);
-              topicInstance.metadata = topic;
-              return topicInstance;
-            });
-          }
+        if (rawTopics) {
+          topics = rawTopics.map(topic => {
+            const topicInstance = this.topic(topic.name);
+            topicInstance.metadata = topic;
+            return topicInstance;
+          });
+        }
 
-          callback!(err, topics!, ...args);
-        });
+        callback!(err, topics!, ...args);
+      }
+    );
   }
   /**
    * Callback function to PubSub.getClient_().
@@ -813,28 +892,48 @@ export class PubSub {
    * @param {function} [callback] The callback function.
    */
   getClient_(config: GetClientConfig, callback: GetClientCallback) {
-    const hasProjectId =
-        this.projectId && this.projectId !== PROJECT_ID_PLACEHOLDER;
-    if (!hasProjectId && !this.isEmulator) {
-      this.auth.getProjectId((err, projectId) => {
-        if (err) {
-          callback(err);
-          return;
-        }
-        this.projectId = projectId!;
-        this.options.projectId = projectId!;
+    this.getClientAsync_(config).then(
+      client => callback(null, client),
+      callback
+    );
+  }
+  /**
+   * Get the PubSub client object.
+   *
+   * @private
+   *
+   * @param {object} config Configuration object.
+   * @param {object} config.gaxOpts GAX options.
+   * @param {function} config.method The gax method to call.
+   * @param {object} config.reqOpts Request options.
+   * @returns {Promise}
+   */
+  async getClientAsync_(config: GetClientConfig): Promise<gax.ClientStub> {
+    if (!this.projectId || this.projectId === PROJECT_ID_PLACEHOLDER) {
+      let projectId;
 
-        this.getClient_(config, callback);
-      });
-      return;
+      try {
+        projectId = await this.auth.getProjectId();
+      } catch (e) {
+        if (!this.isEmulator) {
+          throw e;
+        }
+        projectId = '';
+      }
+
+      this.projectId = projectId!;
+      this.options.projectId = projectId!;
     }
+
     let gaxClient = this.api[config.client];
+
     if (!gaxClient) {
       // Lazily instantiate client.
       gaxClient = new v1[config.client](this.options) as gax.ClientStub;
       this.api[config.client] = gaxClient;
     }
-    callback(null, gaxClient);
+
+    return gaxClient;
   }
   /**
    * Funnel all API requests through this method, to be sure we have a project
@@ -851,7 +950,7 @@ export class PubSub {
   request<T, R = void>(config: RequestConfig, callback: RequestCallback<T, R>) {
     this.getClient_(config, (err, client) => {
       if (err) {
-        callback(err);
+        callback(err as ServiceError);
         return;
       }
       let reqOpts = extend(true, {}, config.reqOpts);
@@ -888,7 +987,7 @@ export class PubSub {
    * @throws {Error} If subscription name is omitted.
    *
    * @param {string} name Name of the subscription.
-   * @param {SubscriberOptions} [options] Subscription options.
+   * @param {SubscriberOptions} [options] Configuration object.
    * @returns {Subscription} A {@link Subscription} instance.
    *
    * @example

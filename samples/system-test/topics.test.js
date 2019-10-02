@@ -1,17 +1,16 @@
-/**
- * Copyright 2017, Google, Inc.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2019 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 'use strict';
 
@@ -156,23 +155,21 @@ describe('topics', () => {
   });
 
   it('should publish with specific batch settings', async () => {
-    const waitTime = 5000;
+    const waitTime = 1000;
     const [subscription] = await pubsub
       .topic(topicNameOne)
       .subscription(subscriptionNameThree)
       .get({autoCreate: true});
     const startTime = Date.now();
     execSync(
-      `${cmd} publish-batch ${topicNameOne} "${
-        expectedMessage.data
-      }" -w ${waitTime}`
+      `${cmd} publish-batch ${topicNameOne} "${expectedMessage.data}" -w ${waitTime}`
     );
 
     const {data, publishTime} = await _pullOneMessage(subscription);
     const actualWait = publishTime.getTime() - startTime;
 
     assert.strictEqual(data.toString(), expectedMessage.data);
-    assert(actualWait >= waitTime);
+    assert(actualWait <= waitTime);
   });
 
   it('should publish with retry settings', async () => {
@@ -181,9 +178,7 @@ describe('topics', () => {
       .subscription(subscriptionNameFour)
       .get({autoCreate: true});
     execSync(
-      `${cmd} publish-retry ${projectId} ${topicNameOne} "${
-        expectedMessage.data
-      }"`
+      `${cmd} publish-retry ${projectId} ${topicNameOne} "${expectedMessage.data}"`
     );
     const receivedMessage = await _pullOneMessage(subscription);
     assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
@@ -197,10 +192,12 @@ describe('topics', () => {
       {
         role: `roles/pubsub.editor`,
         members: [`group:cloud-logs@google.com`],
+        condition: null,
       },
       {
         role: `roles/pubsub.viewer`,
         members: [`allUsers`],
+        condition: null,
       },
     ]);
   });

@@ -2,7 +2,177 @@
 
 [npm history][1]
 
-[1]: https://www.npmjs.com/package/nodejs-pubsub?activeTab=versions
+[1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
+
+## [1.1.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.0.0...v1.1.0) (2019-09-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @google-cloud/pubsub to v1 ([#750](https://www.github.com/googleapis/nodejs-pubsub/issues/750)) ([82305de](https://www.github.com/googleapis/nodejs-pubsub/commit/82305de))
+* **deps:** update dependency @grpc/grpc-js to ^0.6.0 ([#759](https://www.github.com/googleapis/nodejs-pubsub/issues/759)) ([fda95c7](https://www.github.com/googleapis/nodejs-pubsub/commit/fda95c7))
+
+
+### Features
+
+* .d.ts for protos ([#755](https://www.github.com/googleapis/nodejs-pubsub/issues/755)) ([32aab9f](https://www.github.com/googleapis/nodejs-pubsub/commit/32aab9f))
+
+## [1.0.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.32.1...v1.0.0) (2019-09-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* set release level to GA (#745)
+
+### Miscellaneous Chores
+
+* set release level to GA ([#745](https://www.github.com/googleapis/nodejs-pubsub/issues/745)) ([2e90c5b](https://www.github.com/googleapis/nodejs-pubsub/commit/2e90c5b))
+
+### [0.32.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.32.0...v0.32.1) (2019-09-13)
+
+### Updates
+
+* dependency `google-gax` updated to `^1.5.2` to make sure the new version is pulled.
+
+## [0.32.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.31.1...v0.32.0) (2019-09-11)
+
+
+### Bug Fixes
+
+* pull projectId from auth client with emulator ([#731](https://www.github.com/googleapis/nodejs-pubsub/issues/731)) ([3840cad](https://www.github.com/googleapis/nodejs-pubsub/commit/3840cad))
+* update IAM protos ([#736](https://www.github.com/googleapis/nodejs-pubsub/issues/736)) ([055fa33](https://www.github.com/googleapis/nodejs-pubsub/commit/055fa33))
+
+
+### Features
+
+* introduces DeadLetterPolicy ([e24c545](https://www.github.com/googleapis/nodejs-pubsub/commit/e24c545))
+* load protos from JSON, grpc-fallback support ([#730](https://www.github.com/googleapis/nodejs-pubsub/issues/730)) ([2071954](https://www.github.com/googleapis/nodejs-pubsub/commit/2071954))
+* update IAM protos ([#734](https://www.github.com/googleapis/nodejs-pubsub/issues/734)) ([91fa2ef](https://www.github.com/googleapis/nodejs-pubsub/commit/91fa2ef))
+
+### [0.31.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.31.0...v0.31.1) (2019-08-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency yargs to v14 ([b0ceb5e](https://www.github.com/googleapis/nodejs-pubsub/commit/b0ceb5e))
+* use process versions object for client header ([#722](https://www.github.com/googleapis/nodejs-pubsub/issues/722)) ([e65185b](https://www.github.com/googleapis/nodejs-pubsub/commit/e65185b))
+
+## [0.31.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.3...v0.31.0) (2019-08-15)
+
+
+### Features
+
+* **debug:** capture stack trace in errors rather than message ([#718](https://www.github.com/googleapis/nodejs-pubsub/issues/718)) ([bfed3f1](https://www.github.com/googleapis/nodejs-pubsub/commit/bfed3f1))
+
+### [0.30.3](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.2...v0.30.3) (2019-08-03)
+
+
+### Bug Fixes
+
+* allow calls with no request, add JSON proto ([1e73a69](https://www.github.com/googleapis/nodejs-pubsub/commit/1e73a69))
+
+### [0.30.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.1...v0.30.2) (2019-07-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* **message:** remove nack delay parameter (#668)
+
+### Bug Fixes
+
+* **deps:** update dependency @google-cloud/paginator to v2 ([#700](https://www.github.com/googleapis/nodejs-pubsub/issues/700)) ([a5c0160](https://www.github.com/googleapis/nodejs-pubsub/commit/a5c0160))
+* **deps:** update dependency @grpc/grpc-js to ^0.5.0 ([#698](https://www.github.com/googleapis/nodejs-pubsub/issues/698)) ([d48e578](https://www.github.com/googleapis/nodejs-pubsub/commit/d48e578))
+* **deps:** update dependency @sindresorhus/is to v1 ([#701](https://www.github.com/googleapis/nodejs-pubsub/issues/701)) ([e715172](https://www.github.com/googleapis/nodejs-pubsub/commit/e715172))
+* **deps:** update dependency google-auth-library to v5 ([#702](https://www.github.com/googleapis/nodejs-pubsub/issues/702)) ([3a15956](https://www.github.com/googleapis/nodejs-pubsub/commit/3a15956))
+* **docs:** reference docs should link to section of googleapis.dev with API reference ([#670](https://www.github.com/googleapis/nodejs-pubsub/issues/670)) ([c92a09a](https://www.github.com/googleapis/nodejs-pubsub/commit/c92a09a))
+
+
+### Reverts
+
+* **message:** remove nack delay parameter ([#668](https://www.github.com/googleapis/nodejs-pubsub/issues/668)) ([ca8fe65](https://www.github.com/googleapis/nodejs-pubsub/commit/ca8fe65))
+
+### [0.30.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.30.0...v0.30.1) (2019-06-21)
+
+
+### Bug Fixes
+
+* **deps:** include missing @grpc/grpc-js dependency ([#665](https://www.github.com/googleapis/nodejs-pubsub/issues/665)) ([5f42f60](https://www.github.com/googleapis/nodejs-pubsub/commit/5f42f60))
+
+## [0.30.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.29.1...v0.30.0) (2019-06-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** use grpc-js instead of grpc extension (#658)
+* **subscription:** decouple retainAckedMessages from messageRetentionDuration (#625)
+* remove pullTimeout subscriber option (#618)
+
+### Bug Fixes
+
+* **deps:** update dependency @sindresorhus/is to ^0.17.0 ([#591](https://www.github.com/googleapis/nodejs-pubsub/issues/591)) ([06fae6e](https://www.github.com/googleapis/nodejs-pubsub/commit/06fae6e))
+* **deps:** update dependency grpc to v1.21.1 ([#629](https://www.github.com/googleapis/nodejs-pubsub/issues/629)) ([fcf75a2](https://www.github.com/googleapis/nodejs-pubsub/commit/fcf75a2))
+* **deps:** update dependency p-defer to v3 ([#650](https://www.github.com/googleapis/nodejs-pubsub/issues/650)) ([50f9d4e](https://www.github.com/googleapis/nodejs-pubsub/commit/50f9d4e))
+* **deps:** upgrade module extend to fix CVE-2018-16492 ([#644](https://www.github.com/googleapis/nodejs-pubsub/issues/644)) ([cd54630](https://www.github.com/googleapis/nodejs-pubsub/commit/cd54630))
+* **deps:** use grpc-js instead of grpc extension ([#658](https://www.github.com/googleapis/nodejs-pubsub/issues/658)) ([535a917](https://www.github.com/googleapis/nodejs-pubsub/commit/535a917))
+* **docs:** move to new client docs URL ([#657](https://www.github.com/googleapis/nodejs-pubsub/issues/657)) ([a9972ea](https://www.github.com/googleapis/nodejs-pubsub/commit/a9972ea))
+* update regex to target correct comment ([#646](https://www.github.com/googleapis/nodejs-pubsub/issues/646)) ([9e8f245](https://www.github.com/googleapis/nodejs-pubsub/commit/9e8f245))
+* update rpc timeout settings ([#628](https://www.github.com/googleapis/nodejs-pubsub/issues/628)) ([2a1a430](https://www.github.com/googleapis/nodejs-pubsub/commit/2a1a430))
+* **subscription:** decouple retainAckedMessages from messageRetentionDuration ([#625](https://www.github.com/googleapis/nodejs-pubsub/issues/625)) ([3431e7c](https://www.github.com/googleapis/nodejs-pubsub/commit/3431e7c))
+* **typescript:** pin grpc to previous working version ([#624](https://www.github.com/googleapis/nodejs-pubsub/issues/624)) ([2167536](https://www.github.com/googleapis/nodejs-pubsub/commit/2167536))
+
+
+### Features
+
+* add .repo-metadata.json, start generating README.md ([#636](https://www.github.com/googleapis/nodejs-pubsub/issues/636)) ([142f56c](https://www.github.com/googleapis/nodejs-pubsub/commit/142f56c))
+* support apiEndpoint override ([#647](https://www.github.com/googleapis/nodejs-pubsub/issues/647)) ([b44f566](https://www.github.com/googleapis/nodejs-pubsub/commit/b44f566))
+
+
+### Reverts
+
+* remove pullTimeout subscriber option ([#618](https://www.github.com/googleapis/nodejs-pubsub/issues/618)) ([4fc9724](https://www.github.com/googleapis/nodejs-pubsub/commit/4fc9724))
+
+### [0.29.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.29.0...v0.29.1) (2019-05-18)
+
+
+### Bug Fixes
+
+* use typescript import/export for gapics ([#611](https://www.github.com/googleapis/nodejs-pubsub/issues/611)) ([e882e1a](https://www.github.com/googleapis/nodejs-pubsub/commit/e882e1a))
+
+## [0.29.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v0.28.1...v0.29.0) (2019-05-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @google-cloud/paginator to v1 ([#592](https://www.github.com/googleapis/nodejs-pubsub/issues/592)) ([181553a](https://www.github.com/googleapis/nodejs-pubsub/commit/181553a))
+* **deps:** update dependency @google-cloud/precise-date to v1 ([#603](https://www.github.com/googleapis/nodejs-pubsub/issues/603)) ([2e669a1](https://www.github.com/googleapis/nodejs-pubsub/commit/2e669a1))
+* **deps:** update dependency @google-cloud/projectify to v1 ([#588](https://www.github.com/googleapis/nodejs-pubsub/issues/588)) ([d01d010](https://www.github.com/googleapis/nodejs-pubsub/commit/d01d010))
+* **deps:** update dependency @google-cloud/promisify to v1 ([#589](https://www.github.com/googleapis/nodejs-pubsub/issues/589)) ([dad7530](https://www.github.com/googleapis/nodejs-pubsub/commit/dad7530))
+* **deps:** update dependency arrify to v2 ([#565](https://www.github.com/googleapis/nodejs-pubsub/issues/565)) ([8e3b7b8](https://www.github.com/googleapis/nodejs-pubsub/commit/8e3b7b8))
+* **deps:** update dependency google-auth-library to v4 ([#601](https://www.github.com/googleapis/nodejs-pubsub/issues/601)) ([baf9d39](https://www.github.com/googleapis/nodejs-pubsub/commit/baf9d39))
+* **deps:** update dependency google-gax to v1 ([#604](https://www.github.com/googleapis/nodejs-pubsub/issues/604)) ([6415e7c](https://www.github.com/googleapis/nodejs-pubsub/commit/6415e7c))
+* DEADLINE_EXCEEDED no longer treated as idempotent and retried ([39b1dac](https://www.github.com/googleapis/nodejs-pubsub/commit/39b1dac))
+* DEADLINE_EXCEEDED retry code is idempotent ([#605](https://www.github.com/googleapis/nodejs-pubsub/issues/605)) ([1ae8db9](https://www.github.com/googleapis/nodejs-pubsub/commit/1ae8db9))
+* **deps:** update dependency google-gax to ^0.26.0 ([#583](https://www.github.com/googleapis/nodejs-pubsub/issues/583)) ([4214a4f](https://www.github.com/googleapis/nodejs-pubsub/commit/4214a4f))
+* include 'x-goog-request-params' header in requests ([#562](https://www.github.com/googleapis/nodejs-pubsub/issues/562)) ([482e745](https://www.github.com/googleapis/nodejs-pubsub/commit/482e745))
+* relax strictEqual to match RegExp ([#566](https://www.github.com/googleapis/nodejs-pubsub/issues/566)) ([3388fb7](https://www.github.com/googleapis/nodejs-pubsub/commit/3388fb7))
+* **deps:** update dependency p-defer to v2 ([#553](https://www.github.com/googleapis/nodejs-pubsub/issues/553)) ([fe33e40](https://www.github.com/googleapis/nodejs-pubsub/commit/fe33e40))
+
+
+### Build System
+
+* upgrade engines field to >=8.10.0 ([#584](https://www.github.com/googleapis/nodejs-pubsub/issues/584)) ([2116474](https://www.github.com/googleapis/nodejs-pubsub/commit/2116474))
+
+
+### Features
+
+* **subscriber:** ordered messages ([1ae4719](https://www.github.com/googleapis/nodejs-pubsub/commit/1ae4719))
+* **subscription:** accept pull timeout option ([#556](https://www.github.com/googleapis/nodejs-pubsub/issues/556)) ([468e1bf](https://www.github.com/googleapis/nodejs-pubsub/commit/468e1bf))
+* **subscription:** ordered messages ([#560](https://www.github.com/googleapis/nodejs-pubsub/issues/560)) ([38502ad](https://www.github.com/googleapis/nodejs-pubsub/commit/38502ad))
+
+
+### BREAKING CHANGES
+
+* upgrade engines field to >=8.10.0 (#584)
 
 ## v0.28.1
 
@@ -513,4 +683,3 @@ const pubsub = new PubSub();
 - Configure Renovate (#144)
 - refactor: drop repo-tool as an exec wrapper (#150)
 - fix: update linking for samples (#146)
-

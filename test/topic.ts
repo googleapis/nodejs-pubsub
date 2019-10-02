@@ -17,13 +17,17 @@
 import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
 import {CallOptions} from 'google-gax';
-import {ServiceError} from 'grpc';
+import {ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
 import {google} from '../proto/pubsub';
 import {ExistsCallback, RequestCallback, RequestConfig} from '../src/pubsub';
-import {CreateSubscriptionOptions, Subscription, SubscriptionOptions} from '../src/subscription';
+import {
+  CreateSubscriptionOptions,
+  Subscription,
+  SubscriptionOptions,
+} from '../src/subscription';
 import {GetTopicMetadataCallback, Topic} from '../src/topic';
 import * as util from '../src/util';
 
@@ -34,9 +38,12 @@ const fakePromisify = Object.assign({}, pfy, {
       return;
     }
     promisified = true;
-    assert.deepStrictEqual(
-        options.exclude,
-        ['publish', 'publishJSON', 'setPublishOptions', 'subscription']);
+    assert.deepStrictEqual(options.exclude, [
+      'publish',
+      'publishJSON',
+      'setPublishOptions',
+      'subscription',
+    ]);
   },
 });
 
@@ -96,13 +103,13 @@ describe('Topic', () => {
 
   before(() => {
     Topic = proxyquire('../src/topic.js', {
-              '@google-cloud/promisify': fakePromisify,
-              '@google-cloud/paginator': {
-                paginator: fakePaginator,
-              },
-              './iam': {IAM: FakeIAM},
-              './publisher': {Publisher: FakePublisher},
-            }).Topic;
+      '@google-cloud/promisify': fakePromisify,
+      '@google-cloud/paginator': {
+        paginator: fakePaginator,
+      },
+      './iam': {IAM: FakeIAM},
+      './publisher': {Publisher: FakePublisher},
+    }).Topic;
   });
 
   const sandbox = sinon.createSandbox();
@@ -114,7 +121,7 @@ describe('Topic', () => {
 
   describe('initialization', () => {
     it('should extend the correct methods', () => {
-      assert(extended);  // See `fakePaginator.extend`
+      assert(extended); // See `fakePaginator.extend`
     });
 
     it('should streamify the correct methods', () => {
@@ -177,8 +184,10 @@ describe('Topic', () => {
 
   describe('formatName_', () => {
     it('should format name', () => {
-      const formattedName =
-          Topic.formatName_(PROJECT_ID, TOPIC_UNFORMATTED_NAME);
+      const formattedName = Topic.formatName_(
+        PROJECT_ID,
+        TOPIC_UNFORMATTED_NAME
+      );
       assert.strictEqual(formattedName, TOPIC_NAME);
     });
 
@@ -207,13 +216,16 @@ describe('Topic', () => {
       const NAME = 'sub-name';
       const OPTIONS = {a: 'a'};
 
-      PUBSUB.createSubscription =
-          (topic_: Topic, name: string, options: CreateSubscriptionOptions) => {
-            assert.strictEqual(topic_, topic);
-            assert.strictEqual(name, NAME);
-            assert.strictEqual(options, OPTIONS);
-            done();
-          };
+      PUBSUB.createSubscription = (
+        topic_: Topic,
+        name: string,
+        options: CreateSubscriptionOptions
+      ) => {
+        assert.strictEqual(topic_, topic);
+        assert.strictEqual(name, NAME);
+        assert.strictEqual(options, OPTIONS);
+        done();
+      };
 
       topic.createSubscription(NAME, OPTIONS, assert.ifError);
     });
@@ -264,21 +276,23 @@ describe('Topic', () => {
       const fakeMetadata = {};
 
       beforeEach(() => {
-        topic.getMetadata =
-            (gaxOpts: CallOptions,
-             callback: RequestCallback<google.pubsub.v1.ITopic>) => {
-              callback(null, fakeMetadata);
-            };
+        topic.getMetadata = (
+          gaxOpts: CallOptions,
+          callback: RequestCallback<google.pubsub.v1.ITopic>
+        ) => {
+          callback(null, fakeMetadata);
+        };
       });
 
       it('should call through to getMetadata', done => {
         topic.get(
-            (err: Error, _topic: Topic, resp: google.pubsub.v1.ITopic) => {
-              assert.ifError(err);
-              assert.strictEqual(_topic, topic);
-              assert.strictEqual(resp, fakeMetadata);
-              done();
-            });
+          (err: Error, _topic: Topic, resp: google.pubsub.v1.ITopic) => {
+            assert.ifError(err);
+            assert.strictEqual(_topic, topic);
+            assert.strictEqual(resp, fakeMetadata);
+            done();
+          }
+        );
       });
 
       it('should optionally accept options', done => {
@@ -298,36 +312,42 @@ describe('Topic', () => {
         const error = {code: 4} as ServiceError;
         const apiResponse = {} as Topic;
 
-        topic.getMetadata =
-            (gaxOpts: CallOptions, callback: GetTopicMetadataCallback) => {
-              callback(error, apiResponse);
-            };
+        topic.getMetadata = (
+          gaxOpts: CallOptions,
+          callback: GetTopicMetadataCallback
+        ) => {
+          callback(error, apiResponse);
+        };
 
         topic.get(
-            (err: Error, _topic: Topic, resp: google.pubsub.v1.ITopic) => {
-              assert.strictEqual(err, error);
-              assert.strictEqual(_topic, null);
-              assert.strictEqual(resp, apiResponse);
-              done();
-            });
+          (err: Error, _topic: Topic, resp: google.pubsub.v1.ITopic) => {
+            assert.strictEqual(err, error);
+            assert.strictEqual(_topic, null);
+            assert.strictEqual(resp, apiResponse);
+            done();
+          }
+        );
       });
 
       it('should pass back 404 errors if autoCreate is false', done => {
         const error = {code: 5} as ServiceError;
         const apiResponse = {} as Topic;
 
-        topic.getMetadata =
-            (gaxOpts: CallOptions, callback: GetTopicMetadataCallback) => {
-              callback(error, apiResponse);
-            };
+        topic.getMetadata = (
+          gaxOpts: CallOptions,
+          callback: GetTopicMetadataCallback
+        ) => {
+          callback(error, apiResponse);
+        };
 
         topic.get(
-            (err: Error, _topic: Topic, resp: google.pubsub.v1.ITopic) => {
-              assert.strictEqual(err, error);
-              assert.strictEqual(_topic, null);
-              assert.strictEqual(resp, apiResponse);
-              done();
-            });
+          (err: Error, _topic: Topic, resp: google.pubsub.v1.ITopic) => {
+            assert.strictEqual(err, error);
+            assert.strictEqual(_topic, null);
+            assert.strictEqual(resp, apiResponse);
+            done();
+          }
+        );
       });
 
       it('should create the topic if 404 + autoCreate is true', done => {
@@ -338,10 +358,12 @@ describe('Topic', () => {
           autoCreate: true,
         };
 
-        topic.getMetadata =
-            (gaxOpts: CallOptions, callback: GetTopicMetadataCallback) => {
-              callback(error, apiResponse);
-            };
+        topic.getMetadata = (
+          gaxOpts: CallOptions,
+          callback: GetTopicMetadataCallback
+        ) => {
+          callback(error, apiResponse);
+        };
 
         topic.create = (options: CallOptions) => {
           assert.strictEqual(options, fakeOptions);
@@ -418,13 +440,15 @@ describe('Topic', () => {
     });
 
     it('should pass back any errors that occur', done => {
-      const error = new Error('err');
+      const error = new Error('err') as ServiceError;
       const apiResponse = {};
 
-      topic.request =
-          (config: RequestConfig, callback: GetTopicMetadataCallback) => {
-            callback(error, apiResponse);
-          };
+      topic.request = (
+        config: RequestConfig,
+        callback: GetTopicMetadataCallback
+      ) => {
+        callback(error, apiResponse);
+      };
 
       topic.getMetadata((err: Error, metadata: google.pubsub.v1.ITopic) => {
         assert.strictEqual(err, error);
@@ -436,10 +460,12 @@ describe('Topic', () => {
     it('should set the metadata if no error occurs', done => {
       const apiResponse = {};
 
-      topic.request =
-          (config: RequestConfig, callback: GetTopicMetadataCallback) => {
-            callback(null, apiResponse);
-          };
+      topic.request = (
+        config: RequestConfig,
+        callback: GetTopicMetadataCallback
+      ) => {
+        callback(null, apiResponse);
+      };
 
       topic.getMetadata((err: Error, metadata: google.pubsub.v1.ITopic) => {
         assert.ifError(err);
@@ -462,16 +488,18 @@ describe('Topic', () => {
       };
 
       const expectedOptions = Object.assign(
-          {
-            topic: topic.name,
-          },
-          options);
+        {
+          topic: topic.name,
+        },
+        options
+      );
 
       const expectedGaxOpts = Object.assign(
-          {
-            autoPaginate: options.autoPaginate,
-          },
-          options.gaxOpts);
+        {
+          autoPaginate: options.autoPaginate,
+        },
+        options.gaxOpts
+      );
 
       delete expectedOptions.gaxOpts;
       delete expectedOptions.autoPaginate;
@@ -506,10 +534,12 @@ describe('Topic', () => {
         };
       };
 
-      topic.request =
-          (config: RequestConfig, callback: RequestCallback<string[]>) => {
-            callback(null, fakeSubs);
-          };
+      topic.request = (
+        config: RequestConfig,
+        callback: RequestCallback<string[]>
+      ) => {
+        callback(null, fakeSubs);
+      };
 
       topic.getSubscriptions((err: Error, subscriptions: Subscription[]) => {
         assert.ifError(err);
@@ -529,20 +559,21 @@ describe('Topic', () => {
       const apiResponse_ = {};
 
       topic.request =
-          // tslint:disable-next-line:no-any
-          (config: RequestConfig, callback: (...args: any[]) => void) => {
-            callback(err_, subs_, nextQuery_, apiResponse_);
-          };
+        // tslint:disable-next-line:no-any
+        (config: RequestConfig, callback: (...args: any[]) => void) => {
+          callback(err_, subs_, nextQuery_, apiResponse_);
+        };
 
       topic.getSubscriptions(
-          // tslint:disable-next-line:no-any
-          (err: Error, subs: boolean, nextQuery: any, apiResponse: any) => {
-            assert.strictEqual(err, err_);
-            assert.deepStrictEqual(subs, subs_);
-            assert.strictEqual(nextQuery, nextQuery_);
-            assert.strictEqual(apiResponse, apiResponse_);
-            done();
-          });
+        // tslint:disable-next-line:no-any
+        (err: Error, subs: boolean, nextQuery: any, apiResponse: any) => {
+          assert.strictEqual(err, err_);
+          assert.deepStrictEqual(subs, subs_);
+          assert.strictEqual(nextQuery, nextQuery_);
+          assert.strictEqual(apiResponse, apiResponse_);
+          done();
+        }
+      );
     });
   });
 
@@ -553,9 +584,10 @@ describe('Topic', () => {
       const callback = () => {};
 
       const fakePromise = Promise.resolve();
-      const stub = sandbox.stub(topic.publisher, 'publish')
-                       .withArgs(data, attributes, callback)
-                       .returns(fakePromise);
+      const stub = sandbox
+        .stub(topic.publisher, 'publish')
+        .withArgs(data, attributes, callback)
+        .returns(fakePromise);
 
       const promise = topic.publish(data, attributes, callback);
       assert.strictEqual(promise, fakePromise);
@@ -645,8 +677,9 @@ describe('Topic', () => {
   describe('setPublishOptions', () => {
     it('should call through to Publisher#setOptions', () => {
       const fakeOptions = {};
-      const stub =
-          sandbox.stub(topic.publisher, 'setOptions').withArgs(fakeOptions);
+      const stub = sandbox
+        .stub(topic.publisher, 'setOptions')
+        .withArgs(fakeOptions);
 
       topic.setPublishOptions(fakeOptions);
 
@@ -659,22 +692,26 @@ describe('Topic', () => {
       const subscriptionName = 'subName';
       const opts = {};
 
-      topic.parent.subscription =
-          (name: string, options: SubscriptionOptions) => {
-            assert.strictEqual(name, subscriptionName);
-            assert.deepStrictEqual(options, opts);
-            done();
-          };
+      topic.parent.subscription = (
+        name: string,
+        options: SubscriptionOptions
+      ) => {
+        assert.strictEqual(name, subscriptionName);
+        assert.deepStrictEqual(options, opts);
+        done();
+      };
 
       topic.subscription(subscriptionName, opts);
     });
 
     it('should attach the topic instance to the options', done => {
-      topic.parent.subscription =
-          (name: string, options: SubscriptionOptions) => {
-            assert.strictEqual(options.topic, topic);
-            done();
-          };
+      topic.parent.subscription = (
+        name: string,
+        options: SubscriptionOptions
+      ) => {
+        assert.strictEqual(options.topic, topic);
+        done();
+      };
 
       topic.subscription();
     });

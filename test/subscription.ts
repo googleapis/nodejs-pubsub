@@ -17,7 +17,7 @@
 import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
 import {EventEmitter} from 'events';
-import {ServiceError} from 'grpc';
+import {ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
@@ -29,14 +29,16 @@ import * as util from '../src/util';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
-  promisifyAll:
-      (klass: subby.Subscription, options: pfy.PromisifyAllOptions) => {
-        if (klass.name !== 'Subscription') {
-          return;
-        }
-        promisified = true;
-        assert.deepStrictEqual(options.exclude, ['open', 'snapshot']);
-      },
+  promisifyAll: (
+    klass: subby.Subscription,
+    options: pfy.PromisifyAllOptions
+  ) => {
+    if (klass.name !== 'Subscription') {
+      return;
+    }
+    promisified = true;
+    assert.deepStrictEqual(options.exclude, ['open', 'snapshot']);
+  },
 });
 
 class FakeIAM {
@@ -82,21 +84,20 @@ describe('Subscription', () => {
   const SUB_NAME = 'test-subscription';
   const SUB_FULL_NAME = 'projects/' + PROJECT_ID + '/subscriptions/' + SUB_NAME;
 
-
-  const PUBSUB = {
+  const PUBSUB = ({
     projectId: PROJECT_ID,
     Promise: {},
     request: util.noop,
     createSubscription: util.noop,
-  } as {} as PubSub;
+  } as {}) as PubSub;
 
   before(() => {
     Subscription = proxyquire('../src/subscription.js', {
-                     '@google-cloud/promisify': fakePromisify,
-                     './iam.js': {IAM: FakeIAM},
-                     './snapshot.js': {Snapshot: FakeSnapshot},
-                     './subscriber.js': {Subscriber: FakeSubscriber},
-                   }).Subscription;
+      '@google-cloud/promisify': fakePromisify,
+      './iam.js': {IAM: FakeIAM},
+      './snapshot.js': {Snapshot: FakeSnapshot},
+      './subscriber.js': {Subscriber: FakeSubscriber},
+    }).Subscription;
   });
 
   const sandbox = sinon.createSandbox();
@@ -149,7 +150,7 @@ describe('Subscription', () => {
 
     it('should create an IAM object', () => {
       assert(subscription.iam instanceof FakeIAM);
-      const args = (subscription.iam as {} as FakeIAM).calledWith_;
+      const args = ((subscription.iam as {}) as FakeIAM).calledWith_;
       assert.strictEqual(args[0], PUBSUB);
       assert.strictEqual(args[1], subscription.name);
     });
@@ -226,11 +227,12 @@ describe('Subscription', () => {
 
       const formatted = Subscription.formatMetadata_(metadata);
 
-      assert.strictEqual(formatted.retainAckedMessages, true);
       assert.strictEqual(formatted.messageRetentionDuration!.nanos, 0);
 
       assert.strictEqual(
-          formatted.messageRetentionDuration!.seconds, threeDaysInSeconds);
+        formatted.messageRetentionDuration!.seconds,
+        threeDaysInSeconds
+      );
     });
 
     it('should format pushEndpoint', () => {
@@ -244,7 +246,9 @@ describe('Subscription', () => {
 
       assert.strictEqual(formatted.pushConfig!.pushEndpoint, pushEndpoint);
       assert.strictEqual(
-          (formatted as subby.SubscriptionMetadata).pushEndpoint, undefined);
+        (formatted as subby.SubscriptionMetadata).pushEndpoint,
+        undefined
+      );
     });
   });
 
@@ -286,8 +290,7 @@ describe('Subscription', () => {
     });
 
     it('should throw an error if theres no topic', () => {
-      const expectedError =
-          /Subscriptions can only be created when accessed through Topics/;
+      const expectedError = /Subscriptions can only be created when accessed through Topics/;
       delete subscription.topic;
       assert.throws(() => subscription.create(), expectedError);
     });
@@ -380,7 +383,7 @@ describe('Subscription', () => {
     });
 
     it('should make the correct request', done => {
-      subscription.request = (config) => {
+      subscription.request = config => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'createSnapshot');
         assert.deepStrictEqual(config.reqOpts, {
@@ -396,7 +399,7 @@ describe('Subscription', () => {
     it('should optionally accept gax options', done => {
       const gaxOpts = {};
 
-      subscription.request = (config) => {
+      subscription.request = config => {
         assert.strictEqual(config.gaxOpts, gaxOpts);
         done();
       };
@@ -503,7 +506,7 @@ describe('Subscription', () => {
     });
 
     describe('error', () => {
-      const error = new Error('err');
+      const error = new Error('err') as ServiceError;
 
       beforeEach(() => {
         subscription.request = (config, callback) => {
@@ -581,13 +584,12 @@ describe('Subscription', () => {
         autoCreate: true,
         a: 'a',
       };
-      sandbox.stub(subscription, 'getMetadata').callsFake((gaxOpts) => {
+      sandbox.stub(subscription, 'getMetadata').callsFake(gaxOpts => {
         assert.strictEqual(gaxOpts, options);
         // tslint:disable-next-line no-any
         assert.strictEqual((gaxOpts as typeof options).autoCreate, undefined);
         done();
       });
-
 
       subscription.get(options, assert.ifError);
     });
@@ -596,10 +598,11 @@ describe('Subscription', () => {
       const fakeMetadata = {};
 
       it('should call through to getMetadata', done => {
-        sandbox.stub(subscription, 'getMetadata')
-            .callsFake((gaxOpts, callback) => {
-              callback(null, fakeMetadata);
-            });
+        sandbox
+          .stub(subscription, 'getMetadata')
+          .callsFake((gaxOpts, callback) => {
+            callback(null, fakeMetadata);
+          });
 
         subscription.get((err, sub, resp) => {
           assert.ifError(err);
@@ -611,11 +614,12 @@ describe('Subscription', () => {
 
       it('should optionally accept options', done => {
         const options = {};
-        sandbox.stub(subscription, 'getMetadata')
-            .callsFake((gaxOpts, callback) => {
-              assert.strictEqual(gaxOpts, options);
-              callback(null);  // the done fn
-            });
+        sandbox
+          .stub(subscription, 'getMetadata')
+          .callsFake((gaxOpts, callback) => {
+            assert.strictEqual(gaxOpts, options);
+            callback(null); // the done fn
+          });
 
         subscription.get(options, done);
       });
@@ -625,8 +629,9 @@ describe('Subscription', () => {
       it('should pass back errors when not auto-creating', done => {
         const error = {code: 4} as ServiceError;
         const apiResponse = {};
-        sandbox.stub(subscription, 'getMetadata')
-            .callsArgWith(1, error, apiResponse);
+        sandbox
+          .stub(subscription, 'getMetadata')
+          .callsArgWith(1, error, apiResponse);
 
         subscription.get((err, sub, resp) => {
           assert.strictEqual(err, error);
@@ -639,8 +644,9 @@ describe('Subscription', () => {
       it('should pass back 404 errors if autoCreate is false', done => {
         const error = {code: 5} as ServiceError;
         const apiResponse = {};
-        sandbox.stub(subscription, 'getMetadata')
-            .callsArgWith(1, error, apiResponse);
+        sandbox
+          .stub(subscription, 'getMetadata')
+          .callsArgWith(1, error, apiResponse);
 
         subscription.get((err, sub, resp) => {
           assert.strictEqual(err, error);
@@ -653,8 +659,9 @@ describe('Subscription', () => {
       it('should pass back 404 errors if create doesnt exist', done => {
         const error = {code: 5} as ServiceError;
         const apiResponse = {};
-        sandbox.stub(subscription, 'getMetadata')
-            .callsArgWith(1, error, apiResponse);
+        sandbox
+          .stub(subscription, 'getMetadata')
+          .callsArgWith(1, error, apiResponse);
 
         delete subscription.create;
 
@@ -673,14 +680,14 @@ describe('Subscription', () => {
         const fakeOptions = {
           autoCreate: true,
         };
-        sandbox.stub(subscription, 'getMetadata')
-            .callsArgWith(1, error, apiResponse);
+        sandbox
+          .stub(subscription, 'getMetadata')
+          .callsArgWith(1, error, apiResponse);
 
-        sandbox.stub(subscription, 'create').callsFake((options) => {
+        sandbox.stub(subscription, 'create').callsFake(options => {
           assert.strictEqual(options.gaxOpts, fakeOptions);
           done();
         });
-
 
         subscription.topic = 'hi-ho-silver';
         subscription.get(fakeOptions, assert.ifError);
@@ -690,7 +697,7 @@ describe('Subscription', () => {
 
   describe('getMetadata', () => {
     it('should make the correct request', done => {
-      subscription.request = (config) => {
+      subscription.request = config => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'getSubscription');
         assert.deepStrictEqual(config.reqOpts, {
@@ -705,7 +712,7 @@ describe('Subscription', () => {
     it('should optionally accept gax options', done => {
       const gaxOpts = {};
 
-      subscription.request = (config) => {
+      subscription.request = config => {
         assert.strictEqual(config.gaxOpts, gaxOpts);
         done();
       };
@@ -748,7 +755,7 @@ describe('Subscription', () => {
     const fakeConfig = {};
 
     it('should make the correct request', done => {
-      subscription.request = (config) => {
+      subscription.request = config => {
         assert.strictEqual(config.client, 'SubscriberClient');
         assert.strictEqual(config.method, 'modifyPushConfig');
         assert.deepStrictEqual(config.reqOpts, {
@@ -764,7 +771,7 @@ describe('Subscription', () => {
     it('should optionally accept gaxOpts', done => {
       const gaxOpts = {};
 
-      subscription.request = (config) => {
+      subscription.request = config => {
         assert.strictEqual(config.gaxOpts, gaxOpts);
         done();
       };
@@ -871,12 +878,13 @@ describe('Subscription', () => {
       };
 
       const expectedBody = Object.assign(
-          {
-            name: SUB_FULL_NAME,
-          },
-          formattedMetadata);
+        {
+          name: SUB_FULL_NAME,
+        },
+        formattedMetadata
+      );
 
-      Subscription.formatMetadata_ = (metadata) => {
+      Subscription.formatMetadata_ = metadata => {
         assert.strictEqual(metadata, METADATA);
         return formattedMetadata;
       };
@@ -885,7 +893,7 @@ describe('Subscription', () => {
         subscription: expectedBody,
         updateMask: {
           paths: ['push_config'],
-        }
+        },
       };
 
       subscription.request = (config: RequestConfig) => {
