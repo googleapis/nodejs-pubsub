@@ -52,6 +52,8 @@
  */
 
 /**
+ * Reference to internal generated clients, advanced use only.
+ *
  * @name PubSub.v1
  * @see v1.PublisherClient
  * @see v1.SubscriberClient
@@ -63,6 +65,8 @@
  */
 
 /**
+ * Reference to internal generated clients, advanced use only.
+ *
  * @name module:@google-cloud/pubsub.v1
  * @see v1.PublisherClient
  * @see v1.SubscriberClient
