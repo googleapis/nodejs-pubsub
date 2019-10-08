@@ -54,7 +54,6 @@
     "@google-cloud/precise-date": "^1.0.0",
     "@google-cloud/projectify": "^1.0.0",
     "@google-cloud/promisify": "^1.0.0",
-    "@grpc/grpc-js": "^0.6.6",
     "@sindresorhus/is": "^1.0.0",
     "@types/duplexify": "^3.6.0",
     "@types/long": "^4.0.0",
