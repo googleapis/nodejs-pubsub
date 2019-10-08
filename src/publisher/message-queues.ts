@@ -76,6 +76,18 @@ abstract class MessageQueue extends EventEmitter {
       messages,
     };
 
+    const key = messages[0]!.orderingKey || 'not ordered';
+    let range: string = 'unknown range';
+
+    if (messages.length > 1) {
+      const first = messages[0]!.data!.toString();
+      const last = messages[messages.length - 1]!.data!.toString();
+      range = `${key}: ${first} - ${last}`;
+    } else {
+      const value = messages[0]!.data!.toString();
+      range = `${key}: ${value}`;
+    }
+
     if (!done) {
       done = () => {};
     }
@@ -88,6 +100,10 @@ abstract class MessageQueue extends EventEmitter {
         gaxOpts: settings.gaxOpts!,
       },
       (err, resp) => {
+        if (err) {
+          // console.log(reqOpts);
+        }
+        // console.log(`published ${range}`);
         const messageIds = (resp && resp.messageIds) || [];
         callbacks.forEach((callback, i) => callback(err, messageIds[i]));
         done!(err);

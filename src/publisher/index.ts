@@ -178,6 +178,9 @@ export class Publisher {
         maxMilliseconds: 100,
       },
       messageOrdering: false,
+      gaxOpts: {
+        isBundling: false,
+      },
     };
 
     const {batching, gaxOpts, messageOrdering} = extend(

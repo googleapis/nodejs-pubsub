@@ -784,7 +784,7 @@ export class Topic {
       delete message.json;
     }
 
-    this.publisher.publish(message, callback!);
+    this.publisher.publishMessage(message, callback!);
   }
 
   /**
