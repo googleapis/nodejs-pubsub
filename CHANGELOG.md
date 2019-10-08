@@ -4,6 +4,16 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [1.1.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.0...v1.1.1) (2019-10-08)
+
+
+### Bug Fixes
+
+* update messaging retry timeout durations ([#761](https://www.github.com/googleapis/nodejs-pubsub/issues/761)) ([922fe92](https://www.github.com/googleapis/nodejs-pubsub/commit/922fe92))
+* use compatible version of google-gax ([060207a](https://www.github.com/googleapis/nodejs-pubsub/commit/060207a))
+* **deps:** pin @grpc/grpc-js to ^0.6.6 ([#772](https://www.github.com/googleapis/nodejs-pubsub/issues/772)) ([3c5199d](https://www.github.com/googleapis/nodejs-pubsub/commit/3c5199d))
+* **docs:** explain PubSub.v1 property ([#766](https://www.github.com/googleapis/nodejs-pubsub/issues/766)) ([157a86d](https://www.github.com/googleapis/nodejs-pubsub/commit/157a86d))
+
 ## [1.1.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.0.0...v1.1.0) (2019-09-25)
 
 
