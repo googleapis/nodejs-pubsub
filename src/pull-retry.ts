@@ -19,7 +19,6 @@ import {StatusObject, status} from '@grpc/grpc-js';
  * retryable status codes
  */
 export const RETRY_CODES: status[] = [
-  status.OK,
   status.CANCELLED,
   status.UNKNOWN,
   status.DEADLINE_EXCEEDED,
