@@ -43,19 +43,19 @@ const client = new PubSub();
 function recv(call, callback) {
   const subName = call.request.sub_name;
 
-  const subOptions = {
-    streamingPull: {
+  const sub = client.subscription(subName);
+
+  sub.setOptions({
+    streamingOptions: {
       maxStreams: 1,
     },
-  };
-
-  const sub = client.subscription(subName, subOptions);
+  });
 
   sub.on('message', message => {
     message.ack();
   });
 
-  sub.on('error', err => {
+  sub.on('error', () => {
     callback(null, null);
   });
 }
@@ -65,6 +65,6 @@ const server = new grpc.Server();
 server.addService(pubsubBenchWrapper['PubsubBenchWrapper']['service'], {
   Recv: recv,
 });
-console.log('starting on localhost:' + argv.port);
+console.log(`starting on localhost:${argv.port}`);
 server.bind('0.0.0.0:' + argv.port, grpc.ServerCredentials.createInsecure());
 server.start();
