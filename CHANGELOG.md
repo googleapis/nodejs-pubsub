@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [1.1.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.1...v1.1.2) (2019-10-09)
+
+
+### Bug Fixes
+
+* **deps:** remove direct dependency on @grpc/grpc-js ([#773](https://www.github.com/googleapis/nodejs-pubsub/issues/773)) ([0bebf9b](https://www.github.com/googleapis/nodejs-pubsub/commit/0bebf9b))
+
 ### [1.1.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.0...v1.1.1) (2019-10-08)
 
 
