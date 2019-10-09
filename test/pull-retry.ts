@@ -51,7 +51,6 @@ describe('PullRetry', () => {
   describe('retry', () => {
     it('should return true for retryable errors', () => {
       [
-        status.OK,
         status.CANCELLED,
         status.UNKNOWN,
         status.DEADLINE_EXCEEDED,
@@ -78,13 +77,6 @@ describe('PullRetry', () => {
         const shouldRetry = retrier.retry({code} as StatusObject);
         assert.strictEqual(shouldRetry, false);
       });
-    });
-
-    it('should reset the failure count on OK', () => {
-      retrier.retry({code: status.CANCELLED} as StatusObject);
-      retrier.retry({code: status.OK} as StatusObject);
-
-      assert.strictEqual(retrier.createTimeout(), 0);
     });
 
     it('should reset the failure count on DEADLINE_EXCEEDED', () => {
