@@ -56,6 +56,9 @@ function recv(call, callback) {
   });
 
   sub.on('error', () => {
+    // We look for an error here since we expect the server
+    // the close the stream with an grpc "OK" error, which
+    // indicates a successfully closed stream.
     callback(null, null);
   });
 }
@@ -66,5 +69,5 @@ server.addService(pubsubBenchWrapper['PubsubBenchWrapper']['service'], {
   Recv: recv,
 });
 console.log(`starting on localhost:${argv.port}`);
-server.bind('0.0.0.0:' + argv.port, grpc.ServerCredentials.createInsecure());
+server.bind(`0.0.0.0:${argv.port}`, grpc.ServerCredentials.createInsecure());
 server.start();
