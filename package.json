@@ -47,7 +47,8 @@
     "proto:pubsub": "pbjs -t static-module -w commonjs -p protos google/pubsub/v1/pubsub.proto | pbts -o proto/pubsub.d.ts -",
     "proto:iam": "pbjs -t static-module -w commonjs -p protos google/iam/v1/iam_policy.proto | pbts -o proto/iam.d.ts -",
     "docs-test": "linkinator docs",
-    "predocs-test": "npm run docs"
+    "predocs-test": "npm run docs",
+    "benchwrapper": "node bin/benchwrapper.js"
   },
   "dependencies": {
     "@google-cloud/paginator": "^2.0.0",
