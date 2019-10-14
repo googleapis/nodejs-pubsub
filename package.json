@@ -47,7 +47,8 @@
     "proto:pubsub": "pbjs -t static-module -w commonjs -p protos google/pubsub/v1/pubsub.proto | pbts -o proto/pubsub.d.ts -",
     "proto:iam": "pbjs -t static-module -w commonjs -p protos google/iam/v1/iam_policy.proto | pbts -o proto/iam.d.ts -",
     "docs-test": "linkinator docs",
-    "predocs-test": "npm run docs"
+    "predocs-test": "npm run docs",
+    "benchwrapper": "node bin/benchwrapper.js"
   },
   "dependencies": {
     "@google-cloud/paginator": "^2.0.0",
@@ -69,6 +70,7 @@
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^3.0.0",
+    "@grpc/proto-loader": "^0.5.2",
     "@types/execa": "^0.9.0",
     "@types/extend": "^3.0.0",
     "@types/lodash.snakecase": "^4.1.6",
@@ -84,6 +86,7 @@
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.0.0",
+    "grpc": "^1.24.0",
     "gts": "^1.0.0",
     "intelli-espower-loader": "^1.0.1",
     "jsdoc": "^3.6.2",
@@ -100,6 +103,7 @@
     "sinon": "^7.1.1",
     "source-map-support": "^0.5.9",
     "typescript": "~3.6.0",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "yargs": "^14.2.0"
   }
 }
