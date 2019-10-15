@@ -79,7 +79,21 @@ async function quickstart(
 }
 
 ```
+## Running gRPC C++ bindings
 
+For some workflows and environments (see: [#770](https://github.com/googleapis/nodejs-pubsub/issues/770)), we have found
+that running the native gRPC bindings, rather than the default `@grpc/grpc-js`, can be more stable.
+
+To configure `@google-cloud/pubsub` to use an alternative `grpc` transport:
+
+1. `npm install grpc`, adding `grpc` as a dependency.
+1. instantiate `@google-cloud/pubsub` with `grpc`:
+
+   ```js
+   const {PubSub} = require('@google-cloud/pubsub');
+   const grpc = require('grpc');
+   const pubsub = new PubSub({grpc});
+   ```
 
 
 ## Samples
