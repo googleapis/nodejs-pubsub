@@ -81,8 +81,8 @@ async function quickstart(
 ```
 ## Running gRPC C++ bindings
 
-For some workflows and environments (see: [#770](https://github.com/googleapis/nodejs-pubsub/issues/770)), we have found
-that running the native gRPC bindings, rather than the default `@grpc/grpc-js`, can be more stable.
+For some workflows and environments it might make sense to use the C++ gRPC implementation,
+instead of the default one (see: [#770](https://github.com/googleapis/nodejs-pubsub/issues/770)):
 
 To configure `@google-cloud/pubsub` to use an alternative `grpc` transport:
 
