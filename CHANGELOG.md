@@ -4,6 +4,14 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [1.1.3](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.2...v1.1.3) (2019-10-18)
+
+
+### Bug Fixes
+
+* **deps:** explicit update to google-auth-library with various fixes ([#785](https://www.github.com/googleapis/nodejs-pubsub/issues/785)) ([c7b0069](https://www.github.com/googleapis/nodejs-pubsub/commit/c7b006995fb8fe432e8561d189cddbd20c8e0dce))
+* **docs:** add documentation about running C++ gRPC bindings ([#782](https://www.github.com/googleapis/nodejs-pubsub/issues/782)) ([bdc690e](https://www.github.com/googleapis/nodejs-pubsub/commit/bdc690e6d102862f11a5ea4901c98effe1d3c427))
+
 ### [1.1.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.1...v1.1.2) (2019-10-09)
 
 
