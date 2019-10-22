@@ -527,6 +527,7 @@ export class PubSub {
       return;
     }
 
+    const grpcInstance = this.options.grpc || grpc;
     const baseUrl = apiEndpoint || process.env.PUBSUB_EMULATOR_HOST;
     const leadingProtocol = new RegExp('^https*://');
     const trailingSlashes = new RegExp('/*$');
@@ -536,7 +537,7 @@ export class PubSub {
       .split(':');
     this.options.servicePath = baseUrlParts[0];
     this.options.port = baseUrlParts[1];
-    this.options.sslCreds = grpc.credentials.createInsecure();
+    this.options.sslCreds = grpcInstance.credentials.createInsecure();
     this.isEmulator = true;
 
     if (!this.options.projectId && process.env.PUBSUB_PROJECT_ID) {

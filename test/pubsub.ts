@@ -673,6 +673,20 @@ describe('PubSub', () => {
       assert.strictEqual(pubsub.options.port, undefined);
     });
 
+    it('should create credentials from local grpc if present', () => {
+      const fakeCredentials = {};
+      const fakeGrpc = {
+        credentials: {
+          createInsecure: () => fakeCredentials,
+        },
+      };
+
+      setHost('localhost');
+      pubsub.options.grpc = (fakeGrpc as unknown) as typeof grpc;
+      pubsub.determineBaseUrl_();
+      assert.strictEqual(pubsub.options.sslCreds, fakeCredentials);
+    });
+
     describe('with PUBSUB_EMULATOR_HOST environment variable', () => {
       const PUBSUB_EMULATOR_HOST = 'localhost:9090';
 
