@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [1.1.5](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.4...v1.1.5) (2019-10-22)
+
+
+### Bug Fixes
+
+* pull emulator creds from local grpc instance ([#795](https://www.github.com/googleapis/nodejs-pubsub/issues/795)) ([1749b62](https://www.github.com/googleapis/nodejs-pubsub/commit/1749b626e6bff5fefd1b1b8c673c480a10be9cf9))
+
 ### [1.1.4](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.3...v1.1.4) (2019-10-22)
 
 
