@@ -58,8 +58,7 @@ export type PullResponse = google.pubsub.v1.IPullResponse;
  */
 export class Message {
   ackId: string;
-  // tslint:disable-next-line no-any
-  attributes: {[key: string]: any};
+  attributes: {[key: string]: string};
   data: Buffer;
   id: string;
   orderingKey?: string;
@@ -76,7 +75,7 @@ export class Message {
    */
   constructor(
     sub: Subscriber,
-    {ackId, message, deliveryAttempt = 0}: google.pubsub.v1.IReceivedMessage
+    {ackId, message, deliveryAttempt}: google.pubsub.v1.IReceivedMessage
   ) {
     /**
      * This ID is used to acknowledge the message.
@@ -92,7 +91,9 @@ export class Message {
      * @type {object}
      */
     this.attributes = message!.attributes || {};
-    this.attributes['googclient_deliveryattempt'] = deliveryAttempt;
+    this.attributes['googclient_deliveryattempt'] = String(
+      deliveryAttempt || 0
+    );
     /**
      * The message data as a Buffer.
      *

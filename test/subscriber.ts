@@ -656,13 +656,13 @@ describe('Subscriber', () => {
         const message = Object.assign({deliveryAttempt}, RECEIVED_MESSAGE);
         const m = new Message(subscriber, message);
         const attempt = m.attributes.googclient_deliveryattempt;
-        assert.strictEqual(attempt, deliveryAttempt);
+        assert.strictEqual(attempt, deliveryAttempt.toString());
       });
 
       it('should default to 0', () => {
         const m = new Message(subscriber, RECEIVED_MESSAGE);
         const attempt = m.attributes.googclient_deliveryattempt;
-        assert.strictEqual(attempt, 0);
+        assert.strictEqual(attempt, '0');
       });
     });
 
