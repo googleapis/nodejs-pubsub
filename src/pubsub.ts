@@ -338,6 +338,8 @@ export class PubSub {
    *     specified by `options.messageRetentionDuration`.
    * @property {ExpirationPolicy} [expirationPolicy] A policy that specifies
    * the conditions for this subscription's expiration.
+   * @property {DeadLetterPolicy} [deadLetterPolicy] A policy that specifies the
+   *     conditions for dead lettering messages in this subscription.
    */
   /**
    * Create a subscription to a topic.
