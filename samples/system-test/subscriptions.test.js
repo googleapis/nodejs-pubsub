@@ -186,7 +186,10 @@ describe('subscriptions', () => {
       `* %d %j %j`,
       publishedMessageIds[1],
       expected,
-      {counterId: '1'},
+      {
+        counterId: '1',
+        googclient_deliveryattempt: '0',
+      },
     ]);
 
     result = await topicTwo.publish(expectedBuffer, {counterId: '1'});
@@ -201,13 +204,19 @@ describe('subscriptions', () => {
       `* %d %j %j`,
       publishedMessageIds[2],
       expected,
-      {counterId: '2'},
+      {
+        counterId: '2',
+        googclient_deliveryattempt: '0',
+      },
     ]);
     assert.deepStrictEqual(spy.calls[2], [
       `* %d %j %j`,
       publishedMessageIds[0],
       expected,
-      {counterId: '3'},
+      {
+        counterId: '3',
+        googclient_deliveryattempt: '0',
+      },
     ]);
     console.log = log; // eslint-disable-line require-atomic-updates
   });
