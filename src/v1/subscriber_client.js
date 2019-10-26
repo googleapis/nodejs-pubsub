@@ -71,7 +71,9 @@ class SubscriberClient {
     const gaxModule = !global.isBrowser && opts.fallback ? gax.fallback : gax;
 
     const servicePath =
-      opts.servicePath || opts.apiEndpoint || this.constructor.servicePath;
+      opts.servicePath ||
+      opts.apiEndpoint ||
+      this.constructor.servicePath;
 
     // Ensure that options include the service address and port.
     opts = Object.assign(
@@ -112,22 +114,20 @@ class SubscriberClient {
     // For Node.js, pass the path to JSON proto file.
     // For browsers, pass the JSON content.
 
-    const nodejsProtoPath = path.join(
-      __dirname,
-      '..',
-      '..',
-      'protos',
-      'protos.json'
-    );
+    const nodejsProtoPath = path.join(__dirname, '..', '..', 'protos', 'protos.json');
     const protos = gaxGrpc.loadProto(
-      opts.fallback ? require('../../protos/protos.json') : nodejsProtoPath
+      opts.fallback ?
+        require("../../protos/protos.json") :
+        nodejsProtoPath
     );
 
     // This API contains "path templates"; forward-slash-separated
     // identifiers to uniquely identify resources within the API.
     // Create useful helper objects for these.
     this._pathTemplates = {
-      projectPathTemplate: new gaxModule.PathTemplate('projects/{project}'),
+      projectPathTemplate: new gaxModule.PathTemplate(
+        'projects/{project}'
+      ),
       snapshotPathTemplate: new gaxModule.PathTemplate(
         'projects/{project}/snapshots/{snapshot}'
       ),
@@ -158,9 +158,7 @@ class SubscriberClient {
     // Some of the methods on this service provide streaming responses.
     // Provide descriptors for these.
     this._descriptors.stream = {
-      streamingPull: new gaxModule.StreamDescriptor(
-        gax.StreamType.BIDI_STREAMING
-      ),
+      streamingPull: new gaxModule.StreamDescriptor(gax.StreamType.BIDI_STREAMING),
     };
 
     // Put together the default options sent with requests.
@@ -179,9 +177,9 @@ class SubscriberClient {
     // Put together the "service stub" for
     // google.iam.v1.IAMPolicy.
     const iamPolicyStub = gaxGrpc.createStub(
-      opts.fallback
-        ? protos.lookupService('google.iam.v1.IAMPolicy')
-        : protos.google.iam.v1.IAMPolicy,
+      opts.fallback ?
+        protos.lookupService('google.iam.v1.IAMPolicy') :
+        protos.google.iam.v1.IAMPolicy,
       opts
     );
 
@@ -204,17 +202,16 @@ class SubscriberClient {
       this._innerApiCalls[methodName] = gaxModule.createApiCall(
         innerCallPromise,
         defaults[methodName],
-        this._descriptors.page[methodName] ||
-          this._descriptors.stream[methodName]
+        this._descriptors.page[methodName] || this._descriptors.stream[methodName]
       );
     }
 
     // Put together the "service stub" for
     // google.pubsub.v1.Subscriber.
     const subscriberStub = gaxGrpc.createStub(
-      opts.fallback
-        ? protos.lookupService('google.pubsub.v1.Subscriber')
-        : protos.google.pubsub.v1.Subscriber,
+      opts.fallback ?
+        protos.lookupService('google.pubsub.v1.Subscriber') :
+        protos.google.pubsub.v1.Subscriber,
       opts
     );
 
@@ -249,8 +246,7 @@ class SubscriberClient {
       this._innerApiCalls[methodName] = gaxModule.createApiCall(
         innerCallPromise,
         defaults[methodName],
-        this._descriptors.page[methodName] ||
-          this._descriptors.stream[methodName]
+        this._descriptors.page[methodName] || this._descriptors.stream[methodName]
       );
     }
 
@@ -462,11 +458,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      name: request.name,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'name': request.name
+      });
 
     return this._innerApiCalls.createSubscription(request, options, callback);
   }
@@ -517,11 +512,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      subscription: request.subscription,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'subscription': request.subscription
+      });
 
     return this._innerApiCalls.getSubscription(request, options, callback);
   }
@@ -591,11 +585,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      'subscription.name': request.subscription.name,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'subscription.name': request.subscription.name
+      });
 
     return this._innerApiCalls.updateSubscription(request, options, callback);
   }
@@ -694,11 +687,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      project: request.project,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'project': request.project
+      });
 
     return this._innerApiCalls.listSubscriptions(request, options, callback);
   }
@@ -757,7 +749,7 @@ class SubscriberClient {
       request,
       options
     );
-  }
+  };
 
   /**
    * Deletes an existing subscription. All messages retained in the subscription
@@ -801,11 +793,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      subscription: request.subscription,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'subscription': request.subscription
+      });
 
     return this._innerApiCalls.deleteSubscription(request, options, callback);
   }
@@ -870,11 +861,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      subscription: request.subscription,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'subscription': request.subscription
+      });
 
     return this._innerApiCalls.modifyAckDeadline(request, options, callback);
   }
@@ -931,11 +921,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      subscription: request.subscription,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'subscription': request.subscription
+      });
 
     return this._innerApiCalls.acknowledge(request, options, callback);
   }
@@ -1002,11 +991,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      subscription: request.subscription,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'subscription': request.subscription
+      });
 
     return this._innerApiCalls.pull(request, options, callback);
   }
@@ -1111,11 +1099,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      subscription: request.subscription,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'subscription': request.subscription
+      });
 
     return this._innerApiCalls.modifyPushConfig(request, options, callback);
   }
@@ -1219,11 +1206,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      project: request.project,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'project': request.project
+      });
 
     return this._innerApiCalls.listSnapshots(request, options, callback);
   }
@@ -1282,7 +1268,7 @@ class SubscriberClient {
       request,
       options
     );
-  }
+  };
 
   /**
    * Creates a snapshot from the requested subscription. Snapshots are used in
@@ -1370,11 +1356,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      name: request.name,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'name': request.name
+      });
 
     return this._innerApiCalls.createSnapshot(request, options, callback);
   }
@@ -1451,11 +1436,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      'snapshot.name': request.snapshot.name,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'snapshot.name': request.snapshot.name
+      });
 
     return this._innerApiCalls.updateSnapshot(request, options, callback);
   }
@@ -1507,11 +1491,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      snapshot: request.snapshot,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'snapshot': request.snapshot
+      });
 
     return this._innerApiCalls.deleteSnapshot(request, options, callback);
   }
@@ -1586,11 +1569,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      subscription: request.subscription,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'subscription': request.subscription
+      });
 
     return this._innerApiCalls.seek(request, options, callback);
   }
@@ -1654,11 +1636,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      resource: request.resource,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'resource': request.resource
+      });
 
     return this._innerApiCalls.setIamPolicy(request, options, callback);
   }
@@ -1716,11 +1697,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      resource: request.resource,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'resource': request.resource
+      });
 
     return this._innerApiCalls.getIamPolicy(request, options, callback);
   }
@@ -1787,11 +1767,10 @@ class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      resource: request.resource,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'resource': request.resource
+      });
 
     return this._innerApiCalls.testIamPermissions(request, options, callback);
   }
@@ -1862,7 +1841,9 @@ class SubscriberClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromProjectName(projectName) {
-    return this._pathTemplates.projectPathTemplate.match(projectName).project;
+    return this._pathTemplates.projectPathTemplate
+      .match(projectName)
+      .project;
   }
 
   /**
@@ -1873,7 +1854,9 @@ class SubscriberClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromSnapshotName(snapshotName) {
-    return this._pathTemplates.snapshotPathTemplate.match(snapshotName).project;
+    return this._pathTemplates.snapshotPathTemplate
+      .match(snapshotName)
+      .project;
   }
 
   /**
@@ -1884,7 +1867,8 @@ class SubscriberClient {
    * @returns {String} - A string representing the snapshot.
    */
   matchSnapshotFromSnapshotName(snapshotName) {
-    return this._pathTemplates.snapshotPathTemplate.match(snapshotName)
+    return this._pathTemplates.snapshotPathTemplate
+      .match(snapshotName)
       .snapshot;
   }
 
@@ -1896,7 +1880,8 @@ class SubscriberClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromSubscriptionName(subscriptionName) {
-    return this._pathTemplates.subscriptionPathTemplate.match(subscriptionName)
+    return this._pathTemplates.subscriptionPathTemplate
+      .match(subscriptionName)
       .project;
   }
 
@@ -1908,7 +1893,8 @@ class SubscriberClient {
    * @returns {String} - A string representing the subscription.
    */
   matchSubscriptionFromSubscriptionName(subscriptionName) {
-    return this._pathTemplates.subscriptionPathTemplate.match(subscriptionName)
+    return this._pathTemplates.subscriptionPathTemplate
+      .match(subscriptionName)
       .subscription;
   }
 
@@ -1920,7 +1906,9 @@ class SubscriberClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromTopicName(topicName) {
-    return this._pathTemplates.topicPathTemplate.match(topicName).project;
+    return this._pathTemplates.topicPathTemplate
+      .match(topicName)
+      .project;
   }
 
   /**
@@ -1931,8 +1919,11 @@ class SubscriberClient {
    * @returns {String} - A string representing the topic.
    */
   matchTopicFromTopicName(topicName) {
-    return this._pathTemplates.topicPathTemplate.match(topicName).topic;
+    return this._pathTemplates.topicPathTemplate
+      .match(topicName)
+      .topic;
   }
 }
+
 
 module.exports = SubscriberClient;
