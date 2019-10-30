@@ -70,7 +70,9 @@ class PublisherClient {
     const gaxModule = !global.isBrowser && opts.fallback ? gax.fallback : gax;
 
     const servicePath =
-      opts.servicePath || opts.apiEndpoint || this.constructor.servicePath;
+      opts.servicePath ||
+      opts.apiEndpoint ||
+      this.constructor.servicePath;
 
     // Ensure that options include the service address and port.
     opts = Object.assign(
@@ -111,22 +113,20 @@ class PublisherClient {
     // For Node.js, pass the path to JSON proto file.
     // For browsers, pass the JSON content.
 
-    const nodejsProtoPath = path.join(
-      __dirname,
-      '..',
-      '..',
-      'protos',
-      'protos.json'
-    );
+    const nodejsProtoPath = path.join(__dirname, '..', '..', 'protos', 'protos.json');
     const protos = gaxGrpc.loadProto(
-      opts.fallback ? require('../../protos/protos.json') : nodejsProtoPath
+      opts.fallback ?
+        require("../../protos/protos.json") :
+        nodejsProtoPath
     );
 
     // This API contains "path templates"; forward-slash-separated
     // identifiers to uniquely identify resources within the API.
     // Create useful helper objects for these.
     this._pathTemplates = {
-      projectPathTemplate: new gaxModule.PathTemplate('projects/{project}'),
+      projectPathTemplate: new gaxModule.PathTemplate(
+        'projects/{project}'
+      ),
       topicPathTemplate: new gaxModule.PathTemplate(
         'projects/{project}/topics/{topic}'
       ),
@@ -148,20 +148,20 @@ class PublisherClient {
       ),
     };
 
-    const protoFilesRoot = opts.fallback
-      ? gaxModule.protobuf.Root.fromJSON(require('../../protos/protos.json'))
-      : gaxModule.protobuf.loadSync(nodejsProtoPath);
+    const protoFilesRoot = opts.fallback ?
+      gaxModule.protobuf.Root.fromJSON(require("../../protos/protos.json")) :
+      gaxModule.protobuf.loadSync(nodejsProtoPath);
 
     // Some methods on this API support automatically batching
     // requests; denote this.
     this._descriptors.batching = {
       publish: new gaxModule.BundleDescriptor(
         'messages',
-        ['topic'],
+        [
+          'topic',
+        ],
         'messageIds',
-        gax.createByteLengthFunction(
-          protoFilesRoot.lookup('google.pubsub.v1.PubsubMessage')
-        )
+        gax.createByteLengthFunction(protoFilesRoot.lookup('google.pubsub.v1.PubsubMessage'))
       ),
     };
 
@@ -181,9 +181,9 @@ class PublisherClient {
     // Put together the "service stub" for
     // google.iam.v1.IAMPolicy.
     const iamPolicyStub = gaxGrpc.createStub(
-      opts.fallback
-        ? protos.lookupService('google.iam.v1.IAMPolicy')
-        : protos.google.iam.v1.IAMPolicy,
+      opts.fallback ?
+        protos.lookupService('google.iam.v1.IAMPolicy') :
+        protos.google.iam.v1.IAMPolicy,
       opts
     );
 
@@ -206,17 +206,16 @@ class PublisherClient {
       this._innerApiCalls[methodName] = gaxModule.createApiCall(
         innerCallPromise,
         defaults[methodName],
-        this._descriptors.page[methodName] ||
-          this._descriptors.batching[methodName]
+        this._descriptors.page[methodName] || this._descriptors.batching[methodName]
       );
     }
 
     // Put together the "service stub" for
     // google.pubsub.v1.Publisher.
     const publisherStub = gaxGrpc.createStub(
-      opts.fallback
-        ? protos.lookupService('google.pubsub.v1.Publisher')
-        : protos.google.pubsub.v1.Publisher,
+      opts.fallback ?
+        protos.lookupService('google.pubsub.v1.Publisher') :
+        protos.google.pubsub.v1.Publisher,
       opts
     );
 
@@ -243,8 +242,7 @@ class PublisherClient {
       this._innerApiCalls[methodName] = gaxModule.createApiCall(
         innerCallPromise,
         defaults[methodName],
-        this._descriptors.page[methodName] ||
-          this._descriptors.batching[methodName]
+        this._descriptors.page[methodName] || this._descriptors.batching[methodName]
       );
     }
   }
@@ -361,11 +359,10 @@ class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      name: request.name,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'name': request.name
+      });
 
     return this._innerApiCalls.createTopic(request, options, callback);
   }
@@ -431,11 +428,10 @@ class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      'topic.name': request.topic.name,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'topic.name': request.topic.name
+      });
 
     return this._innerApiCalls.updateTopic(request, options, callback);
   }
@@ -500,11 +496,10 @@ class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      topic: request.topic,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'topic': request.topic
+      });
 
     return this._innerApiCalls.publish(request, options, callback);
   }
@@ -555,11 +550,10 @@ class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      topic: request.topic,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'topic': request.topic
+      });
 
     return this._innerApiCalls.getTopic(request, options, callback);
   }
@@ -658,11 +652,10 @@ class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      project: request.project,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'project': request.project
+      });
 
     return this._innerApiCalls.listTopics(request, options, callback);
   }
@@ -721,7 +714,7 @@ class PublisherClient {
       request,
       options
     );
-  }
+  };
 
   /**
    * Lists the names of the subscriptions on this topic.
@@ -817,17 +810,12 @@ class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      topic: request.topic,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'topic': request.topic
+      });
 
-    return this._innerApiCalls.listTopicSubscriptions(
-      request,
-      options,
-      callback
-    );
+    return this._innerApiCalls.listTopicSubscriptions(request, options, callback);
   }
 
   /**
@@ -884,7 +872,7 @@ class PublisherClient {
       request,
       options
     );
-  }
+  };
 
   /**
    * Deletes the topic with the given name. Returns `NOT_FOUND` if the topic
@@ -928,11 +916,10 @@ class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      topic: request.topic,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'topic': request.topic
+      });
 
     return this._innerApiCalls.deleteTopic(request, options, callback);
   }
@@ -996,11 +983,10 @@ class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      resource: request.resource,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'resource': request.resource
+      });
 
     return this._innerApiCalls.setIamPolicy(request, options, callback);
   }
@@ -1058,11 +1044,10 @@ class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      resource: request.resource,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'resource': request.resource
+      });
 
     return this._innerApiCalls.getIamPolicy(request, options, callback);
   }
@@ -1129,11 +1114,10 @@ class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      resource: request.resource,
-    });
+    options.otherArgs.headers['x-goog-request-params'] =
+      gax.routingHeader.fromParams({
+        'resource': request.resource
+      });
 
     return this._innerApiCalls.testIamPermissions(request, options, callback);
   }
@@ -1176,7 +1160,9 @@ class PublisherClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromProjectName(projectName) {
-    return this._pathTemplates.projectPathTemplate.match(projectName).project;
+    return this._pathTemplates.projectPathTemplate
+      .match(projectName)
+      .project;
   }
 
   /**
@@ -1187,7 +1173,9 @@ class PublisherClient {
    * @returns {String} - A string representing the project.
    */
   matchProjectFromTopicName(topicName) {
-    return this._pathTemplates.topicPathTemplate.match(topicName).project;
+    return this._pathTemplates.topicPathTemplate
+      .match(topicName)
+      .project;
   }
 
   /**
@@ -1198,8 +1186,11 @@ class PublisherClient {
    * @returns {String} - A string representing the topic.
    */
   matchTopicFromTopicName(topicName) {
-    return this._pathTemplates.topicPathTemplate.match(topicName).topic;
+    return this._pathTemplates.topicPathTemplate
+      .match(topicName)
+      .topic;
   }
 }
+
 
 module.exports = PublisherClient;
