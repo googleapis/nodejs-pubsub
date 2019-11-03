@@ -13,10 +13,7 @@
   "files": [
     "build/proto",
     "build/protos",
-    "build/src",
-    "AUTHORS",
-    "CONTRIBUTORS",
-    "LICENSE"
+    "build/src"
   ],
   "keywords": [
     "google apis client",
@@ -34,7 +31,7 @@
     "presystem-test": "npm run compile",
     "system-test": "mocha build/system-test --timeout 600000",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
-    "test": "nyc mocha build/test",
+    "test": "c8 mocha build/test",
     "lint": "eslint '**/*.js' && gts check",
     "predocs": "npm run compile",
     "docs": "jsdoc -c .jsdoc.js",
@@ -69,7 +66,6 @@
     "protobufjs": "^6.8.1"
   },
   "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "^3.0.0",
     "@grpc/proto-loader": "^0.5.2",
     "@types/execa": "^0.9.0",
     "@types/extend": "^3.0.0",
@@ -81,6 +77,7 @@
     "@types/sinon": "^7.0.0",
     "@types/tmp": "^0.1.0",
     "@types/uuid": "^3.4.4",
+    "c8": "^6.0.1",
     "codecov": "^3.0.0",
     "eslint": "^6.0.0",
     "eslint-config-prettier": "^6.0.0",
@@ -96,7 +93,6 @@
     "mocha": "^6.0.0",
     "mv": "^2.1.1",
     "ncp": "^2.0.0",
-    "nyc": "^14.0.0",
     "power-assert": "^1.4.4",
     "prettier": "^1.18.2",
     "proxyquire": "^2.0.0",
