@@ -200,10 +200,7 @@ export class MessageStream extends PassThrough {
     stream
       .on('error', err => this._onError(stream, err))
       .once('status', status => this._onStatus(stream, status))
-      .pipe(
-        this,
-        {end: false}
-      );
+      .pipe(this, {end: false});
   }
   /**
    * Attempts to create and cache the desired number of StreamingPull requests.
