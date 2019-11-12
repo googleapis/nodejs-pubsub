@@ -64,7 +64,6 @@
     "google-auth-library": "^5.5.0",
     "google-gax": "^1.7.5",
     "is-stream-ended": "^0.1.4",
-    "jsdoc-region-tag": "^1.0.2",
     "lodash.snakecase": "^4.1.1",
     "p-defer": "^3.0.0",
     "protobufjs": "^6.8.1"
@@ -92,6 +91,7 @@
     "intelli-espower-loader": "^1.0.1",
     "jsdoc": "^3.6.2",
     "jsdoc-fresh": "^1.0.1",
+    "jsdoc-region-tag": "^1.0.2",
     "linkinator": "^1.5.0",
     "mkdirp": "^0.5.1",
     "mocha": "^6.0.0",
