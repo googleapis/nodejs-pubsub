@@ -710,23 +710,22 @@ describe('pubsub', () => {
     describe('seeking', () => {
       let subscription: Subscription;
       let messageId: string;
+      const snapshotName = generateSnapshotName();
 
-      beforeEach(() => {
+      beforeEach(async () => {
         subscription = topic.subscription(generateSubName());
-
-        return subscription
-          .create()
-          .then(() => {
-            return topic.publish(Buffer.from('Hello, world!'));
-          })
-          .then(_messageId => {
-            messageId = _messageId;
-          });
+        await subscription.create();
+        messageId = await topic.publish(Buffer.from('Hello, world!'));
+        // The first call to `createSnapshot` consistently fails,
+        // see: https://github.com/googleapis/nodejs-pubsub/issues/821
+        try {
+          await subscription.createSnapshot(snapshotName);
+        } catch (err) {
+          console.warn(err.message);
+        }
       });
 
       it('should seek to a snapshot', done => {
-        const snapshotName = generateSnapshotName();
-
         subscription.createSnapshot(snapshotName, (err, snapshot) => {
           assert.ifError(err);
 
