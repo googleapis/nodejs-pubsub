@@ -62,35 +62,18 @@ abstract class MessageQueue extends EventEmitter {
    *
    * @param {object[]} messages The messages to publish.
    * @param {PublishCallback[]} callbacks The corresponding callback functions.
-   * @param {function} [done] Callback to be fired when publish is done.
+   * @param {function} [callback] Callback to be fired when publish is done.
    */
   _publish(
     messages: PubsubMessage[],
     callbacks: PublishCallback[],
-    done?: PublishDone
+    callback?: PublishDone
   ): void {
     const {topic, settings} = this.publisher;
-
     const reqOpts = {
       topic: topic.name,
       messages,
     };
-
-    const key = messages[0]!.orderingKey || 'not ordered';
-    let range: string = 'unknown range';
-
-    if (messages.length > 1) {
-      const first = messages[0]!.data!.toString();
-      const last = messages[messages.length - 1]!.data!.toString();
-      range = `${key}: ${first} - ${last}`;
-    } else {
-      const value = messages[0]!.data!.toString();
-      range = `${key}: ${value}`;
-    }
-
-    if (!done) {
-      done = () => {};
-    }
 
     topic.request<google.pubsub.v1.IPublishResponse>(
       {
@@ -100,13 +83,12 @@ abstract class MessageQueue extends EventEmitter {
         gaxOpts: settings.gaxOpts!,
       },
       (err, resp) => {
-        if (err) {
-          // console.log(reqOpts);
-        }
-        // console.log(`published ${range}`);
         const messageIds = (resp && resp.messageIds) || [];
         callbacks.forEach((callback, i) => callback(err, messageIds[i]));
-        done!(err);
+
+        if (typeof callback === 'function') {
+          callback(err);
+        }
       }
     );
   }
@@ -145,10 +127,7 @@ export class Queue extends MessageQueue {
 
     if (!this.pending) {
       const {maxMilliseconds} = this.batchOptions;
-      this.pending = (setTimeout(
-        () => this.publish(),
-        maxMilliseconds
-      ) as unknown) as NodeJS.Timer;
+      this.pending = setTimeout(() => this.publish(), maxMilliseconds);
     }
   }
   /**

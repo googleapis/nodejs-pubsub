@@ -141,14 +141,14 @@ export class Publisher {
       queue.once('drain', () => this.orderedQueues.delete(key));
     }
 
-    const queue = this.orderedQueues.get(key);
+    const queue = this.orderedQueues.get(key)!;
 
-    if (queue!.error) {
-      callback(queue!.error);
+    if (queue.error) {
+      callback(queue.error);
       return;
     }
 
-    queue!.add(message, callback);
+    queue.add(message, callback);
   }
   /**
    * Indicates to the publisher that it is safe to continue publishing for the

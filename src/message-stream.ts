@@ -30,8 +30,6 @@ import {PullRetry} from './pull-retry';
 import {Subscriber} from './subscriber';
 import {google} from '../proto/pubsub';
 
-let uuid = 1;
-
 /*!
  * Frequency to ping streams.
  */
@@ -198,8 +196,6 @@ export class MessageStream extends PassThrough {
   private _addStream(stream: PullStream): void {
     this._setHighWaterMark(stream);
     this._streams.set(stream, false);
-
-    const id = uuid++;
 
     stream
       .on('error', err => this._onError(stream, err))
