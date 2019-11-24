@@ -50,12 +50,12 @@ describe('topics', () => {
   });
 
   // Helper function to pull one message.
-  // Times out after 10 seconds.
+  // Times out after 55 seconds.
   const _pullOneMessage = subscriptionObj => {
     return new Promise((resolve, reject) => {
       const timeoutHandler = setTimeout(() => {
         reject(new Error(`_pullOneMessage timed out`));
-      }, 10000);
+      }, 55000);
 
       subscriptionObj.once('error', reject).once('message', message => {
         message.ack();
