@@ -59,13 +59,11 @@ describe('topics', () => {
         return reject(new Error(`_pullOneMessage timed out`));
       }, timeout);
 
-      subscriptionObj
-        .once('error', reject)
-        .once('message', received => {
-          received.ack();
-          clearTimeout(timeoutHandler);
-          return resolve(message);
-        });
+      subscriptionObj.once('error', reject).once('message', message => {
+        message.ack();
+        clearTimeout(timeoutHandler);
+        return resolve(message);
+      });
     });
   };
 
