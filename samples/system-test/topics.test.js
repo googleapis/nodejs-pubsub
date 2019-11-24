@@ -50,27 +50,22 @@ describe('topics', () => {
 
   // Helper function to pull one message
   const _pullOneMessage = (subscriptionObj, timeout) => {
-    timeout = timeout || 10000; // 10 second timeout by default
+    if (typeof timeout !== 'number') {
+      timeout = 10000; // 10 second timeout by default
+    }
 
-    let message;
     return new Promise((resolve, reject) => {
-      // First message received; ack it + resolve promise
-      const messageHandler = received => {
-        received.ack();
-        message = received;
-        return resolve(messageHandler);
-      };
-
-      // Listen for new messages
-      subscriptionObj.on(`message`, messageHandler);
-
-      // Timeout appropriately
-      setTimeout(() => {
+      const timeoutHandler = setTimeout(() => {
         return reject(new Error(`_pullOneMessage timed out`));
       }, timeout);
-    }).then(messageHandler => {
-      subscriptionObj.removeListener('message', messageHandler);
-      return Promise.resolve(message);
+
+      subscriptionObj
+        .once('error', reject)
+        .once('message', received => {
+          received.ack();
+          clearTimeout(timeoutHandler);
+          return resolve(message);
+        });
     });
   };
 
