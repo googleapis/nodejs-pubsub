@@ -716,7 +716,7 @@ describe('pubsub', () => {
       beforeEach(async () => {
         subscription = topic.subscription(generateSubName());
         snapshot = subscription.snapshot(generateSnapshotName());
-        
+
         return subscription
           .create()
           .then(() => {
