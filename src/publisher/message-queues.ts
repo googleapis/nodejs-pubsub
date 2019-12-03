@@ -22,7 +22,7 @@ import {PublishError} from './publish-error';
 import {Publisher, PubsubMessage, PublishCallback, BATCH_LIMITS} from './';
 import {google} from '../../proto/pubsub';
 
-interface PublishDone {
+export interface PublishDone {
   (err: ServiceError | null): void;
 }
 
@@ -33,7 +33,7 @@ interface PublishDone {
  *
  * @param {Publisher} publisher The parent publisher.
  */
-abstract class MessageQueue extends EventEmitter {
+export abstract class MessageQueue extends EventEmitter {
   batchOptions: BatchPublishOptions;
   publisher: Publisher;
   pending?: NodeJS.Timer;
@@ -123,11 +123,9 @@ export class Queue extends MessageQueue {
 
     if (this.batch.isFull()) {
       this.publish();
-    }
-
-    if (!this.pending) {
+    } else if (!this.pending) {
       const {maxMilliseconds} = this.batchOptions;
-      this.pending = setTimeout(() => this.publish(), maxMilliseconds);
+      this.pending = setTimeout(() => this.publish(), maxMilliseconds!);
     }
   }
   /**
@@ -170,46 +168,71 @@ export class OrderedQueue extends MessageQueue {
     this.key = key;
   }
   /**
+   *
+   */
+  get currentBatch(): MessageBatch {
+    if (!this.batches.length) {
+      this.batches.push(this.createBatch());
+    }
+    return this.batches[0];
+  }
+  /**
    * Adds a message to a batch, creating a new batch if need be.
    *
    * @param {object} message The message to publish.
    * @param {PublishCallback} callback The publish callback.
    */
   add(message: PubsubMessage, callback: PublishCallback): void {
-    let batch = this.batches[0];
+    if (this.inFlight) {
+      if (this.currentBatch.isAtMax()) {
+        this.batches.unshift(this.createBatch());
+      }
 
-    if (
-      !batch ||
-      (this.inFlight && !batch.canFit(message, BATCH_LIMITS)) ||
-      !batch.canFit(message)
-    ) {
-      batch = new MessageBatch(this.batchOptions);
-      this.batches.unshift(batch);
-    }
-
-    batch.add(message, callback);
-
-    if (!this.inFlight && !this.pending) {
-      this.beginNextPublish();
-    }
-  }
-  /**
-   * Prepares the next batch to be published. If the batch is full we will
-   * publish immediately, otherwise we'll wait until the `maxMilliseconds`
-   * threshold has been hit.
-   */
-  beginNextPublish(): void {
-    const nextBatch = this.batches[0];
-
-    if (nextBatch.isFull()) {
-      this.publish();
+      this.currentBatch.add(message, callback);
       return;
     }
 
+    if (!this.currentBatch.canFit(message)) {
+      this.publish();
+    }
+
+    this.currentBatch.add(message, callback);
+
+    if (!this.inFlight) {
+      if (this.currentBatch.isFull()) {
+        this.publish();
+      } else if (!this.pending) {
+        this.beginNextPublish();
+      }
+    }
+  }
+  /**
+   * Prepares the next batch to be published.
+   */
+  beginNextPublish(): void {
     const maxMilliseconds = this.batchOptions.maxMilliseconds!;
-    const delay = Math.max(0, Date.now() - nextBatch.created - maxMilliseconds);
+    const timeWaiting = Date.now() - this.currentBatch.created;
+    const delay = Math.max(0, maxMilliseconds - timeWaiting);
 
     this.pending = setTimeout(() => this.publish(), delay);
+  }
+  /**
+   *
+   */
+  createBatch() {
+    return new MessageBatch(this.batchOptions);
+  }
+  /**
+   *
+   */
+  handlePublishFailure(err: ServiceError): void {
+    this.error = err;
+
+    // reject all pending publishes
+    while (this.batches.length) {
+      const {callbacks} = this.batches.pop()!;
+      callbacks.forEach(callback => callback(err));
+    }
   }
   /**
    * Publishes the messages. If successful it will prepare the next batch to be
@@ -220,6 +243,7 @@ export class OrderedQueue extends MessageQueue {
     this.inFlight = true;
 
     if (this.pending) {
+      clearTimeout(this.pending);
       delete this.pending;
     }
 
@@ -229,34 +253,25 @@ export class OrderedQueue extends MessageQueue {
       this.inFlight = false;
 
       if (err) {
-        this.error = new PublishError(this.key, err);
-        this.rejectPending(this.error);
-        return;
-      }
-
-      if (this.batches.length) {
+        this.handlePublishFailure(err);
+      } else if (this.batches.length) {
         this.beginNextPublish();
-        return;
+      } else {
+        this.emit('drain');
       }
-
-      this.emit('drain');
     });
   }
-  /**
-   * Rejects all pending messages.
-   *
-   * @param {error} err The error to reject with.
-   */
-  rejectPending(err: ServiceError): void {
-    while (this.batches.length) {
-      const {callbacks} = this.batches.pop()!;
-      callbacks.forEach(callback => callback(err));
-    }
-  }
+
   /**
    * Tells the queue it is ok to continue publishing messages.
    */
   resumePublishing(): void {
     delete this.error;
+
+    process.nextTick(() => {
+      if (!this.batches.length) {
+        this.emit('drain');
+      }
+    });
   }
 }
