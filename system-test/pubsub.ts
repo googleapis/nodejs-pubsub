@@ -249,8 +249,7 @@ describe('pubsub', () => {
       });
     });
 
-    // tslint:disable-next-line ban
-    describe.only('ordered messages', () => {
+    describe('ordered messages', () => {
       interface Expected {
         key: string;
         messages: string[];
@@ -266,7 +265,6 @@ describe('pubsub', () => {
       }
 
       it('should pass the acceptance tests', async () => {
-        console.time('publish');
         const [topic] = await pubsub.createTopic(generateName('orderedtopic'));
         const [subscription] = await topic.createSubscription(generateName('orderedsub'), {
           enableMessageOrdering: true
@@ -289,8 +287,6 @@ describe('pubsub', () => {
         });
 
         await Promise.all(publishes);
-        console.timeEnd('publish');
-        console.time('subscribe');
 
         const pending: Pending = {};
 
@@ -299,13 +295,6 @@ describe('pubsub', () => {
         });
 
         const deferred = defer();
-
-        // currently this test will fail because message batches for the same
-        // key appear to be coming in on different streams. Limiting the stream
-        // count to 1 appears to provide a workaround.
-        // subscription.setOptions({
-        //   streamingOptions: {maxStreams: 1}
-        // });
 
         subscription
           .on('error', deferred.reject)
@@ -316,13 +305,13 @@ describe('pubsub', () => {
             const expected = messages[0];
 
             if (key && data !== expected) {
-              // deferred.reject(
-              //   new Error(
-              //     `Expected "${expected}" but received "${data}" for key "${key}"`
-              //   )
-              // );
-              // subscription.close();
-              // return;
+              deferred.reject(
+                new Error(
+                  `Expected "${expected}" but received "${data}" for key "${key}"`
+                )
+              );
+              subscription.close();
+              return;
             }
 
             message.ack();
@@ -331,7 +320,6 @@ describe('pubsub', () => {
             if (!pending[key].length) delete pending[key];
             if (!Object.keys(pending).length) {
               deferred.resolve();
-              console.timeEnd('subscribe');
             }
           });
 
