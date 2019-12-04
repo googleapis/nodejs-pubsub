@@ -106,7 +106,7 @@ describe('pubsub', () => {
       .getSnapshotsStream()
       .on('data', deleteTestResource);
 
-    const streams = [topicStream, subscriptionStream /*, snapshotStream*/].map(
+    const streams = [topicStream, subscriptionStream, snapshotStream].map(
       stream => {
         return new Promise<Resource>((resolve, reject) => {
           stream.on('error', reject);
