@@ -220,7 +220,7 @@ describe('pubsub', () => {
       const topic = pubsub.topic(TOPIC_NAMES[0]);
       const message = {
         data: Buffer.from('message from me'),
-        orderingKey: 'a'
+        orderingKey: 'a',
       };
 
       topic.publishMessage(message, (err, messageId) => {
@@ -266,9 +266,12 @@ describe('pubsub', () => {
 
       it('should pass the acceptance tests', async () => {
         const [topic] = await pubsub.createTopic(generateName('orderedtopic'));
-        const [subscription] = await topic.createSubscription(generateName('orderedsub'), {
-          enableMessageOrdering: true
-        });
+        const [subscription] = await topic.createSubscription(
+          generateName('orderedsub'),
+          {
+            enableMessageOrdering: true,
+          }
+        );
         const {
           input,
           expected,
@@ -344,7 +347,7 @@ describe('pubsub', () => {
       await topic.create();
       await Promise.all(SUBSCRIPTIONS.map(s => s.create()));
       for (let i = 0; i < 10; i++) {
-        const data  = Buffer.from('hello');
+        const data = Buffer.from('hello');
         await topic.publishMessage({data});
       }
       await new Promise(r => setTimeout(r, 2500));

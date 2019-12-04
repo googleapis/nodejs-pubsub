@@ -22,6 +22,7 @@ import * as sinon from 'sinon';
 import {Topic} from '../../src';
 import * as p from '../../src/publisher';
 import * as q from '../../src/publisher/message-queues';
+import {PublishError} from '../../src/publisher/publish-error';
 
 class FakeQueue extends EventEmitter {
   publisher: p.Publisher;
@@ -195,8 +196,10 @@ describe('Publisher', () => {
       });
 
       it('should return an error if the queue encountered an error', done => {
-        const error = new Error('err');
-        queue.error = error;
+        const error = new Error('err') as PublishError;
+        sandbox
+          .stub(queue, 'add')
+          .callsFake((message, callback) => callback(error));
 
         publisher.publishMessage(fakeMessage, err => {
           assert.strictEqual(err, error);

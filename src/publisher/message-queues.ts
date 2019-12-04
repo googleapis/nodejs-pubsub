@@ -111,7 +111,7 @@ export class Queue extends MessageQueue {
   /**
    * Adds a message to the queue.
    *
-   * @param {object} message The message to publish.
+   * @param {PubsubMessage} message The message to publish.
    * @param {PublishCallback} callback The publish callback.
    */
   add(message: PubsubMessage, callback: PublishCallback): void {
@@ -146,7 +146,7 @@ export class Queue extends MessageQueue {
 }
 
 /**
- * Queue for handling ordered messages. Unless the standard queue, this
+ * Queue for handling ordered messages. Unlike the standard queue, this
  * ensures that batches are published one at a time and throws an exception in
  * the event that any batch fails to publish.
  *
@@ -159,7 +159,7 @@ export class Queue extends MessageQueue {
 export class OrderedQueue extends MessageQueue {
   batches: MessageBatch[];
   inFlight: boolean;
-  error?: null | ServiceError;
+  error?: null | PublishError;
   key: string;
   constructor(publisher: Publisher, key: string) {
     super(publisher);
@@ -168,7 +168,8 @@ export class OrderedQueue extends MessageQueue {
     this.key = key;
   }
   /**
-   *
+   * Reference to the batch we're currently filling.
+   * @returns {MessageBatch}
    */
   get currentBatch(): MessageBatch {
     if (!this.batches.length) {
@@ -183,7 +184,14 @@ export class OrderedQueue extends MessageQueue {
    * @param {PublishCallback} callback The publish callback.
    */
   add(message: PubsubMessage, callback: PublishCallback): void {
+    if (this.error) {
+      callback(this.error);
+      return;
+    }
+
     if (this.inFlight) {
+      // in the event that a batch is currently in flight, we can overfill
+      // the next batch as long as it hasn't hit the API limit
       if (this.currentBatch.isAtMax()) {
         this.batches.unshift(this.createBatch());
       }
@@ -198,6 +206,8 @@ export class OrderedQueue extends MessageQueue {
 
     this.currentBatch.add(message, callback);
 
+    // it is possible that we triggered a publish earlier, so we'll need to
+    // check again here
     if (!this.inFlight) {
       if (this.currentBatch.isFull()) {
         this.publish();
@@ -207,7 +217,7 @@ export class OrderedQueue extends MessageQueue {
     }
   }
   /**
-   * Prepares the next batch to be published.
+   * Starts a timeout to publish any pending messages.
    */
   beginNextPublish(): void {
     const maxMilliseconds = this.batchOptions.maxMilliseconds!;
@@ -217,16 +227,22 @@ export class OrderedQueue extends MessageQueue {
     this.pending = setTimeout(() => this.publish(), delay);
   }
   /**
+   * Creates a new {@link MessageBatch} instance.
    *
+   * @returns {MessageBatch}
    */
   createBatch() {
     return new MessageBatch(this.batchOptions);
   }
   /**
+   * In the event of a publish failure, we need to cache the error in question
+   * and reject all pending publish calls, prompting the user to call
+   * {@link OrderedQueue#resumePublishing}.
    *
+   * @param {Error} err The publishing error.
    */
   handlePublishFailure(err: ServiceError): void {
-    this.error = err;
+    this.error = new PublishError(this.key, err);
 
     // reject all pending publishes
     while (this.batches.length) {
@@ -237,7 +253,11 @@ export class OrderedQueue extends MessageQueue {
   /**
    * Publishes the messages. If successful it will prepare the next batch to be
    * published immediately after. If an error occurs, it will reject all
-   * pending messages.
+   * pending messages. In the event that no pending messages/batches are left,
+   * a "drain" event will be fired, indicating to the publisher that it is
+   * safe to delete this queue.
+   *
+   * @fires OrderedQueue#drain
    */
   publish(): void {
     this.inFlight = true;
@@ -268,6 +288,10 @@ export class OrderedQueue extends MessageQueue {
   resumePublishing(): void {
     delete this.error;
 
+    // once this is called, we'll make this object eligible for garbage
+    // collection. by wrapping in nextTick() we'll give users an opportunity
+    // to use it again instead of deleting instantly and then creating a new
+    // instance.
     process.nextTick(() => {
       if (!this.batches.length) {
         this.emit('drain');

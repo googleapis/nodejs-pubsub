@@ -76,7 +76,11 @@ export class MessageBatch {
     );
   }
   /**
+   * Checks to see if this batch is at the maximum allowed payload size.
+   * When publishing ordered messages, it is ok to exceed the user configured
+   * thresholds while a batch is in flight.
    *
+   * @returns {boolean}
    */
   isAtMax(): boolean {
     const {maxMessages, maxBytes} = BATCH_LIMITS;

@@ -108,8 +108,6 @@ export class Publisher {
    * @throws {TypeError} If data is not a Buffer object.
    * @throws {TypeError} If any value in `attributes` object is not a string.
    *
-   * @param {buffer} data The message data. This must come in the form of a
-   *     Buffer object.
    * @param {PubsubMessage} [message] Options for this message.
    * @param {PublishCallback} [callback] Callback function.
    */
@@ -142,12 +140,6 @@ export class Publisher {
     }
 
     const queue = this.orderedQueues.get(key)!;
-
-    if (queue.error) {
-      callback(queue.error);
-      return;
-    }
-
     queue.add(message, callback);
   }
   /**
@@ -155,6 +147,8 @@ export class Publisher {
    * supplied ordering key.
    *
    * @private
+   *
+   * @param {string} key The ordering key to continue publishing for.
    */
   resumePublishing(key: string) {
     const queue = this.orderedQueues.get(key);

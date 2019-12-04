@@ -24,6 +24,7 @@ import {RequestConfig, RequestCallback} from '../../src/pubsub';
 import * as p from '../../src/publisher';
 import * as b from '../../src/publisher/message-batch';
 import * as q from '../../src/publisher/message-queues';
+import {PublishError} from '../../src/publisher/publish-error';
 
 class FakeTopic {
   name = 'fake-topic';
@@ -64,6 +65,15 @@ class FakeMessageBatch {
   }
 }
 
+class FakePublishError {
+  orderingKey: string;
+  error: ServiceError;
+  constructor(key: string, error: ServiceError) {
+    this.orderingKey = key;
+    this.error = error;
+  }
+}
+
 describe('Message Queues', () => {
   const sandbox = sinon.createSandbox();
 
@@ -80,6 +90,7 @@ describe('Message Queues', () => {
   before(() => {
     const mocked = proxyquire('../../src/publisher/message-queues.js', {
       './message-batch': {MessageBatch: FakeMessageBatch},
+      './publish-error': {PublishError: FakePublishError},
     });
 
     MessageQueue = mocked.MessageQueue;
@@ -507,7 +518,9 @@ describe('Message Queues', () => {
       it('should localize the publish error', () => {
         queue.handlePublishFailure(error);
 
-        assert.strictEqual(queue.error, error);
+        assert.ok(queue.error instanceof FakePublishError);
+        assert.strictEqual(queue.error!.orderingKey, key);
+        assert.strictEqual(queue.error!.error, error);
       });
 
       it('should pass the error to call pending callbacks', () => {
@@ -614,7 +627,7 @@ describe('Message Queues', () => {
     });
 
     describe('resumePublishing', () => {
-      const error = new Error('err') as ServiceError;
+      const error = new Error('err') as PublishError;
 
       beforeEach(() => {
         queue.error = error;

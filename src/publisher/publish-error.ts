@@ -56,7 +56,10 @@ export class PublishError extends Error implements ServiceError {
     this.metadata = err.metadata;
 
     /**
+     * The ordering key this failure occurred for.
      *
+     * @name PublishError#orderingKey
+     * @type {string}
      */
     this.orderingKey = key;
 
