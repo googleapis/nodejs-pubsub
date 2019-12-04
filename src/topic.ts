@@ -764,7 +764,7 @@ export class Topic {
    *
    * topic.publishMessage({json}, callback);
    *
-   * @example <caption>To publish messages in order, make sure message ordering is enabled and provide an ordering key</caption>
+   * @example <caption>To publish messages in order (this is still experimental), make sure message ordering is enabled and provide an ordering key</caption>
    * const topic = pubsub.topic('ordered-topic', {messageOrdering: true});
    * const orderingKey = 'my-key';
    *
