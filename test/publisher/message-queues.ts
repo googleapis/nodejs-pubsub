@@ -263,6 +263,7 @@ describe('Message Queues', () => {
         assert.strictEqual(stub.callCount, 0);
         clock.tick(maxMilliseconds);
         assert.strictEqual(stub.callCount, 1);
+        clock.restore();
       });
 
       it('should noop if a timeout is already set', () => {
@@ -273,9 +274,10 @@ describe('Message Queues', () => {
         queue.batchOptions = {maxMilliseconds};
         queue.pending = (1234 as unknown) as NodeJS.Timer;
         queue.add(fakeMessage, spy);
-        clock.tick(maxMilliseconds);
 
+        clock.tick(maxMilliseconds);
         assert.strictEqual(stub.callCount, 0);
+        clock.restore();
       });
     });
 
@@ -474,6 +476,10 @@ describe('Message Queues', () => {
       beforeEach(() => {
         queue.batchOptions = {maxMilliseconds};
         clock = sinon.useFakeTimers();
+      });
+
+      afterEach(() => {
+        clock.restore();
       });
 
       it('should set a timeout that will call publish', done => {
