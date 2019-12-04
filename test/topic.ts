@@ -37,6 +37,9 @@ const fakePromisify = Object.assign({}, pfy, {
     }
     promisified = true;
     assert.deepStrictEqual(options.exclude, [
+      'publish',
+      'publishJSON',
+      'publishMessage',
       'setPublishOptions',
       'subscription',
     ]);
@@ -635,6 +638,14 @@ describe('Topic', () => {
 
       const [{data}] = stub.lastCall.args;
       assert.deepStrictEqual(data, expectedBuffer);
+    });
+
+    it('should return the return value of Publisher#publishMessage', () => {
+      const fakePromise = Promise.resolve();
+      sandbox.stub(topic.publisher, 'publishMessage').resolves(fakePromise);
+
+      const promise = topic.publishMessage({data: Buffer.from('hi')});
+      assert.strictEqual(promise, fakePromise);
     });
   });
 

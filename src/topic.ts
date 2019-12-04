@@ -784,7 +784,7 @@ export class Topic {
       delete message.json;
     }
 
-    this.publisher.publishMessage(message, callback!);
+    return this.publisher.publishMessage(message, callback!);
   }
 
   /**
@@ -1008,7 +1008,13 @@ paginator.extend(Topic, ['getSubscriptions']);
  * that a callback is omitted.
  */
 promisifyAll(Topic, {
-  exclude: ['setPublishOptions', 'subscription'],
+  exclude: [
+    'publish',
+    'publishJSON',
+    'publishMessage',
+    'setPublishOptions',
+    'subscription',
+  ],
 });
 
 export {PublishOptions};

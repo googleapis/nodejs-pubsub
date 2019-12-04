@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import {promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 
@@ -194,3 +195,8 @@ export class Publisher {
     };
   }
 }
+
+promisifyAll(Publisher, {
+  singular: true,
+  exclude: ['publish', 'setOptions'],
+});

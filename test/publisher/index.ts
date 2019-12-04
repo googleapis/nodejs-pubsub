@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
 import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
@@ -23,6 +24,18 @@ import {Topic} from '../../src';
 import * as p from '../../src/publisher';
 import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
+
+let promisified = false;
+const fakePromisify = Object.assign({}, pfy, {
+  promisifyAll: (ctor: Function, options: pfy.PromisifyAllOptions) => {
+    if (ctor.name !== 'Publisher') {
+      return;
+    }
+    promisified = true;
+    assert.ok(options.singular);
+    assert.deepStrictEqual(options.exclude, ['publish', 'setOptions']);
+  },
+});
 
 class FakeQueue extends EventEmitter {
   publisher: p.Publisher;
@@ -53,6 +66,7 @@ describe('Publisher', () => {
 
   before(() => {
     const mocked = proxyquire('../../src/publisher/index.js', {
+      '@google-cloud/promisify': fakePromisify,
       './message-queues': {
         Queue: FakeQueue,
         OrderedQueue: FakeOrderedQueue,
@@ -71,6 +85,10 @@ describe('Publisher', () => {
   });
 
   describe('initialization', () => {
+    it('should promisify all the things', () => {
+      assert(promisified);
+    });
+
     it('should localize Promise class if set', () => {
       const t = {Promise} as Topic;
       publisher = new Publisher(t);
