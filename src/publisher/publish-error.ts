@@ -26,6 +26,7 @@ export class PublishError extends Error implements ServiceError {
   code: status;
   details: string;
   metadata: Metadata;
+  orderingKey: string;
   error: ServiceError;
   constructor(key: string, err: ServiceError) {
     super(`Unable to publish for key "${key}". Reason: ${err.message}`);
@@ -53,6 +54,11 @@ export class PublishError extends Error implements ServiceError {
      * @type {object}
      */
     this.metadata = err.metadata;
+
+    /**
+     *
+     */
+    this.orderingKey = key;
 
     /**
      * The original gRPC error.

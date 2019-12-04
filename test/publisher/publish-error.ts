@@ -14,6 +14,48 @@
  * limitations under the License.
  */
 
-describe('PublishError', () => {
+import * as assert from 'assert';
+import {ServiceError, Metadata} from '@grpc/grpc-js';
+import {PublishError} from '../../src/publisher/publish-error';
 
+describe('PublishError', () => {
+  let error: PublishError;
+
+  const orderingKey = 'abcd';
+  const fakeError = new Error('Oh noes') as ServiceError;
+
+  fakeError.code = 1;
+  fakeError.details = 'Something went wrong!';
+  fakeError.metadata = new Metadata();
+
+  beforeEach(() => {
+    error = new PublishError(orderingKey, fakeError);
+  });
+
+  it('should give a helpful message', () => {
+    assert.strictEqual(
+      error.message,
+      `Unable to publish for key "${orderingKey}". Reason: ${fakeError.message}`
+    );
+  });
+
+  it('should capture the error code', () => {
+    assert.strictEqual(error.code, fakeError.code);
+  });
+
+  it('should capture the error details', () => {
+    assert.strictEqual(error.details, fakeError.details);
+  });
+
+  it('should capture the error metadata', () => {
+    assert.strictEqual(error.metadata, fakeError.metadata);
+  });
+
+  it('should capture the ordering key', () => {
+    assert.strictEqual(error.orderingKey, orderingKey);
+  });
+
+  it('should capture the original error', () => {
+    assert.strictEqual(error.error, fakeError);
+  });
 });
