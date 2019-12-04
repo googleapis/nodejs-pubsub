@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {PubsubMessage, PublishCallback} from './';
+import {BATCH_LIMITS, PubsubMessage, PublishCallback} from './';
 
 export interface BatchPublishOptions {
   maxBytes?: number;
@@ -68,12 +68,19 @@ export class MessageBatch {
    * @param {object} message The message in question.
    * @returns {boolean}
    */
-  canFit({data}: PubsubMessage, options?: BatchPublishOptions): boolean {
-    const {maxMessages, maxBytes} = options || this.options;
+  canFit({data}: PubsubMessage): boolean {
+    const {maxMessages, maxBytes} = this.options;
     return (
       this.messages.length < maxMessages! &&
       this.bytes + data!.length <= maxBytes!
     );
+  }
+  /**
+   *
+   */
+  isAtMax(): boolean {
+    const {maxMessages, maxBytes} = BATCH_LIMITS;
+    return this.messages.length >= maxMessages! || this.bytes >= maxBytes!;
   }
   /**
    * Indicates if the batch is at capacity.

@@ -14,6 +14,163 @@
  * limitations under the License.
  */
 
-describe('MessageBatch', () => {
+import * as assert from 'assert';
+import {randomBytes} from 'crypto';
+import * as sinon from 'sinon';
 
+import {MessageBatch} from '../../src/publisher/message-batch';
+
+describe('MessageBatch', () => {
+  let batch: MessageBatch;
+
+  const sandbox = sinon.createSandbox();
+
+  const options = {
+    maxBytes: 1000,
+    maxMessages: 100,
+  };
+
+  beforeEach(() => {
+    batch = new MessageBatch(Object.assign({}, options));
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  describe('initialization', () => {
+    it('should localize options', () => {
+      assert.deepStrictEqual(batch.options, options);
+    });
+
+    it('should create a message array', () => {
+      assert.deepStrictEqual(batch.messages, []);
+    });
+
+    it('should create a callback array', () => {
+      assert.deepStrictEqual(batch.callbacks, []);
+    });
+
+    it('should capture the creation time', () => {
+      const now = Date.now();
+
+      sandbox.stub(Date, 'now').returns(now);
+      batch = new MessageBatch(options);
+
+      assert.strictEqual(batch.created, now);
+    });
+
+    it('should initialize bytes to 0', () => {
+      assert.strictEqual(batch.bytes, 0);
+    });
+  });
+
+  describe('add', () => {
+    const callback = sandbox.spy();
+    const message = {
+      data: Buffer.from('Hello, world!'),
+    };
+
+    it('should add the message to the message array', () => {
+      batch.add(message, callback);
+      assert.deepStrictEqual(batch.messages, [message]);
+    });
+
+    it('should add the callback to the callback array', () => {
+      batch.add(message, callback);
+      assert.deepStrictEqual(batch.callbacks, [callback]);
+    });
+
+    it('should adjust the byte count', () => {
+      batch.add(message, callback);
+      assert.strictEqual(batch.bytes, message.data.length);
+    });
+  });
+
+  describe('canFit', () => {
+    const message = {
+      data: Buffer.from('Hello, world!'),
+    };
+
+    it('should return false if too many messages', () => {
+      batch.options.maxMessages = 0;
+      const canFit = batch.canFit(message);
+      assert.strictEqual(canFit, false);
+    });
+
+    it('should return false if too many bytes', () => {
+      batch.options.maxBytes = message.data.length - 1;
+      const canFit = batch.canFit(message);
+      assert.strictEqual(canFit, false);
+    });
+
+    it('should return true if it can fit', () => {
+      const canFit = batch.canFit(message);
+      assert.strictEqual(canFit, true);
+    });
+  });
+
+  describe('isAtMax', () => {
+    it('should return true if at max message limit', () => {
+      // tslint:disable-next-line ban
+      Array(1000)
+        .fill({
+          data: Buffer.from('Hello!'),
+        })
+        .forEach(message => {
+          batch.add(message, sandbox.spy());
+        });
+
+      const isAtMax = batch.isAtMax();
+      assert.strictEqual(isAtMax, true);
+    });
+
+    it('should return true if at max byte limit', () => {
+      const message = {
+        data: randomBytes(Math.pow(1024, 2) * 9),
+      };
+
+      batch.add(message, sandbox.spy());
+
+      const isAtMax = batch.isAtMax();
+      assert.strictEqual(isAtMax, true);
+    });
+
+    it('should return false if it is not full', () => {
+      const message = {
+        data: randomBytes(500),
+      };
+
+      batch.add(message, sandbox.spy());
+
+      const isAtMax = batch.isAtMax();
+      assert.strictEqual(isAtMax, false);
+    });
+  });
+
+  describe('isFull', () => {
+    const message = {
+      data: Buffer.from('Hello, world!'),
+    };
+
+    it('should return true if at max message limit', () => {
+      batch.options.maxMessages = 1;
+      batch.add(message, sandbox.spy());
+      const isFull = batch.isFull();
+      assert.strictEqual(isFull, true);
+    });
+
+    it('should return true if at max byte limit', () => {
+      batch.options.maxBytes = message.data.length;
+      batch.add(message, sandbox.spy());
+      const isFull = batch.isFull();
+      assert.strictEqual(isFull, true);
+    });
+
+    it('should return false if it is not full', () => {
+      batch.add(message, sandbox.spy());
+      const isFull = batch.isFull();
+      assert.strictEqual(isFull, false);
+    });
+  });
 });
