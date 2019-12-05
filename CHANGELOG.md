@@ -4,6 +4,16 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [1.1.6](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.5...v1.1.6) (2019-11-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency yargs to v15 ([#820](https://www.github.com/googleapis/nodejs-pubsub/issues/820)) ([3615211](https://www.github.com/googleapis/nodejs-pubsub/commit/36152114829c384a97b4f19b9006704a0f216878))
+* **docs:** snippets are now replaced in jsdoc comments ([#815](https://www.github.com/googleapis/nodejs-pubsub/issues/815)) ([b0b26ad](https://www.github.com/googleapis/nodejs-pubsub/commit/b0b26ade6096aa39fbc36a5c270982f3b6f9192e))
+* adds streaming pull retry, and increases request thresholds ([a7d4d04](https://www.github.com/googleapis/nodejs-pubsub/commit/a7d4d04c1b728e3d29626656889da0dd747b94ce))
+* include long import in proto typescript declaration file ([#816](https://www.github.com/googleapis/nodejs-pubsub/issues/816)) ([4b3b813](https://www.github.com/googleapis/nodejs-pubsub/commit/4b3b81384ad4e46f75ee23f3b174842ada212bfe))
+
 ### [1.1.5](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.4...v1.1.5) (2019-10-22)
 
 
