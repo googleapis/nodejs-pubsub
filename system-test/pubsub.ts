@@ -795,46 +795,44 @@ describe('pubsub', () => {
 
     describe('seeking', () => {
       let subscription: Subscription;
+      let snapshot: Snapshot;
       let messageId: string;
       const snapshotName = generateSnapshotName();
 
       beforeEach(async () => {
         subscription = topic.subscription(generateSubName());
-        await subscription.create();
-        messageId = await topic.publish(Buffer.from('Hello, world!'));
-        // The first call to `createSnapshot` consistently fails,
-        // see: https://github.com/googleapis/nodejs-pubsub/issues/821
-        try {
-          await subscription.createSnapshot(snapshotName);
-        } catch (err) {
-          console.warn(err.message);
-        }
+        snapshot = subscription.snapshot(generateSnapshotName());
+
+        return subscription
+          .create()
+          .then(() => {
+            return snapshot.create();
+          })
+          .then(() => {
+            return topic.publish(Buffer.from('Hello, world!'));
+          })
+          .then(_messageId => {
+            messageId = _messageId;
+          });
       });
 
       it('should seek to a snapshot', done => {
-        subscription.createSnapshot(snapshotName, (err, snapshot) => {
-          assert.ifError(err);
+        let messageCount = 0;
 
-          let messageCount = 0;
+        subscription.on('error', done);
+        subscription.on('message', message => {
+          if (message.id !== messageId) {
+            return;
+          }
+          message.ack();
 
-          subscription.on('error', done);
-          subscription.on('message', message => {
-            if (message.id !== messageId) {
-              return;
-            }
+          if (++messageCount === 1) {
+            snapshot!.seek(assert.ifError);
+            return;
+          }
 
-            message.ack();
-
-            if (++messageCount === 1) {
-              snapshot!.seek(err => {
-                assert.ifError(err);
-              });
-              return;
-            }
-
-            assert.strictEqual(messageCount, 2);
-            subscription.close(done);
-          });
+          assert.strictEqual(messageCount, 2);
+          subscription.close(done);
         });
       });
 
