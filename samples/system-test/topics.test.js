@@ -114,7 +114,6 @@ describe('topics', () => {
     assert.deepStrictEqual(receivedMessage.attributes, {
       origin: 'nodejs-sample',
       username: 'gcp',
-      googclient_deliveryattempt: '0',
     });
   });
 
