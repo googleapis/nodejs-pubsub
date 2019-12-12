@@ -60,6 +60,7 @@ export class Message {
   ackId: string;
   attributes: {[key: string]: string};
   data: Buffer;
+  deliveryAttempt: number;
   id: string;
   orderingKey?: string;
   publishTime: PreciseDate;
@@ -91,9 +92,6 @@ export class Message {
      * @type {object}
      */
     this.attributes = message!.attributes || {};
-    this.attributes['googclient_deliveryattempt'] = String(
-      deliveryAttempt || 0
-    );
     /**
      * The message data as a Buffer.
      *
@@ -101,6 +99,14 @@ export class Message {
      * @type {Buffer}
      */
     this.data = message!.data as Buffer;
+    /**
+     * Delivery attempt counter is 1 + (the sum of number of NACKs and number of
+     * ack_deadline exceeds) for this message.
+     *
+     * @name Message#deliveryAttempt
+     * @type {number}
+     */
+    this.deliveryAttempt = Number(deliveryAttempt || 0);
     /**
      * ID of the message, assigned by the server when the message is published.
      * Guaranteed to be unique within the topic.

@@ -651,18 +651,18 @@ describe('Subscriber', () => {
     });
 
     describe('deliveryAttempt', () => {
-      it('should store the delivery attempt as an attribute', () => {
+      it('should store the delivery attempt', () => {
         const deliveryAttempt = 10;
         const message = Object.assign({deliveryAttempt}, RECEIVED_MESSAGE);
         const m = new Message(subscriber, message);
-        const attempt = m.attributes.googclient_deliveryattempt;
-        assert.strictEqual(attempt, deliveryAttempt.toString());
+        const attempt = m.deliveryAttempt;
+        assert.strictEqual(attempt, deliveryAttempt);
       });
 
       it('should default to 0', () => {
         const m = new Message(subscriber, RECEIVED_MESSAGE);
-        const attempt = m.attributes.googclient_deliveryattempt;
-        assert.strictEqual(attempt, '0');
+        const attempt = m.deliveryAttempt;
+        assert.strictEqual(attempt, 0);
       });
     });
 
