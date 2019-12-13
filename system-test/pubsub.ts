@@ -26,6 +26,7 @@ import {
   Topic,
 } from '../src';
 import {Policy} from '../src/iam';
+import {MessageOptions} from '../src/topic';
 
 type Resource = Topic | Subscription | Snapshot;
 
@@ -117,13 +118,13 @@ describe('pubsub', () => {
     return Promise.all(streams);
   }
 
-  async function publishPop(message: Buffer, options = {}) {
+  async function publishPop(message: MessageOptions) {
     const topic = pubsub.topic(generateTopicName());
     const subscription = topic.subscription(generateSubName());
     await topic.create();
     await subscription.create();
     for (let i = 0; i < 6; i++) {
-      await topic.publish(Buffer.from(message), options);
+      await topic.publishMessage(message);
     }
     return new Promise<Message>((resolve, reject) => {
       subscription.on('error', reject);
@@ -217,9 +218,12 @@ describe('pubsub', () => {
 
     it('should publish a message', done => {
       const topic = pubsub.topic(TOPIC_NAMES[0]);
-      const message = Buffer.from('message from me');
+      const message = {
+        data: Buffer.from('message from me'),
+        orderingKey: 'a',
+      };
 
-      topic.publish(message, (err, messageId) => {
+      topic.publishMessage(message, (err, messageId) => {
         assert.ifError(err);
         assert.strictEqual(typeof messageId, 'string');
         done();
@@ -228,12 +232,12 @@ describe('pubsub', () => {
 
     it('should publish a message with attributes', async () => {
       const data = Buffer.from('raw message data');
-      const attrs = {
+      const attributes = {
         customAttribute: 'value',
       };
-      const message = await publishPop(data, attrs);
+      const message = await publishPop({data, attributes});
       assert.deepStrictEqual(message.data, data);
-      assert.deepStrictEqual(message.attributes, attrs);
+      assert.deepStrictEqual(message.attributes, attributes);
     });
 
     it('should get the metadata of a topic', done => {
@@ -242,6 +246,88 @@ describe('pubsub', () => {
         assert.ifError(err);
         assert.strictEqual(metadata!.name, topic.name);
         done();
+      });
+    });
+
+    describe('ordered messages', () => {
+      interface Expected {
+        key: string;
+        messages: string[];
+      }
+
+      interface Input {
+        key: string;
+        message: string;
+      }
+
+      interface Pending {
+        [key: string]: string[];
+      }
+
+      it('should pass the acceptance tests', async () => {
+        const [topic] = await pubsub.createTopic(generateName('orderedtopic'));
+        const [subscription] = await topic.createSubscription(
+          generateName('orderedsub'),
+          {
+            enableMessageOrdering: true,
+          }
+        );
+        const {
+          input,
+          expected,
+        } = require('../../system-test/fixtures/ordered-messages.json');
+
+        const publishes = input.map(({key, message}: Input) => {
+          const options: MessageOptions = {
+            data: Buffer.from(message),
+          };
+
+          if (key) {
+            options.orderingKey = key;
+          }
+
+          return topic.publishMessage(options);
+        });
+
+        await Promise.all(publishes);
+
+        const pending: Pending = {};
+
+        expected.forEach(({key, messages}: Expected) => {
+          pending[key] = messages;
+        });
+
+        const deferred = defer();
+
+        subscription
+          .on('error', deferred.reject)
+          .on('message', (message: Message) => {
+            const key = message.orderingKey || '';
+            const data = message.data.toString();
+            const messages = pending[key];
+            const expected = messages[0];
+
+            if (key && data !== expected) {
+              deferred.reject(
+                new Error(
+                  `Expected "${expected}" but received "${data}" for key "${key}"`
+                )
+              );
+              subscription.close();
+              return;
+            }
+
+            message.ack();
+            messages.splice(messages.indexOf(data), 1);
+
+            if (!pending[key].length) delete pending[key];
+            if (!Object.keys(pending).length) {
+              deferred.resolve();
+            }
+          });
+
+        await deferred.promise;
+        await Promise.all([topic.delete(), subscription.delete()]);
       });
     });
   });
@@ -261,7 +347,8 @@ describe('pubsub', () => {
       await topic.create();
       await Promise.all(SUBSCRIPTIONS.map(s => s.create()));
       for (let i = 0; i < 10; i++) {
-        await topic.publish(Buffer.from('hello'));
+        const data = Buffer.from('hello');
+        await topic.publishMessage({data});
       }
       await new Promise(r => setTimeout(r, 2500));
     });
@@ -507,17 +594,17 @@ describe('pubsub', () => {
 
     it('should send and receive large messages', done => {
       const subscription = topic.subscription(SUB_NAMES[0]);
-      const buf = crypto.randomBytes(9000000); // 9mb
+      const data = crypto.randomBytes(9000000); // 9mb
 
-      topic.publish(buf, (err, messageId) => {
+      topic.publishMessage({data}, (err, messageId) => {
         assert.ifError(err);
 
-        subscription.on('error', done).on('message', ({id, data}: Message) => {
-          if (id !== messageId) {
+        subscription.on('error', done).on('message', (message: Message) => {
+          if (message.id !== messageId) {
             return;
           }
 
-          assert.deepStrictEqual(data, buf);
+          assert.deepStrictEqual(data, message.data);
           subscription.close(done);
         });
       });
@@ -584,14 +671,15 @@ describe('pubsub', () => {
 
       function publish(messageCount: number) {
         const data = Buffer.from('Hello, world!');
-        const promises: Array<Promise<string>> = [];
+        const promises: Array<Promise<[string]>> = [];
 
         let id = 0;
 
         for (let i = 0; i < messageCount; i++) {
           const testid = String(++id);
+          const attributes = {testid};
           messages.add(testid);
-          promises.push(topic.publish(data, {testid}));
+          promises.push(topic.publishMessage({data, attributes}));
         }
 
         return Promise.all(promises);

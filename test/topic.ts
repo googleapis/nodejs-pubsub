@@ -39,6 +39,7 @@ const fakePromisify = Object.assign({}, pfy, {
     assert.deepStrictEqual(options.exclude, [
       'publish',
       'publishJSON',
+      'publishMessage',
       'setPublishOptions',
       'subscription',
     ]);
@@ -59,7 +60,7 @@ class FakePublisher {
   constructor(...args: Array<{}>) {
     this.calledWith_ = args;
   }
-  publish(...args: Array<{}>) {
+  publishMessage(...args: Array<{}>) {
     this.published_ = args;
   }
   setOptions(options: object) {
@@ -576,19 +577,19 @@ describe('Topic', () => {
   });
 
   describe('publish', () => {
-    it('should call through to Publisher#publish', () => {
-      const data = Buffer.from('Hello, world!');
-      const attributes = {};
-      const callback = () => {};
+    it('should call through to Topic#publishMessage', () => {
+      const fdata = Buffer.from('Hello, world!');
+      const fattributes = {};
+      const fcallback = () => {};
 
-      const fakePromise = Promise.resolve();
-      const stub = sandbox
-        .stub(topic.publisher, 'publish')
-        .withArgs(data, attributes, callback)
-        .returns(fakePromise);
+      const stub = sandbox.stub(topic, 'publishMessage');
 
-      const promise = topic.publish(data, attributes, callback);
-      assert.strictEqual(promise, fakePromise);
+      topic.publish(fdata, fattributes, fcallback);
+
+      const [{data, attributes}, callback] = stub.lastCall.args;
+      assert.strictEqual(data, fdata);
+      assert.strictEqual(attributes, fattributes);
+      assert.strictEqual(callback, fcallback);
     });
   });
 
@@ -599,27 +600,52 @@ describe('Topic', () => {
       assert.throws(() => topic.publishJSON('hi'), expectedError);
     });
 
-    it('should transform JSON into a Buffer', () => {
-      const stub = sandbox.stub(topic, 'publish');
-      const json = {foo: 'bar'};
-      const expectedBuffer = Buffer.from(JSON.stringify(json));
-
-      topic.publishJSON(json);
-
-      const [buffer] = stub.lastCall.args;
-      assert.deepStrictEqual(buffer, expectedBuffer);
-    });
-
     it('should pass along the attributes and callback', () => {
-      const stub = sandbox.stub(topic, 'publish');
+      const stub = sandbox.stub(topic, 'publishMessage');
       const fakeAttributes = {};
       const fakeCallback = () => {};
 
       topic.publishJSON({}, fakeAttributes, fakeCallback);
 
-      const [, attributes, callback] = stub.lastCall.args;
+      const [{attributes}, callback] = stub.lastCall.args;
       assert.strictEqual(attributes, fakeAttributes);
       assert.strictEqual(callback, fakeCallback);
+    });
+  });
+
+  describe('publishMessage', () => {
+    it('should call through to Publisher#publishMessage', () => {
+      const stub = sandbox.stub(topic.publisher, 'publishMessage');
+
+      const fdata = Buffer.from('Hello, world!');
+      const fattributes = {};
+      const fcallback = () => {};
+
+      topic.publish(fdata, fattributes, fcallback);
+
+      const [{data, attributes}, callback] = stub.lastCall.args;
+      assert.strictEqual(data, fdata);
+      assert.strictEqual(attributes, fattributes);
+      assert.strictEqual(callback, fcallback);
+    });
+
+    it('should transform JSON into a Buffer', () => {
+      const json = {foo: 'bar'};
+      const expectedBuffer = Buffer.from(JSON.stringify(json));
+      const stub = sandbox.stub(topic.publisher, 'publishMessage');
+
+      topic.publishMessage({json});
+
+      const [{data}] = stub.lastCall.args;
+      assert.deepStrictEqual(data, expectedBuffer);
+    });
+
+    it('should return the return value of Publisher#publishMessage', () => {
+      const fakePromise = Promise.resolve();
+      sandbox.stub(topic.publisher, 'publishMessage').resolves(fakePromise);
+
+      const promise = topic.publishMessage({data: Buffer.from('hi')});
+      assert.strictEqual(promise, fakePromise);
     });
   });
 

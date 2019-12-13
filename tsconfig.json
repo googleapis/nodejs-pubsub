@@ -5,8 +5,8 @@
     "outDir": "build"
   },
   "include": [
-    "src/*.ts",
-    "test/*.ts",
+    "src/**/*.ts",
+    "test/**/*.ts",
     "system-test/*.ts"
   ]
 }
