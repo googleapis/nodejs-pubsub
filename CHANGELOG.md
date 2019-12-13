@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [1.2.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.6...v1.2.0) (2019-12-13)
+
+
+### Features
+
+* ordered messaging ([#716](https://www.github.com/googleapis/nodejs-pubsub/issues/716)) ([b2f96ff](https://www.github.com/googleapis/nodejs-pubsub/commit/b2f96ffe6c1db93741f40804786f8c294717676b))
+
 ### [1.1.6](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.5...v1.1.6) (2019-11-25)
 
 
