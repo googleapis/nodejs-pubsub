@@ -1,7 +1,9 @@
 {
   "name": "nodejs-docs-samples-pubsub",
   "files": [
-    "*.js"
+    "*.js",
+    "subscriptions/*.js",
+    "topics/*.js"
   ],
   "private": true,
   "license": "Apache-2.0",

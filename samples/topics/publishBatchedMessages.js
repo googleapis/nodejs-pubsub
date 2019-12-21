@@ -23,6 +23,7 @@
 'use strict';
 
 // Publishes messages to a topic using custom batching settings.
+// TODO: Convert parameters to numbers.
 function main(
   topicName = 'YOUR_TOPIC_NAME',
   data = JSON.stringify({foo: 'bar'}),
