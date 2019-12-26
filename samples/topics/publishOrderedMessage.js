@@ -23,7 +23,7 @@
 'use strict';
 
 // Publishes an ordered message to a topic.
-// TODO: This sample doesn't make any sense by itself, because it's
+// TODO(feywind): This sample doesn't make any sense by itself, because it's
 // only sending one message. Need to look at this more re: subscriptions.js.
 function main(
   topicName = 'YOUR_TOPIC_NAME',
@@ -77,4 +77,17 @@ function main(
   publishOrderedMessage();
 }
 
-main(...process.argv.slice(2));
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('publish-ordered')
+  .args('<topicName> <message>')
+  .help('Publishes an ordered message to a topic.')
+  .example('my-topic "Hello, world!"')
+  .execute(module, opts => {
+    try {
+      opts.message = JSON.parse(opts.message);
+    } catch (err) {
+      // Ignore error
+    }
+    main(opts.topicName, opts.message);
+  });

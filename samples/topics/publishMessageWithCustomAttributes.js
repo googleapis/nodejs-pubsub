@@ -60,4 +60,10 @@ function main(
   // [END pubsub_publish_custom_attributes]
 }
 
-main(...process.argv.slice(2));
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('publish-attributes')
+  .args('<topicName> <message>')
+  .help('Publishes a message with custom attributes to a Topic.')
+  .example('my-topic "Hello, world!"')
+  .execute(module, opts => main(opts.topicName, opts.message));

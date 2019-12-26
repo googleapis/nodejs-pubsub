@@ -23,7 +23,6 @@
 'use strict';
 
 // Publishes messages to a topic using custom batching settings.
-// TODO: Convert parameters to numbers.
 function main(
   topicName = 'YOUR_TOPIC_NAME',
   data = JSON.stringify({foo: 'bar'}),
@@ -68,4 +67,23 @@ function main(
   // [END pubsub_publisher_batch_settings]
 }
 
-main(...process.argv.slice(2));
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('publish-batch')
+  .args('<topicName> <message>', {
+    maxWaitTime: {
+      alias: 'w',
+      type: 'number',
+      default: 10000,
+    },
+    maxMessages: {
+      alias: 'm',
+      type: 'number',
+      default: 10,
+    },
+  })
+  .help('Publishes messages to a topic using custom batching settings.')
+  .example('my-topic "Hello, world!" -w 1000')
+  .execute(module, opts => {
+    main(opts.topicName, opts.message, opts.maxMessages, opts.maxWaitTime);
+  });

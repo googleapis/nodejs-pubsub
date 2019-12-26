@@ -42,4 +42,9 @@ function main() {
   // [END pubsub_list_topics]
 }
 
-main();
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('list')
+  .help('Lists all topics in the current project.')
+  .example('')
+  .execute(module, () => main());

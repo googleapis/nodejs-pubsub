@@ -37,7 +37,7 @@ function main(
   // const data = JSON.stringify({foo: 'bar'});
 
   // Imports the Google Cloud client library
-  // TODO: Explain why this isn't PubSub?
+  // TODO(feywind): Explain why this isn't PubSub?
   const {v1} = require('@google-cloud/pubsub');
 
   // Creates a publisher client
@@ -94,4 +94,12 @@ function main(
   // [END pubsub_publisher_retry_settings]
 }
 
-main(...process.argv.slice(2));
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('publish-retry')
+  .args('<projectId> <topicName> <message>')
+  .help('Publishes a message to a topic with retry settings.')
+  .example('my-project my-topic "Hello, world!"')
+  .execute(module, opts => {
+    main(opts.projectId, opts.topicName, opts.message);
+  });
