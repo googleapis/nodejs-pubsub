@@ -22,7 +22,6 @@
 
 'use strict';
 
-// TODO(feywind): Convert parameters to numbers.
 // Listens to messages and errors for a subscription.
 function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 10) {
   // [START pubsub_subscriber_error_listener]
