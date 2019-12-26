@@ -58,10 +58,10 @@ function main(
   // [END pubsub_update_push_configuration]
 }
 
-module.exports = {
-  modifyPushConfig: main,
-};
-
-if (module === require.main) {
-  main(...process.argv.slice(2));
-}
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('modify-config')
+  .args('<topicName> <subscriptionName>')
+  .help('Modifies the configuration of an existing push subscription.')
+  .example('my-topic worker-1')
+  .execute(module, opts => main(opts.topicName, opts.subscriptionName));

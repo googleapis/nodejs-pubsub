@@ -71,10 +71,16 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 10) {
   // [END pubsub_subscriber_error_listener]
 }
 
-module.exports = {
-  listenForErrors: main,
-};
-
-if (module === require.main) {
-  main();
-}
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('listen-errors')
+  .args('<subscriptionName>', {
+    timeout: {
+      alias: 't',
+      type: 'number',
+      default: 10,
+    },
+  })
+  .help('Listens to messages and errors for a subscription.')
+  .example('my-subscription')
+  .execute(module, opts => main(opts.subscriptionName, opts.timeout));

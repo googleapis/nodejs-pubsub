@@ -50,10 +50,10 @@ function main(
   // [END pubsub_create_pull_subscription]
 }
 
-module.exports = {
-  createSubscription: main,
-};
-
-if (module === require.main) {
-  main(...process.argv.slice(2));
-}
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('create')
+  .args('<topicName> <subscriptionName>')
+  .help('Creates a new subscription.')
+  .example('my-topic worker-1')
+  .execute(module, opts => main(opts.topicName, opts.subscriptionName));

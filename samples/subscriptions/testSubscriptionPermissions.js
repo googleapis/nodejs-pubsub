@@ -54,10 +54,10 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   // [END pubsub_test_subscription_permissions]
 }
 
-module.exports = {
-  testSubscriptionPermissions: main,
-};
-
-if (module === require.main) {
-  main(...process.argv.slice(2));
-}
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('test-permissions')
+  .args('<subscriptionName>')
+  .help('Tests the permissions for a subscription.')
+  .example('worker-1')
+  .execute(module, opts => main(opts.subscriptionName));

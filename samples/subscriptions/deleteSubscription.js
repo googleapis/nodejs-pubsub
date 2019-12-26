@@ -45,10 +45,10 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   // [END pubsub_delete_subscription]
 }
 
-module.exports = {
-  deleteSubscription: main,
-};
-
-if (module === require.main) {
-  main(...process.argv.slice(2));
-}
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('delete')
+  .args('<subscriptionName>')
+  .help('Deletes a subscription.')
+  .example('worker-1')
+  .execute(module, opts => main(opts.subscriptionName));

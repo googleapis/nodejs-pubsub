@@ -22,11 +22,10 @@
 
 'use strict';
 
-// TODO(feywind): Convert parameters to numbers.
 // Listen to messages with flow control settings, which are properties of the client/listener instance.
 function main(
   subscriptionName = 'YOUR_SUBSCRIPTION_NAME',
-  maxInProgress = 5,
+  maxInProgress = 1,
   timeout = 10
 ) {
   // [START pubsub_subscriber_flow_settings]
@@ -81,10 +80,25 @@ function main(
   subscribeWithFlowControlSettings();
 }
 
-module.exports = {
-  subscribeWithFlowControlSettings: main,
-};
-
-if (module === require.main) {
-  main(...process.argv.slice(2));
-}
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('listen-flow-control')
+  .args('<subscriptionName>', {
+    maxInProgress: {
+      alias: 'm',
+      type: 'number',
+      default: 1,
+    },
+    timeout: {
+      alias: 't',
+      type: 'number',
+      default: 10,
+    },
+  })
+  .help(
+    'Listen to messages with flow control settings, which are properties of the client/listener instance.'
+  )
+  .example('my-subscription -m 5')
+  .execute(module, opts =>
+    main(opts.subscriptionName, opts.maxInProgress, opts.timeout)
+  );

@@ -115,10 +115,10 @@ function main(
   // [END pubsub_subscriber_sync_pull]
 }
 
-module.exports = {
-  synchronousPull: main,
-};
-
-if (module === require.main) {
-  main(...process.argv.slice(2));
-}
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('sync-pull')
+  .args('<projectName> <subscriptionName>')
+  .help('Receive messages synchronously.')
+  .example('my-project my-subscription')
+  .execute(module, opts => main(opts.projectName, opts.subscriptionName));
