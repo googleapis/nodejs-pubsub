@@ -61,6 +61,7 @@ __Usage:__
 
 `node subscriptions.js`
 
+Note that `subscriptions.js` is a wrapper that allows easy access to multiple smaller samples, which can be found [in subscriptions](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/subscriptions/).
 
 -----
 
@@ -78,6 +79,7 @@ __Usage:__
 
 `node topics.js`
 
+Note that `topics.js` is a wrapper that allows easy access to multiple smaller samples, which can be found [in topics](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/topics/).
 
 
 
