@@ -46,6 +46,13 @@ const sampleModules = [
   require('./subscriptions/testSubscriptionPermissions'),
 ];
 
+// This is not exposed as a runnable sample, but we need to re-export
+// it for the system tests to find.
+module.exports = {
+  listenForOrderedMessages: require('./subscriptions/listenForOrderedMessages')
+    .listenForOrderedMessages,
+};
+
 // We need these two for special handling below. Please ensure that the
 // ordering is maintained in the sampleModules array.
 const [listSubscriptions, listTopicSubscriptions] = sampleModules;

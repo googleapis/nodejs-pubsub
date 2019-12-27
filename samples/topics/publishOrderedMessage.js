@@ -23,8 +23,6 @@
 'use strict';
 
 // Publishes an ordered message to a topic.
-// TODO(feywind): This sample doesn't make any sense by itself, because it's
-// only sending one message. Need to look at this more re: subscriptions.js.
 function main(
   topicName = 'YOUR_TOPIC_NAME',
   data = JSON.stringify({foo: 'bar'})
@@ -76,6 +74,11 @@ function main(
   // [END pubsub_publish_ordered_message]
   publishOrderedMessage();
 }
+
+// This needs to be exported directly so that the system tests can find it.
+module.exports = {
+  publishOrderedMessage: main,
+};
 
 const {sampleMain} = require('../common');
 sampleMain()

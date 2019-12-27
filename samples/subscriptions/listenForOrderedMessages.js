@@ -22,18 +22,13 @@
 
 'use strict';
 
-// TODO(feywind): There's some kind of weirdness in here too, related to the publish ordered messages sample.
-// TODO(feywind): Arg types (number)
-function main(
-  subscriptionName = 'YOUR_SUBSCRIPTION_NAME'
-  timeout = ??
-) {
+function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 1000) {
   // [START pubsub_listen_ordered_messages]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
   // const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
-  // const timeout = ??;
+  // const timeout = 1000;
 
   // Imports the Google Cloud client library
   const {PubSub} = require('@google-cloud/pubsub');
@@ -55,7 +50,7 @@ function main(
 
   async function listenForOrderedMessages() {
     // References an existing subscription, e.g. "my-subscription"
-    const subscription = pubsub.subscription(subscriptionName);
+    const subscription = pubSubClient.subscription(subscriptionName);
 
     // Create an event handler to handle messages
     const messageHandler = function(message) {
@@ -108,10 +103,21 @@ function main(
   // [END pubsub_listen_ordered_messages]
 }
 
+// This needs to be exported directly so that the system tests can find it.
 module.exports = {
-  listenForOrderedMessages: main
+  listenForOrderedMessages: main,
 };
 
-if (module === require.main) {
-  main(...process.argv.slice(2));
-}
+const {sampleMain} = require('../common');
+sampleMain()
+  .commandName('listen-ordered')
+  .args('<subscriptionName>', {
+    timeout: {
+      alias: 't',
+      type: 'number',
+      default: 10,
+    },
+  })
+  .help('Listens to messages for a subscription with ordering metadata.')
+  .example('my-subscription')
+  .execute(module, opts => main(opts.subscriptionName, opts.timeout));

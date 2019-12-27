@@ -38,6 +38,12 @@ const sampleModules = [
   require('./topics/testTopicPermissions'),
 ];
 
+// We need to re-export this for the system tests to find.
+module.exports = {
+  publishOrderedMessage: require('./topics/publishOrderedMessage')
+    .publishOrderedMessage,
+};
+
 const cli = require('yargs').demand(1);
 sampleModules.forEach(m => m.declaration.addToYargs(cli));
 
