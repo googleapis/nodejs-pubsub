@@ -23,11 +23,6 @@
 
 'use strict';
 
-// Pull in all of the individual samples.
-/*
-  .example('node $0 pull worker-1')
-*/
-
 // Import all of the needed sub-modules that contain the actual examples.
 const sampleModules = [
   require('./subscriptions/listSubscriptions'),
