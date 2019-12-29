@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as assert from 'assert';
+import {describe, it} from 'mocha';
 import * as crypto from 'crypto';
 import defer = require('p-defer');
 import * as uuid from 'uuid';
