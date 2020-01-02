@@ -16,7 +16,6 @@
 
 import {paginator} from '@google-cloud/paginator';
 import {promisifyAll} from '@google-cloud/promisify';
-import is from '@sindresorhus/is';
 import {CallOptions} from 'google-gax';
 
 import {google} from '../proto/pubsub';
@@ -711,7 +710,7 @@ export class Topic {
     attrsOrCb?: Attributes | PublishCallback,
     callback?: PublishCallback
   ): Promise<string> | void {
-    if (!is.object(json)) {
+    if (!json || typeof json !== 'object') {
       throw new Error('First parameter should be an object.');
     }
     const attributes = typeof attrsOrCb === 'object' ? attrsOrCb : {};
@@ -779,7 +778,7 @@ export class Topic {
   ): Promise<[string]> | void {
     message = Object.assign({}, message);
 
-    if (is.object(message.json)) {
+    if (message.json && typeof message.json === 'object') {
       message.data = Buffer.from(JSON.stringify(message.json));
       delete message.json;
     }
