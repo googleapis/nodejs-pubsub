@@ -36,11 +36,11 @@ function main(
   // const topicName = 'YOUR_TOPIC_NAME';
   // const data = JSON.stringify({foo: 'bar'});
 
-  // Imports the Google Cloud client library
-  // TODO(feywind): Explain why this isn't PubSub?
+  // Imports the Google Cloud client library. v1 is for the lower level
+  // proto access.
   const {v1} = require('@google-cloud/pubsub');
 
-  // Creates a publisher client
+  // Creates a publisher client.
   const publisherClient = new v1.PublisherClient({
     // optional auth parameters
   });

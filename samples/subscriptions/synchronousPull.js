@@ -34,12 +34,11 @@ function main(
   // const projectName = 'YOUR_PROJECT_NAME';
   // const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
 
-  // Imports the Google Cloud client library
-  // TODO(feywind): Why are we pulling in v1 here? (explanation)
+  // Imports the Google Cloud client library. v1 is for the lower level
+  // proto access.
   const {v1} = require('@google-cloud/pubsub');
 
-  // Creates a client; cache this for further use
-  // TODO(feywind): Cache this too?
+  // Creates a client; cache this for further use.
   const subClient = new v1.SubscriberClient();
 
   async function synchronousPull() {
