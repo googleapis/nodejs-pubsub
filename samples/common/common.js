@@ -23,13 +23,14 @@
 // specifically when running with the sample as main, versus using one
 // of the sample runner files.
 class SampleDeclaration {
-  constructor() {
+  constructor(yargs) {
     this.name = null;
     this.helpText = '';
     this.argString = '';
     this.spacedArgs = '';
     this.extraOptions = {};
     this.exampleText = [];
+    this.yargs = yargs;
   }
 
   // Pass the name of the command (e.g. "create-push").
@@ -62,17 +63,18 @@ class SampleDeclaration {
 
   // Call this last; it will either run the sample with what's been
   // given (if it's running as main) or export this object for the
-  // consolidated runner module to use.
-  execute(sampleModule, executionCallback) {
+  // consolidated runner module to use. 'forceMain' is for testing
+  // purposes.
+  execute(sampleModule, executionCallback, forceMain = false) {
     // If we're not running as main, then we're probably being required in
     // by one of the sample runners. In which case, stuff the arg setup
     // function into its exports so that the runner can build with it.
-    if (sampleModule !== require.main) {
+    if (sampleModule !== require.main && !forceMain) {
       this.executionCallback = executionCallback;
       sampleModule.exports.declaration = this;
     } else {
       // The sample is running as main. Create a parser of our own.
-      const cli = require('yargs').command(
+      const cli = this.yargs.command(
         `$0${this.spacedArgs}`,
         this.helpText,
         this.extraOptions,
@@ -109,8 +111,8 @@ class SampleDeclaration {
 // a sample; this can be used from one of the consolidated runner modules
 // to add to its command line parameters, or if it's running as main, it
 // will make its own arg parser and start the sample.
-function sampleMain() {
-  return new SampleDeclaration();
+function sampleMain(yargs = require('yargs')) {
+  return new SampleDeclaration(yargs);
 }
 
 module.exports = {sampleMain};
