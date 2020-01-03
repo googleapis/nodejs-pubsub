@@ -22,8 +22,18 @@
 
 'use strict';
 
+let publishCounterValue = 1;
+
+function getPublishCounterValue() {
+  return publishCounterValue;
+}
+
+function setPublishCounterValue(value) {
+  publishCounterValue = value;
+}
+
 // Publishes an ordered message to a topic.
-function main(
+async function main(
   topicName = 'YOUR_TOPIC_NAME',
   data = JSON.stringify({foo: 'bar'})
 ) {
@@ -39,16 +49,6 @@ function main(
 
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
-
-  let publishCounterValue = 1;
-
-  function getPublishCounterValue() {
-    return publishCounterValue;
-  }
-
-  function setPublishCounterValue(value) {
-    publishCounterValue = value;
-  }
 
   async function publishOrderedMessage() {
     // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
@@ -71,8 +71,8 @@ function main(
     return messageId;
   }
 
+  return await publishOrderedMessage();
   // [END pubsub_publish_ordered_message]
-  publishOrderedMessage();
 }
 
 // This needs to be exported directly so that the system tests can find it.

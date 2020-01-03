@@ -22,7 +22,22 @@
 
 'use strict';
 
-function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 1000) {
+let subscribeCounterValue = 1;
+
+function getSubscribeCounterValue() {
+  return subscribeCounterValue;
+}
+
+function setSubscribeCounterValue(value) {
+  subscribeCounterValue = value;
+}
+
+const outstandingMessages = {};
+
+async function main(
+  subscriptionName = 'YOUR_SUBSCRIPTION_NAME',
+  timeout = 1000
+) {
   // [START pubsub_listen_ordered_messages]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
@@ -35,18 +50,6 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 1000) {
 
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
-
-  let subscribeCounterValue = 1;
-
-  function getSubscribeCounterValue() {
-    return subscribeCounterValue;
-  }
-
-  function setSubscribeCounterValue(value) {
-    subscribeCounterValue = value;
-  }
-
-  const outstandingMessages = {};
 
   async function listenForOrderedMessages() {
     // References an existing subscription, e.g. "my-subscription"
@@ -99,7 +102,7 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 1000) {
     });
   }
 
-  listenForOrderedMessages();
+  return await listenForOrderedMessages();
   // [END pubsub_listen_ordered_messages]
 }
 
