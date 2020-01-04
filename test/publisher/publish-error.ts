@@ -15,6 +15,7 @@
  */
 
 import * as assert from 'assert';
+import {describe, it} from 'mocha';
 import {ServiceError, Metadata} from '@grpc/grpc-js';
 import {PublishError} from '../../src/publisher/publish-error';
 

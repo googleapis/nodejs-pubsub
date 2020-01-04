@@ -16,6 +16,7 @@ import * as pjy from '@google-cloud/projectify';
 import * as promisify from '@google-cloud/promisify';
 import arrify = require('arrify');
 import * as assert from 'assert';
+import {describe, it} from 'mocha';
 import * as gax from 'google-gax';
 import * as grpc from '@grpc/grpc-js';
 import {CallOptions, ChannelCredentials, ServiceError} from '@grpc/grpc-js';
