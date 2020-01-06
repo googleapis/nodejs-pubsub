@@ -15,6 +15,7 @@
  */
 
 import * as assert from 'assert';
+import {describe, it} from 'mocha';
 import {EventEmitter} from 'events';
 import {CallOptions} from 'google-gax';
 import {Metadata, ServiceError} from '@grpc/grpc-js';
