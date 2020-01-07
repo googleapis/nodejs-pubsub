@@ -17,7 +17,6 @@
 import {paginator} from '@google-cloud/paginator';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisifyAll} from '@google-cloud/promisify';
-import is from '@sindresorhus/is';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
@@ -380,10 +379,10 @@ export class PubSub {
     optionsOrCallback?: CreateSubscriptionOptions | CreateSubscriptionCallback,
     callback?: CreateSubscriptionCallback
   ): Promise<CreateSubscriptionResponse> | void {
-    if (!is.string(topic) && !(topic instanceof Topic)) {
+    if (typeof topic !== 'string' && !(topic instanceof Topic)) {
       throw new Error('A Topic is required for a new subscription.');
     }
-    if (!is.string(name)) {
+    if (typeof name !== 'string') {
       throw new Error('A subscription name is required.');
     }
     if (typeof topic === 'string') {
@@ -977,7 +976,7 @@ export class PubSub {
    * const snapshot = pubsub.snapshot('my-snapshot');
    */
   snapshot(name: string): Snapshot {
-    if (!is.string(name)) {
+    if (typeof name !== 'string') {
       throw new Error('You must supply a valid name for the snapshot.');
     }
     return new Snapshot(this, name);

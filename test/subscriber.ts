@@ -15,6 +15,7 @@
  */
 
 import * as assert from 'assert';
+import {describe, it} from 'mocha';
 import {EventEmitter} from 'events';
 import {common as protobuf} from 'protobufjs';
 import * as proxyquire from 'proxyquire';

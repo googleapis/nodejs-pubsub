@@ -15,7 +15,6 @@
  */
 
 import {promisifyAll} from '@google-cloud/promisify';
-import is from '@sindresorhus/is';
 import {EventEmitter} from 'events';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
@@ -441,7 +440,7 @@ export class Subscription extends EventEmitter {
     optsOrCallback?: CallOptions | CreateSnapshotCallback,
     callback?: CreateSnapshotCallback
   ): void | Promise<CreateSnapshotResponse> {
-    if (!is.string(name)) {
+    if (typeof name !== 'string') {
       throw new Error('A name is required to create a snapshot.');
     }
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
@@ -881,7 +880,7 @@ export class Subscription extends EventEmitter {
 
     if (typeof snapshot === 'string') {
       reqOpts.snapshot = Snapshot.formatName_(this.pubsub.projectId, snapshot);
-    } else if (is.date(snapshot)) {
+    } else if (Object.prototype.toString.call(snapshot) === '[object Date]') {
       reqOpts.time = snapshot as google.protobuf.ITimestamp;
     } else {
       throw new Error('Either a snapshot name or Date is needed to seek to.');

@@ -14,6 +14,7 @@
 
 import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
+import {describe, it} from 'mocha';
 import {CallOptions} from 'google-gax';
 import {ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
