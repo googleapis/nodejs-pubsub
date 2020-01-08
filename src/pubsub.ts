@@ -315,6 +315,8 @@ export class PubSub {
    * resource](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions).
    *
    * @typedef {object} CreateSubscriptionRequest
+   * @property {DeadLetterPolicy} [deadLetterPolicy] A policy that specifies the
+   *     conditions for dead lettering messages in this subscription.
    * @property {object} [flowControl] Flow control configurations for
    *     receiving messages. Note that these options do not persist across
    *     subscription instances.
