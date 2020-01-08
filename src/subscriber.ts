@@ -58,8 +58,9 @@ export type PullResponse = google.pubsub.v1.IPullResponse;
  */
 export class Message {
   ackId: string;
-  attributes: {};
+  attributes: {[key: string]: string};
   data: Buffer;
+  deliveryAttempt: number;
   id: string;
   orderingKey?: string;
   publishTime: PreciseDate;
@@ -75,7 +76,7 @@ export class Message {
    */
   constructor(
     sub: Subscriber,
-    {ackId, message}: google.pubsub.v1.IReceivedMessage
+    {ackId, message, deliveryAttempt}: google.pubsub.v1.IReceivedMessage
   ) {
     /**
      * This ID is used to acknowledge the message.
@@ -98,6 +99,14 @@ export class Message {
      * @type {Buffer}
      */
     this.data = message!.data as Buffer;
+    /**
+     * Delivery attempt counter is 1 + (the sum of number of NACKs and number of
+     * ack_deadline exceeds) for this message.
+     *
+     * @name Message#deliveryAttempt
+     * @type {number}
+     */
+    this.deliveryAttempt = Number(deliveryAttempt || 0);
     /**
      * ID of the message, assigned by the server when the message is published.
      * Guaranteed to be unique within the topic.

@@ -16,6 +16,7 @@
 
 import {ServiceError} from '@grpc/grpc-js';
 import * as assert from 'assert';
+import {describe, it} from 'mocha';
 import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';

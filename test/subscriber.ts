@@ -15,6 +15,7 @@
  */
 
 import * as assert from 'assert';
+import {describe, it} from 'mocha';
 import {EventEmitter} from 'events';
 import {common as protobuf} from 'protobufjs';
 import * as proxyquire from 'proxyquire';
@@ -647,6 +648,22 @@ describe('Subscriber', () => {
         const m = new Message(subscriber, RECEIVED_MESSAGE);
 
         assert.strictEqual(m.received, now);
+      });
+    });
+
+    describe('deliveryAttempt', () => {
+      it('should store the delivery attempt', () => {
+        const deliveryAttempt = 10;
+        const message = Object.assign({deliveryAttempt}, RECEIVED_MESSAGE);
+        const m = new Message(subscriber, message);
+        const attempt = m.deliveryAttempt;
+        assert.strictEqual(attempt, deliveryAttempt);
+      });
+
+      it('should default to 0', () => {
+        const m = new Message(subscriber, RECEIVED_MESSAGE);
+        const attempt = m.deliveryAttempt;
+        assert.strictEqual(attempt, 0);
       });
     });
 
