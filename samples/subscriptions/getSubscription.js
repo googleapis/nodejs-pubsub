@@ -22,9 +22,6 @@
 
 'use strict';
 
-// TODO(feywind): This sample didn't have document tags in the original file.
-//   Seems to be missing from this page too:
-//   https://cloud.google.com/pubsub/docs/admin#pubsub-create-subscription-nodejs
 // Gets the metadata for a subscription.
 function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   /**
