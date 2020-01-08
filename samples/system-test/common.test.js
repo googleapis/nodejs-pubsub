@@ -16,6 +16,7 @@
 
 const common = require('../common');
 const {assert} = require('chai');
+const {describe, it, beforeEach} = require('mocha');
 
 // This is a very simple yargs mockup for testing the generated
 // command line spec.
