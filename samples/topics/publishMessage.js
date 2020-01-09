@@ -59,11 +59,4 @@ function main(
   // [END pubsub_quickstart_publisher]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('publish')
-  .args('<topicName> <message>')
-  .help('Publishes a message to a topic.')
-  .example('my-topic "Hello, world!"')
-  .example(`my-topic '{"data":"Hello, world!"}'`)
-  .execute(module, opts => main(opts.topicName, opts.message));
+main(...process.argv.slice(2));

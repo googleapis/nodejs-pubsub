@@ -29,6 +29,9 @@ function main(
   maxMessages = 10,
   maxWaitTime = 10000
 ) {
+  maxMessages = Number(maxMessages);
+  maxWaitTime = Number(maxWaitTime);
+
   // [START pubsub_publisher_batch_settings]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
@@ -67,23 +70,4 @@ function main(
   // [END pubsub_publisher_batch_settings]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('publish-batch')
-  .args('<topicName> <message>', {
-    maxWaitTime: {
-      alias: 'w',
-      type: 'number',
-      default: 10000,
-    },
-    maxMessages: {
-      alias: 'm',
-      type: 'number',
-      default: 10,
-    },
-  })
-  .help('Publishes messages to a topic using custom batching settings.')
-  .example('my-topic "Hello, world!" -w 1000')
-  .execute(module, opts => {
-    main(opts.topicName, opts.message, opts.maxMessages, opts.maxWaitTime);
-  });
+main(...process.argv.slice(2));

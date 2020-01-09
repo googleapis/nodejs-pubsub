@@ -80,17 +80,6 @@ module.exports = {
   publishOrderedMessage: main,
 };
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('publish-ordered')
-  .args('<topicName> <message>')
-  .help('Publishes an ordered message to a topic.')
-  .example('my-topic "Hello, world!"')
-  .execute(module, opts => {
-    try {
-      opts.message = JSON.parse(opts.message);
-    } catch (err) {
-      // Ignore error
-    }
-    main(opts.topicName, opts.message);
-  });
+if (require.main === module) {
+  main(...process.argv.slice(2)).catch(console.error);
+}

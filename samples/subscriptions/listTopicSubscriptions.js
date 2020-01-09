@@ -50,14 +50,4 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
   // [END pubsub_list_topic_subscriptions]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('list-topic-subs')
-  .args('<topicName>')
-  .help('Lists all subscriptions in the current project, filtering by a topic.')
-  .example('my-topic')
-  .execute(module, opts => main(opts.topicName));
-
-// Because we want to support the old 'list' syntax, main() also must
-// be exported.
-module.exports.main = main;
+main(...process.argv.slice(2));

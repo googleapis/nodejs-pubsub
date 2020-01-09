@@ -49,10 +49,4 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   // [END pubsub_get_subscription_policy]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('get-policy')
-  .args('<subscriptionName>')
-  .help('Gets the IAM policy for a subscription.')
-  .example('worker-1')
-  .execute(module, opts => main(opts.subscriptionName));
+main(...process.argv.slice(2));

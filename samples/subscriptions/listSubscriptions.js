@@ -42,13 +42,4 @@ function main() {
   // [END pubsub_list_subscriptions]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('list-subs')
-  .help('Lists all subscriptions in the current project.')
-  .example('')
-  .execute(module, () => main());
-
-// Because we want to support the old 'list' syntax, main() also must
-// be exported.
-module.exports.main = main;
+main(...process.argv.slice(2));

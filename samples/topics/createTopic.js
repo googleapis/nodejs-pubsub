@@ -46,10 +46,4 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
   // [END pubsub_create_topic]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('create')
-  .args('<topicName>')
-  .help('Creates a new topic.')
-  .example('my-topic')
-  .execute(module, opts => main(opts.topicName));
+main(...process.argv.slice(2));

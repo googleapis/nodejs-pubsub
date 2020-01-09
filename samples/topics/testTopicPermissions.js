@@ -55,10 +55,4 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
   // [END pubsub_test_topic_permissions]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('test-permissions')
-  .args('<topicName>')
-  .help('Tests the permissions for a topic.')
-  .example('greetings')
-  .execute(module, opts => main(opts.topicName));
+main(...process.argv.slice(2));

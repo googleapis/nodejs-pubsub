@@ -65,10 +65,4 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   // [END pubsub_set_subscription_policy]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('set-policy')
-  .args('<subscriptionName>')
-  .help('Sets the IAM policy for a subscription.')
-  .example('worker-1')
-  .execute(module, opts => main(opts.subscriptionName));
+main(...process.argv.slice(2));

@@ -94,12 +94,4 @@ function main(
   // [END pubsub_publisher_retry_settings]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('publish-retry')
-  .args('<projectId> <topicName> <message>')
-  .help('Publishes a message to a topic with retry settings.')
-  .example('my-project my-topic "Hello, world!"')
-  .execute(module, opts => {
-    main(opts.projectId, opts.topicName, opts.message);
-  });
+main(...process.argv.slice(2));

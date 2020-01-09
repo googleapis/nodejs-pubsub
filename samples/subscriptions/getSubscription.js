@@ -50,10 +50,4 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   getSubscription();
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('get')
-  .args('<subscriptionName>')
-  .help('Gets the metadata for a subscription.')
-  .example('worker-1')
-  .execute(module, opts => main(opts.subscriptionName));
+main(...process.argv.slice(2));

@@ -51,10 +51,4 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
   // [END pubsub_delete_topic]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('delete')
-  .args('<topicName>')
-  .help('Deletes a topic.')
-  .example('my-topic')
-  .execute(module, opts => main(opts.topicName));
+main(...process.argv.slice(2));

@@ -64,10 +64,4 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
   // [END pubsub_set_topic_policy]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('set-policy')
-  .args('<topicName>')
-  .help('Sets the IAM policy for a topic.')
-  .example('greetings')
-  .execute(module, opts => main(opts.topicName));
+main(...process.argv.slice(2));

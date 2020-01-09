@@ -24,6 +24,8 @@
 
 // Listens to messages and errors for a subscription.
 function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 10) {
+  timeout = Number(timeout);
+
   // [START pubsub_subscriber_error_listener]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
@@ -70,16 +72,4 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 10) {
   // [END pubsub_subscriber_error_listener]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('listen-errors')
-  .args('<subscriptionName>', {
-    timeout: {
-      alias: 't',
-      type: 'number',
-      default: 10,
-    },
-  })
-  .help('Listens to messages and errors for a subscription.')
-  .example('my-subscription')
-  .execute(module, opts => main(opts.subscriptionName, opts.timeout));
+main(...process.argv.slice(2));

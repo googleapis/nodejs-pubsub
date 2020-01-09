@@ -38,6 +38,8 @@ async function main(
   subscriptionName = 'YOUR_SUBSCRIPTION_NAME',
   timeout = 1000
 ) {
+  timeout = Number(timeout);
+
   // [START pubsub_listen_ordered_messages]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
@@ -111,16 +113,6 @@ module.exports = {
   listenForOrderedMessages: main,
 };
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('listen-ordered')
-  .args('<subscriptionName>', {
-    timeout: {
-      alias: 't',
-      type: 'number',
-      default: 10,
-    },
-  })
-  .help('Listens to messages for a subscription with ordering metadata.')
-  .example('my-subscription')
-  .execute(module, opts => main(opts.subscriptionName, opts.timeout));
+if (require.main === module) {
+  main(...process.argv.slice(2)).catch(console.error);
+}

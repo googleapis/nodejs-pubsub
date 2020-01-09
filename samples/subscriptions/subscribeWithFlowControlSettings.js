@@ -28,6 +28,9 @@ function main(
   maxInProgress = 1,
   timeout = 10
 ) {
+  maxInProgress = Number(maxInProgress);
+  timeout = Number(timeout);
+
   // [START pubsub_subscriber_flow_settings]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
@@ -80,25 +83,4 @@ function main(
   subscribeWithFlowControlSettings();
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('listen-flow-control')
-  .args('<subscriptionName>', {
-    maxInProgress: {
-      alias: 'm',
-      type: 'number',
-      default: 1,
-    },
-    timeout: {
-      alias: 't',
-      type: 'number',
-      default: 10,
-    },
-  })
-  .help(
-    'Listen to messages with flow control settings, which are properties of the client/listener instance.'
-  )
-  .example('my-subscription -m 5')
-  .execute(module, opts =>
-    main(opts.subscriptionName, opts.maxInProgress, opts.timeout)
-  );
+main(...process.argv.slice(2));

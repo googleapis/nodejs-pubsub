@@ -68,16 +68,4 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
   // [END pubsub_quickstart_subscriber]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('listen-messages')
-  .args('<subscriptionName>')
-  .help('Listens to messages for a subscription.', {
-    timeout: {
-      alias: 't',
-      type: 'number',
-      default: 10,
-    },
-  })
-  .example('my-subscription')
-  .execute(module, opts => main(opts.subscriptionName, opts.timeout));
+main(...process.argv.slice(2));

@@ -21,8 +21,6 @@ guides.
 * [Before you begin](#before-you-begin)
 * [Samples](#samples)
   * [Quickstart](#quickstart)
-  * [Subscriptions](#subscriptions)
-  * [Topics](#topics)
 
 ## Before you begin
 
@@ -52,40 +50,6 @@ __Usage:__
 
 
 -----
-
-
-
-
-### Subscriptions
-
-View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/subscriptions.js).
-
-[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/subscriptions.js,samples/README.md)
-
-__Usage:__
-
-
-`node samples/subscriptions.js`
-
-Note that `subscriptions.js` is a wrapper that allows easy access to multiple smaller samples, which can be found [in subscriptions](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/subscriptions/).
-
------
-
-
-
-
-### Topics
-
-View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/topics.js).
-
-[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/topics.js,samples/README.md)
-
-__Usage:__
-
-
-`node samples/topics.js`
-
-Note that `topics.js` is a wrapper that allows easy access to multiple smaller samples, which can be found [in topics](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/topics/).
 
 
 

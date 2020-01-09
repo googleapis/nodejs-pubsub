@@ -104,8 +104,6 @@ has instructions for running the samples.
 | Sample                      | Source Code                       | Try it |
 | --------------------------- | --------------------------------- | ------ |
 | Quickstart | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/quickstart.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/quickstart.js,samples/README.md) |
-| Subscriptions | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/subscriptions.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/subscriptions.js,samples/README.md) |
-| Topics | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/topics.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/topics.js,samples/README.md) |
 
 
 

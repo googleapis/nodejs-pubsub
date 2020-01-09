@@ -114,10 +114,4 @@ function main(
   // [END pubsub_subscriber_sync_pull]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('sync-pull')
-  .args('<projectName> <subscriptionName>')
-  .help('Receive messages synchronously.')
-  .example('my-project my-subscription')
-  .execute(module, opts => main(opts.projectName, opts.subscriptionName));
+main(...process.argv.slice(2));

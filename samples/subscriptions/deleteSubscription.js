@@ -45,10 +45,4 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   // [END pubsub_delete_subscription]
 }
 
-const {sampleMain} = require('../common');
-sampleMain()
-  .commandName('delete')
-  .args('<subscriptionName>')
-  .help('Deletes a subscription.')
-  .example('worker-1')
-  .execute(module, opts => main(opts.subscriptionName));
+main(...process.argv.slice(2));
