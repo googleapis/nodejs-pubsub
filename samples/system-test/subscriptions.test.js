@@ -50,7 +50,7 @@ describe('subscriptions', () => {
   const fullSubscriptionNameFour = `projects/${projectId}/subscriptions/${subscriptionNameFour}`;
 
   function commandFor(action) {
-    return `node subscriptions/${action}.js`;
+    return `node ${action}.js`;
   }
 
   before(() => {
@@ -169,7 +169,7 @@ describe('subscriptions', () => {
 
   it('should listen for ordered messages', async () => {
     const timeout = 5;
-    const subscriptions = require('../subscriptions/listenForOrderedMessages');
+    const subscriptions = require('../listenForOrderedMessages');
     const spy = {calls: []};
     const log = console.log;
     console.log = (...args) => {

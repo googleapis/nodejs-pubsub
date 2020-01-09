@@ -35,7 +35,7 @@ describe('topics', () => {
   const expectedMessage = {data: 'Hello, world!'};
 
   function commandFor(action) {
-    return `node topics/${action}.js`;
+    return `node ${action}.js`;
   }
 
   before(() => {
@@ -132,7 +132,7 @@ describe('topics', () => {
   });
 
   it('should publish ordered messages', async () => {
-    const topics = require('../topics/publishOrderedMessage');
+    const topics = require('../publishOrderedMessage');
 
     const [subscription] = await pubsub
       .topic(topicNameTwo)
