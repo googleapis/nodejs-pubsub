@@ -55,7 +55,7 @@ function main(
     console.log(`Subscription ${subscriptionName} created.`);
   }
 
-  createPushSubscription();
+  createPushSubscription().catch(console.error);
   // [END pubsub_create_push_subscription]
 }
 

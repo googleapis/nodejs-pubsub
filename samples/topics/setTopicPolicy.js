@@ -60,7 +60,7 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
     console.log(`Updated policy for topic: %j`, updatedPolicy.bindings);
   }
 
-  setTopicPolicy();
+  setTopicPolicy().catch(console.error);
   // [END pubsub_set_topic_policy]
 }
 

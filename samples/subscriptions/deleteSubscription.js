@@ -41,7 +41,7 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
     console.log(`Subscription ${subscriptionName} deleted.`);
   }
 
-  deleteSubscription();
+  deleteSubscription().catch(console.error);
   // [END pubsub_delete_subscription]
 }
 

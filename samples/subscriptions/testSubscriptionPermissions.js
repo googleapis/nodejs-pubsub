@@ -50,7 +50,7 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
     console.log(`Tested permissions for subscription: %j`, permissions);
   }
 
-  testSubscriptionPermissions();
+  testSubscriptionPermissions().catch(console.error);
   // [END pubsub_test_subscription_permissions]
 }
 

@@ -90,7 +90,7 @@ function main(
     console.log(`Message ${response.messageIds} published.`);
   }
 
-  publishWithRetrySettings();
+  publishWithRetrySettings().catch(console.error);
   // [END pubsub_publisher_retry_settings]
 }
 

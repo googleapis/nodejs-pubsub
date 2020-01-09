@@ -80,7 +80,7 @@ function main(
   }
 
   // [END pubsub_subscriber_flow_settings]
-  subscribeWithFlowControlSettings();
+  subscribeWithFlowControlSettings().catch(console.error);
 }
 
 main(...process.argv.slice(2));

@@ -42,7 +42,7 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
     console.log(`Topic ${topicName} created.`);
   }
 
-  createTopic();
+  createTopic().catch(console.error);
   // [END pubsub_create_topic]
 }
 

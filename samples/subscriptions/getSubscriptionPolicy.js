@@ -45,7 +45,7 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
     console.log(`Policy for subscription: ${JSON.stringify(policy.bindings)}.`);
   }
 
-  getSubscriptionPolicy();
+  getSubscriptionPolicy().catch(console.error);
   // [END pubsub_get_subscription_policy]
 }
 

@@ -68,7 +68,7 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 10) {
     }, timeout * 1000);
   }
 
-  listenForErrors();
+  listenForErrors().catch(console.error);
   // [END pubsub_subscriber_error_listener]
 }
 

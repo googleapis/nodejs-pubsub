@@ -54,7 +54,7 @@ function main(
     console.log(`Modified push config for subscription ${subscriptionName}.`);
   }
 
-  modifyPushConfig();
+  modifyPushConfig().catch(console.error);
   // [END pubsub_update_push_configuration]
 }
 

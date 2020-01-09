@@ -38,7 +38,7 @@ function main() {
     subscriptions.forEach(subscription => console.log(subscription.name));
   }
 
-  listSubscriptions();
+  listSubscriptions().catch(console.error);
   // [END pubsub_list_subscriptions]
 }
 

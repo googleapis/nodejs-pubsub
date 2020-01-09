@@ -42,7 +42,7 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
     console.log(`Policy for topic: %j.`, policy.bindings);
   }
 
-  getTopicPolicy();
+  getTopicPolicy().catch(console.error);
   // [END pubsub_get_topic_policy]
 }
 

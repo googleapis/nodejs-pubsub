@@ -46,7 +46,7 @@ function main(
     console.log(`Subscription ${subscriptionName} created.`);
   }
 
-  createSubscription();
+  createSubscription().catch(console.error);
   // [END pubsub_create_pull_subscription]
 }
 

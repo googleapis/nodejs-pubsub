@@ -54,7 +54,7 @@ function main(
     console.log(`Message ${messageId} published.`);
   }
 
-  publishMessage();
+  publishMessage().catch(console.error);
   // [END pubsub_publish]
   // [END pubsub_quickstart_publisher]
 }

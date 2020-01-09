@@ -46,7 +46,7 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
     subscriptions.forEach(subscription => console.log(subscription.name));
   }
 
-  listTopicSubscriptions();
+  listTopicSubscriptions().catch(console.error);
   // [END pubsub_list_topic_subscriptions]
 }
 

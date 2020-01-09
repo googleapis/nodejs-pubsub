@@ -47,7 +47,7 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
     console.log(`Topic ${topicName} deleted.`);
   }
 
-  deleteTopic();
+  deleteTopic().catch(console.error);
   // [END pubsub_delete_topic]
 }
 

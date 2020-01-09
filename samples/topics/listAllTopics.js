@@ -38,7 +38,7 @@ function main() {
     topics.forEach(topic => console.log(topic.name));
   }
 
-  listAllTopics();
+  listAllTopics().catch(console.error);
   // [END pubsub_list_topics]
 }
 

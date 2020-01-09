@@ -47,7 +47,7 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
     console.log(`Ack deadline: ${metadata.ackDeadlineSeconds}s`);
   }
 
-  getSubscription();
+  getSubscription().catch(console.error);
 }
 
 main(...process.argv.slice(2));

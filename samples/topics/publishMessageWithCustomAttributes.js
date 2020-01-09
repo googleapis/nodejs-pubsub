@@ -56,7 +56,7 @@ function main(
     console.log(`Message ${messageId} published.`);
   }
 
-  publishMessageWithCustomAttributes();
+  publishMessageWithCustomAttributes().catch(console.error);
   // [END pubsub_publish_custom_attributes]
 }
 

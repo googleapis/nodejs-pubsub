@@ -51,7 +51,7 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
     console.log(`Tested permissions for topic: %j`, permissions);
   }
 
-  testTopicPermissions();
+  testTopicPermissions().catch(console.error);
   // [END pubsub_test_topic_permissions]
 }
 

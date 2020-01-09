@@ -110,7 +110,7 @@ function main(
     }
   }
 
-  synchronousPull();
+  synchronousPull().catch(console.error);
   // [END pubsub_subscriber_sync_pull]
 }
 

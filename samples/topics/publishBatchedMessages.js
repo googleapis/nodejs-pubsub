@@ -66,7 +66,7 @@ function main(
     }
   }
 
-  publishBatchedMessages();
+  publishBatchedMessages().catch(console.error);
   // [END pubsub_publisher_batch_settings]
 }
 

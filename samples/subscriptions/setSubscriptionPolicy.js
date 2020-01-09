@@ -61,7 +61,7 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
     console.log(`Updated policy for subscription: %j`, updatedPolicy.bindings);
   }
 
-  setSubscriptionPolicy();
+  setSubscriptionPolicy().catch(console.error);
   // [END pubsub_set_subscription_policy]
 }
 
