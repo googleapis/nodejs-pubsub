@@ -119,9 +119,9 @@ describe('topics', () => {
       .subscription(subscriptionNameOne)
       .get({autoCreate: true});
     execSync(
-      `${commandFor(
-        'publishMessageWithCustomAttributes'
-      )} publish-attributes ${topicNameOne} "${expectedMessage.data}"`
+      `${commandFor('publishMessageWithCustomAttributes')} ${topicNameOne} "${
+        expectedMessage.data
+      }"`
     );
     const receivedMessage = await _pullOneMessage(subscription);
     assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
@@ -230,9 +230,7 @@ describe('topics', () => {
   });
 
   it('should delete a topic', async () => {
-    const output = execSync(
-      `${commandFor('deleteTopic')} delete ${topicNameOne}`
-    );
+    const output = execSync(`${commandFor('deleteTopic')} ${topicNameOne}`);
     assert.include(output, `Topic ${topicNameOne} deleted.`);
     const [topics] = await pubsub.getTopics();
     assert(topics.every(s => s.name !== fullTopicNameOne));
