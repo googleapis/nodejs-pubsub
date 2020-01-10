@@ -22,9 +22,13 @@
 
 'use strict';
 
-// Publishes a message to a topic with retry settings.
+// sample-metadata:
+//   title: Publish With Retry Settings
+//   description: Publishes a message to a topic with retry settings.
+//   usage: node publishWithRetrySettings.js <project-id> <topic-name> <data>
+
 function main(
-  projectId = 'YOUR_PROJECT_NAME',
+  projectId = 'YOUR_PROJECT_ID',
   topicName = 'YOUR_TOPIC_NAME',
   data = JSON.stringify({foo: 'bar'})
 ) {
@@ -32,7 +36,7 @@ function main(
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
-  // const projectId = 'YOUR_PROJECT_NAME'
+  // const projectId = 'YOUR_PROJECT_ID'
   // const topicName = 'YOUR_TOPIC_NAME';
   // const data = JSON.stringify({foo: 'bar'});
 

@@ -22,7 +22,13 @@
 
 'use strict';
 
-// Listen to messages with flow control settings, which are properties of the client/listener instance.
+// sample-metadata:
+//   title: Subscribe With Flow Control Settings
+//   description: Listen to messages with flow control settings, which are
+//     properties of the client/listener instance.
+//   usage: node subscribeWithFlowControlSettings.js <subscription-name>
+//     [max-in-progress [timeout-in-seconds]]
+
 function main(
   subscriptionName = 'YOUR_SUBSCRIPTION_NAME',
   maxInProgress = 1,

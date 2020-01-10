@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Creates a new topic.
+// sample-metadata:
+//   title: Create Topic
+//   description: Creates a new topic.
+//   usage: node createTopic.js <topic-name>
+
 function main(topicName = 'YOUR_TOPIC_NAME') {
   // [START pubsub_create_topic]
   /**

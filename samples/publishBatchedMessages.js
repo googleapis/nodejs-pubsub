@@ -22,12 +22,16 @@
 
 'use strict';
 
-// Publishes messages to a topic using custom batching settings.
+// sample-metadata:
+//   title: Publish Batched Messages
+//   description: Publishes messages to a topic using custom batching settings.
+//   usage: node publishBatchedMessages.js <topic-name> <data> [max-messages [max-wait-in-seconds]]
+
 function main(
   topicName = 'YOUR_TOPIC_NAME',
   data = JSON.stringify({foo: 'bar'}),
   maxMessages = 10,
-  maxWaitTime = 10000
+  maxWaitTime = 10
 ) {
   maxMessages = Number(maxMessages);
   maxWaitTime = Number(maxWaitTime);
@@ -39,7 +43,7 @@ function main(
   // const topicName = 'YOUR_TOPIC_NAME';
   // const data = JSON.stringify({foo: 'bar'});
   // const maxMessages = 10;
-  // const maxWaitTime = 10000;
+  // const maxWaitTime = 10;
 
   // Imports the Google Cloud client library
   const {PubSub} = require('@google-cloud/pubsub');
@@ -54,7 +58,7 @@ function main(
     const batchPublisher = pubSubClient.topic(topicName, {
       batching: {
         maxMessages: maxMessages,
-        maxMilliseconds: maxWaitTime,
+        maxMilliseconds: maxWaitTime * 1000,
       },
     });
 

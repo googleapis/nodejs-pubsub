@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Publishes a message to a topic.
+// sample-metadata:
+//   title: Publish Message
+//   description: Publishes a message to a topic.
+//   usage: node publishMessage.js <topic-name> <data>
+
 function main(
   topicName = 'YOUR_TOPIC_NAME',
   data = JSON.stringify({foo: 'bar'})

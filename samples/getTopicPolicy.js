@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Gets the IAM policy for a topic.
+// sample-metadata:
+//   title: Get Topic Policy
+//   description: Gets the IAM policy for a topic.
+//   usage: node getTopicPolicy.js <topic-name>
+
 function main(topicName = 'YOUR_TOPIC_NAME') {
   // [START pubsub_get_topic_policy]
   /**

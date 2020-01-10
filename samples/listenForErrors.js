@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Listens to messages and errors for a subscription.
+// sample-metadata:
+//   title: Listen For Errors
+//   description: Listens to messages and errors for a subscription.
+//   usage: node listenForErrors.js <subscription-name> [timeout-in-seconds]
+
 function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 10) {
   timeout = Number(timeout);
 

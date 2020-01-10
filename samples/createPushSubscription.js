@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Creates a new push subscription.
+// sample-metadata:
+//   title: Create Push Subscription
+//   description: Creates a new push subscription.
+//   usage: node createPushSubscription.js <topic-name> <subscription-name>
+
 function main(
   topicName = 'YOUR_TOPIC_NAME',
   subscriptionName = 'YOUR_SUBSCRIPTION_NAME'

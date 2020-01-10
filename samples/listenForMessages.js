@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Listens to messages for a subscription.
+// sample-metadata:
+//   title: Listen For Messages
+//   description: Listens for messages from a subscription.
+//   usage: node listenForMessages.js <subscription-name> [timeout-in-seconds]
+
 function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
   // [START pubsub_subscriber_async_pull]
   // [START pubsub_quickstart_subscriber]

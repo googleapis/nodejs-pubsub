@@ -22,6 +22,11 @@
 
 'use strict';
 
+// sample-metadata:
+//   title: Delete Subscription
+//   description: Deletes an existing subscription from a topic.
+//   usage: node deleteSubscription.js <subscription-name>
+
 function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   // [START pubsub_delete_subscription]
   /**

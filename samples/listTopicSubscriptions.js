@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Lists all subscriptions in the current project, filtering by a topic.
+// sample-metadata:
+//   title: List Subscriptions On a Topic
+//   description: Lists all subscriptions in the current project, filtering by a topic.
+//   usage: node listTopicSubscriptions.js <topic-name>
+
 function main(topicName = 'YOUR_TOPIC_NAME') {
   // [START pubsub_list_topic_subscriptions]
   /**

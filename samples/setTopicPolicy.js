@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Sets the IAM policy for a topic.
+// sample-metadata:
+//   title: Set Topic IAM Policy
+//   description: Sets the IAM policy for a topic.
+//   usage: node setTopicPolicy.js <topic-name>
+
 function main(topicName = 'YOUR_TOPIC_NAME') {
   // [START pubsub_set_topic_policy]
   /**

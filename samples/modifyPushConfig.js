@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Modifies the configuration of an existing push subscription.
+// sample-metadata:
+//   title: Modify Push Configuration
+//   description: Modifies the configuration of an existing push subscription.
+//   usage: node modifyPushConfig.js <topic-name> <subscription-name>
+
 function main(
   topicName = 'YOUR_TOPIC_NAME',
   subscriptionName = 'YOUR_SUBSCRIPTION_NAME'

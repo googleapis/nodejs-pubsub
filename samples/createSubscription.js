@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Creates a new subscription.
+// sample-metadata:
+//   title: Create Subscription
+//   description: Creates a new subscription.
+//   usage: node createSubscription.js <topic-name> <subscription-name>
+
 function main(
   topicName = 'YOUR_TOPIC_NAME',
   subscriptionName = 'YOUR_SUBSCRIPTION_NAME'

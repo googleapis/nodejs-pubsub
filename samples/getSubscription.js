@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Gets the metadata for a subscription.
+// sample-metadata:
+//   title: Get Subscription
+//   description: Gets the metadata for a subscription.
+//   usage: node getSubscription.js <subscription-name>
+
 function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   /**
    * TODO(developer): Uncomment this variable before running the sample.

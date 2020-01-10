@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Tests the permissions for a subscription.
+// sample-metadata:
+//   title: Test Subscription Permissions
+//   description: Tests the permissions for a subscription.
+//   usage: node testSubscriptionPermissions.js <subscription-name>
+
 function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   // [START pubsub_test_subscription_permissions]
   /**

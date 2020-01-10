@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Lists all subscriptions in the current project.
+// sample-metadata:
+//   title: List Subscriptions
+//   description: Lists all subscriptions in the current project.
+//   usage: node listSubscriptions.js
+
 function main() {
   // [START pubsub_list_subscriptions]
   // Imports the Google Cloud client library

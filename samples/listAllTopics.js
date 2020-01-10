@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Lists all topics in the current project.
+// sample-metadata:
+//   title: List All Topics
+//   description: Lists all topics in the current project.
+//   usage: node listAllTopics.js
+
 function main() {
   // [START pubsub_list_topics]
   // Imports the Google Cloud client library

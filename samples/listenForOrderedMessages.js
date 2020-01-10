@@ -22,6 +22,12 @@
 
 'use strict';
 
+// sample-metadata:
+//   title: Listen For Ordered Messages
+//   description: Demonstrates how to order messages coming from a topic.
+//     Please see "Publish Ordered Message" for the other side of this.
+//   usage: node listenForOrderedMessages.js <subscription-name> [timeout-in-seconds]
+
 let subscribeCounterValue = 1;
 
 function getSubscribeCounterValue() {

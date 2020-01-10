@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Deletes a topic.
+// sample-metadata:
+//   title: Delete Topic
+//   description: Deletes an existing topic.
+//   usage: node deleteTopic.js <topic-name>
+
 function main(topicName = 'YOUR_TOPIC_NAME') {
   // [START pubsub_delete_topic]
   /**

@@ -22,16 +22,20 @@
 
 'use strict';
 
-// Receive messages synchronously.
+// sample-metadata:
+//   title: Synchronous Pull
+//   description: Receive messages synchronously.
+//   usage: node synchronousPull.js <project-id> <subscription-name>
+
 function main(
-  projectName = 'YOUR_PROJECT_NAME',
+  projectId = 'YOUR_PROJECT_ID',
   subscriptionName = 'YOUR_SUBSCRIPTION_NAME'
 ) {
   // [START pubsub_subscriber_sync_pull]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
-  // const projectName = 'YOUR_PROJECT_NAME';
+  // const projectId = 'YOUR_PROJECT_ID';
   // const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
 
   // Imports the Google Cloud client library. v1 is for the lower level
@@ -43,7 +47,7 @@ function main(
 
   async function synchronousPull() {
     const formattedSubscription = subClient.subscriptionPath(
-      projectName,
+      projectId,
       subscriptionName
     );
     // The maximum number of messages returned for this request.

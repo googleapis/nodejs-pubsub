@@ -22,6 +22,13 @@
 
 'use strict';
 
+// sample-metadata:
+//   title: Publish Ordered Message
+//   description: Demonstrates how to publish messages to a topic
+//     with ordering. Please see "Listen for Ordered Messages" for
+//     the other side of this.
+//   usage: node publishOrderedMessage.js <topic-name> <data>
+
 let publishCounterValue = 1;
 
 function getPublishCounterValue() {
@@ -32,7 +39,6 @@ function setPublishCounterValue(value) {
   publishCounterValue = value;
 }
 
-// Publishes an ordered message to a topic.
 async function main(
   topicName = 'YOUR_TOPIC_NAME',
   data = JSON.stringify({foo: 'bar'})

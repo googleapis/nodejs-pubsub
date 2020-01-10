@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Tests the permissions for a topic.
+// sample-metadata:
+//   title: Test Topic Permissions
+//   description: Tests the permissions for a topic.
+//   usage: node testTopicPermissions.js <topic-name>
+
 function main(topicName = 'YOUR_TOPIC_NAME') {
   // [START pubsub_test_topic_permissions]
   /**

@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Sets the IAM policy for a subscription.
+// sample-metadata:
+//   title: Set Subscription IAM Policy
+//   description: Sets the IAM policy for a subscription.
+//   usage: node setSubscriptionPolicy.js <subscription-name>
+
 function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   // [START pubsub_set_subscription_policy]
   /**

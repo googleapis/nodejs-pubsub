@@ -22,7 +22,11 @@
 
 'use strict';
 
-// Publishes a message with custom attributes to a Topic.
+// sample-metadata:
+//   title: Publish Message With Custom Attributes
+//   description: Publishes a message with custom attributes to a topic.
+//   usage: node publishMessageWithCustomAttributes.js <topic-name> <data>
+
 function main(
   topicName = 'YOUR_TOPIC_NAME',
   data = JSON.stringify({foo: 'bar'})
