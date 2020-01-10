@@ -30,19 +30,19 @@ guides.
   * [Get Topic Policy](#get-topic-policy)
   * [List All Topics](#list-all-topics)
   * [List Subscriptions](#list-subscriptions)
-  * [List Topic Subscriptions](#list-topic-subscriptions)
+  * [List Subscriptions On a Topic](#list-subscriptions-on-a-topic)
   * [Listen For Errors](#listen-for-errors)
   * [Listen For Messages](#listen-for-messages)
   * [Listen For Ordered Messages](#listen-for-ordered-messages)
-  * [Modify Push Config](#modify-push-config)
+  * [Modify Push Configuration](#modify-push-configuration)
   * [Publish Batched Messages](#publish-batched-messages)
   * [Publish Message](#publish-message)
   * [Publish Message With Custom Attributes](#publish-message-with-custom-attributes)
   * [Publish Ordered Message](#publish-ordered-message)
   * [Publish With Retry Settings](#publish-with-retry-settings)
   * [Quickstart](#quickstart)
-  * [Set Subscription Policy](#set-subscription-policy)
-  * [Set Topic Policy](#set-topic-policy)
+  * [Set Subscription IAM Policy](#set-subscription-iam-policy)
+  * [Set Topic IAM Policy](#set-topic-iam-policy)
   * [Subscribe With Flow Control Settings](#subscribe-with-flow-control-settings)
   * [Synchronous Pull](#synchronous-pull)
   * [Test Subscription Permissions](#test-subscription-permissions)
@@ -65,6 +65,8 @@ Before running the samples, make sure you've followed the steps outlined in
 
 ### Create Push Subscription
 
+Creates a new push subscription.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/createPushSubscription.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createPushSubscription.js,samples/README.md)
@@ -72,7 +74,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/createPushSubscription.js`
+`node createPushSubscription.js <topic-name> <subscription-name>`
 
 
 -----
@@ -82,6 +84,8 @@ __Usage:__
 
 ### Create Subscription
 
+Creates a new subscription.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/createSubscription.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createSubscription.js,samples/README.md)
@@ -89,7 +93,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/createSubscription.js`
+`node createSubscription.js <topic-name> <subscription-name>`
 
 
 -----
@@ -99,6 +103,8 @@ __Usage:__
 
 ### Create Topic
 
+Creates a new topic.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/createTopic.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createTopic.js,samples/README.md)
@@ -106,7 +112,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/createTopic.js`
+`node createTopic.js <topic-name>`
 
 
 -----
@@ -116,6 +122,8 @@ __Usage:__
 
 ### Delete Subscription
 
+Deletes an existing subscription from a topic.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/deleteSubscription.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/deleteSubscription.js,samples/README.md)
@@ -123,7 +131,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/deleteSubscription.js`
+`node deleteSubscription.js <subscription-name>`
 
 
 -----
@@ -133,6 +141,8 @@ __Usage:__
 
 ### Delete Topic
 
+Deletes an existing topic.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/deleteTopic.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/deleteTopic.js,samples/README.md)
@@ -140,7 +150,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/deleteTopic.js`
+`node deleteTopic.js <topic-name>`
 
 
 -----
@@ -150,6 +160,8 @@ __Usage:__
 
 ### Get Subscription
 
+Gets the metadata for a subscription.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/getSubscription.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/getSubscription.js,samples/README.md)
@@ -157,7 +169,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/getSubscription.js`
+`node getSubscription.js <subscription-name>`
 
 
 -----
@@ -167,6 +179,8 @@ __Usage:__
 
 ### Get Subscription Policy
 
+Gets the IAM policy for a subscription.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/getSubscriptionPolicy.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/getSubscriptionPolicy.js,samples/README.md)
@@ -174,7 +188,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/getSubscriptionPolicy.js`
+`node getSubscriptionPolicy.js <subscription-name>`
 
 
 -----
@@ -184,6 +198,8 @@ __Usage:__
 
 ### Get Topic Policy
 
+Gets the IAM policy for a topic.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/getTopicPolicy.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/getTopicPolicy.js,samples/README.md)
@@ -191,7 +207,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/getTopicPolicy.js`
+`node getTopicPolicy.js <topic-name>`
 
 
 -----
@@ -201,6 +217,8 @@ __Usage:__
 
 ### List All Topics
 
+Lists all topics in the current project.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listAllTopics.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listAllTopics.js,samples/README.md)
@@ -208,7 +226,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/listAllTopics.js`
+`node listAllTopics.js`
 
 
 -----
@@ -218,6 +236,8 @@ __Usage:__
 
 ### List Subscriptions
 
+Lists all subscriptions in the current project.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listSubscriptions.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listSubscriptions.js,samples/README.md)
@@ -225,7 +245,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/listSubscriptions.js`
+`node listSubscriptions.js`
 
 
 -----
@@ -233,7 +253,9 @@ __Usage:__
 
 
 
-### List Topic Subscriptions
+### List Subscriptions On a Topic
+
+Lists all subscriptions in the current project, filtering by a topic.
 
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listTopicSubscriptions.js).
 
@@ -242,7 +264,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/listTopicSubscriptions.js`
+`node listTopicSubscriptions.js <topic-name>`
 
 
 -----
@@ -252,6 +274,8 @@ __Usage:__
 
 ### Listen For Errors
 
+Listens to messages and errors for a subscription.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listenForErrors.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listenForErrors.js,samples/README.md)
@@ -259,7 +283,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/listenForErrors.js`
+`node listenForErrors.js <subscription-name> [timeout-in-seconds]`
 
 
 -----
@@ -269,6 +293,8 @@ __Usage:__
 
 ### Listen For Messages
 
+Listens for messages from a subscription.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listenForMessages.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listenForMessages.js,samples/README.md)
@@ -276,7 +302,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/listenForMessages.js`
+`node listenForMessages.js <subscription-name> [timeout-in-seconds]`
 
 
 -----
@@ -286,6 +312,8 @@ __Usage:__
 
 ### Listen For Ordered Messages
 
+Demonstrates how to order messages coming from a topic. Please see "Publish Ordered Message" for the other side of this.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listenForOrderedMessages.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listenForOrderedMessages.js,samples/README.md)
@@ -293,7 +321,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/listenForOrderedMessages.js`
+`node listenForOrderedMessages.js <subscription-name> [timeout-in-seconds]`
 
 
 -----
@@ -301,7 +329,9 @@ __Usage:__
 
 
 
-### Modify Push Config
+### Modify Push Configuration
+
+Modifies the configuration of an existing push subscription.
 
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/modifyPushConfig.js).
 
@@ -310,7 +340,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/modifyPushConfig.js`
+`node modifyPushConfig.js <topic-name> <subscription-name>`
 
 
 -----
@@ -320,6 +350,8 @@ __Usage:__
 
 ### Publish Batched Messages
 
+Publishes messages to a topic using custom batching settings.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/publishBatchedMessages.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/publishBatchedMessages.js,samples/README.md)
@@ -327,7 +359,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/publishBatchedMessages.js`
+`node publishBatchedMessages.js <topic-name> <data> [max-messages [max-wait-in-seconds]]`
 
 
 -----
@@ -337,6 +369,8 @@ __Usage:__
 
 ### Publish Message
 
+Publishes a message to a topic.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/publishMessage.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/publishMessage.js,samples/README.md)
@@ -344,7 +378,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/publishMessage.js`
+`node publishMessage.js <topic-name> <data>`
 
 
 -----
@@ -354,6 +388,8 @@ __Usage:__
 
 ### Publish Message With Custom Attributes
 
+Publishes a message with custom attributes to a topic.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/publishMessageWithCustomAttributes.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/publishMessageWithCustomAttributes.js,samples/README.md)
@@ -361,7 +397,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/publishMessageWithCustomAttributes.js`
+`node publishMessageWithCustomAttributes.js <topic-name> <data>`
 
 
 -----
@@ -371,6 +407,8 @@ __Usage:__
 
 ### Publish Ordered Message
 
+Demonstrates how to publish messages to a topic with ordering. Please see "Listen for Ordered Messages" for the other side of this.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/publishOrderedMessage.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/publishOrderedMessage.js,samples/README.md)
@@ -378,7 +416,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/publishOrderedMessage.js`
+`node publishOrderedMessage.js <topic-name> <data>`
 
 
 -----
@@ -388,6 +426,8 @@ __Usage:__
 
 ### Publish With Retry Settings
 
+Publishes a message to a topic with retry settings.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/publishWithRetrySettings.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/publishWithRetrySettings.js,samples/README.md)
@@ -395,7 +435,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/publishWithRetrySettings.js`
+`node publishWithRetrySettings.js <project-id> <topic-name> <data>`
 
 
 -----
@@ -405,6 +445,8 @@ __Usage:__
 
 ### Quickstart
 
+A quick introduction to using the Pub/Sub client library.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/quickstart.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/quickstart.js,samples/README.md)
@@ -412,7 +454,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/quickstart.js`
+`node quickstart.js <project-id> <topic-name>`
 
 
 -----
@@ -420,7 +462,9 @@ __Usage:__
 
 
 
-### Set Subscription Policy
+### Set Subscription IAM Policy
+
+Sets the IAM policy for a subscription.
 
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/setSubscriptionPolicy.js).
 
@@ -429,7 +473,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/setSubscriptionPolicy.js`
+`node setSubscriptionPolicy.js <subscription-name>`
 
 
 -----
@@ -437,7 +481,9 @@ __Usage:__
 
 
 
-### Set Topic Policy
+### Set Topic IAM Policy
+
+Sets the IAM policy for a topic.
 
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/setTopicPolicy.js).
 
@@ -446,7 +492,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/setTopicPolicy.js`
+`node setTopicPolicy.js <topic-name>`
 
 
 -----
@@ -456,6 +502,8 @@ __Usage:__
 
 ### Subscribe With Flow Control Settings
 
+Listen to messages with flow control settings, which are properties of the client/listener instance.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/subscribeWithFlowControlSettings.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/subscribeWithFlowControlSettings.js,samples/README.md)
@@ -463,7 +511,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/subscribeWithFlowControlSettings.js`
+`node subscribeWithFlowControlSettings.js <subscription-name> [max-in-progress [timeout-in-seconds]]`
 
 
 -----
@@ -473,6 +521,8 @@ __Usage:__
 
 ### Synchronous Pull
 
+Receive messages synchronously.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/synchronousPull.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/synchronousPull.js,samples/README.md)
@@ -480,7 +530,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/synchronousPull.js`
+`node synchronousPull.js <project-id> <subscription-name>`
 
 
 -----
@@ -490,6 +540,8 @@ __Usage:__
 
 ### Test Subscription Permissions
 
+Tests the permissions for a subscription.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/testSubscriptionPermissions.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/testSubscriptionPermissions.js,samples/README.md)
@@ -497,7 +549,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/testSubscriptionPermissions.js`
+`node testSubscriptionPermissions.js <subscription-name>`
 
 
 -----
@@ -507,6 +559,8 @@ __Usage:__
 
 ### Test Topic Permissions
 
+Tests the permissions for a topic.
+
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/testTopicPermissions.js).
 
 [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/testTopicPermissions.js,samples/README.md)
@@ -514,7 +568,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node samples/testTopicPermissions.js`
+`node testTopicPermissions.js <topic-name>`
 
 
 
