@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [1.3.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.2.0...v1.3.0) (2020-01-14)
+
+
+### Features
+
+* **subscription:** dead letter policy support ([#799](https://www.github.com/googleapis/nodejs-pubsub/issues/799)) ([b5a4195](https://www.github.com/googleapis/nodejs-pubsub/commit/b5a4195238cf8ceed0b066a93066765820dc0488))
+
 ## [1.2.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.1.6...v1.2.0) (2019-12-13)
 
 
