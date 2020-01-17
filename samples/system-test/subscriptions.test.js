@@ -146,6 +146,17 @@ describe('subscriptions', () => {
     const output = await execPromise(
       `${commandFor('synchronousPull')} ${projectId} ${subscriptionNameOne}`
     );
+    assert.match(output, /Hello/);
+    assert.match(output, /Done./);
+  });
+
+  it('should listen for messages synchronously with lease management', async () => {
+    pubsub.topic(topicNameOne).publish(Buffer.from(`Hello, world!`));
+    const output = await execPromise(
+      `${commandFor(
+        'synchronousPullWithLeaseManagement'
+      )} ${projectId} ${subscriptionNameOne}`
+    );
     assert.match(output, /Done./);
   });
 
