@@ -47,7 +47,7 @@ const PULL_TIMEOUT = require('./v1/subscriber_client_config.json').interfaces[
  */
 const DEFAULT_OPTIONS: MessageStreamOptions = {
   highWaterMark: 0,
-  maxStreams: 5,
+  maxStreams: undefined,
   timeout: 300000,
 };
 
