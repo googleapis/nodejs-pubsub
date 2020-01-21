@@ -142,8 +142,8 @@ describe('subscriptions', () => {
   });
 
   it('should listen for messages synchronously', async () => {
-    pubsub.topic(topicNameOne).publish(Buffer.from(`Hello, world!`));
-    const output = await execPromise(
+    await pubsub.topic(topicNameOne).publish(Buffer.from(`Hello, world!`));
+    const output = execSync(
       `${commandFor('synchronousPull')} ${projectId} ${subscriptionNameOne}`
     );
     assert.match(output, /Hello/);
@@ -151,8 +151,8 @@ describe('subscriptions', () => {
   });
 
   it('should listen for messages synchronously with lease management', async () => {
-    pubsub.topic(topicNameOne).publish(Buffer.from(`Hello, world!`));
-    const output = await execPromise(
+    await pubsub.topic(topicNameOne).publish(Buffer.from(`Hello, world!`));
+    const output = execSync(
       `${commandFor(
         'synchronousPullWithLeaseManagement'
       )} ${projectId} ${subscriptionNameOne}`
