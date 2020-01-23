@@ -29,6 +29,7 @@ import {PassThrough} from 'stream';
 import {PullRetry} from './pull-retry';
 import {Subscriber} from './subscriber';
 import {google} from '../proto/pubsub';
+import {defaultOptions} from './default-options';
 
 /*!
  * Frequency to ping streams.
@@ -47,7 +48,7 @@ const PULL_TIMEOUT = require('./v1/subscriber_client_config.json').interfaces[
  */
 const DEFAULT_OPTIONS: MessageStreamOptions = {
   highWaterMark: 0,
-  maxStreams: undefined,
+  maxStreams: defaultOptions.maxStreams,
   timeout: 300000,
 };
 
