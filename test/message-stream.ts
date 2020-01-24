@@ -250,7 +250,10 @@ describe('MessageStream', () => {
           messageStream = new MessageStream(subscriber, {highWaterMark});
 
           setImmediate(() => {
-            assert.strictEqual(client.streams.length, defaultOptions.maxStreams);
+            assert.strictEqual(
+              client.streams.length,
+              defaultOptions.maxStreams
+            );
             client.streams.forEach(stream => {
               assert.strictEqual(
                 stream._readableState.highWaterMark,

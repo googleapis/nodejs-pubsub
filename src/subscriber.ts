@@ -402,7 +402,9 @@ export class Subscriber extends EventEmitter {
     // It doesn't really make sense to open 5 streams if the user only wants
     // 1 message at a time.
     if (options.flowControl) {
-      const {maxMessages = defaultOptions.maxOutstandingMessages} = options.flowControl;
+      const {
+        maxMessages = defaultOptions.maxOutstandingMessages,
+      } = options.flowControl;
 
       if (!options.streamingOptions) {
         options.streamingOptions = {} as MessageStreamOptions;
