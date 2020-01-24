@@ -28,6 +28,7 @@ import {FlowControlOptions, LeaseManager} from './lease-manager';
 import {AckQueue, BatchOptions, ModAckQueue} from './message-queues';
 import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
+import {defaultOptions} from './default-options';
 
 export type PullResponse = google.pubsub.v1.IPullResponse;
 
@@ -396,18 +397,20 @@ export class Subscriber extends EventEmitter {
       this._isUserSetDeadline = true;
     }
 
-    // in the event that the user has specified the maxMessages option, we want
-    // to make sure that the maxStreams option isn't higher
-    // it doesn't really make sense to open 5 streams if the user only wants
+    // In the event that the user has specified the maxMessages option, we want
+    // to make sure that the maxStreams option isn't higher.
+    // It doesn't really make sense to open 5 streams if the user only wants
     // 1 message at a time.
     if (options.flowControl) {
-      const {maxMessages = 100} = options.flowControl;
+      const {
+        maxMessages = defaultOptions.maxOutstandingMessages,
+      } = options.flowControl;
 
       if (!options.streamingOptions) {
         options.streamingOptions = {} as MessageStreamOptions;
       }
 
-      const {maxStreams = 5} = options.streamingOptions;
+      const {maxStreams = defaultOptions.maxStreams} = options.streamingOptions;
       options.streamingOptions.maxStreams = Math.min(maxStreams, maxMessages);
     }
   }

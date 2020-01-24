@@ -18,6 +18,7 @@ import {EventEmitter} from 'events';
 import {freemem} from 'os';
 
 import {Message, Subscriber} from './subscriber';
+import {defaultOptions} from './default-options';
 
 export interface FlowControlOptions {
   allowExcessMessages?: boolean;
@@ -34,12 +35,12 @@ export interface FlowControlOptions {
  *     Setting this option to false will make the client manage any excess
  *     messages until you're ready for them. This will prevent them from being
  *     redelivered and make the maxMessages option behave more predictably.
- * @property {number} [maxBytes] The desired amount of memory to allow message
- *     data to consume, defaults to 20% of available memory. Its possible that
- *     this value will be exceeded since messages are received in batches.
- * @property {number} [maxExtension=Infinity] The maximum duration (in seconds)
+ * @property {number} [maxBytes=104857600] The desired amount of memory to
+ *     allow message data to consume. (Default: 100MB) It's possible that this
+ *     value will be exceeded, since messages are received in batches.
+ * @property {number} [maxExtension=60] The maximum duration (in seconds)
  *      to extend the message deadline before redelivering.
- * @property {number} [maxMessages=100] The desired number of messages to allow
+ * @property {number} [maxMessages=1000] The desired number of messages to allow
  *     in memory before pausing the message stream. Unless allowExcessMessages
  *     is set to false, it is very likely that this value will be exceeded since
  *     any given message batch could contain a greater number of messages than
@@ -185,9 +186,9 @@ export class LeaseManager extends EventEmitter {
   setOptions(options: FlowControlOptions): void {
     const defaults: FlowControlOptions = {
       allowExcessMessages: true,
-      maxBytes: freemem() * 0.2,
-      maxExtension: Infinity,
-      maxMessages: 100,
+      maxBytes: defaultOptions.maxOutstandingBytes,
+      maxExtension: defaultOptions.maxExtensionMinutes,
+      maxMessages: defaultOptions.maxOutstandingMessages,
     };
 
     this._options = Object.assign(defaults, options);

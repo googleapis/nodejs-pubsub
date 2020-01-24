@@ -22,6 +22,7 @@ import * as sinon from 'sinon';
 
 import * as leaseTypes from '../src/lease-manager';
 import {Message, Subscriber} from '../src/subscriber';
+import {defaultOptions} from '../src/default-options';
 
 const FREE_MEM = 9376387072;
 const fakeos = {
@@ -424,7 +425,7 @@ describe('LeaseManager', () => {
   describe('setOptions', () => {
     it('should allow excess messages by default', () => {});
 
-    it('should default maxBytes to 20% of free memory', () => {
+    it('should default maxBytes', () => {
       const littleMessage = new FakeMessage() as Message;
       const bigMessage = new FakeMessage();
 
@@ -432,13 +433,13 @@ describe('LeaseManager', () => {
       assert.strictEqual(leaseManager.isFull(), false);
 
       leaseManager.remove(littleMessage);
-      bigMessage.length = FREE_MEM * 0.21;
+      bigMessage.length = defaultOptions.maxOutstandingBytes * 2;
       leaseManager.add(bigMessage as Message);
       assert.strictEqual(leaseManager.isFull(), true);
     });
 
-    it('should cap maxMessages at 100', () => {
-      for (let i = 0; i < 100; i++) {
+    it('should cap maxMessages', () => {
+      for (let i = 0; i < defaultOptions.maxOutstandingMessages; i++) {
         assert.strictEqual(leaseManager.isFull(), false);
         leaseManager.add(new FakeMessage() as Message);
       }
