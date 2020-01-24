@@ -18,7 +18,7 @@ import {EventEmitter} from 'events';
 import {freemem} from 'os';
 
 import {Message, Subscriber} from './subscriber';
-import { defaultOptions } from './default-options';
+import {defaultOptions} from './default-options';
 
 export interface FlowControlOptions {
   allowExcessMessages?: boolean;
