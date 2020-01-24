@@ -23,6 +23,7 @@ import {Duplex, PassThrough} from 'stream';
 import * as uuid from 'uuid';
 import * as messageTypes from '../src/message-stream';
 import {Subscriber} from '../src/subscriber';
+import {defaultOptions} from '../src/default-options';
 
 const FAKE_STREAMING_PULL_TIMEOUT = 123456789;
 const FAKE_CLIENT_CONFIG = {
@@ -217,8 +218,8 @@ describe('MessageStream', () => {
           });
         });
 
-        it('should default maxStreams to 5', () => {
-          assert.strictEqual(client.streams.length, 5);
+        it('should default maxStreams', () => {
+          assert.strictEqual(client.streams.length, defaultOptions.maxStreams);
         });
 
         it('should pull pullTimeouts default from config file', () => {
@@ -249,7 +250,10 @@ describe('MessageStream', () => {
           messageStream = new MessageStream(subscriber, {highWaterMark});
 
           setImmediate(() => {
-            assert.strictEqual(client.streams.length, 5);
+            assert.strictEqual(
+              client.streams.length,
+              defaultOptions.maxStreams
+            );
             client.streams.forEach(stream => {
               assert.strictEqual(
                 stream._readableState.highWaterMark,
