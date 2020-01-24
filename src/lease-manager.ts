@@ -18,6 +18,7 @@ import {EventEmitter} from 'events';
 import {freemem} from 'os';
 
 import {Message, Subscriber} from './subscriber';
+import { defaultOptions } from './default-options';
 
 export interface FlowControlOptions {
   allowExcessMessages?: boolean;
@@ -185,9 +186,9 @@ export class LeaseManager extends EventEmitter {
   setOptions(options: FlowControlOptions): void {
     const defaults: FlowControlOptions = {
       allowExcessMessages: true,
-      maxBytes: 104857600,
-      maxExtension: 60,
-      maxMessages: 1000,
+      maxBytes: defaultOptions.maxOutstandingBytes,
+      maxExtension: defaultOptions.maxExtensionMinutes,
+      maxMessages: defaultOptions.maxOutstandingMessages,
     };
 
     this._options = Object.assign(defaults, options);
