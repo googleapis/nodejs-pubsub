@@ -249,6 +249,53 @@ describe('Subscription', () => {
         undefined
       );
     });
+
+    it('should format oidcToken', () => {
+      const oidcToken = {
+        serviceAccount: 'pubsub-test@appspot.gserviceaccount.com',
+        audience: 'audience',
+      };
+
+      const metadata = {
+        oidcToken,
+      };
+
+      const formatted = Subscription.formatMetadata_(metadata);
+
+      assert.strictEqual(formatted.pushConfig!.oidcToken, oidcToken);
+      assert.strictEqual(
+        (formatted as subby.SubscriptionMetadata).oidcToken,
+        undefined
+      );
+    });
+
+    it('should format both pushEndpoint and oidcToken', () => {
+      const pushEndpoint = 'http://noop.com/push';
+
+      const oidcToken = {
+        serviceAccount: 'pubsub-test@appspot.gserviceaccount.com',
+        audience: 'audience',
+      };
+
+      const metadata = {
+        pushEndpoint,
+        oidcToken,
+      };
+
+      const formatted = Subscription.formatMetadata_(metadata);
+
+      assert.strictEqual(formatted.pushConfig!.pushEndpoint, pushEndpoint);
+      assert.strictEqual(
+        (formatted as subby.SubscriptionMetadata).pushEndpoint,
+        undefined
+      );
+
+      assert.strictEqual(formatted.pushConfig!.oidcToken, oidcToken);
+      assert.strictEqual(
+        (formatted as subby.SubscriptionMetadata).oidcToken,
+        undefined
+      );
+    });
   });
 
   describe('formatName_', () => {
