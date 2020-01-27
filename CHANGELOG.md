@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [1.4.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.3.0...v1.4.0) (2020-01-24)
+
+
+### Features
+
+* **defaults:** update defaults for the node client library to match other pub/sub libraries ([#859](https://www.github.com/googleapis/nodejs-pubsub/issues/859)) ([8d6c3f7](https://www.github.com/googleapis/nodejs-pubsub/commit/8d6c3f778cbe00cde8b273b25bc50b491687396b))
+
 ## [1.3.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.2.0...v1.3.0) (2020-01-14)
 
 
