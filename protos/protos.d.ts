@@ -3556,6 +3556,9 @@ export namespace google {
 
                 /** StreamingPullRequest streamAckDeadlineSeconds */
                 streamAckDeadlineSeconds?: (number|null);
+
+                /** StreamingPullRequest clientId */
+                clientId?: (string|null);
             }
 
             /** Represents a StreamingPullRequest. */
@@ -3581,6 +3584,9 @@ export namespace google {
 
                 /** StreamingPullRequest streamAckDeadlineSeconds. */
                 public streamAckDeadlineSeconds: number;
+
+                /** StreamingPullRequest clientId. */
+                public clientId: string;
 
                 /**
                  * Creates a new StreamingPullRequest instance using the specified properties.

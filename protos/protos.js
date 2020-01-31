@@ -7875,6 +7875,7 @@
                      * @property {Array.<number>|null} [modifyDeadlineSeconds] StreamingPullRequest modifyDeadlineSeconds
                      * @property {Array.<string>|null} [modifyDeadlineAckIds] StreamingPullRequest modifyDeadlineAckIds
                      * @property {number|null} [streamAckDeadlineSeconds] StreamingPullRequest streamAckDeadlineSeconds
+                     * @property {string|null} [clientId] StreamingPullRequest clientId
                      */
     
                     /**
@@ -7936,6 +7937,14 @@
                     StreamingPullRequest.prototype.streamAckDeadlineSeconds = 0;
     
                     /**
+                     * StreamingPullRequest clientId.
+                     * @member {string} clientId
+                     * @memberof google.pubsub.v1.StreamingPullRequest
+                     * @instance
+                     */
+                    StreamingPullRequest.prototype.clientId = "";
+    
+                    /**
                      * Creates a new StreamingPullRequest instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.StreamingPullRequest
@@ -7975,6 +7984,8 @@
                                 writer.uint32(/* id 4, wireType 2 =*/34).string(message.modifyDeadlineAckIds[i]);
                         if (message.streamAckDeadlineSeconds != null && message.hasOwnProperty("streamAckDeadlineSeconds"))
                             writer.uint32(/* id 5, wireType 0 =*/40).int32(message.streamAckDeadlineSeconds);
+                        if (message.clientId != null && message.hasOwnProperty("clientId"))
+                            writer.uint32(/* id 6, wireType 2 =*/50).string(message.clientId);
                         return writer;
                     };
     
@@ -8034,6 +8045,9 @@
                                 break;
                             case 5:
                                 message.streamAckDeadlineSeconds = reader.int32();
+                                break;
+                            case 6:
+                                message.clientId = reader.string();
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -8097,6 +8111,9 @@
                         if (message.streamAckDeadlineSeconds != null && message.hasOwnProperty("streamAckDeadlineSeconds"))
                             if (!$util.isInteger(message.streamAckDeadlineSeconds))
                                 return "streamAckDeadlineSeconds: integer expected";
+                        if (message.clientId != null && message.hasOwnProperty("clientId"))
+                            if (!$util.isString(message.clientId))
+                                return "clientId: string expected";
                         return null;
                     };
     
@@ -8137,6 +8154,8 @@
                         }
                         if (object.streamAckDeadlineSeconds != null)
                             message.streamAckDeadlineSeconds = object.streamAckDeadlineSeconds | 0;
+                        if (object.clientId != null)
+                            message.clientId = String(object.clientId);
                         return message;
                     };
     
@@ -8161,6 +8180,7 @@
                         if (options.defaults) {
                             object.subscription = "";
                             object.streamAckDeadlineSeconds = 0;
+                            object.clientId = "";
                         }
                         if (message.subscription != null && message.hasOwnProperty("subscription"))
                             object.subscription = message.subscription;
@@ -8181,6 +8201,8 @@
                         }
                         if (message.streamAckDeadlineSeconds != null && message.hasOwnProperty("streamAckDeadlineSeconds"))
                             object.streamAckDeadlineSeconds = message.streamAckDeadlineSeconds;
+                        if (message.clientId != null && message.hasOwnProperty("clientId"))
+                            object.clientId = message.clientId;
                         return object;
                     };
     

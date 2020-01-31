@@ -670,6 +670,10 @@
                     "streamAckDeadlineSeconds": {
                       "type": "int32",
                       "id": 5
+                    },
+                    "clientId": {
+                      "type": "string",
+                      "id": 6
                     }
                   }
                 },
