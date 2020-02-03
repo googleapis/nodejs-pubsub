@@ -219,7 +219,10 @@ describe('MessageStream', () => {
         });
 
         it('should default maxStreams', () => {
-          assert.strictEqual(client.streams.length, defaultOptions.maxStreams);
+          assert.strictEqual(
+            client.streams.length,
+            defaultOptions.subscription.maxStreams
+          );
         });
 
         it('should pull pullTimeouts default from config file', () => {
@@ -252,7 +255,7 @@ describe('MessageStream', () => {
           setImmediate(() => {
             assert.strictEqual(
               client.streams.length,
-              defaultOptions.maxStreams
+              defaultOptions.subscription.maxStreams
             );
             client.streams.forEach(stream => {
               assert.strictEqual(

@@ -19,15 +19,11 @@ import {StatusObject, status} from '@grpc/grpc-js';
  * retryable status codes
  */
 export const RETRY_CODES: status[] = [
-  status.OK,
-  status.CANCELLED,
-  status.UNKNOWN,
   status.DEADLINE_EXCEEDED,
   status.RESOURCE_EXHAUSTED,
   status.ABORTED,
   status.INTERNAL,
   status.UNAVAILABLE,
-  status.DATA_LOSS,
 ];
 
 /**
@@ -71,6 +67,14 @@ export class PullRetry {
       this.failures = 0;
     } else {
       this.failures += 1;
+    }
+
+    if (
+      err.code === status.UNAVAILABLE &&
+      err.details &&
+      err.details.match(/Server shutdownNow invoked/)
+    ) {
+      return true;
     }
 
     return RETRY_CODES.includes(err.code);
