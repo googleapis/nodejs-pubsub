@@ -37,10 +37,10 @@ export const defaultOptions = {
 
   publish: {
     // The maximum number of messages we'll batch up for publish().
-    maxCount: 100,
+    maxOutstandingMessages: 100,
 
     // The maximum size of the total batched up messages for publish().
-    maxSize: 1 * 1024 * 1024,
+    maxOutstandingBytes: 1 * 1024 * 1024,
 
     // The maximum time we'll wait to send batched messages, in milliseconds.
     maxDelayMillis: 10,

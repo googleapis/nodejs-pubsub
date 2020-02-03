@@ -169,8 +169,8 @@ export class Publisher {
   setOptions(options = {} as PublishOptions): void {
     const defaults = {
       batching: {
-        maxBytes: defaultOptions.publish.maxSize,
-        maxMessages: defaultOptions.publish.maxCount,
+        maxBytes: defaultOptions.publish.maxOutstandingBytes,
+        maxMessages: defaultOptions.publish.maxOutstandingMessages,
         maxMilliseconds: defaultOptions.publish.maxDelayMillis,
       },
       messageOrdering: false,

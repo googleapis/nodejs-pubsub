@@ -49,19 +49,21 @@ describe('PullRetry', () => {
   describe('retry', () => {
     it('should return true for retryable errors', () => {
       [
-        status.OK,
-        status.CANCELLED,
-        status.UNKNOWN,
         status.DEADLINE_EXCEEDED,
         status.RESOURCE_EXHAUSTED,
         status.ABORTED,
         status.INTERNAL,
         status.UNAVAILABLE,
-        status.DATA_LOSS,
       ].forEach((code: status) => {
         const shouldRetry = retrier.retry({code} as StatusObject);
         assert.strictEqual(shouldRetry, true);
       });
+
+      const serverShutdown = retrier.retry({
+        code: status.UNAVAILABLE,
+        details: "Server shutdownNow invoked",
+      } as StatusObject);
+      assert.strictEqual(serverShutdown, true);
     });
 
     it('should return false for non-retryable errors', () => {

@@ -403,14 +403,14 @@ export class Subscriber extends EventEmitter {
     // 1 message at a time.
     if (options.flowControl) {
       const {
-        maxMessages = defaultOptions.maxOutstandingMessages,
+        maxMessages = defaultOptions.subscription.maxOutstandingMessages,
       } = options.flowControl;
 
       if (!options.streamingOptions) {
         options.streamingOptions = {} as MessageStreamOptions;
       }
 
-      const {maxStreams = defaultOptions.maxStreams} = options.streamingOptions;
+      const {maxStreams = defaultOptions.subscription.maxStreams} = options.streamingOptions;
       options.streamingOptions.maxStreams = Math.min(maxStreams, maxMessages);
     }
   }

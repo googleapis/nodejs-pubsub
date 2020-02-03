@@ -433,13 +433,13 @@ describe('LeaseManager', () => {
       assert.strictEqual(leaseManager.isFull(), false);
 
       leaseManager.remove(littleMessage);
-      bigMessage.length = defaultOptions.maxOutstandingBytes * 2;
+      bigMessage.length = defaultOptions.subscription.maxOutstandingBytes * 2;
       leaseManager.add(bigMessage as Message);
       assert.strictEqual(leaseManager.isFull(), true);
     });
 
     it('should cap maxMessages', () => {
-      for (let i = 0; i < defaultOptions.maxOutstandingMessages; i++) {
+      for (let i = 0; i < defaultOptions.subscription.maxOutstandingMessages; i++) {
         assert.strictEqual(leaseManager.isFull(), false);
         leaseManager.add(new FakeMessage() as Message);
       }
