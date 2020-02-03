@@ -69,7 +69,11 @@ export class PullRetry {
       this.failures += 1;
     }
 
-    if (err.code === status.UNAVAILABLE && err.details && err.details.match(/Server shutdownNow invoked/)) {
+    if (
+      err.code === status.UNAVAILABLE &&
+      err.details &&
+      err.details.match(/Server shutdownNow invoked/)
+    ) {
       return true;
     }
 

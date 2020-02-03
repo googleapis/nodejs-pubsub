@@ -61,7 +61,7 @@ describe('PullRetry', () => {
 
       const serverShutdown = retrier.retry({
         code: status.UNAVAILABLE,
-        details: "Server shutdownNow invoked",
+        details: 'Server shutdownNow invoked',
       } as StatusObject);
       assert.strictEqual(serverShutdown, true);
     });

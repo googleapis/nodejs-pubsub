@@ -410,7 +410,9 @@ export class Subscriber extends EventEmitter {
         options.streamingOptions = {} as MessageStreamOptions;
       }
 
-      const {maxStreams = defaultOptions.subscription.maxStreams} = options.streamingOptions;
+      const {
+        maxStreams = defaultOptions.subscription.maxStreams,
+      } = options.streamingOptions;
       options.streamingOptions.maxStreams = Math.min(maxStreams, maxMessages);
     }
   }

@@ -439,7 +439,11 @@ describe('LeaseManager', () => {
     });
 
     it('should cap maxMessages', () => {
-      for (let i = 0; i < defaultOptions.subscription.maxOutstandingMessages; i++) {
+      for (
+        let i = 0;
+        i < defaultOptions.subscription.maxOutstandingMessages;
+        i++
+      ) {
         assert.strictEqual(leaseManager.isFull(), false);
         leaseManager.add(new FakeMessage() as Message);
       }
