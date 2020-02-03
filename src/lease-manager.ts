@@ -186,9 +186,9 @@ export class LeaseManager extends EventEmitter {
   setOptions(options: FlowControlOptions): void {
     const defaults: FlowControlOptions = {
       allowExcessMessages: true,
-      maxBytes: defaultOptions.maxOutstandingBytes,
-      maxExtension: defaultOptions.maxExtensionMinutes,
-      maxMessages: defaultOptions.maxOutstandingMessages,
+      maxBytes: defaultOptions.subscription.maxOutstandingBytes,
+      maxExtension: defaultOptions.subscription.maxExtensionMinutes,
+      maxMessages: defaultOptions.subscription.maxOutstandingMessages,
     };
 
     this._options = Object.assign(defaults, options);
