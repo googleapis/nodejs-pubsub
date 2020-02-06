@@ -23,6 +23,7 @@ import {Queue, OrderedQueue} from './message-queues';
 import {Topic} from '../topic';
 import {RequestCallback} from '../pubsub';
 import {google} from '../../proto/pubsub';
+import {defaultOptions} from '../default-options';
 
 export type PubsubMessage = google.pubsub.v1.IPubsubMessage;
 
@@ -168,9 +169,9 @@ export class Publisher {
   setOptions(options = {} as PublishOptions): void {
     const defaults = {
       batching: {
-        maxBytes: Math.pow(1024, 2) * 5,
-        maxMessages: 1000,
-        maxMilliseconds: 100,
+        maxBytes: defaultOptions.publish.maxOutstandingBytes,
+        maxMessages: defaultOptions.publish.maxOutstandingMessages,
+        maxMilliseconds: defaultOptions.publish.maxDelayMillis,
       },
       messageOrdering: false,
       gaxOpts: {

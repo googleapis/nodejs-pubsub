@@ -26,6 +26,8 @@ import * as p from '../../src/publisher';
 import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
 
+import {defaultOptions} from '../../src/default-options';
+
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
   promisifyAll: (ctor: Function, options: pfy.PromisifyAllOptions) => {
@@ -262,9 +264,9 @@ describe('Publisher', () => {
 
       assert.deepStrictEqual(publisher.settings, {
         batching: {
-          maxBytes: Math.pow(1024, 2) * 5,
-          maxMessages: 1000,
-          maxMilliseconds: 100,
+          maxBytes: defaultOptions.publish.maxOutstandingBytes,
+          maxMessages: defaultOptions.publish.maxOutstandingMessages,
+          maxMilliseconds: defaultOptions.publish.maxDelayMillis,
         },
         messageOrdering: false,
         gaxOpts: {
