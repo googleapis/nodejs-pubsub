@@ -334,11 +334,15 @@ export class PubSub {
    *     days.
    * @property {string} [pushEndpoint] A URL to a custom endpoint that
    *     messages should be pushed to.
+   * @property {object} [oidcToken] If specified, Pub/Sub will generate and
+   *     attach an OIDC JWT token as an `Authorization` header in the HTTP
+   *     request for every pushed message. This object should have the same
+   *     structure as [OidcToken]{@link google.pubsub.v1.OidcToken}
    * @property {boolean} [retainAckedMessages=false] If set, acked messages
    *     are retained in the subscription's backlog for the length of time
    *     specified by `options.messageRetentionDuration`.
    * @property {ExpirationPolicy} [expirationPolicy] A policy that specifies
-   * the conditions for this subscription's expiration.
+   *     the conditions for this subscription's expiration.
    */
   /**
    * Create a subscription to a topic.
