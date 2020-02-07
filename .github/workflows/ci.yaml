@@ -1,4 +1,4 @@
-on: [push]
+on: [push, pull_request]
 name: ci
 jobs:
   test:
@@ -23,6 +23,15 @@ jobs:
           node-version: 12
       - run: npm ci
       - run: npm run lint
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: npm install
+      - run: npm run docs-test
   license_check:
     runs-on: ubuntu-latest
     steps:
@@ -39,10 +48,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - run: npm ci
+      - run: npm install
       - run: npm test
-      - run: npm run codecov
-      - uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-  
+      - run: ./node_modules/.bin/c8 report --reporter=text-lcov | npx codecov@3 -t ${{ secrets.CODECOV_TOKEN }} --pipe
