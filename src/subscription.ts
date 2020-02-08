@@ -47,9 +47,12 @@ import {noop} from './util';
 
 export type PushConfig = google.pubsub.v1.IPushConfig;
 
+export type OidcToken = google.pubsub.v1.PushConfig.IOidcToken;
+
 export type SubscriptionMetadata = {
   messageRetentionDuration?: google.protobuf.IDuration | number;
   pushEndpoint?: string;
+  oidcToken?: OidcToken;
 } & Omit<google.pubsub.v1.ISubscription, 'messageRetentionDuration'>;
 
 export type SubscriptionOptions = SubscriberOptions & {topic?: Topic};
@@ -739,6 +742,10 @@ export class Subscription extends EventEmitter {
    * @param {string} config.pushEndpoint A URL locating the endpoint to which
    *     messages should be published.
    * @param {object} config.attributes [PushConfig attributes](https://cloud.google.com/pubsub/docs/reference/rpc/google.pubsub.v1#google.pubsub.v1.PushConfig).
+   * @param {object} config.oidcToken If specified, Pub/Sub will generate and
+   *     attach an OIDC JWT token as an `Authorization` header in the HTTP
+   *     request for every pushed message. This object should have the same
+   *     structure as [OidcToken]{@link google.pubsub.v1.OidcToken}
    * @param {object} [gaxOpts] Request configuration options, outlined
    *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
    * @param {ModifyPushConfigCallback} [callback] Callback function.
@@ -755,6 +762,10 @@ export class Subscription extends EventEmitter {
    *   pushEndpoint: 'https://mydomain.com/push',
    *   attributes: {
    *     key: 'value'
+   *   },
+   *   oidcToken: {
+   *     serviceAccountEmail: 'myproject@appspot.gserviceaccount.com',
+   *     audience: 'myaudience'
    *   }
    * };
    *
@@ -1037,6 +1048,14 @@ export class Subscription extends EventEmitter {
         pushEndpoint: metadata.pushEndpoint,
       };
       delete formatted.pushEndpoint;
+    }
+
+    if (metadata.oidcToken) {
+      formatted.pushConfig = {
+        ...formatted.pushConfig,
+        oidcToken: metadata.oidcToken,
+      };
+      delete formatted.oidcToken;
     }
 
     return formatted as google.pubsub.v1.ISubscription;

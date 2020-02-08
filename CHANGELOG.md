@@ -4,6 +4,14 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [1.5.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.4.1...v1.5.0) (2020-02-03)
+
+
+### Features
+
+* added clientId to StreamingPullRequest ([b566ab3](https://www.github.com/googleapis/nodejs-pubsub/commit/b566ab3187efe08d19c29afc8a506a94ed2760b3))
+* update defaults for batch settings also, and update which result codes will cause a retry ([#877](https://www.github.com/googleapis/nodejs-pubsub/issues/877)) ([32ae411](https://www.github.com/googleapis/nodejs-pubsub/commit/32ae4114fb7b42722a6c5100e9d494e470a5cae2))
+
 ### [1.4.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.4.0...v1.4.1) (2020-01-28)
 
 
