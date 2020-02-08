@@ -21,8 +21,10 @@ cd ..
 @rem we upgrade Node.js in the image:
 SET PATH=%PATH%;/cygdrive/c/Program Files/nodejs/npm
 
-call nvm use v10
+call nvm install lts/dubnium
+call nvm use lts/dubnium
 call which node
+call node --version
 
 call npm install || goto :error
 call npm run test || goto :error
