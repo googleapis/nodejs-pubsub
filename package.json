@@ -45,8 +45,7 @@
     "proto:iam": "pbjs -t static-module -w commonjs -p protos google/iam/v1/iam_policy.proto | pbts -o proto/iam.d.ts -",
     "docs-test": "linkinator docs",
     "predocs-test": "npm run docs",
-    "benchwrapper": "node bin/benchwrapper.js",
-    "license-check": "jsgl --local ."
+    "benchwrapper": "node bin/benchwrapper.js"
   },
   "dependencies": {
     "@google-cloud/paginator": "^2.0.0",
@@ -61,7 +60,6 @@
     "google-auth-library": "^5.5.0",
     "google-gax": "^1.7.5",
     "is-stream-ended": "^0.1.4",
-    "js-green-licenses": "^1.1.0",
     "lodash.snakecase": "^4.1.1",
     "p-defer": "^3.0.0",
     "protobufjs": "^6.8.1"
