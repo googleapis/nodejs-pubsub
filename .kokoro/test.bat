@@ -21,8 +21,7 @@ cd ..
 @rem we upgrade Node.js in the image:
 SET PATH=%PATH%;/cygdrive/c/Program Files/nodejs/npm
 
-call nvm install lts/dubnium
-call nvm use lts/dubnium
+call nvm use v12.14.1
 call which node
 call node --version
 
