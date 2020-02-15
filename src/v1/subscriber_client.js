@@ -330,14 +330,14 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.name
-   *   The name of the subscription. It must have the format
+   *   Required. The name of the subscription. It must have the format
    *   `"projects/{project}/subscriptions/{subscription}"`. `{subscription}` must
    *   start with a letter, and contain only letters (`[A-Za-z]`), numbers
    *   (`[0-9]`), dashes (`-`), underscores (`_`), periods (`.`), tildes (`~`),
    *   plus (`+`) or percent signs (`%`). It must be between 3 and 255 characters
-   *   in length, and it must not start with `"goog"`
+   *   in length, and it must not start with `"goog"`.
    * @param {string} request.topic
-   *   The name of the topic from which this subscription is receiving messages.
+   *   Required. The name of the topic from which this subscription is receiving messages.
    *   Format is `projects/{project}/topics/{topic}`.
    *   The value of this field will be `_deleted-topic_` if the topic has been
    *   deleted.
@@ -477,7 +477,7 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.subscription
-   *   The name of the subscription to get.
+   *   Required. The name of the subscription to get.
    *   Format is `projects/{project}/subscriptions/{sub}`.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
@@ -533,11 +533,11 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {Object} request.subscription
-   *   The updated subscription object.
+   *   Required. The updated subscription object.
    *
    *   This object should have the same structure as [Subscription]{@link google.pubsub.v1.Subscription}
    * @param {Object} request.updateMask
-   *   Indicates which fields in the provided subscription to update.
+   *   Required. Indicates which fields in the provided subscription to update.
    *   Must be specified and non-empty.
    *
    *   This object should have the same structure as [FieldMask]{@link google.protobuf.FieldMask}
@@ -606,7 +606,7 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
-   *   The name of the project in which to list subscriptions.
+   *   Required. The name of the project in which to list subscriptions.
    *   Format is `projects/{project-id}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
@@ -719,7 +719,7 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
-   *   The name of the project in which to list subscriptions.
+   *   Required. The name of the project in which to list subscriptions.
    *   Format is `projects/{project-id}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
@@ -769,7 +769,7 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.subscription
-   *   The subscription to delete.
+   *   Required. The subscription to delete.
    *   Format is `projects/{project}/subscriptions/{sub}`.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
@@ -820,12 +820,12 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.subscription
-   *   The name of the subscription.
+   *   Required. The name of the subscription.
    *   Format is `projects/{project}/subscriptions/{sub}`.
    * @param {string[]} request.ackIds
-   *   List of acknowledgment IDs.
+   *   Required. List of acknowledgment IDs.
    * @param {number} request.ackDeadlineSeconds
-   *   The new ack deadline with respect to the time this request was sent to
+   *   Required. The new ack deadline with respect to the time this request was sent to
    *   the Pub/Sub system. For example, if the value is 10, the new
    *   ack deadline will expire 10 seconds after the `ModifyAckDeadline` call
    *   was made. Specifying zero might immediately make the message available for
@@ -891,10 +891,10 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.subscription
-   *   The subscription whose message is being acknowledged.
+   *   Required. The subscription whose message is being acknowledged.
    *   Format is `projects/{project}/subscriptions/{sub}`.
    * @param {string[]} request.ackIds
-   *   The acknowledgment ID for the messages being acknowledged that was returned
+   *   Required. The acknowledgment ID for the messages being acknowledged that was returned
    *   by the Pub/Sub system in the `Pull` response. Must not be empty.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
@@ -948,10 +948,10 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.subscription
-   *   The subscription from which messages should be pulled.
+   *   Required. The subscription from which messages should be pulled.
    *   Format is `projects/{project}/subscriptions/{sub}`.
    * @param {number} request.maxMessages
-   *   The maximum number of messages to return for this request. Must be a
+   *   Required. The maximum number of messages to return for this request. Must be a
    *   positive integer. The Pub/Sub system may return fewer than the number
    *   specified.
    * @param {boolean} [request.returnImmediately]
@@ -1065,10 +1065,10 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.subscription
-   *   The name of the subscription.
+   *   Required. The name of the subscription.
    *   Format is `projects/{project}/subscriptions/{sub}`.
    * @param {Object} request.pushConfig
-   *   The push configuration for future deliveries.
+   *   Required. The push configuration for future deliveries.
    *
    *   An empty `pushConfig` indicates that the Pub/Sub system should
    *   stop pushing messages from the given subscription and allow
@@ -1131,7 +1131,7 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
-   *   The name of the project in which to list snapshots.
+   *   Required. The name of the project in which to list snapshots.
    *   Format is `projects/{project-id}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
@@ -1244,7 +1244,7 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
-   *   The name of the project in which to list snapshots.
+   *   Required. The name of the project in which to list snapshots.
    *   Format is `projects/{project-id}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
@@ -1307,14 +1307,14 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.name
-   *   User-provided name for this snapshot. If the name is not provided in the
+   *   Required. User-provided name for this snapshot. If the name is not provided in the
    *   request, the server will assign a random name for this snapshot on the same
    *   project as the subscription. Note that for REST API requests, you must
    *   specify a name.  See the <a
    *   href="https://cloud.google.com/pubsub/docs/admin#resource_names"> resource
    *   name rules</a>. Format is `projects/{project}/snapshots/{snap}`.
    * @param {string} request.subscription
-   *   The subscription whose backlog the snapshot retains.
+   *   Required. The subscription whose backlog the snapshot retains.
    *   Specifically, the created snapshot is guaranteed to retain:
    *    (a) The existing backlog on the subscription. More precisely, this is
    *        defined as the messages in the subscription's backlog that are
@@ -1389,11 +1389,11 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {Object} request.snapshot
-   *   The updated snapshot object.
+   *   Required. The updated snapshot object.
    *
    *   This object should have the same structure as [Snapshot]{@link google.pubsub.v1.Snapshot}
    * @param {Object} request.updateMask
-   *   Indicates which fields in the provided snapshot to update.
+   *   Required. Indicates which fields in the provided snapshot to update.
    *   Must be specified and non-empty.
    *
    *   This object should have the same structure as [FieldMask]{@link google.protobuf.FieldMask}
@@ -1474,7 +1474,7 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.snapshot
-   *   The name of the snapshot to delete.
+   *   Required. The name of the snapshot to delete.
    *   Format is `projects/{project}/snapshots/{snap}`.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
@@ -1528,7 +1528,7 @@ class SubscriberClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.subscription
-   *   The subscription to affect.
+   *   Required. The subscription to affect.
    * @param {Object} [request.time]
    *   The time to seek to.
    *   Messages retained in the subscription that were published before this
@@ -1595,8 +1595,11 @@ class SubscriberClient {
   }
 
   /**
-   * Sets the access control policy on the specified resource. Replaces any
-   * existing policy.
+   * Sets the access control policy on the specified resource. Replaces
+   * any existing policy.
+   *
+   * Can return Public Errors: NOT_FOUND, INVALID_ARGUMENT and
+   * PERMISSION_DENIED
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1663,9 +1666,8 @@ class SubscriberClient {
   }
 
   /**
-   * Gets the access control policy for a resource.
-   * Returns an empty policy if the resource exists and does not have a policy
-   * set.
+   * Gets the access control policy for a resource. Returns an empty policy
+   * if the resource exists and does not have a policy set.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1725,13 +1727,13 @@ class SubscriberClient {
   }
 
   /**
-   * Returns permissions that a caller has on the specified resource.
-   * If the resource does not exist, this will return an empty set of
+   * Returns permissions that a caller has on the specified resource. If the
+   * resource does not exist, this will return an empty set of
    * permissions, not a NOT_FOUND error.
    *
-   * Note: This operation is designed to be used for building permission-aware
-   * UIs and command-line tools, not for authorization checking. This operation
-   * may "fail open" without warning.
+   * Note: This operation is designed to be used for building
+   * permission-aware UIs and command-line tools, not for authorization
+   * checking. This operation may "fail open" without warning.
    *
    * @param {Object} request
    *   The request object that will be sent.
