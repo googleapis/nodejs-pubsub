@@ -10457,6 +10457,587 @@
              */
             var api = {};
     
+            /**
+             * FieldBehavior enum.
+             * @name google.api.FieldBehavior
+             * @enum {string}
+             * @property {number} FIELD_BEHAVIOR_UNSPECIFIED=0 FIELD_BEHAVIOR_UNSPECIFIED value
+             * @property {number} OPTIONAL=1 OPTIONAL value
+             * @property {number} REQUIRED=2 REQUIRED value
+             * @property {number} OUTPUT_ONLY=3 OUTPUT_ONLY value
+             * @property {number} INPUT_ONLY=4 INPUT_ONLY value
+             * @property {number} IMMUTABLE=5 IMMUTABLE value
+             */
+            api.FieldBehavior = (function() {
+                var valuesById = {}, values = Object.create(valuesById);
+                values[valuesById[0] = "FIELD_BEHAVIOR_UNSPECIFIED"] = 0;
+                values[valuesById[1] = "OPTIONAL"] = 1;
+                values[valuesById[2] = "REQUIRED"] = 2;
+                values[valuesById[3] = "OUTPUT_ONLY"] = 3;
+                values[valuesById[4] = "INPUT_ONLY"] = 4;
+                values[valuesById[5] = "IMMUTABLE"] = 5;
+                return values;
+            })();
+    
+            api.ResourceDescriptor = (function() {
+    
+                /**
+                 * Properties of a ResourceDescriptor.
+                 * @memberof google.api
+                 * @interface IResourceDescriptor
+                 * @property {string|null} [type] ResourceDescriptor type
+                 * @property {Array.<string>|null} [pattern] ResourceDescriptor pattern
+                 * @property {string|null} [nameField] ResourceDescriptor nameField
+                 * @property {google.api.ResourceDescriptor.History|null} [history] ResourceDescriptor history
+                 * @property {string|null} [plural] ResourceDescriptor plural
+                 * @property {string|null} [singular] ResourceDescriptor singular
+                 */
+    
+                /**
+                 * Constructs a new ResourceDescriptor.
+                 * @memberof google.api
+                 * @classdesc Represents a ResourceDescriptor.
+                 * @implements IResourceDescriptor
+                 * @constructor
+                 * @param {google.api.IResourceDescriptor=} [properties] Properties to set
+                 */
+                function ResourceDescriptor(properties) {
+                    this.pattern = [];
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+    
+                /**
+                 * ResourceDescriptor type.
+                 * @member {string} type
+                 * @memberof google.api.ResourceDescriptor
+                 * @instance
+                 */
+                ResourceDescriptor.prototype.type = "";
+    
+                /**
+                 * ResourceDescriptor pattern.
+                 * @member {Array.<string>} pattern
+                 * @memberof google.api.ResourceDescriptor
+                 * @instance
+                 */
+                ResourceDescriptor.prototype.pattern = $util.emptyArray;
+    
+                /**
+                 * ResourceDescriptor nameField.
+                 * @member {string} nameField
+                 * @memberof google.api.ResourceDescriptor
+                 * @instance
+                 */
+                ResourceDescriptor.prototype.nameField = "";
+    
+                /**
+                 * ResourceDescriptor history.
+                 * @member {google.api.ResourceDescriptor.History} history
+                 * @memberof google.api.ResourceDescriptor
+                 * @instance
+                 */
+                ResourceDescriptor.prototype.history = 0;
+    
+                /**
+                 * ResourceDescriptor plural.
+                 * @member {string} plural
+                 * @memberof google.api.ResourceDescriptor
+                 * @instance
+                 */
+                ResourceDescriptor.prototype.plural = "";
+    
+                /**
+                 * ResourceDescriptor singular.
+                 * @member {string} singular
+                 * @memberof google.api.ResourceDescriptor
+                 * @instance
+                 */
+                ResourceDescriptor.prototype.singular = "";
+    
+                /**
+                 * Creates a new ResourceDescriptor instance using the specified properties.
+                 * @function create
+                 * @memberof google.api.ResourceDescriptor
+                 * @static
+                 * @param {google.api.IResourceDescriptor=} [properties] Properties to set
+                 * @returns {google.api.ResourceDescriptor} ResourceDescriptor instance
+                 */
+                ResourceDescriptor.create = function create(properties) {
+                    return new ResourceDescriptor(properties);
+                };
+    
+                /**
+                 * Encodes the specified ResourceDescriptor message. Does not implicitly {@link google.api.ResourceDescriptor.verify|verify} messages.
+                 * @function encode
+                 * @memberof google.api.ResourceDescriptor
+                 * @static
+                 * @param {google.api.IResourceDescriptor} message ResourceDescriptor message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                ResourceDescriptor.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.type != null && message.hasOwnProperty("type"))
+                        writer.uint32(/* id 1, wireType 2 =*/10).string(message.type);
+                    if (message.pattern != null && message.pattern.length)
+                        for (var i = 0; i < message.pattern.length; ++i)
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.pattern[i]);
+                    if (message.nameField != null && message.hasOwnProperty("nameField"))
+                        writer.uint32(/* id 3, wireType 2 =*/26).string(message.nameField);
+                    if (message.history != null && message.hasOwnProperty("history"))
+                        writer.uint32(/* id 4, wireType 0 =*/32).int32(message.history);
+                    if (message.plural != null && message.hasOwnProperty("plural"))
+                        writer.uint32(/* id 5, wireType 2 =*/42).string(message.plural);
+                    if (message.singular != null && message.hasOwnProperty("singular"))
+                        writer.uint32(/* id 6, wireType 2 =*/50).string(message.singular);
+                    return writer;
+                };
+    
+                /**
+                 * Encodes the specified ResourceDescriptor message, length delimited. Does not implicitly {@link google.api.ResourceDescriptor.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof google.api.ResourceDescriptor
+                 * @static
+                 * @param {google.api.IResourceDescriptor} message ResourceDescriptor message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                ResourceDescriptor.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+    
+                /**
+                 * Decodes a ResourceDescriptor message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof google.api.ResourceDescriptor
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {google.api.ResourceDescriptor} ResourceDescriptor
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                ResourceDescriptor.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.ResourceDescriptor();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1:
+                            message.type = reader.string();
+                            break;
+                        case 2:
+                            if (!(message.pattern && message.pattern.length))
+                                message.pattern = [];
+                            message.pattern.push(reader.string());
+                            break;
+                        case 3:
+                            message.nameField = reader.string();
+                            break;
+                        case 4:
+                            message.history = reader.int32();
+                            break;
+                        case 5:
+                            message.plural = reader.string();
+                            break;
+                        case 6:
+                            message.singular = reader.string();
+                            break;
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+    
+                /**
+                 * Decodes a ResourceDescriptor message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof google.api.ResourceDescriptor
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {google.api.ResourceDescriptor} ResourceDescriptor
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                ResourceDescriptor.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+    
+                /**
+                 * Verifies a ResourceDescriptor message.
+                 * @function verify
+                 * @memberof google.api.ResourceDescriptor
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                ResourceDescriptor.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.type != null && message.hasOwnProperty("type"))
+                        if (!$util.isString(message.type))
+                            return "type: string expected";
+                    if (message.pattern != null && message.hasOwnProperty("pattern")) {
+                        if (!Array.isArray(message.pattern))
+                            return "pattern: array expected";
+                        for (var i = 0; i < message.pattern.length; ++i)
+                            if (!$util.isString(message.pattern[i]))
+                                return "pattern: string[] expected";
+                    }
+                    if (message.nameField != null && message.hasOwnProperty("nameField"))
+                        if (!$util.isString(message.nameField))
+                            return "nameField: string expected";
+                    if (message.history != null && message.hasOwnProperty("history"))
+                        switch (message.history) {
+                        default:
+                            return "history: enum value expected";
+                        case 0:
+                        case 1:
+                        case 2:
+                            break;
+                        }
+                    if (message.plural != null && message.hasOwnProperty("plural"))
+                        if (!$util.isString(message.plural))
+                            return "plural: string expected";
+                    if (message.singular != null && message.hasOwnProperty("singular"))
+                        if (!$util.isString(message.singular))
+                            return "singular: string expected";
+                    return null;
+                };
+    
+                /**
+                 * Creates a ResourceDescriptor message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof google.api.ResourceDescriptor
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {google.api.ResourceDescriptor} ResourceDescriptor
+                 */
+                ResourceDescriptor.fromObject = function fromObject(object) {
+                    if (object instanceof $root.google.api.ResourceDescriptor)
+                        return object;
+                    var message = new $root.google.api.ResourceDescriptor();
+                    if (object.type != null)
+                        message.type = String(object.type);
+                    if (object.pattern) {
+                        if (!Array.isArray(object.pattern))
+                            throw TypeError(".google.api.ResourceDescriptor.pattern: array expected");
+                        message.pattern = [];
+                        for (var i = 0; i < object.pattern.length; ++i)
+                            message.pattern[i] = String(object.pattern[i]);
+                    }
+                    if (object.nameField != null)
+                        message.nameField = String(object.nameField);
+                    switch (object.history) {
+                    case "HISTORY_UNSPECIFIED":
+                    case 0:
+                        message.history = 0;
+                        break;
+                    case "ORIGINALLY_SINGLE_PATTERN":
+                    case 1:
+                        message.history = 1;
+                        break;
+                    case "FUTURE_MULTI_PATTERN":
+                    case 2:
+                        message.history = 2;
+                        break;
+                    }
+                    if (object.plural != null)
+                        message.plural = String(object.plural);
+                    if (object.singular != null)
+                        message.singular = String(object.singular);
+                    return message;
+                };
+    
+                /**
+                 * Creates a plain object from a ResourceDescriptor message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof google.api.ResourceDescriptor
+                 * @static
+                 * @param {google.api.ResourceDescriptor} message ResourceDescriptor
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                ResourceDescriptor.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    var object = {};
+                    if (options.arrays || options.defaults)
+                        object.pattern = [];
+                    if (options.defaults) {
+                        object.type = "";
+                        object.nameField = "";
+                        object.history = options.enums === String ? "HISTORY_UNSPECIFIED" : 0;
+                        object.plural = "";
+                        object.singular = "";
+                    }
+                    if (message.type != null && message.hasOwnProperty("type"))
+                        object.type = message.type;
+                    if (message.pattern && message.pattern.length) {
+                        object.pattern = [];
+                        for (var j = 0; j < message.pattern.length; ++j)
+                            object.pattern[j] = message.pattern[j];
+                    }
+                    if (message.nameField != null && message.hasOwnProperty("nameField"))
+                        object.nameField = message.nameField;
+                    if (message.history != null && message.hasOwnProperty("history"))
+                        object.history = options.enums === String ? $root.google.api.ResourceDescriptor.History[message.history] : message.history;
+                    if (message.plural != null && message.hasOwnProperty("plural"))
+                        object.plural = message.plural;
+                    if (message.singular != null && message.hasOwnProperty("singular"))
+                        object.singular = message.singular;
+                    return object;
+                };
+    
+                /**
+                 * Converts this ResourceDescriptor to JSON.
+                 * @function toJSON
+                 * @memberof google.api.ResourceDescriptor
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                ResourceDescriptor.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+    
+                /**
+                 * History enum.
+                 * @name google.api.ResourceDescriptor.History
+                 * @enum {string}
+                 * @property {number} HISTORY_UNSPECIFIED=0 HISTORY_UNSPECIFIED value
+                 * @property {number} ORIGINALLY_SINGLE_PATTERN=1 ORIGINALLY_SINGLE_PATTERN value
+                 * @property {number} FUTURE_MULTI_PATTERN=2 FUTURE_MULTI_PATTERN value
+                 */
+                ResourceDescriptor.History = (function() {
+                    var valuesById = {}, values = Object.create(valuesById);
+                    values[valuesById[0] = "HISTORY_UNSPECIFIED"] = 0;
+                    values[valuesById[1] = "ORIGINALLY_SINGLE_PATTERN"] = 1;
+                    values[valuesById[2] = "FUTURE_MULTI_PATTERN"] = 2;
+                    return values;
+                })();
+    
+                return ResourceDescriptor;
+            })();
+    
+            api.ResourceReference = (function() {
+    
+                /**
+                 * Properties of a ResourceReference.
+                 * @memberof google.api
+                 * @interface IResourceReference
+                 * @property {string|null} [type] ResourceReference type
+                 * @property {string|null} [childType] ResourceReference childType
+                 */
+    
+                /**
+                 * Constructs a new ResourceReference.
+                 * @memberof google.api
+                 * @classdesc Represents a ResourceReference.
+                 * @implements IResourceReference
+                 * @constructor
+                 * @param {google.api.IResourceReference=} [properties] Properties to set
+                 */
+                function ResourceReference(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+    
+                /**
+                 * ResourceReference type.
+                 * @member {string} type
+                 * @memberof google.api.ResourceReference
+                 * @instance
+                 */
+                ResourceReference.prototype.type = "";
+    
+                /**
+                 * ResourceReference childType.
+                 * @member {string} childType
+                 * @memberof google.api.ResourceReference
+                 * @instance
+                 */
+                ResourceReference.prototype.childType = "";
+    
+                /**
+                 * Creates a new ResourceReference instance using the specified properties.
+                 * @function create
+                 * @memberof google.api.ResourceReference
+                 * @static
+                 * @param {google.api.IResourceReference=} [properties] Properties to set
+                 * @returns {google.api.ResourceReference} ResourceReference instance
+                 */
+                ResourceReference.create = function create(properties) {
+                    return new ResourceReference(properties);
+                };
+    
+                /**
+                 * Encodes the specified ResourceReference message. Does not implicitly {@link google.api.ResourceReference.verify|verify} messages.
+                 * @function encode
+                 * @memberof google.api.ResourceReference
+                 * @static
+                 * @param {google.api.IResourceReference} message ResourceReference message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                ResourceReference.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.type != null && message.hasOwnProperty("type"))
+                        writer.uint32(/* id 1, wireType 2 =*/10).string(message.type);
+                    if (message.childType != null && message.hasOwnProperty("childType"))
+                        writer.uint32(/* id 2, wireType 2 =*/18).string(message.childType);
+                    return writer;
+                };
+    
+                /**
+                 * Encodes the specified ResourceReference message, length delimited. Does not implicitly {@link google.api.ResourceReference.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof google.api.ResourceReference
+                 * @static
+                 * @param {google.api.IResourceReference} message ResourceReference message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                ResourceReference.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+    
+                /**
+                 * Decodes a ResourceReference message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof google.api.ResourceReference
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {google.api.ResourceReference} ResourceReference
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                ResourceReference.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.ResourceReference();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1:
+                            message.type = reader.string();
+                            break;
+                        case 2:
+                            message.childType = reader.string();
+                            break;
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+    
+                /**
+                 * Decodes a ResourceReference message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof google.api.ResourceReference
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {google.api.ResourceReference} ResourceReference
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                ResourceReference.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+    
+                /**
+                 * Verifies a ResourceReference message.
+                 * @function verify
+                 * @memberof google.api.ResourceReference
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                ResourceReference.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.type != null && message.hasOwnProperty("type"))
+                        if (!$util.isString(message.type))
+                            return "type: string expected";
+                    if (message.childType != null && message.hasOwnProperty("childType"))
+                        if (!$util.isString(message.childType))
+                            return "childType: string expected";
+                    return null;
+                };
+    
+                /**
+                 * Creates a ResourceReference message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof google.api.ResourceReference
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {google.api.ResourceReference} ResourceReference
+                 */
+                ResourceReference.fromObject = function fromObject(object) {
+                    if (object instanceof $root.google.api.ResourceReference)
+                        return object;
+                    var message = new $root.google.api.ResourceReference();
+                    if (object.type != null)
+                        message.type = String(object.type);
+                    if (object.childType != null)
+                        message.childType = String(object.childType);
+                    return message;
+                };
+    
+                /**
+                 * Creates a plain object from a ResourceReference message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof google.api.ResourceReference
+                 * @static
+                 * @param {google.api.ResourceReference} message ResourceReference
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                ResourceReference.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    var object = {};
+                    if (options.defaults) {
+                        object.type = "";
+                        object.childType = "";
+                    }
+                    if (message.type != null && message.hasOwnProperty("type"))
+                        object.type = message.type;
+                    if (message.childType != null && message.hasOwnProperty("childType"))
+                        object.childType = message.childType;
+                    return object;
+                };
+    
+                /**
+                 * Converts this ResourceReference to JSON.
+                 * @function toJSON
+                 * @memberof google.api.ResourceReference
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                ResourceReference.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+    
+                return ResourceReference;
+            })();
+    
             api.Http = (function() {
     
                 /**
@@ -15532,6 +16113,7 @@
                  * @property {string|null} [phpMetadataNamespace] FileOptions phpMetadataNamespace
                  * @property {string|null} [rubyPackage] FileOptions rubyPackage
                  * @property {Array.<google.protobuf.IUninterpretedOption>|null} [uninterpretedOption] FileOptions uninterpretedOption
+                 * @property {Array.<google.api.IResourceDescriptor>|null} [".google.api.resourceDefinition"] FileOptions .google.api.resourceDefinition
                  */
     
                 /**
@@ -15544,6 +16126,7 @@
                  */
                 function FileOptions(properties) {
                     this.uninterpretedOption = [];
+                    this[".google.api.resourceDefinition"] = [];
                     if (properties)
                         for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
@@ -15719,6 +16302,14 @@
                 FileOptions.prototype.uninterpretedOption = $util.emptyArray;
     
                 /**
+                 * FileOptions .google.api.resourceDefinition.
+                 * @member {Array.<google.api.IResourceDescriptor>} .google.api.resourceDefinition
+                 * @memberof google.protobuf.FileOptions
+                 * @instance
+                 */
+                FileOptions.prototype[".google.api.resourceDefinition"] = $util.emptyArray;
+    
+                /**
                  * Creates a new FileOptions instance using the specified properties.
                  * @function create
                  * @memberof google.protobuf.FileOptions
@@ -15785,6 +16376,9 @@
                     if (message.uninterpretedOption != null && message.uninterpretedOption.length)
                         for (var i = 0; i < message.uninterpretedOption.length; ++i)
                             $root.google.protobuf.UninterpretedOption.encode(message.uninterpretedOption[i], writer.uint32(/* id 999, wireType 2 =*/7994).fork()).ldelim();
+                    if (message[".google.api.resourceDefinition"] != null && message[".google.api.resourceDefinition"].length)
+                        for (var i = 0; i < message[".google.api.resourceDefinition"].length; ++i)
+                            $root.google.api.ResourceDescriptor.encode(message[".google.api.resourceDefinition"][i], writer.uint32(/* id 1053, wireType 2 =*/8426).fork()).ldelim();
                     return writer;
                 };
     
@@ -15883,6 +16477,11 @@
                             if (!(message.uninterpretedOption && message.uninterpretedOption.length))
                                 message.uninterpretedOption = [];
                             message.uninterpretedOption.push($root.google.protobuf.UninterpretedOption.decode(reader, reader.uint32()));
+                            break;
+                        case 1053:
+                            if (!(message[".google.api.resourceDefinition"] && message[".google.api.resourceDefinition"].length))
+                                message[".google.api.resourceDefinition"] = [];
+                            message[".google.api.resourceDefinition"].push($root.google.api.ResourceDescriptor.decode(reader, reader.uint32()));
                             break;
                         default:
                             reader.skipType(tag & 7);
@@ -15994,6 +16593,15 @@
                                 return "uninterpretedOption." + error;
                         }
                     }
+                    if (message[".google.api.resourceDefinition"] != null && message.hasOwnProperty(".google.api.resourceDefinition")) {
+                        if (!Array.isArray(message[".google.api.resourceDefinition"]))
+                            return ".google.api.resourceDefinition: array expected";
+                        for (var i = 0; i < message[".google.api.resourceDefinition"].length; ++i) {
+                            var error = $root.google.api.ResourceDescriptor.verify(message[".google.api.resourceDefinition"][i]);
+                            if (error)
+                                return ".google.api.resourceDefinition." + error;
+                        }
+                    }
                     return null;
                 };
     
@@ -16071,6 +16679,16 @@
                             message.uninterpretedOption[i] = $root.google.protobuf.UninterpretedOption.fromObject(object.uninterpretedOption[i]);
                         }
                     }
+                    if (object[".google.api.resourceDefinition"]) {
+                        if (!Array.isArray(object[".google.api.resourceDefinition"]))
+                            throw TypeError(".google.protobuf.FileOptions..google.api.resourceDefinition: array expected");
+                        message[".google.api.resourceDefinition"] = [];
+                        for (var i = 0; i < object[".google.api.resourceDefinition"].length; ++i) {
+                            if (typeof object[".google.api.resourceDefinition"][i] !== "object")
+                                throw TypeError(".google.protobuf.FileOptions..google.api.resourceDefinition: object expected");
+                            message[".google.api.resourceDefinition"][i] = $root.google.api.ResourceDescriptor.fromObject(object[".google.api.resourceDefinition"][i]);
+                        }
+                    }
                     return message;
                 };
     
@@ -16087,8 +16705,10 @@
                     if (!options)
                         options = {};
                     var object = {};
-                    if (options.arrays || options.defaults)
+                    if (options.arrays || options.defaults) {
                         object.uninterpretedOption = [];
+                        object[".google.api.resourceDefinition"] = [];
+                    }
                     if (options.defaults) {
                         object.javaPackage = "";
                         object.javaOuterClassname = "";
@@ -16156,6 +16776,11 @@
                         for (var j = 0; j < message.uninterpretedOption.length; ++j)
                             object.uninterpretedOption[j] = $root.google.protobuf.UninterpretedOption.toObject(message.uninterpretedOption[j], options);
                     }
+                    if (message[".google.api.resourceDefinition"] && message[".google.api.resourceDefinition"].length) {
+                        object[".google.api.resourceDefinition"] = [];
+                        for (var j = 0; j < message[".google.api.resourceDefinition"].length; ++j)
+                            object[".google.api.resourceDefinition"][j] = $root.google.api.ResourceDescriptor.toObject(message[".google.api.resourceDefinition"][j], options);
+                    }
                     return object;
                 };
     
@@ -16200,6 +16825,7 @@
                  * @property {boolean|null} [deprecated] MessageOptions deprecated
                  * @property {boolean|null} [mapEntry] MessageOptions mapEntry
                  * @property {Array.<google.protobuf.IUninterpretedOption>|null} [uninterpretedOption] MessageOptions uninterpretedOption
+                 * @property {google.api.IResourceDescriptor|null} [".google.api.resource"] MessageOptions .google.api.resource
                  */
     
                 /**
@@ -16259,6 +16885,14 @@
                 MessageOptions.prototype.uninterpretedOption = $util.emptyArray;
     
                 /**
+                 * MessageOptions .google.api.resource.
+                 * @member {google.api.IResourceDescriptor|null|undefined} .google.api.resource
+                 * @memberof google.protobuf.MessageOptions
+                 * @instance
+                 */
+                MessageOptions.prototype[".google.api.resource"] = null;
+    
+                /**
                  * Creates a new MessageOptions instance using the specified properties.
                  * @function create
                  * @memberof google.protobuf.MessageOptions
@@ -16293,6 +16927,8 @@
                     if (message.uninterpretedOption != null && message.uninterpretedOption.length)
                         for (var i = 0; i < message.uninterpretedOption.length; ++i)
                             $root.google.protobuf.UninterpretedOption.encode(message.uninterpretedOption[i], writer.uint32(/* id 999, wireType 2 =*/7994).fork()).ldelim();
+                    if (message[".google.api.resource"] != null && message.hasOwnProperty(".google.api.resource"))
+                        $root.google.api.ResourceDescriptor.encode(message[".google.api.resource"], writer.uint32(/* id 1053, wireType 2 =*/8426).fork()).ldelim();
                     return writer;
                 };
     
@@ -16343,6 +16979,9 @@
                             if (!(message.uninterpretedOption && message.uninterpretedOption.length))
                                 message.uninterpretedOption = [];
                             message.uninterpretedOption.push($root.google.protobuf.UninterpretedOption.decode(reader, reader.uint32()));
+                            break;
+                        case 1053:
+                            message[".google.api.resource"] = $root.google.api.ResourceDescriptor.decode(reader, reader.uint32());
                             break;
                         default:
                             reader.skipType(tag & 7);
@@ -16400,6 +17039,11 @@
                                 return "uninterpretedOption." + error;
                         }
                     }
+                    if (message[".google.api.resource"] != null && message.hasOwnProperty(".google.api.resource")) {
+                        var error = $root.google.api.ResourceDescriptor.verify(message[".google.api.resource"]);
+                        if (error)
+                            return ".google.api.resource." + error;
+                    }
                     return null;
                 };
     
@@ -16433,6 +17077,11 @@
                             message.uninterpretedOption[i] = $root.google.protobuf.UninterpretedOption.fromObject(object.uninterpretedOption[i]);
                         }
                     }
+                    if (object[".google.api.resource"] != null) {
+                        if (typeof object[".google.api.resource"] !== "object")
+                            throw TypeError(".google.protobuf.MessageOptions..google.api.resource: object expected");
+                        message[".google.api.resource"] = $root.google.api.ResourceDescriptor.fromObject(object[".google.api.resource"]);
+                    }
                     return message;
                 };
     
@@ -16456,6 +17105,7 @@
                         object.noStandardDescriptorAccessor = false;
                         object.deprecated = false;
                         object.mapEntry = false;
+                        object[".google.api.resource"] = null;
                     }
                     if (message.messageSetWireFormat != null && message.hasOwnProperty("messageSetWireFormat"))
                         object.messageSetWireFormat = message.messageSetWireFormat;
@@ -16470,6 +17120,8 @@
                         for (var j = 0; j < message.uninterpretedOption.length; ++j)
                             object.uninterpretedOption[j] = $root.google.protobuf.UninterpretedOption.toObject(message.uninterpretedOption[j], options);
                     }
+                    if (message[".google.api.resource"] != null && message.hasOwnProperty(".google.api.resource"))
+                        object[".google.api.resource"] = $root.google.api.ResourceDescriptor.toObject(message[".google.api.resource"], options);
                     return object;
                 };
     
@@ -16500,6 +17152,8 @@
                  * @property {boolean|null} [deprecated] FieldOptions deprecated
                  * @property {boolean|null} [weak] FieldOptions weak
                  * @property {Array.<google.protobuf.IUninterpretedOption>|null} [uninterpretedOption] FieldOptions uninterpretedOption
+                 * @property {Array.<google.api.FieldBehavior>|null} [".google.api.fieldBehavior"] FieldOptions .google.api.fieldBehavior
+                 * @property {google.api.IResourceReference|null} [".google.api.resourceReference"] FieldOptions .google.api.resourceReference
                  */
     
                 /**
@@ -16512,6 +17166,7 @@
                  */
                 function FieldOptions(properties) {
                     this.uninterpretedOption = [];
+                    this[".google.api.fieldBehavior"] = [];
                     if (properties)
                         for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
@@ -16575,6 +17230,22 @@
                 FieldOptions.prototype.uninterpretedOption = $util.emptyArray;
     
                 /**
+                 * FieldOptions .google.api.fieldBehavior.
+                 * @member {Array.<google.api.FieldBehavior>} .google.api.fieldBehavior
+                 * @memberof google.protobuf.FieldOptions
+                 * @instance
+                 */
+                FieldOptions.prototype[".google.api.fieldBehavior"] = $util.emptyArray;
+    
+                /**
+                 * FieldOptions .google.api.resourceReference.
+                 * @member {google.api.IResourceReference|null|undefined} .google.api.resourceReference
+                 * @memberof google.protobuf.FieldOptions
+                 * @instance
+                 */
+                FieldOptions.prototype[".google.api.resourceReference"] = null;
+    
+                /**
                  * Creates a new FieldOptions instance using the specified properties.
                  * @function create
                  * @memberof google.protobuf.FieldOptions
@@ -16613,6 +17284,14 @@
                     if (message.uninterpretedOption != null && message.uninterpretedOption.length)
                         for (var i = 0; i < message.uninterpretedOption.length; ++i)
                             $root.google.protobuf.UninterpretedOption.encode(message.uninterpretedOption[i], writer.uint32(/* id 999, wireType 2 =*/7994).fork()).ldelim();
+                    if (message[".google.api.fieldBehavior"] != null && message[".google.api.fieldBehavior"].length) {
+                        writer.uint32(/* id 1052, wireType 2 =*/8418).fork();
+                        for (var i = 0; i < message[".google.api.fieldBehavior"].length; ++i)
+                            writer.int32(message[".google.api.fieldBehavior"][i]);
+                        writer.ldelim();
+                    }
+                    if (message[".google.api.resourceReference"] != null && message.hasOwnProperty(".google.api.resourceReference"))
+                        $root.google.api.ResourceReference.encode(message[".google.api.resourceReference"], writer.uint32(/* id 1055, wireType 2 =*/8442).fork()).ldelim();
                     return writer;
                 };
     
@@ -16669,6 +17348,19 @@
                             if (!(message.uninterpretedOption && message.uninterpretedOption.length))
                                 message.uninterpretedOption = [];
                             message.uninterpretedOption.push($root.google.protobuf.UninterpretedOption.decode(reader, reader.uint32()));
+                            break;
+                        case 1052:
+                            if (!(message[".google.api.fieldBehavior"] && message[".google.api.fieldBehavior"].length))
+                                message[".google.api.fieldBehavior"] = [];
+                            if ((tag & 7) === 2) {
+                                var end2 = reader.uint32() + reader.pos;
+                                while (reader.pos < end2)
+                                    message[".google.api.fieldBehavior"].push(reader.int32());
+                            } else
+                                message[".google.api.fieldBehavior"].push(reader.int32());
+                            break;
+                        case 1055:
+                            message[".google.api.resourceReference"] = $root.google.api.ResourceReference.decode(reader, reader.uint32());
                             break;
                         default:
                             reader.skipType(tag & 7);
@@ -16744,6 +17436,27 @@
                                 return "uninterpretedOption." + error;
                         }
                     }
+                    if (message[".google.api.fieldBehavior"] != null && message.hasOwnProperty(".google.api.fieldBehavior")) {
+                        if (!Array.isArray(message[".google.api.fieldBehavior"]))
+                            return ".google.api.fieldBehavior: array expected";
+                        for (var i = 0; i < message[".google.api.fieldBehavior"].length; ++i)
+                            switch (message[".google.api.fieldBehavior"][i]) {
+                            default:
+                                return ".google.api.fieldBehavior: enum value[] expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                            case 4:
+                            case 5:
+                                break;
+                            }
+                    }
+                    if (message[".google.api.resourceReference"] != null && message.hasOwnProperty(".google.api.resourceReference")) {
+                        var error = $root.google.api.ResourceReference.verify(message[".google.api.resourceReference"]);
+                        if (error)
+                            return ".google.api.resourceReference." + error;
+                    }
                     return null;
                 };
     
@@ -16805,6 +17518,44 @@
                             message.uninterpretedOption[i] = $root.google.protobuf.UninterpretedOption.fromObject(object.uninterpretedOption[i]);
                         }
                     }
+                    if (object[".google.api.fieldBehavior"]) {
+                        if (!Array.isArray(object[".google.api.fieldBehavior"]))
+                            throw TypeError(".google.protobuf.FieldOptions..google.api.fieldBehavior: array expected");
+                        message[".google.api.fieldBehavior"] = [];
+                        for (var i = 0; i < object[".google.api.fieldBehavior"].length; ++i)
+                            switch (object[".google.api.fieldBehavior"][i]) {
+                            default:
+                            case "FIELD_BEHAVIOR_UNSPECIFIED":
+                            case 0:
+                                message[".google.api.fieldBehavior"][i] = 0;
+                                break;
+                            case "OPTIONAL":
+                            case 1:
+                                message[".google.api.fieldBehavior"][i] = 1;
+                                break;
+                            case "REQUIRED":
+                            case 2:
+                                message[".google.api.fieldBehavior"][i] = 2;
+                                break;
+                            case "OUTPUT_ONLY":
+                            case 3:
+                                message[".google.api.fieldBehavior"][i] = 3;
+                                break;
+                            case "INPUT_ONLY":
+                            case 4:
+                                message[".google.api.fieldBehavior"][i] = 4;
+                                break;
+                            case "IMMUTABLE":
+                            case 5:
+                                message[".google.api.fieldBehavior"][i] = 5;
+                                break;
+                            }
+                    }
+                    if (object[".google.api.resourceReference"] != null) {
+                        if (typeof object[".google.api.resourceReference"] !== "object")
+                            throw TypeError(".google.protobuf.FieldOptions..google.api.resourceReference: object expected");
+                        message[".google.api.resourceReference"] = $root.google.api.ResourceReference.fromObject(object[".google.api.resourceReference"]);
+                    }
                     return message;
                 };
     
@@ -16821,8 +17572,10 @@
                     if (!options)
                         options = {};
                     var object = {};
-                    if (options.arrays || options.defaults)
+                    if (options.arrays || options.defaults) {
                         object.uninterpretedOption = [];
+                        object[".google.api.fieldBehavior"] = [];
+                    }
                     if (options.defaults) {
                         object.ctype = options.enums === String ? "STRING" : 0;
                         object.packed = false;
@@ -16830,6 +17583,7 @@
                         object.lazy = false;
                         object.jstype = options.enums === String ? "JS_NORMAL" : 0;
                         object.weak = false;
+                        object[".google.api.resourceReference"] = null;
                     }
                     if (message.ctype != null && message.hasOwnProperty("ctype"))
                         object.ctype = options.enums === String ? $root.google.protobuf.FieldOptions.CType[message.ctype] : message.ctype;
@@ -16848,6 +17602,13 @@
                         for (var j = 0; j < message.uninterpretedOption.length; ++j)
                             object.uninterpretedOption[j] = $root.google.protobuf.UninterpretedOption.toObject(message.uninterpretedOption[j], options);
                     }
+                    if (message[".google.api.fieldBehavior"] && message[".google.api.fieldBehavior"].length) {
+                        object[".google.api.fieldBehavior"] = [];
+                        for (var j = 0; j < message[".google.api.fieldBehavior"].length; ++j)
+                            object[".google.api.fieldBehavior"][j] = options.enums === String ? $root.google.api.FieldBehavior[message[".google.api.fieldBehavior"][j]] : message[".google.api.fieldBehavior"][j];
+                    }
+                    if (message[".google.api.resourceReference"] != null && message.hasOwnProperty(".google.api.resourceReference"))
+                        object[".google.api.resourceReference"] = $root.google.api.ResourceReference.toObject(message[".google.api.resourceReference"], options);
                     return object;
                 };
     
@@ -17875,8 +18636,8 @@
                  * @property {boolean|null} [deprecated] MethodOptions deprecated
                  * @property {google.protobuf.MethodOptions.IdempotencyLevel|null} [idempotencyLevel] MethodOptions idempotencyLevel
                  * @property {Array.<google.protobuf.IUninterpretedOption>|null} [uninterpretedOption] MethodOptions uninterpretedOption
-                 * @property {google.api.IHttpRule|null} [".google.api.http"] MethodOptions .google.api.http
                  * @property {Array.<string>|null} [".google.api.methodSignature"] MethodOptions .google.api.methodSignature
+                 * @property {google.api.IHttpRule|null} [".google.api.http"] MethodOptions .google.api.http
                  */
     
                 /**
@@ -17921,20 +18682,20 @@
                 MethodOptions.prototype.uninterpretedOption = $util.emptyArray;
     
                 /**
-                 * MethodOptions .google.api.http.
-                 * @member {google.api.IHttpRule|null|undefined} .google.api.http
-                 * @memberof google.protobuf.MethodOptions
-                 * @instance
-                 */
-                MethodOptions.prototype[".google.api.http"] = null;
-    
-                /**
                  * MethodOptions .google.api.methodSignature.
                  * @member {Array.<string>} .google.api.methodSignature
                  * @memberof google.protobuf.MethodOptions
                  * @instance
                  */
                 MethodOptions.prototype[".google.api.methodSignature"] = $util.emptyArray;
+    
+                /**
+                 * MethodOptions .google.api.http.
+                 * @member {google.api.IHttpRule|null|undefined} .google.api.http
+                 * @memberof google.protobuf.MethodOptions
+                 * @instance
+                 */
+                MethodOptions.prototype[".google.api.http"] = null;
     
                 /**
                  * Creates a new MethodOptions instance using the specified properties.
@@ -18017,13 +18778,13 @@
                                 message.uninterpretedOption = [];
                             message.uninterpretedOption.push($root.google.protobuf.UninterpretedOption.decode(reader, reader.uint32()));
                             break;
-                        case 72295728:
-                            message[".google.api.http"] = $root.google.api.HttpRule.decode(reader, reader.uint32());
-                            break;
                         case 1051:
                             if (!(message[".google.api.methodSignature"] && message[".google.api.methodSignature"].length))
                                 message[".google.api.methodSignature"] = [];
                             message[".google.api.methodSignature"].push(reader.string());
+                            break;
+                        case 72295728:
+                            message[".google.api.http"] = $root.google.api.HttpRule.decode(reader, reader.uint32());
                             break;
                         default:
                             reader.skipType(tag & 7);
@@ -18081,17 +18842,17 @@
                                 return "uninterpretedOption." + error;
                         }
                     }
-                    if (message[".google.api.http"] != null && message.hasOwnProperty(".google.api.http")) {
-                        var error = $root.google.api.HttpRule.verify(message[".google.api.http"]);
-                        if (error)
-                            return ".google.api.http." + error;
-                    }
                     if (message[".google.api.methodSignature"] != null && message.hasOwnProperty(".google.api.methodSignature")) {
                         if (!Array.isArray(message[".google.api.methodSignature"]))
                             return ".google.api.methodSignature: array expected";
                         for (var i = 0; i < message[".google.api.methodSignature"].length; ++i)
                             if (!$util.isString(message[".google.api.methodSignature"][i]))
                                 return ".google.api.methodSignature: string[] expected";
+                    }
+                    if (message[".google.api.http"] != null && message.hasOwnProperty(".google.api.http")) {
+                        var error = $root.google.api.HttpRule.verify(message[".google.api.http"]);
+                        if (error)
+                            return ".google.api.http." + error;
                     }
                     return null;
                 };
@@ -18134,17 +18895,17 @@
                             message.uninterpretedOption[i] = $root.google.protobuf.UninterpretedOption.fromObject(object.uninterpretedOption[i]);
                         }
                     }
-                    if (object[".google.api.http"] != null) {
-                        if (typeof object[".google.api.http"] !== "object")
-                            throw TypeError(".google.protobuf.MethodOptions..google.api.http: object expected");
-                        message[".google.api.http"] = $root.google.api.HttpRule.fromObject(object[".google.api.http"]);
-                    }
                     if (object[".google.api.methodSignature"]) {
                         if (!Array.isArray(object[".google.api.methodSignature"]))
                             throw TypeError(".google.protobuf.MethodOptions..google.api.methodSignature: array expected");
                         message[".google.api.methodSignature"] = [];
                         for (var i = 0; i < object[".google.api.methodSignature"].length; ++i)
                             message[".google.api.methodSignature"][i] = String(object[".google.api.methodSignature"][i]);
+                    }
+                    if (object[".google.api.http"] != null) {
+                        if (typeof object[".google.api.http"] !== "object")
+                            throw TypeError(".google.protobuf.MethodOptions..google.api.http: object expected");
+                        message[".google.api.http"] = $root.google.api.HttpRule.fromObject(object[".google.api.http"]);
                     }
                     return message;
                 };
