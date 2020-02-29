@@ -154,3 +154,5 @@ if (process.env.DEBUG_GRPC) {
   setLogger(console);
   setLogVerbosity(logVerbosity.DEBUG);
 }
+import * as protos from '../protos/protos';
+export {protos};
