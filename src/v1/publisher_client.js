@@ -303,7 +303,7 @@ class PublisherClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.name
-   *   The name of the topic. It must have the format
+   *   Required. The name of the topic. It must have the format
    *   `"projects/{project}/topics/{topic}"`. `{topic}` must start with a letter,
    *   and contain only letters (`[A-Za-z]`), numbers (`[0-9]`), dashes (`-`),
    *   underscores (`_`), periods (`.`), tildes (`~`), plus (`+`) or percent
@@ -377,11 +377,11 @@ class PublisherClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {Object} request.topic
-   *   The updated topic object.
+   *   Required. The updated topic object.
    *
    *   This object should have the same structure as [Topic]{@link google.pubsub.v1.Topic}
    * @param {Object} request.updateMask
-   *   Indicates which fields in the provided topic to update. Must be specified
+   *   Required. Indicates which fields in the provided topic to update. Must be specified
    *   and non-empty. Note that if `update_mask` contains
    *   "message_storage_policy" then the new value will be determined based on the
    *   policy configured at the project or organization level. The
@@ -447,10 +447,10 @@ class PublisherClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.topic
-   *   The messages in the request will be published on this topic.
+   *   Required. The messages in the request will be published on this topic.
    *   Format is `projects/{project}/topics/{topic}`.
    * @param {Object[]} request.messages
-   *   The messages to publish.
+   *   Required. The messages to publish.
    *
    *   This object should have the same structure as [PubsubMessage]{@link google.pubsub.v1.PubsubMessage}
    * @param {Object} [options]
@@ -515,7 +515,7 @@ class PublisherClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.topic
-   *   The name of the topic to get.
+   *   Required. The name of the topic to get.
    *   Format is `projects/{project}/topics/{topic}`.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
@@ -570,7 +570,7 @@ class PublisherClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
-   *   The name of the project in which to list topics.
+   *   Required. The name of the project in which to list topics.
    *   Format is `projects/{project-id}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
@@ -683,7 +683,7 @@ class PublisherClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
-   *   The name of the project in which to list topics.
+   *   Required. The name of the project in which to list topics.
    *   Format is `projects/{project-id}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
@@ -729,7 +729,7 @@ class PublisherClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.topic
-   *   The name of the topic that subscriptions are attached to.
+   *   Required. The name of the topic that subscriptions are attached to.
    *   Format is `projects/{project}/topics/{topic}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
@@ -846,7 +846,7 @@ class PublisherClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.topic
-   *   The name of the topic that subscriptions are attached to.
+   *   Required. The name of the topic that subscriptions are attached to.
    *   Format is `projects/{project}/topics/{topic}`.
    * @param {number} [request.pageSize]
    *   The maximum number of resources contained in the underlying API
@@ -896,7 +896,7 @@ class PublisherClient {
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.topic
-   *   Name of the topic to delete.
+   *   Required. Name of the topic to delete.
    *   Format is `projects/{project}/topics/{topic}`.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
@@ -938,8 +938,11 @@ class PublisherClient {
   }
 
   /**
-   * Sets the access control policy on the specified resource. Replaces any
-   * existing policy.
+   * Sets the access control policy on the specified resource. Replaces
+   * any existing policy.
+   *
+   * Can return Public Errors: NOT_FOUND, INVALID_ARGUMENT and
+   * PERMISSION_DENIED
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1006,9 +1009,8 @@ class PublisherClient {
   }
 
   /**
-   * Gets the access control policy for a resource.
-   * Returns an empty policy if the resource exists and does not have a policy
-   * set.
+   * Gets the access control policy for a resource. Returns an empty policy
+   * if the resource exists and does not have a policy set.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1068,13 +1070,13 @@ class PublisherClient {
   }
 
   /**
-   * Returns permissions that a caller has on the specified resource.
-   * If the resource does not exist, this will return an empty set of
+   * Returns permissions that a caller has on the specified resource. If the
+   * resource does not exist, this will return an empty set of
    * permissions, not a NOT_FOUND error.
    *
-   * Note: This operation is designed to be used for building permission-aware
-   * UIs and command-line tools, not for authorization checking. This operation
-   * may "fail open" without warning.
+   * Note: This operation is designed to be used for building
+   * permission-aware UIs and command-line tools, not for authorization
+   * checking. This operation may "fail open" without warning.
    *
    * @param {Object} request
    *   The request object that will be sent.
