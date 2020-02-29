@@ -27,7 +27,8 @@
                       "responseType": "Topic",
                       "options": {
                         "(google.api.http).put": "/v1/{name=projects/*/topics/*}",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "name"
                       }
                     },
                     "UpdateTopic": {
@@ -43,28 +44,32 @@
                       "responseType": "PublishResponse",
                       "options": {
                         "(google.api.http).post": "/v1/{topic=projects/*/topics/*}:publish",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "topic,messages"
                       }
                     },
                     "GetTopic": {
                       "requestType": "GetTopicRequest",
                       "responseType": "Topic",
                       "options": {
-                        "(google.api.http).get": "/v1/{topic=projects/*/topics/*}"
+                        "(google.api.http).get": "/v1/{topic=projects/*/topics/*}",
+                        "(google.api.method_signature)": "topic"
                       }
                     },
                     "ListTopics": {
                       "requestType": "ListTopicsRequest",
                       "responseType": "ListTopicsResponse",
                       "options": {
-                        "(google.api.http).get": "/v1/{project=projects/*}/topics"
+                        "(google.api.http).get": "/v1/{project=projects/*}/topics",
+                        "(google.api.method_signature)": "project"
                       }
                     },
                     "ListTopicSubscriptions": {
                       "requestType": "ListTopicSubscriptionsRequest",
                       "responseType": "ListTopicSubscriptionsResponse",
                       "options": {
-                        "(google.api.http).get": "/v1/{topic=projects/*/topics/*}/subscriptions"
+                        "(google.api.http).get": "/v1/{topic=projects/*/topics/*}/subscriptions",
+                        "(google.api.method_signature)": "topic"
                       }
                     },
                     "ListTopicSnapshots": {
@@ -78,7 +83,8 @@
                       "requestType": "DeleteTopicRequest",
                       "responseType": "google.protobuf.Empty",
                       "options": {
-                        "(google.api.http).delete": "/v1/{topic=projects/*/topics/*}"
+                        "(google.api.http).delete": "/v1/{topic=projects/*/topics/*}",
+                        "(google.api.method_signature)": "topic"
                       }
                     }
                   }
@@ -93,10 +99,17 @@
                   }
                 },
                 "Topic": {
+                  "options": {
+                    "(google.api.resource).type": "pubsub.googleapis.com/Topic",
+                    "(google.api.resource).pattern": "_deleted-topic_"
+                  },
                   "fields": {
                     "name": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     },
                     "labels": {
                       "keyType": "string",
@@ -142,7 +155,11 @@
                   "fields": {
                     "topic": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
                     }
                   }
                 },
@@ -150,11 +167,17 @@
                   "fields": {
                     "topic": {
                       "type": "Topic",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     },
                     "updateMask": {
                       "type": "google.protobuf.FieldMask",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     }
                   }
                 },
@@ -162,12 +185,19 @@
                   "fields": {
                     "topic": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
                     },
                     "messages": {
                       "rule": "repeated",
                       "type": "PubsubMessage",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     }
                   }
                 },
@@ -184,7 +214,11 @@
                   "fields": {
                     "project": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
+                      }
                     },
                     "pageSize": {
                       "type": "int32",
@@ -213,7 +247,11 @@
                   "fields": {
                     "topic": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
                     },
                     "pageSize": {
                       "type": "int32",
@@ -230,7 +268,10 @@
                     "subscriptions": {
                       "rule": "repeated",
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
                     },
                     "nextPageToken": {
                       "type": "string",
@@ -271,7 +312,11 @@
                   "fields": {
                     "topic": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
                     }
                   }
                 },
@@ -286,14 +331,16 @@
                       "responseType": "Subscription",
                       "options": {
                         "(google.api.http).put": "/v1/{name=projects/*/subscriptions/*}",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "name,topic,push_config,ack_deadline_seconds"
                       }
                     },
                     "GetSubscription": {
                       "requestType": "GetSubscriptionRequest",
                       "responseType": "Subscription",
                       "options": {
-                        "(google.api.http).get": "/v1/{subscription=projects/*/subscriptions/*}"
+                        "(google.api.http).get": "/v1/{subscription=projects/*/subscriptions/*}",
+                        "(google.api.method_signature)": "subscription"
                       }
                     },
                     "UpdateSubscription": {
@@ -308,14 +355,16 @@
                       "requestType": "ListSubscriptionsRequest",
                       "responseType": "ListSubscriptionsResponse",
                       "options": {
-                        "(google.api.http).get": "/v1/{project=projects/*}/subscriptions"
+                        "(google.api.http).get": "/v1/{project=projects/*}/subscriptions",
+                        "(google.api.method_signature)": "project"
                       }
                     },
                     "DeleteSubscription": {
                       "requestType": "DeleteSubscriptionRequest",
                       "responseType": "google.protobuf.Empty",
                       "options": {
-                        "(google.api.http).delete": "/v1/{subscription=projects/*/subscriptions/*}"
+                        "(google.api.http).delete": "/v1/{subscription=projects/*/subscriptions/*}",
+                        "(google.api.method_signature)": "subscription"
                       }
                     },
                     "ModifyAckDeadline": {
@@ -323,7 +372,8 @@
                       "responseType": "google.protobuf.Empty",
                       "options": {
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:modifyAckDeadline",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "subscription,ack_ids,ack_deadline_seconds"
                       }
                     },
                     "Acknowledge": {
@@ -331,7 +381,8 @@
                       "responseType": "google.protobuf.Empty",
                       "options": {
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:acknowledge",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "subscription,ack_ids"
                       }
                     },
                     "Pull": {
@@ -339,7 +390,8 @@
                       "responseType": "PullResponse",
                       "options": {
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:pull",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "subscription,return_immediately,max_messages"
                       }
                     },
                     "StreamingPull": {
@@ -353,7 +405,8 @@
                       "responseType": "google.protobuf.Empty",
                       "options": {
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:modifyPushConfig",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "subscription,push_config"
                       }
                     },
                     "GetSnapshot": {
@@ -367,7 +420,8 @@
                       "requestType": "ListSnapshotsRequest",
                       "responseType": "ListSnapshotsResponse",
                       "options": {
-                        "(google.api.http).get": "/v1/{project=projects/*}/snapshots"
+                        "(google.api.http).get": "/v1/{project=projects/*}/snapshots",
+                        "(google.api.method_signature)": "project"
                       }
                     },
                     "CreateSnapshot": {
@@ -375,7 +429,8 @@
                       "responseType": "Snapshot",
                       "options": {
                         "(google.api.http).put": "/v1/{name=projects/*/snapshots/*}",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "name,subscription"
                       }
                     },
                     "UpdateSnapshot": {
@@ -390,7 +445,8 @@
                       "requestType": "DeleteSnapshotRequest",
                       "responseType": "google.protobuf.Empty",
                       "options": {
-                        "(google.api.http).delete": "/v1/{snapshot=projects/*/snapshots/*}"
+                        "(google.api.http).delete": "/v1/{snapshot=projects/*/snapshots/*}",
+                        "(google.api.method_signature)": "snapshot"
                       }
                     },
                     "Seek": {
@@ -404,14 +460,25 @@
                   }
                 },
                 "Subscription": {
+                  "options": {
+                    "(google.api.resource).type": "pubsub.googleapis.com/Subscription",
+                    "(google.api.resource).pattern": "projects/{project}/subscriptions/{subscription}"
+                  },
                   "fields": {
                     "name": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     },
                     "topic": {
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
                     },
                     "pushConfig": {
                       "type": "PushConfig",
@@ -526,7 +593,11 @@
                   "fields": {
                     "subscription": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
                     }
                   }
                 },
@@ -534,11 +605,17 @@
                   "fields": {
                     "subscription": {
                       "type": "Subscription",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     },
                     "updateMask": {
                       "type": "google.protobuf.FieldMask",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     }
                   }
                 },
@@ -546,7 +623,11 @@
                   "fields": {
                     "project": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
+                      }
                     },
                     "pageSize": {
                       "type": "int32",
@@ -575,7 +656,11 @@
                   "fields": {
                     "subscription": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
                     }
                   }
                 },
@@ -583,11 +668,18 @@
                   "fields": {
                     "subscription": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
                     },
                     "pushConfig": {
                       "type": "PushConfig",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     }
                   }
                 },
@@ -595,7 +687,11 @@
                   "fields": {
                     "subscription": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
                     },
                     "returnImmediately": {
                       "type": "bool",
@@ -603,7 +699,10 @@
                     },
                     "maxMessages": {
                       "type": "int32",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     }
                   }
                 },
@@ -620,16 +719,26 @@
                   "fields": {
                     "subscription": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
                     },
                     "ackIds": {
                       "rule": "repeated",
                       "type": "string",
-                      "id": 4
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     },
                     "ackDeadlineSeconds": {
                       "type": "int32",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     }
                   }
                 },
@@ -637,12 +746,19 @@
                   "fields": {
                     "subscription": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
                     },
                     "ackIds": {
                       "rule": "repeated",
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     }
                   }
                 },
@@ -650,7 +766,11 @@
                   "fields": {
                     "subscription": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
                     },
                     "ackIds": {
                       "rule": "repeated",
@@ -669,7 +789,10 @@
                     },
                     "streamAckDeadlineSeconds": {
                       "type": "int32",
-                      "id": 5
+                      "id": 5,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     },
                     "clientId": {
                       "type": "string",
@@ -690,11 +813,19 @@
                   "fields": {
                     "name": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
+                      }
                     },
                     "subscription": {
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
                     },
                     "labels": {
                       "keyType": "string",
@@ -707,15 +838,25 @@
                   "fields": {
                     "snapshot": {
                       "type": "Snapshot",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     },
                     "updateMask": {
                       "type": "google.protobuf.FieldMask",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     }
                   }
                 },
                 "Snapshot": {
+                  "options": {
+                    "(google.api.resource).type": "pubsub.googleapis.com/Snapshot",
+                    "(google.api.resource).pattern": "projects/{project}/snapshots/{snapshot}"
+                  },
                   "fields": {
                     "name": {
                       "type": "string",
@@ -723,7 +864,10 @@
                     },
                     "topic": {
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
                     },
                     "expireTime": {
                       "type": "google.protobuf.Timestamp",
@@ -740,7 +884,11 @@
                   "fields": {
                     "snapshot": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
+                      }
                     }
                   }
                 },
@@ -748,7 +896,11 @@
                   "fields": {
                     "project": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
+                      }
                     },
                     "pageSize": {
                       "type": "int32",
@@ -777,7 +929,11 @@
                   "fields": {
                     "snapshot": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
+                      }
                     }
                   }
                 },
@@ -793,7 +949,11 @@
                   "fields": {
                     "subscription": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
                     },
                     "time": {
                       "type": "google.protobuf.Timestamp",
@@ -801,7 +961,10 @@
                     },
                     "snapshot": {
                       "type": "string",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
+                      }
                     }
                   }
                 },
@@ -816,12 +979,110 @@
           "options": {
             "go_package": "google.golang.org/genproto/googleapis/api/annotations;annotations",
             "java_multiple_files": true,
-            "java_outer_classname": "ClientProto",
+            "java_outer_classname": "HttpProto",
             "java_package": "com.google.api",
             "objc_class_prefix": "GAPI",
             "cc_enable_arenas": true
           },
           "nested": {
+            "methodSignature": {
+              "rule": "repeated",
+              "type": "string",
+              "id": 1051,
+              "extend": "google.protobuf.MethodOptions"
+            },
+            "defaultHost": {
+              "type": "string",
+              "id": 1049,
+              "extend": "google.protobuf.ServiceOptions"
+            },
+            "oauthScopes": {
+              "type": "string",
+              "id": 1050,
+              "extend": "google.protobuf.ServiceOptions"
+            },
+            "fieldBehavior": {
+              "rule": "repeated",
+              "type": "google.api.FieldBehavior",
+              "id": 1052,
+              "extend": "google.protobuf.FieldOptions"
+            },
+            "FieldBehavior": {
+              "values": {
+                "FIELD_BEHAVIOR_UNSPECIFIED": 0,
+                "OPTIONAL": 1,
+                "REQUIRED": 2,
+                "OUTPUT_ONLY": 3,
+                "INPUT_ONLY": 4,
+                "IMMUTABLE": 5
+              }
+            },
+            "resourceReference": {
+              "type": "google.api.ResourceReference",
+              "id": 1055,
+              "extend": "google.protobuf.FieldOptions"
+            },
+            "resourceDefinition": {
+              "rule": "repeated",
+              "type": "google.api.ResourceDescriptor",
+              "id": 1053,
+              "extend": "google.protobuf.FileOptions"
+            },
+            "resource": {
+              "type": "google.api.ResourceDescriptor",
+              "id": 1053,
+              "extend": "google.protobuf.MessageOptions"
+            },
+            "ResourceDescriptor": {
+              "fields": {
+                "type": {
+                  "type": "string",
+                  "id": 1
+                },
+                "pattern": {
+                  "rule": "repeated",
+                  "type": "string",
+                  "id": 2
+                },
+                "nameField": {
+                  "type": "string",
+                  "id": 3
+                },
+                "history": {
+                  "type": "History",
+                  "id": 4
+                },
+                "plural": {
+                  "type": "string",
+                  "id": 5
+                },
+                "singular": {
+                  "type": "string",
+                  "id": 6
+                }
+              },
+              "nested": {
+                "History": {
+                  "values": {
+                    "HISTORY_UNSPECIFIED": 0,
+                    "ORIGINALLY_SINGLE_PATTERN": 1,
+                    "FUTURE_MULTI_PATTERN": 2
+                  }
+                }
+              }
+            },
+            "ResourceReference": {
+              "fields": {
+                "type": {
+                  "type": "string",
+                  "id": 1
+                },
+                "childType": {
+                  "type": "string",
+                  "id": 2
+                }
+              }
+            },
             "http": {
               "type": "HttpRule",
               "id": 72295728,
@@ -908,22 +1169,6 @@
                   "id": 2
                 }
               }
-            },
-            "methodSignature": {
-              "rule": "repeated",
-              "type": "string",
-              "id": 1051,
-              "extend": "google.protobuf.MethodOptions"
-            },
-            "defaultHost": {
-              "type": "string",
-              "id": 1049,
-              "extend": "google.protobuf.ServiceOptions"
-            },
-            "oauthScopes": {
-              "type": "string",
-              "id": 1050,
-              "extend": "google.protobuf.ServiceOptions"
             }
           }
         },

@@ -35,7 +35,7 @@ const MessageStoragePolicy = {
  * A topic resource.
  *
  * @property {string} name
- *   The name of the topic. It must have the format
+ *   Required. The name of the topic. It must have the format
  *   `"projects/{project}/topics/{topic}"`. `{topic}` must start with a letter,
  *   and contain only letters (`[A-Za-z]`), numbers (`[0-9]`), dashes (`-`),
  *   underscores (`_`), periods (`.`), tildes (`~`), plus (`+`) or percent
@@ -121,7 +121,7 @@ const PubsubMessage = {
  * Request for the GetTopic method.
  *
  * @property {string} topic
- *   The name of the topic to get.
+ *   Required. The name of the topic to get.
  *   Format is `projects/{project}/topics/{topic}`.
  *
  * @typedef GetTopicRequest
@@ -136,12 +136,12 @@ const GetTopicRequest = {
  * Request for the UpdateTopic method.
  *
  * @property {Object} topic
- *   The updated topic object.
+ *   Required. The updated topic object.
  *
  *   This object should have the same structure as [Topic]{@link google.pubsub.v1.Topic}
  *
  * @property {Object} updateMask
- *   Indicates which fields in the provided topic to update. Must be specified
+ *   Required. Indicates which fields in the provided topic to update. Must be specified
  *   and non-empty. Note that if `update_mask` contains
  *   "message_storage_policy" then the new value will be determined based on the
  *   policy configured at the project or organization level. The
@@ -161,11 +161,11 @@ const UpdateTopicRequest = {
  * Request for the Publish method.
  *
  * @property {string} topic
- *   The messages in the request will be published on this topic.
+ *   Required. The messages in the request will be published on this topic.
  *   Format is `projects/{project}/topics/{topic}`.
  *
  * @property {Object[]} messages
- *   The messages to publish.
+ *   Required. The messages to publish.
  *
  *   This object should have the same structure as [PubsubMessage]{@link google.pubsub.v1.PubsubMessage}
  *
@@ -197,7 +197,7 @@ const PublishResponse = {
  * Request for the `ListTopics` method.
  *
  * @property {string} project
- *   The name of the project in which to list topics.
+ *   Required. The name of the project in which to list topics.
  *   Format is `projects/{project-id}`.
  *
  * @property {number} pageSize
@@ -240,7 +240,7 @@ const ListTopicsResponse = {
  * Request for the `ListTopicSubscriptions` method.
  *
  * @property {string} topic
- *   The name of the topic that subscriptions are attached to.
+ *   Required. The name of the topic that subscriptions are attached to.
  *   Format is `projects/{project}/topics/{topic}`.
  *
  * @property {number} pageSize
@@ -324,7 +324,7 @@ const ListTopicSnapshotsResponse = {
  * Request for the `DeleteTopic` method.
  *
  * @property {string} topic
- *   Name of the topic to delete.
+ *   Required. Name of the topic to delete.
  *   Format is `projects/{project}/topics/{topic}`.
  *
  * @typedef DeleteTopicRequest
@@ -339,15 +339,15 @@ const DeleteTopicRequest = {
  * A subscription resource.
  *
  * @property {string} name
- *   The name of the subscription. It must have the format
+ *   Required. The name of the subscription. It must have the format
  *   `"projects/{project}/subscriptions/{subscription}"`. `{subscription}` must
  *   start with a letter, and contain only letters (`[A-Za-z]`), numbers
  *   (`[0-9]`), dashes (`-`), underscores (`_`), periods (`.`), tildes (`~`),
  *   plus (`+`) or percent signs (`%`). It must be between 3 and 255 characters
- *   in length, and it must not start with `"goog"`
+ *   in length, and it must not start with `"goog"`.
  *
  * @property {string} topic
- *   The name of the topic from which this subscription is receiving messages.
+ *   Required. The name of the topic from which this subscription is receiving messages.
  *   Format is `projects/{project}/topics/{topic}`.
  *   The value of this field will be `_deleted-topic_` if the topic has been
  *   deleted.
@@ -622,7 +622,7 @@ const ReceivedMessage = {
  * Request for the GetSubscription method.
  *
  * @property {string} subscription
- *   The name of the subscription to get.
+ *   Required. The name of the subscription to get.
  *   Format is `projects/{project}/subscriptions/{sub}`.
  *
  * @typedef GetSubscriptionRequest
@@ -637,12 +637,12 @@ const GetSubscriptionRequest = {
  * Request for the UpdateSubscription method.
  *
  * @property {Object} subscription
- *   The updated subscription object.
+ *   Required. The updated subscription object.
  *
  *   This object should have the same structure as [Subscription]{@link google.pubsub.v1.Subscription}
  *
  * @property {Object} updateMask
- *   Indicates which fields in the provided subscription to update.
+ *   Required. Indicates which fields in the provided subscription to update.
  *   Must be specified and non-empty.
  *
  *   This object should have the same structure as [FieldMask]{@link google.protobuf.FieldMask}
@@ -659,7 +659,7 @@ const UpdateSubscriptionRequest = {
  * Request for the `ListSubscriptions` method.
  *
  * @property {string} project
- *   The name of the project in which to list subscriptions.
+ *   Required. The name of the project in which to list subscriptions.
  *   Format is `projects/{project-id}`.
  *
  * @property {number} pageSize
@@ -703,7 +703,7 @@ const ListSubscriptionsResponse = {
  * Request for the DeleteSubscription method.
  *
  * @property {string} subscription
- *   The subscription to delete.
+ *   Required. The subscription to delete.
  *   Format is `projects/{project}/subscriptions/{sub}`.
  *
  * @typedef DeleteSubscriptionRequest
@@ -718,11 +718,11 @@ const DeleteSubscriptionRequest = {
  * Request for the ModifyPushConfig method.
  *
  * @property {string} subscription
- *   The name of the subscription.
+ *   Required. The name of the subscription.
  *   Format is `projects/{project}/subscriptions/{sub}`.
  *
  * @property {Object} pushConfig
- *   The push configuration for future deliveries.
+ *   Required. The push configuration for future deliveries.
  *
  *   An empty `pushConfig` indicates that the Pub/Sub system should
  *   stop pushing messages from the given subscription and allow
@@ -743,7 +743,7 @@ const ModifyPushConfigRequest = {
  * Request for the `Pull` method.
  *
  * @property {string} subscription
- *   The subscription from which messages should be pulled.
+ *   Required. The subscription from which messages should be pulled.
  *   Format is `projects/{project}/subscriptions/{sub}`.
  *
  * @property {boolean} returnImmediately
@@ -753,7 +753,7 @@ const ModifyPushConfigRequest = {
  *   least one message is available, rather than returning no messages.
  *
  * @property {number} maxMessages
- *   The maximum number of messages to return for this request. Must be a
+ *   Required. The maximum number of messages to return for this request. Must be a
  *   positive integer. The Pub/Sub system may return fewer than the number
  *   specified.
  *
@@ -788,14 +788,14 @@ const PullResponse = {
  * Request for the ModifyAckDeadline method.
  *
  * @property {string} subscription
- *   The name of the subscription.
+ *   Required. The name of the subscription.
  *   Format is `projects/{project}/subscriptions/{sub}`.
  *
  * @property {string[]} ackIds
- *   List of acknowledgment IDs.
+ *   Required. List of acknowledgment IDs.
  *
  * @property {number} ackDeadlineSeconds
- *   The new ack deadline with respect to the time this request was sent to
+ *   Required. The new ack deadline with respect to the time this request was sent to
  *   the Pub/Sub system. For example, if the value is 10, the new
  *   ack deadline will expire 10 seconds after the `ModifyAckDeadline` call
  *   was made. Specifying zero might immediately make the message available for
@@ -816,11 +816,11 @@ const ModifyAckDeadlineRequest = {
  * Request for the Acknowledge method.
  *
  * @property {string} subscription
- *   The subscription whose message is being acknowledged.
+ *   Required. The subscription whose message is being acknowledged.
  *   Format is `projects/{project}/subscriptions/{sub}`.
  *
  * @property {string[]} ackIds
- *   The acknowledgment ID for the messages being acknowledged that was returned
+ *   Required. The acknowledgment ID for the messages being acknowledged that was returned
  *   by the Pub/Sub system in the `Pull` response. Must not be empty.
  *
  * @typedef AcknowledgeRequest
@@ -837,7 +837,7 @@ const AcknowledgeRequest = {
  * deadline modifications from the client to the server.
  *
  * @property {string} subscription
- *   The subscription for which to initialize the new stream. This must be
+ *   Required. The subscription for which to initialize the new stream. This must be
  *   provided in the first request on the stream, and must not be set in
  *   subsequent requests from client to server.
  *   Format is `projects/{project}/subscriptions/{sub}`.
@@ -870,7 +870,7 @@ const AcknowledgeRequest = {
  *   processing was interrupted.
  *
  * @property {number} streamAckDeadlineSeconds
- *   The ack deadline to use for the stream. This must be provided in the
+ *   Required. The ack deadline to use for the stream. This must be provided in the
  *   first request on the stream, but it can also be updated on subsequent
  *   requests from client to server. The minimum deadline you can specify is 10
  *   seconds. The maximum deadline you can specify is 600 seconds (10 minutes).
@@ -912,7 +912,7 @@ const StreamingPullResponse = {
  * Request for the `CreateSnapshot` method.
  *
  * @property {string} name
- *   User-provided name for this snapshot. If the name is not provided in the
+ *   Required. User-provided name for this snapshot. If the name is not provided in the
  *   request, the server will assign a random name for this snapshot on the same
  *   project as the subscription. Note that for REST API requests, you must
  *   specify a name.  See the <a
@@ -920,7 +920,7 @@ const StreamingPullResponse = {
  *   name rules</a>. Format is `projects/{project}/snapshots/{snap}`.
  *
  * @property {string} subscription
- *   The subscription whose backlog the snapshot retains.
+ *   Required. The subscription whose backlog the snapshot retains.
  *   Specifically, the created snapshot is guaranteed to retain:
  *    (a) The existing backlog on the subscription. More precisely, this is
  *        defined as the messages in the subscription's backlog that are
@@ -946,12 +946,12 @@ const CreateSnapshotRequest = {
  * Request for the UpdateSnapshot method.
  *
  * @property {Object} snapshot
- *   The updated snapshot object.
+ *   Required. The updated snapshot object.
  *
  *   This object should have the same structure as [Snapshot]{@link google.pubsub.v1.Snapshot}
  *
  * @property {Object} updateMask
- *   Indicates which fields in the provided snapshot to update.
+ *   Required. Indicates which fields in the provided snapshot to update.
  *   Must be specified and non-empty.
  *
  *   This object should have the same structure as [FieldMask]{@link google.protobuf.FieldMask}
@@ -1008,7 +1008,7 @@ const Snapshot = {
  * Request for the GetSnapshot method.
  *
  * @property {string} snapshot
- *   The name of the snapshot to get.
+ *   Required. The name of the snapshot to get.
  *   Format is `projects/{project}/snapshots/{snap}`.
  *
  * @typedef GetSnapshotRequest
@@ -1023,7 +1023,7 @@ const GetSnapshotRequest = {
  * Request for the `ListSnapshots` method.
  *
  * @property {string} project
- *   The name of the project in which to list snapshots.
+ *   Required. The name of the project in which to list snapshots.
  *   Format is `projects/{project-id}`.
  *
  * @property {number} pageSize
@@ -1066,7 +1066,7 @@ const ListSnapshotsResponse = {
  * Request for the `DeleteSnapshot` method.
  *
  * @property {string} snapshot
- *   The name of the snapshot to delete.
+ *   Required. The name of the snapshot to delete.
  *   Format is `projects/{project}/snapshots/{snap}`.
  *
  * @typedef DeleteSnapshotRequest
@@ -1081,7 +1081,7 @@ const DeleteSnapshotRequest = {
  * Request for the `Seek` method.
  *
  * @property {string} subscription
- *   The subscription to affect.
+ *   Required. The subscription to affect.
  *
  * @property {Object} time
  *   The time to seek to.
