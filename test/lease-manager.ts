@@ -186,7 +186,8 @@ describe('LeaseManager', () => {
       let halfway: number;
 
       beforeEach(() => {
-        random = Math.random();
+        // This random number was generated once to keep the test results stable.
+        random = 0.5756015072052962;
         sandbox.stub(global.Math, 'random').returns(random);
         clock = sandbox.useFakeTimers();
         expectedTimeout =
@@ -226,7 +227,7 @@ describe('LeaseManager', () => {
       });
 
       it('should remove any messages that pass the maxExtension value', () => {
-        const maxExtension = (expectedTimeout - 1) / 1000;
+        const maxExtension = (expectedTimeout - 100) / 1000;
         const badMessages = [new FakeMessage(), new FakeMessage()];
 
         leaseManager.setOptions({maxExtension});
