@@ -58,7 +58,7 @@
     "async-each": "^1.0.1",
     "extend": "^3.0.2",
     "google-auth-library": "^5.5.0",
-    "google-gax": "^1.7.5",
+    "google-gax": "^1.14.2",
     "is-stream-ended": "^0.1.4",
     "lodash.snakecase": "^4.1.1",
     "p-defer": "^3.0.0",
@@ -94,7 +94,8 @@
     "ncp": "^2.0.0",
     "prettier": "^1.18.2",
     "proxyquire": "^2.0.0",
-    "sinon": "^8.0.0",
+    "sinon": "^9.0.0",
+    "source-map-support": "^0.5.9",
     "typescript": "3.6.4",
     "uuid": "^3.1.0",
     "yargs": "^15.0.0"
