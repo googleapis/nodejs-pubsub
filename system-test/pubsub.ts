@@ -862,6 +862,27 @@ describe('pubsub', () => {
           subscription.close(done);
         });
       });
+
+      it('should seek to a future date (purge)', done => {
+        const testText = 'Oh no!';
+
+        // Forward-seek to remove any messages from the queue (those were
+        // placed there in before()).
+        //
+        // We... probably won't be using this in 3000?
+        subscription.seek(new Date('3000-01-01')).then(() => {
+          // Drop a second message and make sure it's the right ID.
+          return topic.publish(Buffer.from(testText));
+        }).then(() => {
+          subscription.on('error', done);
+          subscription.on('message', message => {
+            // If we get the default message from before() then this fails.
+            assert.equal(message.data.toString(), testText);
+            message.ack();
+            subscription.close(done);
+          });
+        });
+      });
     });
   });
 });

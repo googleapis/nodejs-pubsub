@@ -884,7 +884,13 @@ describe('Subscription', () => {
 
     it('should optionally accept a Date object', done => {
       const date = new Date();
-      const reqOpts = {subscription: SUB_FULL_NAME, time: date};
+      const reqOpts = {
+        subscription: SUB_FULL_NAME,
+        time: {
+          seconds: Math.floor(date.getTime() / 1000),
+          nanos: Math.floor(date.getTime() % 1000) * 1000
+        }
+      };
       subscription.request = (config: RequestConfig) => {
         assert.deepStrictEqual(config.reqOpts, reqOpts);
         done();
