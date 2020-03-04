@@ -895,7 +895,7 @@ export class Subscription extends EventEmitter {
       const dateMillis = (snapshot as Date).getTime();
       reqOpts.time = {
         seconds: Math.floor(dateMillis / 1000),
-        nanos: Math.floor(dateMillis % 1000) * 1000
+        nanos: Math.floor(dateMillis % 1000) * 1000,
       };
     } else {
       throw new Error('Either a snapshot name or Date is needed to seek to.');

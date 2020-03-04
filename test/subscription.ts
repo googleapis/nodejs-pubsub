@@ -888,8 +888,8 @@ describe('Subscription', () => {
         subscription: SUB_FULL_NAME,
         time: {
           seconds: Math.floor(date.getTime() / 1000),
-          nanos: Math.floor(date.getTime() % 1000) * 1000
-        }
+          nanos: Math.floor(date.getTime() % 1000) * 1000,
+        },
       };
       subscription.request = (config: RequestConfig) => {
         assert.deepStrictEqual(config.reqOpts, reqOpts);
