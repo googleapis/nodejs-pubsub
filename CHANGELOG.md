@@ -4,6 +4,20 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [1.6.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.5.0...v1.6.0) (2020-03-04)
+
+
+### Features
+
+* **subscription:** support oidcToken ([#865](https://www.github.com/googleapis/nodejs-pubsub/issues/865)) ([a786ca0](https://www.github.com/googleapis/nodejs-pubsub/commit/a786ca00bd27a6e098125d6b7b87edb11ea6ea0f))
+* export protos in src/index.ts ([f32910c](https://www.github.com/googleapis/nodejs-pubsub/commit/f32910c3a7da5ce268084d7294094912ab696034))
+
+
+### Bug Fixes
+
+* **deps:** update to the latest google-gax to pull in grpc-js 0.6.18 ([#903](https://www.github.com/googleapis/nodejs-pubsub/issues/903)) ([78bd9e9](https://www.github.com/googleapis/nodejs-pubsub/commit/78bd9e97a913b5e2aa457c2a28fd849f67bf225e))
+* send the ITimestamp protobuf to Pub/Sub for seeking, not JavaScript Date() ([#908](https://www.github.com/googleapis/nodejs-pubsub/issues/908)) ([0c1d711](https://www.github.com/googleapis/nodejs-pubsub/commit/0c1d711854d7397a0fc4d6e84ed090984a6e05dc))
+
 ## [1.5.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.4.1...v1.5.0) (2020-02-03)
 
 
