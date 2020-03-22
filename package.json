@@ -94,7 +94,7 @@
     "mv": "^2.1.1",
     "ncp": "^2.0.0",
     "power-assert": "^1.4.4",
-    "prettier": "^1.18.2",
+    "prettier": "^2.0.0",
     "proxyquire": "^2.0.0",
     "sinon": "^9.0.0",
     "source-map-support": "^0.5.9",
