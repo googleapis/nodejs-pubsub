@@ -22,7 +22,7 @@ import {MessageBatch, BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
 import {Topic} from '../topic';
 import {RequestCallback} from '../pubsub';
-import {google} from '../../proto/pubsub';
+import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
 
 export type PubsubMessage = google.pubsub.v1.IPubsubMessage;

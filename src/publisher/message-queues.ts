@@ -20,7 +20,7 @@ import {EventEmitter} from 'events';
 import {BatchPublishOptions, MessageBatch} from './message-batch';
 import {PublishError} from './publish-error';
 import {Publisher, PubsubMessage, PublishCallback, BATCH_LIMITS} from './';
-import {google} from '../../proto/pubsub';
+import {google} from '../../protos/protos';
 
 export interface PublishDone {
   (err: ServiceError | null): void;

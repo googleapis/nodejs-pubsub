@@ -21,7 +21,7 @@ import {EventEmitter} from 'events';
 import {ClientStub} from 'google-gax';
 import {common as protobuf} from 'protobufjs';
 
-import {google} from '../proto/pubsub';
+import {google} from '../protos/protos';
 
 import {Histogram} from './histogram';
 import {FlowControlOptions, LeaseManager} from './lease-manager';
