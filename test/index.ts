@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+<<<<<<< HEAD:test/index.ts
 
 import * as assert from 'assert';
 import {describe, it} from 'mocha';
@@ -21,3 +22,20 @@ describe('exports', () => {
     assert.ok(pubsub.v1);
   });
 });
+=======
+const config = {
+  "enable-source-maps": true,
+  "throw-deprecation": true,
+  "timeout": 10000
+}
+if (process.env.MOCHA_THROW_DEPRECATION === 'false') {
+  delete config['throw-deprecation'];
+}
+if (process.env.MOCHA_REPORTER) {
+  config.reporter = process.env.MOCHA_REPORTER;
+}
+if (process.env.MOCHA_REPORTER_OUTPUT) {
+  config['reporter-option'] = `output=${process.env.MOCHA_REPORTER_OUTPUT}`;
+}
+module.exports = config
+>>>>>>> feat: convert client to typescript:.mocharc.js
