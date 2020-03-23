@@ -28,7 +28,7 @@ import {PassThrough} from 'stream';
 
 import {PullRetry} from './pull-retry';
 import {Subscriber} from './subscriber';
-import {google} from '../proto/pubsub';
+import {google} from '../protos/protos';
 import {defaultOptions} from './default-options';
 
 /*!

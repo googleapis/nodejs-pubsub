@@ -11,7 +11,6 @@
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
   "files": [
-    "build/proto",
     "build/protos",
     "build/src"
   ],
@@ -31,18 +30,16 @@
     "presystem-test": "npm run compile",
     "system-test": "mocha build/system-test --timeout 600000",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
-    "test": "c8 mocha build/test/*{,/*}.js",
-    "lint": "eslint '**/*.js' && gts check",
+    "test": "mocha build/test",
+    "lint": "gts check",
     "predocs": "npm run compile",
     "docs": "jsdoc -c .jsdoc.js",
-    "fix": "eslint --fix '**/*.js' && gts fix",
+    "fix": "gts fix",
     "clean": "gts clean",
-    "compile": "tsc -p . && cp -r src/v1 build/src/ && cp -r protos build/ && cp -r proto build/ && cp smoke-test/*.js build/system-test && cp test/*.js build/test",
-    "prepare": "npm run compile",
+    "compile": "tsc -p . && cp -r protos build/ && cp smoke-test/*.js build/system-test",
+    "compile-protos": "compileProtos src",
+    "prepare": "npm run compile-protos && npm run compile",
     "pretest": "npm run compile",
-    "proto": "mkdirp proto && npm run proto:pubsub && npm run proto:iam",
-    "proto:pubsub": "pbjs -t static-module -w commonjs -p protos google/pubsub/v1/pubsub.proto | pbts -o proto/pubsub.d.ts -",
-    "proto:iam": "pbjs -t static-module -w commonjs -p protos google/iam/v1/iam_policy.proto | pbts -o proto/iam.d.ts -",
     "docs-test": "linkinator docs",
     "predocs-test": "npm run docs",
     "benchwrapper": "node bin/benchwrapper.js"
@@ -72,6 +69,7 @@
     "@types/mocha": "^7.0.0",
     "@types/mv": "^2.1.0",
     "@types/ncp": "^2.0.1",
+    "@types/node": "^12.12.30",
     "@types/proxyquire": "^1.3.28",
     "@types/sinon": "^9.0.0",
     "@types/tmp": "^0.1.0",
@@ -92,12 +90,20 @@
     "mocha": "^7.0.0",
     "mv": "^2.1.1",
     "ncp": "^2.0.0",
+<<<<<<< HEAD
+=======
+    "null-loader": "^3.0.0",
+    "power-assert": "^1.4.4",
+>>>>>>> feat: convert client to typescript
     "prettier": "^1.18.2",
     "proxyquire": "^2.0.0",
     "sinon": "^9.0.0",
     "source-map-support": "^0.5.9",
+    "ts-loader": "^6.2.1",
     "typescript": "3.6.4",
     "uuid": "^7.0.0",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11",
     "yargs": "^15.0.0"
   }
 }
