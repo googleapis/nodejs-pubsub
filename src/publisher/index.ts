@@ -21,7 +21,11 @@ import {CallOptions} from 'google-gax';
 import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue, PublishDone} from './message-queues';
 import {Topic} from '../topic';
+<<<<<<< HEAD
 import {RequestCallback, EmptyCallback, EmptyResponse} from '../pubsub';
+=======
+import {RequestCallback} from '../pubsub';
+>>>>>>> feat: convert client to typescript
 import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
 

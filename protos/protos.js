@@ -26,39 +26,39 @@
 
     // Common aliases
     var $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
-    
+
     // Exported root namespace
     var $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
-    
+
     $root.google = (function() {
-    
+
         /**
          * Namespace google.
          * @exports google
          * @namespace
          */
         var google = {};
-    
+
         google.iam = (function() {
-    
+
             /**
              * Namespace iam.
              * @memberof google
              * @namespace
              */
             var iam = {};
-    
+
             iam.v1 = (function() {
-    
+
                 /**
                  * Namespace v1.
                  * @memberof google.iam
                  * @namespace
                  */
                 var v1 = {};
-    
+
                 v1.Policy = (function() {
-    
+
                     /**
                      * Properties of a Policy.
                      * @memberof google.iam.v1
@@ -67,7 +67,7 @@
                      * @property {Array.<google.iam.v1.IBinding>|null} [bindings] Policy bindings
                      * @property {Uint8Array|null} [etag] Policy etag
                      */
-    
+
                     /**
                      * Constructs a new Policy.
                      * @memberof google.iam.v1
@@ -83,7 +83,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * Policy version.
                      * @member {number} version
@@ -91,7 +91,7 @@
                      * @instance
                      */
                     Policy.prototype.version = 0;
-    
+
                     /**
                      * Policy bindings.
                      * @member {Array.<google.iam.v1.IBinding>} bindings
@@ -99,7 +99,7 @@
                      * @instance
                      */
                     Policy.prototype.bindings = $util.emptyArray;
-    
+
                     /**
                      * Policy etag.
                      * @member {Uint8Array} etag
@@ -107,7 +107,7 @@
                      * @instance
                      */
                     Policy.prototype.etag = $util.newBuffer([]);
-    
+
                     /**
                      * Creates a new Policy instance using the specified properties.
                      * @function create
@@ -119,7 +119,7 @@
                     Policy.create = function create(properties) {
                         return new Policy(properties);
                     };
-    
+
                     /**
                      * Encodes the specified Policy message. Does not implicitly {@link google.iam.v1.Policy.verify|verify} messages.
                      * @function encode
@@ -141,7 +141,7 @@
                                 $root.google.iam.v1.Binding.encode(message.bindings[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified Policy message, length delimited. Does not implicitly {@link google.iam.v1.Policy.verify|verify} messages.
                      * @function encodeDelimited
@@ -154,7 +154,7 @@
                     Policy.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a Policy message from the specified reader or buffer.
                      * @function decode
@@ -191,7 +191,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a Policy message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -207,7 +207,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a Policy message.
                      * @function verify
@@ -236,7 +236,7 @@
                                 return "etag: buffer expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a Policy message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -268,7 +268,7 @@
                                 message.etag = object.etag;
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a Policy message. Also converts values to other types if specified.
                      * @function toObject
@@ -305,7 +305,7 @@
                         }
                         return object;
                     };
-    
+
                     /**
                      * Converts this Policy to JSON.
                      * @function toJSON
@@ -316,12 +316,12 @@
                     Policy.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return Policy;
                 })();
-    
+
                 v1.Binding = (function() {
-    
+
                     /**
                      * Properties of a Binding.
                      * @memberof google.iam.v1
@@ -330,7 +330,7 @@
                      * @property {Array.<string>|null} [members] Binding members
                      * @property {google.type.IExpr|null} [condition] Binding condition
                      */
-    
+
                     /**
                      * Constructs a new Binding.
                      * @memberof google.iam.v1
@@ -346,7 +346,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * Binding role.
                      * @member {string} role
@@ -354,7 +354,7 @@
                      * @instance
                      */
                     Binding.prototype.role = "";
-    
+
                     /**
                      * Binding members.
                      * @member {Array.<string>} members
@@ -362,7 +362,7 @@
                      * @instance
                      */
                     Binding.prototype.members = $util.emptyArray;
-    
+
                     /**
                      * Binding condition.
                      * @member {google.type.IExpr|null|undefined} condition
@@ -370,7 +370,7 @@
                      * @instance
                      */
                     Binding.prototype.condition = null;
-    
+
                     /**
                      * Creates a new Binding instance using the specified properties.
                      * @function create
@@ -382,7 +382,7 @@
                     Binding.create = function create(properties) {
                         return new Binding(properties);
                     };
-    
+
                     /**
                      * Encodes the specified Binding message. Does not implicitly {@link google.iam.v1.Binding.verify|verify} messages.
                      * @function encode
@@ -404,7 +404,7 @@
                             $root.google.type.Expr.encode(message.condition, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified Binding message, length delimited. Does not implicitly {@link google.iam.v1.Binding.verify|verify} messages.
                      * @function encodeDelimited
@@ -417,7 +417,7 @@
                     Binding.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a Binding message from the specified reader or buffer.
                      * @function decode
@@ -454,7 +454,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a Binding message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -470,7 +470,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a Binding message.
                      * @function verify
@@ -499,7 +499,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a Binding message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -528,7 +528,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a Binding message. Also converts values to other types if specified.
                      * @function toObject
@@ -559,7 +559,7 @@
                             object.condition = $root.google.type.Expr.toObject(message.condition, options);
                         return object;
                     };
-    
+
                     /**
                      * Converts this Binding to JSON.
                      * @function toJSON
@@ -570,12 +570,12 @@
                     Binding.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return Binding;
                 })();
-    
+
                 v1.PolicyDelta = (function() {
-    
+
                     /**
                      * Properties of a PolicyDelta.
                      * @memberof google.iam.v1
@@ -583,7 +583,7 @@
                      * @property {Array.<google.iam.v1.IBindingDelta>|null} [bindingDeltas] PolicyDelta bindingDeltas
                      * @property {Array.<google.iam.v1.IAuditConfigDelta>|null} [auditConfigDeltas] PolicyDelta auditConfigDeltas
                      */
-    
+
                     /**
                      * Constructs a new PolicyDelta.
                      * @memberof google.iam.v1
@@ -600,7 +600,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * PolicyDelta bindingDeltas.
                      * @member {Array.<google.iam.v1.IBindingDelta>} bindingDeltas
@@ -608,7 +608,7 @@
                      * @instance
                      */
                     PolicyDelta.prototype.bindingDeltas = $util.emptyArray;
-    
+
                     /**
                      * PolicyDelta auditConfigDeltas.
                      * @member {Array.<google.iam.v1.IAuditConfigDelta>} auditConfigDeltas
@@ -616,7 +616,7 @@
                      * @instance
                      */
                     PolicyDelta.prototype.auditConfigDeltas = $util.emptyArray;
-    
+
                     /**
                      * Creates a new PolicyDelta instance using the specified properties.
                      * @function create
@@ -628,7 +628,7 @@
                     PolicyDelta.create = function create(properties) {
                         return new PolicyDelta(properties);
                     };
-    
+
                     /**
                      * Encodes the specified PolicyDelta message. Does not implicitly {@link google.iam.v1.PolicyDelta.verify|verify} messages.
                      * @function encode
@@ -649,7 +649,7 @@
                                 $root.google.iam.v1.AuditConfigDelta.encode(message.auditConfigDeltas[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified PolicyDelta message, length delimited. Does not implicitly {@link google.iam.v1.PolicyDelta.verify|verify} messages.
                      * @function encodeDelimited
@@ -662,7 +662,7 @@
                     PolicyDelta.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a PolicyDelta message from the specified reader or buffer.
                      * @function decode
@@ -698,7 +698,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a PolicyDelta message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -714,7 +714,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a PolicyDelta message.
                      * @function verify
@@ -746,7 +746,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a PolicyDelta message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -781,7 +781,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a PolicyDelta message. Also converts values to other types if specified.
                      * @function toObject
@@ -811,7 +811,7 @@
                         }
                         return object;
                     };
-    
+
                     /**
                      * Converts this PolicyDelta to JSON.
                      * @function toJSON
@@ -822,12 +822,12 @@
                     PolicyDelta.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return PolicyDelta;
                 })();
-    
+
                 v1.BindingDelta = (function() {
-    
+
                     /**
                      * Properties of a BindingDelta.
                      * @memberof google.iam.v1
@@ -837,7 +837,7 @@
                      * @property {string|null} [member] BindingDelta member
                      * @property {google.type.IExpr|null} [condition] BindingDelta condition
                      */
-    
+
                     /**
                      * Constructs a new BindingDelta.
                      * @memberof google.iam.v1
@@ -852,7 +852,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * BindingDelta action.
                      * @member {google.iam.v1.BindingDelta.Action} action
@@ -860,7 +860,7 @@
                      * @instance
                      */
                     BindingDelta.prototype.action = 0;
-    
+
                     /**
                      * BindingDelta role.
                      * @member {string} role
@@ -868,7 +868,7 @@
                      * @instance
                      */
                     BindingDelta.prototype.role = "";
-    
+
                     /**
                      * BindingDelta member.
                      * @member {string} member
@@ -876,7 +876,7 @@
                      * @instance
                      */
                     BindingDelta.prototype.member = "";
-    
+
                     /**
                      * BindingDelta condition.
                      * @member {google.type.IExpr|null|undefined} condition
@@ -884,7 +884,7 @@
                      * @instance
                      */
                     BindingDelta.prototype.condition = null;
-    
+
                     /**
                      * Creates a new BindingDelta instance using the specified properties.
                      * @function create
@@ -896,7 +896,7 @@
                     BindingDelta.create = function create(properties) {
                         return new BindingDelta(properties);
                     };
-    
+
                     /**
                      * Encodes the specified BindingDelta message. Does not implicitly {@link google.iam.v1.BindingDelta.verify|verify} messages.
                      * @function encode
@@ -919,7 +919,7 @@
                             $root.google.type.Expr.encode(message.condition, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified BindingDelta message, length delimited. Does not implicitly {@link google.iam.v1.BindingDelta.verify|verify} messages.
                      * @function encodeDelimited
@@ -932,7 +932,7 @@
                     BindingDelta.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a BindingDelta message from the specified reader or buffer.
                      * @function decode
@@ -970,7 +970,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a BindingDelta message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -986,7 +986,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a BindingDelta message.
                      * @function verify
@@ -1020,7 +1020,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a BindingDelta message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -1058,7 +1058,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a BindingDelta message. Also converts values to other types if specified.
                      * @function toObject
@@ -1088,7 +1088,7 @@
                             object.condition = $root.google.type.Expr.toObject(message.condition, options);
                         return object;
                     };
-    
+
                     /**
                      * Converts this BindingDelta to JSON.
                      * @function toJSON
@@ -1099,7 +1099,7 @@
                     BindingDelta.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     /**
                      * Action enum.
                      * @name google.iam.v1.BindingDelta.Action
@@ -1115,12 +1115,12 @@
                         values[valuesById[2] = "REMOVE"] = 2;
                         return values;
                     })();
-    
+
                     return BindingDelta;
                 })();
-    
+
                 v1.AuditConfigDelta = (function() {
-    
+
                     /**
                      * Properties of an AuditConfigDelta.
                      * @memberof google.iam.v1
@@ -1130,7 +1130,7 @@
                      * @property {string|null} [exemptedMember] AuditConfigDelta exemptedMember
                      * @property {string|null} [logType] AuditConfigDelta logType
                      */
-    
+
                     /**
                      * Constructs a new AuditConfigDelta.
                      * @memberof google.iam.v1
@@ -1145,7 +1145,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * AuditConfigDelta action.
                      * @member {google.iam.v1.AuditConfigDelta.Action} action
@@ -1153,7 +1153,7 @@
                      * @instance
                      */
                     AuditConfigDelta.prototype.action = 0;
-    
+
                     /**
                      * AuditConfigDelta service.
                      * @member {string} service
@@ -1161,7 +1161,7 @@
                      * @instance
                      */
                     AuditConfigDelta.prototype.service = "";
-    
+
                     /**
                      * AuditConfigDelta exemptedMember.
                      * @member {string} exemptedMember
@@ -1169,7 +1169,7 @@
                      * @instance
                      */
                     AuditConfigDelta.prototype.exemptedMember = "";
-    
+
                     /**
                      * AuditConfigDelta logType.
                      * @member {string} logType
@@ -1177,7 +1177,7 @@
                      * @instance
                      */
                     AuditConfigDelta.prototype.logType = "";
-    
+
                     /**
                      * Creates a new AuditConfigDelta instance using the specified properties.
                      * @function create
@@ -1189,7 +1189,7 @@
                     AuditConfigDelta.create = function create(properties) {
                         return new AuditConfigDelta(properties);
                     };
-    
+
                     /**
                      * Encodes the specified AuditConfigDelta message. Does not implicitly {@link google.iam.v1.AuditConfigDelta.verify|verify} messages.
                      * @function encode
@@ -1212,7 +1212,7 @@
                             writer.uint32(/* id 4, wireType 2 =*/34).string(message.logType);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified AuditConfigDelta message, length delimited. Does not implicitly {@link google.iam.v1.AuditConfigDelta.verify|verify} messages.
                      * @function encodeDelimited
@@ -1225,7 +1225,7 @@
                     AuditConfigDelta.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes an AuditConfigDelta message from the specified reader or buffer.
                      * @function decode
@@ -1263,7 +1263,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes an AuditConfigDelta message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -1279,7 +1279,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies an AuditConfigDelta message.
                      * @function verify
@@ -1311,7 +1311,7 @@
                                 return "logType: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates an AuditConfigDelta message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -1346,7 +1346,7 @@
                             message.logType = String(object.logType);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from an AuditConfigDelta message. Also converts values to other types if specified.
                      * @function toObject
@@ -1376,7 +1376,7 @@
                             object.logType = message.logType;
                         return object;
                     };
-    
+
                     /**
                      * Converts this AuditConfigDelta to JSON.
                      * @function toJSON
@@ -1387,7 +1387,7 @@
                     AuditConfigDelta.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     /**
                      * Action enum.
                      * @name google.iam.v1.AuditConfigDelta.Action
@@ -1403,19 +1403,19 @@
                         values[valuesById[2] = "REMOVE"] = 2;
                         return values;
                     })();
-    
+
                     return AuditConfigDelta;
                 })();
-    
+
                 v1.GetPolicyOptions = (function() {
-    
+
                     /**
                      * Properties of a GetPolicyOptions.
                      * @memberof google.iam.v1
                      * @interface IGetPolicyOptions
                      * @property {number|null} [requestedPolicyVersion] GetPolicyOptions requestedPolicyVersion
                      */
-    
+
                     /**
                      * Constructs a new GetPolicyOptions.
                      * @memberof google.iam.v1
@@ -1430,7 +1430,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * GetPolicyOptions requestedPolicyVersion.
                      * @member {number} requestedPolicyVersion
@@ -1438,7 +1438,7 @@
                      * @instance
                      */
                     GetPolicyOptions.prototype.requestedPolicyVersion = 0;
-    
+
                     /**
                      * Creates a new GetPolicyOptions instance using the specified properties.
                      * @function create
@@ -1450,7 +1450,7 @@
                     GetPolicyOptions.create = function create(properties) {
                         return new GetPolicyOptions(properties);
                     };
-    
+
                     /**
                      * Encodes the specified GetPolicyOptions message. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
                      * @function encode
@@ -1467,7 +1467,7 @@
                             writer.uint32(/* id 1, wireType 0 =*/8).int32(message.requestedPolicyVersion);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified GetPolicyOptions message, length delimited. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
                      * @function encodeDelimited
@@ -1480,7 +1480,7 @@
                     GetPolicyOptions.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a GetPolicyOptions message from the specified reader or buffer.
                      * @function decode
@@ -1509,7 +1509,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a GetPolicyOptions message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -1525,7 +1525,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a GetPolicyOptions message.
                      * @function verify
@@ -1542,7 +1542,7 @@
                                 return "requestedPolicyVersion: integer expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a GetPolicyOptions message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -1559,7 +1559,7 @@
                             message.requestedPolicyVersion = object.requestedPolicyVersion | 0;
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a GetPolicyOptions message. Also converts values to other types if specified.
                      * @function toObject
@@ -1579,7 +1579,7 @@
                             object.requestedPolicyVersion = message.requestedPolicyVersion;
                         return object;
                     };
-    
+
                     /**
                      * Converts this GetPolicyOptions to JSON.
                      * @function toJSON
@@ -1590,12 +1590,12 @@
                     GetPolicyOptions.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return GetPolicyOptions;
                 })();
-    
+
                 v1.IAMPolicy = (function() {
-    
+
                     /**
                      * Constructs a new IAMPolicy service.
                      * @memberof google.iam.v1
@@ -1609,9 +1609,9 @@
                     function IAMPolicy(rpcImpl, requestDelimited, responseDelimited) {
                         $protobuf.rpc.Service.call(this, rpcImpl, requestDelimited, responseDelimited);
                     }
-    
+
                     (IAMPolicy.prototype = Object.create($protobuf.rpc.Service.prototype)).constructor = IAMPolicy;
-    
+
                     /**
                      * Creates new IAMPolicy service using the specified rpc implementation.
                      * @function create
@@ -1625,7 +1625,7 @@
                     IAMPolicy.create = function create(rpcImpl, requestDelimited, responseDelimited) {
                         return new this(rpcImpl, requestDelimited, responseDelimited);
                     };
-    
+
                     /**
                      * Callback as used by {@link google.iam.v1.IAMPolicy#setIamPolicy}.
                      * @memberof google.iam.v1.IAMPolicy
@@ -1634,7 +1634,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.iam.v1.Policy} [response] Policy
                      */
-    
+
                     /**
                      * Calls SetIamPolicy.
                      * @function setIamPolicy
@@ -1648,7 +1648,7 @@
                     Object.defineProperty(IAMPolicy.prototype.setIamPolicy = function setIamPolicy(request, callback) {
                         return this.rpcCall(setIamPolicy, $root.google.iam.v1.SetIamPolicyRequest, $root.google.iam.v1.Policy, request, callback);
                     }, "name", { value: "SetIamPolicy" });
-    
+
                     /**
                      * Calls SetIamPolicy.
                      * @function setIamPolicy
@@ -1658,7 +1658,7 @@
                      * @returns {Promise<google.iam.v1.Policy>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.iam.v1.IAMPolicy#getIamPolicy}.
                      * @memberof google.iam.v1.IAMPolicy
@@ -1667,7 +1667,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.iam.v1.Policy} [response] Policy
                      */
-    
+
                     /**
                      * Calls GetIamPolicy.
                      * @function getIamPolicy
@@ -1681,7 +1681,7 @@
                     Object.defineProperty(IAMPolicy.prototype.getIamPolicy = function getIamPolicy(request, callback) {
                         return this.rpcCall(getIamPolicy, $root.google.iam.v1.GetIamPolicyRequest, $root.google.iam.v1.Policy, request, callback);
                     }, "name", { value: "GetIamPolicy" });
-    
+
                     /**
                      * Calls GetIamPolicy.
                      * @function getIamPolicy
@@ -1691,7 +1691,7 @@
                      * @returns {Promise<google.iam.v1.Policy>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.iam.v1.IAMPolicy#testIamPermissions}.
                      * @memberof google.iam.v1.IAMPolicy
@@ -1700,7 +1700,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.iam.v1.TestIamPermissionsResponse} [response] TestIamPermissionsResponse
                      */
-    
+
                     /**
                      * Calls TestIamPermissions.
                      * @function testIamPermissions
@@ -1714,7 +1714,7 @@
                     Object.defineProperty(IAMPolicy.prototype.testIamPermissions = function testIamPermissions(request, callback) {
                         return this.rpcCall(testIamPermissions, $root.google.iam.v1.TestIamPermissionsRequest, $root.google.iam.v1.TestIamPermissionsResponse, request, callback);
                     }, "name", { value: "TestIamPermissions" });
-    
+
                     /**
                      * Calls TestIamPermissions.
                      * @function testIamPermissions
@@ -1724,12 +1724,12 @@
                      * @returns {Promise<google.iam.v1.TestIamPermissionsResponse>} Promise
                      * @variation 2
                      */
-    
+
                     return IAMPolicy;
                 })();
-    
+
                 v1.SetIamPolicyRequest = (function() {
-    
+
                     /**
                      * Properties of a SetIamPolicyRequest.
                      * @memberof google.iam.v1
@@ -1737,7 +1737,7 @@
                      * @property {string|null} [resource] SetIamPolicyRequest resource
                      * @property {google.iam.v1.IPolicy|null} [policy] SetIamPolicyRequest policy
                      */
-    
+
                     /**
                      * Constructs a new SetIamPolicyRequest.
                      * @memberof google.iam.v1
@@ -1752,7 +1752,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * SetIamPolicyRequest resource.
                      * @member {string} resource
@@ -1760,7 +1760,7 @@
                      * @instance
                      */
                     SetIamPolicyRequest.prototype.resource = "";
-    
+
                     /**
                      * SetIamPolicyRequest policy.
                      * @member {google.iam.v1.IPolicy|null|undefined} policy
@@ -1768,7 +1768,7 @@
                      * @instance
                      */
                     SetIamPolicyRequest.prototype.policy = null;
-    
+
                     /**
                      * Creates a new SetIamPolicyRequest instance using the specified properties.
                      * @function create
@@ -1780,7 +1780,7 @@
                     SetIamPolicyRequest.create = function create(properties) {
                         return new SetIamPolicyRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified SetIamPolicyRequest message. Does not implicitly {@link google.iam.v1.SetIamPolicyRequest.verify|verify} messages.
                      * @function encode
@@ -1799,7 +1799,7 @@
                             $root.google.iam.v1.Policy.encode(message.policy, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified SetIamPolicyRequest message, length delimited. Does not implicitly {@link google.iam.v1.SetIamPolicyRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -1812,7 +1812,7 @@
                     SetIamPolicyRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a SetIamPolicyRequest message from the specified reader or buffer.
                      * @function decode
@@ -1844,7 +1844,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a SetIamPolicyRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -1860,7 +1860,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a SetIamPolicyRequest message.
                      * @function verify
@@ -1882,7 +1882,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a SetIamPolicyRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -1904,7 +1904,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a SetIamPolicyRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -1928,7 +1928,7 @@
                             object.policy = $root.google.iam.v1.Policy.toObject(message.policy, options);
                         return object;
                     };
-    
+
                     /**
                      * Converts this SetIamPolicyRequest to JSON.
                      * @function toJSON
@@ -1939,12 +1939,12 @@
                     SetIamPolicyRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return SetIamPolicyRequest;
                 })();
-    
+
                 v1.GetIamPolicyRequest = (function() {
-    
+
                     /**
                      * Properties of a GetIamPolicyRequest.
                      * @memberof google.iam.v1
@@ -1952,7 +1952,7 @@
                      * @property {string|null} [resource] GetIamPolicyRequest resource
                      * @property {google.iam.v1.IGetPolicyOptions|null} [options] GetIamPolicyRequest options
                      */
-    
+
                     /**
                      * Constructs a new GetIamPolicyRequest.
                      * @memberof google.iam.v1
@@ -1967,7 +1967,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * GetIamPolicyRequest resource.
                      * @member {string} resource
@@ -1975,7 +1975,7 @@
                      * @instance
                      */
                     GetIamPolicyRequest.prototype.resource = "";
-    
+
                     /**
                      * GetIamPolicyRequest options.
                      * @member {google.iam.v1.IGetPolicyOptions|null|undefined} options
@@ -1983,7 +1983,7 @@
                      * @instance
                      */
                     GetIamPolicyRequest.prototype.options = null;
-    
+
                     /**
                      * Creates a new GetIamPolicyRequest instance using the specified properties.
                      * @function create
@@ -1995,7 +1995,7 @@
                     GetIamPolicyRequest.create = function create(properties) {
                         return new GetIamPolicyRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified GetIamPolicyRequest message. Does not implicitly {@link google.iam.v1.GetIamPolicyRequest.verify|verify} messages.
                      * @function encode
@@ -2014,7 +2014,7 @@
                             $root.google.iam.v1.GetPolicyOptions.encode(message.options, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified GetIamPolicyRequest message, length delimited. Does not implicitly {@link google.iam.v1.GetIamPolicyRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -2027,7 +2027,7 @@
                     GetIamPolicyRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a GetIamPolicyRequest message from the specified reader or buffer.
                      * @function decode
@@ -2059,7 +2059,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a GetIamPolicyRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -2075,7 +2075,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a GetIamPolicyRequest message.
                      * @function verify
@@ -2097,7 +2097,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a GetIamPolicyRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -2119,7 +2119,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a GetIamPolicyRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -2143,7 +2143,7 @@
                             object.options = $root.google.iam.v1.GetPolicyOptions.toObject(message.options, options);
                         return object;
                     };
-    
+
                     /**
                      * Converts this GetIamPolicyRequest to JSON.
                      * @function toJSON
@@ -2154,12 +2154,12 @@
                     GetIamPolicyRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return GetIamPolicyRequest;
                 })();
-    
+
                 v1.TestIamPermissionsRequest = (function() {
-    
+
                     /**
                      * Properties of a TestIamPermissionsRequest.
                      * @memberof google.iam.v1
@@ -2167,7 +2167,7 @@
                      * @property {string|null} [resource] TestIamPermissionsRequest resource
                      * @property {Array.<string>|null} [permissions] TestIamPermissionsRequest permissions
                      */
-    
+
                     /**
                      * Constructs a new TestIamPermissionsRequest.
                      * @memberof google.iam.v1
@@ -2183,7 +2183,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * TestIamPermissionsRequest resource.
                      * @member {string} resource
@@ -2191,7 +2191,7 @@
                      * @instance
                      */
                     TestIamPermissionsRequest.prototype.resource = "";
-    
+
                     /**
                      * TestIamPermissionsRequest permissions.
                      * @member {Array.<string>} permissions
@@ -2199,7 +2199,7 @@
                      * @instance
                      */
                     TestIamPermissionsRequest.prototype.permissions = $util.emptyArray;
-    
+
                     /**
                      * Creates a new TestIamPermissionsRequest instance using the specified properties.
                      * @function create
@@ -2211,7 +2211,7 @@
                     TestIamPermissionsRequest.create = function create(properties) {
                         return new TestIamPermissionsRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified TestIamPermissionsRequest message. Does not implicitly {@link google.iam.v1.TestIamPermissionsRequest.verify|verify} messages.
                      * @function encode
@@ -2231,7 +2231,7 @@
                                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.permissions[i]);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified TestIamPermissionsRequest message, length delimited. Does not implicitly {@link google.iam.v1.TestIamPermissionsRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -2244,7 +2244,7 @@
                     TestIamPermissionsRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a TestIamPermissionsRequest message from the specified reader or buffer.
                      * @function decode
@@ -2278,7 +2278,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a TestIamPermissionsRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -2294,7 +2294,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a TestIamPermissionsRequest message.
                      * @function verify
@@ -2318,7 +2318,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a TestIamPermissionsRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -2342,7 +2342,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a TestIamPermissionsRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -2369,7 +2369,7 @@
                         }
                         return object;
                     };
-    
+
                     /**
                      * Converts this TestIamPermissionsRequest to JSON.
                      * @function toJSON
@@ -2380,19 +2380,19 @@
                     TestIamPermissionsRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return TestIamPermissionsRequest;
                 })();
-    
+
                 v1.TestIamPermissionsResponse = (function() {
-    
+
                     /**
                      * Properties of a TestIamPermissionsResponse.
                      * @memberof google.iam.v1
                      * @interface ITestIamPermissionsResponse
                      * @property {Array.<string>|null} [permissions] TestIamPermissionsResponse permissions
                      */
-    
+
                     /**
                      * Constructs a new TestIamPermissionsResponse.
                      * @memberof google.iam.v1
@@ -2408,7 +2408,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * TestIamPermissionsResponse permissions.
                      * @member {Array.<string>} permissions
@@ -2416,7 +2416,7 @@
                      * @instance
                      */
                     TestIamPermissionsResponse.prototype.permissions = $util.emptyArray;
-    
+
                     /**
                      * Creates a new TestIamPermissionsResponse instance using the specified properties.
                      * @function create
@@ -2428,7 +2428,7 @@
                     TestIamPermissionsResponse.create = function create(properties) {
                         return new TestIamPermissionsResponse(properties);
                     };
-    
+
                     /**
                      * Encodes the specified TestIamPermissionsResponse message. Does not implicitly {@link google.iam.v1.TestIamPermissionsResponse.verify|verify} messages.
                      * @function encode
@@ -2446,7 +2446,7 @@
                                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.permissions[i]);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified TestIamPermissionsResponse message, length delimited. Does not implicitly {@link google.iam.v1.TestIamPermissionsResponse.verify|verify} messages.
                      * @function encodeDelimited
@@ -2459,7 +2459,7 @@
                     TestIamPermissionsResponse.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a TestIamPermissionsResponse message from the specified reader or buffer.
                      * @function decode
@@ -2490,7 +2490,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a TestIamPermissionsResponse message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -2506,7 +2506,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a TestIamPermissionsResponse message.
                      * @function verify
@@ -2527,7 +2527,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a TestIamPermissionsResponse message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -2549,7 +2549,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a TestIamPermissionsResponse message. Also converts values to other types if specified.
                      * @function toObject
@@ -2572,7 +2572,7 @@
                         }
                         return object;
                     };
-    
+
                     /**
                      * Converts this TestIamPermissionsResponse to JSON.
                      * @function toJSON
@@ -2583,28 +2583,28 @@
                     TestIamPermissionsResponse.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return TestIamPermissionsResponse;
                 })();
-    
+
                 v1.logging = (function() {
-    
+
                     /**
                      * Namespace logging.
                      * @memberof google.iam.v1
                      * @namespace
                      */
                     var logging = {};
-    
+
                     logging.AuditData = (function() {
-    
+
                         /**
                          * Properties of an AuditData.
                          * @memberof google.iam.v1.logging
                          * @interface IAuditData
                          * @property {google.iam.v1.IPolicyDelta|null} [policyDelta] AuditData policyDelta
                          */
-    
+
                         /**
                          * Constructs a new AuditData.
                          * @memberof google.iam.v1.logging
@@ -2619,7 +2619,7 @@
                                     if (properties[keys[i]] != null)
                                         this[keys[i]] = properties[keys[i]];
                         }
-    
+
                         /**
                          * AuditData policyDelta.
                          * @member {google.iam.v1.IPolicyDelta|null|undefined} policyDelta
@@ -2627,7 +2627,7 @@
                          * @instance
                          */
                         AuditData.prototype.policyDelta = null;
-    
+
                         /**
                          * Creates a new AuditData instance using the specified properties.
                          * @function create
@@ -2639,7 +2639,7 @@
                         AuditData.create = function create(properties) {
                             return new AuditData(properties);
                         };
-    
+
                         /**
                          * Encodes the specified AuditData message. Does not implicitly {@link google.iam.v1.logging.AuditData.verify|verify} messages.
                          * @function encode
@@ -2656,7 +2656,7 @@
                                 $root.google.iam.v1.PolicyDelta.encode(message.policyDelta, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                             return writer;
                         };
-    
+
                         /**
                          * Encodes the specified AuditData message, length delimited. Does not implicitly {@link google.iam.v1.logging.AuditData.verify|verify} messages.
                          * @function encodeDelimited
@@ -2669,7 +2669,7 @@
                         AuditData.encodeDelimited = function encodeDelimited(message, writer) {
                             return this.encode(message, writer).ldelim();
                         };
-    
+
                         /**
                          * Decodes an AuditData message from the specified reader or buffer.
                          * @function decode
@@ -2698,7 +2698,7 @@
                             }
                             return message;
                         };
-    
+
                         /**
                          * Decodes an AuditData message from the specified reader or buffer, length delimited.
                          * @function decodeDelimited
@@ -2714,7 +2714,7 @@
                                 reader = new $Reader(reader);
                             return this.decode(reader, reader.uint32());
                         };
-    
+
                         /**
                          * Verifies an AuditData message.
                          * @function verify
@@ -2733,7 +2733,7 @@
                             }
                             return null;
                         };
-    
+
                         /**
                          * Creates an AuditData message from a plain object. Also converts values to their respective internal types.
                          * @function fromObject
@@ -2753,7 +2753,7 @@
                             }
                             return message;
                         };
-    
+
                         /**
                          * Creates a plain object from an AuditData message. Also converts values to other types if specified.
                          * @function toObject
@@ -2773,7 +2773,7 @@
                                 object.policyDelta = $root.google.iam.v1.PolicyDelta.toObject(message.policyDelta, options);
                             return object;
                         };
-    
+
                         /**
                          * Converts this AuditData to JSON.
                          * @function toJSON
@@ -2784,30 +2784,30 @@
                         AuditData.prototype.toJSON = function toJSON() {
                             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                         };
-    
+
                         return AuditData;
                     })();
-    
+
                     return logging;
                 })();
-    
+
                 return v1;
             })();
-    
+
             return iam;
         })();
-    
+
         google.type = (function() {
-    
+
             /**
              * Namespace type.
              * @memberof google
              * @namespace
              */
             var type = {};
-    
+
             type.Expr = (function() {
-    
+
                 /**
                  * Properties of an Expr.
                  * @memberof google.type
@@ -2817,7 +2817,7 @@
                  * @property {string|null} [description] Expr description
                  * @property {string|null} [location] Expr location
                  */
-    
+
                 /**
                  * Constructs a new Expr.
                  * @memberof google.type
@@ -2832,7 +2832,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * Expr expression.
                  * @member {string} expression
@@ -2840,7 +2840,7 @@
                  * @instance
                  */
                 Expr.prototype.expression = "";
-    
+
                 /**
                  * Expr title.
                  * @member {string} title
@@ -2848,7 +2848,7 @@
                  * @instance
                  */
                 Expr.prototype.title = "";
-    
+
                 /**
                  * Expr description.
                  * @member {string} description
@@ -2856,7 +2856,7 @@
                  * @instance
                  */
                 Expr.prototype.description = "";
-    
+
                 /**
                  * Expr location.
                  * @member {string} location
@@ -2864,7 +2864,7 @@
                  * @instance
                  */
                 Expr.prototype.location = "";
-    
+
                 /**
                  * Creates a new Expr instance using the specified properties.
                  * @function create
@@ -2876,7 +2876,7 @@
                 Expr.create = function create(properties) {
                     return new Expr(properties);
                 };
-    
+
                 /**
                  * Encodes the specified Expr message. Does not implicitly {@link google.type.Expr.verify|verify} messages.
                  * @function encode
@@ -2899,7 +2899,7 @@
                         writer.uint32(/* id 4, wireType 2 =*/34).string(message.location);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified Expr message, length delimited. Does not implicitly {@link google.type.Expr.verify|verify} messages.
                  * @function encodeDelimited
@@ -2912,7 +2912,7 @@
                 Expr.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes an Expr message from the specified reader or buffer.
                  * @function decode
@@ -2950,7 +2950,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes an Expr message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -2966,7 +2966,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies an Expr message.
                  * @function verify
@@ -2992,7 +2992,7 @@
                             return "location: string expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates an Expr message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -3015,7 +3015,7 @@
                         message.location = String(object.location);
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from an Expr message. Also converts values to other types if specified.
                  * @function toObject
@@ -3045,7 +3045,7 @@
                         object.location = message.location;
                     return object;
                 };
-    
+
                 /**
                  * Converts this Expr to JSON.
                  * @function toJSON
@@ -3056,24 +3056,24 @@
                 Expr.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return Expr;
             })();
-    
+
             return type;
         })();
-    
+
         google.api = (function() {
-    
+
             /**
              * Namespace api.
              * @memberof google
              * @namespace
              */
             var api = {};
-    
+
             api.Http = (function() {
-    
+
                 /**
                  * Properties of a Http.
                  * @memberof google.api
@@ -3081,7 +3081,7 @@
                  * @property {Array.<google.api.IHttpRule>|null} [rules] Http rules
                  * @property {boolean|null} [fullyDecodeReservedExpansion] Http fullyDecodeReservedExpansion
                  */
-    
+
                 /**
                  * Constructs a new Http.
                  * @memberof google.api
@@ -3097,7 +3097,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * Http rules.
                  * @member {Array.<google.api.IHttpRule>} rules
@@ -3105,7 +3105,7 @@
                  * @instance
                  */
                 Http.prototype.rules = $util.emptyArray;
-    
+
                 /**
                  * Http fullyDecodeReservedExpansion.
                  * @member {boolean} fullyDecodeReservedExpansion
@@ -3113,7 +3113,7 @@
                  * @instance
                  */
                 Http.prototype.fullyDecodeReservedExpansion = false;
-    
+
                 /**
                  * Creates a new Http instance using the specified properties.
                  * @function create
@@ -3125,7 +3125,7 @@
                 Http.create = function create(properties) {
                     return new Http(properties);
                 };
-    
+
                 /**
                  * Encodes the specified Http message. Does not implicitly {@link google.api.Http.verify|verify} messages.
                  * @function encode
@@ -3145,7 +3145,7 @@
                         writer.uint32(/* id 2, wireType 0 =*/16).bool(message.fullyDecodeReservedExpansion);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified Http message, length delimited. Does not implicitly {@link google.api.Http.verify|verify} messages.
                  * @function encodeDelimited
@@ -3158,7 +3158,7 @@
                 Http.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a Http message from the specified reader or buffer.
                  * @function decode
@@ -3192,7 +3192,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a Http message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -3208,7 +3208,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a Http message.
                  * @function verify
@@ -3234,7 +3234,7 @@
                             return "fullyDecodeReservedExpansion: boolean expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates a Http message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -3261,7 +3261,7 @@
                         message.fullyDecodeReservedExpansion = Boolean(object.fullyDecodeReservedExpansion);
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a Http message. Also converts values to other types if specified.
                  * @function toObject
@@ -3288,7 +3288,7 @@
                         object.fullyDecodeReservedExpansion = message.fullyDecodeReservedExpansion;
                     return object;
                 };
-    
+
                 /**
                  * Converts this Http to JSON.
                  * @function toJSON
@@ -3299,12 +3299,12 @@
                 Http.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return Http;
             })();
-    
+
             api.HttpRule = (function() {
-    
+
                 /**
                  * Properties of a HttpRule.
                  * @memberof google.api
@@ -3320,7 +3320,7 @@
                  * @property {string|null} [responseBody] HttpRule responseBody
                  * @property {Array.<google.api.IHttpRule>|null} [additionalBindings] HttpRule additionalBindings
                  */
-    
+
                 /**
                  * Constructs a new HttpRule.
                  * @memberof google.api
@@ -3336,7 +3336,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * HttpRule selector.
                  * @member {string} selector
@@ -3344,7 +3344,7 @@
                  * @instance
                  */
                 HttpRule.prototype.selector = "";
-    
+
                 /**
                  * HttpRule get.
                  * @member {string} get
@@ -3352,7 +3352,7 @@
                  * @instance
                  */
                 HttpRule.prototype.get = "";
-    
+
                 /**
                  * HttpRule put.
                  * @member {string} put
@@ -3360,7 +3360,7 @@
                  * @instance
                  */
                 HttpRule.prototype.put = "";
-    
+
                 /**
                  * HttpRule post.
                  * @member {string} post
@@ -3368,7 +3368,7 @@
                  * @instance
                  */
                 HttpRule.prototype.post = "";
-    
+
                 /**
                  * HttpRule delete.
                  * @member {string} delete
@@ -3376,7 +3376,7 @@
                  * @instance
                  */
                 HttpRule.prototype["delete"] = "";
-    
+
                 /**
                  * HttpRule patch.
                  * @member {string} patch
@@ -3384,7 +3384,7 @@
                  * @instance
                  */
                 HttpRule.prototype.patch = "";
-    
+
                 /**
                  * HttpRule custom.
                  * @member {google.api.ICustomHttpPattern|null|undefined} custom
@@ -3392,7 +3392,7 @@
                  * @instance
                  */
                 HttpRule.prototype.custom = null;
-    
+
                 /**
                  * HttpRule body.
                  * @member {string} body
@@ -3400,7 +3400,7 @@
                  * @instance
                  */
                 HttpRule.prototype.body = "";
-    
+
                 /**
                  * HttpRule responseBody.
                  * @member {string} responseBody
@@ -3408,7 +3408,7 @@
                  * @instance
                  */
                 HttpRule.prototype.responseBody = "";
-    
+
                 /**
                  * HttpRule additionalBindings.
                  * @member {Array.<google.api.IHttpRule>} additionalBindings
@@ -3416,10 +3416,10 @@
                  * @instance
                  */
                 HttpRule.prototype.additionalBindings = $util.emptyArray;
-    
+
                 // OneOf field names bound to virtual getters and setters
                 var $oneOfFields;
-    
+
                 /**
                  * HttpRule pattern.
                  * @member {"get"|"put"|"post"|"delete"|"patch"|"custom"|undefined} pattern
@@ -3430,7 +3430,7 @@
                     get: $util.oneOfGetter($oneOfFields = ["get", "put", "post", "delete", "patch", "custom"]),
                     set: $util.oneOfSetter($oneOfFields)
                 });
-    
+
                 /**
                  * Creates a new HttpRule instance using the specified properties.
                  * @function create
@@ -3442,7 +3442,7 @@
                 HttpRule.create = function create(properties) {
                     return new HttpRule(properties);
                 };
-    
+
                 /**
                  * Encodes the specified HttpRule message. Does not implicitly {@link google.api.HttpRule.verify|verify} messages.
                  * @function encode
@@ -3478,7 +3478,7 @@
                         writer.uint32(/* id 12, wireType 2 =*/98).string(message.responseBody);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified HttpRule message, length delimited. Does not implicitly {@link google.api.HttpRule.verify|verify} messages.
                  * @function encodeDelimited
@@ -3491,7 +3491,7 @@
                 HttpRule.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a HttpRule message from the specified reader or buffer.
                  * @function decode
@@ -3549,7 +3549,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a HttpRule message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -3565,7 +3565,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a HttpRule message.
                  * @function verify
@@ -3641,7 +3641,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates a HttpRule message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -3687,7 +3687,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a HttpRule message. Also converts values to other types if specified.
                  * @function toObject
@@ -3751,7 +3751,7 @@
                         object.responseBody = message.responseBody;
                     return object;
                 };
-    
+
                 /**
                  * Converts this HttpRule to JSON.
                  * @function toJSON
@@ -3762,12 +3762,12 @@
                 HttpRule.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return HttpRule;
             })();
-    
+
             api.CustomHttpPattern = (function() {
-    
+
                 /**
                  * Properties of a CustomHttpPattern.
                  * @memberof google.api
@@ -3775,7 +3775,7 @@
                  * @property {string|null} [kind] CustomHttpPattern kind
                  * @property {string|null} [path] CustomHttpPattern path
                  */
-    
+
                 /**
                  * Constructs a new CustomHttpPattern.
                  * @memberof google.api
@@ -3790,7 +3790,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * CustomHttpPattern kind.
                  * @member {string} kind
@@ -3798,7 +3798,7 @@
                  * @instance
                  */
                 CustomHttpPattern.prototype.kind = "";
-    
+
                 /**
                  * CustomHttpPattern path.
                  * @member {string} path
@@ -3806,7 +3806,7 @@
                  * @instance
                  */
                 CustomHttpPattern.prototype.path = "";
-    
+
                 /**
                  * Creates a new CustomHttpPattern instance using the specified properties.
                  * @function create
@@ -3818,7 +3818,7 @@
                 CustomHttpPattern.create = function create(properties) {
                     return new CustomHttpPattern(properties);
                 };
-    
+
                 /**
                  * Encodes the specified CustomHttpPattern message. Does not implicitly {@link google.api.CustomHttpPattern.verify|verify} messages.
                  * @function encode
@@ -3837,7 +3837,7 @@
                         writer.uint32(/* id 2, wireType 2 =*/18).string(message.path);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified CustomHttpPattern message, length delimited. Does not implicitly {@link google.api.CustomHttpPattern.verify|verify} messages.
                  * @function encodeDelimited
@@ -3850,7 +3850,7 @@
                 CustomHttpPattern.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a CustomHttpPattern message from the specified reader or buffer.
                  * @function decode
@@ -3882,7 +3882,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a CustomHttpPattern message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -3898,7 +3898,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a CustomHttpPattern message.
                  * @function verify
@@ -3918,7 +3918,7 @@
                             return "path: string expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates a CustomHttpPattern message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -3937,7 +3937,7 @@
                         message.path = String(object.path);
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a CustomHttpPattern message. Also converts values to other types if specified.
                  * @function toObject
@@ -3961,7 +3961,7 @@
                         object.path = message.path;
                     return object;
                 };
-    
+
                 /**
                  * Converts this CustomHttpPattern to JSON.
                  * @function toJSON
@@ -3972,10 +3972,10 @@
                 CustomHttpPattern.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return CustomHttpPattern;
             })();
-    
+
             /**
              * FieldBehavior enum.
              * @name google.api.FieldBehavior
@@ -3997,9 +3997,9 @@
                 values[valuesById[5] = "IMMUTABLE"] = 5;
                 return values;
             })();
-    
+
             api.ResourceDescriptor = (function() {
-    
+
                 /**
                  * Properties of a ResourceDescriptor.
                  * @memberof google.api
@@ -4011,7 +4011,7 @@
                  * @property {string|null} [plural] ResourceDescriptor plural
                  * @property {string|null} [singular] ResourceDescriptor singular
                  */
-    
+
                 /**
                  * Constructs a new ResourceDescriptor.
                  * @memberof google.api
@@ -4027,7 +4027,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * ResourceDescriptor type.
                  * @member {string} type
@@ -4035,7 +4035,7 @@
                  * @instance
                  */
                 ResourceDescriptor.prototype.type = "";
-    
+
                 /**
                  * ResourceDescriptor pattern.
                  * @member {Array.<string>} pattern
@@ -4043,7 +4043,7 @@
                  * @instance
                  */
                 ResourceDescriptor.prototype.pattern = $util.emptyArray;
-    
+
                 /**
                  * ResourceDescriptor nameField.
                  * @member {string} nameField
@@ -4051,7 +4051,7 @@
                  * @instance
                  */
                 ResourceDescriptor.prototype.nameField = "";
-    
+
                 /**
                  * ResourceDescriptor history.
                  * @member {google.api.ResourceDescriptor.History} history
@@ -4059,7 +4059,7 @@
                  * @instance
                  */
                 ResourceDescriptor.prototype.history = 0;
-    
+
                 /**
                  * ResourceDescriptor plural.
                  * @member {string} plural
@@ -4067,7 +4067,7 @@
                  * @instance
                  */
                 ResourceDescriptor.prototype.plural = "";
-    
+
                 /**
                  * ResourceDescriptor singular.
                  * @member {string} singular
@@ -4075,7 +4075,7 @@
                  * @instance
                  */
                 ResourceDescriptor.prototype.singular = "";
-    
+
                 /**
                  * Creates a new ResourceDescriptor instance using the specified properties.
                  * @function create
@@ -4087,7 +4087,7 @@
                 ResourceDescriptor.create = function create(properties) {
                     return new ResourceDescriptor(properties);
                 };
-    
+
                 /**
                  * Encodes the specified ResourceDescriptor message. Does not implicitly {@link google.api.ResourceDescriptor.verify|verify} messages.
                  * @function encode
@@ -4115,7 +4115,7 @@
                         writer.uint32(/* id 6, wireType 2 =*/50).string(message.singular);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified ResourceDescriptor message, length delimited. Does not implicitly {@link google.api.ResourceDescriptor.verify|verify} messages.
                  * @function encodeDelimited
@@ -4128,7 +4128,7 @@
                 ResourceDescriptor.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a ResourceDescriptor message from the specified reader or buffer.
                  * @function decode
@@ -4174,7 +4174,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a ResourceDescriptor message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -4190,7 +4190,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a ResourceDescriptor message.
                  * @function verify
@@ -4232,7 +4232,7 @@
                             return "singular: string expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates a ResourceDescriptor message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -4276,7 +4276,7 @@
                         message.singular = String(object.singular);
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a ResourceDescriptor message. Also converts values to other types if specified.
                  * @function toObject
@@ -4316,7 +4316,7 @@
                         object.singular = message.singular;
                     return object;
                 };
-    
+
                 /**
                  * Converts this ResourceDescriptor to JSON.
                  * @function toJSON
@@ -4327,7 +4327,7 @@
                 ResourceDescriptor.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 /**
                  * History enum.
                  * @name google.api.ResourceDescriptor.History
@@ -4343,12 +4343,12 @@
                     values[valuesById[2] = "FUTURE_MULTI_PATTERN"] = 2;
                     return values;
                 })();
-    
+
                 return ResourceDescriptor;
             })();
-    
+
             api.ResourceReference = (function() {
-    
+
                 /**
                  * Properties of a ResourceReference.
                  * @memberof google.api
@@ -4356,7 +4356,7 @@
                  * @property {string|null} [type] ResourceReference type
                  * @property {string|null} [childType] ResourceReference childType
                  */
-    
+
                 /**
                  * Constructs a new ResourceReference.
                  * @memberof google.api
@@ -4371,7 +4371,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * ResourceReference type.
                  * @member {string} type
@@ -4379,7 +4379,7 @@
                  * @instance
                  */
                 ResourceReference.prototype.type = "";
-    
+
                 /**
                  * ResourceReference childType.
                  * @member {string} childType
@@ -4387,7 +4387,7 @@
                  * @instance
                  */
                 ResourceReference.prototype.childType = "";
-    
+
                 /**
                  * Creates a new ResourceReference instance using the specified properties.
                  * @function create
@@ -4399,7 +4399,8 @@
                 ResourceReference.create = function create(properties) {
                     return new ResourceReference(properties);
                 };
-    
+
+<<<<<<< HEAD
                 /**
                  * Encodes the specified ResourceReference message. Does not implicitly {@link google.api.ResourceReference.verify|verify} messages.
                  * @function encode
@@ -4418,7 +4419,26 @@
                         writer.uint32(/* id 2, wireType 2 =*/18).string(message.childType);
                     return writer;
                 };
-    
+=======
+                    /**
+                     * Properties of a Subscription.
+                     * @memberof google.pubsub.v1
+                     * @interface ISubscription
+                     * @property {string|null} [name] Subscription name
+                     * @property {string|null} [topic] Subscription topic
+                     * @property {google.pubsub.v1.IPushConfig|null} [pushConfig] Subscription pushConfig
+                     * @property {number|null} [ackDeadlineSeconds] Subscription ackDeadlineSeconds
+                     * @property {boolean|null} [retainAckedMessages] Subscription retainAckedMessages
+                     * @property {google.protobuf.IDuration|null} [messageRetentionDuration] Subscription messageRetentionDuration
+                     * @property {Object.<string,string>|null} [labels] Subscription labels
+                     * @property {boolean|null} [enableMessageOrdering] Subscription enableMessageOrdering
+                     * @property {google.pubsub.v1.IExpirationPolicy|null} [expirationPolicy] Subscription expirationPolicy
+                     * @property {string|null} [filter] Subscription filter
+                     * @property {google.pubsub.v1.IDeadLetterPolicy|null} [deadLetterPolicy] Subscription deadLetterPolicy
+                     * @property {google.pubsub.v1.IRetryPolicy|null} [retryPolicy] Subscription retryPolicy
+                     */
+>>>>>>> feat: convert client to typescript
+
                 /**
                  * Encodes the specified ResourceReference message, length delimited. Does not implicitly {@link google.api.ResourceReference.verify|verify} messages.
                  * @function encodeDelimited
@@ -4431,7 +4451,7 @@
                 ResourceReference.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a ResourceReference message from the specified reader or buffer.
                  * @function decode
@@ -4463,7 +4483,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a ResourceReference message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -4479,7 +4499,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a ResourceReference message.
                  * @function verify
@@ -4499,7 +4519,7 @@
                             return "childType: string expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates a ResourceReference message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -4518,7 +4538,7 @@
                         message.childType = String(object.childType);
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a ResourceReference message. Also converts values to other types if specified.
                  * @function toObject
@@ -4542,7 +4562,7 @@
                         object.childType = message.childType;
                     return object;
                 };
-    
+
                 /**
                  * Converts this ResourceReference to JSON.
                  * @function toJSON
@@ -4553,31 +4573,32 @@
                 ResourceReference.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return ResourceReference;
             })();
-    
+
             return api;
         })();
-    
+
         google.protobuf = (function() {
-    
+
             /**
              * Namespace protobuf.
              * @memberof google
              * @namespace
              */
             var protobuf = {};
-    
+
+<<<<<<< HEAD
             protobuf.FileDescriptorSet = (function() {
-    
+
                 /**
                  * Properties of a FileDescriptorSet.
                  * @memberof google.protobuf
                  * @interface IFileDescriptorSet
                  * @property {Array.<google.protobuf.IFileDescriptorProto>|null} [file] FileDescriptorSet file
                  */
-    
+
                 /**
                  * Constructs a new FileDescriptorSet.
                  * @memberof google.protobuf
@@ -4593,7 +4614,84 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+=======
+                    /**
+                     * Subscription filter.
+                     * @member {string} filter
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.filter = "";
+
+                    /**
+                     * Subscription deadLetterPolicy.
+                     * @member {google.pubsub.v1.IDeadLetterPolicy|null|undefined} deadLetterPolicy
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.deadLetterPolicy = null;
+
+                    /**
+                     * Subscription retryPolicy.
+                     * @member {google.pubsub.v1.IRetryPolicy|null|undefined} retryPolicy
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.retryPolicy = null;
+
+                    /**
+                     * Creates a new Subscription instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.Subscription
+                     * @static
+                     * @param {google.pubsub.v1.ISubscription=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.Subscription} Subscription instance
+                     */
+                    Subscription.create = function create(properties) {
+                        return new Subscription(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Subscription message. Does not implicitly {@link google.pubsub.v1.Subscription.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.Subscription
+                     * @static
+                     * @param {google.pubsub.v1.ISubscription} message Subscription message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Subscription.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.name);
+                        if (message.topic != null && message.hasOwnProperty("topic"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.topic);
+                        if (message.pushConfig != null && message.hasOwnProperty("pushConfig"))
+                            $root.google.pubsub.v1.PushConfig.encode(message.pushConfig, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                        if (message.ackDeadlineSeconds != null && message.hasOwnProperty("ackDeadlineSeconds"))
+                            writer.uint32(/* id 5, wireType 0 =*/40).int32(message.ackDeadlineSeconds);
+                        if (message.retainAckedMessages != null && message.hasOwnProperty("retainAckedMessages"))
+                            writer.uint32(/* id 7, wireType 0 =*/56).bool(message.retainAckedMessages);
+                        if (message.messageRetentionDuration != null && message.hasOwnProperty("messageRetentionDuration"))
+                            $root.google.protobuf.Duration.encode(message.messageRetentionDuration, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
+                        if (message.labels != null && message.hasOwnProperty("labels"))
+                            for (var keys = Object.keys(message.labels), i = 0; i < keys.length; ++i)
+                                writer.uint32(/* id 9, wireType 2 =*/74).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]).uint32(/* id 2, wireType 2 =*/18).string(message.labels[keys[i]]).ldelim();
+                        if (message.enableMessageOrdering != null && message.hasOwnProperty("enableMessageOrdering"))
+                            writer.uint32(/* id 10, wireType 0 =*/80).bool(message.enableMessageOrdering);
+                        if (message.expirationPolicy != null && message.hasOwnProperty("expirationPolicy"))
+                            $root.google.pubsub.v1.ExpirationPolicy.encode(message.expirationPolicy, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
+                        if (message.filter != null && message.hasOwnProperty("filter"))
+                            writer.uint32(/* id 12, wireType 2 =*/98).string(message.filter);
+                        if (message.deadLetterPolicy != null && message.hasOwnProperty("deadLetterPolicy"))
+                            $root.google.pubsub.v1.DeadLetterPolicy.encode(message.deadLetterPolicy, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
+                        if (message.retryPolicy != null && message.hasOwnProperty("retryPolicy"))
+                            $root.google.pubsub.v1.RetryPolicy.encode(message.retryPolicy, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
+                        return writer;
+                    };
+>>>>>>> feat: convert client to typescript
+
                 /**
                  * FileDescriptorSet file.
                  * @member {Array.<google.protobuf.IFileDescriptorProto>} file
@@ -4601,7 +4699,8 @@
                  * @instance
                  */
                 FileDescriptorSet.prototype.file = $util.emptyArray;
-    
+
+<<<<<<< HEAD
                 /**
                  * Creates a new FileDescriptorSet instance using the specified properties.
                  * @function create
@@ -4613,7 +4712,75 @@
                 FileDescriptorSet.create = function create(properties) {
                     return new FileDescriptorSet(properties);
                 };
-    
+=======
+                    /**
+                     * Decodes a Subscription message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.Subscription
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.Subscription} Subscription
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Subscription.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Subscription(), key;
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.name = reader.string();
+                                break;
+                            case 2:
+                                message.topic = reader.string();
+                                break;
+                            case 4:
+                                message.pushConfig = $root.google.pubsub.v1.PushConfig.decode(reader, reader.uint32());
+                                break;
+                            case 5:
+                                message.ackDeadlineSeconds = reader.int32();
+                                break;
+                            case 7:
+                                message.retainAckedMessages = reader.bool();
+                                break;
+                            case 8:
+                                message.messageRetentionDuration = $root.google.protobuf.Duration.decode(reader, reader.uint32());
+                                break;
+                            case 9:
+                                reader.skip().pos++;
+                                if (message.labels === $util.emptyObject)
+                                    message.labels = {};
+                                key = reader.string();
+                                reader.pos++;
+                                message.labels[key] = reader.string();
+                                break;
+                            case 10:
+                                message.enableMessageOrdering = reader.bool();
+                                break;
+                            case 11:
+                                message.expirationPolicy = $root.google.pubsub.v1.ExpirationPolicy.decode(reader, reader.uint32());
+                                break;
+                            case 12:
+                                message.filter = reader.string();
+                                break;
+                            case 13:
+                                message.deadLetterPolicy = $root.google.pubsub.v1.DeadLetterPolicy.decode(reader, reader.uint32());
+                                break;
+                            case 14:
+                                message.retryPolicy = $root.google.pubsub.v1.RetryPolicy.decode(reader, reader.uint32());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+>>>>>>> feat: convert client to typescript
+
                 /**
                  * Encodes the specified FileDescriptorSet message. Does not implicitly {@link google.protobuf.FileDescriptorSet.verify|verify} messages.
                  * @function encode
@@ -4631,7 +4798,7 @@
                             $root.google.protobuf.FileDescriptorProto.encode(message.file[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified FileDescriptorSet message, length delimited. Does not implicitly {@link google.protobuf.FileDescriptorSet.verify|verify} messages.
                  * @function encodeDelimited
@@ -4644,7 +4811,7 @@
                 FileDescriptorSet.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a FileDescriptorSet message from the specified reader or buffer.
                  * @function decode
@@ -4672,10 +4839,11 @@
                             reader.skipType(tag & 7);
                             break;
                         }
+<<<<<<< HEAD
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a FileDescriptorSet message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -4691,7 +4859,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a FileDescriptorSet message.
                  * @function verify
@@ -4708,13 +4876,30 @@
                             return "file: array expected";
                         for (var i = 0; i < message.file.length; ++i) {
                             var error = $root.google.protobuf.FileDescriptorProto.verify(message.file[i]);
+=======
+                        if (message.filter != null && message.hasOwnProperty("filter"))
+                            if (!$util.isString(message.filter))
+                                return "filter: string expected";
+                        if (message.deadLetterPolicy != null && message.hasOwnProperty("deadLetterPolicy")) {
+                            var error = $root.google.pubsub.v1.DeadLetterPolicy.verify(message.deadLetterPolicy);
+>>>>>>> feat: convert client to typescript
                             if (error)
                                 return "file." + error;
                         }
+<<<<<<< HEAD
                     }
                     return null;
                 };
-    
+=======
+                        if (message.retryPolicy != null && message.hasOwnProperty("retryPolicy")) {
+                            var error = $root.google.pubsub.v1.RetryPolicy.verify(message.retryPolicy);
+                            if (error)
+                                return "retryPolicy." + error;
+                        }
+                        return null;
+                    };
+>>>>>>> feat: convert client to typescript
+
                 /**
                  * Creates a FileDescriptorSet message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -4736,10 +4921,11 @@
                                 throw TypeError(".google.protobuf.FileDescriptorSet.file: object expected");
                             message.file[i] = $root.google.protobuf.FileDescriptorProto.fromObject(object.file[i]);
                         }
+<<<<<<< HEAD
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a FileDescriptorSet message. Also converts values to other types if specified.
                  * @function toObject
@@ -4762,7 +4948,105 @@
                     }
                     return object;
                 };
-    
+=======
+                        if (object.ackDeadlineSeconds != null)
+                            message.ackDeadlineSeconds = object.ackDeadlineSeconds | 0;
+                        if (object.retainAckedMessages != null)
+                            message.retainAckedMessages = Boolean(object.retainAckedMessages);
+                        if (object.messageRetentionDuration != null) {
+                            if (typeof object.messageRetentionDuration !== "object")
+                                throw TypeError(".google.pubsub.v1.Subscription.messageRetentionDuration: object expected");
+                            message.messageRetentionDuration = $root.google.protobuf.Duration.fromObject(object.messageRetentionDuration);
+                        }
+                        if (object.labels) {
+                            if (typeof object.labels !== "object")
+                                throw TypeError(".google.pubsub.v1.Subscription.labels: object expected");
+                            message.labels = {};
+                            for (var keys = Object.keys(object.labels), i = 0; i < keys.length; ++i)
+                                message.labels[keys[i]] = String(object.labels[keys[i]]);
+                        }
+                        if (object.enableMessageOrdering != null)
+                            message.enableMessageOrdering = Boolean(object.enableMessageOrdering);
+                        if (object.expirationPolicy != null) {
+                            if (typeof object.expirationPolicy !== "object")
+                                throw TypeError(".google.pubsub.v1.Subscription.expirationPolicy: object expected");
+                            message.expirationPolicy = $root.google.pubsub.v1.ExpirationPolicy.fromObject(object.expirationPolicy);
+                        }
+                        if (object.filter != null)
+                            message.filter = String(object.filter);
+                        if (object.deadLetterPolicy != null) {
+                            if (typeof object.deadLetterPolicy !== "object")
+                                throw TypeError(".google.pubsub.v1.Subscription.deadLetterPolicy: object expected");
+                            message.deadLetterPolicy = $root.google.pubsub.v1.DeadLetterPolicy.fromObject(object.deadLetterPolicy);
+                        }
+                        if (object.retryPolicy != null) {
+                            if (typeof object.retryPolicy !== "object")
+                                throw TypeError(".google.pubsub.v1.Subscription.retryPolicy: object expected");
+                            message.retryPolicy = $root.google.pubsub.v1.RetryPolicy.fromObject(object.retryPolicy);
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a Subscription message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.Subscription
+                     * @static
+                     * @param {google.pubsub.v1.Subscription} message Subscription
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Subscription.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.objects || options.defaults)
+                            object.labels = {};
+                        if (options.defaults) {
+                            object.name = "";
+                            object.topic = "";
+                            object.pushConfig = null;
+                            object.ackDeadlineSeconds = 0;
+                            object.retainAckedMessages = false;
+                            object.messageRetentionDuration = null;
+                            object.enableMessageOrdering = false;
+                            object.expirationPolicy = null;
+                            object.filter = "";
+                            object.deadLetterPolicy = null;
+                            object.retryPolicy = null;
+                        }
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            object.name = message.name;
+                        if (message.topic != null && message.hasOwnProperty("topic"))
+                            object.topic = message.topic;
+                        if (message.pushConfig != null && message.hasOwnProperty("pushConfig"))
+                            object.pushConfig = $root.google.pubsub.v1.PushConfig.toObject(message.pushConfig, options);
+                        if (message.ackDeadlineSeconds != null && message.hasOwnProperty("ackDeadlineSeconds"))
+                            object.ackDeadlineSeconds = message.ackDeadlineSeconds;
+                        if (message.retainAckedMessages != null && message.hasOwnProperty("retainAckedMessages"))
+                            object.retainAckedMessages = message.retainAckedMessages;
+                        if (message.messageRetentionDuration != null && message.hasOwnProperty("messageRetentionDuration"))
+                            object.messageRetentionDuration = $root.google.protobuf.Duration.toObject(message.messageRetentionDuration, options);
+                        var keys2;
+                        if (message.labels && (keys2 = Object.keys(message.labels)).length) {
+                            object.labels = {};
+                            for (var j = 0; j < keys2.length; ++j)
+                                object.labels[keys2[j]] = message.labels[keys2[j]];
+                        }
+                        if (message.enableMessageOrdering != null && message.hasOwnProperty("enableMessageOrdering"))
+                            object.enableMessageOrdering = message.enableMessageOrdering;
+                        if (message.expirationPolicy != null && message.hasOwnProperty("expirationPolicy"))
+                            object.expirationPolicy = $root.google.pubsub.v1.ExpirationPolicy.toObject(message.expirationPolicy, options);
+                        if (message.filter != null && message.hasOwnProperty("filter"))
+                            object.filter = message.filter;
+                        if (message.deadLetterPolicy != null && message.hasOwnProperty("deadLetterPolicy"))
+                            object.deadLetterPolicy = $root.google.pubsub.v1.DeadLetterPolicy.toObject(message.deadLetterPolicy, options);
+                        if (message.retryPolicy != null && message.hasOwnProperty("retryPolicy"))
+                            object.retryPolicy = $root.google.pubsub.v1.RetryPolicy.toObject(message.retryPolicy, options);
+                        return object;
+                    };
+>>>>>>> feat: convert client to typescript
+
                 /**
                  * Converts this FileDescriptorSet to JSON.
                  * @function toJSON
@@ -4773,12 +5057,236 @@
                 FileDescriptorSet.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return FileDescriptorSet;
             })();
-    
+
+<<<<<<< HEAD
             protobuf.FileDescriptorProto = (function() {
-    
+=======
+                v1.RetryPolicy = (function() {
+
+                    /**
+                     * Properties of a RetryPolicy.
+                     * @memberof google.pubsub.v1
+                     * @interface IRetryPolicy
+                     * @property {google.protobuf.IDuration|null} [minimumBackoff] RetryPolicy minimumBackoff
+                     * @property {google.protobuf.IDuration|null} [maximumBackoff] RetryPolicy maximumBackoff
+                     */
+
+                    /**
+                     * Constructs a new RetryPolicy.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a RetryPolicy.
+                     * @implements IRetryPolicy
+                     * @constructor
+                     * @param {google.pubsub.v1.IRetryPolicy=} [properties] Properties to set
+                     */
+                    function RetryPolicy(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * RetryPolicy minimumBackoff.
+                     * @member {google.protobuf.IDuration|null|undefined} minimumBackoff
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @instance
+                     */
+                    RetryPolicy.prototype.minimumBackoff = null;
+
+                    /**
+                     * RetryPolicy maximumBackoff.
+                     * @member {google.protobuf.IDuration|null|undefined} maximumBackoff
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @instance
+                     */
+                    RetryPolicy.prototype.maximumBackoff = null;
+
+                    /**
+                     * Creates a new RetryPolicy instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {google.pubsub.v1.IRetryPolicy=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.RetryPolicy} RetryPolicy instance
+                     */
+                    RetryPolicy.create = function create(properties) {
+                        return new RetryPolicy(properties);
+                    };
+
+                    /**
+                     * Encodes the specified RetryPolicy message. Does not implicitly {@link google.pubsub.v1.RetryPolicy.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {google.pubsub.v1.IRetryPolicy} message RetryPolicy message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    RetryPolicy.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.minimumBackoff != null && message.hasOwnProperty("minimumBackoff"))
+                            $root.google.protobuf.Duration.encode(message.minimumBackoff, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        if (message.maximumBackoff != null && message.hasOwnProperty("maximumBackoff"))
+                            $root.google.protobuf.Duration.encode(message.maximumBackoff, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified RetryPolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.RetryPolicy.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {google.pubsub.v1.IRetryPolicy} message RetryPolicy message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    RetryPolicy.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a RetryPolicy message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.RetryPolicy} RetryPolicy
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    RetryPolicy.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.RetryPolicy();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.minimumBackoff = $root.google.protobuf.Duration.decode(reader, reader.uint32());
+                                break;
+                            case 2:
+                                message.maximumBackoff = $root.google.protobuf.Duration.decode(reader, reader.uint32());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a RetryPolicy message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.RetryPolicy} RetryPolicy
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    RetryPolicy.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a RetryPolicy message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    RetryPolicy.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.minimumBackoff != null && message.hasOwnProperty("minimumBackoff")) {
+                            var error = $root.google.protobuf.Duration.verify(message.minimumBackoff);
+                            if (error)
+                                return "minimumBackoff." + error;
+                        }
+                        if (message.maximumBackoff != null && message.hasOwnProperty("maximumBackoff")) {
+                            var error = $root.google.protobuf.Duration.verify(message.maximumBackoff);
+                            if (error)
+                                return "maximumBackoff." + error;
+                        }
+                        return null;
+                    };
+
+                    /**
+                     * Creates a RetryPolicy message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.RetryPolicy} RetryPolicy
+                     */
+                    RetryPolicy.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.RetryPolicy)
+                            return object;
+                        var message = new $root.google.pubsub.v1.RetryPolicy();
+                        if (object.minimumBackoff != null) {
+                            if (typeof object.minimumBackoff !== "object")
+                                throw TypeError(".google.pubsub.v1.RetryPolicy.minimumBackoff: object expected");
+                            message.minimumBackoff = $root.google.protobuf.Duration.fromObject(object.minimumBackoff);
+                        }
+                        if (object.maximumBackoff != null) {
+                            if (typeof object.maximumBackoff !== "object")
+                                throw TypeError(".google.pubsub.v1.RetryPolicy.maximumBackoff: object expected");
+                            message.maximumBackoff = $root.google.protobuf.Duration.fromObject(object.maximumBackoff);
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a RetryPolicy message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {google.pubsub.v1.RetryPolicy} message RetryPolicy
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    RetryPolicy.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.minimumBackoff = null;
+                            object.maximumBackoff = null;
+                        }
+                        if (message.minimumBackoff != null && message.hasOwnProperty("minimumBackoff"))
+                            object.minimumBackoff = $root.google.protobuf.Duration.toObject(message.minimumBackoff, options);
+                        if (message.maximumBackoff != null && message.hasOwnProperty("maximumBackoff"))
+                            object.maximumBackoff = $root.google.protobuf.Duration.toObject(message.maximumBackoff, options);
+                        return object;
+                    };
+
+                    /**
+                     * Converts this RetryPolicy to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    RetryPolicy.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    return RetryPolicy;
+                })();
+
+                v1.DeadLetterPolicy = (function() {
+>>>>>>> feat: convert client to typescript
+
                 /**
                  * Properties of a FileDescriptorProto.
                  * @memberof google.protobuf
@@ -4796,7 +5304,7 @@
                  * @property {google.protobuf.ISourceCodeInfo|null} [sourceCodeInfo] FileDescriptorProto sourceCodeInfo
                  * @property {string|null} [syntax] FileDescriptorProto syntax
                  */
-    
+
                 /**
                  * Constructs a new FileDescriptorProto.
                  * @memberof google.protobuf
@@ -4818,7 +5326,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * FileDescriptorProto name.
                  * @member {string} name
@@ -4826,7 +5334,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype.name = "";
-    
+
                 /**
                  * FileDescriptorProto package.
                  * @member {string} package
@@ -4834,7 +5342,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype["package"] = "";
-    
+
                 /**
                  * FileDescriptorProto dependency.
                  * @member {Array.<string>} dependency
@@ -4842,7 +5350,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype.dependency = $util.emptyArray;
-    
+
                 /**
                  * FileDescriptorProto publicDependency.
                  * @member {Array.<number>} publicDependency
@@ -4850,7 +5358,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype.publicDependency = $util.emptyArray;
-    
+
                 /**
                  * FileDescriptorProto weakDependency.
                  * @member {Array.<number>} weakDependency
@@ -4858,7 +5366,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype.weakDependency = $util.emptyArray;
-    
+
                 /**
                  * FileDescriptorProto messageType.
                  * @member {Array.<google.protobuf.IDescriptorProto>} messageType
@@ -4866,7 +5374,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype.messageType = $util.emptyArray;
-    
+
                 /**
                  * FileDescriptorProto enumType.
                  * @member {Array.<google.protobuf.IEnumDescriptorProto>} enumType
@@ -4874,7 +5382,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype.enumType = $util.emptyArray;
-    
+
                 /**
                  * FileDescriptorProto service.
                  * @member {Array.<google.protobuf.IServiceDescriptorProto>} service
@@ -4882,7 +5390,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype.service = $util.emptyArray;
-    
+
                 /**
                  * FileDescriptorProto extension.
                  * @member {Array.<google.protobuf.IFieldDescriptorProto>} extension
@@ -4890,7 +5398,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype.extension = $util.emptyArray;
-    
+
                 /**
                  * FileDescriptorProto options.
                  * @member {google.protobuf.IFileOptions|null|undefined} options
@@ -4898,7 +5406,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype.options = null;
-    
+
                 /**
                  * FileDescriptorProto sourceCodeInfo.
                  * @member {google.protobuf.ISourceCodeInfo|null|undefined} sourceCodeInfo
@@ -4906,7 +5414,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype.sourceCodeInfo = null;
-    
+
                 /**
                  * FileDescriptorProto syntax.
                  * @member {string} syntax
@@ -4914,7 +5422,7 @@
                  * @instance
                  */
                 FileDescriptorProto.prototype.syntax = "";
-    
+
                 /**
                  * Creates a new FileDescriptorProto instance using the specified properties.
                  * @function create
@@ -4926,7 +5434,7 @@
                 FileDescriptorProto.create = function create(properties) {
                     return new FileDescriptorProto(properties);
                 };
-    
+
                 /**
                  * Encodes the specified FileDescriptorProto message. Does not implicitly {@link google.protobuf.FileDescriptorProto.verify|verify} messages.
                  * @function encode
@@ -4972,7 +5480,7 @@
                         writer.uint32(/* id 12, wireType 2 =*/98).string(message.syntax);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified FileDescriptorProto message, length delimited. Does not implicitly {@link google.protobuf.FileDescriptorProto.verify|verify} messages.
                  * @function encodeDelimited
@@ -4985,7 +5493,7 @@
                 FileDescriptorProto.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a FileDescriptorProto message from the specified reader or buffer.
                  * @function decode
@@ -5071,7 +5579,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a FileDescriptorProto message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -5087,7 +5595,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a FileDescriptorProto message.
                  * @function verify
@@ -5177,7 +5685,7 @@
                             return "syntax: string expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates a FileDescriptorProto message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -5269,7 +5777,7 @@
                         message.syntax = String(object.syntax);
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a FileDescriptorProto message. Also converts values to other types if specified.
                  * @function toObject
@@ -5346,7 +5854,7 @@
                         object.syntax = message.syntax;
                     return object;
                 };
-    
+
                 /**
                  * Converts this FileDescriptorProto to JSON.
                  * @function toJSON
@@ -5357,12 +5865,12 @@
                 FileDescriptorProto.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return FileDescriptorProto;
             })();
-    
+
             protobuf.DescriptorProto = (function() {
-    
+
                 /**
                  * Properties of a DescriptorProto.
                  * @memberof google.protobuf
@@ -5378,7 +5886,7 @@
                  * @property {Array.<google.protobuf.DescriptorProto.IReservedRange>|null} [reservedRange] DescriptorProto reservedRange
                  * @property {Array.<string>|null} [reservedName] DescriptorProto reservedName
                  */
-    
+
                 /**
                  * Constructs a new DescriptorProto.
                  * @memberof google.protobuf
@@ -5401,7 +5909,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * DescriptorProto name.
                  * @member {string} name
@@ -5409,7 +5917,7 @@
                  * @instance
                  */
                 DescriptorProto.prototype.name = "";
-    
+
                 /**
                  * DescriptorProto field.
                  * @member {Array.<google.protobuf.IFieldDescriptorProto>} field
@@ -5417,7 +5925,7 @@
                  * @instance
                  */
                 DescriptorProto.prototype.field = $util.emptyArray;
-    
+
                 /**
                  * DescriptorProto extension.
                  * @member {Array.<google.protobuf.IFieldDescriptorProto>} extension
@@ -5425,7 +5933,7 @@
                  * @instance
                  */
                 DescriptorProto.prototype.extension = $util.emptyArray;
-    
+
                 /**
                  * DescriptorProto nestedType.
                  * @member {Array.<google.protobuf.IDescriptorProto>} nestedType
@@ -5433,7 +5941,7 @@
                  * @instance
                  */
                 DescriptorProto.prototype.nestedType = $util.emptyArray;
-    
+
                 /**
                  * DescriptorProto enumType.
                  * @member {Array.<google.protobuf.IEnumDescriptorProto>} enumType
@@ -5441,7 +5949,7 @@
                  * @instance
                  */
                 DescriptorProto.prototype.enumType = $util.emptyArray;
-    
+
                 /**
                  * DescriptorProto extensionRange.
                  * @member {Array.<google.protobuf.DescriptorProto.IExtensionRange>} extensionRange
@@ -5449,7 +5957,7 @@
                  * @instance
                  */
                 DescriptorProto.prototype.extensionRange = $util.emptyArray;
-    
+
                 /**
                  * DescriptorProto oneofDecl.
                  * @member {Array.<google.protobuf.IOneofDescriptorProto>} oneofDecl
@@ -5457,7 +5965,7 @@
                  * @instance
                  */
                 DescriptorProto.prototype.oneofDecl = $util.emptyArray;
-    
+
                 /**
                  * DescriptorProto options.
                  * @member {google.protobuf.IMessageOptions|null|undefined} options
@@ -5465,7 +5973,7 @@
                  * @instance
                  */
                 DescriptorProto.prototype.options = null;
-    
+
                 /**
                  * DescriptorProto reservedRange.
                  * @member {Array.<google.protobuf.DescriptorProto.IReservedRange>} reservedRange
@@ -5473,7 +5981,7 @@
                  * @instance
                  */
                 DescriptorProto.prototype.reservedRange = $util.emptyArray;
-    
+
                 /**
                  * DescriptorProto reservedName.
                  * @member {Array.<string>} reservedName
@@ -5481,7 +5989,7 @@
                  * @instance
                  */
                 DescriptorProto.prototype.reservedName = $util.emptyArray;
-    
+
                 /**
                  * Creates a new DescriptorProto instance using the specified properties.
                  * @function create
@@ -5493,7 +6001,7 @@
                 DescriptorProto.create = function create(properties) {
                     return new DescriptorProto(properties);
                 };
-    
+
                 /**
                  * Encodes the specified DescriptorProto message. Does not implicitly {@link google.protobuf.DescriptorProto.verify|verify} messages.
                  * @function encode
@@ -5536,7 +6044,7 @@
                             writer.uint32(/* id 10, wireType 2 =*/82).string(message.reservedName[i]);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified DescriptorProto message, length delimited. Does not implicitly {@link google.protobuf.DescriptorProto.verify|verify} messages.
                  * @function encodeDelimited
@@ -5549,7 +6057,7 @@
                 DescriptorProto.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a DescriptorProto message from the specified reader or buffer.
                  * @function decode
@@ -5621,7 +6129,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a DescriptorProto message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -5637,7 +6145,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a DescriptorProto message.
                  * @function verify
@@ -5729,7 +6237,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates a DescriptorProto message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -5828,7 +6336,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a DescriptorProto message. Also converts values to other types if specified.
                  * @function toObject
@@ -5902,7 +6410,7 @@
                     }
                     return object;
                 };
-    
+
                 /**
                  * Converts this DescriptorProto to JSON.
                  * @function toJSON
@@ -5913,9 +6421,9 @@
                 DescriptorProto.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 DescriptorProto.ExtensionRange = (function() {
-    
+
                     /**
                      * Properties of an ExtensionRange.
                      * @memberof google.protobuf.DescriptorProto
@@ -5924,7 +6432,7 @@
                      * @property {number|null} [end] ExtensionRange end
                      * @property {google.protobuf.IExtensionRangeOptions|null} [options] ExtensionRange options
                      */
-    
+
                     /**
                      * Constructs a new ExtensionRange.
                      * @memberof google.protobuf.DescriptorProto
@@ -5939,7 +6447,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ExtensionRange start.
                      * @member {number} start
@@ -5947,7 +6455,7 @@
                      * @instance
                      */
                     ExtensionRange.prototype.start = 0;
-    
+
                     /**
                      * ExtensionRange end.
                      * @member {number} end
@@ -5955,7 +6463,7 @@
                      * @instance
                      */
                     ExtensionRange.prototype.end = 0;
-    
+
                     /**
                      * ExtensionRange options.
                      * @member {google.protobuf.IExtensionRangeOptions|null|undefined} options
@@ -5963,7 +6471,7 @@
                      * @instance
                      */
                     ExtensionRange.prototype.options = null;
-    
+
                     /**
                      * Creates a new ExtensionRange instance using the specified properties.
                      * @function create
@@ -5975,7 +6483,7 @@
                     ExtensionRange.create = function create(properties) {
                         return new ExtensionRange(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ExtensionRange message. Does not implicitly {@link google.protobuf.DescriptorProto.ExtensionRange.verify|verify} messages.
                      * @function encode
@@ -5996,7 +6504,7 @@
                             $root.google.protobuf.ExtensionRangeOptions.encode(message.options, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ExtensionRange message, length delimited. Does not implicitly {@link google.protobuf.DescriptorProto.ExtensionRange.verify|verify} messages.
                      * @function encodeDelimited
@@ -6009,7 +6517,7 @@
                     ExtensionRange.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes an ExtensionRange message from the specified reader or buffer.
                      * @function decode
@@ -6044,7 +6552,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes an ExtensionRange message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -6060,7 +6568,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies an ExtensionRange message.
                      * @function verify
@@ -6085,7 +6593,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates an ExtensionRange message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -6109,7 +6617,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from an ExtensionRange message. Also converts values to other types if specified.
                      * @function toObject
@@ -6136,7 +6644,7 @@
                             object.options = $root.google.protobuf.ExtensionRangeOptions.toObject(message.options, options);
                         return object;
                     };
-    
+
                     /**
                      * Converts this ExtensionRange to JSON.
                      * @function toJSON
@@ -6147,12 +6655,12 @@
                     ExtensionRange.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ExtensionRange;
                 })();
-    
+
                 DescriptorProto.ReservedRange = (function() {
-    
+
                     /**
                      * Properties of a ReservedRange.
                      * @memberof google.protobuf.DescriptorProto
@@ -6160,7 +6668,7 @@
                      * @property {number|null} [start] ReservedRange start
                      * @property {number|null} [end] ReservedRange end
                      */
-    
+
                     /**
                      * Constructs a new ReservedRange.
                      * @memberof google.protobuf.DescriptorProto
@@ -6175,7 +6683,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ReservedRange start.
                      * @member {number} start
@@ -6183,7 +6691,7 @@
                      * @instance
                      */
                     ReservedRange.prototype.start = 0;
-    
+
                     /**
                      * ReservedRange end.
                      * @member {number} end
@@ -6191,7 +6699,7 @@
                      * @instance
                      */
                     ReservedRange.prototype.end = 0;
-    
+
                     /**
                      * Creates a new ReservedRange instance using the specified properties.
                      * @function create
@@ -6203,7 +6711,7 @@
                     ReservedRange.create = function create(properties) {
                         return new ReservedRange(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ReservedRange message. Does not implicitly {@link google.protobuf.DescriptorProto.ReservedRange.verify|verify} messages.
                      * @function encode
@@ -6222,7 +6730,7 @@
                             writer.uint32(/* id 2, wireType 0 =*/16).int32(message.end);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ReservedRange message, length delimited. Does not implicitly {@link google.protobuf.DescriptorProto.ReservedRange.verify|verify} messages.
                      * @function encodeDelimited
@@ -6235,7 +6743,7 @@
                     ReservedRange.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ReservedRange message from the specified reader or buffer.
                      * @function decode
@@ -6267,7 +6775,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ReservedRange message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -6283,7 +6791,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ReservedRange message.
                      * @function verify
@@ -6303,7 +6811,7 @@
                                 return "end: integer expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a ReservedRange message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -6322,7 +6830,7 @@
                             message.end = object.end | 0;
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ReservedRange message. Also converts values to other types if specified.
                      * @function toObject
@@ -6346,7 +6854,7 @@
                             object.end = message.end;
                         return object;
                     };
-    
+
                     /**
                      * Converts this ReservedRange to JSON.
                      * @function toJSON
@@ -6357,22 +6865,22 @@
                     ReservedRange.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ReservedRange;
                 })();
-    
+
                 return DescriptorProto;
             })();
-    
+
             protobuf.ExtensionRangeOptions = (function() {
-    
+
                 /**
                  * Properties of an ExtensionRangeOptions.
                  * @memberof google.protobuf
                  * @interface IExtensionRangeOptions
                  * @property {Array.<google.protobuf.IUninterpretedOption>|null} [uninterpretedOption] ExtensionRangeOptions uninterpretedOption
                  */
-    
+
                 /**
                  * Constructs a new ExtensionRangeOptions.
                  * @memberof google.protobuf
@@ -6388,7 +6896,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * ExtensionRangeOptions uninterpretedOption.
                  * @member {Array.<google.protobuf.IUninterpretedOption>} uninterpretedOption
@@ -6396,7 +6904,7 @@
                  * @instance
                  */
                 ExtensionRangeOptions.prototype.uninterpretedOption = $util.emptyArray;
-    
+
                 /**
                  * Creates a new ExtensionRangeOptions instance using the specified properties.
                  * @function create
@@ -6408,7 +6916,7 @@
                 ExtensionRangeOptions.create = function create(properties) {
                     return new ExtensionRangeOptions(properties);
                 };
-    
+
                 /**
                  * Encodes the specified ExtensionRangeOptions message. Does not implicitly {@link google.protobuf.ExtensionRangeOptions.verify|verify} messages.
                  * @function encode
@@ -6426,7 +6934,7 @@
                             $root.google.protobuf.UninterpretedOption.encode(message.uninterpretedOption[i], writer.uint32(/* id 999, wireType 2 =*/7994).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified ExtensionRangeOptions message, length delimited. Does not implicitly {@link google.protobuf.ExtensionRangeOptions.verify|verify} messages.
                  * @function encodeDelimited
@@ -6439,7 +6947,7 @@
                 ExtensionRangeOptions.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes an ExtensionRangeOptions message from the specified reader or buffer.
                  * @function decode
@@ -6470,7 +6978,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes an ExtensionRangeOptions message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -6486,7 +6994,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies an ExtensionRangeOptions message.
                  * @function verify
@@ -6509,7 +7017,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates an ExtensionRangeOptions message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -6534,7 +7042,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from an ExtensionRangeOptions message. Also converts values to other types if specified.
                  * @function toObject
@@ -6557,7 +7065,7 @@
                     }
                     return object;
                 };
-    
+
                 /**
                  * Converts this ExtensionRangeOptions to JSON.
                  * @function toJSON
@@ -6568,12 +7076,12 @@
                 ExtensionRangeOptions.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return ExtensionRangeOptions;
             })();
-    
+
             protobuf.FieldDescriptorProto = (function() {
-    
+
                 /**
                  * Properties of a FieldDescriptorProto.
                  * @memberof google.protobuf
@@ -6589,7 +7097,7 @@
                  * @property {string|null} [jsonName] FieldDescriptorProto jsonName
                  * @property {google.protobuf.IFieldOptions|null} [options] FieldDescriptorProto options
                  */
-    
+
                 /**
                  * Constructs a new FieldDescriptorProto.
                  * @memberof google.protobuf
@@ -6604,7 +7112,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * FieldDescriptorProto name.
                  * @member {string} name
@@ -6612,7 +7120,7 @@
                  * @instance
                  */
                 FieldDescriptorProto.prototype.name = "";
-    
+
                 /**
                  * FieldDescriptorProto number.
                  * @member {number} number
@@ -6620,7 +7128,7 @@
                  * @instance
                  */
                 FieldDescriptorProto.prototype.number = 0;
-    
+
                 /**
                  * FieldDescriptorProto label.
                  * @member {google.protobuf.FieldDescriptorProto.Label} label
@@ -6628,7 +7136,7 @@
                  * @instance
                  */
                 FieldDescriptorProto.prototype.label = 1;
-    
+
                 /**
                  * FieldDescriptorProto type.
                  * @member {google.protobuf.FieldDescriptorProto.Type} type
@@ -6636,7 +7144,7 @@
                  * @instance
                  */
                 FieldDescriptorProto.prototype.type = 1;
-    
+
                 /**
                  * FieldDescriptorProto typeName.
                  * @member {string} typeName
@@ -6644,7 +7152,7 @@
                  * @instance
                  */
                 FieldDescriptorProto.prototype.typeName = "";
-    
+
                 /**
                  * FieldDescriptorProto extendee.
                  * @member {string} extendee
@@ -6652,7 +7160,7 @@
                  * @instance
                  */
                 FieldDescriptorProto.prototype.extendee = "";
-    
+
                 /**
                  * FieldDescriptorProto defaultValue.
                  * @member {string} defaultValue
@@ -6660,7 +7168,7 @@
                  * @instance
                  */
                 FieldDescriptorProto.prototype.defaultValue = "";
-    
+
                 /**
                  * FieldDescriptorProto oneofIndex.
                  * @member {number} oneofIndex
@@ -6668,7 +7176,7 @@
                  * @instance
                  */
                 FieldDescriptorProto.prototype.oneofIndex = 0;
-    
+
                 /**
                  * FieldDescriptorProto jsonName.
                  * @member {string} jsonName
@@ -6676,7 +7184,7 @@
                  * @instance
                  */
                 FieldDescriptorProto.prototype.jsonName = "";
-    
+
                 /**
                  * FieldDescriptorProto options.
                  * @member {google.protobuf.IFieldOptions|null|undefined} options
@@ -6684,7 +7192,7 @@
                  * @instance
                  */
                 FieldDescriptorProto.prototype.options = null;
-    
+
                 /**
                  * Creates a new FieldDescriptorProto instance using the specified properties.
                  * @function create
@@ -6696,7 +7204,7 @@
                 FieldDescriptorProto.create = function create(properties) {
                     return new FieldDescriptorProto(properties);
                 };
-    
+
                 /**
                  * Encodes the specified FieldDescriptorProto message. Does not implicitly {@link google.protobuf.FieldDescriptorProto.verify|verify} messages.
                  * @function encode
@@ -6731,7 +7239,7 @@
                         writer.uint32(/* id 10, wireType 2 =*/82).string(message.jsonName);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified FieldDescriptorProto message, length delimited. Does not implicitly {@link google.protobuf.FieldDescriptorProto.verify|verify} messages.
                  * @function encodeDelimited
@@ -6744,7 +7252,7 @@
                 FieldDescriptorProto.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a FieldDescriptorProto message from the specified reader or buffer.
                  * @function decode
@@ -6800,7 +7308,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a FieldDescriptorProto message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -6816,7 +7324,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a FieldDescriptorProto message.
                  * @function verify
@@ -6889,7 +7397,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates a FieldDescriptorProto message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -7011,7 +7519,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a FieldDescriptorProto message. Also converts values to other types if specified.
                  * @function toObject
@@ -7059,7 +7567,7 @@
                         object.jsonName = message.jsonName;
                     return object;
                 };
-    
+
                 /**
                  * Converts this FieldDescriptorProto to JSON.
                  * @function toJSON
@@ -7070,7 +7578,7 @@
                 FieldDescriptorProto.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 /**
                  * Type enum.
                  * @name google.protobuf.FieldDescriptorProto.Type
@@ -7116,7 +7624,7 @@
                     values[valuesById[18] = "TYPE_SINT64"] = 18;
                     return values;
                 })();
-    
+
                 /**
                  * Label enum.
                  * @name google.protobuf.FieldDescriptorProto.Label
@@ -7132,12 +7640,12 @@
                     values[valuesById[3] = "LABEL_REPEATED"] = 3;
                     return values;
                 })();
-    
+
                 return FieldDescriptorProto;
             })();
-    
+
             protobuf.OneofDescriptorProto = (function() {
-    
+
                 /**
                  * Properties of an OneofDescriptorProto.
                  * @memberof google.protobuf
@@ -7145,7 +7653,7 @@
                  * @property {string|null} [name] OneofDescriptorProto name
                  * @property {google.protobuf.IOneofOptions|null} [options] OneofDescriptorProto options
                  */
-    
+
                 /**
                  * Constructs a new OneofDescriptorProto.
                  * @memberof google.protobuf
@@ -7160,7 +7668,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * OneofDescriptorProto name.
                  * @member {string} name
@@ -7168,7 +7676,7 @@
                  * @instance
                  */
                 OneofDescriptorProto.prototype.name = "";
-    
+
                 /**
                  * OneofDescriptorProto options.
                  * @member {google.protobuf.IOneofOptions|null|undefined} options
@@ -7176,7 +7684,7 @@
                  * @instance
                  */
                 OneofDescriptorProto.prototype.options = null;
-    
+
                 /**
                  * Creates a new OneofDescriptorProto instance using the specified properties.
                  * @function create
@@ -7188,7 +7696,7 @@
                 OneofDescriptorProto.create = function create(properties) {
                     return new OneofDescriptorProto(properties);
                 };
-    
+
                 /**
                  * Encodes the specified OneofDescriptorProto message. Does not implicitly {@link google.protobuf.OneofDescriptorProto.verify|verify} messages.
                  * @function encode
@@ -7207,7 +7715,7 @@
                         $root.google.protobuf.OneofOptions.encode(message.options, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified OneofDescriptorProto message, length delimited. Does not implicitly {@link google.protobuf.OneofDescriptorProto.verify|verify} messages.
                  * @function encodeDelimited
@@ -7220,7 +7728,7 @@
                 OneofDescriptorProto.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes an OneofDescriptorProto message from the specified reader or buffer.
                  * @function decode
@@ -7252,7 +7760,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes an OneofDescriptorProto message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -7268,7 +7776,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies an OneofDescriptorProto message.
                  * @function verify
@@ -7290,7 +7798,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates an OneofDescriptorProto message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -7312,7 +7820,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from an OneofDescriptorProto message. Also converts values to other types if specified.
                  * @function toObject
@@ -7336,7 +7844,7 @@
                         object.options = $root.google.protobuf.OneofOptions.toObject(message.options, options);
                     return object;
                 };
-    
+
                 /**
                  * Converts this OneofDescriptorProto to JSON.
                  * @function toJSON
@@ -7347,12 +7855,12 @@
                 OneofDescriptorProto.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return OneofDescriptorProto;
             })();
-    
+
             protobuf.EnumDescriptorProto = (function() {
-    
+
                 /**
                  * Properties of an EnumDescriptorProto.
                  * @memberof google.protobuf
@@ -7363,7 +7871,7 @@
                  * @property {Array.<google.protobuf.EnumDescriptorProto.IEnumReservedRange>|null} [reservedRange] EnumDescriptorProto reservedRange
                  * @property {Array.<string>|null} [reservedName] EnumDescriptorProto reservedName
                  */
-    
+
                 /**
                  * Constructs a new EnumDescriptorProto.
                  * @memberof google.protobuf
@@ -7381,7 +7889,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * EnumDescriptorProto name.
                  * @member {string} name
@@ -7389,7 +7897,7 @@
                  * @instance
                  */
                 EnumDescriptorProto.prototype.name = "";
-    
+
                 /**
                  * EnumDescriptorProto value.
                  * @member {Array.<google.protobuf.IEnumValueDescriptorProto>} value
@@ -7397,7 +7905,7 @@
                  * @instance
                  */
                 EnumDescriptorProto.prototype.value = $util.emptyArray;
-    
+
                 /**
                  * EnumDescriptorProto options.
                  * @member {google.protobuf.IEnumOptions|null|undefined} options
@@ -7405,7 +7913,7 @@
                  * @instance
                  */
                 EnumDescriptorProto.prototype.options = null;
-    
+
                 /**
                  * EnumDescriptorProto reservedRange.
                  * @member {Array.<google.protobuf.EnumDescriptorProto.IEnumReservedRange>} reservedRange
@@ -7413,7 +7921,7 @@
                  * @instance
                  */
                 EnumDescriptorProto.prototype.reservedRange = $util.emptyArray;
-    
+
                 /**
                  * EnumDescriptorProto reservedName.
                  * @member {Array.<string>} reservedName
@@ -7421,7 +7929,7 @@
                  * @instance
                  */
                 EnumDescriptorProto.prototype.reservedName = $util.emptyArray;
-    
+
                 /**
                  * Creates a new EnumDescriptorProto instance using the specified properties.
                  * @function create
@@ -7433,7 +7941,7 @@
                 EnumDescriptorProto.create = function create(properties) {
                     return new EnumDescriptorProto(properties);
                 };
-    
+
                 /**
                  * Encodes the specified EnumDescriptorProto message. Does not implicitly {@link google.protobuf.EnumDescriptorProto.verify|verify} messages.
                  * @function encode
@@ -7461,7 +7969,7 @@
                             writer.uint32(/* id 5, wireType 2 =*/42).string(message.reservedName[i]);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified EnumDescriptorProto message, length delimited. Does not implicitly {@link google.protobuf.EnumDescriptorProto.verify|verify} messages.
                  * @function encodeDelimited
@@ -7474,7 +7982,7 @@
                 EnumDescriptorProto.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes an EnumDescriptorProto message from the specified reader or buffer.
                  * @function decode
@@ -7521,7 +8029,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes an EnumDescriptorProto message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -7537,7 +8045,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies an EnumDescriptorProto message.
                  * @function verify
@@ -7584,7 +8092,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates an EnumDescriptorProto message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -7633,7 +8141,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from an EnumDescriptorProto message. Also converts values to other types if specified.
                  * @function toObject
@@ -7677,7 +8185,7 @@
                     }
                     return object;
                 };
-    
+
                 /**
                  * Converts this EnumDescriptorProto to JSON.
                  * @function toJSON
@@ -7688,9 +8196,9 @@
                 EnumDescriptorProto.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 EnumDescriptorProto.EnumReservedRange = (function() {
-    
+
                     /**
                      * Properties of an EnumReservedRange.
                      * @memberof google.protobuf.EnumDescriptorProto
@@ -7698,7 +8206,7 @@
                      * @property {number|null} [start] EnumReservedRange start
                      * @property {number|null} [end] EnumReservedRange end
                      */
-    
+
                     /**
                      * Constructs a new EnumReservedRange.
                      * @memberof google.protobuf.EnumDescriptorProto
@@ -7713,7 +8221,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * EnumReservedRange start.
                      * @member {number} start
@@ -7721,7 +8229,7 @@
                      * @instance
                      */
                     EnumReservedRange.prototype.start = 0;
-    
+
                     /**
                      * EnumReservedRange end.
                      * @member {number} end
@@ -7729,7 +8237,7 @@
                      * @instance
                      */
                     EnumReservedRange.prototype.end = 0;
-    
+
                     /**
                      * Creates a new EnumReservedRange instance using the specified properties.
                      * @function create
@@ -7741,7 +8249,7 @@
                     EnumReservedRange.create = function create(properties) {
                         return new EnumReservedRange(properties);
                     };
-    
+
                     /**
                      * Encodes the specified EnumReservedRange message. Does not implicitly {@link google.protobuf.EnumDescriptorProto.EnumReservedRange.verify|verify} messages.
                      * @function encode
@@ -7760,7 +8268,7 @@
                             writer.uint32(/* id 2, wireType 0 =*/16).int32(message.end);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified EnumReservedRange message, length delimited. Does not implicitly {@link google.protobuf.EnumDescriptorProto.EnumReservedRange.verify|verify} messages.
                      * @function encodeDelimited
@@ -7773,7 +8281,7 @@
                     EnumReservedRange.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes an EnumReservedRange message from the specified reader or buffer.
                      * @function decode
@@ -7805,7 +8313,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes an EnumReservedRange message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -7821,7 +8329,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies an EnumReservedRange message.
                      * @function verify
@@ -7841,7 +8349,7 @@
                                 return "end: integer expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates an EnumReservedRange message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -7860,7 +8368,7 @@
                             message.end = object.end | 0;
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from an EnumReservedRange message. Also converts values to other types if specified.
                      * @function toObject
@@ -7884,7 +8392,7 @@
                             object.end = message.end;
                         return object;
                     };
-    
+
                     /**
                      * Converts this EnumReservedRange to JSON.
                      * @function toJSON
@@ -7895,15 +8403,15 @@
                     EnumReservedRange.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return EnumReservedRange;
                 })();
-    
+
                 return EnumDescriptorProto;
             })();
-    
+
             protobuf.EnumValueDescriptorProto = (function() {
-    
+
                 /**
                  * Properties of an EnumValueDescriptorProto.
                  * @memberof google.protobuf
@@ -7912,7 +8420,7 @@
                  * @property {number|null} [number] EnumValueDescriptorProto number
                  * @property {google.protobuf.IEnumValueOptions|null} [options] EnumValueDescriptorProto options
                  */
-    
+
                 /**
                  * Constructs a new EnumValueDescriptorProto.
                  * @memberof google.protobuf
@@ -7927,7 +8435,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * EnumValueDescriptorProto name.
                  * @member {string} name
@@ -7935,7 +8443,7 @@
                  * @instance
                  */
                 EnumValueDescriptorProto.prototype.name = "";
-    
+
                 /**
                  * EnumValueDescriptorProto number.
                  * @member {number} number
@@ -7943,7 +8451,7 @@
                  * @instance
                  */
                 EnumValueDescriptorProto.prototype.number = 0;
-    
+
                 /**
                  * EnumValueDescriptorProto options.
                  * @member {google.protobuf.IEnumValueOptions|null|undefined} options
@@ -7951,7 +8459,7 @@
                  * @instance
                  */
                 EnumValueDescriptorProto.prototype.options = null;
-    
+
                 /**
                  * Creates a new EnumValueDescriptorProto instance using the specified properties.
                  * @function create
@@ -7963,7 +8471,7 @@
                 EnumValueDescriptorProto.create = function create(properties) {
                     return new EnumValueDescriptorProto(properties);
                 };
-    
+
                 /**
                  * Encodes the specified EnumValueDescriptorProto message. Does not implicitly {@link google.protobuf.EnumValueDescriptorProto.verify|verify} messages.
                  * @function encode
@@ -7984,7 +8492,7 @@
                         $root.google.protobuf.EnumValueOptions.encode(message.options, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified EnumValueDescriptorProto message, length delimited. Does not implicitly {@link google.protobuf.EnumValueDescriptorProto.verify|verify} messages.
                  * @function encodeDelimited
@@ -7997,7 +8505,7 @@
                 EnumValueDescriptorProto.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes an EnumValueDescriptorProto message from the specified reader or buffer.
                  * @function decode
@@ -8032,7 +8540,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes an EnumValueDescriptorProto message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -8048,7 +8556,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies an EnumValueDescriptorProto message.
                  * @function verify
@@ -8073,7 +8581,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates an EnumValueDescriptorProto message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -8097,7 +8605,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from an EnumValueDescriptorProto message. Also converts values to other types if specified.
                  * @function toObject
@@ -8124,7 +8632,7 @@
                         object.options = $root.google.protobuf.EnumValueOptions.toObject(message.options, options);
                     return object;
                 };
-    
+
                 /**
                  * Converts this EnumValueDescriptorProto to JSON.
                  * @function toJSON
@@ -8135,12 +8643,12 @@
                 EnumValueDescriptorProto.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return EnumValueDescriptorProto;
             })();
-    
+
             protobuf.ServiceDescriptorProto = (function() {
-    
+
                 /**
                  * Properties of a ServiceDescriptorProto.
                  * @memberof google.protobuf
@@ -8149,7 +8657,7 @@
                  * @property {Array.<google.protobuf.IMethodDescriptorProto>|null} [method] ServiceDescriptorProto method
                  * @property {google.protobuf.IServiceOptions|null} [options] ServiceDescriptorProto options
                  */
-    
+
                 /**
                  * Constructs a new ServiceDescriptorProto.
                  * @memberof google.protobuf
@@ -8165,7 +8673,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * ServiceDescriptorProto name.
                  * @member {string} name
@@ -8173,7 +8681,7 @@
                  * @instance
                  */
                 ServiceDescriptorProto.prototype.name = "";
-    
+
                 /**
                  * ServiceDescriptorProto method.
                  * @member {Array.<google.protobuf.IMethodDescriptorProto>} method
@@ -8181,7 +8689,7 @@
                  * @instance
                  */
                 ServiceDescriptorProto.prototype.method = $util.emptyArray;
-    
+
                 /**
                  * ServiceDescriptorProto options.
                  * @member {google.protobuf.IServiceOptions|null|undefined} options
@@ -8189,7 +8697,7 @@
                  * @instance
                  */
                 ServiceDescriptorProto.prototype.options = null;
-    
+
                 /**
                  * Creates a new ServiceDescriptorProto instance using the specified properties.
                  * @function create
@@ -8201,7 +8709,7 @@
                 ServiceDescriptorProto.create = function create(properties) {
                     return new ServiceDescriptorProto(properties);
                 };
-    
+
                 /**
                  * Encodes the specified ServiceDescriptorProto message. Does not implicitly {@link google.protobuf.ServiceDescriptorProto.verify|verify} messages.
                  * @function encode
@@ -8223,7 +8731,7 @@
                         $root.google.protobuf.ServiceOptions.encode(message.options, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified ServiceDescriptorProto message, length delimited. Does not implicitly {@link google.protobuf.ServiceDescriptorProto.verify|verify} messages.
                  * @function encodeDelimited
@@ -8236,7 +8744,7 @@
                 ServiceDescriptorProto.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a ServiceDescriptorProto message from the specified reader or buffer.
                  * @function decode
@@ -8273,7 +8781,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a ServiceDescriptorProto message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -8289,7 +8797,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a ServiceDescriptorProto message.
                  * @function verify
@@ -8320,7 +8828,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates a ServiceDescriptorProto message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -8352,7 +8860,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a ServiceDescriptorProto message. Also converts values to other types if specified.
                  * @function toObject
@@ -8383,7 +8891,7 @@
                         object.options = $root.google.protobuf.ServiceOptions.toObject(message.options, options);
                     return object;
                 };
-    
+
                 /**
                  * Converts this ServiceDescriptorProto to JSON.
                  * @function toJSON
@@ -8394,12 +8902,12 @@
                 ServiceDescriptorProto.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return ServiceDescriptorProto;
             })();
-    
+
             protobuf.MethodDescriptorProto = (function() {
-    
+
                 /**
                  * Properties of a MethodDescriptorProto.
                  * @memberof google.protobuf
@@ -8411,7 +8919,7 @@
                  * @property {boolean|null} [clientStreaming] MethodDescriptorProto clientStreaming
                  * @property {boolean|null} [serverStreaming] MethodDescriptorProto serverStreaming
                  */
-    
+
                 /**
                  * Constructs a new MethodDescriptorProto.
                  * @memberof google.protobuf
@@ -8426,7 +8934,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * MethodDescriptorProto name.
                  * @member {string} name
@@ -8434,7 +8942,7 @@
                  * @instance
                  */
                 MethodDescriptorProto.prototype.name = "";
-    
+
                 /**
                  * MethodDescriptorProto inputType.
                  * @member {string} inputType
@@ -8442,7 +8950,7 @@
                  * @instance
                  */
                 MethodDescriptorProto.prototype.inputType = "";
-    
+
                 /**
                  * MethodDescriptorProto outputType.
                  * @member {string} outputType
@@ -8450,7 +8958,7 @@
                  * @instance
                  */
                 MethodDescriptorProto.prototype.outputType = "";
-    
+
                 /**
                  * MethodDescriptorProto options.
                  * @member {google.protobuf.IMethodOptions|null|undefined} options
@@ -8458,7 +8966,7 @@
                  * @instance
                  */
                 MethodDescriptorProto.prototype.options = null;
-    
+
                 /**
                  * MethodDescriptorProto clientStreaming.
                  * @member {boolean} clientStreaming
@@ -8466,7 +8974,7 @@
                  * @instance
                  */
                 MethodDescriptorProto.prototype.clientStreaming = false;
-    
+
                 /**
                  * MethodDescriptorProto serverStreaming.
                  * @member {boolean} serverStreaming
@@ -8474,7 +8982,7 @@
                  * @instance
                  */
                 MethodDescriptorProto.prototype.serverStreaming = false;
-    
+
                 /**
                  * Creates a new MethodDescriptorProto instance using the specified properties.
                  * @function create
@@ -8486,7 +8994,7 @@
                 MethodDescriptorProto.create = function create(properties) {
                     return new MethodDescriptorProto(properties);
                 };
-    
+
                 /**
                  * Encodes the specified MethodDescriptorProto message. Does not implicitly {@link google.protobuf.MethodDescriptorProto.verify|verify} messages.
                  * @function encode
@@ -8513,7 +9021,7 @@
                         writer.uint32(/* id 6, wireType 0 =*/48).bool(message.serverStreaming);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified MethodDescriptorProto message, length delimited. Does not implicitly {@link google.protobuf.MethodDescriptorProto.verify|verify} messages.
                  * @function encodeDelimited
@@ -8526,7 +9034,7 @@
                 MethodDescriptorProto.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a MethodDescriptorProto message from the specified reader or buffer.
                  * @function decode
@@ -8570,7 +9078,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a MethodDescriptorProto message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -8586,7 +9094,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a MethodDescriptorProto message.
                  * @function verify
@@ -8620,7 +9128,7 @@
                             return "serverStreaming: boolean expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates a MethodDescriptorProto message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -8650,7 +9158,7 @@
                         message.serverStreaming = Boolean(object.serverStreaming);
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a MethodDescriptorProto message. Also converts values to other types if specified.
                  * @function toObject
@@ -8686,7 +9194,7 @@
                         object.serverStreaming = message.serverStreaming;
                     return object;
                 };
-    
+
                 /**
                  * Converts this MethodDescriptorProto to JSON.
                  * @function toJSON
@@ -8697,12 +9205,12 @@
                 MethodDescriptorProto.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return MethodDescriptorProto;
             })();
-    
+
             protobuf.FileOptions = (function() {
-    
+
                 /**
                  * Properties of a FileOptions.
                  * @memberof google.protobuf
@@ -8730,7 +9238,7 @@
                  * @property {Array.<google.protobuf.IUninterpretedOption>|null} [uninterpretedOption] FileOptions uninterpretedOption
                  * @property {Array.<google.api.IResourceDescriptor>|null} [".google.api.resourceDefinition"] FileOptions .google.api.resourceDefinition
                  */
-    
+
                 /**
                  * Constructs a new FileOptions.
                  * @memberof google.protobuf
@@ -8747,7 +9255,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * FileOptions javaPackage.
                  * @member {string} javaPackage
@@ -8755,7 +9263,7 @@
                  * @instance
                  */
                 FileOptions.prototype.javaPackage = "";
-    
+
                 /**
                  * FileOptions javaOuterClassname.
                  * @member {string} javaOuterClassname
@@ -8763,7 +9271,7 @@
                  * @instance
                  */
                 FileOptions.prototype.javaOuterClassname = "";
-    
+
                 /**
                  * FileOptions javaMultipleFiles.
                  * @member {boolean} javaMultipleFiles
@@ -8771,7 +9279,7 @@
                  * @instance
                  */
                 FileOptions.prototype.javaMultipleFiles = false;
-    
+
                 /**
                  * FileOptions javaGenerateEqualsAndHash.
                  * @member {boolean} javaGenerateEqualsAndHash
@@ -8779,7 +9287,7 @@
                  * @instance
                  */
                 FileOptions.prototype.javaGenerateEqualsAndHash = false;
-    
+
                 /**
                  * FileOptions javaStringCheckUtf8.
                  * @member {boolean} javaStringCheckUtf8
@@ -8787,7 +9295,7 @@
                  * @instance
                  */
                 FileOptions.prototype.javaStringCheckUtf8 = false;
-    
+
                 /**
                  * FileOptions optimizeFor.
                  * @member {google.protobuf.FileOptions.OptimizeMode} optimizeFor
@@ -8795,7 +9303,7 @@
                  * @instance
                  */
                 FileOptions.prototype.optimizeFor = 1;
-    
+
                 /**
                  * FileOptions goPackage.
                  * @member {string} goPackage
@@ -8803,7 +9311,7 @@
                  * @instance
                  */
                 FileOptions.prototype.goPackage = "";
-    
+
                 /**
                  * FileOptions ccGenericServices.
                  * @member {boolean} ccGenericServices
@@ -8811,7 +9319,7 @@
                  * @instance
                  */
                 FileOptions.prototype.ccGenericServices = false;
-    
+
                 /**
                  * FileOptions javaGenericServices.
                  * @member {boolean} javaGenericServices
@@ -8819,7 +9327,7 @@
                  * @instance
                  */
                 FileOptions.prototype.javaGenericServices = false;
-    
+
                 /**
                  * FileOptions pyGenericServices.
                  * @member {boolean} pyGenericServices
@@ -8827,7 +9335,7 @@
                  * @instance
                  */
                 FileOptions.prototype.pyGenericServices = false;
-    
+
                 /**
                  * FileOptions phpGenericServices.
                  * @member {boolean} phpGenericServices
@@ -8835,7 +9343,7 @@
                  * @instance
                  */
                 FileOptions.prototype.phpGenericServices = false;
-    
+
                 /**
                  * FileOptions deprecated.
                  * @member {boolean} deprecated
@@ -8843,7 +9351,7 @@
                  * @instance
                  */
                 FileOptions.prototype.deprecated = false;
-    
+
                 /**
                  * FileOptions ccEnableArenas.
                  * @member {boolean} ccEnableArenas
@@ -8851,7 +9359,7 @@
                  * @instance
                  */
                 FileOptions.prototype.ccEnableArenas = false;
-    
+
                 /**
                  * FileOptions objcClassPrefix.
                  * @member {string} objcClassPrefix
@@ -8859,7 +9367,7 @@
                  * @instance
                  */
                 FileOptions.prototype.objcClassPrefix = "";
-    
+
                 /**
                  * FileOptions csharpNamespace.
                  * @member {string} csharpNamespace
@@ -8867,7 +9375,7 @@
                  * @instance
                  */
                 FileOptions.prototype.csharpNamespace = "";
-    
+
                 /**
                  * FileOptions swiftPrefix.
                  * @member {string} swiftPrefix
@@ -8875,7 +9383,7 @@
                  * @instance
                  */
                 FileOptions.prototype.swiftPrefix = "";
-    
+
                 /**
                  * FileOptions phpClassPrefix.
                  * @member {string} phpClassPrefix
@@ -8883,7 +9391,7 @@
                  * @instance
                  */
                 FileOptions.prototype.phpClassPrefix = "";
-    
+
                 /**
                  * FileOptions phpNamespace.
                  * @member {string} phpNamespace
@@ -8891,7 +9399,7 @@
                  * @instance
                  */
                 FileOptions.prototype.phpNamespace = "";
-    
+
                 /**
                  * FileOptions phpMetadataNamespace.
                  * @member {string} phpMetadataNamespace
@@ -8899,7 +9407,7 @@
                  * @instance
                  */
                 FileOptions.prototype.phpMetadataNamespace = "";
-    
+
                 /**
                  * FileOptions rubyPackage.
                  * @member {string} rubyPackage
@@ -8907,7 +9415,7 @@
                  * @instance
                  */
                 FileOptions.prototype.rubyPackage = "";
-    
+
                 /**
                  * FileOptions uninterpretedOption.
                  * @member {Array.<google.protobuf.IUninterpretedOption>} uninterpretedOption
@@ -8915,7 +9423,7 @@
                  * @instance
                  */
                 FileOptions.prototype.uninterpretedOption = $util.emptyArray;
-    
+
                 /**
                  * FileOptions .google.api.resourceDefinition.
                  * @member {Array.<google.api.IResourceDescriptor>} .google.api.resourceDefinition
@@ -8923,7 +9431,7 @@
                  * @instance
                  */
                 FileOptions.prototype[".google.api.resourceDefinition"] = $util.emptyArray;
-    
+
                 /**
                  * Creates a new FileOptions instance using the specified properties.
                  * @function create
@@ -8935,7 +9443,7 @@
                 FileOptions.create = function create(properties) {
                     return new FileOptions(properties);
                 };
-    
+
                 /**
                  * Encodes the specified FileOptions message. Does not implicitly {@link google.protobuf.FileOptions.verify|verify} messages.
                  * @function encode
@@ -8996,7 +9504,7 @@
                             $root.google.api.ResourceDescriptor.encode(message[".google.api.resourceDefinition"][i], writer.uint32(/* id 1053, wireType 2 =*/8426).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified FileOptions message, length delimited. Does not implicitly {@link google.protobuf.FileOptions.verify|verify} messages.
                  * @function encodeDelimited
@@ -9009,7 +9517,7 @@
                 FileOptions.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a FileOptions message from the specified reader or buffer.
                  * @function decode
@@ -9105,7 +9613,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a FileOptions message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -9121,7 +9629,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a FileOptions message.
                  * @function verify
@@ -9219,7 +9727,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates a FileOptions message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -9306,7 +9814,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a FileOptions message. Also converts values to other types if specified.
                  * @function toObject
@@ -9398,7 +9906,7 @@
                     }
                     return object;
                 };
-    
+
                 /**
                  * Converts this FileOptions to JSON.
                  * @function toJSON
@@ -9409,7 +9917,7 @@
                 FileOptions.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 /**
                  * OptimizeMode enum.
                  * @name google.protobuf.FileOptions.OptimizeMode
@@ -9425,12 +9933,12 @@
                     values[valuesById[3] = "LITE_RUNTIME"] = 3;
                     return values;
                 })();
-    
+
                 return FileOptions;
             })();
-    
+
             protobuf.MessageOptions = (function() {
-    
+
                 /**
                  * Properties of a MessageOptions.
                  * @memberof google.protobuf
@@ -9442,7 +9950,7 @@
                  * @property {Array.<google.protobuf.IUninterpretedOption>|null} [uninterpretedOption] MessageOptions uninterpretedOption
                  * @property {google.api.IResourceDescriptor|null} [".google.api.resource"] MessageOptions .google.api.resource
                  */
-    
+
                 /**
                  * Constructs a new MessageOptions.
                  * @memberof google.protobuf
@@ -9458,7 +9966,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * MessageOptions messageSetWireFormat.
                  * @member {boolean} messageSetWireFormat
@@ -9466,7 +9974,7 @@
                  * @instance
                  */
                 MessageOptions.prototype.messageSetWireFormat = false;
-    
+
                 /**
                  * MessageOptions noStandardDescriptorAccessor.
                  * @member {boolean} noStandardDescriptorAccessor
@@ -9474,7 +9982,7 @@
                  * @instance
                  */
                 MessageOptions.prototype.noStandardDescriptorAccessor = false;
-    
+
                 /**
                  * MessageOptions deprecated.
                  * @member {boolean} deprecated
@@ -9482,7 +9990,7 @@
                  * @instance
                  */
                 MessageOptions.prototype.deprecated = false;
-    
+
                 /**
                  * MessageOptions mapEntry.
                  * @member {boolean} mapEntry
@@ -9490,7 +9998,7 @@
                  * @instance
                  */
                 MessageOptions.prototype.mapEntry = false;
-    
+
                 /**
                  * MessageOptions uninterpretedOption.
                  * @member {Array.<google.protobuf.IUninterpretedOption>} uninterpretedOption
@@ -9498,7 +10006,7 @@
                  * @instance
                  */
                 MessageOptions.prototype.uninterpretedOption = $util.emptyArray;
-    
+
                 /**
                  * MessageOptions .google.api.resource.
                  * @member {google.api.IResourceDescriptor|null|undefined} .google.api.resource
@@ -9506,7 +10014,7 @@
                  * @instance
                  */
                 MessageOptions.prototype[".google.api.resource"] = null;
-    
+
                 /**
                  * Creates a new MessageOptions instance using the specified properties.
                  * @function create
@@ -9518,7 +10026,7 @@
                 MessageOptions.create = function create(properties) {
                     return new MessageOptions(properties);
                 };
-    
+
                 /**
                  * Encodes the specified MessageOptions message. Does not implicitly {@link google.protobuf.MessageOptions.verify|verify} messages.
                  * @function encode
@@ -9546,7 +10054,7 @@
                         $root.google.api.ResourceDescriptor.encode(message[".google.api.resource"], writer.uint32(/* id 1053, wireType 2 =*/8426).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified MessageOptions message, length delimited. Does not implicitly {@link google.protobuf.MessageOptions.verify|verify} messages.
                  * @function encodeDelimited
@@ -9559,7 +10067,7 @@
                 MessageOptions.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a MessageOptions message from the specified reader or buffer.
                  * @function decode
@@ -9605,7 +10113,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a MessageOptions message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -9621,7 +10129,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a MessageOptions message.
                  * @function verify
@@ -9661,7 +10169,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates a MessageOptions message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -9699,7 +10207,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a MessageOptions message. Also converts values to other types if specified.
                  * @function toObject
@@ -9739,7 +10247,7 @@
                         object[".google.api.resource"] = $root.google.api.ResourceDescriptor.toObject(message[".google.api.resource"], options);
                     return object;
                 };
-    
+
                 /**
                  * Converts this MessageOptions to JSON.
                  * @function toJSON
@@ -9750,12 +10258,12 @@
                 MessageOptions.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return MessageOptions;
             })();
-    
+
             protobuf.FieldOptions = (function() {
-    
+
                 /**
                  * Properties of a FieldOptions.
                  * @memberof google.protobuf
@@ -9770,7 +10278,7 @@
                  * @property {Array.<google.api.FieldBehavior>|null} [".google.api.fieldBehavior"] FieldOptions .google.api.fieldBehavior
                  * @property {google.api.IResourceReference|null} [".google.api.resourceReference"] FieldOptions .google.api.resourceReference
                  */
-    
+
                 /**
                  * Constructs a new FieldOptions.
                  * @memberof google.protobuf
@@ -9787,7 +10295,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * FieldOptions ctype.
                  * @member {google.protobuf.FieldOptions.CType} ctype
@@ -9795,7 +10303,7 @@
                  * @instance
                  */
                 FieldOptions.prototype.ctype = 0;
-    
+
                 /**
                  * FieldOptions packed.
                  * @member {boolean} packed
@@ -9803,7 +10311,7 @@
                  * @instance
                  */
                 FieldOptions.prototype.packed = false;
-    
+
                 /**
                  * FieldOptions jstype.
                  * @member {google.protobuf.FieldOptions.JSType} jstype
@@ -9811,7 +10319,7 @@
                  * @instance
                  */
                 FieldOptions.prototype.jstype = 0;
-    
+
                 /**
                  * FieldOptions lazy.
                  * @member {boolean} lazy
@@ -9819,7 +10327,7 @@
                  * @instance
                  */
                 FieldOptions.prototype.lazy = false;
-    
+
                 /**
                  * FieldOptions deprecated.
                  * @member {boolean} deprecated
@@ -9827,7 +10335,7 @@
                  * @instance
                  */
                 FieldOptions.prototype.deprecated = false;
-    
+
                 /**
                  * FieldOptions weak.
                  * @member {boolean} weak
@@ -9835,7 +10343,7 @@
                  * @instance
                  */
                 FieldOptions.prototype.weak = false;
-    
+
                 /**
                  * FieldOptions uninterpretedOption.
                  * @member {Array.<google.protobuf.IUninterpretedOption>} uninterpretedOption
@@ -9843,7 +10351,7 @@
                  * @instance
                  */
                 FieldOptions.prototype.uninterpretedOption = $util.emptyArray;
-    
+
                 /**
                  * FieldOptions .google.api.fieldBehavior.
                  * @member {Array.<google.api.FieldBehavior>} .google.api.fieldBehavior
@@ -9851,7 +10359,7 @@
                  * @instance
                  */
                 FieldOptions.prototype[".google.api.fieldBehavior"] = $util.emptyArray;
-    
+
                 /**
                  * FieldOptions .google.api.resourceReference.
                  * @member {google.api.IResourceReference|null|undefined} .google.api.resourceReference
@@ -9859,7 +10367,7 @@
                  * @instance
                  */
                 FieldOptions.prototype[".google.api.resourceReference"] = null;
-    
+
                 /**
                  * Creates a new FieldOptions instance using the specified properties.
                  * @function create
@@ -9871,7 +10379,7 @@
                 FieldOptions.create = function create(properties) {
                     return new FieldOptions(properties);
                 };
-    
+
                 /**
                  * Encodes the specified FieldOptions message. Does not implicitly {@link google.protobuf.FieldOptions.verify|verify} messages.
                  * @function encode
@@ -9909,7 +10417,7 @@
                         $root.google.api.ResourceReference.encode(message[".google.api.resourceReference"], writer.uint32(/* id 1055, wireType 2 =*/8442).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified FieldOptions message, length delimited. Does not implicitly {@link google.protobuf.FieldOptions.verify|verify} messages.
                  * @function encodeDelimited
@@ -9922,7 +10430,7 @@
                 FieldOptions.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a FieldOptions message from the specified reader or buffer.
                  * @function decode
@@ -9984,7 +10492,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a FieldOptions message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -10000,7 +10508,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a FieldOptions message.
                  * @function verify
@@ -10074,7 +10582,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates a FieldOptions message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -10173,7 +10681,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a FieldOptions message. Also converts values to other types if specified.
                  * @function toObject
@@ -10226,7 +10734,7 @@
                         object[".google.api.resourceReference"] = $root.google.api.ResourceReference.toObject(message[".google.api.resourceReference"], options);
                     return object;
                 };
-    
+
                 /**
                  * Converts this FieldOptions to JSON.
                  * @function toJSON
@@ -10237,7 +10745,7 @@
                 FieldOptions.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 /**
                  * CType enum.
                  * @name google.protobuf.FieldOptions.CType
@@ -10253,7 +10761,7 @@
                     values[valuesById[2] = "STRING_PIECE"] = 2;
                     return values;
                 })();
-    
+
                 /**
                  * JSType enum.
                  * @name google.protobuf.FieldOptions.JSType
@@ -10269,19 +10777,19 @@
                     values[valuesById[2] = "JS_NUMBER"] = 2;
                     return values;
                 })();
-    
+
                 return FieldOptions;
             })();
-    
+
             protobuf.OneofOptions = (function() {
-    
+
                 /**
                  * Properties of an OneofOptions.
                  * @memberof google.protobuf
                  * @interface IOneofOptions
                  * @property {Array.<google.protobuf.IUninterpretedOption>|null} [uninterpretedOption] OneofOptions uninterpretedOption
                  */
-    
+
                 /**
                  * Constructs a new OneofOptions.
                  * @memberof google.protobuf
@@ -10297,7 +10805,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * OneofOptions uninterpretedOption.
                  * @member {Array.<google.protobuf.IUninterpretedOption>} uninterpretedOption
@@ -10305,7 +10813,7 @@
                  * @instance
                  */
                 OneofOptions.prototype.uninterpretedOption = $util.emptyArray;
-    
+
                 /**
                  * Creates a new OneofOptions instance using the specified properties.
                  * @function create
@@ -10317,7 +10825,7 @@
                 OneofOptions.create = function create(properties) {
                     return new OneofOptions(properties);
                 };
-    
+
                 /**
                  * Encodes the specified OneofOptions message. Does not implicitly {@link google.protobuf.OneofOptions.verify|verify} messages.
                  * @function encode
@@ -10335,7 +10843,7 @@
                             $root.google.protobuf.UninterpretedOption.encode(message.uninterpretedOption[i], writer.uint32(/* id 999, wireType 2 =*/7994).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified OneofOptions message, length delimited. Does not implicitly {@link google.protobuf.OneofOptions.verify|verify} messages.
                  * @function encodeDelimited
@@ -10348,7 +10856,7 @@
                 OneofOptions.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes an OneofOptions message from the specified reader or buffer.
                  * @function decode
@@ -10379,7 +10887,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes an OneofOptions message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -10395,7 +10903,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies an OneofOptions message.
                  * @function verify
@@ -10418,7 +10926,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates an OneofOptions message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -10443,7 +10951,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from an OneofOptions message. Also converts values to other types if specified.
                  * @function toObject
@@ -10466,7 +10974,7 @@
                     }
                     return object;
                 };
-    
+
                 /**
                  * Converts this OneofOptions to JSON.
                  * @function toJSON
@@ -10477,12 +10985,12 @@
                 OneofOptions.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return OneofOptions;
             })();
-    
+
             protobuf.EnumOptions = (function() {
-    
+
                 /**
                  * Properties of an EnumOptions.
                  * @memberof google.protobuf
@@ -10491,7 +10999,7 @@
                  * @property {boolean|null} [deprecated] EnumOptions deprecated
                  * @property {Array.<google.protobuf.IUninterpretedOption>|null} [uninterpretedOption] EnumOptions uninterpretedOption
                  */
-    
+
                 /**
                  * Constructs a new EnumOptions.
                  * @memberof google.protobuf
@@ -10507,7 +11015,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * EnumOptions allowAlias.
                  * @member {boolean} allowAlias
@@ -10515,7 +11023,7 @@
                  * @instance
                  */
                 EnumOptions.prototype.allowAlias = false;
-    
+
                 /**
                  * EnumOptions deprecated.
                  * @member {boolean} deprecated
@@ -10523,7 +11031,7 @@
                  * @instance
                  */
                 EnumOptions.prototype.deprecated = false;
-    
+
                 /**
                  * EnumOptions uninterpretedOption.
                  * @member {Array.<google.protobuf.IUninterpretedOption>} uninterpretedOption
@@ -10531,7 +11039,7 @@
                  * @instance
                  */
                 EnumOptions.prototype.uninterpretedOption = $util.emptyArray;
-    
+
                 /**
                  * Creates a new EnumOptions instance using the specified properties.
                  * @function create
@@ -10543,7 +11051,7 @@
                 EnumOptions.create = function create(properties) {
                     return new EnumOptions(properties);
                 };
-    
+
                 /**
                  * Encodes the specified EnumOptions message. Does not implicitly {@link google.protobuf.EnumOptions.verify|verify} messages.
                  * @function encode
@@ -10565,7 +11073,7 @@
                             $root.google.protobuf.UninterpretedOption.encode(message.uninterpretedOption[i], writer.uint32(/* id 999, wireType 2 =*/7994).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified EnumOptions message, length delimited. Does not implicitly {@link google.protobuf.EnumOptions.verify|verify} messages.
                  * @function encodeDelimited
@@ -10578,7 +11086,7 @@
                 EnumOptions.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes an EnumOptions message from the specified reader or buffer.
                  * @function decode
@@ -10615,7 +11123,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes an EnumOptions message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -10631,7 +11139,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies an EnumOptions message.
                  * @function verify
@@ -10660,7 +11168,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates an EnumOptions message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -10689,7 +11197,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from an EnumOptions message. Also converts values to other types if specified.
                  * @function toObject
@@ -10720,7 +11228,7 @@
                     }
                     return object;
                 };
-    
+
                 /**
                  * Converts this EnumOptions to JSON.
                  * @function toJSON
@@ -10731,12 +11239,12 @@
                 EnumOptions.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return EnumOptions;
             })();
-    
+
             protobuf.EnumValueOptions = (function() {
-    
+
                 /**
                  * Properties of an EnumValueOptions.
                  * @memberof google.protobuf
@@ -10744,7 +11252,7 @@
                  * @property {boolean|null} [deprecated] EnumValueOptions deprecated
                  * @property {Array.<google.protobuf.IUninterpretedOption>|null} [uninterpretedOption] EnumValueOptions uninterpretedOption
                  */
-    
+
                 /**
                  * Constructs a new EnumValueOptions.
                  * @memberof google.protobuf
@@ -10760,7 +11268,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * EnumValueOptions deprecated.
                  * @member {boolean} deprecated
@@ -10768,7 +11276,7 @@
                  * @instance
                  */
                 EnumValueOptions.prototype.deprecated = false;
-    
+
                 /**
                  * EnumValueOptions uninterpretedOption.
                  * @member {Array.<google.protobuf.IUninterpretedOption>} uninterpretedOption
@@ -10776,7 +11284,7 @@
                  * @instance
                  */
                 EnumValueOptions.prototype.uninterpretedOption = $util.emptyArray;
-    
+
                 /**
                  * Creates a new EnumValueOptions instance using the specified properties.
                  * @function create
@@ -10788,7 +11296,7 @@
                 EnumValueOptions.create = function create(properties) {
                     return new EnumValueOptions(properties);
                 };
-    
+
                 /**
                  * Encodes the specified EnumValueOptions message. Does not implicitly {@link google.protobuf.EnumValueOptions.verify|verify} messages.
                  * @function encode
@@ -10808,7 +11316,7 @@
                             $root.google.protobuf.UninterpretedOption.encode(message.uninterpretedOption[i], writer.uint32(/* id 999, wireType 2 =*/7994).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified EnumValueOptions message, length delimited. Does not implicitly {@link google.protobuf.EnumValueOptions.verify|verify} messages.
                  * @function encodeDelimited
@@ -10821,7 +11329,7 @@
                 EnumValueOptions.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes an EnumValueOptions message from the specified reader or buffer.
                  * @function decode
@@ -10855,7 +11363,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes an EnumValueOptions message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -10871,7 +11379,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies an EnumValueOptions message.
                  * @function verify
@@ -10897,7 +11405,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates an EnumValueOptions message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -10924,7 +11432,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from an EnumValueOptions message. Also converts values to other types if specified.
                  * @function toObject
@@ -10951,7 +11459,7 @@
                     }
                     return object;
                 };
-    
+
                 /**
                  * Converts this EnumValueOptions to JSON.
                  * @function toJSON
@@ -10962,12 +11470,12 @@
                 EnumValueOptions.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return EnumValueOptions;
             })();
-    
+
             protobuf.ServiceOptions = (function() {
-    
+
                 /**
                  * Properties of a ServiceOptions.
                  * @memberof google.protobuf
@@ -10977,7 +11485,7 @@
                  * @property {string|null} [".google.api.defaultHost"] ServiceOptions .google.api.defaultHost
                  * @property {string|null} [".google.api.oauthScopes"] ServiceOptions .google.api.oauthScopes
                  */
-    
+
                 /**
                  * Constructs a new ServiceOptions.
                  * @memberof google.protobuf
@@ -10993,7 +11501,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * ServiceOptions deprecated.
                  * @member {boolean} deprecated
@@ -11001,7 +11509,7 @@
                  * @instance
                  */
                 ServiceOptions.prototype.deprecated = false;
-    
+
                 /**
                  * ServiceOptions uninterpretedOption.
                  * @member {Array.<google.protobuf.IUninterpretedOption>} uninterpretedOption
@@ -11009,7 +11517,7 @@
                  * @instance
                  */
                 ServiceOptions.prototype.uninterpretedOption = $util.emptyArray;
-    
+
                 /**
                  * ServiceOptions .google.api.defaultHost.
                  * @member {string} .google.api.defaultHost
@@ -11017,7 +11525,7 @@
                  * @instance
                  */
                 ServiceOptions.prototype[".google.api.defaultHost"] = "";
-    
+
                 /**
                  * ServiceOptions .google.api.oauthScopes.
                  * @member {string} .google.api.oauthScopes
@@ -11025,7 +11533,7 @@
                  * @instance
                  */
                 ServiceOptions.prototype[".google.api.oauthScopes"] = "";
-    
+
                 /**
                  * Creates a new ServiceOptions instance using the specified properties.
                  * @function create
@@ -11037,7 +11545,7 @@
                 ServiceOptions.create = function create(properties) {
                     return new ServiceOptions(properties);
                 };
-    
+
                 /**
                  * Encodes the specified ServiceOptions message. Does not implicitly {@link google.protobuf.ServiceOptions.verify|verify} messages.
                  * @function encode
@@ -11061,7 +11569,7 @@
                         writer.uint32(/* id 1050, wireType 2 =*/8402).string(message[".google.api.oauthScopes"]);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified ServiceOptions message, length delimited. Does not implicitly {@link google.protobuf.ServiceOptions.verify|verify} messages.
                  * @function encodeDelimited
@@ -11074,7 +11582,7 @@
                 ServiceOptions.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a ServiceOptions message from the specified reader or buffer.
                  * @function decode
@@ -11114,7 +11622,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a ServiceOptions message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -11130,7 +11638,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a ServiceOptions message.
                  * @function verify
@@ -11162,7 +11670,7 @@
                             return ".google.api.oauthScopes: string expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates a ServiceOptions message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -11193,7 +11701,7 @@
                         message[".google.api.oauthScopes"] = String(object[".google.api.oauthScopes"]);
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a ServiceOptions message. Also converts values to other types if specified.
                  * @function toObject
@@ -11227,7 +11735,7 @@
                         object[".google.api.oauthScopes"] = message[".google.api.oauthScopes"];
                     return object;
                 };
-    
+
                 /**
                  * Converts this ServiceOptions to JSON.
                  * @function toJSON
@@ -11238,12 +11746,12 @@
                 ServiceOptions.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return ServiceOptions;
             })();
-    
+
             protobuf.MethodOptions = (function() {
-    
+
                 /**
                  * Properties of a MethodOptions.
                  * @memberof google.protobuf
@@ -11254,7 +11762,7 @@
                  * @property {google.api.IHttpRule|null} [".google.api.http"] MethodOptions .google.api.http
                  * @property {Array.<string>|null} [".google.api.methodSignature"] MethodOptions .google.api.methodSignature
                  */
-    
+
                 /**
                  * Constructs a new MethodOptions.
                  * @memberof google.protobuf
@@ -11271,7 +11779,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * MethodOptions deprecated.
                  * @member {boolean} deprecated
@@ -11279,7 +11787,7 @@
                  * @instance
                  */
                 MethodOptions.prototype.deprecated = false;
-    
+
                 /**
                  * MethodOptions idempotencyLevel.
                  * @member {google.protobuf.MethodOptions.IdempotencyLevel} idempotencyLevel
@@ -11287,7 +11795,7 @@
                  * @instance
                  */
                 MethodOptions.prototype.idempotencyLevel = 0;
-    
+
                 /**
                  * MethodOptions uninterpretedOption.
                  * @member {Array.<google.protobuf.IUninterpretedOption>} uninterpretedOption
@@ -11295,7 +11803,7 @@
                  * @instance
                  */
                 MethodOptions.prototype.uninterpretedOption = $util.emptyArray;
-    
+
                 /**
                  * MethodOptions .google.api.http.
                  * @member {google.api.IHttpRule|null|undefined} .google.api.http
@@ -11303,7 +11811,7 @@
                  * @instance
                  */
                 MethodOptions.prototype[".google.api.http"] = null;
-    
+
                 /**
                  * MethodOptions .google.api.methodSignature.
                  * @member {Array.<string>} .google.api.methodSignature
@@ -11311,7 +11819,7 @@
                  * @instance
                  */
                 MethodOptions.prototype[".google.api.methodSignature"] = $util.emptyArray;
-    
+
                 /**
                  * Creates a new MethodOptions instance using the specified properties.
                  * @function create
@@ -11323,7 +11831,7 @@
                 MethodOptions.create = function create(properties) {
                     return new MethodOptions(properties);
                 };
-    
+
                 /**
                  * Encodes the specified MethodOptions message. Does not implicitly {@link google.protobuf.MethodOptions.verify|verify} messages.
                  * @function encode
@@ -11350,7 +11858,7 @@
                         $root.google.api.HttpRule.encode(message[".google.api.http"], writer.uint32(/* id 72295728, wireType 2 =*/578365826).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified MethodOptions message, length delimited. Does not implicitly {@link google.protobuf.MethodOptions.verify|verify} messages.
                  * @function encodeDelimited
@@ -11363,7 +11871,7 @@
                 MethodOptions.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a MethodOptions message from the specified reader or buffer.
                  * @function decode
@@ -11408,7 +11916,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a MethodOptions message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -11424,7 +11932,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a MethodOptions message.
                  * @function verify
@@ -11471,7 +11979,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates a MethodOptions message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -11524,7 +12032,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a MethodOptions message. Also converts values to other types if specified.
                  * @function toObject
@@ -11565,7 +12073,7 @@
                         object[".google.api.http"] = $root.google.api.HttpRule.toObject(message[".google.api.http"], options);
                     return object;
                 };
-    
+
                 /**
                  * Converts this MethodOptions to JSON.
                  * @function toJSON
@@ -11576,7 +12084,7 @@
                 MethodOptions.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 /**
                  * IdempotencyLevel enum.
                  * @name google.protobuf.MethodOptions.IdempotencyLevel
@@ -11592,12 +12100,12 @@
                     values[valuesById[2] = "IDEMPOTENT"] = 2;
                     return values;
                 })();
-    
+
                 return MethodOptions;
             })();
-    
+
             protobuf.UninterpretedOption = (function() {
-    
+
                 /**
                  * Properties of an UninterpretedOption.
                  * @memberof google.protobuf
@@ -11610,7 +12118,7 @@
                  * @property {Uint8Array|null} [stringValue] UninterpretedOption stringValue
                  * @property {string|null} [aggregateValue] UninterpretedOption aggregateValue
                  */
-    
+
                 /**
                  * Constructs a new UninterpretedOption.
                  * @memberof google.protobuf
@@ -11626,7 +12134,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * UninterpretedOption name.
                  * @member {Array.<google.protobuf.UninterpretedOption.INamePart>} name
@@ -11634,7 +12142,7 @@
                  * @instance
                  */
                 UninterpretedOption.prototype.name = $util.emptyArray;
-    
+
                 /**
                  * UninterpretedOption identifierValue.
                  * @member {string} identifierValue
@@ -11642,7 +12150,7 @@
                  * @instance
                  */
                 UninterpretedOption.prototype.identifierValue = "";
-    
+
                 /**
                  * UninterpretedOption positiveIntValue.
                  * @member {number|Long} positiveIntValue
@@ -11650,7 +12158,7 @@
                  * @instance
                  */
                 UninterpretedOption.prototype.positiveIntValue = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
-    
+
                 /**
                  * UninterpretedOption negativeIntValue.
                  * @member {number|Long} negativeIntValue
@@ -11658,7 +12166,7 @@
                  * @instance
                  */
                 UninterpretedOption.prototype.negativeIntValue = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
-    
+
                 /**
                  * UninterpretedOption doubleValue.
                  * @member {number} doubleValue
@@ -11666,7 +12174,7 @@
                  * @instance
                  */
                 UninterpretedOption.prototype.doubleValue = 0;
-    
+
                 /**
                  * UninterpretedOption stringValue.
                  * @member {Uint8Array} stringValue
@@ -11674,7 +12182,7 @@
                  * @instance
                  */
                 UninterpretedOption.prototype.stringValue = $util.newBuffer([]);
-    
+
                 /**
                  * UninterpretedOption aggregateValue.
                  * @member {string} aggregateValue
@@ -11682,7 +12190,7 @@
                  * @instance
                  */
                 UninterpretedOption.prototype.aggregateValue = "";
-    
+
                 /**
                  * Creates a new UninterpretedOption instance using the specified properties.
                  * @function create
@@ -11694,7 +12202,7 @@
                 UninterpretedOption.create = function create(properties) {
                     return new UninterpretedOption(properties);
                 };
-    
+
                 /**
                  * Encodes the specified UninterpretedOption message. Does not implicitly {@link google.protobuf.UninterpretedOption.verify|verify} messages.
                  * @function encode
@@ -11724,7 +12232,7 @@
                         writer.uint32(/* id 8, wireType 2 =*/66).string(message.aggregateValue);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified UninterpretedOption message, length delimited. Does not implicitly {@link google.protobuf.UninterpretedOption.verify|verify} messages.
                  * @function encodeDelimited
@@ -11737,7 +12245,7 @@
                 UninterpretedOption.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes an UninterpretedOption message from the specified reader or buffer.
                  * @function decode
@@ -11786,7 +12294,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes an UninterpretedOption message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -11802,7 +12310,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies an UninterpretedOption message.
                  * @function verify
@@ -11843,7 +12351,7 @@
                             return "aggregateValue: string expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates an UninterpretedOption message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -11897,7 +12405,7 @@
                         message.aggregateValue = String(object.aggregateValue);
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from an UninterpretedOption message. Also converts values to other types if specified.
                  * @function toObject
@@ -11960,7 +12468,7 @@
                         object.aggregateValue = message.aggregateValue;
                     return object;
                 };
-    
+
                 /**
                  * Converts this UninterpretedOption to JSON.
                  * @function toJSON
@@ -11971,9 +12479,9 @@
                 UninterpretedOption.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 UninterpretedOption.NamePart = (function() {
-    
+
                     /**
                      * Properties of a NamePart.
                      * @memberof google.protobuf.UninterpretedOption
@@ -11981,7 +12489,7 @@
                      * @property {string} namePart NamePart namePart
                      * @property {boolean} isExtension NamePart isExtension
                      */
-    
+
                     /**
                      * Constructs a new NamePart.
                      * @memberof google.protobuf.UninterpretedOption
@@ -11996,7 +12504,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * NamePart namePart.
                      * @member {string} namePart
@@ -12004,7 +12512,7 @@
                      * @instance
                      */
                     NamePart.prototype.namePart = "";
-    
+
                     /**
                      * NamePart isExtension.
                      * @member {boolean} isExtension
@@ -12012,7 +12520,7 @@
                      * @instance
                      */
                     NamePart.prototype.isExtension = false;
-    
+
                     /**
                      * Creates a new NamePart instance using the specified properties.
                      * @function create
@@ -12024,7 +12532,7 @@
                     NamePart.create = function create(properties) {
                         return new NamePart(properties);
                     };
-    
+
                     /**
                      * Encodes the specified NamePart message. Does not implicitly {@link google.protobuf.UninterpretedOption.NamePart.verify|verify} messages.
                      * @function encode
@@ -12041,7 +12549,7 @@
                         writer.uint32(/* id 2, wireType 0 =*/16).bool(message.isExtension);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified NamePart message, length delimited. Does not implicitly {@link google.protobuf.UninterpretedOption.NamePart.verify|verify} messages.
                      * @function encodeDelimited
@@ -12054,7 +12562,7 @@
                     NamePart.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a NamePart message from the specified reader or buffer.
                      * @function decode
@@ -12090,7 +12598,7 @@
                             throw $util.ProtocolError("missing required 'isExtension'", { instance: message });
                         return message;
                     };
-    
+
                     /**
                      * Decodes a NamePart message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -12106,7 +12614,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a NamePart message.
                      * @function verify
@@ -12124,7 +12632,7 @@
                             return "isExtension: boolean expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a NamePart message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -12143,7 +12651,7 @@
                             message.isExtension = Boolean(object.isExtension);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a NamePart message. Also converts values to other types if specified.
                      * @function toObject
@@ -12167,7 +12675,7 @@
                             object.isExtension = message.isExtension;
                         return object;
                     };
-    
+
                     /**
                      * Converts this NamePart to JSON.
                      * @function toJSON
@@ -12178,22 +12686,22 @@
                     NamePart.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return NamePart;
                 })();
-    
+
                 return UninterpretedOption;
             })();
-    
+
             protobuf.SourceCodeInfo = (function() {
-    
+
                 /**
                  * Properties of a SourceCodeInfo.
                  * @memberof google.protobuf
                  * @interface ISourceCodeInfo
                  * @property {Array.<google.protobuf.SourceCodeInfo.ILocation>|null} [location] SourceCodeInfo location
                  */
-    
+
                 /**
                  * Constructs a new SourceCodeInfo.
                  * @memberof google.protobuf
@@ -12209,7 +12717,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * SourceCodeInfo location.
                  * @member {Array.<google.protobuf.SourceCodeInfo.ILocation>} location
@@ -12217,7 +12725,7 @@
                  * @instance
                  */
                 SourceCodeInfo.prototype.location = $util.emptyArray;
-    
+
                 /**
                  * Creates a new SourceCodeInfo instance using the specified properties.
                  * @function create
@@ -12229,7 +12737,7 @@
                 SourceCodeInfo.create = function create(properties) {
                     return new SourceCodeInfo(properties);
                 };
-    
+
                 /**
                  * Encodes the specified SourceCodeInfo message. Does not implicitly {@link google.protobuf.SourceCodeInfo.verify|verify} messages.
                  * @function encode
@@ -12247,7 +12755,7 @@
                             $root.google.protobuf.SourceCodeInfo.Location.encode(message.location[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified SourceCodeInfo message, length delimited. Does not implicitly {@link google.protobuf.SourceCodeInfo.verify|verify} messages.
                  * @function encodeDelimited
@@ -12260,7 +12768,7 @@
                 SourceCodeInfo.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a SourceCodeInfo message from the specified reader or buffer.
                  * @function decode
@@ -12291,7 +12799,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a SourceCodeInfo message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -12307,7 +12815,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a SourceCodeInfo message.
                  * @function verify
@@ -12330,7 +12838,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates a SourceCodeInfo message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -12355,7 +12863,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a SourceCodeInfo message. Also converts values to other types if specified.
                  * @function toObject
@@ -12378,7 +12886,7 @@
                     }
                     return object;
                 };
-    
+
                 /**
                  * Converts this SourceCodeInfo to JSON.
                  * @function toJSON
@@ -12389,9 +12897,9 @@
                 SourceCodeInfo.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 SourceCodeInfo.Location = (function() {
-    
+
                     /**
                      * Properties of a Location.
                      * @memberof google.protobuf.SourceCodeInfo
@@ -12402,7 +12910,7 @@
                      * @property {string|null} [trailingComments] Location trailingComments
                      * @property {Array.<string>|null} [leadingDetachedComments] Location leadingDetachedComments
                      */
-    
+
                     /**
                      * Constructs a new Location.
                      * @memberof google.protobuf.SourceCodeInfo
@@ -12420,7 +12928,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * Location path.
                      * @member {Array.<number>} path
@@ -12428,7 +12936,7 @@
                      * @instance
                      */
                     Location.prototype.path = $util.emptyArray;
-    
+
                     /**
                      * Location span.
                      * @member {Array.<number>} span
@@ -12436,7 +12944,7 @@
                      * @instance
                      */
                     Location.prototype.span = $util.emptyArray;
-    
+
                     /**
                      * Location leadingComments.
                      * @member {string} leadingComments
@@ -12444,7 +12952,7 @@
                      * @instance
                      */
                     Location.prototype.leadingComments = "";
-    
+
                     /**
                      * Location trailingComments.
                      * @member {string} trailingComments
@@ -12452,7 +12960,7 @@
                      * @instance
                      */
                     Location.prototype.trailingComments = "";
-    
+
                     /**
                      * Location leadingDetachedComments.
                      * @member {Array.<string>} leadingDetachedComments
@@ -12460,7 +12968,7 @@
                      * @instance
                      */
                     Location.prototype.leadingDetachedComments = $util.emptyArray;
-    
+
                     /**
                      * Creates a new Location instance using the specified properties.
                      * @function create
@@ -12472,7 +12980,7 @@
                     Location.create = function create(properties) {
                         return new Location(properties);
                     };
-    
+
                     /**
                      * Encodes the specified Location message. Does not implicitly {@link google.protobuf.SourceCodeInfo.Location.verify|verify} messages.
                      * @function encode
@@ -12506,7 +13014,7 @@
                                 writer.uint32(/* id 6, wireType 2 =*/50).string(message.leadingDetachedComments[i]);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified Location message, length delimited. Does not implicitly {@link google.protobuf.SourceCodeInfo.Location.verify|verify} messages.
                      * @function encodeDelimited
@@ -12519,7 +13027,7 @@
                     Location.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a Location message from the specified reader or buffer.
                      * @function decode
@@ -12576,7 +13084,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a Location message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -12592,7 +13100,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a Location message.
                      * @function verify
@@ -12633,7 +13141,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a Location message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -12673,7 +13181,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a Location message. Also converts values to other types if specified.
                      * @function toObject
@@ -12717,7 +13225,7 @@
                         }
                         return object;
                     };
-    
+
                     /**
                      * Converts this Location to JSON.
                      * @function toJSON
@@ -12728,22 +13236,22 @@
                     Location.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return Location;
                 })();
-    
+
                 return SourceCodeInfo;
             })();
-    
+
             protobuf.GeneratedCodeInfo = (function() {
-    
+
                 /**
                  * Properties of a GeneratedCodeInfo.
                  * @memberof google.protobuf
                  * @interface IGeneratedCodeInfo
                  * @property {Array.<google.protobuf.GeneratedCodeInfo.IAnnotation>|null} [annotation] GeneratedCodeInfo annotation
                  */
-    
+
                 /**
                  * Constructs a new GeneratedCodeInfo.
                  * @memberof google.protobuf
@@ -12759,7 +13267,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * GeneratedCodeInfo annotation.
                  * @member {Array.<google.protobuf.GeneratedCodeInfo.IAnnotation>} annotation
@@ -12767,7 +13275,7 @@
                  * @instance
                  */
                 GeneratedCodeInfo.prototype.annotation = $util.emptyArray;
-    
+
                 /**
                  * Creates a new GeneratedCodeInfo instance using the specified properties.
                  * @function create
@@ -12779,7 +13287,7 @@
                 GeneratedCodeInfo.create = function create(properties) {
                     return new GeneratedCodeInfo(properties);
                 };
-    
+
                 /**
                  * Encodes the specified GeneratedCodeInfo message. Does not implicitly {@link google.protobuf.GeneratedCodeInfo.verify|verify} messages.
                  * @function encode
@@ -12797,7 +13305,7 @@
                             $root.google.protobuf.GeneratedCodeInfo.Annotation.encode(message.annotation[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified GeneratedCodeInfo message, length delimited. Does not implicitly {@link google.protobuf.GeneratedCodeInfo.verify|verify} messages.
                  * @function encodeDelimited
@@ -12810,7 +13318,7 @@
                 GeneratedCodeInfo.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a GeneratedCodeInfo message from the specified reader or buffer.
                  * @function decode
@@ -12841,7 +13349,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a GeneratedCodeInfo message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -12857,7 +13365,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a GeneratedCodeInfo message.
                  * @function verify
@@ -12880,7 +13388,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates a GeneratedCodeInfo message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -12905,7 +13413,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a GeneratedCodeInfo message. Also converts values to other types if specified.
                  * @function toObject
@@ -12928,7 +13436,7 @@
                     }
                     return object;
                 };
-    
+
                 /**
                  * Converts this GeneratedCodeInfo to JSON.
                  * @function toJSON
@@ -12939,9 +13447,9 @@
                 GeneratedCodeInfo.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 GeneratedCodeInfo.Annotation = (function() {
-    
+
                     /**
                      * Properties of an Annotation.
                      * @memberof google.protobuf.GeneratedCodeInfo
@@ -12951,7 +13459,7 @@
                      * @property {number|null} [begin] Annotation begin
                      * @property {number|null} [end] Annotation end
                      */
-    
+
                     /**
                      * Constructs a new Annotation.
                      * @memberof google.protobuf.GeneratedCodeInfo
@@ -12967,7 +13475,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * Annotation path.
                      * @member {Array.<number>} path
@@ -12975,7 +13483,7 @@
                      * @instance
                      */
                     Annotation.prototype.path = $util.emptyArray;
-    
+
                     /**
                      * Annotation sourceFile.
                      * @member {string} sourceFile
@@ -12983,7 +13491,7 @@
                      * @instance
                      */
                     Annotation.prototype.sourceFile = "";
-    
+
                     /**
                      * Annotation begin.
                      * @member {number} begin
@@ -12991,7 +13499,7 @@
                      * @instance
                      */
                     Annotation.prototype.begin = 0;
-    
+
                     /**
                      * Annotation end.
                      * @member {number} end
@@ -12999,7 +13507,7 @@
                      * @instance
                      */
                     Annotation.prototype.end = 0;
-    
+
                     /**
                      * Creates a new Annotation instance using the specified properties.
                      * @function create
@@ -13011,7 +13519,7 @@
                     Annotation.create = function create(properties) {
                         return new Annotation(properties);
                     };
-    
+
                     /**
                      * Encodes the specified Annotation message. Does not implicitly {@link google.protobuf.GeneratedCodeInfo.Annotation.verify|verify} messages.
                      * @function encode
@@ -13038,7 +13546,7 @@
                             writer.uint32(/* id 4, wireType 0 =*/32).int32(message.end);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified Annotation message, length delimited. Does not implicitly {@link google.protobuf.GeneratedCodeInfo.Annotation.verify|verify} messages.
                      * @function encodeDelimited
@@ -13051,7 +13559,7 @@
                     Annotation.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes an Annotation message from the specified reader or buffer.
                      * @function decode
@@ -13096,7 +13604,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes an Annotation message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -13112,7 +13620,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies an Annotation message.
                      * @function verify
@@ -13142,7 +13650,7 @@
                                 return "end: integer expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates an Annotation message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -13170,7 +13678,7 @@
                             message.end = object.end | 0;
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from an Annotation message. Also converts values to other types if specified.
                      * @function toObject
@@ -13204,7 +13712,7 @@
                             object.end = message.end;
                         return object;
                     };
-    
+
                     /**
                      * Converts this Annotation to JSON.
                      * @function toJSON
@@ -13215,15 +13723,15 @@
                     Annotation.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return Annotation;
                 })();
-    
+
                 return GeneratedCodeInfo;
             })();
-    
+
             protobuf.Duration = (function() {
-    
+
                 /**
                  * Properties of a Duration.
                  * @memberof google.protobuf
@@ -13231,7 +13739,7 @@
                  * @property {number|Long|null} [seconds] Duration seconds
                  * @property {number|null} [nanos] Duration nanos
                  */
-    
+
                 /**
                  * Constructs a new Duration.
                  * @memberof google.protobuf
@@ -13246,7 +13754,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * Duration seconds.
                  * @member {number|Long} seconds
@@ -13254,7 +13762,7 @@
                  * @instance
                  */
                 Duration.prototype.seconds = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
-    
+
                 /**
                  * Duration nanos.
                  * @member {number} nanos
@@ -13262,7 +13770,7 @@
                  * @instance
                  */
                 Duration.prototype.nanos = 0;
-    
+
                 /**
                  * Creates a new Duration instance using the specified properties.
                  * @function create
@@ -13274,7 +13782,7 @@
                 Duration.create = function create(properties) {
                     return new Duration(properties);
                 };
-    
+
                 /**
                  * Encodes the specified Duration message. Does not implicitly {@link google.protobuf.Duration.verify|verify} messages.
                  * @function encode
@@ -13293,7 +13801,7 @@
                         writer.uint32(/* id 2, wireType 0 =*/16).int32(message.nanos);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified Duration message, length delimited. Does not implicitly {@link google.protobuf.Duration.verify|verify} messages.
                  * @function encodeDelimited
@@ -13306,7 +13814,7 @@
                 Duration.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a Duration message from the specified reader or buffer.
                  * @function decode
@@ -13338,7 +13846,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a Duration message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -13354,7 +13862,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a Duration message.
                  * @function verify
@@ -13374,7 +13882,7 @@
                             return "nanos: integer expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates a Duration message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -13400,7 +13908,7 @@
                         message.nanos = object.nanos | 0;
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a Duration message. Also converts values to other types if specified.
                  * @function toObject
@@ -13431,7 +13939,7 @@
                         object.nanos = message.nanos;
                     return object;
                 };
-    
+
                 /**
                  * Converts this Duration to JSON.
                  * @function toJSON
@@ -13442,18 +13950,18 @@
                 Duration.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return Duration;
             })();
-    
+
             protobuf.Empty = (function() {
-    
+
                 /**
                  * Properties of an Empty.
                  * @memberof google.protobuf
                  * @interface IEmpty
                  */
-    
+
                 /**
                  * Constructs a new Empty.
                  * @memberof google.protobuf
@@ -13468,7 +13976,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * Creates a new Empty instance using the specified properties.
                  * @function create
@@ -13480,7 +13988,7 @@
                 Empty.create = function create(properties) {
                     return new Empty(properties);
                 };
-    
+
                 /**
                  * Encodes the specified Empty message. Does not implicitly {@link google.protobuf.Empty.verify|verify} messages.
                  * @function encode
@@ -13495,7 +14003,7 @@
                         writer = $Writer.create();
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified Empty message, length delimited. Does not implicitly {@link google.protobuf.Empty.verify|verify} messages.
                  * @function encodeDelimited
@@ -13508,7 +14016,7 @@
                 Empty.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes an Empty message from the specified reader or buffer.
                  * @function decode
@@ -13534,7 +14042,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes an Empty message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -13550,7 +14058,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies an Empty message.
                  * @function verify
@@ -13564,7 +14072,7 @@
                         return "object expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates an Empty message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -13578,7 +14086,7 @@
                         return object;
                     return new $root.google.protobuf.Empty();
                 };
-    
+
                 /**
                  * Creates a plain object from an Empty message. Also converts values to other types if specified.
                  * @function toObject
@@ -13591,7 +14099,7 @@
                 Empty.toObject = function toObject() {
                     return {};
                 };
-    
+
                 /**
                  * Converts this Empty to JSON.
                  * @function toJSON
@@ -13602,19 +14110,19 @@
                 Empty.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return Empty;
             })();
-    
+
             protobuf.FieldMask = (function() {
-    
+
                 /**
                  * Properties of a FieldMask.
                  * @memberof google.protobuf
                  * @interface IFieldMask
                  * @property {Array.<string>|null} [paths] FieldMask paths
                  */
-    
+
                 /**
                  * Constructs a new FieldMask.
                  * @memberof google.protobuf
@@ -13630,7 +14138,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * FieldMask paths.
                  * @member {Array.<string>} paths
@@ -13638,7 +14146,7 @@
                  * @instance
                  */
                 FieldMask.prototype.paths = $util.emptyArray;
-    
+
                 /**
                  * Creates a new FieldMask instance using the specified properties.
                  * @function create
@@ -13650,7 +14158,7 @@
                 FieldMask.create = function create(properties) {
                     return new FieldMask(properties);
                 };
-    
+
                 /**
                  * Encodes the specified FieldMask message. Does not implicitly {@link google.protobuf.FieldMask.verify|verify} messages.
                  * @function encode
@@ -13668,7 +14176,7 @@
                             writer.uint32(/* id 1, wireType 2 =*/10).string(message.paths[i]);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified FieldMask message, length delimited. Does not implicitly {@link google.protobuf.FieldMask.verify|verify} messages.
                  * @function encodeDelimited
@@ -13681,7 +14189,7 @@
                 FieldMask.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a FieldMask message from the specified reader or buffer.
                  * @function decode
@@ -13712,7 +14220,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a FieldMask message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -13728,7 +14236,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a FieldMask message.
                  * @function verify
@@ -13749,7 +14257,7 @@
                     }
                     return null;
                 };
-    
+
                 /**
                  * Creates a FieldMask message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -13771,7 +14279,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a FieldMask message. Also converts values to other types if specified.
                  * @function toObject
@@ -13794,7 +14302,7 @@
                     }
                     return object;
                 };
-    
+
                 /**
                  * Converts this FieldMask to JSON.
                  * @function toJSON
@@ -13805,12 +14313,12 @@
                 FieldMask.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return FieldMask;
             })();
-    
+
             protobuf.Timestamp = (function() {
-    
+
                 /**
                  * Properties of a Timestamp.
                  * @memberof google.protobuf
@@ -13818,7 +14326,7 @@
                  * @property {number|Long|null} [seconds] Timestamp seconds
                  * @property {number|null} [nanos] Timestamp nanos
                  */
-    
+
                 /**
                  * Constructs a new Timestamp.
                  * @memberof google.protobuf
@@ -13833,7 +14341,7 @@
                             if (properties[keys[i]] != null)
                                 this[keys[i]] = properties[keys[i]];
                 }
-    
+
                 /**
                  * Timestamp seconds.
                  * @member {number|Long} seconds
@@ -13841,7 +14349,7 @@
                  * @instance
                  */
                 Timestamp.prototype.seconds = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
-    
+
                 /**
                  * Timestamp nanos.
                  * @member {number} nanos
@@ -13849,7 +14357,7 @@
                  * @instance
                  */
                 Timestamp.prototype.nanos = 0;
-    
+
                 /**
                  * Creates a new Timestamp instance using the specified properties.
                  * @function create
@@ -13861,7 +14369,7 @@
                 Timestamp.create = function create(properties) {
                     return new Timestamp(properties);
                 };
-    
+
                 /**
                  * Encodes the specified Timestamp message. Does not implicitly {@link google.protobuf.Timestamp.verify|verify} messages.
                  * @function encode
@@ -13880,7 +14388,7 @@
                         writer.uint32(/* id 2, wireType 0 =*/16).int32(message.nanos);
                     return writer;
                 };
-    
+
                 /**
                  * Encodes the specified Timestamp message, length delimited. Does not implicitly {@link google.protobuf.Timestamp.verify|verify} messages.
                  * @function encodeDelimited
@@ -13893,7 +14401,7 @@
                 Timestamp.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
-    
+
                 /**
                  * Decodes a Timestamp message from the specified reader or buffer.
                  * @function decode
@@ -13925,7 +14433,7 @@
                     }
                     return message;
                 };
-    
+
                 /**
                  * Decodes a Timestamp message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
@@ -13941,7 +14449,7 @@
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
-    
+
                 /**
                  * Verifies a Timestamp message.
                  * @function verify
@@ -13961,7 +14469,7 @@
                             return "nanos: integer expected";
                     return null;
                 };
-    
+
                 /**
                  * Creates a Timestamp message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
@@ -13987,7 +14495,7 @@
                         message.nanos = object.nanos | 0;
                     return message;
                 };
-    
+
                 /**
                  * Creates a plain object from a Timestamp message. Also converts values to other types if specified.
                  * @function toObject
@@ -14018,7 +14526,7 @@
                         object.nanos = message.nanos;
                     return object;
                 };
-    
+
                 /**
                  * Converts this Timestamp to JSON.
                  * @function toJSON
@@ -14029,33 +14537,33 @@
                 Timestamp.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
-    
+
                 return Timestamp;
             })();
-    
+
             return protobuf;
         })();
-    
+
         google.pubsub = (function() {
-    
+
             /**
              * Namespace pubsub.
              * @memberof google
              * @namespace
              */
             var pubsub = {};
-    
+
             pubsub.v1 = (function() {
-    
+
                 /**
                  * Namespace v1.
                  * @memberof google.pubsub
                  * @namespace
                  */
                 var v1 = {};
-    
+
                 v1.Publisher = (function() {
-    
+
                     /**
                      * Constructs a new Publisher service.
                      * @memberof google.pubsub.v1
@@ -14069,9 +14577,9 @@
                     function Publisher(rpcImpl, requestDelimited, responseDelimited) {
                         $protobuf.rpc.Service.call(this, rpcImpl, requestDelimited, responseDelimited);
                     }
-    
+
                     (Publisher.prototype = Object.create($protobuf.rpc.Service.prototype)).constructor = Publisher;
-    
+
                     /**
                      * Creates new Publisher service using the specified rpc implementation.
                      * @function create
@@ -14085,7 +14593,7 @@
                     Publisher.create = function create(rpcImpl, requestDelimited, responseDelimited) {
                         return new this(rpcImpl, requestDelimited, responseDelimited);
                     };
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Publisher#createTopic}.
                      * @memberof google.pubsub.v1.Publisher
@@ -14094,7 +14602,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.Topic} [response] Topic
                      */
-    
+
                     /**
                      * Calls CreateTopic.
                      * @function createTopic
@@ -14108,7 +14616,7 @@
                     Object.defineProperty(Publisher.prototype.createTopic = function createTopic(request, callback) {
                         return this.rpcCall(createTopic, $root.google.pubsub.v1.Topic, $root.google.pubsub.v1.Topic, request, callback);
                     }, "name", { value: "CreateTopic" });
-    
+
                     /**
                      * Calls CreateTopic.
                      * @function createTopic
@@ -14118,7 +14626,7 @@
                      * @returns {Promise<google.pubsub.v1.Topic>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Publisher#updateTopic}.
                      * @memberof google.pubsub.v1.Publisher
@@ -14127,7 +14635,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.Topic} [response] Topic
                      */
-    
+
                     /**
                      * Calls UpdateTopic.
                      * @function updateTopic
@@ -14141,7 +14649,7 @@
                     Object.defineProperty(Publisher.prototype.updateTopic = function updateTopic(request, callback) {
                         return this.rpcCall(updateTopic, $root.google.pubsub.v1.UpdateTopicRequest, $root.google.pubsub.v1.Topic, request, callback);
                     }, "name", { value: "UpdateTopic" });
-    
+
                     /**
                      * Calls UpdateTopic.
                      * @function updateTopic
@@ -14151,7 +14659,7 @@
                      * @returns {Promise<google.pubsub.v1.Topic>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Publisher#publish}.
                      * @memberof google.pubsub.v1.Publisher
@@ -14160,7 +14668,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.PublishResponse} [response] PublishResponse
                      */
-    
+
                     /**
                      * Calls Publish.
                      * @function publish
@@ -14174,7 +14682,7 @@
                     Object.defineProperty(Publisher.prototype.publish = function publish(request, callback) {
                         return this.rpcCall(publish, $root.google.pubsub.v1.PublishRequest, $root.google.pubsub.v1.PublishResponse, request, callback);
                     }, "name", { value: "Publish" });
-    
+
                     /**
                      * Calls Publish.
                      * @function publish
@@ -14184,7 +14692,7 @@
                      * @returns {Promise<google.pubsub.v1.PublishResponse>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Publisher#getTopic}.
                      * @memberof google.pubsub.v1.Publisher
@@ -14193,7 +14701,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.Topic} [response] Topic
                      */
-    
+
                     /**
                      * Calls GetTopic.
                      * @function getTopic
@@ -14207,7 +14715,7 @@
                     Object.defineProperty(Publisher.prototype.getTopic = function getTopic(request, callback) {
                         return this.rpcCall(getTopic, $root.google.pubsub.v1.GetTopicRequest, $root.google.pubsub.v1.Topic, request, callback);
                     }, "name", { value: "GetTopic" });
-    
+
                     /**
                      * Calls GetTopic.
                      * @function getTopic
@@ -14217,7 +14725,7 @@
                      * @returns {Promise<google.pubsub.v1.Topic>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Publisher#listTopics}.
                      * @memberof google.pubsub.v1.Publisher
@@ -14226,7 +14734,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.ListTopicsResponse} [response] ListTopicsResponse
                      */
-    
+
                     /**
                      * Calls ListTopics.
                      * @function listTopics
@@ -14240,7 +14748,7 @@
                     Object.defineProperty(Publisher.prototype.listTopics = function listTopics(request, callback) {
                         return this.rpcCall(listTopics, $root.google.pubsub.v1.ListTopicsRequest, $root.google.pubsub.v1.ListTopicsResponse, request, callback);
                     }, "name", { value: "ListTopics" });
-    
+
                     /**
                      * Calls ListTopics.
                      * @function listTopics
@@ -14250,7 +14758,7 @@
                      * @returns {Promise<google.pubsub.v1.ListTopicsResponse>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSubscriptions}.
                      * @memberof google.pubsub.v1.Publisher
@@ -14259,7 +14767,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.ListTopicSubscriptionsResponse} [response] ListTopicSubscriptionsResponse
                      */
-    
+
                     /**
                      * Calls ListTopicSubscriptions.
                      * @function listTopicSubscriptions
@@ -14273,7 +14781,7 @@
                     Object.defineProperty(Publisher.prototype.listTopicSubscriptions = function listTopicSubscriptions(request, callback) {
                         return this.rpcCall(listTopicSubscriptions, $root.google.pubsub.v1.ListTopicSubscriptionsRequest, $root.google.pubsub.v1.ListTopicSubscriptionsResponse, request, callback);
                     }, "name", { value: "ListTopicSubscriptions" });
-    
+
                     /**
                      * Calls ListTopicSubscriptions.
                      * @function listTopicSubscriptions
@@ -14283,7 +14791,7 @@
                      * @returns {Promise<google.pubsub.v1.ListTopicSubscriptionsResponse>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSnapshots}.
                      * @memberof google.pubsub.v1.Publisher
@@ -14292,7 +14800,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.ListTopicSnapshotsResponse} [response] ListTopicSnapshotsResponse
                      */
-    
+
                     /**
                      * Calls ListTopicSnapshots.
                      * @function listTopicSnapshots
@@ -14306,7 +14814,7 @@
                     Object.defineProperty(Publisher.prototype.listTopicSnapshots = function listTopicSnapshots(request, callback) {
                         return this.rpcCall(listTopicSnapshots, $root.google.pubsub.v1.ListTopicSnapshotsRequest, $root.google.pubsub.v1.ListTopicSnapshotsResponse, request, callback);
                     }, "name", { value: "ListTopicSnapshots" });
-    
+
                     /**
                      * Calls ListTopicSnapshots.
                      * @function listTopicSnapshots
@@ -14316,7 +14824,7 @@
                      * @returns {Promise<google.pubsub.v1.ListTopicSnapshotsResponse>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Publisher#deleteTopic}.
                      * @memberof google.pubsub.v1.Publisher
@@ -14325,7 +14833,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.protobuf.Empty} [response] Empty
                      */
-    
+
                     /**
                      * Calls DeleteTopic.
                      * @function deleteTopic
@@ -14339,7 +14847,7 @@
                     Object.defineProperty(Publisher.prototype.deleteTopic = function deleteTopic(request, callback) {
                         return this.rpcCall(deleteTopic, $root.google.pubsub.v1.DeleteTopicRequest, $root.google.protobuf.Empty, request, callback);
                     }, "name", { value: "DeleteTopic" });
-    
+
                     /**
                      * Calls DeleteTopic.
                      * @function deleteTopic
@@ -14349,19 +14857,19 @@
                      * @returns {Promise<google.protobuf.Empty>} Promise
                      * @variation 2
                      */
-    
+
                     return Publisher;
                 })();
-    
+
                 v1.MessageStoragePolicy = (function() {
-    
+
                     /**
                      * Properties of a MessageStoragePolicy.
                      * @memberof google.pubsub.v1
                      * @interface IMessageStoragePolicy
                      * @property {Array.<string>|null} [allowedPersistenceRegions] MessageStoragePolicy allowedPersistenceRegions
                      */
-    
+
                     /**
                      * Constructs a new MessageStoragePolicy.
                      * @memberof google.pubsub.v1
@@ -14377,7 +14885,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * MessageStoragePolicy allowedPersistenceRegions.
                      * @member {Array.<string>} allowedPersistenceRegions
@@ -14385,7 +14893,7 @@
                      * @instance
                      */
                     MessageStoragePolicy.prototype.allowedPersistenceRegions = $util.emptyArray;
-    
+
                     /**
                      * Creates a new MessageStoragePolicy instance using the specified properties.
                      * @function create
@@ -14397,7 +14905,7 @@
                     MessageStoragePolicy.create = function create(properties) {
                         return new MessageStoragePolicy(properties);
                     };
-    
+
                     /**
                      * Encodes the specified MessageStoragePolicy message. Does not implicitly {@link google.pubsub.v1.MessageStoragePolicy.verify|verify} messages.
                      * @function encode
@@ -14415,7 +14923,7 @@
                                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.allowedPersistenceRegions[i]);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified MessageStoragePolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.MessageStoragePolicy.verify|verify} messages.
                      * @function encodeDelimited
@@ -14428,7 +14936,7 @@
                     MessageStoragePolicy.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a MessageStoragePolicy message from the specified reader or buffer.
                      * @function decode
@@ -14459,7 +14967,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a MessageStoragePolicy message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -14475,7 +14983,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a MessageStoragePolicy message.
                      * @function verify
@@ -14496,7 +15004,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a MessageStoragePolicy message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -14518,7 +15026,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a MessageStoragePolicy message. Also converts values to other types if specified.
                      * @function toObject
@@ -14541,7 +15049,7 @@
                         }
                         return object;
                     };
-    
+
                     /**
                      * Converts this MessageStoragePolicy to JSON.
                      * @function toJSON
@@ -14552,12 +15060,12 @@
                     MessageStoragePolicy.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return MessageStoragePolicy;
                 })();
-    
+
                 v1.Topic = (function() {
-    
+
                     /**
                      * Properties of a Topic.
                      * @memberof google.pubsub.v1
@@ -14567,7 +15075,7 @@
                      * @property {google.pubsub.v1.IMessageStoragePolicy|null} [messageStoragePolicy] Topic messageStoragePolicy
                      * @property {string|null} [kmsKeyName] Topic kmsKeyName
                      */
-    
+
                     /**
                      * Constructs a new Topic.
                      * @memberof google.pubsub.v1
@@ -14583,7 +15091,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * Topic name.
                      * @member {string} name
@@ -14591,7 +15099,7 @@
                      * @instance
                      */
                     Topic.prototype.name = "";
-    
+
                     /**
                      * Topic labels.
                      * @member {Object.<string,string>} labels
@@ -14599,7 +15107,7 @@
                      * @instance
                      */
                     Topic.prototype.labels = $util.emptyObject;
-    
+
                     /**
                      * Topic messageStoragePolicy.
                      * @member {google.pubsub.v1.IMessageStoragePolicy|null|undefined} messageStoragePolicy
@@ -14607,7 +15115,7 @@
                      * @instance
                      */
                     Topic.prototype.messageStoragePolicy = null;
-    
+
                     /**
                      * Topic kmsKeyName.
                      * @member {string} kmsKeyName
@@ -14615,7 +15123,7 @@
                      * @instance
                      */
                     Topic.prototype.kmsKeyName = "";
-    
+
                     /**
                      * Creates a new Topic instance using the specified properties.
                      * @function create
@@ -14627,7 +15135,7 @@
                     Topic.create = function create(properties) {
                         return new Topic(properties);
                     };
-    
+
                     /**
                      * Encodes the specified Topic message. Does not implicitly {@link google.pubsub.v1.Topic.verify|verify} messages.
                      * @function encode
@@ -14651,7 +15159,7 @@
                             writer.uint32(/* id 5, wireType 2 =*/42).string(message.kmsKeyName);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified Topic message, length delimited. Does not implicitly {@link google.pubsub.v1.Topic.verify|verify} messages.
                      * @function encodeDelimited
@@ -14664,7 +15172,7 @@
                     Topic.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a Topic message from the specified reader or buffer.
                      * @function decode
@@ -14707,7 +15215,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a Topic message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -14723,7 +15231,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a Topic message.
                      * @function verify
@@ -14756,7 +15264,7 @@
                                 return "kmsKeyName: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a Topic message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -14787,7 +15295,7 @@
                             message.kmsKeyName = String(object.kmsKeyName);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a Topic message. Also converts values to other types if specified.
                      * @function toObject
@@ -14822,7 +15330,7 @@
                             object.kmsKeyName = message.kmsKeyName;
                         return object;
                     };
-    
+
                     /**
                      * Converts this Topic to JSON.
                      * @function toJSON
@@ -14833,12 +15341,12 @@
                     Topic.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return Topic;
                 })();
-    
+
                 v1.PubsubMessage = (function() {
-    
+
                     /**
                      * Properties of a PubsubMessage.
                      * @memberof google.pubsub.v1
@@ -14849,7 +15357,7 @@
                      * @property {google.protobuf.ITimestamp|null} [publishTime] PubsubMessage publishTime
                      * @property {string|null} [orderingKey] PubsubMessage orderingKey
                      */
-    
+
                     /**
                      * Constructs a new PubsubMessage.
                      * @memberof google.pubsub.v1
@@ -14865,7 +15373,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * PubsubMessage data.
                      * @member {Uint8Array} data
@@ -14873,7 +15381,7 @@
                      * @instance
                      */
                     PubsubMessage.prototype.data = $util.newBuffer([]);
-    
+
                     /**
                      * PubsubMessage attributes.
                      * @member {Object.<string,string>} attributes
@@ -14881,7 +15389,7 @@
                      * @instance
                      */
                     PubsubMessage.prototype.attributes = $util.emptyObject;
-    
+
                     /**
                      * PubsubMessage messageId.
                      * @member {string} messageId
@@ -14889,7 +15397,7 @@
                      * @instance
                      */
                     PubsubMessage.prototype.messageId = "";
-    
+
                     /**
                      * PubsubMessage publishTime.
                      * @member {google.protobuf.ITimestamp|null|undefined} publishTime
@@ -14897,7 +15405,7 @@
                      * @instance
                      */
                     PubsubMessage.prototype.publishTime = null;
-    
+
                     /**
                      * PubsubMessage orderingKey.
                      * @member {string} orderingKey
@@ -14905,7 +15413,7 @@
                      * @instance
                      */
                     PubsubMessage.prototype.orderingKey = "";
-    
+
                     /**
                      * Creates a new PubsubMessage instance using the specified properties.
                      * @function create
@@ -14917,7 +15425,7 @@
                     PubsubMessage.create = function create(properties) {
                         return new PubsubMessage(properties);
                     };
-    
+
                     /**
                      * Encodes the specified PubsubMessage message. Does not implicitly {@link google.pubsub.v1.PubsubMessage.verify|verify} messages.
                      * @function encode
@@ -14943,7 +15451,7 @@
                             writer.uint32(/* id 5, wireType 2 =*/42).string(message.orderingKey);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified PubsubMessage message, length delimited. Does not implicitly {@link google.pubsub.v1.PubsubMessage.verify|verify} messages.
                      * @function encodeDelimited
@@ -14956,7 +15464,7 @@
                     PubsubMessage.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a PubsubMessage message from the specified reader or buffer.
                      * @function decode
@@ -15002,7 +15510,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a PubsubMessage message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -15018,7 +15526,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a PubsubMessage message.
                      * @function verify
@@ -15054,7 +15562,7 @@
                                 return "orderingKey: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a PubsubMessage message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -15090,7 +15598,7 @@
                             message.orderingKey = String(object.orderingKey);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a PubsubMessage message. Also converts values to other types if specified.
                      * @function toObject
@@ -15134,7 +15642,7 @@
                             object.orderingKey = message.orderingKey;
                         return object;
                     };
-    
+
                     /**
                      * Converts this PubsubMessage to JSON.
                      * @function toJSON
@@ -15145,19 +15653,19 @@
                     PubsubMessage.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return PubsubMessage;
                 })();
-    
+
                 v1.GetTopicRequest = (function() {
-    
+
                     /**
                      * Properties of a GetTopicRequest.
                      * @memberof google.pubsub.v1
                      * @interface IGetTopicRequest
                      * @property {string|null} [topic] GetTopicRequest topic
                      */
-    
+
                     /**
                      * Constructs a new GetTopicRequest.
                      * @memberof google.pubsub.v1
@@ -15172,7 +15680,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * GetTopicRequest topic.
                      * @member {string} topic
@@ -15180,7 +15688,7 @@
                      * @instance
                      */
                     GetTopicRequest.prototype.topic = "";
-    
+
                     /**
                      * Creates a new GetTopicRequest instance using the specified properties.
                      * @function create
@@ -15192,7 +15700,7 @@
                     GetTopicRequest.create = function create(properties) {
                         return new GetTopicRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified GetTopicRequest message. Does not implicitly {@link google.pubsub.v1.GetTopicRequest.verify|verify} messages.
                      * @function encode
@@ -15209,7 +15717,7 @@
                             writer.uint32(/* id 1, wireType 2 =*/10).string(message.topic);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified GetTopicRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.GetTopicRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -15222,7 +15730,7 @@
                     GetTopicRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a GetTopicRequest message from the specified reader or buffer.
                      * @function decode
@@ -15251,7 +15759,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a GetTopicRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -15267,7 +15775,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a GetTopicRequest message.
                      * @function verify
@@ -15284,7 +15792,7 @@
                                 return "topic: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a GetTopicRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -15301,7 +15809,7 @@
                             message.topic = String(object.topic);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a GetTopicRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -15321,7 +15829,7 @@
                             object.topic = message.topic;
                         return object;
                     };
-    
+
                     /**
                      * Converts this GetTopicRequest to JSON.
                      * @function toJSON
@@ -15332,12 +15840,12 @@
                     GetTopicRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return GetTopicRequest;
                 })();
-    
+
                 v1.UpdateTopicRequest = (function() {
-    
+
                     /**
                      * Properties of an UpdateTopicRequest.
                      * @memberof google.pubsub.v1
@@ -15345,7 +15853,7 @@
                      * @property {google.pubsub.v1.ITopic|null} [topic] UpdateTopicRequest topic
                      * @property {google.protobuf.IFieldMask|null} [updateMask] UpdateTopicRequest updateMask
                      */
-    
+
                     /**
                      * Constructs a new UpdateTopicRequest.
                      * @memberof google.pubsub.v1
@@ -15360,7 +15868,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * UpdateTopicRequest topic.
                      * @member {google.pubsub.v1.ITopic|null|undefined} topic
@@ -15368,7 +15876,7 @@
                      * @instance
                      */
                     UpdateTopicRequest.prototype.topic = null;
-    
+
                     /**
                      * UpdateTopicRequest updateMask.
                      * @member {google.protobuf.IFieldMask|null|undefined} updateMask
@@ -15376,7 +15884,7 @@
                      * @instance
                      */
                     UpdateTopicRequest.prototype.updateMask = null;
-    
+
                     /**
                      * Creates a new UpdateTopicRequest instance using the specified properties.
                      * @function create
@@ -15388,7 +15896,7 @@
                     UpdateTopicRequest.create = function create(properties) {
                         return new UpdateTopicRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified UpdateTopicRequest message. Does not implicitly {@link google.pubsub.v1.UpdateTopicRequest.verify|verify} messages.
                      * @function encode
@@ -15407,7 +15915,7 @@
                             $root.google.protobuf.FieldMask.encode(message.updateMask, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified UpdateTopicRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.UpdateTopicRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -15420,7 +15928,7 @@
                     UpdateTopicRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes an UpdateTopicRequest message from the specified reader or buffer.
                      * @function decode
@@ -15452,7 +15960,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes an UpdateTopicRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -15468,7 +15976,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies an UpdateTopicRequest message.
                      * @function verify
@@ -15492,7 +16000,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates an UpdateTopicRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -15517,7 +16025,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from an UpdateTopicRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -15541,7 +16049,7 @@
                             object.updateMask = $root.google.protobuf.FieldMask.toObject(message.updateMask, options);
                         return object;
                     };
-    
+
                     /**
                      * Converts this UpdateTopicRequest to JSON.
                      * @function toJSON
@@ -15552,12 +16060,12 @@
                     UpdateTopicRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return UpdateTopicRequest;
                 })();
-    
+
                 v1.PublishRequest = (function() {
-    
+
                     /**
                      * Properties of a PublishRequest.
                      * @memberof google.pubsub.v1
@@ -15565,7 +16073,7 @@
                      * @property {string|null} [topic] PublishRequest topic
                      * @property {Array.<google.pubsub.v1.IPubsubMessage>|null} [messages] PublishRequest messages
                      */
-    
+
                     /**
                      * Constructs a new PublishRequest.
                      * @memberof google.pubsub.v1
@@ -15581,7 +16089,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * PublishRequest topic.
                      * @member {string} topic
@@ -15589,7 +16097,7 @@
                      * @instance
                      */
                     PublishRequest.prototype.topic = "";
-    
+
                     /**
                      * PublishRequest messages.
                      * @member {Array.<google.pubsub.v1.IPubsubMessage>} messages
@@ -15597,7 +16105,7 @@
                      * @instance
                      */
                     PublishRequest.prototype.messages = $util.emptyArray;
-    
+
                     /**
                      * Creates a new PublishRequest instance using the specified properties.
                      * @function create
@@ -15609,7 +16117,7 @@
                     PublishRequest.create = function create(properties) {
                         return new PublishRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified PublishRequest message. Does not implicitly {@link google.pubsub.v1.PublishRequest.verify|verify} messages.
                      * @function encode
@@ -15629,7 +16137,7 @@
                                 $root.google.pubsub.v1.PubsubMessage.encode(message.messages[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified PublishRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.PublishRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -15642,7 +16150,7 @@
                     PublishRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a PublishRequest message from the specified reader or buffer.
                      * @function decode
@@ -15676,7 +16184,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a PublishRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -15692,7 +16200,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a PublishRequest message.
                      * @function verify
@@ -15718,7 +16226,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a PublishRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -15745,7 +16253,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a PublishRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -15772,7 +16280,7 @@
                         }
                         return object;
                     };
-    
+
                     /**
                      * Converts this PublishRequest to JSON.
                      * @function toJSON
@@ -15783,19 +16291,19 @@
                     PublishRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return PublishRequest;
                 })();
-    
+
                 v1.PublishResponse = (function() {
-    
+
                     /**
                      * Properties of a PublishResponse.
                      * @memberof google.pubsub.v1
                      * @interface IPublishResponse
                      * @property {Array.<string>|null} [messageIds] PublishResponse messageIds
                      */
-    
+
                     /**
                      * Constructs a new PublishResponse.
                      * @memberof google.pubsub.v1
@@ -15811,7 +16319,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * PublishResponse messageIds.
                      * @member {Array.<string>} messageIds
@@ -15819,7 +16327,7 @@
                      * @instance
                      */
                     PublishResponse.prototype.messageIds = $util.emptyArray;
-    
+
                     /**
                      * Creates a new PublishResponse instance using the specified properties.
                      * @function create
@@ -15831,7 +16339,7 @@
                     PublishResponse.create = function create(properties) {
                         return new PublishResponse(properties);
                     };
-    
+
                     /**
                      * Encodes the specified PublishResponse message. Does not implicitly {@link google.pubsub.v1.PublishResponse.verify|verify} messages.
                      * @function encode
@@ -15849,7 +16357,7 @@
                                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.messageIds[i]);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified PublishResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.PublishResponse.verify|verify} messages.
                      * @function encodeDelimited
@@ -15862,7 +16370,7 @@
                     PublishResponse.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a PublishResponse message from the specified reader or buffer.
                      * @function decode
@@ -15893,7 +16401,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a PublishResponse message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -15909,7 +16417,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a PublishResponse message.
                      * @function verify
@@ -15930,7 +16438,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a PublishResponse message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -15952,7 +16460,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a PublishResponse message. Also converts values to other types if specified.
                      * @function toObject
@@ -15975,7 +16483,7 @@
                         }
                         return object;
                     };
-    
+
                     /**
                      * Converts this PublishResponse to JSON.
                      * @function toJSON
@@ -15986,12 +16494,12 @@
                     PublishResponse.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return PublishResponse;
                 })();
-    
+
                 v1.ListTopicsRequest = (function() {
-    
+
                     /**
                      * Properties of a ListTopicsRequest.
                      * @memberof google.pubsub.v1
@@ -16000,7 +16508,7 @@
                      * @property {number|null} [pageSize] ListTopicsRequest pageSize
                      * @property {string|null} [pageToken] ListTopicsRequest pageToken
                      */
-    
+
                     /**
                      * Constructs a new ListTopicsRequest.
                      * @memberof google.pubsub.v1
@@ -16015,7 +16523,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ListTopicsRequest project.
                      * @member {string} project
@@ -16023,7 +16531,7 @@
                      * @instance
                      */
                     ListTopicsRequest.prototype.project = "";
-    
+
                     /**
                      * ListTopicsRequest pageSize.
                      * @member {number} pageSize
@@ -16031,7 +16539,7 @@
                      * @instance
                      */
                     ListTopicsRequest.prototype.pageSize = 0;
-    
+
                     /**
                      * ListTopicsRequest pageToken.
                      * @member {string} pageToken
@@ -16039,7 +16547,7 @@
                      * @instance
                      */
                     ListTopicsRequest.prototype.pageToken = "";
-    
+
                     /**
                      * Creates a new ListTopicsRequest instance using the specified properties.
                      * @function create
@@ -16051,7 +16559,7 @@
                     ListTopicsRequest.create = function create(properties) {
                         return new ListTopicsRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicsRequest message. Does not implicitly {@link google.pubsub.v1.ListTopicsRequest.verify|verify} messages.
                      * @function encode
@@ -16072,7 +16580,7 @@
                             writer.uint32(/* id 3, wireType 2 =*/26).string(message.pageToken);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicsRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -16085,7 +16593,7 @@
                     ListTopicsRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ListTopicsRequest message from the specified reader or buffer.
                      * @function decode
@@ -16120,7 +16628,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ListTopicsRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -16136,7 +16644,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ListTopicsRequest message.
                      * @function verify
@@ -16159,7 +16667,7 @@
                                 return "pageToken: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a ListTopicsRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -16180,7 +16688,7 @@
                             message.pageToken = String(object.pageToken);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ListTopicsRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -16207,7 +16715,7 @@
                             object.pageToken = message.pageToken;
                         return object;
                     };
-    
+
                     /**
                      * Converts this ListTopicsRequest to JSON.
                      * @function toJSON
@@ -16218,12 +16726,12 @@
                     ListTopicsRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ListTopicsRequest;
                 })();
-    
+
                 v1.ListTopicsResponse = (function() {
-    
+
                     /**
                      * Properties of a ListTopicsResponse.
                      * @memberof google.pubsub.v1
@@ -16231,7 +16739,7 @@
                      * @property {Array.<google.pubsub.v1.ITopic>|null} [topics] ListTopicsResponse topics
                      * @property {string|null} [nextPageToken] ListTopicsResponse nextPageToken
                      */
-    
+
                     /**
                      * Constructs a new ListTopicsResponse.
                      * @memberof google.pubsub.v1
@@ -16247,7 +16755,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ListTopicsResponse topics.
                      * @member {Array.<google.pubsub.v1.ITopic>} topics
@@ -16255,7 +16763,7 @@
                      * @instance
                      */
                     ListTopicsResponse.prototype.topics = $util.emptyArray;
-    
+
                     /**
                      * ListTopicsResponse nextPageToken.
                      * @member {string} nextPageToken
@@ -16263,7 +16771,7 @@
                      * @instance
                      */
                     ListTopicsResponse.prototype.nextPageToken = "";
-    
+
                     /**
                      * Creates a new ListTopicsResponse instance using the specified properties.
                      * @function create
@@ -16275,7 +16783,7 @@
                     ListTopicsResponse.create = function create(properties) {
                         return new ListTopicsResponse(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicsResponse message. Does not implicitly {@link google.pubsub.v1.ListTopicsResponse.verify|verify} messages.
                      * @function encode
@@ -16295,7 +16803,7 @@
                             writer.uint32(/* id 2, wireType 2 =*/18).string(message.nextPageToken);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicsResponse.verify|verify} messages.
                      * @function encodeDelimited
@@ -16308,7 +16816,7 @@
                     ListTopicsResponse.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ListTopicsResponse message from the specified reader or buffer.
                      * @function decode
@@ -16342,7 +16850,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ListTopicsResponse message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -16358,7 +16866,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ListTopicsResponse message.
                      * @function verify
@@ -16384,7 +16892,7 @@
                                 return "nextPageToken: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a ListTopicsResponse message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -16411,7 +16919,7 @@
                             message.nextPageToken = String(object.nextPageToken);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ListTopicsResponse message. Also converts values to other types if specified.
                      * @function toObject
@@ -16438,7 +16946,7 @@
                             object.nextPageToken = message.nextPageToken;
                         return object;
                     };
-    
+
                     /**
                      * Converts this ListTopicsResponse to JSON.
                      * @function toJSON
@@ -16449,12 +16957,12 @@
                     ListTopicsResponse.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ListTopicsResponse;
                 })();
-    
+
                 v1.ListTopicSubscriptionsRequest = (function() {
-    
+
                     /**
                      * Properties of a ListTopicSubscriptionsRequest.
                      * @memberof google.pubsub.v1
@@ -16463,7 +16971,7 @@
                      * @property {number|null} [pageSize] ListTopicSubscriptionsRequest pageSize
                      * @property {string|null} [pageToken] ListTopicSubscriptionsRequest pageToken
                      */
-    
+
                     /**
                      * Constructs a new ListTopicSubscriptionsRequest.
                      * @memberof google.pubsub.v1
@@ -16478,7 +16986,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ListTopicSubscriptionsRequest topic.
                      * @member {string} topic
@@ -16486,7 +16994,7 @@
                      * @instance
                      */
                     ListTopicSubscriptionsRequest.prototype.topic = "";
-    
+
                     /**
                      * ListTopicSubscriptionsRequest pageSize.
                      * @member {number} pageSize
@@ -16494,7 +17002,7 @@
                      * @instance
                      */
                     ListTopicSubscriptionsRequest.prototype.pageSize = 0;
-    
+
                     /**
                      * ListTopicSubscriptionsRequest pageToken.
                      * @member {string} pageToken
@@ -16502,7 +17010,7 @@
                      * @instance
                      */
                     ListTopicSubscriptionsRequest.prototype.pageToken = "";
-    
+
                     /**
                      * Creates a new ListTopicSubscriptionsRequest instance using the specified properties.
                      * @function create
@@ -16514,7 +17022,7 @@
                     ListTopicSubscriptionsRequest.create = function create(properties) {
                         return new ListTopicSubscriptionsRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicSubscriptionsRequest message. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsRequest.verify|verify} messages.
                      * @function encode
@@ -16535,7 +17043,7 @@
                             writer.uint32(/* id 3, wireType 2 =*/26).string(message.pageToken);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicSubscriptionsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -16548,7 +17056,7 @@
                     ListTopicSubscriptionsRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ListTopicSubscriptionsRequest message from the specified reader or buffer.
                      * @function decode
@@ -16583,7 +17091,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ListTopicSubscriptionsRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -16599,7 +17107,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ListTopicSubscriptionsRequest message.
                      * @function verify
@@ -16622,7 +17130,7 @@
                                 return "pageToken: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a ListTopicSubscriptionsRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -16643,7 +17151,7 @@
                             message.pageToken = String(object.pageToken);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ListTopicSubscriptionsRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -16670,7 +17178,7 @@
                             object.pageToken = message.pageToken;
                         return object;
                     };
-    
+
                     /**
                      * Converts this ListTopicSubscriptionsRequest to JSON.
                      * @function toJSON
@@ -16681,12 +17189,12 @@
                     ListTopicSubscriptionsRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ListTopicSubscriptionsRequest;
                 })();
-    
+
                 v1.ListTopicSubscriptionsResponse = (function() {
-    
+
                     /**
                      * Properties of a ListTopicSubscriptionsResponse.
                      * @memberof google.pubsub.v1
@@ -16694,7 +17202,7 @@
                      * @property {Array.<string>|null} [subscriptions] ListTopicSubscriptionsResponse subscriptions
                      * @property {string|null} [nextPageToken] ListTopicSubscriptionsResponse nextPageToken
                      */
-    
+
                     /**
                      * Constructs a new ListTopicSubscriptionsResponse.
                      * @memberof google.pubsub.v1
@@ -16710,7 +17218,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ListTopicSubscriptionsResponse subscriptions.
                      * @member {Array.<string>} subscriptions
@@ -16718,7 +17226,7 @@
                      * @instance
                      */
                     ListTopicSubscriptionsResponse.prototype.subscriptions = $util.emptyArray;
-    
+
                     /**
                      * ListTopicSubscriptionsResponse nextPageToken.
                      * @member {string} nextPageToken
@@ -16726,7 +17234,7 @@
                      * @instance
                      */
                     ListTopicSubscriptionsResponse.prototype.nextPageToken = "";
-    
+
                     /**
                      * Creates a new ListTopicSubscriptionsResponse instance using the specified properties.
                      * @function create
@@ -16738,7 +17246,7 @@
                     ListTopicSubscriptionsResponse.create = function create(properties) {
                         return new ListTopicSubscriptionsResponse(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicSubscriptionsResponse message. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsResponse.verify|verify} messages.
                      * @function encode
@@ -16758,7 +17266,7 @@
                             writer.uint32(/* id 2, wireType 2 =*/18).string(message.nextPageToken);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicSubscriptionsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsResponse.verify|verify} messages.
                      * @function encodeDelimited
@@ -16771,7 +17279,7 @@
                     ListTopicSubscriptionsResponse.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ListTopicSubscriptionsResponse message from the specified reader or buffer.
                      * @function decode
@@ -16805,7 +17313,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ListTopicSubscriptionsResponse message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -16821,7 +17329,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ListTopicSubscriptionsResponse message.
                      * @function verify
@@ -16845,7 +17353,7 @@
                                 return "nextPageToken: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a ListTopicSubscriptionsResponse message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -16869,7 +17377,7 @@
                             message.nextPageToken = String(object.nextPageToken);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ListTopicSubscriptionsResponse message. Also converts values to other types if specified.
                      * @function toObject
@@ -16896,7 +17404,7 @@
                             object.nextPageToken = message.nextPageToken;
                         return object;
                     };
-    
+
                     /**
                      * Converts this ListTopicSubscriptionsResponse to JSON.
                      * @function toJSON
@@ -16907,12 +17415,12 @@
                     ListTopicSubscriptionsResponse.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ListTopicSubscriptionsResponse;
                 })();
-    
+
                 v1.ListTopicSnapshotsRequest = (function() {
-    
+
                     /**
                      * Properties of a ListTopicSnapshotsRequest.
                      * @memberof google.pubsub.v1
@@ -16921,7 +17429,7 @@
                      * @property {number|null} [pageSize] ListTopicSnapshotsRequest pageSize
                      * @property {string|null} [pageToken] ListTopicSnapshotsRequest pageToken
                      */
-    
+
                     /**
                      * Constructs a new ListTopicSnapshotsRequest.
                      * @memberof google.pubsub.v1
@@ -16936,7 +17444,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ListTopicSnapshotsRequest topic.
                      * @member {string} topic
@@ -16944,7 +17452,7 @@
                      * @instance
                      */
                     ListTopicSnapshotsRequest.prototype.topic = "";
-    
+
                     /**
                      * ListTopicSnapshotsRequest pageSize.
                      * @member {number} pageSize
@@ -16952,7 +17460,7 @@
                      * @instance
                      */
                     ListTopicSnapshotsRequest.prototype.pageSize = 0;
-    
+
                     /**
                      * ListTopicSnapshotsRequest pageToken.
                      * @member {string} pageToken
@@ -16960,7 +17468,7 @@
                      * @instance
                      */
                     ListTopicSnapshotsRequest.prototype.pageToken = "";
-    
+
                     /**
                      * Creates a new ListTopicSnapshotsRequest instance using the specified properties.
                      * @function create
@@ -16972,7 +17480,7 @@
                     ListTopicSnapshotsRequest.create = function create(properties) {
                         return new ListTopicSnapshotsRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicSnapshotsRequest message. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsRequest.verify|verify} messages.
                      * @function encode
@@ -16993,7 +17501,7 @@
                             writer.uint32(/* id 3, wireType 2 =*/26).string(message.pageToken);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicSnapshotsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -17006,7 +17514,7 @@
                     ListTopicSnapshotsRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ListTopicSnapshotsRequest message from the specified reader or buffer.
                      * @function decode
@@ -17041,7 +17549,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ListTopicSnapshotsRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -17057,7 +17565,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ListTopicSnapshotsRequest message.
                      * @function verify
@@ -17080,7 +17588,7 @@
                                 return "pageToken: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a ListTopicSnapshotsRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -17101,7 +17609,7 @@
                             message.pageToken = String(object.pageToken);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ListTopicSnapshotsRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -17128,7 +17636,7 @@
                             object.pageToken = message.pageToken;
                         return object;
                     };
-    
+
                     /**
                      * Converts this ListTopicSnapshotsRequest to JSON.
                      * @function toJSON
@@ -17139,12 +17647,12 @@
                     ListTopicSnapshotsRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ListTopicSnapshotsRequest;
                 })();
-    
+
                 v1.ListTopicSnapshotsResponse = (function() {
-    
+
                     /**
                      * Properties of a ListTopicSnapshotsResponse.
                      * @memberof google.pubsub.v1
@@ -17152,7 +17660,7 @@
                      * @property {Array.<string>|null} [snapshots] ListTopicSnapshotsResponse snapshots
                      * @property {string|null} [nextPageToken] ListTopicSnapshotsResponse nextPageToken
                      */
-    
+
                     /**
                      * Constructs a new ListTopicSnapshotsResponse.
                      * @memberof google.pubsub.v1
@@ -17168,7 +17676,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ListTopicSnapshotsResponse snapshots.
                      * @member {Array.<string>} snapshots
@@ -17176,7 +17684,7 @@
                      * @instance
                      */
                     ListTopicSnapshotsResponse.prototype.snapshots = $util.emptyArray;
-    
+
                     /**
                      * ListTopicSnapshotsResponse nextPageToken.
                      * @member {string} nextPageToken
@@ -17184,7 +17692,7 @@
                      * @instance
                      */
                     ListTopicSnapshotsResponse.prototype.nextPageToken = "";
-    
+
                     /**
                      * Creates a new ListTopicSnapshotsResponse instance using the specified properties.
                      * @function create
@@ -17196,7 +17704,7 @@
                     ListTopicSnapshotsResponse.create = function create(properties) {
                         return new ListTopicSnapshotsResponse(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicSnapshotsResponse message. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsResponse.verify|verify} messages.
                      * @function encode
@@ -17216,7 +17724,7 @@
                             writer.uint32(/* id 2, wireType 2 =*/18).string(message.nextPageToken);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ListTopicSnapshotsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsResponse.verify|verify} messages.
                      * @function encodeDelimited
@@ -17229,7 +17737,7 @@
                     ListTopicSnapshotsResponse.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ListTopicSnapshotsResponse message from the specified reader or buffer.
                      * @function decode
@@ -17263,7 +17771,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ListTopicSnapshotsResponse message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -17279,7 +17787,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ListTopicSnapshotsResponse message.
                      * @function verify
@@ -17303,7 +17811,7 @@
                                 return "nextPageToken: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a ListTopicSnapshotsResponse message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -17327,7 +17835,7 @@
                             message.nextPageToken = String(object.nextPageToken);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ListTopicSnapshotsResponse message. Also converts values to other types if specified.
                      * @function toObject
@@ -17354,7 +17862,7 @@
                             object.nextPageToken = message.nextPageToken;
                         return object;
                     };
-    
+
                     /**
                      * Converts this ListTopicSnapshotsResponse to JSON.
                      * @function toJSON
@@ -17365,19 +17873,19 @@
                     ListTopicSnapshotsResponse.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ListTopicSnapshotsResponse;
                 })();
-    
+
                 v1.DeleteTopicRequest = (function() {
-    
+
                     /**
                      * Properties of a DeleteTopicRequest.
                      * @memberof google.pubsub.v1
                      * @interface IDeleteTopicRequest
                      * @property {string|null} [topic] DeleteTopicRequest topic
                      */
-    
+
                     /**
                      * Constructs a new DeleteTopicRequest.
                      * @memberof google.pubsub.v1
@@ -17392,7 +17900,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * DeleteTopicRequest topic.
                      * @member {string} topic
@@ -17400,7 +17908,7 @@
                      * @instance
                      */
                     DeleteTopicRequest.prototype.topic = "";
-    
+
                     /**
                      * Creates a new DeleteTopicRequest instance using the specified properties.
                      * @function create
@@ -17412,7 +17920,7 @@
                     DeleteTopicRequest.create = function create(properties) {
                         return new DeleteTopicRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified DeleteTopicRequest message. Does not implicitly {@link google.pubsub.v1.DeleteTopicRequest.verify|verify} messages.
                      * @function encode
@@ -17429,7 +17937,7 @@
                             writer.uint32(/* id 1, wireType 2 =*/10).string(message.topic);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified DeleteTopicRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteTopicRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -17442,7 +17950,7 @@
                     DeleteTopicRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a DeleteTopicRequest message from the specified reader or buffer.
                      * @function decode
@@ -17471,7 +17979,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a DeleteTopicRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -17487,7 +17995,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a DeleteTopicRequest message.
                      * @function verify
@@ -17504,7 +18012,7 @@
                                 return "topic: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a DeleteTopicRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -17521,7 +18029,7 @@
                             message.topic = String(object.topic);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a DeleteTopicRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -17541,7 +18049,7 @@
                             object.topic = message.topic;
                         return object;
                     };
-    
+
                     /**
                      * Converts this DeleteTopicRequest to JSON.
                      * @function toJSON
@@ -17552,12 +18060,12 @@
                     DeleteTopicRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return DeleteTopicRequest;
                 })();
-    
+
                 v1.Subscriber = (function() {
-    
+
                     /**
                      * Constructs a new Subscriber service.
                      * @memberof google.pubsub.v1
@@ -17571,9 +18079,9 @@
                     function Subscriber(rpcImpl, requestDelimited, responseDelimited) {
                         $protobuf.rpc.Service.call(this, rpcImpl, requestDelimited, responseDelimited);
                     }
-    
+
                     (Subscriber.prototype = Object.create($protobuf.rpc.Service.prototype)).constructor = Subscriber;
-    
+
                     /**
                      * Creates new Subscriber service using the specified rpc implementation.
                      * @function create
@@ -17587,7 +18095,7 @@
                     Subscriber.create = function create(rpcImpl, requestDelimited, responseDelimited) {
                         return new this(rpcImpl, requestDelimited, responseDelimited);
                     };
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#createSubscription}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17596,7 +18104,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.Subscription} [response] Subscription
                      */
-    
+
                     /**
                      * Calls CreateSubscription.
                      * @function createSubscription
@@ -17610,7 +18118,7 @@
                     Object.defineProperty(Subscriber.prototype.createSubscription = function createSubscription(request, callback) {
                         return this.rpcCall(createSubscription, $root.google.pubsub.v1.Subscription, $root.google.pubsub.v1.Subscription, request, callback);
                     }, "name", { value: "CreateSubscription" });
-    
+
                     /**
                      * Calls CreateSubscription.
                      * @function createSubscription
@@ -17620,7 +18128,7 @@
                      * @returns {Promise<google.pubsub.v1.Subscription>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#getSubscription}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17629,7 +18137,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.Subscription} [response] Subscription
                      */
-    
+
                     /**
                      * Calls GetSubscription.
                      * @function getSubscription
@@ -17643,7 +18151,7 @@
                     Object.defineProperty(Subscriber.prototype.getSubscription = function getSubscription(request, callback) {
                         return this.rpcCall(getSubscription, $root.google.pubsub.v1.GetSubscriptionRequest, $root.google.pubsub.v1.Subscription, request, callback);
                     }, "name", { value: "GetSubscription" });
-    
+
                     /**
                      * Calls GetSubscription.
                      * @function getSubscription
@@ -17653,7 +18161,7 @@
                      * @returns {Promise<google.pubsub.v1.Subscription>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#updateSubscription}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17662,7 +18170,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.Subscription} [response] Subscription
                      */
-    
+
                     /**
                      * Calls UpdateSubscription.
                      * @function updateSubscription
@@ -17676,7 +18184,7 @@
                     Object.defineProperty(Subscriber.prototype.updateSubscription = function updateSubscription(request, callback) {
                         return this.rpcCall(updateSubscription, $root.google.pubsub.v1.UpdateSubscriptionRequest, $root.google.pubsub.v1.Subscription, request, callback);
                     }, "name", { value: "UpdateSubscription" });
-    
+
                     /**
                      * Calls UpdateSubscription.
                      * @function updateSubscription
@@ -17686,7 +18194,7 @@
                      * @returns {Promise<google.pubsub.v1.Subscription>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#listSubscriptions}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17695,7 +18203,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.ListSubscriptionsResponse} [response] ListSubscriptionsResponse
                      */
-    
+
                     /**
                      * Calls ListSubscriptions.
                      * @function listSubscriptions
@@ -17709,7 +18217,7 @@
                     Object.defineProperty(Subscriber.prototype.listSubscriptions = function listSubscriptions(request, callback) {
                         return this.rpcCall(listSubscriptions, $root.google.pubsub.v1.ListSubscriptionsRequest, $root.google.pubsub.v1.ListSubscriptionsResponse, request, callback);
                     }, "name", { value: "ListSubscriptions" });
-    
+
                     /**
                      * Calls ListSubscriptions.
                      * @function listSubscriptions
@@ -17719,7 +18227,7 @@
                      * @returns {Promise<google.pubsub.v1.ListSubscriptionsResponse>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSubscription}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17728,7 +18236,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.protobuf.Empty} [response] Empty
                      */
-    
+
                     /**
                      * Calls DeleteSubscription.
                      * @function deleteSubscription
@@ -17742,7 +18250,7 @@
                     Object.defineProperty(Subscriber.prototype.deleteSubscription = function deleteSubscription(request, callback) {
                         return this.rpcCall(deleteSubscription, $root.google.pubsub.v1.DeleteSubscriptionRequest, $root.google.protobuf.Empty, request, callback);
                     }, "name", { value: "DeleteSubscription" });
-    
+
                     /**
                      * Calls DeleteSubscription.
                      * @function deleteSubscription
@@ -17752,7 +18260,7 @@
                      * @returns {Promise<google.protobuf.Empty>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#modifyAckDeadline}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17761,7 +18269,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.protobuf.Empty} [response] Empty
                      */
-    
+
                     /**
                      * Calls ModifyAckDeadline.
                      * @function modifyAckDeadline
@@ -17775,7 +18283,7 @@
                     Object.defineProperty(Subscriber.prototype.modifyAckDeadline = function modifyAckDeadline(request, callback) {
                         return this.rpcCall(modifyAckDeadline, $root.google.pubsub.v1.ModifyAckDeadlineRequest, $root.google.protobuf.Empty, request, callback);
                     }, "name", { value: "ModifyAckDeadline" });
-    
+
                     /**
                      * Calls ModifyAckDeadline.
                      * @function modifyAckDeadline
@@ -17785,7 +18293,7 @@
                      * @returns {Promise<google.protobuf.Empty>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#acknowledge}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17794,7 +18302,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.protobuf.Empty} [response] Empty
                      */
-    
+
                     /**
                      * Calls Acknowledge.
                      * @function acknowledge
@@ -17808,7 +18316,7 @@
                     Object.defineProperty(Subscriber.prototype.acknowledge = function acknowledge(request, callback) {
                         return this.rpcCall(acknowledge, $root.google.pubsub.v1.AcknowledgeRequest, $root.google.protobuf.Empty, request, callback);
                     }, "name", { value: "Acknowledge" });
-    
+
                     /**
                      * Calls Acknowledge.
                      * @function acknowledge
@@ -17818,7 +18326,7 @@
                      * @returns {Promise<google.protobuf.Empty>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#pull}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17827,7 +18335,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.PullResponse} [response] PullResponse
                      */
-    
+
                     /**
                      * Calls Pull.
                      * @function pull
@@ -17841,7 +18349,7 @@
                     Object.defineProperty(Subscriber.prototype.pull = function pull(request, callback) {
                         return this.rpcCall(pull, $root.google.pubsub.v1.PullRequest, $root.google.pubsub.v1.PullResponse, request, callback);
                     }, "name", { value: "Pull" });
-    
+
                     /**
                      * Calls Pull.
                      * @function pull
@@ -17851,7 +18359,7 @@
                      * @returns {Promise<google.pubsub.v1.PullResponse>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#streamingPull}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17860,7 +18368,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.StreamingPullResponse} [response] StreamingPullResponse
                      */
-    
+
                     /**
                      * Calls StreamingPull.
                      * @function streamingPull
@@ -17874,7 +18382,7 @@
                     Object.defineProperty(Subscriber.prototype.streamingPull = function streamingPull(request, callback) {
                         return this.rpcCall(streamingPull, $root.google.pubsub.v1.StreamingPullRequest, $root.google.pubsub.v1.StreamingPullResponse, request, callback);
                     }, "name", { value: "StreamingPull" });
-    
+
                     /**
                      * Calls StreamingPull.
                      * @function streamingPull
@@ -17884,7 +18392,7 @@
                      * @returns {Promise<google.pubsub.v1.StreamingPullResponse>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#modifyPushConfig}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17893,7 +18401,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.protobuf.Empty} [response] Empty
                      */
-    
+
                     /**
                      * Calls ModifyPushConfig.
                      * @function modifyPushConfig
@@ -17907,7 +18415,7 @@
                     Object.defineProperty(Subscriber.prototype.modifyPushConfig = function modifyPushConfig(request, callback) {
                         return this.rpcCall(modifyPushConfig, $root.google.pubsub.v1.ModifyPushConfigRequest, $root.google.protobuf.Empty, request, callback);
                     }, "name", { value: "ModifyPushConfig" });
-    
+
                     /**
                      * Calls ModifyPushConfig.
                      * @function modifyPushConfig
@@ -17917,7 +18425,7 @@
                      * @returns {Promise<google.protobuf.Empty>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#getSnapshot}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17926,7 +18434,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.Snapshot} [response] Snapshot
                      */
-    
+
                     /**
                      * Calls GetSnapshot.
                      * @function getSnapshot
@@ -17940,7 +18448,7 @@
                     Object.defineProperty(Subscriber.prototype.getSnapshot = function getSnapshot(request, callback) {
                         return this.rpcCall(getSnapshot, $root.google.pubsub.v1.GetSnapshotRequest, $root.google.pubsub.v1.Snapshot, request, callback);
                     }, "name", { value: "GetSnapshot" });
-    
+
                     /**
                      * Calls GetSnapshot.
                      * @function getSnapshot
@@ -17950,7 +18458,7 @@
                      * @returns {Promise<google.pubsub.v1.Snapshot>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#listSnapshots}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17959,7 +18467,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.ListSnapshotsResponse} [response] ListSnapshotsResponse
                      */
-    
+
                     /**
                      * Calls ListSnapshots.
                      * @function listSnapshots
@@ -17973,7 +18481,7 @@
                     Object.defineProperty(Subscriber.prototype.listSnapshots = function listSnapshots(request, callback) {
                         return this.rpcCall(listSnapshots, $root.google.pubsub.v1.ListSnapshotsRequest, $root.google.pubsub.v1.ListSnapshotsResponse, request, callback);
                     }, "name", { value: "ListSnapshots" });
-    
+
                     /**
                      * Calls ListSnapshots.
                      * @function listSnapshots
@@ -17983,7 +18491,7 @@
                      * @returns {Promise<google.pubsub.v1.ListSnapshotsResponse>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#createSnapshot}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -17992,7 +18500,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.Snapshot} [response] Snapshot
                      */
-    
+
                     /**
                      * Calls CreateSnapshot.
                      * @function createSnapshot
@@ -18006,7 +18514,7 @@
                     Object.defineProperty(Subscriber.prototype.createSnapshot = function createSnapshot(request, callback) {
                         return this.rpcCall(createSnapshot, $root.google.pubsub.v1.CreateSnapshotRequest, $root.google.pubsub.v1.Snapshot, request, callback);
                     }, "name", { value: "CreateSnapshot" });
-    
+
                     /**
                      * Calls CreateSnapshot.
                      * @function createSnapshot
@@ -18016,7 +18524,7 @@
                      * @returns {Promise<google.pubsub.v1.Snapshot>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#updateSnapshot}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -18025,7 +18533,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.Snapshot} [response] Snapshot
                      */
-    
+
                     /**
                      * Calls UpdateSnapshot.
                      * @function updateSnapshot
@@ -18039,7 +18547,7 @@
                     Object.defineProperty(Subscriber.prototype.updateSnapshot = function updateSnapshot(request, callback) {
                         return this.rpcCall(updateSnapshot, $root.google.pubsub.v1.UpdateSnapshotRequest, $root.google.pubsub.v1.Snapshot, request, callback);
                     }, "name", { value: "UpdateSnapshot" });
-    
+
                     /**
                      * Calls UpdateSnapshot.
                      * @function updateSnapshot
@@ -18049,7 +18557,7 @@
                      * @returns {Promise<google.pubsub.v1.Snapshot>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSnapshot}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -18058,7 +18566,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.protobuf.Empty} [response] Empty
                      */
-    
+
                     /**
                      * Calls DeleteSnapshot.
                      * @function deleteSnapshot
@@ -18072,7 +18580,7 @@
                     Object.defineProperty(Subscriber.prototype.deleteSnapshot = function deleteSnapshot(request, callback) {
                         return this.rpcCall(deleteSnapshot, $root.google.pubsub.v1.DeleteSnapshotRequest, $root.google.protobuf.Empty, request, callback);
                     }, "name", { value: "DeleteSnapshot" });
-    
+
                     /**
                      * Calls DeleteSnapshot.
                      * @function deleteSnapshot
@@ -18082,7 +18590,7 @@
                      * @returns {Promise<google.protobuf.Empty>} Promise
                      * @variation 2
                      */
-    
+
                     /**
                      * Callback as used by {@link google.pubsub.v1.Subscriber#seek}.
                      * @memberof google.pubsub.v1.Subscriber
@@ -18091,7 +18599,7 @@
                      * @param {Error|null} error Error, if any
                      * @param {google.pubsub.v1.SeekResponse} [response] SeekResponse
                      */
-    
+
                     /**
                      * Calls Seek.
                      * @function seek
@@ -18105,7 +18613,7 @@
                     Object.defineProperty(Subscriber.prototype.seek = function seek(request, callback) {
                         return this.rpcCall(seek, $root.google.pubsub.v1.SeekRequest, $root.google.pubsub.v1.SeekResponse, request, callback);
                     }, "name", { value: "Seek" });
-    
+
                     /**
                      * Calls Seek.
                      * @function seek
@@ -18115,12 +18623,12 @@
                      * @returns {Promise<google.pubsub.v1.SeekResponse>} Promise
                      * @variation 2
                      */
-    
+
                     return Subscriber;
                 })();
-    
+
                 v1.Subscription = (function() {
-    
+
                     /**
                      * Properties of a Subscription.
                      * @memberof google.pubsub.v1
@@ -18138,7 +18646,7 @@
                      * @property {google.pubsub.v1.IDeadLetterPolicy|null} [deadLetterPolicy] Subscription deadLetterPolicy
                      * @property {google.pubsub.v1.IRetryPolicy|null} [retryPolicy] Subscription retryPolicy
                      */
-    
+
                     /**
                      * Constructs a new Subscription.
                      * @memberof google.pubsub.v1
@@ -18154,7 +18662,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * Subscription name.
                      * @member {string} name
@@ -18162,7 +18670,7 @@
                      * @instance
                      */
                     Subscription.prototype.name = "";
-    
+
                     /**
                      * Subscription topic.
                      * @member {string} topic
@@ -18170,7 +18678,7 @@
                      * @instance
                      */
                     Subscription.prototype.topic = "";
-    
+
                     /**
                      * Subscription pushConfig.
                      * @member {google.pubsub.v1.IPushConfig|null|undefined} pushConfig
@@ -18178,7 +18686,7 @@
                      * @instance
                      */
                     Subscription.prototype.pushConfig = null;
-    
+
                     /**
                      * Subscription ackDeadlineSeconds.
                      * @member {number} ackDeadlineSeconds
@@ -18186,7 +18694,7 @@
                      * @instance
                      */
                     Subscription.prototype.ackDeadlineSeconds = 0;
-    
+
                     /**
                      * Subscription retainAckedMessages.
                      * @member {boolean} retainAckedMessages
@@ -18194,7 +18702,7 @@
                      * @instance
                      */
                     Subscription.prototype.retainAckedMessages = false;
-    
+
                     /**
                      * Subscription messageRetentionDuration.
                      * @member {google.protobuf.IDuration|null|undefined} messageRetentionDuration
@@ -18202,7 +18710,7 @@
                      * @instance
                      */
                     Subscription.prototype.messageRetentionDuration = null;
-    
+
                     /**
                      * Subscription labels.
                      * @member {Object.<string,string>} labels
@@ -18210,7 +18718,7 @@
                      * @instance
                      */
                     Subscription.prototype.labels = $util.emptyObject;
-    
+
                     /**
                      * Subscription enableMessageOrdering.
                      * @member {boolean} enableMessageOrdering
@@ -18218,7 +18726,7 @@
                      * @instance
                      */
                     Subscription.prototype.enableMessageOrdering = false;
-    
+
                     /**
                      * Subscription expirationPolicy.
                      * @member {google.pubsub.v1.IExpirationPolicy|null|undefined} expirationPolicy
@@ -18226,7 +18734,7 @@
                      * @instance
                      */
                     Subscription.prototype.expirationPolicy = null;
-    
+
                     /**
                      * Subscription filter.
                      * @member {string} filter
@@ -18234,7 +18742,7 @@
                      * @instance
                      */
                     Subscription.prototype.filter = "";
-    
+
                     /**
                      * Subscription deadLetterPolicy.
                      * @member {google.pubsub.v1.IDeadLetterPolicy|null|undefined} deadLetterPolicy
@@ -18242,7 +18750,7 @@
                      * @instance
                      */
                     Subscription.prototype.deadLetterPolicy = null;
-    
+
                     /**
                      * Subscription retryPolicy.
                      * @member {google.pubsub.v1.IRetryPolicy|null|undefined} retryPolicy
@@ -18250,7 +18758,7 @@
                      * @instance
                      */
                     Subscription.prototype.retryPolicy = null;
-    
+
                     /**
                      * Creates a new Subscription instance using the specified properties.
                      * @function create
@@ -18262,7 +18770,7 @@
                     Subscription.create = function create(properties) {
                         return new Subscription(properties);
                     };
-    
+
                     /**
                      * Encodes the specified Subscription message. Does not implicitly {@link google.pubsub.v1.Subscription.verify|verify} messages.
                      * @function encode
@@ -18302,7 +18810,7 @@
                             $root.google.pubsub.v1.RetryPolicy.encode(message.retryPolicy, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified Subscription message, length delimited. Does not implicitly {@link google.pubsub.v1.Subscription.verify|verify} messages.
                      * @function encodeDelimited
@@ -18315,7 +18823,7 @@
                     Subscription.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a Subscription message from the specified reader or buffer.
                      * @function decode
@@ -18382,7 +18890,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a Subscription message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -18398,7 +18906,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a Subscription message.
                      * @function verify
@@ -18463,7 +18971,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a Subscription message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -18522,7 +19030,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a Subscription message. Also converts values to other types if specified.
                      * @function toObject
@@ -18581,7 +19089,7 @@
                             object.retryPolicy = $root.google.pubsub.v1.RetryPolicy.toObject(message.retryPolicy, options);
                         return object;
                     };
-    
+
                     /**
                      * Converts this Subscription to JSON.
                      * @function toJSON
@@ -18592,12 +19100,12 @@
                     Subscription.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return Subscription;
                 })();
-    
+
                 v1.RetryPolicy = (function() {
-    
+
                     /**
                      * Properties of a RetryPolicy.
                      * @memberof google.pubsub.v1
@@ -18605,7 +19113,7 @@
                      * @property {google.protobuf.IDuration|null} [minimumBackoff] RetryPolicy minimumBackoff
                      * @property {google.protobuf.IDuration|null} [maximumBackoff] RetryPolicy maximumBackoff
                      */
-    
+
                     /**
                      * Constructs a new RetryPolicy.
                      * @memberof google.pubsub.v1
@@ -18620,7 +19128,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * RetryPolicy minimumBackoff.
                      * @member {google.protobuf.IDuration|null|undefined} minimumBackoff
@@ -18628,7 +19136,7 @@
                      * @instance
                      */
                     RetryPolicy.prototype.minimumBackoff = null;
-    
+
                     /**
                      * RetryPolicy maximumBackoff.
                      * @member {google.protobuf.IDuration|null|undefined} maximumBackoff
@@ -18636,7 +19144,7 @@
                      * @instance
                      */
                     RetryPolicy.prototype.maximumBackoff = null;
-    
+
                     /**
                      * Creates a new RetryPolicy instance using the specified properties.
                      * @function create
@@ -18648,7 +19156,7 @@
                     RetryPolicy.create = function create(properties) {
                         return new RetryPolicy(properties);
                     };
-    
+
                     /**
                      * Encodes the specified RetryPolicy message. Does not implicitly {@link google.pubsub.v1.RetryPolicy.verify|verify} messages.
                      * @function encode
@@ -18667,7 +19175,7 @@
                             $root.google.protobuf.Duration.encode(message.maximumBackoff, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified RetryPolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.RetryPolicy.verify|verify} messages.
                      * @function encodeDelimited
@@ -18680,7 +19188,7 @@
                     RetryPolicy.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a RetryPolicy message from the specified reader or buffer.
                      * @function decode
@@ -18712,7 +19220,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a RetryPolicy message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -18728,7 +19236,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a RetryPolicy message.
                      * @function verify
@@ -18752,7 +19260,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a RetryPolicy message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -18777,7 +19285,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a RetryPolicy message. Also converts values to other types if specified.
                      * @function toObject
@@ -18801,7 +19309,7 @@
                             object.maximumBackoff = $root.google.protobuf.Duration.toObject(message.maximumBackoff, options);
                         return object;
                     };
-    
+
                     /**
                      * Converts this RetryPolicy to JSON.
                      * @function toJSON
@@ -18812,12 +19320,12 @@
                     RetryPolicy.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return RetryPolicy;
                 })();
-    
+
                 v1.DeadLetterPolicy = (function() {
-    
+
                     /**
                      * Properties of a DeadLetterPolicy.
                      * @memberof google.pubsub.v1
@@ -18825,7 +19333,7 @@
                      * @property {string|null} [deadLetterTopic] DeadLetterPolicy deadLetterTopic
                      * @property {number|null} [maxDeliveryAttempts] DeadLetterPolicy maxDeliveryAttempts
                      */
-    
+
                     /**
                      * Constructs a new DeadLetterPolicy.
                      * @memberof google.pubsub.v1
@@ -18840,7 +19348,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * DeadLetterPolicy deadLetterTopic.
                      * @member {string} deadLetterTopic
@@ -18848,7 +19356,7 @@
                      * @instance
                      */
                     DeadLetterPolicy.prototype.deadLetterTopic = "";
-    
+
                     /**
                      * DeadLetterPolicy maxDeliveryAttempts.
                      * @member {number} maxDeliveryAttempts
@@ -18856,7 +19364,7 @@
                      * @instance
                      */
                     DeadLetterPolicy.prototype.maxDeliveryAttempts = 0;
-    
+
                     /**
                      * Creates a new DeadLetterPolicy instance using the specified properties.
                      * @function create
@@ -18868,7 +19376,7 @@
                     DeadLetterPolicy.create = function create(properties) {
                         return new DeadLetterPolicy(properties);
                     };
-    
+
                     /**
                      * Encodes the specified DeadLetterPolicy message. Does not implicitly {@link google.pubsub.v1.DeadLetterPolicy.verify|verify} messages.
                      * @function encode
@@ -18887,7 +19395,7 @@
                             writer.uint32(/* id 2, wireType 0 =*/16).int32(message.maxDeliveryAttempts);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified DeadLetterPolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.DeadLetterPolicy.verify|verify} messages.
                      * @function encodeDelimited
@@ -18900,7 +19408,7 @@
                     DeadLetterPolicy.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a DeadLetterPolicy message from the specified reader or buffer.
                      * @function decode
@@ -18932,7 +19440,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a DeadLetterPolicy message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -18948,7 +19456,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a DeadLetterPolicy message.
                      * @function verify
@@ -18968,7 +19476,7 @@
                                 return "maxDeliveryAttempts: integer expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a DeadLetterPolicy message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -18987,7 +19495,7 @@
                             message.maxDeliveryAttempts = object.maxDeliveryAttempts | 0;
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a DeadLetterPolicy message. Also converts values to other types if specified.
                      * @function toObject
@@ -19011,7 +19519,7 @@
                             object.maxDeliveryAttempts = message.maxDeliveryAttempts;
                         return object;
                     };
-    
+
                     /**
                      * Converts this DeadLetterPolicy to JSON.
                      * @function toJSON
@@ -19022,19 +19530,19 @@
                     DeadLetterPolicy.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return DeadLetterPolicy;
                 })();
-    
+
                 v1.ExpirationPolicy = (function() {
-    
+
                     /**
                      * Properties of an ExpirationPolicy.
                      * @memberof google.pubsub.v1
                      * @interface IExpirationPolicy
                      * @property {google.protobuf.IDuration|null} [ttl] ExpirationPolicy ttl
                      */
-    
+
                     /**
                      * Constructs a new ExpirationPolicy.
                      * @memberof google.pubsub.v1
@@ -19049,7 +19557,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ExpirationPolicy ttl.
                      * @member {google.protobuf.IDuration|null|undefined} ttl
@@ -19057,7 +19565,7 @@
                      * @instance
                      */
                     ExpirationPolicy.prototype.ttl = null;
-    
+
                     /**
                      * Creates a new ExpirationPolicy instance using the specified properties.
                      * @function create
@@ -19069,7 +19577,7 @@
                     ExpirationPolicy.create = function create(properties) {
                         return new ExpirationPolicy(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ExpirationPolicy message. Does not implicitly {@link google.pubsub.v1.ExpirationPolicy.verify|verify} messages.
                      * @function encode
@@ -19086,7 +19594,7 @@
                             $root.google.protobuf.Duration.encode(message.ttl, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ExpirationPolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.ExpirationPolicy.verify|verify} messages.
                      * @function encodeDelimited
@@ -19099,7 +19607,7 @@
                     ExpirationPolicy.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes an ExpirationPolicy message from the specified reader or buffer.
                      * @function decode
@@ -19128,7 +19636,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes an ExpirationPolicy message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -19144,7 +19652,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies an ExpirationPolicy message.
                      * @function verify
@@ -19163,7 +19671,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates an ExpirationPolicy message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -19183,7 +19691,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from an ExpirationPolicy message. Also converts values to other types if specified.
                      * @function toObject
@@ -19203,7 +19711,7 @@
                             object.ttl = $root.google.protobuf.Duration.toObject(message.ttl, options);
                         return object;
                     };
-    
+
                     /**
                      * Converts this ExpirationPolicy to JSON.
                      * @function toJSON
@@ -19214,12 +19722,12 @@
                     ExpirationPolicy.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ExpirationPolicy;
                 })();
-    
+
                 v1.PushConfig = (function() {
-    
+
                     /**
                      * Properties of a PushConfig.
                      * @memberof google.pubsub.v1
@@ -19228,7 +19736,7 @@
                      * @property {Object.<string,string>|null} [attributes] PushConfig attributes
                      * @property {google.pubsub.v1.PushConfig.IOidcToken|null} [oidcToken] PushConfig oidcToken
                      */
-    
+
                     /**
                      * Constructs a new PushConfig.
                      * @memberof google.pubsub.v1
@@ -19244,7 +19752,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * PushConfig pushEndpoint.
                      * @member {string} pushEndpoint
@@ -19252,7 +19760,7 @@
                      * @instance
                      */
                     PushConfig.prototype.pushEndpoint = "";
-    
+
                     /**
                      * PushConfig attributes.
                      * @member {Object.<string,string>} attributes
@@ -19260,7 +19768,7 @@
                      * @instance
                      */
                     PushConfig.prototype.attributes = $util.emptyObject;
-    
+
                     /**
                      * PushConfig oidcToken.
                      * @member {google.pubsub.v1.PushConfig.IOidcToken|null|undefined} oidcToken
@@ -19268,10 +19776,10 @@
                      * @instance
                      */
                     PushConfig.prototype.oidcToken = null;
-    
+
                     // OneOf field names bound to virtual getters and setters
                     var $oneOfFields;
-    
+
                     /**
                      * PushConfig authenticationMethod.
                      * @member {"oidcToken"|undefined} authenticationMethod
@@ -19282,7 +19790,7 @@
                         get: $util.oneOfGetter($oneOfFields = ["oidcToken"]),
                         set: $util.oneOfSetter($oneOfFields)
                     });
-    
+
                     /**
                      * Creates a new PushConfig instance using the specified properties.
                      * @function create
@@ -19294,7 +19802,7 @@
                     PushConfig.create = function create(properties) {
                         return new PushConfig(properties);
                     };
-    
+
                     /**
                      * Encodes the specified PushConfig message. Does not implicitly {@link google.pubsub.v1.PushConfig.verify|verify} messages.
                      * @function encode
@@ -19316,7 +19824,7 @@
                             $root.google.pubsub.v1.PushConfig.OidcToken.encode(message.oidcToken, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified PushConfig message, length delimited. Does not implicitly {@link google.pubsub.v1.PushConfig.verify|verify} messages.
                      * @function encodeDelimited
@@ -19329,7 +19837,7 @@
                     PushConfig.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a PushConfig message from the specified reader or buffer.
                      * @function decode
@@ -19369,7 +19877,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a PushConfig message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -19385,7 +19893,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a PushConfig message.
                      * @function verify
@@ -19419,7 +19927,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a PushConfig message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -19448,7 +19956,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a PushConfig message. Also converts values to other types if specified.
                      * @function toObject
@@ -19481,7 +19989,7 @@
                         }
                         return object;
                     };
-    
+
                     /**
                      * Converts this PushConfig to JSON.
                      * @function toJSON
@@ -19492,9 +20000,9 @@
                     PushConfig.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     PushConfig.OidcToken = (function() {
-    
+
                         /**
                          * Properties of an OidcToken.
                          * @memberof google.pubsub.v1.PushConfig
@@ -19502,7 +20010,7 @@
                          * @property {string|null} [serviceAccountEmail] OidcToken serviceAccountEmail
                          * @property {string|null} [audience] OidcToken audience
                          */
-    
+
                         /**
                          * Constructs a new OidcToken.
                          * @memberof google.pubsub.v1.PushConfig
@@ -19517,7 +20025,7 @@
                                     if (properties[keys[i]] != null)
                                         this[keys[i]] = properties[keys[i]];
                         }
-    
+
                         /**
                          * OidcToken serviceAccountEmail.
                          * @member {string} serviceAccountEmail
@@ -19525,7 +20033,7 @@
                          * @instance
                          */
                         OidcToken.prototype.serviceAccountEmail = "";
-    
+
                         /**
                          * OidcToken audience.
                          * @member {string} audience
@@ -19533,7 +20041,7 @@
                          * @instance
                          */
                         OidcToken.prototype.audience = "";
-    
+
                         /**
                          * Creates a new OidcToken instance using the specified properties.
                          * @function create
@@ -19545,7 +20053,7 @@
                         OidcToken.create = function create(properties) {
                             return new OidcToken(properties);
                         };
-    
+
                         /**
                          * Encodes the specified OidcToken message. Does not implicitly {@link google.pubsub.v1.PushConfig.OidcToken.verify|verify} messages.
                          * @function encode
@@ -19564,7 +20072,7 @@
                                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.audience);
                             return writer;
                         };
-    
+
                         /**
                          * Encodes the specified OidcToken message, length delimited. Does not implicitly {@link google.pubsub.v1.PushConfig.OidcToken.verify|verify} messages.
                          * @function encodeDelimited
@@ -19577,7 +20085,7 @@
                         OidcToken.encodeDelimited = function encodeDelimited(message, writer) {
                             return this.encode(message, writer).ldelim();
                         };
-    
+
                         /**
                          * Decodes an OidcToken message from the specified reader or buffer.
                          * @function decode
@@ -19609,7 +20117,7 @@
                             }
                             return message;
                         };
-    
+
                         /**
                          * Decodes an OidcToken message from the specified reader or buffer, length delimited.
                          * @function decodeDelimited
@@ -19625,7 +20133,7 @@
                                 reader = new $Reader(reader);
                             return this.decode(reader, reader.uint32());
                         };
-    
+
                         /**
                          * Verifies an OidcToken message.
                          * @function verify
@@ -19645,7 +20153,7 @@
                                     return "audience: string expected";
                             return null;
                         };
-    
+
                         /**
                          * Creates an OidcToken message from a plain object. Also converts values to their respective internal types.
                          * @function fromObject
@@ -19664,7 +20172,7 @@
                                 message.audience = String(object.audience);
                             return message;
                         };
-    
+
                         /**
                          * Creates a plain object from an OidcToken message. Also converts values to other types if specified.
                          * @function toObject
@@ -19688,7 +20196,7 @@
                                 object.audience = message.audience;
                             return object;
                         };
-    
+
                         /**
                          * Converts this OidcToken to JSON.
                          * @function toJSON
@@ -19699,15 +20207,15 @@
                         OidcToken.prototype.toJSON = function toJSON() {
                             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                         };
-    
+
                         return OidcToken;
                     })();
-    
+
                     return PushConfig;
                 })();
-    
+
                 v1.ReceivedMessage = (function() {
-    
+
                     /**
                      * Properties of a ReceivedMessage.
                      * @memberof google.pubsub.v1
@@ -19716,7 +20224,7 @@
                      * @property {google.pubsub.v1.IPubsubMessage|null} [message] ReceivedMessage message
                      * @property {number|null} [deliveryAttempt] ReceivedMessage deliveryAttempt
                      */
-    
+
                     /**
                      * Constructs a new ReceivedMessage.
                      * @memberof google.pubsub.v1
@@ -19731,7 +20239,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ReceivedMessage ackId.
                      * @member {string} ackId
@@ -19739,7 +20247,7 @@
                      * @instance
                      */
                     ReceivedMessage.prototype.ackId = "";
-    
+
                     /**
                      * ReceivedMessage message.
                      * @member {google.pubsub.v1.IPubsubMessage|null|undefined} message
@@ -19747,7 +20255,7 @@
                      * @instance
                      */
                     ReceivedMessage.prototype.message = null;
-    
+
                     /**
                      * ReceivedMessage deliveryAttempt.
                      * @member {number} deliveryAttempt
@@ -19755,7 +20263,7 @@
                      * @instance
                      */
                     ReceivedMessage.prototype.deliveryAttempt = 0;
-    
+
                     /**
                      * Creates a new ReceivedMessage instance using the specified properties.
                      * @function create
@@ -19767,7 +20275,7 @@
                     ReceivedMessage.create = function create(properties) {
                         return new ReceivedMessage(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ReceivedMessage message. Does not implicitly {@link google.pubsub.v1.ReceivedMessage.verify|verify} messages.
                      * @function encode
@@ -19788,7 +20296,7 @@
                             writer.uint32(/* id 3, wireType 0 =*/24).int32(message.deliveryAttempt);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ReceivedMessage message, length delimited. Does not implicitly {@link google.pubsub.v1.ReceivedMessage.verify|verify} messages.
                      * @function encodeDelimited
@@ -19801,7 +20309,7 @@
                     ReceivedMessage.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ReceivedMessage message from the specified reader or buffer.
                      * @function decode
@@ -19836,7 +20344,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ReceivedMessage message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -19852,7 +20360,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ReceivedMessage message.
                      * @function verify
@@ -19877,7 +20385,7 @@
                                 return "deliveryAttempt: integer expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a ReceivedMessage message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -19901,7 +20409,7 @@
                             message.deliveryAttempt = object.deliveryAttempt | 0;
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ReceivedMessage message. Also converts values to other types if specified.
                      * @function toObject
@@ -19928,7 +20436,7 @@
                             object.deliveryAttempt = message.deliveryAttempt;
                         return object;
                     };
-    
+
                     /**
                      * Converts this ReceivedMessage to JSON.
                      * @function toJSON
@@ -19939,19 +20447,19 @@
                     ReceivedMessage.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ReceivedMessage;
                 })();
-    
+
                 v1.GetSubscriptionRequest = (function() {
-    
+
                     /**
                      * Properties of a GetSubscriptionRequest.
                      * @memberof google.pubsub.v1
                      * @interface IGetSubscriptionRequest
                      * @property {string|null} [subscription] GetSubscriptionRequest subscription
                      */
-    
+
                     /**
                      * Constructs a new GetSubscriptionRequest.
                      * @memberof google.pubsub.v1
@@ -19966,7 +20474,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * GetSubscriptionRequest subscription.
                      * @member {string} subscription
@@ -19974,7 +20482,7 @@
                      * @instance
                      */
                     GetSubscriptionRequest.prototype.subscription = "";
-    
+
                     /**
                      * Creates a new GetSubscriptionRequest instance using the specified properties.
                      * @function create
@@ -19986,7 +20494,7 @@
                     GetSubscriptionRequest.create = function create(properties) {
                         return new GetSubscriptionRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified GetSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.GetSubscriptionRequest.verify|verify} messages.
                      * @function encode
@@ -20003,7 +20511,7 @@
                             writer.uint32(/* id 1, wireType 2 =*/10).string(message.subscription);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified GetSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.GetSubscriptionRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -20016,7 +20524,7 @@
                     GetSubscriptionRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a GetSubscriptionRequest message from the specified reader or buffer.
                      * @function decode
@@ -20045,7 +20553,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a GetSubscriptionRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -20061,7 +20569,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a GetSubscriptionRequest message.
                      * @function verify
@@ -20078,7 +20586,7 @@
                                 return "subscription: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a GetSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -20095,7 +20603,7 @@
                             message.subscription = String(object.subscription);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a GetSubscriptionRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -20115,7 +20623,7 @@
                             object.subscription = message.subscription;
                         return object;
                     };
-    
+
                     /**
                      * Converts this GetSubscriptionRequest to JSON.
                      * @function toJSON
@@ -20126,12 +20634,12 @@
                     GetSubscriptionRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return GetSubscriptionRequest;
                 })();
-    
+
                 v1.UpdateSubscriptionRequest = (function() {
-    
+
                     /**
                      * Properties of an UpdateSubscriptionRequest.
                      * @memberof google.pubsub.v1
@@ -20139,7 +20647,7 @@
                      * @property {google.pubsub.v1.ISubscription|null} [subscription] UpdateSubscriptionRequest subscription
                      * @property {google.protobuf.IFieldMask|null} [updateMask] UpdateSubscriptionRequest updateMask
                      */
-    
+
                     /**
                      * Constructs a new UpdateSubscriptionRequest.
                      * @memberof google.pubsub.v1
@@ -20154,7 +20662,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * UpdateSubscriptionRequest subscription.
                      * @member {google.pubsub.v1.ISubscription|null|undefined} subscription
@@ -20162,7 +20670,7 @@
                      * @instance
                      */
                     UpdateSubscriptionRequest.prototype.subscription = null;
-    
+
                     /**
                      * UpdateSubscriptionRequest updateMask.
                      * @member {google.protobuf.IFieldMask|null|undefined} updateMask
@@ -20170,7 +20678,7 @@
                      * @instance
                      */
                     UpdateSubscriptionRequest.prototype.updateMask = null;
-    
+
                     /**
                      * Creates a new UpdateSubscriptionRequest instance using the specified properties.
                      * @function create
@@ -20182,7 +20690,7 @@
                     UpdateSubscriptionRequest.create = function create(properties) {
                         return new UpdateSubscriptionRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified UpdateSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.UpdateSubscriptionRequest.verify|verify} messages.
                      * @function encode
@@ -20201,7 +20709,7 @@
                             $root.google.protobuf.FieldMask.encode(message.updateMask, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified UpdateSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.UpdateSubscriptionRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -20214,7 +20722,7 @@
                     UpdateSubscriptionRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes an UpdateSubscriptionRequest message from the specified reader or buffer.
                      * @function decode
@@ -20246,7 +20754,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes an UpdateSubscriptionRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -20262,7 +20770,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies an UpdateSubscriptionRequest message.
                      * @function verify
@@ -20286,7 +20794,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates an UpdateSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -20311,7 +20819,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from an UpdateSubscriptionRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -20335,7 +20843,7 @@
                             object.updateMask = $root.google.protobuf.FieldMask.toObject(message.updateMask, options);
                         return object;
                     };
-    
+
                     /**
                      * Converts this UpdateSubscriptionRequest to JSON.
                      * @function toJSON
@@ -20346,12 +20854,12 @@
                     UpdateSubscriptionRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return UpdateSubscriptionRequest;
                 })();
-    
+
                 v1.ListSubscriptionsRequest = (function() {
-    
+
                     /**
                      * Properties of a ListSubscriptionsRequest.
                      * @memberof google.pubsub.v1
@@ -20360,7 +20868,7 @@
                      * @property {number|null} [pageSize] ListSubscriptionsRequest pageSize
                      * @property {string|null} [pageToken] ListSubscriptionsRequest pageToken
                      */
-    
+
                     /**
                      * Constructs a new ListSubscriptionsRequest.
                      * @memberof google.pubsub.v1
@@ -20375,7 +20883,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ListSubscriptionsRequest project.
                      * @member {string} project
@@ -20383,7 +20891,7 @@
                      * @instance
                      */
                     ListSubscriptionsRequest.prototype.project = "";
-    
+
                     /**
                      * ListSubscriptionsRequest pageSize.
                      * @member {number} pageSize
@@ -20391,7 +20899,7 @@
                      * @instance
                      */
                     ListSubscriptionsRequest.prototype.pageSize = 0;
-    
+
                     /**
                      * ListSubscriptionsRequest pageToken.
                      * @member {string} pageToken
@@ -20399,7 +20907,7 @@
                      * @instance
                      */
                     ListSubscriptionsRequest.prototype.pageToken = "";
-    
+
                     /**
                      * Creates a new ListSubscriptionsRequest instance using the specified properties.
                      * @function create
@@ -20411,7 +20919,7 @@
                     ListSubscriptionsRequest.create = function create(properties) {
                         return new ListSubscriptionsRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ListSubscriptionsRequest message. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsRequest.verify|verify} messages.
                      * @function encode
@@ -20432,7 +20940,7 @@
                             writer.uint32(/* id 3, wireType 2 =*/26).string(message.pageToken);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ListSubscriptionsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -20445,7 +20953,7 @@
                     ListSubscriptionsRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ListSubscriptionsRequest message from the specified reader or buffer.
                      * @function decode
@@ -20480,7 +20988,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ListSubscriptionsRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -20496,7 +21004,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ListSubscriptionsRequest message.
                      * @function verify
@@ -20519,7 +21027,7 @@
                                 return "pageToken: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a ListSubscriptionsRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -20540,7 +21048,7 @@
                             message.pageToken = String(object.pageToken);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ListSubscriptionsRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -20567,7 +21075,7 @@
                             object.pageToken = message.pageToken;
                         return object;
                     };
-    
+
                     /**
                      * Converts this ListSubscriptionsRequest to JSON.
                      * @function toJSON
@@ -20578,12 +21086,12 @@
                     ListSubscriptionsRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ListSubscriptionsRequest;
                 })();
-    
+
                 v1.ListSubscriptionsResponse = (function() {
-    
+
                     /**
                      * Properties of a ListSubscriptionsResponse.
                      * @memberof google.pubsub.v1
@@ -20591,7 +21099,7 @@
                      * @property {Array.<google.pubsub.v1.ISubscription>|null} [subscriptions] ListSubscriptionsResponse subscriptions
                      * @property {string|null} [nextPageToken] ListSubscriptionsResponse nextPageToken
                      */
-    
+
                     /**
                      * Constructs a new ListSubscriptionsResponse.
                      * @memberof google.pubsub.v1
@@ -20607,7 +21115,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ListSubscriptionsResponse subscriptions.
                      * @member {Array.<google.pubsub.v1.ISubscription>} subscriptions
@@ -20615,7 +21123,7 @@
                      * @instance
                      */
                     ListSubscriptionsResponse.prototype.subscriptions = $util.emptyArray;
-    
+
                     /**
                      * ListSubscriptionsResponse nextPageToken.
                      * @member {string} nextPageToken
@@ -20623,7 +21131,7 @@
                      * @instance
                      */
                     ListSubscriptionsResponse.prototype.nextPageToken = "";
-    
+
                     /**
                      * Creates a new ListSubscriptionsResponse instance using the specified properties.
                      * @function create
@@ -20635,7 +21143,7 @@
                     ListSubscriptionsResponse.create = function create(properties) {
                         return new ListSubscriptionsResponse(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ListSubscriptionsResponse message. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsResponse.verify|verify} messages.
                      * @function encode
@@ -20655,7 +21163,7 @@
                             writer.uint32(/* id 2, wireType 2 =*/18).string(message.nextPageToken);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ListSubscriptionsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsResponse.verify|verify} messages.
                      * @function encodeDelimited
@@ -20668,7 +21176,7 @@
                     ListSubscriptionsResponse.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ListSubscriptionsResponse message from the specified reader or buffer.
                      * @function decode
@@ -20702,7 +21210,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ListSubscriptionsResponse message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -20718,7 +21226,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ListSubscriptionsResponse message.
                      * @function verify
@@ -20744,7 +21252,7 @@
                                 return "nextPageToken: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a ListSubscriptionsResponse message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -20771,7 +21279,7 @@
                             message.nextPageToken = String(object.nextPageToken);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ListSubscriptionsResponse message. Also converts values to other types if specified.
                      * @function toObject
@@ -20798,7 +21306,7 @@
                             object.nextPageToken = message.nextPageToken;
                         return object;
                     };
-    
+
                     /**
                      * Converts this ListSubscriptionsResponse to JSON.
                      * @function toJSON
@@ -20809,19 +21317,19 @@
                     ListSubscriptionsResponse.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ListSubscriptionsResponse;
                 })();
-    
+
                 v1.DeleteSubscriptionRequest = (function() {
-    
+
                     /**
                      * Properties of a DeleteSubscriptionRequest.
                      * @memberof google.pubsub.v1
                      * @interface IDeleteSubscriptionRequest
                      * @property {string|null} [subscription] DeleteSubscriptionRequest subscription
                      */
-    
+
                     /**
                      * Constructs a new DeleteSubscriptionRequest.
                      * @memberof google.pubsub.v1
@@ -20836,7 +21344,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * DeleteSubscriptionRequest subscription.
                      * @member {string} subscription
@@ -20844,7 +21352,7 @@
                      * @instance
                      */
                     DeleteSubscriptionRequest.prototype.subscription = "";
-    
+
                     /**
                      * Creates a new DeleteSubscriptionRequest instance using the specified properties.
                      * @function create
@@ -20856,7 +21364,7 @@
                     DeleteSubscriptionRequest.create = function create(properties) {
                         return new DeleteSubscriptionRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified DeleteSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.DeleteSubscriptionRequest.verify|verify} messages.
                      * @function encode
@@ -20873,7 +21381,7 @@
                             writer.uint32(/* id 1, wireType 2 =*/10).string(message.subscription);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified DeleteSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteSubscriptionRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -20886,7 +21394,7 @@
                     DeleteSubscriptionRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a DeleteSubscriptionRequest message from the specified reader or buffer.
                      * @function decode
@@ -20915,7 +21423,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a DeleteSubscriptionRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -20931,7 +21439,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a DeleteSubscriptionRequest message.
                      * @function verify
@@ -20948,7 +21456,7 @@
                                 return "subscription: string expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a DeleteSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -20965,7 +21473,7 @@
                             message.subscription = String(object.subscription);
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a DeleteSubscriptionRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -20985,7 +21493,7 @@
                             object.subscription = message.subscription;
                         return object;
                     };
-    
+
                     /**
                      * Converts this DeleteSubscriptionRequest to JSON.
                      * @function toJSON
@@ -20996,12 +21504,12 @@
                     DeleteSubscriptionRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return DeleteSubscriptionRequest;
                 })();
-    
+
                 v1.ModifyPushConfigRequest = (function() {
-    
+
                     /**
                      * Properties of a ModifyPushConfigRequest.
                      * @memberof google.pubsub.v1
@@ -21009,7 +21517,7 @@
                      * @property {string|null} [subscription] ModifyPushConfigRequest subscription
                      * @property {google.pubsub.v1.IPushConfig|null} [pushConfig] ModifyPushConfigRequest pushConfig
                      */
-    
+
                     /**
                      * Constructs a new ModifyPushConfigRequest.
                      * @memberof google.pubsub.v1
@@ -21024,7 +21532,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ModifyPushConfigRequest subscription.
                      * @member {string} subscription
@@ -21032,7 +21540,7 @@
                      * @instance
                      */
                     ModifyPushConfigRequest.prototype.subscription = "";
-    
+
                     /**
                      * ModifyPushConfigRequest pushConfig.
                      * @member {google.pubsub.v1.IPushConfig|null|undefined} pushConfig
@@ -21040,7 +21548,7 @@
                      * @instance
                      */
                     ModifyPushConfigRequest.prototype.pushConfig = null;
-    
+
                     /**
                      * Creates a new ModifyPushConfigRequest instance using the specified properties.
                      * @function create
@@ -21052,7 +21560,7 @@
                     ModifyPushConfigRequest.create = function create(properties) {
                         return new ModifyPushConfigRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ModifyPushConfigRequest message. Does not implicitly {@link google.pubsub.v1.ModifyPushConfigRequest.verify|verify} messages.
                      * @function encode
@@ -21071,7 +21579,7 @@
                             $root.google.pubsub.v1.PushConfig.encode(message.pushConfig, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ModifyPushConfigRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ModifyPushConfigRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -21084,7 +21592,7 @@
                     ModifyPushConfigRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ModifyPushConfigRequest message from the specified reader or buffer.
                      * @function decode
@@ -21116,7 +21624,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ModifyPushConfigRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -21132,7 +21640,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ModifyPushConfigRequest message.
                      * @function verify
@@ -21154,7 +21662,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a ModifyPushConfigRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -21176,7 +21684,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ModifyPushConfigRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -21200,7 +21708,7 @@
                             object.pushConfig = $root.google.pubsub.v1.PushConfig.toObject(message.pushConfig, options);
                         return object;
                     };
-    
+
                     /**
                      * Converts this ModifyPushConfigRequest to JSON.
                      * @function toJSON
@@ -21211,12 +21719,12 @@
                     ModifyPushConfigRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ModifyPushConfigRequest;
                 })();
-    
+
                 v1.PullRequest = (function() {
-    
+
                     /**
                      * Properties of a PullRequest.
                      * @memberof google.pubsub.v1
@@ -21225,7 +21733,7 @@
                      * @property {boolean|null} [returnImmediately] PullRequest returnImmediately
                      * @property {number|null} [maxMessages] PullRequest maxMessages
                      */
-    
+
                     /**
                      * Constructs a new PullRequest.
                      * @memberof google.pubsub.v1
@@ -21240,7 +21748,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * PullRequest subscription.
                      * @member {string} subscription
@@ -21248,7 +21756,7 @@
                      * @instance
                      */
                     PullRequest.prototype.subscription = "";
-    
+
                     /**
                      * PullRequest returnImmediately.
                      * @member {boolean} returnImmediately
@@ -21256,7 +21764,7 @@
                      * @instance
                      */
                     PullRequest.prototype.returnImmediately = false;
-    
+
                     /**
                      * PullRequest maxMessages.
                      * @member {number} maxMessages
@@ -21264,7 +21772,7 @@
                      * @instance
                      */
                     PullRequest.prototype.maxMessages = 0;
-    
+
                     /**
                      * Creates a new PullRequest instance using the specified properties.
                      * @function create
@@ -21276,7 +21784,7 @@
                     PullRequest.create = function create(properties) {
                         return new PullRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified PullRequest message. Does not implicitly {@link google.pubsub.v1.PullRequest.verify|verify} messages.
                      * @function encode
@@ -21297,7 +21805,7 @@
                             writer.uint32(/* id 3, wireType 0 =*/24).int32(message.maxMessages);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified PullRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.PullRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -21310,7 +21818,7 @@
                     PullRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a PullRequest message from the specified reader or buffer.
                      * @function decode
@@ -21345,7 +21853,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a PullRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -21361,7 +21869,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a PullRequest message.
                      * @function verify
@@ -21384,7 +21892,7 @@
                                 return "maxMessages: integer expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a PullRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -21405,7 +21913,7 @@
                             message.maxMessages = object.maxMessages | 0;
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a PullRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -21432,7 +21940,7 @@
                             object.maxMessages = message.maxMessages;
                         return object;
                     };
-    
+
                     /**
                      * Converts this PullRequest to JSON.
                      * @function toJSON
@@ -21443,19 +21951,19 @@
                     PullRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return PullRequest;
                 })();
-    
+
                 v1.PullResponse = (function() {
-    
+
                     /**
                      * Properties of a PullResponse.
                      * @memberof google.pubsub.v1
                      * @interface IPullResponse
                      * @property {Array.<google.pubsub.v1.IReceivedMessage>|null} [receivedMessages] PullResponse receivedMessages
                      */
-    
+
                     /**
                      * Constructs a new PullResponse.
                      * @memberof google.pubsub.v1
@@ -21471,7 +21979,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * PullResponse receivedMessages.
                      * @member {Array.<google.pubsub.v1.IReceivedMessage>} receivedMessages
@@ -21479,7 +21987,7 @@
                      * @instance
                      */
                     PullResponse.prototype.receivedMessages = $util.emptyArray;
-    
+
                     /**
                      * Creates a new PullResponse instance using the specified properties.
                      * @function create
@@ -21491,7 +21999,7 @@
                     PullResponse.create = function create(properties) {
                         return new PullResponse(properties);
                     };
-    
+
                     /**
                      * Encodes the specified PullResponse message. Does not implicitly {@link google.pubsub.v1.PullResponse.verify|verify} messages.
                      * @function encode
@@ -21509,7 +22017,7 @@
                                 $root.google.pubsub.v1.ReceivedMessage.encode(message.receivedMessages[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified PullResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.PullResponse.verify|verify} messages.
                      * @function encodeDelimited
@@ -21522,7 +22030,7 @@
                     PullResponse.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a PullResponse message from the specified reader or buffer.
                      * @function decode
@@ -21553,7 +22061,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a PullResponse message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -21569,7 +22077,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a PullResponse message.
                      * @function verify
@@ -21592,7 +22100,7 @@
                         }
                         return null;
                     };
-    
+
                     /**
                      * Creates a PullResponse message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -21617,7 +22125,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a PullResponse message. Also converts values to other types if specified.
                      * @function toObject
@@ -21640,7 +22148,7 @@
                         }
                         return object;
                     };
-    
+
                     /**
                      * Converts this PullResponse to JSON.
                      * @function toJSON
@@ -21651,12 +22159,12 @@
                     PullResponse.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return PullResponse;
                 })();
-    
+
                 v1.ModifyAckDeadlineRequest = (function() {
-    
+
                     /**
                      * Properties of a ModifyAckDeadlineRequest.
                      * @memberof google.pubsub.v1
@@ -21665,7 +22173,7 @@
                      * @property {Array.<string>|null} [ackIds] ModifyAckDeadlineRequest ackIds
                      * @property {number|null} [ackDeadlineSeconds] ModifyAckDeadlineRequest ackDeadlineSeconds
                      */
-    
+
                     /**
                      * Constructs a new ModifyAckDeadlineRequest.
                      * @memberof google.pubsub.v1
@@ -21681,7 +22189,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
+
                     /**
                      * ModifyAckDeadlineRequest subscription.
                      * @member {string} subscription
@@ -21689,7 +22197,7 @@
                      * @instance
                      */
                     ModifyAckDeadlineRequest.prototype.subscription = "";
-    
+
                     /**
                      * ModifyAckDeadlineRequest ackIds.
                      * @member {Array.<string>} ackIds
@@ -21697,7 +22205,7 @@
                      * @instance
                      */
                     ModifyAckDeadlineRequest.prototype.ackIds = $util.emptyArray;
-    
+
                     /**
                      * ModifyAckDeadlineRequest ackDeadlineSeconds.
                      * @member {number} ackDeadlineSeconds
@@ -21705,7 +22213,7 @@
                      * @instance
                      */
                     ModifyAckDeadlineRequest.prototype.ackDeadlineSeconds = 0;
-    
+
                     /**
                      * Creates a new ModifyAckDeadlineRequest instance using the specified properties.
                      * @function create
@@ -21717,7 +22225,7 @@
                     ModifyAckDeadlineRequest.create = function create(properties) {
                         return new ModifyAckDeadlineRequest(properties);
                     };
-    
+
                     /**
                      * Encodes the specified ModifyAckDeadlineRequest message. Does not implicitly {@link google.pubsub.v1.ModifyAckDeadlineRequest.verify|verify} messages.
                      * @function encode
@@ -21739,7 +22247,7 @@
                                 writer.uint32(/* id 4, wireType 2 =*/34).string(message.ackIds[i]);
                         return writer;
                     };
-    
+
                     /**
                      * Encodes the specified ModifyAckDeadlineRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ModifyAckDeadlineRequest.verify|verify} messages.
                      * @function encodeDelimited
@@ -21752,7 +22260,7 @@
                     ModifyAckDeadlineRequest.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
-    
+
                     /**
                      * Decodes a ModifyAckDeadlineRequest message from the specified reader or buffer.
                      * @function decode
@@ -21789,7 +22297,7 @@
                         }
                         return message;
                     };
-    
+
                     /**
                      * Decodes a ModifyAckDeadlineRequest message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
@@ -21805,7 +22313,7 @@
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
-    
+
                     /**
                      * Verifies a ModifyAckDeadlineRequest message.
                      * @function verify
@@ -21832,7 +22340,7 @@
                                 return "ackDeadlineSeconds: integer expected";
                         return null;
                     };
-    
+
                     /**
                      * Creates a ModifyAckDeadlineRequest message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
@@ -21858,7 +22366,7 @@
                             message.ackDeadlineSeconds = object.ackDeadlineSeconds | 0;
                         return message;
                     };
-    
+
                     /**
                      * Creates a plain object from a ModifyAckDeadlineRequest message. Also converts values to other types if specified.
                      * @function toObject
@@ -21889,7 +22397,7 @@
                         }
                         return object;
                     };
-    
+
                     /**
                      * Converts this ModifyAckDeadlineRequest to JSON.
                      * @function toJSON
@@ -21900,12 +22408,12 @@
                     ModifyAckDeadlineRequest.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
-    
+
                     return ModifyAckDeadlineRequest;
                 })();
-    
+
                 v1.AcknowledgeRequest = (function() {
-    
+
                     /**
                      * Properties of an AcknowledgeRequest.
                      * @memberof google.pubsub.v1
@@ -21913,7 +22421,7 @@
                      * @property {string|null} [subscription] AcknowledgeRequest subscription
                      * @property {Array.<string>|null} [ackIds] AcknowledgeRequest ackIds
                      */
-    
+
                     /**
                      * Constructs a new AcknowledgeRequest.
                      * @memberof google.pubsub.v1
@@ -21929,2791 +22437,7 @@
                                 if (properties[keys[i]] != null)
                                     this[keys[i]] = properties[keys[i]];
                     }
-    
-                    /**
-                     * AcknowledgeRequest subscription.
-                     * @member {string} subscription
-                     * @memberof google.pubsub.v1.AcknowledgeRequest
-                     * @instance
-                     */
-                    AcknowledgeRequest.prototype.subscription = "";
-    
-                    /**
-                     * AcknowledgeRequest ackIds.
-                     * @member {Array.<string>} ackIds
-                     * @memberof google.pubsub.v1.AcknowledgeRequest
-                     * @instance
-                     */
-                    AcknowledgeRequest.prototype.ackIds = $util.emptyArray;
-    
-                    /**
-                     * Creates a new AcknowledgeRequest instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.AcknowledgeRequest
-                     * @static
-                     * @param {google.pubsub.v1.IAcknowledgeRequest=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.AcknowledgeRequest} AcknowledgeRequest instance
-                     */
-                    AcknowledgeRequest.create = function create(properties) {
-                        return new AcknowledgeRequest(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified AcknowledgeRequest message. Does not implicitly {@link google.pubsub.v1.AcknowledgeRequest.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.AcknowledgeRequest
-                     * @static
-                     * @param {google.pubsub.v1.IAcknowledgeRequest} message AcknowledgeRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    AcknowledgeRequest.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.subscription);
-                        if (message.ackIds != null && message.ackIds.length)
-                            for (var i = 0; i < message.ackIds.length; ++i)
-                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.ackIds[i]);
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified AcknowledgeRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.AcknowledgeRequest.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.AcknowledgeRequest
-                     * @static
-                     * @param {google.pubsub.v1.IAcknowledgeRequest} message AcknowledgeRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    AcknowledgeRequest.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes an AcknowledgeRequest message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.AcknowledgeRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.AcknowledgeRequest} AcknowledgeRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    AcknowledgeRequest.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.AcknowledgeRequest();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.subscription = reader.string();
-                                break;
-                            case 2:
-                                if (!(message.ackIds && message.ackIds.length))
-                                    message.ackIds = [];
-                                message.ackIds.push(reader.string());
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes an AcknowledgeRequest message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.AcknowledgeRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.AcknowledgeRequest} AcknowledgeRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    AcknowledgeRequest.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies an AcknowledgeRequest message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.AcknowledgeRequest
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    AcknowledgeRequest.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            if (!$util.isString(message.subscription))
-                                return "subscription: string expected";
-                        if (message.ackIds != null && message.hasOwnProperty("ackIds")) {
-                            if (!Array.isArray(message.ackIds))
-                                return "ackIds: array expected";
-                            for (var i = 0; i < message.ackIds.length; ++i)
-                                if (!$util.isString(message.ackIds[i]))
-                                    return "ackIds: string[] expected";
-                        }
-                        return null;
-                    };
-    
-                    /**
-                     * Creates an AcknowledgeRequest message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.AcknowledgeRequest
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.AcknowledgeRequest} AcknowledgeRequest
-                     */
-                    AcknowledgeRequest.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.AcknowledgeRequest)
-                            return object;
-                        var message = new $root.google.pubsub.v1.AcknowledgeRequest();
-                        if (object.subscription != null)
-                            message.subscription = String(object.subscription);
-                        if (object.ackIds) {
-                            if (!Array.isArray(object.ackIds))
-                                throw TypeError(".google.pubsub.v1.AcknowledgeRequest.ackIds: array expected");
-                            message.ackIds = [];
-                            for (var i = 0; i < object.ackIds.length; ++i)
-                                message.ackIds[i] = String(object.ackIds[i]);
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from an AcknowledgeRequest message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.AcknowledgeRequest
-                     * @static
-                     * @param {google.pubsub.v1.AcknowledgeRequest} message AcknowledgeRequest
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    AcknowledgeRequest.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.arrays || options.defaults)
-                            object.ackIds = [];
-                        if (options.defaults)
-                            object.subscription = "";
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            object.subscription = message.subscription;
-                        if (message.ackIds && message.ackIds.length) {
-                            object.ackIds = [];
-                            for (var j = 0; j < message.ackIds.length; ++j)
-                                object.ackIds[j] = message.ackIds[j];
-                        }
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this AcknowledgeRequest to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.AcknowledgeRequest
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    AcknowledgeRequest.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return AcknowledgeRequest;
-                })();
-    
-                v1.StreamingPullRequest = (function() {
-    
-                    /**
-                     * Properties of a StreamingPullRequest.
-                     * @memberof google.pubsub.v1
-                     * @interface IStreamingPullRequest
-                     * @property {string|null} [subscription] StreamingPullRequest subscription
-                     * @property {Array.<string>|null} [ackIds] StreamingPullRequest ackIds
-                     * @property {Array.<number>|null} [modifyDeadlineSeconds] StreamingPullRequest modifyDeadlineSeconds
-                     * @property {Array.<string>|null} [modifyDeadlineAckIds] StreamingPullRequest modifyDeadlineAckIds
-                     * @property {number|null} [streamAckDeadlineSeconds] StreamingPullRequest streamAckDeadlineSeconds
-                     * @property {string|null} [clientId] StreamingPullRequest clientId
-                     */
-    
-                    /**
-                     * Constructs a new StreamingPullRequest.
-                     * @memberof google.pubsub.v1
-                     * @classdesc Represents a StreamingPullRequest.
-                     * @implements IStreamingPullRequest
-                     * @constructor
-                     * @param {google.pubsub.v1.IStreamingPullRequest=} [properties] Properties to set
-                     */
-                    function StreamingPullRequest(properties) {
-                        this.ackIds = [];
-                        this.modifyDeadlineSeconds = [];
-                        this.modifyDeadlineAckIds = [];
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * StreamingPullRequest subscription.
-                     * @member {string} subscription
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @instance
-                     */
-                    StreamingPullRequest.prototype.subscription = "";
-    
-                    /**
-                     * StreamingPullRequest ackIds.
-                     * @member {Array.<string>} ackIds
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @instance
-                     */
-                    StreamingPullRequest.prototype.ackIds = $util.emptyArray;
-    
-                    /**
-                     * StreamingPullRequest modifyDeadlineSeconds.
-                     * @member {Array.<number>} modifyDeadlineSeconds
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @instance
-                     */
-                    StreamingPullRequest.prototype.modifyDeadlineSeconds = $util.emptyArray;
-    
-                    /**
-                     * StreamingPullRequest modifyDeadlineAckIds.
-                     * @member {Array.<string>} modifyDeadlineAckIds
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @instance
-                     */
-                    StreamingPullRequest.prototype.modifyDeadlineAckIds = $util.emptyArray;
-    
-                    /**
-                     * StreamingPullRequest streamAckDeadlineSeconds.
-                     * @member {number} streamAckDeadlineSeconds
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @instance
-                     */
-                    StreamingPullRequest.prototype.streamAckDeadlineSeconds = 0;
-    
-                    /**
-                     * StreamingPullRequest clientId.
-                     * @member {string} clientId
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @instance
-                     */
-                    StreamingPullRequest.prototype.clientId = "";
-    
-                    /**
-                     * Creates a new StreamingPullRequest instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @static
-                     * @param {google.pubsub.v1.IStreamingPullRequest=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.StreamingPullRequest} StreamingPullRequest instance
-                     */
-                    StreamingPullRequest.create = function create(properties) {
-                        return new StreamingPullRequest(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified StreamingPullRequest message. Does not implicitly {@link google.pubsub.v1.StreamingPullRequest.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @static
-                     * @param {google.pubsub.v1.IStreamingPullRequest} message StreamingPullRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    StreamingPullRequest.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.subscription);
-                        if (message.ackIds != null && message.ackIds.length)
-                            for (var i = 0; i < message.ackIds.length; ++i)
-                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.ackIds[i]);
-                        if (message.modifyDeadlineSeconds != null && message.modifyDeadlineSeconds.length) {
-                            writer.uint32(/* id 3, wireType 2 =*/26).fork();
-                            for (var i = 0; i < message.modifyDeadlineSeconds.length; ++i)
-                                writer.int32(message.modifyDeadlineSeconds[i]);
-                            writer.ldelim();
-                        }
-                        if (message.modifyDeadlineAckIds != null && message.modifyDeadlineAckIds.length)
-                            for (var i = 0; i < message.modifyDeadlineAckIds.length; ++i)
-                                writer.uint32(/* id 4, wireType 2 =*/34).string(message.modifyDeadlineAckIds[i]);
-                        if (message.streamAckDeadlineSeconds != null && message.hasOwnProperty("streamAckDeadlineSeconds"))
-                            writer.uint32(/* id 5, wireType 0 =*/40).int32(message.streamAckDeadlineSeconds);
-                        if (message.clientId != null && message.hasOwnProperty("clientId"))
-                            writer.uint32(/* id 6, wireType 2 =*/50).string(message.clientId);
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified StreamingPullRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullRequest.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @static
-                     * @param {google.pubsub.v1.IStreamingPullRequest} message StreamingPullRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    StreamingPullRequest.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a StreamingPullRequest message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.StreamingPullRequest} StreamingPullRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    StreamingPullRequest.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.StreamingPullRequest();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.subscription = reader.string();
-                                break;
-                            case 2:
-                                if (!(message.ackIds && message.ackIds.length))
-                                    message.ackIds = [];
-                                message.ackIds.push(reader.string());
-                                break;
-                            case 3:
-                                if (!(message.modifyDeadlineSeconds && message.modifyDeadlineSeconds.length))
-                                    message.modifyDeadlineSeconds = [];
-                                if ((tag & 7) === 2) {
-                                    var end2 = reader.uint32() + reader.pos;
-                                    while (reader.pos < end2)
-                                        message.modifyDeadlineSeconds.push(reader.int32());
-                                } else
-                                    message.modifyDeadlineSeconds.push(reader.int32());
-                                break;
-                            case 4:
-                                if (!(message.modifyDeadlineAckIds && message.modifyDeadlineAckIds.length))
-                                    message.modifyDeadlineAckIds = [];
-                                message.modifyDeadlineAckIds.push(reader.string());
-                                break;
-                            case 5:
-                                message.streamAckDeadlineSeconds = reader.int32();
-                                break;
-                            case 6:
-                                message.clientId = reader.string();
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a StreamingPullRequest message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.StreamingPullRequest} StreamingPullRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    StreamingPullRequest.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a StreamingPullRequest message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    StreamingPullRequest.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            if (!$util.isString(message.subscription))
-                                return "subscription: string expected";
-                        if (message.ackIds != null && message.hasOwnProperty("ackIds")) {
-                            if (!Array.isArray(message.ackIds))
-                                return "ackIds: array expected";
-                            for (var i = 0; i < message.ackIds.length; ++i)
-                                if (!$util.isString(message.ackIds[i]))
-                                    return "ackIds: string[] expected";
-                        }
-                        if (message.modifyDeadlineSeconds != null && message.hasOwnProperty("modifyDeadlineSeconds")) {
-                            if (!Array.isArray(message.modifyDeadlineSeconds))
-                                return "modifyDeadlineSeconds: array expected";
-                            for (var i = 0; i < message.modifyDeadlineSeconds.length; ++i)
-                                if (!$util.isInteger(message.modifyDeadlineSeconds[i]))
-                                    return "modifyDeadlineSeconds: integer[] expected";
-                        }
-                        if (message.modifyDeadlineAckIds != null && message.hasOwnProperty("modifyDeadlineAckIds")) {
-                            if (!Array.isArray(message.modifyDeadlineAckIds))
-                                return "modifyDeadlineAckIds: array expected";
-                            for (var i = 0; i < message.modifyDeadlineAckIds.length; ++i)
-                                if (!$util.isString(message.modifyDeadlineAckIds[i]))
-                                    return "modifyDeadlineAckIds: string[] expected";
-                        }
-                        if (message.streamAckDeadlineSeconds != null && message.hasOwnProperty("streamAckDeadlineSeconds"))
-                            if (!$util.isInteger(message.streamAckDeadlineSeconds))
-                                return "streamAckDeadlineSeconds: integer expected";
-                        if (message.clientId != null && message.hasOwnProperty("clientId"))
-                            if (!$util.isString(message.clientId))
-                                return "clientId: string expected";
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a StreamingPullRequest message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.StreamingPullRequest} StreamingPullRequest
-                     */
-                    StreamingPullRequest.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.StreamingPullRequest)
-                            return object;
-                        var message = new $root.google.pubsub.v1.StreamingPullRequest();
-                        if (object.subscription != null)
-                            message.subscription = String(object.subscription);
-                        if (object.ackIds) {
-                            if (!Array.isArray(object.ackIds))
-                                throw TypeError(".google.pubsub.v1.StreamingPullRequest.ackIds: array expected");
-                            message.ackIds = [];
-                            for (var i = 0; i < object.ackIds.length; ++i)
-                                message.ackIds[i] = String(object.ackIds[i]);
-                        }
-                        if (object.modifyDeadlineSeconds) {
-                            if (!Array.isArray(object.modifyDeadlineSeconds))
-                                throw TypeError(".google.pubsub.v1.StreamingPullRequest.modifyDeadlineSeconds: array expected");
-                            message.modifyDeadlineSeconds = [];
-                            for (var i = 0; i < object.modifyDeadlineSeconds.length; ++i)
-                                message.modifyDeadlineSeconds[i] = object.modifyDeadlineSeconds[i] | 0;
-                        }
-                        if (object.modifyDeadlineAckIds) {
-                            if (!Array.isArray(object.modifyDeadlineAckIds))
-                                throw TypeError(".google.pubsub.v1.StreamingPullRequest.modifyDeadlineAckIds: array expected");
-                            message.modifyDeadlineAckIds = [];
-                            for (var i = 0; i < object.modifyDeadlineAckIds.length; ++i)
-                                message.modifyDeadlineAckIds[i] = String(object.modifyDeadlineAckIds[i]);
-                        }
-                        if (object.streamAckDeadlineSeconds != null)
-                            message.streamAckDeadlineSeconds = object.streamAckDeadlineSeconds | 0;
-                        if (object.clientId != null)
-                            message.clientId = String(object.clientId);
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a StreamingPullRequest message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @static
-                     * @param {google.pubsub.v1.StreamingPullRequest} message StreamingPullRequest
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    StreamingPullRequest.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.arrays || options.defaults) {
-                            object.ackIds = [];
-                            object.modifyDeadlineSeconds = [];
-                            object.modifyDeadlineAckIds = [];
-                        }
-                        if (options.defaults) {
-                            object.subscription = "";
-                            object.streamAckDeadlineSeconds = 0;
-                            object.clientId = "";
-                        }
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            object.subscription = message.subscription;
-                        if (message.ackIds && message.ackIds.length) {
-                            object.ackIds = [];
-                            for (var j = 0; j < message.ackIds.length; ++j)
-                                object.ackIds[j] = message.ackIds[j];
-                        }
-                        if (message.modifyDeadlineSeconds && message.modifyDeadlineSeconds.length) {
-                            object.modifyDeadlineSeconds = [];
-                            for (var j = 0; j < message.modifyDeadlineSeconds.length; ++j)
-                                object.modifyDeadlineSeconds[j] = message.modifyDeadlineSeconds[j];
-                        }
-                        if (message.modifyDeadlineAckIds && message.modifyDeadlineAckIds.length) {
-                            object.modifyDeadlineAckIds = [];
-                            for (var j = 0; j < message.modifyDeadlineAckIds.length; ++j)
-                                object.modifyDeadlineAckIds[j] = message.modifyDeadlineAckIds[j];
-                        }
-                        if (message.streamAckDeadlineSeconds != null && message.hasOwnProperty("streamAckDeadlineSeconds"))
-                            object.streamAckDeadlineSeconds = message.streamAckDeadlineSeconds;
-                        if (message.clientId != null && message.hasOwnProperty("clientId"))
-                            object.clientId = message.clientId;
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this StreamingPullRequest to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.StreamingPullRequest
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    StreamingPullRequest.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return StreamingPullRequest;
-                })();
-    
-                v1.StreamingPullResponse = (function() {
-    
-                    /**
-                     * Properties of a StreamingPullResponse.
-                     * @memberof google.pubsub.v1
-                     * @interface IStreamingPullResponse
-                     * @property {Array.<google.pubsub.v1.IReceivedMessage>|null} [receivedMessages] StreamingPullResponse receivedMessages
-                     */
-    
-                    /**
-                     * Constructs a new StreamingPullResponse.
-                     * @memberof google.pubsub.v1
-                     * @classdesc Represents a StreamingPullResponse.
-                     * @implements IStreamingPullResponse
-                     * @constructor
-                     * @param {google.pubsub.v1.IStreamingPullResponse=} [properties] Properties to set
-                     */
-                    function StreamingPullResponse(properties) {
-                        this.receivedMessages = [];
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * StreamingPullResponse receivedMessages.
-                     * @member {Array.<google.pubsub.v1.IReceivedMessage>} receivedMessages
-                     * @memberof google.pubsub.v1.StreamingPullResponse
-                     * @instance
-                     */
-                    StreamingPullResponse.prototype.receivedMessages = $util.emptyArray;
-    
-                    /**
-                     * Creates a new StreamingPullResponse instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.StreamingPullResponse
-                     * @static
-                     * @param {google.pubsub.v1.IStreamingPullResponse=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.StreamingPullResponse} StreamingPullResponse instance
-                     */
-                    StreamingPullResponse.create = function create(properties) {
-                        return new StreamingPullResponse(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified StreamingPullResponse message. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.StreamingPullResponse
-                     * @static
-                     * @param {google.pubsub.v1.IStreamingPullResponse} message StreamingPullResponse message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    StreamingPullResponse.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.receivedMessages != null && message.receivedMessages.length)
-                            for (var i = 0; i < message.receivedMessages.length; ++i)
-                                $root.google.pubsub.v1.ReceivedMessage.encode(message.receivedMessages[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified StreamingPullResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.StreamingPullResponse
-                     * @static
-                     * @param {google.pubsub.v1.IStreamingPullResponse} message StreamingPullResponse message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    StreamingPullResponse.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a StreamingPullResponse message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.StreamingPullResponse
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.StreamingPullResponse} StreamingPullResponse
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    StreamingPullResponse.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.StreamingPullResponse();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                if (!(message.receivedMessages && message.receivedMessages.length))
-                                    message.receivedMessages = [];
-                                message.receivedMessages.push($root.google.pubsub.v1.ReceivedMessage.decode(reader, reader.uint32()));
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a StreamingPullResponse message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.StreamingPullResponse
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.StreamingPullResponse} StreamingPullResponse
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    StreamingPullResponse.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a StreamingPullResponse message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.StreamingPullResponse
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    StreamingPullResponse.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.receivedMessages != null && message.hasOwnProperty("receivedMessages")) {
-                            if (!Array.isArray(message.receivedMessages))
-                                return "receivedMessages: array expected";
-                            for (var i = 0; i < message.receivedMessages.length; ++i) {
-                                var error = $root.google.pubsub.v1.ReceivedMessage.verify(message.receivedMessages[i]);
-                                if (error)
-                                    return "receivedMessages." + error;
-                            }
-                        }
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a StreamingPullResponse message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.StreamingPullResponse
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.StreamingPullResponse} StreamingPullResponse
-                     */
-                    StreamingPullResponse.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.StreamingPullResponse)
-                            return object;
-                        var message = new $root.google.pubsub.v1.StreamingPullResponse();
-                        if (object.receivedMessages) {
-                            if (!Array.isArray(object.receivedMessages))
-                                throw TypeError(".google.pubsub.v1.StreamingPullResponse.receivedMessages: array expected");
-                            message.receivedMessages = [];
-                            for (var i = 0; i < object.receivedMessages.length; ++i) {
-                                if (typeof object.receivedMessages[i] !== "object")
-                                    throw TypeError(".google.pubsub.v1.StreamingPullResponse.receivedMessages: object expected");
-                                message.receivedMessages[i] = $root.google.pubsub.v1.ReceivedMessage.fromObject(object.receivedMessages[i]);
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a StreamingPullResponse message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.StreamingPullResponse
-                     * @static
-                     * @param {google.pubsub.v1.StreamingPullResponse} message StreamingPullResponse
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    StreamingPullResponse.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.arrays || options.defaults)
-                            object.receivedMessages = [];
-                        if (message.receivedMessages && message.receivedMessages.length) {
-                            object.receivedMessages = [];
-                            for (var j = 0; j < message.receivedMessages.length; ++j)
-                                object.receivedMessages[j] = $root.google.pubsub.v1.ReceivedMessage.toObject(message.receivedMessages[j], options);
-                        }
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this StreamingPullResponse to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.StreamingPullResponse
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    StreamingPullResponse.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return StreamingPullResponse;
-                })();
-    
-                v1.CreateSnapshotRequest = (function() {
-    
-                    /**
-                     * Properties of a CreateSnapshotRequest.
-                     * @memberof google.pubsub.v1
-                     * @interface ICreateSnapshotRequest
-                     * @property {string|null} [name] CreateSnapshotRequest name
-                     * @property {string|null} [subscription] CreateSnapshotRequest subscription
-                     * @property {Object.<string,string>|null} [labels] CreateSnapshotRequest labels
-                     */
-    
-                    /**
-                     * Constructs a new CreateSnapshotRequest.
-                     * @memberof google.pubsub.v1
-                     * @classdesc Represents a CreateSnapshotRequest.
-                     * @implements ICreateSnapshotRequest
-                     * @constructor
-                     * @param {google.pubsub.v1.ICreateSnapshotRequest=} [properties] Properties to set
-                     */
-                    function CreateSnapshotRequest(properties) {
-                        this.labels = {};
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * CreateSnapshotRequest name.
-                     * @member {string} name
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @instance
-                     */
-                    CreateSnapshotRequest.prototype.name = "";
-    
-                    /**
-                     * CreateSnapshotRequest subscription.
-                     * @member {string} subscription
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @instance
-                     */
-                    CreateSnapshotRequest.prototype.subscription = "";
-    
-                    /**
-                     * CreateSnapshotRequest labels.
-                     * @member {Object.<string,string>} labels
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @instance
-                     */
-                    CreateSnapshotRequest.prototype.labels = $util.emptyObject;
-    
-                    /**
-                     * Creates a new CreateSnapshotRequest instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.ICreateSnapshotRequest=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.CreateSnapshotRequest} CreateSnapshotRequest instance
-                     */
-                    CreateSnapshotRequest.create = function create(properties) {
-                        return new CreateSnapshotRequest(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified CreateSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.CreateSnapshotRequest.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.ICreateSnapshotRequest} message CreateSnapshotRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    CreateSnapshotRequest.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.name != null && message.hasOwnProperty("name"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.name);
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.subscription);
-                        if (message.labels != null && message.hasOwnProperty("labels"))
-                            for (var keys = Object.keys(message.labels), i = 0; i < keys.length; ++i)
-                                writer.uint32(/* id 3, wireType 2 =*/26).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]).uint32(/* id 2, wireType 2 =*/18).string(message.labels[keys[i]]).ldelim();
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified CreateSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.CreateSnapshotRequest.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.ICreateSnapshotRequest} message CreateSnapshotRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    CreateSnapshotRequest.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a CreateSnapshotRequest message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.CreateSnapshotRequest} CreateSnapshotRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    CreateSnapshotRequest.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CreateSnapshotRequest(), key;
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.name = reader.string();
-                                break;
-                            case 2:
-                                message.subscription = reader.string();
-                                break;
-                            case 3:
-                                reader.skip().pos++;
-                                if (message.labels === $util.emptyObject)
-                                    message.labels = {};
-                                key = reader.string();
-                                reader.pos++;
-                                message.labels[key] = reader.string();
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a CreateSnapshotRequest message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.CreateSnapshotRequest} CreateSnapshotRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    CreateSnapshotRequest.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a CreateSnapshotRequest message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    CreateSnapshotRequest.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.name != null && message.hasOwnProperty("name"))
-                            if (!$util.isString(message.name))
-                                return "name: string expected";
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            if (!$util.isString(message.subscription))
-                                return "subscription: string expected";
-                        if (message.labels != null && message.hasOwnProperty("labels")) {
-                            if (!$util.isObject(message.labels))
-                                return "labels: object expected";
-                            var key = Object.keys(message.labels);
-                            for (var i = 0; i < key.length; ++i)
-                                if (!$util.isString(message.labels[key[i]]))
-                                    return "labels: string{k:string} expected";
-                        }
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a CreateSnapshotRequest message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.CreateSnapshotRequest} CreateSnapshotRequest
-                     */
-                    CreateSnapshotRequest.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.CreateSnapshotRequest)
-                            return object;
-                        var message = new $root.google.pubsub.v1.CreateSnapshotRequest();
-                        if (object.name != null)
-                            message.name = String(object.name);
-                        if (object.subscription != null)
-                            message.subscription = String(object.subscription);
-                        if (object.labels) {
-                            if (typeof object.labels !== "object")
-                                throw TypeError(".google.pubsub.v1.CreateSnapshotRequest.labels: object expected");
-                            message.labels = {};
-                            for (var keys = Object.keys(object.labels), i = 0; i < keys.length; ++i)
-                                message.labels[keys[i]] = String(object.labels[keys[i]]);
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a CreateSnapshotRequest message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.CreateSnapshotRequest} message CreateSnapshotRequest
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    CreateSnapshotRequest.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.objects || options.defaults)
-                            object.labels = {};
-                        if (options.defaults) {
-                            object.name = "";
-                            object.subscription = "";
-                        }
-                        if (message.name != null && message.hasOwnProperty("name"))
-                            object.name = message.name;
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            object.subscription = message.subscription;
-                        var keys2;
-                        if (message.labels && (keys2 = Object.keys(message.labels)).length) {
-                            object.labels = {};
-                            for (var j = 0; j < keys2.length; ++j)
-                                object.labels[keys2[j]] = message.labels[keys2[j]];
-                        }
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this CreateSnapshotRequest to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.CreateSnapshotRequest
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    CreateSnapshotRequest.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return CreateSnapshotRequest;
-                })();
-    
-                v1.UpdateSnapshotRequest = (function() {
-    
-                    /**
-                     * Properties of an UpdateSnapshotRequest.
-                     * @memberof google.pubsub.v1
-                     * @interface IUpdateSnapshotRequest
-                     * @property {google.pubsub.v1.ISnapshot|null} [snapshot] UpdateSnapshotRequest snapshot
-                     * @property {google.protobuf.IFieldMask|null} [updateMask] UpdateSnapshotRequest updateMask
-                     */
-    
-                    /**
-                     * Constructs a new UpdateSnapshotRequest.
-                     * @memberof google.pubsub.v1
-                     * @classdesc Represents an UpdateSnapshotRequest.
-                     * @implements IUpdateSnapshotRequest
-                     * @constructor
-                     * @param {google.pubsub.v1.IUpdateSnapshotRequest=} [properties] Properties to set
-                     */
-                    function UpdateSnapshotRequest(properties) {
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * UpdateSnapshotRequest snapshot.
-                     * @member {google.pubsub.v1.ISnapshot|null|undefined} snapshot
-                     * @memberof google.pubsub.v1.UpdateSnapshotRequest
-                     * @instance
-                     */
-                    UpdateSnapshotRequest.prototype.snapshot = null;
-    
-                    /**
-                     * UpdateSnapshotRequest updateMask.
-                     * @member {google.protobuf.IFieldMask|null|undefined} updateMask
-                     * @memberof google.pubsub.v1.UpdateSnapshotRequest
-                     * @instance
-                     */
-                    UpdateSnapshotRequest.prototype.updateMask = null;
-    
-                    /**
-                     * Creates a new UpdateSnapshotRequest instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.UpdateSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.IUpdateSnapshotRequest=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.UpdateSnapshotRequest} UpdateSnapshotRequest instance
-                     */
-                    UpdateSnapshotRequest.create = function create(properties) {
-                        return new UpdateSnapshotRequest(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified UpdateSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.UpdateSnapshotRequest.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.UpdateSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.IUpdateSnapshotRequest} message UpdateSnapshotRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    UpdateSnapshotRequest.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot"))
-                            $root.google.pubsub.v1.Snapshot.encode(message.snapshot, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-                        if (message.updateMask != null && message.hasOwnProperty("updateMask"))
-                            $root.google.protobuf.FieldMask.encode(message.updateMask, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified UpdateSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.UpdateSnapshotRequest.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.UpdateSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.IUpdateSnapshotRequest} message UpdateSnapshotRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    UpdateSnapshotRequest.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes an UpdateSnapshotRequest message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.UpdateSnapshotRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.UpdateSnapshotRequest} UpdateSnapshotRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    UpdateSnapshotRequest.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.UpdateSnapshotRequest();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.snapshot = $root.google.pubsub.v1.Snapshot.decode(reader, reader.uint32());
-                                break;
-                            case 2:
-                                message.updateMask = $root.google.protobuf.FieldMask.decode(reader, reader.uint32());
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes an UpdateSnapshotRequest message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.UpdateSnapshotRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.UpdateSnapshotRequest} UpdateSnapshotRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    UpdateSnapshotRequest.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies an UpdateSnapshotRequest message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.UpdateSnapshotRequest
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    UpdateSnapshotRequest.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot")) {
-                            var error = $root.google.pubsub.v1.Snapshot.verify(message.snapshot);
-                            if (error)
-                                return "snapshot." + error;
-                        }
-                        if (message.updateMask != null && message.hasOwnProperty("updateMask")) {
-                            var error = $root.google.protobuf.FieldMask.verify(message.updateMask);
-                            if (error)
-                                return "updateMask." + error;
-                        }
-                        return null;
-                    };
-    
-                    /**
-                     * Creates an UpdateSnapshotRequest message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.UpdateSnapshotRequest
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.UpdateSnapshotRequest} UpdateSnapshotRequest
-                     */
-                    UpdateSnapshotRequest.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.UpdateSnapshotRequest)
-                            return object;
-                        var message = new $root.google.pubsub.v1.UpdateSnapshotRequest();
-                        if (object.snapshot != null) {
-                            if (typeof object.snapshot !== "object")
-                                throw TypeError(".google.pubsub.v1.UpdateSnapshotRequest.snapshot: object expected");
-                            message.snapshot = $root.google.pubsub.v1.Snapshot.fromObject(object.snapshot);
-                        }
-                        if (object.updateMask != null) {
-                            if (typeof object.updateMask !== "object")
-                                throw TypeError(".google.pubsub.v1.UpdateSnapshotRequest.updateMask: object expected");
-                            message.updateMask = $root.google.protobuf.FieldMask.fromObject(object.updateMask);
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from an UpdateSnapshotRequest message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.UpdateSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.UpdateSnapshotRequest} message UpdateSnapshotRequest
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    UpdateSnapshotRequest.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.defaults) {
-                            object.snapshot = null;
-                            object.updateMask = null;
-                        }
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot"))
-                            object.snapshot = $root.google.pubsub.v1.Snapshot.toObject(message.snapshot, options);
-                        if (message.updateMask != null && message.hasOwnProperty("updateMask"))
-                            object.updateMask = $root.google.protobuf.FieldMask.toObject(message.updateMask, options);
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this UpdateSnapshotRequest to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.UpdateSnapshotRequest
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    UpdateSnapshotRequest.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return UpdateSnapshotRequest;
-                })();
-    
-                v1.Snapshot = (function() {
-    
-                    /**
-                     * Properties of a Snapshot.
-                     * @memberof google.pubsub.v1
-                     * @interface ISnapshot
-                     * @property {string|null} [name] Snapshot name
-                     * @property {string|null} [topic] Snapshot topic
-                     * @property {google.protobuf.ITimestamp|null} [expireTime] Snapshot expireTime
-                     * @property {Object.<string,string>|null} [labels] Snapshot labels
-                     */
-    
-                    /**
-                     * Constructs a new Snapshot.
-                     * @memberof google.pubsub.v1
-                     * @classdesc Represents a Snapshot.
-                     * @implements ISnapshot
-                     * @constructor
-                     * @param {google.pubsub.v1.ISnapshot=} [properties] Properties to set
-                     */
-                    function Snapshot(properties) {
-                        this.labels = {};
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * Snapshot name.
-                     * @member {string} name
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @instance
-                     */
-                    Snapshot.prototype.name = "";
-    
-                    /**
-                     * Snapshot topic.
-                     * @member {string} topic
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @instance
-                     */
-                    Snapshot.prototype.topic = "";
-    
-                    /**
-                     * Snapshot expireTime.
-                     * @member {google.protobuf.ITimestamp|null|undefined} expireTime
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @instance
-                     */
-                    Snapshot.prototype.expireTime = null;
-    
-                    /**
-                     * Snapshot labels.
-                     * @member {Object.<string,string>} labels
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @instance
-                     */
-                    Snapshot.prototype.labels = $util.emptyObject;
-    
-                    /**
-                     * Creates a new Snapshot instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @static
-                     * @param {google.pubsub.v1.ISnapshot=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.Snapshot} Snapshot instance
-                     */
-                    Snapshot.create = function create(properties) {
-                        return new Snapshot(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified Snapshot message. Does not implicitly {@link google.pubsub.v1.Snapshot.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @static
-                     * @param {google.pubsub.v1.ISnapshot} message Snapshot message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    Snapshot.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.name != null && message.hasOwnProperty("name"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.name);
-                        if (message.topic != null && message.hasOwnProperty("topic"))
-                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.topic);
-                        if (message.expireTime != null && message.hasOwnProperty("expireTime"))
-                            $root.google.protobuf.Timestamp.encode(message.expireTime, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-                        if (message.labels != null && message.hasOwnProperty("labels"))
-                            for (var keys = Object.keys(message.labels), i = 0; i < keys.length; ++i)
-                                writer.uint32(/* id 4, wireType 2 =*/34).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]).uint32(/* id 2, wireType 2 =*/18).string(message.labels[keys[i]]).ldelim();
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified Snapshot message, length delimited. Does not implicitly {@link google.pubsub.v1.Snapshot.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @static
-                     * @param {google.pubsub.v1.ISnapshot} message Snapshot message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    Snapshot.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a Snapshot message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.Snapshot} Snapshot
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    Snapshot.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Snapshot(), key;
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.name = reader.string();
-                                break;
-                            case 2:
-                                message.topic = reader.string();
-                                break;
-                            case 3:
-                                message.expireTime = $root.google.protobuf.Timestamp.decode(reader, reader.uint32());
-                                break;
-                            case 4:
-                                reader.skip().pos++;
-                                if (message.labels === $util.emptyObject)
-                                    message.labels = {};
-                                key = reader.string();
-                                reader.pos++;
-                                message.labels[key] = reader.string();
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a Snapshot message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.Snapshot} Snapshot
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    Snapshot.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a Snapshot message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    Snapshot.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.name != null && message.hasOwnProperty("name"))
-                            if (!$util.isString(message.name))
-                                return "name: string expected";
-                        if (message.topic != null && message.hasOwnProperty("topic"))
-                            if (!$util.isString(message.topic))
-                                return "topic: string expected";
-                        if (message.expireTime != null && message.hasOwnProperty("expireTime")) {
-                            var error = $root.google.protobuf.Timestamp.verify(message.expireTime);
-                            if (error)
-                                return "expireTime." + error;
-                        }
-                        if (message.labels != null && message.hasOwnProperty("labels")) {
-                            if (!$util.isObject(message.labels))
-                                return "labels: object expected";
-                            var key = Object.keys(message.labels);
-                            for (var i = 0; i < key.length; ++i)
-                                if (!$util.isString(message.labels[key[i]]))
-                                    return "labels: string{k:string} expected";
-                        }
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a Snapshot message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.Snapshot} Snapshot
-                     */
-                    Snapshot.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.Snapshot)
-                            return object;
-                        var message = new $root.google.pubsub.v1.Snapshot();
-                        if (object.name != null)
-                            message.name = String(object.name);
-                        if (object.topic != null)
-                            message.topic = String(object.topic);
-                        if (object.expireTime != null) {
-                            if (typeof object.expireTime !== "object")
-                                throw TypeError(".google.pubsub.v1.Snapshot.expireTime: object expected");
-                            message.expireTime = $root.google.protobuf.Timestamp.fromObject(object.expireTime);
-                        }
-                        if (object.labels) {
-                            if (typeof object.labels !== "object")
-                                throw TypeError(".google.pubsub.v1.Snapshot.labels: object expected");
-                            message.labels = {};
-                            for (var keys = Object.keys(object.labels), i = 0; i < keys.length; ++i)
-                                message.labels[keys[i]] = String(object.labels[keys[i]]);
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a Snapshot message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @static
-                     * @param {google.pubsub.v1.Snapshot} message Snapshot
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    Snapshot.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.objects || options.defaults)
-                            object.labels = {};
-                        if (options.defaults) {
-                            object.name = "";
-                            object.topic = "";
-                            object.expireTime = null;
-                        }
-                        if (message.name != null && message.hasOwnProperty("name"))
-                            object.name = message.name;
-                        if (message.topic != null && message.hasOwnProperty("topic"))
-                            object.topic = message.topic;
-                        if (message.expireTime != null && message.hasOwnProperty("expireTime"))
-                            object.expireTime = $root.google.protobuf.Timestamp.toObject(message.expireTime, options);
-                        var keys2;
-                        if (message.labels && (keys2 = Object.keys(message.labels)).length) {
-                            object.labels = {};
-                            for (var j = 0; j < keys2.length; ++j)
-                                object.labels[keys2[j]] = message.labels[keys2[j]];
-                        }
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this Snapshot to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.Snapshot
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    Snapshot.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return Snapshot;
-                })();
-    
-                v1.GetSnapshotRequest = (function() {
-    
-                    /**
-                     * Properties of a GetSnapshotRequest.
-                     * @memberof google.pubsub.v1
-                     * @interface IGetSnapshotRequest
-                     * @property {string|null} [snapshot] GetSnapshotRequest snapshot
-                     */
-    
-                    /**
-                     * Constructs a new GetSnapshotRequest.
-                     * @memberof google.pubsub.v1
-                     * @classdesc Represents a GetSnapshotRequest.
-                     * @implements IGetSnapshotRequest
-                     * @constructor
-                     * @param {google.pubsub.v1.IGetSnapshotRequest=} [properties] Properties to set
-                     */
-                    function GetSnapshotRequest(properties) {
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * GetSnapshotRequest snapshot.
-                     * @member {string} snapshot
-                     * @memberof google.pubsub.v1.GetSnapshotRequest
-                     * @instance
-                     */
-                    GetSnapshotRequest.prototype.snapshot = "";
-    
-                    /**
-                     * Creates a new GetSnapshotRequest instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.GetSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.IGetSnapshotRequest=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.GetSnapshotRequest} GetSnapshotRequest instance
-                     */
-                    GetSnapshotRequest.create = function create(properties) {
-                        return new GetSnapshotRequest(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified GetSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.GetSnapshotRequest.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.GetSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.IGetSnapshotRequest} message GetSnapshotRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    GetSnapshotRequest.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.snapshot);
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified GetSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.GetSnapshotRequest.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.GetSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.IGetSnapshotRequest} message GetSnapshotRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    GetSnapshotRequest.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a GetSnapshotRequest message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.GetSnapshotRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.GetSnapshotRequest} GetSnapshotRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    GetSnapshotRequest.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.GetSnapshotRequest();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.snapshot = reader.string();
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a GetSnapshotRequest message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.GetSnapshotRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.GetSnapshotRequest} GetSnapshotRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    GetSnapshotRequest.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a GetSnapshotRequest message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.GetSnapshotRequest
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    GetSnapshotRequest.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot"))
-                            if (!$util.isString(message.snapshot))
-                                return "snapshot: string expected";
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a GetSnapshotRequest message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.GetSnapshotRequest
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.GetSnapshotRequest} GetSnapshotRequest
-                     */
-                    GetSnapshotRequest.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.GetSnapshotRequest)
-                            return object;
-                        var message = new $root.google.pubsub.v1.GetSnapshotRequest();
-                        if (object.snapshot != null)
-                            message.snapshot = String(object.snapshot);
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a GetSnapshotRequest message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.GetSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.GetSnapshotRequest} message GetSnapshotRequest
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    GetSnapshotRequest.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.defaults)
-                            object.snapshot = "";
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot"))
-                            object.snapshot = message.snapshot;
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this GetSnapshotRequest to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.GetSnapshotRequest
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    GetSnapshotRequest.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return GetSnapshotRequest;
-                })();
-    
-                v1.ListSnapshotsRequest = (function() {
-    
-                    /**
-                     * Properties of a ListSnapshotsRequest.
-                     * @memberof google.pubsub.v1
-                     * @interface IListSnapshotsRequest
-                     * @property {string|null} [project] ListSnapshotsRequest project
-                     * @property {number|null} [pageSize] ListSnapshotsRequest pageSize
-                     * @property {string|null} [pageToken] ListSnapshotsRequest pageToken
-                     */
-    
-                    /**
-                     * Constructs a new ListSnapshotsRequest.
-                     * @memberof google.pubsub.v1
-                     * @classdesc Represents a ListSnapshotsRequest.
-                     * @implements IListSnapshotsRequest
-                     * @constructor
-                     * @param {google.pubsub.v1.IListSnapshotsRequest=} [properties] Properties to set
-                     */
-                    function ListSnapshotsRequest(properties) {
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * ListSnapshotsRequest project.
-                     * @member {string} project
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @instance
-                     */
-                    ListSnapshotsRequest.prototype.project = "";
-    
-                    /**
-                     * ListSnapshotsRequest pageSize.
-                     * @member {number} pageSize
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @instance
-                     */
-                    ListSnapshotsRequest.prototype.pageSize = 0;
-    
-                    /**
-                     * ListSnapshotsRequest pageToken.
-                     * @member {string} pageToken
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @instance
-                     */
-                    ListSnapshotsRequest.prototype.pageToken = "";
-    
-                    /**
-                     * Creates a new ListSnapshotsRequest instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @static
-                     * @param {google.pubsub.v1.IListSnapshotsRequest=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.ListSnapshotsRequest} ListSnapshotsRequest instance
-                     */
-                    ListSnapshotsRequest.create = function create(properties) {
-                        return new ListSnapshotsRequest(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified ListSnapshotsRequest message. Does not implicitly {@link google.pubsub.v1.ListSnapshotsRequest.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @static
-                     * @param {google.pubsub.v1.IListSnapshotsRequest} message ListSnapshotsRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    ListSnapshotsRequest.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.project != null && message.hasOwnProperty("project"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.project);
-                        if (message.pageSize != null && message.hasOwnProperty("pageSize"))
-                            writer.uint32(/* id 2, wireType 0 =*/16).int32(message.pageSize);
-                        if (message.pageToken != null && message.hasOwnProperty("pageToken"))
-                            writer.uint32(/* id 3, wireType 2 =*/26).string(message.pageToken);
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified ListSnapshotsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSnapshotsRequest.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @static
-                     * @param {google.pubsub.v1.IListSnapshotsRequest} message ListSnapshotsRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    ListSnapshotsRequest.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a ListSnapshotsRequest message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.ListSnapshotsRequest} ListSnapshotsRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    ListSnapshotsRequest.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSnapshotsRequest();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.project = reader.string();
-                                break;
-                            case 2:
-                                message.pageSize = reader.int32();
-                                break;
-                            case 3:
-                                message.pageToken = reader.string();
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a ListSnapshotsRequest message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.ListSnapshotsRequest} ListSnapshotsRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    ListSnapshotsRequest.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a ListSnapshotsRequest message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    ListSnapshotsRequest.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.project != null && message.hasOwnProperty("project"))
-                            if (!$util.isString(message.project))
-                                return "project: string expected";
-                        if (message.pageSize != null && message.hasOwnProperty("pageSize"))
-                            if (!$util.isInteger(message.pageSize))
-                                return "pageSize: integer expected";
-                        if (message.pageToken != null && message.hasOwnProperty("pageToken"))
-                            if (!$util.isString(message.pageToken))
-                                return "pageToken: string expected";
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a ListSnapshotsRequest message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.ListSnapshotsRequest} ListSnapshotsRequest
-                     */
-                    ListSnapshotsRequest.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.ListSnapshotsRequest)
-                            return object;
-                        var message = new $root.google.pubsub.v1.ListSnapshotsRequest();
-                        if (object.project != null)
-                            message.project = String(object.project);
-                        if (object.pageSize != null)
-                            message.pageSize = object.pageSize | 0;
-                        if (object.pageToken != null)
-                            message.pageToken = String(object.pageToken);
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a ListSnapshotsRequest message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @static
-                     * @param {google.pubsub.v1.ListSnapshotsRequest} message ListSnapshotsRequest
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    ListSnapshotsRequest.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.defaults) {
-                            object.project = "";
-                            object.pageSize = 0;
-                            object.pageToken = "";
-                        }
-                        if (message.project != null && message.hasOwnProperty("project"))
-                            object.project = message.project;
-                        if (message.pageSize != null && message.hasOwnProperty("pageSize"))
-                            object.pageSize = message.pageSize;
-                        if (message.pageToken != null && message.hasOwnProperty("pageToken"))
-                            object.pageToken = message.pageToken;
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this ListSnapshotsRequest to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.ListSnapshotsRequest
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    ListSnapshotsRequest.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return ListSnapshotsRequest;
-                })();
-    
-                v1.ListSnapshotsResponse = (function() {
-    
-                    /**
-                     * Properties of a ListSnapshotsResponse.
-                     * @memberof google.pubsub.v1
-                     * @interface IListSnapshotsResponse
-                     * @property {Array.<google.pubsub.v1.ISnapshot>|null} [snapshots] ListSnapshotsResponse snapshots
-                     * @property {string|null} [nextPageToken] ListSnapshotsResponse nextPageToken
-                     */
-    
-                    /**
-                     * Constructs a new ListSnapshotsResponse.
-                     * @memberof google.pubsub.v1
-                     * @classdesc Represents a ListSnapshotsResponse.
-                     * @implements IListSnapshotsResponse
-                     * @constructor
-                     * @param {google.pubsub.v1.IListSnapshotsResponse=} [properties] Properties to set
-                     */
-                    function ListSnapshotsResponse(properties) {
-                        this.snapshots = [];
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * ListSnapshotsResponse snapshots.
-                     * @member {Array.<google.pubsub.v1.ISnapshot>} snapshots
-                     * @memberof google.pubsub.v1.ListSnapshotsResponse
-                     * @instance
-                     */
-                    ListSnapshotsResponse.prototype.snapshots = $util.emptyArray;
-    
-                    /**
-                     * ListSnapshotsResponse nextPageToken.
-                     * @member {string} nextPageToken
-                     * @memberof google.pubsub.v1.ListSnapshotsResponse
-                     * @instance
-                     */
-                    ListSnapshotsResponse.prototype.nextPageToken = "";
-    
-                    /**
-                     * Creates a new ListSnapshotsResponse instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.ListSnapshotsResponse
-                     * @static
-                     * @param {google.pubsub.v1.IListSnapshotsResponse=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.ListSnapshotsResponse} ListSnapshotsResponse instance
-                     */
-                    ListSnapshotsResponse.create = function create(properties) {
-                        return new ListSnapshotsResponse(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified ListSnapshotsResponse message. Does not implicitly {@link google.pubsub.v1.ListSnapshotsResponse.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.ListSnapshotsResponse
-                     * @static
-                     * @param {google.pubsub.v1.IListSnapshotsResponse} message ListSnapshotsResponse message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    ListSnapshotsResponse.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.snapshots != null && message.snapshots.length)
-                            for (var i = 0; i < message.snapshots.length; ++i)
-                                $root.google.pubsub.v1.Snapshot.encode(message.snapshots[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-                        if (message.nextPageToken != null && message.hasOwnProperty("nextPageToken"))
-                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.nextPageToken);
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified ListSnapshotsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSnapshotsResponse.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.ListSnapshotsResponse
-                     * @static
-                     * @param {google.pubsub.v1.IListSnapshotsResponse} message ListSnapshotsResponse message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    ListSnapshotsResponse.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a ListSnapshotsResponse message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.ListSnapshotsResponse
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.ListSnapshotsResponse} ListSnapshotsResponse
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    ListSnapshotsResponse.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSnapshotsResponse();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                if (!(message.snapshots && message.snapshots.length))
-                                    message.snapshots = [];
-                                message.snapshots.push($root.google.pubsub.v1.Snapshot.decode(reader, reader.uint32()));
-                                break;
-                            case 2:
-                                message.nextPageToken = reader.string();
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a ListSnapshotsResponse message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.ListSnapshotsResponse
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.ListSnapshotsResponse} ListSnapshotsResponse
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    ListSnapshotsResponse.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a ListSnapshotsResponse message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.ListSnapshotsResponse
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    ListSnapshotsResponse.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.snapshots != null && message.hasOwnProperty("snapshots")) {
-                            if (!Array.isArray(message.snapshots))
-                                return "snapshots: array expected";
-                            for (var i = 0; i < message.snapshots.length; ++i) {
-                                var error = $root.google.pubsub.v1.Snapshot.verify(message.snapshots[i]);
-                                if (error)
-                                    return "snapshots." + error;
-                            }
-                        }
-                        if (message.nextPageToken != null && message.hasOwnProperty("nextPageToken"))
-                            if (!$util.isString(message.nextPageToken))
-                                return "nextPageToken: string expected";
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a ListSnapshotsResponse message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.ListSnapshotsResponse
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.ListSnapshotsResponse} ListSnapshotsResponse
-                     */
-                    ListSnapshotsResponse.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.ListSnapshotsResponse)
-                            return object;
-                        var message = new $root.google.pubsub.v1.ListSnapshotsResponse();
-                        if (object.snapshots) {
-                            if (!Array.isArray(object.snapshots))
-                                throw TypeError(".google.pubsub.v1.ListSnapshotsResponse.snapshots: array expected");
-                            message.snapshots = [];
-                            for (var i = 0; i < object.snapshots.length; ++i) {
-                                if (typeof object.snapshots[i] !== "object")
-                                    throw TypeError(".google.pubsub.v1.ListSnapshotsResponse.snapshots: object expected");
-                                message.snapshots[i] = $root.google.pubsub.v1.Snapshot.fromObject(object.snapshots[i]);
-                            }
-                        }
-                        if (object.nextPageToken != null)
-                            message.nextPageToken = String(object.nextPageToken);
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a ListSnapshotsResponse message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.ListSnapshotsResponse
-                     * @static
-                     * @param {google.pubsub.v1.ListSnapshotsResponse} message ListSnapshotsResponse
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    ListSnapshotsResponse.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.arrays || options.defaults)
-                            object.snapshots = [];
-                        if (options.defaults)
-                            object.nextPageToken = "";
-                        if (message.snapshots && message.snapshots.length) {
-                            object.snapshots = [];
-                            for (var j = 0; j < message.snapshots.length; ++j)
-                                object.snapshots[j] = $root.google.pubsub.v1.Snapshot.toObject(message.snapshots[j], options);
-                        }
-                        if (message.nextPageToken != null && message.hasOwnProperty("nextPageToken"))
-                            object.nextPageToken = message.nextPageToken;
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this ListSnapshotsResponse to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.ListSnapshotsResponse
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    ListSnapshotsResponse.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return ListSnapshotsResponse;
-                })();
-    
-                v1.DeleteSnapshotRequest = (function() {
-    
-                    /**
-                     * Properties of a DeleteSnapshotRequest.
-                     * @memberof google.pubsub.v1
-                     * @interface IDeleteSnapshotRequest
-                     * @property {string|null} [snapshot] DeleteSnapshotRequest snapshot
-                     */
-    
-                    /**
-                     * Constructs a new DeleteSnapshotRequest.
-                     * @memberof google.pubsub.v1
-                     * @classdesc Represents a DeleteSnapshotRequest.
-                     * @implements IDeleteSnapshotRequest
-                     * @constructor
-                     * @param {google.pubsub.v1.IDeleteSnapshotRequest=} [properties] Properties to set
-                     */
-                    function DeleteSnapshotRequest(properties) {
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * DeleteSnapshotRequest snapshot.
-                     * @member {string} snapshot
-                     * @memberof google.pubsub.v1.DeleteSnapshotRequest
-                     * @instance
-                     */
-                    DeleteSnapshotRequest.prototype.snapshot = "";
-    
-                    /**
-                     * Creates a new DeleteSnapshotRequest instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.DeleteSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.IDeleteSnapshotRequest=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.DeleteSnapshotRequest} DeleteSnapshotRequest instance
-                     */
-                    DeleteSnapshotRequest.create = function create(properties) {
-                        return new DeleteSnapshotRequest(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified DeleteSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.DeleteSnapshotRequest.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.DeleteSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.IDeleteSnapshotRequest} message DeleteSnapshotRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    DeleteSnapshotRequest.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.snapshot);
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified DeleteSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteSnapshotRequest.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.DeleteSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.IDeleteSnapshotRequest} message DeleteSnapshotRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    DeleteSnapshotRequest.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a DeleteSnapshotRequest message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.DeleteSnapshotRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.DeleteSnapshotRequest} DeleteSnapshotRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    DeleteSnapshotRequest.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DeleteSnapshotRequest();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.snapshot = reader.string();
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a DeleteSnapshotRequest message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.DeleteSnapshotRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.DeleteSnapshotRequest} DeleteSnapshotRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    DeleteSnapshotRequest.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a DeleteSnapshotRequest message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.DeleteSnapshotRequest
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    DeleteSnapshotRequest.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot"))
-                            if (!$util.isString(message.snapshot))
-                                return "snapshot: string expected";
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a DeleteSnapshotRequest message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.DeleteSnapshotRequest
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.DeleteSnapshotRequest} DeleteSnapshotRequest
-                     */
-                    DeleteSnapshotRequest.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.DeleteSnapshotRequest)
-                            return object;
-                        var message = new $root.google.pubsub.v1.DeleteSnapshotRequest();
-                        if (object.snapshot != null)
-                            message.snapshot = String(object.snapshot);
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a DeleteSnapshotRequest message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.DeleteSnapshotRequest
-                     * @static
-                     * @param {google.pubsub.v1.DeleteSnapshotRequest} message DeleteSnapshotRequest
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    DeleteSnapshotRequest.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.defaults)
-                            object.snapshot = "";
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot"))
-                            object.snapshot = message.snapshot;
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this DeleteSnapshotRequest to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.DeleteSnapshotRequest
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    DeleteSnapshotRequest.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return DeleteSnapshotRequest;
-                })();
-    
-                v1.SeekRequest = (function() {
-    
-                    /**
-                     * Properties of a SeekRequest.
-                     * @memberof google.pubsub.v1
-                     * @interface ISeekRequest
-                     * @property {string|null} [subscription] SeekRequest subscription
-                     * @property {google.protobuf.ITimestamp|null} [time] SeekRequest time
-                     * @property {string|null} [snapshot] SeekRequest snapshot
-                     */
-    
-                    /**
-                     * Constructs a new SeekRequest.
-                     * @memberof google.pubsub.v1
-                     * @classdesc Represents a SeekRequest.
-                     * @implements ISeekRequest
-                     * @constructor
-                     * @param {google.pubsub.v1.ISeekRequest=} [properties] Properties to set
-                     */
-                    function SeekRequest(properties) {
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * SeekRequest subscription.
-                     * @member {string} subscription
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @instance
-                     */
-                    SeekRequest.prototype.subscription = "";
-    
-                    /**
-                     * SeekRequest time.
-                     * @member {google.protobuf.ITimestamp|null|undefined} time
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @instance
-                     */
-                    SeekRequest.prototype.time = null;
-    
-                    /**
-                     * SeekRequest snapshot.
-                     * @member {string} snapshot
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @instance
-                     */
-                    SeekRequest.prototype.snapshot = "";
-    
-                    // OneOf field names bound to virtual getters and setters
-                    var $oneOfFields;
-    
-                    /**
-                     * SeekRequest target.
-                     * @member {"time"|"snapshot"|undefined} target
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @instance
-                     */
-                    Object.defineProperty(SeekRequest.prototype, "target", {
-                        get: $util.oneOfGetter($oneOfFields = ["time", "snapshot"]),
-                        set: $util.oneOfSetter($oneOfFields)
-                    });
-    
-                    /**
-                     * Creates a new SeekRequest instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @static
-                     * @param {google.pubsub.v1.ISeekRequest=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.SeekRequest} SeekRequest instance
-                     */
-                    SeekRequest.create = function create(properties) {
-                        return new SeekRequest(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified SeekRequest message. Does not implicitly {@link google.pubsub.v1.SeekRequest.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @static
-                     * @param {google.pubsub.v1.ISeekRequest} message SeekRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    SeekRequest.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.subscription);
-                        if (message.time != null && message.hasOwnProperty("time"))
-                            $root.google.protobuf.Timestamp.encode(message.time, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot"))
-                            writer.uint32(/* id 3, wireType 2 =*/26).string(message.snapshot);
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified SeekRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.SeekRequest.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @static
-                     * @param {google.pubsub.v1.ISeekRequest} message SeekRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    SeekRequest.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a SeekRequest message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.SeekRequest} SeekRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    SeekRequest.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.SeekRequest();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.subscription = reader.string();
-                                break;
-                            case 2:
-                                message.time = $root.google.protobuf.Timestamp.decode(reader, reader.uint32());
-                                break;
-                            case 3:
-                                message.snapshot = reader.string();
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a SeekRequest message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.SeekRequest} SeekRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    SeekRequest.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a SeekRequest message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    SeekRequest.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        var properties = {};
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            if (!$util.isString(message.subscription))
-                                return "subscription: string expected";
-                        if (message.time != null && message.hasOwnProperty("time")) {
-                            properties.target = 1;
-                            {
-                                var error = $root.google.protobuf.Timestamp.verify(message.time);
-                                if (error)
-                                    return "time." + error;
-                            }
-                        }
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot")) {
-                            if (properties.target === 1)
-                                return "target: multiple values";
-                            properties.target = 1;
-                            if (!$util.isString(message.snapshot))
-                                return "snapshot: string expected";
-                        }
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a SeekRequest message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.SeekRequest} SeekRequest
-                     */
-                    SeekRequest.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.SeekRequest)
-                            return object;
-                        var message = new $root.google.pubsub.v1.SeekRequest();
-                        if (object.subscription != null)
-                            message.subscription = String(object.subscription);
-                        if (object.time != null) {
-                            if (typeof object.time !== "object")
-                                throw TypeError(".google.pubsub.v1.SeekRequest.time: object expected");
-                            message.time = $root.google.protobuf.Timestamp.fromObject(object.time);
-                        }
-                        if (object.snapshot != null)
-                            message.snapshot = String(object.snapshot);
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a SeekRequest message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @static
-                     * @param {google.pubsub.v1.SeekRequest} message SeekRequest
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    SeekRequest.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.defaults)
-                            object.subscription = "";
-                        if (message.subscription != null && message.hasOwnProperty("subscription"))
-                            object.subscription = message.subscription;
-                        if (message.time != null && message.hasOwnProperty("time")) {
-                            object.time = $root.google.protobuf.Timestamp.toObject(message.time, options);
-                            if (options.oneofs)
-                                object.target = "time";
-                        }
-                        if (message.snapshot != null && message.hasOwnProperty("snapshot")) {
-                            object.snapshot = message.snapshot;
-                            if (options.oneofs)
-                                object.target = "snapshot";
-                        }
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this SeekRequest to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.SeekRequest
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    SeekRequest.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return SeekRequest;
-                })();
-    
-                v1.SeekResponse = (function() {
-    
-                    /**
-                     * Properties of a SeekResponse.
-                     * @memberof google.pubsub.v1
-                     * @interface ISeekResponse
-                     */
-    
-                    /**
-                     * Constructs a new SeekResponse.
-                     * @memberof google.pubsub.v1
-                     * @classdesc Represents a SeekResponse.
-                     * @implements ISeekResponse
-                     * @constructor
-                     * @param {google.pubsub.v1.ISeekResponse=} [properties] Properties to set
-                     */
-                    function SeekResponse(properties) {
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * Creates a new SeekResponse instance using the specified properties.
-                     * @function create
-                     * @memberof google.pubsub.v1.SeekResponse
-                     * @static
-                     * @param {google.pubsub.v1.ISeekResponse=} [properties] Properties to set
-                     * @returns {google.pubsub.v1.SeekResponse} SeekResponse instance
-                     */
-                    SeekResponse.create = function create(properties) {
-                        return new SeekResponse(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified SeekResponse message. Does not implicitly {@link google.pubsub.v1.SeekResponse.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.pubsub.v1.SeekResponse
-                     * @static
-                     * @param {google.pubsub.v1.ISeekResponse} message SeekResponse message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    SeekResponse.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified SeekResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.SeekResponse.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.pubsub.v1.SeekResponse
-                     * @static
-                     * @param {google.pubsub.v1.ISeekResponse} message SeekResponse message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    SeekResponse.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a SeekResponse message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.pubsub.v1.SeekResponse
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.pubsub.v1.SeekResponse} SeekResponse
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    SeekResponse.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.SeekResponse();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a SeekResponse message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.pubsub.v1.SeekResponse
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.pubsub.v1.SeekResponse} SeekResponse
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    SeekResponse.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a SeekResponse message.
-                     * @function verify
-                     * @memberof google.pubsub.v1.SeekResponse
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    SeekResponse.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a SeekResponse message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.pubsub.v1.SeekResponse
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.pubsub.v1.SeekResponse} SeekResponse
-                     */
-                    SeekResponse.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.pubsub.v1.SeekResponse)
-                            return object;
-                        return new $root.google.pubsub.v1.SeekResponse();
-                    };
-    
-                    /**
-                     * Creates a plain object from a SeekResponse message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.pubsub.v1.SeekResponse
-                     * @static
-                     * @param {google.pubsub.v1.SeekResponse} message SeekResponse
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    SeekResponse.toObject = function toObject() {
-                        return {};
-                    };
-    
-                    /**
-                     * Converts this SeekResponse to JSON.
-                     * @function toJSON
-                     * @memberof google.pubsub.v1.SeekResponse
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    SeekResponse.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return SeekResponse;
-                })();
-    
-                return v1;
-            })();
-    
-            return pubsub;
-        })();
-    
+
         return google;
     })();
 

@@ -25,7 +25,8 @@ library = gapic.typescript_library(
         'template': f'typescript_gapic'
     },
     proto_path=f'/google/pubsub/{version}',
-    extra_proto_files=['google/iam/v1/']
+    extra_proto_files=['google/iam/v1/.',
+                       'google/cloud/common_resources.proto']
 )
 
 # skip index, protos, package.json, and README.md

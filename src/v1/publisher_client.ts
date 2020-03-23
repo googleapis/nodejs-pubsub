@@ -24,13 +24,13 @@ import {
   Descriptors,
   ClientOptions,
   PaginationCallback,
+  PaginationResponse,
 } from 'google-gax';
 import * as path from 'path';
 
 import {Transform} from 'stream';
 import * as protosTypes from '../../protos/protos';
 import * as gapicConfig from './publisher_client_config.json';
-import {IamClient} from '../helper';
 
 const version = require('../../../package.json').version;
 
@@ -50,7 +50,6 @@ export class PublisherClient {
   private _innerApiCalls: {[name: string]: Function};
   private _pathTemplates: {[name: string]: gax.PathTemplate};
   private _terminated = false;
-  private _iamClient: IamClient;
   private _opts: ClientOptions;
   private _gaxModule: typeof gax | typeof gax.fallback;
   private _gaxGrpc: gax.GrpcClient | gax.fallback.GrpcClient;
@@ -92,8 +91,8 @@ export class PublisherClient {
       opts && opts.servicePath
         ? opts.servicePath
         : opts && opts.apiEndpoint
-        ? opts.apiEndpoint
-        : staticMembers.servicePath;
+          ? opts.apiEndpoint
+          : staticMembers.servicePath;
     const port = opts && opts.port ? opts.port : staticMembers.port;
 
     if (!opts) {
@@ -123,7 +122,6 @@ export class PublisherClient {
     // Save the auth object to the client, for use by other methods.
     this.auth = this._gaxGrpc.auth as gax.GoogleAuth;
 
-    this._iamClient = new IamClient(opts);
     // Determine the client header string.
     const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${version}`];
     if (typeof process !== 'undefined' && 'versions' in process) {
@@ -156,6 +154,9 @@ export class PublisherClient {
     // identifiers to uniquely identify resources within the API.
     // Create useful helper objects for these.
     this._pathTemplates = {
+      projectPathTemplate: new this._gaxModule.PathTemplate(
+        'projects/{project}'
+      ),
       projectTopicPathTemplate: new this._gaxModule.PathTemplate(
         'projects/{project}/topics/{topic}'
       ),
@@ -224,10 +225,10 @@ export class PublisherClient {
     this.publisherStub = this._gaxGrpc.createStub(
       this._opts.fallback
         ? (this._protos as protobuf.Root).lookupService(
-            'google.pubsub.v1.Publisher'
-          )
+          'google.pubsub.v1.Publisher'
+        )
         : // tslint:disable-next-line no-any
-          (this._protos as any).google.pubsub.v1.Publisher,
+        (this._protos as any).google.pubsub.v1.Publisher,
       this._opts
     ) as Promise<{[method: string]: Function}>;
 
@@ -262,8 +263,8 @@ export class PublisherClient {
         innerCallPromise,
         this._defaults[methodName],
         this._descriptors.page[methodName] ||
-          this._descriptors.stream[methodName] ||
-          this._descriptors.longrunning[methodName]
+        this._descriptors.stream[methodName] ||
+        this._descriptors.longrunning[methodName]
       );
 
       this._innerApiCalls[methodName] = (
@@ -387,10 +388,10 @@ export class PublisherClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-          protosTypes.google.pubsub.v1.ITopic,
-          protosTypes.google.pubsub.v1.ITopic | undefined,
-          {} | undefined
-        >,
+        protosTypes.google.pubsub.v1.ITopic,
+        protosTypes.google.pubsub.v1.ITopic | undefined,
+        {} | undefined
+      >,
     callback?: Callback<
       protosTypes.google.pubsub.v1.ITopic,
       protosTypes.google.pubsub.v1.ITopic | undefined,
@@ -466,10 +467,10 @@ export class PublisherClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-          protosTypes.google.pubsub.v1.ITopic,
-          protosTypes.google.pubsub.v1.IUpdateTopicRequest | undefined,
-          {} | undefined
-        >,
+        protosTypes.google.pubsub.v1.ITopic,
+        protosTypes.google.pubsub.v1.IUpdateTopicRequest | undefined,
+        {} | undefined
+      >,
     callback?: Callback<
       protosTypes.google.pubsub.v1.ITopic,
       protosTypes.google.pubsub.v1.IUpdateTopicRequest | undefined,
@@ -542,10 +543,10 @@ export class PublisherClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-          protosTypes.google.pubsub.v1.IPublishResponse,
-          protosTypes.google.pubsub.v1.IPublishRequest | undefined,
-          {} | undefined
-        >,
+        protosTypes.google.pubsub.v1.IPublishResponse,
+        protosTypes.google.pubsub.v1.IPublishRequest | undefined,
+        {} | undefined
+      >,
     callback?: Callback<
       protosTypes.google.pubsub.v1.IPublishResponse,
       protosTypes.google.pubsub.v1.IPublishRequest | undefined,
@@ -615,10 +616,10 @@ export class PublisherClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-          protosTypes.google.pubsub.v1.ITopic,
-          protosTypes.google.pubsub.v1.IGetTopicRequest | undefined,
-          {} | undefined
-        >,
+        protosTypes.google.pubsub.v1.ITopic,
+        protosTypes.google.pubsub.v1.IGetTopicRequest | undefined,
+        {} | undefined
+      >,
     callback?: Callback<
       protosTypes.google.pubsub.v1.ITopic,
       protosTypes.google.pubsub.v1.IGetTopicRequest | undefined,
@@ -692,10 +693,10 @@ export class PublisherClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-          protosTypes.google.protobuf.IEmpty,
-          protosTypes.google.pubsub.v1.IDeleteTopicRequest | undefined,
-          {} | undefined
-        >,
+        protosTypes.google.protobuf.IEmpty,
+        protosTypes.google.pubsub.v1.IDeleteTopicRequest | undefined,
+        {} | undefined
+      >,
     callback?: Callback<
       protosTypes.google.protobuf.IEmpty,
       protosTypes.google.pubsub.v1.IDeleteTopicRequest | undefined,
@@ -741,7 +742,7 @@ export class PublisherClient {
   listTopics(
     request: protosTypes.google.pubsub.v1.IListTopicsRequest,
     options: gax.CallOptions,
-    callback: PaginationCallback<
+    callback: Callback<
       protosTypes.google.pubsub.v1.ITopic[],
       protosTypes.google.pubsub.v1.IListTopicsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicsResponse
@@ -783,12 +784,12 @@ export class PublisherClient {
     request: protosTypes.google.pubsub.v1.IListTopicsRequest,
     optionsOrCallback?:
       | gax.CallOptions
-      | PaginationCallback<
-          protosTypes.google.pubsub.v1.ITopic[],
-          protosTypes.google.pubsub.v1.IListTopicsRequest | null,
-          protosTypes.google.pubsub.v1.IListTopicsResponse
-        >,
-    callback?: PaginationCallback<
+      | Callback<
+        protosTypes.google.pubsub.v1.ITopic[],
+        protosTypes.google.pubsub.v1.IListTopicsRequest | null,
+        protosTypes.google.pubsub.v1.IListTopicsResponse
+      >,
+    callback?: Callback<
       protosTypes.google.pubsub.v1.ITopic[],
       protosTypes.google.pubsub.v1.IListTopicsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicsResponse
@@ -883,7 +884,7 @@ export class PublisherClient {
   listTopicSubscriptions(
     request: protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest,
     options: gax.CallOptions,
-    callback: PaginationCallback<
+    callback: Callback<
       string[],
       protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicSubscriptionsResponse
@@ -925,12 +926,12 @@ export class PublisherClient {
     request: protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest,
     optionsOrCallback?:
       | gax.CallOptions
-      | PaginationCallback<
-          string[],
-          protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
-          protosTypes.google.pubsub.v1.IListTopicSubscriptionsResponse
-        >,
-    callback?: PaginationCallback<
+      | Callback<
+        string[],
+        protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
+        protosTypes.google.pubsub.v1.IListTopicSubscriptionsResponse
+      >,
+    callback?: Callback<
       string[],
       protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicSubscriptionsResponse
@@ -1029,7 +1030,7 @@ export class PublisherClient {
   listTopicSnapshots(
     request: protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest,
     options: gax.CallOptions,
-    callback: PaginationCallback<
+    callback: Callback<
       string[],
       protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicSnapshotsResponse
@@ -1076,12 +1077,12 @@ export class PublisherClient {
     request: protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest,
     optionsOrCallback?:
       | gax.CallOptions
-      | PaginationCallback<
-          string[],
-          protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest | null,
-          protosTypes.google.pubsub.v1.IListTopicSnapshotsResponse
-        >,
-    callback?: PaginationCallback<
+      | Callback<
+        string[],
+        protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest | null,
+        protosTypes.google.pubsub.v1.IListTopicSnapshotsResponse
+      >,
+    callback?: Callback<
       string[],
       protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicSnapshotsResponse
@@ -1166,6 +1167,29 @@ export class PublisherClient {
   // --------------------
   // -- Path templates --
   // --------------------
+
+  /**
+   * Return a fully-qualified project resource name string.
+   *
+   * @param {string} project
+   * @returns {string} Resource name string.
+   */
+  projectPath(project: string) {
+    return this._pathTemplates.projectPathTemplate.render({
+      project,
+    });
+  }
+
+  /**
+   * Parse the project from Project resource.
+   *
+   * @param {string} projectName
+   *   A fully-qualified path representing Project resource.
+   * @returns {string} A string representing the project.
+   */
+  matchProjectFromProjectName(projectName: string) {
+    return this._pathTemplates.projectPathTemplate.match(projectName).project;
+  }
 
   /**
    * Return a fully-qualified projectTopic resource name string.

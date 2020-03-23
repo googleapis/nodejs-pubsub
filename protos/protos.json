@@ -262,9 +262,81 @@
                   "type": "string",
                   "id": 1
                 },
-                "title": {
-                  "type": "string",
-                  "id": 2
+                "Subscription": {
+                  "options": {
+                    "(google.api.resource).type": "pubsub.googleapis.com/Subscription",
+                    "(google.api.resource).pattern": "projects/{project}/subscriptions/{subscription}"
+                  },
+                  "fields": {
+                    "name": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "topic": {
+                      "type": "string",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
+                    },
+                    "pushConfig": {
+                      "type": "PushConfig",
+                      "id": 4
+                    },
+                    "ackDeadlineSeconds": {
+                      "type": "int32",
+                      "id": 5
+                    },
+                    "retainAckedMessages": {
+                      "type": "bool",
+                      "id": 7
+                    },
+                    "messageRetentionDuration": {
+                      "type": "google.protobuf.Duration",
+                      "id": 8
+                    },
+                    "labels": {
+                      "keyType": "string",
+                      "type": "string",
+                      "id": 9
+                    },
+                    "enableMessageOrdering": {
+                      "type": "bool",
+                      "id": 10
+                    },
+                    "expirationPolicy": {
+                      "type": "ExpirationPolicy",
+                      "id": 11
+                    },
+                    "filter": {
+                      "type": "string",
+                      "id": 12
+                    },
+                    "deadLetterPolicy": {
+                      "type": "DeadLetterPolicy",
+                      "id": 13
+                    },
+                    "retryPolicy": {
+                      "type": "RetryPolicy",
+                      "id": 14
+                    }
+                  }
+                },
+                "RetryPolicy": {
+                  "fields": {
+                    "minimumBackoff": {
+                      "type": "google.protobuf.Duration",
+                      "id": 1
+                    },
+                    "maximumBackoff": {
+                      "type": "google.protobuf.Duration",
+                      "id": 2
+                    }
+                  }
                 },
                 "description": {
                   "type": "string",
@@ -2174,7 +2246,8 @@
                     }
                   }
                 },
-                "AcknowledgeRequest": {
+                <<
+                << << < HEAD "AcknowledgeRequest": {
                   "fields": {
                     "subscription": {
                       "type": "string",
@@ -2401,7 +2474,37 @@
                   }
                 },
                 "SeekResponse": {
-                  "fields": {}
+                  "fields": {} ===
+                  === =
+                  "nanos": {
+                    "type": "int32",
+                    "id": 2
+                  }
+                }
+              },
+              "Empty": {
+                "fields": {}
+              },
+              "FieldMask": {
+                "fields": {
+                  "paths": {
+                    "rule": "repeated",
+                    "type": "string",
+                    "id": 1
+                  }
+                }
+              },
+              "Timestamp": {
+                "fields": {
+                  "seconds": {
+                    "type": "int64",
+                    "id": 1
+                  },
+                  "nanos": {
+                    "type": "int32",
+                    "id": 2 >>>
+                      >>> > feat: convert client to typescript
+                  }
                 }
               }
             }
@@ -2410,4 +2513,3 @@
       }
     }
   }
-}
