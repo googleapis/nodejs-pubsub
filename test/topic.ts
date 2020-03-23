@@ -20,7 +20,7 @@ import {ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
-import {google} from '../proto/pubsub';
+import {google} from '../protos/protos';
 import {ExistsCallback, RequestCallback, RequestConfig} from '../src/pubsub';
 import {
   CreateSubscriptionOptions,

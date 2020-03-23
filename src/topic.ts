@@ -18,7 +18,7 @@ import {paginator} from '@google-cloud/paginator';
 import {promisifyAll} from '@google-cloud/promisify';
 import {CallOptions} from 'google-gax';
 
-import {google} from '../proto/pubsub';
+import {google} from '../protos/protos';
 
 import {IAM} from './iam';
 import {
@@ -607,7 +607,7 @@ export class Topic {
         let subscriptions: Subscription[];
 
         if (subNames) {
-          subscriptions = subNames.map(sub => this.subscription(sub));
+          subscriptions = subNames.map((sub: string) => this.subscription(sub));
         }
 
         callback!(err, subscriptions!, ...args);

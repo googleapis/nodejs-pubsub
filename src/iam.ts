@@ -22,7 +22,7 @@ import {promisifyAll} from '@google-cloud/promisify';
 import arrify = require('arrify');
 import {CallOptions} from 'google-gax';
 
-import {google} from '../proto/iam';
+import {google} from '../protos/protos';
 
 import {Omit, PubSub, RequestCallback, ResourceCallback} from './pubsub';
 
