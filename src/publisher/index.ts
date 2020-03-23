@@ -26,6 +26,9 @@ import {RequestCallback, EmptyCallback, EmptyResponse} from '../pubsub';
 =======
 import {RequestCallback} from '../pubsub';
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> feat: convert client to typescript
+=======
 >>>>>>> feat: convert client to typescript
 =======
 >>>>>>> feat: convert client to typescript

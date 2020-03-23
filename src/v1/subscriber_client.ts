@@ -24,13 +24,20 @@ import {
   Descriptors,
   ClientOptions,
   PaginationCallback,
+<<<<<<< HEAD
+=======
+  PaginationResponse,
+>>>>>>> feat: convert client to typescript
 } from 'google-gax';
 import * as path from 'path';
 
 import {Transform} from 'stream';
 import * as protosTypes from '../../protos/protos';
 import * as gapicConfig from './subscriber_client_config.json';
+<<<<<<< HEAD
 import {IamClient} from '../helper';
+=======
+>>>>>>> feat: convert client to typescript
 
 const version = require('../../../package.json').version;
 
@@ -51,7 +58,10 @@ export class SubscriberClient {
   private _innerApiCalls: {[name: string]: Function};
   private _pathTemplates: {[name: string]: gax.PathTemplate};
   private _terminated = false;
+<<<<<<< HEAD
   private _iamClient: IamClient;
+=======
+>>>>>>> feat: convert client to typescript
   private _opts: ClientOptions;
   private _gaxModule: typeof gax | typeof gax.fallback;
   private _gaxGrpc: gax.GrpcClient | gax.fallback.GrpcClient;
@@ -93,8 +103,13 @@ export class SubscriberClient {
       opts && opts.servicePath
         ? opts.servicePath
         : opts && opts.apiEndpoint
+<<<<<<< HEAD
           ? opts.apiEndpoint
           : staticMembers.servicePath;
+=======
+        ? opts.apiEndpoint
+        : staticMembers.servicePath;
+>>>>>>> feat: convert client to typescript
     const port = opts && opts.port ? opts.port : staticMembers.port;
 
     if (!opts) {
@@ -124,7 +139,10 @@ export class SubscriberClient {
     // Save the auth object to the client, for use by other methods.
     this.auth = this._gaxGrpc.auth as gax.GoogleAuth;
 
+<<<<<<< HEAD
     this._iamClient = new IamClient(opts);
+=======
+>>>>>>> feat: convert client to typescript
     // Determine the client header string.
     const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${version}`];
     if (typeof process !== 'undefined' && 'versions' in process) {
@@ -157,6 +175,12 @@ export class SubscriberClient {
     // identifiers to uniquely identify resources within the API.
     // Create useful helper objects for these.
     this._pathTemplates = {
+<<<<<<< HEAD
+=======
+      projectPathTemplate: new this._gaxModule.PathTemplate(
+        'projects/{project}'
+      ),
+>>>>>>> feat: convert client to typescript
       projectTopicPathTemplate: new this._gaxModule.PathTemplate(
         'projects/{project}/topics/{topic}'
       ),
@@ -228,10 +252,17 @@ export class SubscriberClient {
     this.subscriberStub = this._gaxGrpc.createStub(
       this._opts.fallback
         ? (this._protos as protobuf.Root).lookupService(
+<<<<<<< HEAD
           'google.pubsub.v1.Subscriber'
         )
         : // tslint:disable-next-line no-any
         (this._protos as any).google.pubsub.v1.Subscriber,
+=======
+            'google.pubsub.v1.Subscriber'
+          )
+        : // tslint:disable-next-line no-any
+          (this._protos as any).google.pubsub.v1.Subscriber,
+>>>>>>> feat: convert client to typescript
       this._opts
     ) as Promise<{[method: string]: Function}>;
 
@@ -274,8 +305,13 @@ export class SubscriberClient {
         innerCallPromise,
         this._defaults[methodName],
         this._descriptors.page[methodName] ||
+<<<<<<< HEAD
         this._descriptors.stream[methodName] ||
         this._descriptors.longrunning[methodName]
+=======
+          this._descriptors.stream[methodName] ||
+          this._descriptors.longrunning[methodName]
+>>>>>>> feat: convert client to typescript
       );
 
       this._innerApiCalls[methodName] = (
@@ -490,10 +526,17 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
+<<<<<<< HEAD
         protosTypes.google.pubsub.v1.ISubscription,
         protosTypes.google.pubsub.v1.ISubscription | undefined,
         {} | undefined
       >,
+=======
+          protosTypes.google.pubsub.v1.ISubscription,
+          protosTypes.google.pubsub.v1.ISubscription | undefined,
+          {} | undefined
+        >,
+>>>>>>> feat: convert client to typescript
     callback?: Callback<
       protosTypes.google.pubsub.v1.ISubscription,
       protosTypes.google.pubsub.v1.ISubscription | undefined,
@@ -563,10 +606,17 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
+<<<<<<< HEAD
         protosTypes.google.pubsub.v1.ISubscription,
         protosTypes.google.pubsub.v1.IGetSubscriptionRequest | undefined,
         {} | undefined
       >,
+=======
+          protosTypes.google.pubsub.v1.ISubscription,
+          protosTypes.google.pubsub.v1.IGetSubscriptionRequest | undefined,
+          {} | undefined
+        >,
+>>>>>>> feat: convert client to typescript
     callback?: Callback<
       protosTypes.google.pubsub.v1.ISubscription,
       protosTypes.google.pubsub.v1.IGetSubscriptionRequest | undefined,
@@ -639,10 +689,17 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
+<<<<<<< HEAD
         protosTypes.google.pubsub.v1.ISubscription,
         protosTypes.google.pubsub.v1.IUpdateSubscriptionRequest | undefined,
         {} | undefined
       >,
+=======
+          protosTypes.google.pubsub.v1.ISubscription,
+          protosTypes.google.pubsub.v1.IUpdateSubscriptionRequest | undefined,
+          {} | undefined
+        >,
+>>>>>>> feat: convert client to typescript
     callback?: Callback<
       protosTypes.google.pubsub.v1.ISubscription,
       protosTypes.google.pubsub.v1.IUpdateSubscriptionRequest | undefined,
@@ -1759,12 +1816,21 @@ export class SubscriberClient {
     request: protosTypes.google.pubsub.v1.IListSnapshotsRequest,
     optionsOrCallback?:
       | gax.CallOptions
+<<<<<<< HEAD
       | PaginationCallback<
         protosTypes.google.pubsub.v1.ISnapshot[],
         protosTypes.google.pubsub.v1.IListSnapshotsRequest | null,
         protosTypes.google.pubsub.v1.IListSnapshotsResponse
       >,
     callback?: PaginationCallback<
+=======
+      | Callback<
+          protosTypes.google.pubsub.v1.ISnapshot[],
+          protosTypes.google.pubsub.v1.IListSnapshotsRequest | null,
+          protosTypes.google.pubsub.v1.IListSnapshotsResponse
+        >,
+    callback?: Callback<
+>>>>>>> feat: convert client to typescript
       protosTypes.google.pubsub.v1.ISnapshot[],
       protosTypes.google.pubsub.v1.IListSnapshotsRequest | null,
       protosTypes.google.pubsub.v1.IListSnapshotsResponse
@@ -1851,6 +1917,32 @@ export class SubscriberClient {
   // --------------------
 
   /**
+<<<<<<< HEAD
+=======
+   * Return a fully-qualified project resource name string.
+   *
+   * @param {string} project
+   * @returns {string} Resource name string.
+   */
+  projectPath(project: string) {
+    return this._pathTemplates.projectPathTemplate.render({
+      project,
+    });
+  }
+
+  /**
+   * Parse the project from Project resource.
+   *
+   * @param {string} projectName
+   *   A fully-qualified path representing Project resource.
+   * @returns {string} A string representing the project.
+   */
+  matchProjectFromProjectName(projectName: string) {
+    return this._pathTemplates.projectPathTemplate.match(projectName).project;
+  }
+
+  /**
+>>>>>>> feat: convert client to typescript
    * Return a fully-qualified projectTopic resource name string.
    *
    * @param {string} project
@@ -1978,6 +2070,7 @@ export class SubscriberClient {
     }
     return Promise.resolve();
   }
+<<<<<<< HEAD
   /**
    * This part will be added into src/v1/key_management_service_client.ts by synth.py.
    * KMS service requires IAM client for [setIamPolicy, getIamPolicy, testIamPerssion] methods.
@@ -2010,4 +2103,6 @@ export class SubscriberClient {
   ) {
     return this._iamClient.testIamPermissions(request, options, callback);
   }
+=======
+>>>>>>> feat: convert client to typescript
 }
