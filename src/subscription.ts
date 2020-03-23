@@ -20,7 +20,7 @@ import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 import snakeCase = require('lodash.snakecase');
 
-import {google} from '../proto/pubsub';
+import {google} from '../protos/protos';
 
 import {IAM} from './iam';
 import {FlowControlOptions} from './lease-manager';
