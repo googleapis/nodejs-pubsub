@@ -25,6 +25,9 @@ import {Topic} from '../topic';
 import {RequestCallback, EmptyCallback, EmptyResponse} from '../pubsub';
 =======
 import {RequestCallback} from '../pubsub';
+<<<<<<< HEAD
+>>>>>>> feat: convert client to typescript
+=======
 >>>>>>> feat: convert client to typescript
 import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';

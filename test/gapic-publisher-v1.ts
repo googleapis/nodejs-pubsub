@@ -19,10 +19,6 @@
 import * as protosTypes from '../protos/protos';
 import * as assert from 'assert';
 import {describe, it} from 'mocha';
-<<<<<<< HEAD
-/* eslint-disable @typescript-eslint/no-var-requires */
-=======
->>>>>>> feat: convert client to typescript
 const publisherModule = require('../src');
 
 const FAKE_STATUS_CODE = 1;
@@ -138,6 +134,11 @@ describe('v1.PublisherClient', () => {
       const request: protosTypes.google.pubsub.v1.ITopic = {};
       request.name = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -195,6 +196,11 @@ describe('v1.PublisherClient', () => {
       request.topic = {};
       request.topic.name = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -250,6 +256,11 @@ describe('v1.PublisherClient', () => {
       const request: protosTypes.google.pubsub.v1.IPublishRequest = {};
       request.topic = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -305,6 +316,11 @@ describe('v1.PublisherClient', () => {
       const request: protosTypes.google.pubsub.v1.IGetTopicRequest = {};
       request.topic = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -360,6 +376,11 @@ describe('v1.PublisherClient', () => {
       const request: protosTypes.google.pubsub.v1.IDeleteTopicRequest = {};
       request.topic = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};

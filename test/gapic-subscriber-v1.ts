@@ -20,7 +20,10 @@ import * as protosTypes from '../protos/protos';
 import * as assert from 'assert';
 import {describe, it} from 'mocha';
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* eslint-disable @typescript-eslint/no-var-requires */
+=======
+>>>>>>> feat: convert client to typescript
 =======
 >>>>>>> feat: convert client to typescript
 const subscriberModule = require('../src');
@@ -160,6 +163,11 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.ISubscription = {};
       request.name = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -215,6 +223,11 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.IGetSubscriptionRequest = {};
       request.subscription = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -272,6 +285,11 @@ describe('v1.SubscriberClient', () => {
       request.subscription = {};
       request.subscription.name = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -327,6 +345,11 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.IDeleteSubscriptionRequest = {};
       request.subscription = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -382,6 +405,11 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.IModifyAckDeadlineRequest = {};
       request.subscription = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -437,6 +465,11 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.IAcknowledgeRequest = {};
       request.subscription = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -492,6 +525,11 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.IPullRequest = {};
       request.subscription = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -543,6 +581,11 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.IModifyPushConfigRequest = {};
       request.subscription = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -598,6 +641,11 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.IGetSnapshotRequest = {};
       request.snapshot = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -653,6 +701,11 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.ICreateSnapshotRequest = {};
       request.name = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -710,6 +763,11 @@ describe('v1.SubscriberClient', () => {
       request.snapshot = {};
       request.snapshot.name = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -765,6 +823,11 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.IDeleteSnapshotRequest = {};
       request.snapshot = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -820,6 +883,11 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.ISeekRequest = {};
       request.subscription = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};
@@ -873,6 +941,11 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IStreamingPullRequest = {};
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      // Mock response
+      const expectedResponse = {};
+>>>>>>> feat: convert client to typescript
 =======
       // Mock response
       const expectedResponse = {};

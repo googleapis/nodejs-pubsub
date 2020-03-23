@@ -2247,7 +2247,8 @@
                   }
                 },
                 <<
-                << << < HEAD "AcknowledgeRequest": {
+                <<
+                << < HEAD "AcknowledgeRequest": {
                   "fields": {
                     "subscription": {
                       "type": "string",
@@ -2475,7 +2476,8 @@
                 },
                 "SeekResponse": {
                   "fields": {} ===
-                  === =
+                  ===
+                  =
                   "nanos": {
                     "type": "int32",
                     "id": 2
@@ -2503,7 +2505,8 @@
                   "nanos": {
                     "type": "int32",
                     "id": 2 >>>
-                      >>> > feat: convert client to typescript
+                      >>>
+                      > feat: convert client to typescript
                   }
                 }
               }
