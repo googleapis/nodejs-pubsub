@@ -11,20 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-import * as assert from 'assert';
-import {
-  describe,
-  it
-} from 'mocha';
-import * as pubsub from '../src';
-
-describe('exports', () => {
-  it('should export the gapic clients', () => {
-    assert.ok(pubsub.v1);
-  });
-});
-
 const config = {
   "enable-source-maps": true,
   "throw-deprecation": true,
