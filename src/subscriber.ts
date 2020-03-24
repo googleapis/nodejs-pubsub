@@ -29,6 +29,7 @@ import {AckQueue, BatchOptions, ModAckQueue} from './message-queues';
 import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
+import {SubscriberClient} from './v1';
 
 export type PullResponse = google.pubsub.v1.IPullResponse;
 
@@ -323,7 +324,7 @@ export class Subscriber extends EventEmitter {
    * @returns {Promise<object>}
    * @private
    */
-  async getClient(): Promise<ClientStub> {
+  async getClient(): Promise<SubscriberClient> {
     const pubsub = this._subscription.pubsub;
     const [client] = await promisify(pubsub.getClient_).call(pubsub, {
       client: 'SubscriberClient',
