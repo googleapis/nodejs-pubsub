@@ -1137,7 +1137,7 @@ export class PubSub {
 
 /*! Developer Documentation
  *
- * These methods can be agto-paginated.
+ * These methods can be auto-paginated.
  */
 paginator.extend(PubSub, ['getSnapshots', 'getSubscriptions', 'getTopics']);
 
