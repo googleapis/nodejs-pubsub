@@ -31,7 +31,7 @@ library = gapic.typescript_library(
 # skip index, protos, package.json, and README.md
 s.copy(
     library,
-    excludes=['package.json', 'README.md', 'src/index.js'])
+    excludes=['package.json', 'README.md', 'src/index.ts'])
 
 templates = common_templates.node_library(source_location='build/src')
 s.copy(templates)
