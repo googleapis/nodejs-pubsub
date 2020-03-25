@@ -95,7 +95,7 @@ export class ChannelError extends Error implements ServiceError {
   constructor(err: Error) {
     super(
       `Failed to connect to channel. Reason: ${
-      process.env.DEBUG_GRPC ? err.stack : err.message
+        process.env.DEBUG_GRPC ? err.stack : err.message
       }`
     );
     this.code = err.message.includes('deadline')

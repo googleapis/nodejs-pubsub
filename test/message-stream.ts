@@ -109,8 +109,10 @@ class FakeGrpcStream extends Duplex {
 
 class FakeGaxClient {
   client: FakeGrpcClient;
+  subscriberStub: Promise<FakeGrpcClient>;
   constructor() {
     this.client = new FakeGrpcClient();
+    this.subscriberStub = this.getSubscriberStub();
   }
   async getSubscriberStub(): Promise<FakeGrpcClient> {
     return this.client;
