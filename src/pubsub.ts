@@ -298,12 +298,12 @@ export class PubSub {
   close(callback?: EmptyCallback): Promise<void> | void {
     const definedCallback = callback || (() => {});
     if (this.isOpen) {
+      this.isOpen = false;
       this.closeAllClients_()
         .then(() => {
           definedCallback(null);
         })
         .catch(definedCallback);
-      this.isOpen = false;
     } else {
       definedCallback(null);
     }
