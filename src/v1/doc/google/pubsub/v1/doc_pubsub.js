@@ -422,6 +422,15 @@ const DeleteTopicRequest = {
  *
  *   This object should have the same structure as [ExpirationPolicy]{@link google.pubsub.v1.ExpirationPolicy}
  *
+ * @property {string} filter
+ *   An expression written in the Cloud Pub/Sub filter language. If non-empty,
+ *   then only `PubsubMessage`s whose `attributes` field matches the filter are
+ *   delivered on this subscription. If empty, then no messages are filtered
+ *   out.
+ *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+ *   API might be changed in backward-incompatible ways and is not recommended
+ *   for production use. It is not subject to any SLA or deprecation policy.
+ *
  * @property {Object} deadLetterPolicy
  *   A policy that specifies the conditions for dead lettering messages in
  *   this subscription. If dead_letter_policy is not set, dead lettering
@@ -437,11 +446,58 @@ const DeleteTopicRequest = {
  *
  *   This object should have the same structure as [DeadLetterPolicy]{@link google.pubsub.v1.DeadLetterPolicy}
  *
+ * @property {Object} retryPolicy
+ *   A policy that specifies how Cloud Pub/Sub retries message delivery for this
+ *   subscription.
+ *
+ *   If not set, the default retry policy is applied. This generally implies
+ *   that messages will be retried as soon as possible for healthy subscribers.
+ *   RetryPolicy will be triggered on NACKs or acknowledgement deadline
+ *   exceeded events for a given message.
+ *   <b>EXPERIMENTAL:</b> This API might be changed in backward-incompatible
+ *   ways and is not recommended for production use. It is not subject to any
+ *   SLA or deprecation policy.
+ *
+ *   This object should have the same structure as [RetryPolicy]{@link google.pubsub.v1.RetryPolicy}
+ *
  * @typedef Subscription
  * @memberof google.pubsub.v1
  * @see [google.pubsub.v1.Subscription definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
  */
 const Subscription = {
+  // This is for documentation. Actual contents will be loaded by gRPC.
+};
+
+/**
+ * A policy that specifies how Cloud Pub/Sub retries message delivery.
+ *
+ * Retry delay will be exponential based on provided minimum and maximum
+ * backoffs. https://en.wikipedia.org/wiki/Exponential_backoff.
+ *
+ * RetryPolicy will be triggered on NACKs or acknowledgement deadline exceeded
+ * events for a given message.
+ *
+ * Retry Policy is implemented on a best effort basis. At times, the delay
+ * between consecutive deliveries may not match the configuration. That is,
+ * delay can be more or less than configured backoff.
+ *
+ * @property {Object} minimumBackoff
+ *   The minimum delay between consecutive deliveries of a given message.
+ *   Value should be between 0 and 600 seconds. Defaults to 10 seconds.
+ *
+ *   This object should have the same structure as [Duration]{@link google.protobuf.Duration}
+ *
+ * @property {Object} maximumBackoff
+ *   The maximum delay between consecutive deliveries of a given message.
+ *   Value should be between 0 and 600 seconds. Defaults to 600 seconds.
+ *
+ *   This object should have the same structure as [Duration]{@link google.protobuf.Duration}
+ *
+ * @typedef RetryPolicy
+ * @memberof google.pubsub.v1
+ * @see [google.pubsub.v1.RetryPolicy definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto}
+ */
+const RetryPolicy = {
   // This is for documentation. Actual contents will be loaded by gRPC.
 };
 
