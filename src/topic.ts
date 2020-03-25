@@ -834,7 +834,7 @@ export class Topic {
   /**
    * Updates the topic.
    *
-   * @see [UpdateTopicRequest API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/UpdateTopicRequest}
+   * @see [UpdateTopicRequest API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rpc/google.pubsub.v1#google.pubsub.v1.UpdateTopicRequest}
    *
    * @param {object} metadata The fields to update. This should be structured
    *     like a {@link
