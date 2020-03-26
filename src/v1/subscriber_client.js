@@ -404,6 +404,14 @@ class SubscriberClient {
    *   value for `expiration_policy.ttl` is 1 day.
    *
    *   This object should have the same structure as [ExpirationPolicy]{@link google.pubsub.v1.ExpirationPolicy}
+   * @param {string} [request.filter]
+   *   An expression written in the Cloud Pub/Sub filter language. If non-empty,
+   *   then only `PubsubMessage`s whose `attributes` field matches the filter are
+   *   delivered on this subscription. If empty, then no messages are filtered
+   *   out.
+   *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+   *   API might be changed in backward-incompatible ways and is not recommended
+   *   for production use. It is not subject to any SLA or deprecation policy.
    * @param {Object} [request.deadLetterPolicy]
    *   A policy that specifies the conditions for dead lettering messages in
    *   this subscription. If dead_letter_policy is not set, dead lettering
@@ -418,6 +426,19 @@ class SubscriberClient {
    *   for production use. It is not subject to any SLA or deprecation policy.
    *
    *   This object should have the same structure as [DeadLetterPolicy]{@link google.pubsub.v1.DeadLetterPolicy}
+   * @param {Object} [request.retryPolicy]
+   *   A policy that specifies how Cloud Pub/Sub retries message delivery for this
+   *   subscription.
+   *
+   *   If not set, the default retry policy is applied. This generally implies
+   *   that messages will be retried as soon as possible for healthy subscribers.
+   *   RetryPolicy will be triggered on NACKs or acknowledgement deadline
+   *   exceeded events for a given message.
+   *   <b>EXPERIMENTAL:</b> This API might be changed in backward-incompatible
+   *   ways and is not recommended for production use. It is not subject to any
+   *   SLA or deprecation policy.
+   *
+   *   This object should have the same structure as [RetryPolicy]{@link google.pubsub.v1.RetryPolicy}
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
@@ -1635,10 +1656,10 @@ class SubscriberClient {
    *   // optional auth parameters.
    * });
    *
-   * const formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const resource = '';
    * const policy = {};
    * const request = {
-   *   resource: formattedResource,
+   *   resource: resource,
    *   policy: policy,
    * };
    * client.setIamPolicy(request)
@@ -1701,8 +1722,8 @@ class SubscriberClient {
    *   // optional auth parameters.
    * });
    *
-   * const formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
-   * client.getIamPolicy({resource: formattedResource})
+   * const resource = '';
+   * client.getIamPolicy({resource: resource})
    *   .then(responses => {
    *     const response = responses[0];
    *     // doThingsWith(response)
@@ -1767,10 +1788,10 @@ class SubscriberClient {
    *   // optional auth parameters.
    * });
    *
-   * const formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const resource = '';
    * const permissions = [];
    * const request = {
-   *   resource: formattedResource,
+   *   resource: resource,
    *   permissions: permissions,
    * };
    * client.testIamPermissions(request)
@@ -1845,6 +1866,7 @@ class SubscriberClient {
   }
 
   /**
+   * @deprecated Multi-pattern resource names will have unified formatting and parsing helper functions. This helper function will be deleted in the next major version.
    * Return a fully-qualified topic resource name string.
    *
    * @param {String} project
@@ -1917,6 +1939,7 @@ class SubscriberClient {
   }
 
   /**
+   * @deprecated Multi-pattern resource names will have unified formatting and parsing helper functions. This helper function will be deleted in the next major version.
    * Parse the topicName from a topic resource.
    *
    * @param {String} topicName
@@ -1928,6 +1951,7 @@ class SubscriberClient {
   }
 
   /**
+   * @deprecated Multi-pattern resource names will have unified formatting and parsing helper functions. This helper function will be deleted in the next major version.
    * Parse the topicName from a topic resource.
    *
    * @param {String} topicName
