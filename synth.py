@@ -36,6 +36,13 @@ s.copy(
 templates = common_templates.node_library(source_location='build/src')
 s.copy(templates)
 
+# fix tslint issue due to mismatch gts version with gapic-generator-typescript
+# it should be removed once pubsub upgrade gts 2.0.0
+s.replace('src/v1/publisher_client.ts', '\/\*\ eslint\-disable\ \@typescript\-eslint\/no\-explicit\-any\ \*/',
+          '// tslint:disable-next-line no-any')
+s.replace('src/v1/subscriber_client.ts', '\/\*\ eslint\-disable\ \@typescript\-eslint\/no\-explicit\-any\ \*\/',
+          '// tslint:disable-next-line no-any')
+
 # Node.js specific cleanup
 subprocess.run(['npm', 'install'])
 subprocess.run(['npm', 'run', 'fix'])

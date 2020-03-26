@@ -19,6 +19,7 @@
 import * as protosTypes from '../protos/protos';
 import * as assert from 'assert';
 import {describe, it} from 'mocha';
+/* eslint-disable @typescript-eslint/no-var-requires */
 const subscriberModule = require('../src');
 
 import {PassThrough} from 'stream';
@@ -155,8 +156,6 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.ISubscription = {};
       request.name = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.createSubscription = mockSimpleGrpcMethod(
         request,
@@ -207,8 +206,6 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IGetSubscriptionRequest = {};
       request.subscription = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.getSubscription = mockSimpleGrpcMethod(
         request,
@@ -261,8 +258,6 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.IUpdateSubscriptionRequest = {};
       request.subscription = {};
       request.subscription.name = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.updateSubscription = mockSimpleGrpcMethod(
         request,
@@ -313,8 +308,6 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IDeleteSubscriptionRequest = {};
       request.subscription = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.deleteSubscription = mockSimpleGrpcMethod(
         request,
@@ -365,8 +358,6 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IModifyAckDeadlineRequest = {};
       request.subscription = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.modifyAckDeadline = mockSimpleGrpcMethod(
         request,
@@ -417,8 +408,6 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IAcknowledgeRequest = {};
       request.subscription = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.acknowledge = mockSimpleGrpcMethod(
         request,
@@ -469,8 +458,6 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IPullRequest = {};
       request.subscription = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.pull = mockSimpleGrpcMethod(request, null, error);
       client.pull(request, (err: FakeError, response: {}) => {
@@ -517,8 +504,6 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IModifyPushConfigRequest = {};
       request.subscription = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.modifyPushConfig = mockSimpleGrpcMethod(
         request,
@@ -569,8 +554,6 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IGetSnapshotRequest = {};
       request.snapshot = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.getSnapshot = mockSimpleGrpcMethod(
         request,
@@ -621,8 +604,6 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.ICreateSnapshotRequest = {};
       request.name = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.createSnapshot = mockSimpleGrpcMethod(
         request,
@@ -675,8 +656,6 @@ describe('v1.SubscriberClient', () => {
       const request: protosTypes.google.pubsub.v1.IUpdateSnapshotRequest = {};
       request.snapshot = {};
       request.snapshot.name = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.updateSnapshot = mockSimpleGrpcMethod(
         request,
@@ -727,8 +706,6 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IDeleteSnapshotRequest = {};
       request.snapshot = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.deleteSnapshot = mockSimpleGrpcMethod(
         request,
@@ -779,8 +756,6 @@ describe('v1.SubscriberClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.ISeekRequest = {};
       request.subscription = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.seek = mockSimpleGrpcMethod(request, null, error);
       client.seek(request, (err: FakeError, response: {}) => {
@@ -829,8 +804,6 @@ describe('v1.SubscriberClient', () => {
       client.initialize();
       // Mock request
       const request: protosTypes.google.pubsub.v1.IStreamingPullRequest = {};
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.streamingPull = mockBidiStreamingGrpcMethod(
         request,
