@@ -24,7 +24,6 @@ import {
   Descriptors,
   ClientOptions,
   PaginationCallback,
-  PaginationResponse,
 } from 'google-gax';
 import * as path from 'path';
 
@@ -1571,7 +1570,7 @@ export class SubscriberClient {
   listSubscriptions(
     request: protosTypes.google.pubsub.v1.IListSubscriptionsRequest,
     options: gax.CallOptions,
-    callback: Callback<
+    callback: PaginationCallback<
       protosTypes.google.pubsub.v1.ISubscription[],
       protosTypes.google.pubsub.v1.IListSubscriptionsRequest | null,
       protosTypes.google.pubsub.v1.IListSubscriptionsResponse
@@ -1613,12 +1612,12 @@ export class SubscriberClient {
     request: protosTypes.google.pubsub.v1.IListSubscriptionsRequest,
     optionsOrCallback?:
       | gax.CallOptions
-      | Callback<
+      | PaginationCallback<
           protosTypes.google.pubsub.v1.ISubscription[],
           protosTypes.google.pubsub.v1.IListSubscriptionsRequest | null,
           protosTypes.google.pubsub.v1.IListSubscriptionsResponse
         >,
-    callback?: Callback<
+    callback?: PaginationCallback<
       protosTypes.google.pubsub.v1.ISubscription[],
       protosTypes.google.pubsub.v1.IListSubscriptionsRequest | null,
       protosTypes.google.pubsub.v1.IListSubscriptionsResponse
@@ -1713,7 +1712,7 @@ export class SubscriberClient {
   listSnapshots(
     request: protosTypes.google.pubsub.v1.IListSnapshotsRequest,
     options: gax.CallOptions,
-    callback: Callback<
+    callback: PaginationCallback<
       protosTypes.google.pubsub.v1.ISnapshot[],
       protosTypes.google.pubsub.v1.IListSnapshotsRequest | null,
       protosTypes.google.pubsub.v1.IListSnapshotsResponse
@@ -1760,12 +1759,12 @@ export class SubscriberClient {
     request: protosTypes.google.pubsub.v1.IListSnapshotsRequest,
     optionsOrCallback?:
       | gax.CallOptions
-      | Callback<
+      | PaginationCallback<
           protosTypes.google.pubsub.v1.ISnapshot[],
           protosTypes.google.pubsub.v1.IListSnapshotsRequest | null,
           protosTypes.google.pubsub.v1.IListSnapshotsResponse
         >,
-    callback?: Callback<
+    callback?: PaginationCallback<
       protosTypes.google.pubsub.v1.ISnapshot[],
       protosTypes.google.pubsub.v1.IListSnapshotsRequest | null,
       protosTypes.google.pubsub.v1.IListSnapshotsResponse
