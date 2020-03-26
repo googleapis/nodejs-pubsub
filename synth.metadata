@@ -1,20 +1,19 @@
 {
-  "updateTime": "2020-03-24T19:51:41.876243Z",
+  "updateTime": "2020-03-26T19:11:34.172453Z",
   "sources": [
     {
       "git": {
         "name": "googleapis",
         "remote": "https://github.com/googleapis/googleapis.git",
-        "sha": "36c0febd0fa7267ab66d14408eec2afd1b6bec4e",
-        "internalRef": "302639621",
-        "log": "36c0febd0fa7267ab66d14408eec2afd1b6bec4e\nUpdate GAPIC configurations to v2 .yaml.\n\nPiperOrigin-RevId: 302639621\n\n"
+        "sha": "65816afa71e588252b7119dc723592abe51ea106",
+        "internalRef": "303150338"
       }
     },
     {
       "git": {
         "name": "synthtool",
         "remote": "https://github.com/googleapis/synthtool.git",
-        "sha": "6a17abc7652e2fe563e1288c6e8c23fc260dda97"
+        "sha": "e36822bfa0acb355502dab391b8ef9c4f30208d8"
       }
     }
   ],

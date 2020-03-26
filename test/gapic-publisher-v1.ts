@@ -19,6 +19,7 @@
 import * as protosTypes from '../protos/protos';
 import * as assert from 'assert';
 import {describe, it} from 'mocha';
+/* eslint-disable @typescript-eslint/no-var-requires */
 const publisherModule = require('../src');
 
 const FAKE_STATUS_CODE = 1;
@@ -133,8 +134,6 @@ describe('v1.PublisherClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.ITopic = {};
       request.name = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.createTopic = mockSimpleGrpcMethod(
         request,
@@ -187,8 +186,6 @@ describe('v1.PublisherClient', () => {
       const request: protosTypes.google.pubsub.v1.IUpdateTopicRequest = {};
       request.topic = {};
       request.topic.name = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.updateTopic = mockSimpleGrpcMethod(
         request,
@@ -239,8 +236,6 @@ describe('v1.PublisherClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IPublishRequest = {};
       request.topic = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.publish = mockSimpleGrpcMethod(
         request,
@@ -291,8 +286,6 @@ describe('v1.PublisherClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IGetTopicRequest = {};
       request.topic = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.getTopic = mockSimpleGrpcMethod(
         request,
@@ -343,8 +336,6 @@ describe('v1.PublisherClient', () => {
       // Mock request
       const request: protosTypes.google.pubsub.v1.IDeleteTopicRequest = {};
       request.topic = '';
-      // Mock response
-      const expectedResponse = {};
       // Mock gRPC layer
       client._innerApiCalls.deleteTopic = mockSimpleGrpcMethod(
         request,

@@ -24,7 +24,6 @@ import {
   Descriptors,
   ClientOptions,
   PaginationCallback,
-  PaginationResponse,
 } from 'google-gax';
 import * as path from 'path';
 
@@ -742,7 +741,7 @@ export class PublisherClient {
   listTopics(
     request: protosTypes.google.pubsub.v1.IListTopicsRequest,
     options: gax.CallOptions,
-    callback: Callback<
+    callback: PaginationCallback<
       protosTypes.google.pubsub.v1.ITopic[],
       protosTypes.google.pubsub.v1.IListTopicsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicsResponse
@@ -784,12 +783,12 @@ export class PublisherClient {
     request: protosTypes.google.pubsub.v1.IListTopicsRequest,
     optionsOrCallback?:
       | gax.CallOptions
-      | Callback<
+      | PaginationCallback<
           protosTypes.google.pubsub.v1.ITopic[],
           protosTypes.google.pubsub.v1.IListTopicsRequest | null,
           protosTypes.google.pubsub.v1.IListTopicsResponse
         >,
-    callback?: Callback<
+    callback?: PaginationCallback<
       protosTypes.google.pubsub.v1.ITopic[],
       protosTypes.google.pubsub.v1.IListTopicsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicsResponse
@@ -884,7 +883,7 @@ export class PublisherClient {
   listTopicSubscriptions(
     request: protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest,
     options: gax.CallOptions,
-    callback: Callback<
+    callback: PaginationCallback<
       string[],
       protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicSubscriptionsResponse
@@ -926,12 +925,12 @@ export class PublisherClient {
     request: protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest,
     optionsOrCallback?:
       | gax.CallOptions
-      | Callback<
+      | PaginationCallback<
           string[],
           protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
           protosTypes.google.pubsub.v1.IListTopicSubscriptionsResponse
         >,
-    callback?: Callback<
+    callback?: PaginationCallback<
       string[],
       protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicSubscriptionsResponse
@@ -1030,7 +1029,7 @@ export class PublisherClient {
   listTopicSnapshots(
     request: protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest,
     options: gax.CallOptions,
-    callback: Callback<
+    callback: PaginationCallback<
       string[],
       protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicSnapshotsResponse
@@ -1077,12 +1076,12 @@ export class PublisherClient {
     request: protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest,
     optionsOrCallback?:
       | gax.CallOptions
-      | Callback<
+      | PaginationCallback<
           string[],
           protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest | null,
           protosTypes.google.pubsub.v1.IListTopicSnapshotsResponse
         >,
-    callback?: Callback<
+    callback?: PaginationCallback<
       string[],
       protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest | null,
       protosTypes.google.pubsub.v1.IListTopicSnapshotsResponse
