@@ -1,21 +1,12 @@
 {
-<<<<<<< HEAD
   "updateTime": "2020-03-24T03:41:51.876202Z",
-=======
-  "updateTime": "2020-03-27T06:46:52.243448Z",
->>>>>>> hack synth.py to fix duplicate http namespace
   "sources": [
     {
       "git": {
         "name": "googleapis",
         "remote": "https://github.com/googleapis/googleapis.git",
-<<<<<<< HEAD
         "sha": "078f222366ed344509a48f2f084944ef61476613",
         "internalRef": "302529186"
-=======
-        "sha": "42f77489b300df2e27c84a7b65c4e8f04da20981",
-        "internalRef": "303241805"
->>>>>>> hack synth.py to fix duplicate http namespace
       }
     },
     {
