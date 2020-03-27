@@ -30,6 +30,7 @@ import * as path from 'path';
 import {Transform} from 'stream';
 import * as protosTypes from '../../protos/protos';
 import * as gapicConfig from './publisher_client_config.json';
+import {IamClient} from '../helper';
 
 const version = require('../../../package.json').version;
 
@@ -49,6 +50,7 @@ export class PublisherClient {
   private _innerApiCalls: {[name: string]: Function};
   private _pathTemplates: {[name: string]: gax.PathTemplate};
   private _terminated = false;
+  private _iamClient: IamClient;
   private _opts: ClientOptions;
   private _gaxModule: typeof gax | typeof gax.fallback;
   private _gaxGrpc: gax.GrpcClient | gax.fallback.GrpcClient;
@@ -121,6 +123,7 @@ export class PublisherClient {
     // Save the auth object to the client, for use by other methods.
     this.auth = this._gaxGrpc.auth as gax.GoogleAuth;
 
+    this._iamClient = new IamClient(opts);
     // Determine the client header string.
     const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${version}`];
     if (typeof process !== 'undefined' && 'versions' in process) {
