@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import {promisifyAll} from '@google-cloud/promisify';
+import {promisify, promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 
-import {MessageBatch, BatchPublishOptions} from './message-batch';
-import {Queue, OrderedQueue} from './message-queues';
+import {BatchPublishOptions} from './message-batch';
+import {Queue, OrderedQueue, PublishDone} from './message-queues';
 import {Topic} from '../topic';
-import {RequestCallback} from '../pubsub';
+import {RequestCallback, EmptyCallback, EmptyResponse} from '../pubsub';
 import {google} from '../../proto/pubsub';
 import {defaultOptions} from '../default-options';
 
@@ -71,6 +71,34 @@ export class Publisher {
     this.topic = topic;
     this.queue = new Queue(this);
     this.orderedQueues = new Map();
+  }
+
+  flush(): Promise<void>;
+  flush(callback: EmptyCallback): void;
+  /**
+   * Immediately sends all remaining queued data. This is mostly useful
+   * if you are planning to call close() on the PubSub object that holds
+   * the server connections.
+   *
+   * @private
+   *
+   * @param {EmptyCallback} [callback] Callback function.
+   * @returns {Promise<EmptyResponse>}
+   */
+  flush(callback?: EmptyCallback): Promise<void> | void {
+    const definedCallback = callback ? callback : () => {};
+
+    const publishes = [promisify(this.queue.publish)()];
+    Array.from(this.orderedQueues.values()).forEach(q =>
+      publishes.push(promisify(q.publish)())
+    );
+    const allPublishes = Promise.all(publishes);
+
+    allPublishes
+      .then(() => {
+        definedCallback(null);
+      })
+      .catch(definedCallback);
   }
   publish(data: Buffer, attributes?: Attributes): Promise<string>;
   publish(data: Buffer, callback: PublishCallback): void;
