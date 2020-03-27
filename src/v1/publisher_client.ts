@@ -30,6 +30,7 @@ import * as path from 'path';
 import {Transform} from 'stream';
 import * as protosTypes from '../../protos/protos';
 import * as gapicConfig from './publisher_client_config.json';
+import {IamClient} from '../helper';
 
 const version = require('../../../package.json').version;
 
@@ -49,6 +50,7 @@ export class PublisherClient {
   private _innerApiCalls: {[name: string]: Function};
   private _pathTemplates: {[name: string]: gax.PathTemplate};
   private _terminated = false;
+  private _iamClient: IamClient;
   private _opts: ClientOptions;
   private _gaxModule: typeof gax | typeof gax.fallback;
   private _gaxGrpc: gax.GrpcClient | gax.fallback.GrpcClient;
@@ -121,6 +123,7 @@ export class PublisherClient {
     // Save the auth object to the client, for use by other methods.
     this.auth = this._gaxGrpc.auth as gax.GoogleAuth;
 
+    this._iamClient = new IamClient(opts);
     // Determine the client header string.
     const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${version}`];
     if (typeof process !== 'undefined' && 'versions' in process) {
@@ -1291,5 +1294,37 @@ export class PublisherClient {
       });
     }
     return Promise.resolve();
+  }
+  /**
+   * This part will be added into src/v1/key_management_service_client.ts by synth.py.
+   * KMS service requires IAM client for [setIamPolicy, getIamPolicy, testIamPerssion] methods.
+   * But we don't support it now in micro-generators for rerouting one service to another and mix them in.
+   * New feature request link: [https://github.com/googleapis/gapic-generator-typescript/issues/315]
+   *
+   * So this is manually written for providing methods to the KMS client.
+   * IamClient is created for KMS client in the constructor using src/helper.ts.
+   * [setIamPolicy, getIamPolicy, testIamPerssion] methods are created which is calling the corresponding methods from IamClient in `helper.ts`.
+   */
+
+  getIamPolicy(
+    request: protosTypes.google.iam.v1.GetIamPolicyRequest,
+    options: gax.CallOptions,
+    callback: protosTypes.google.iam.v1.IAMPolicy.GetIamPolicyCallback
+  ) {
+    return this._iamClient.getIamPolicy(request, options, callback);
+  }
+  setIamPolicy(
+    request: protosTypes.google.iam.v1.SetIamPolicyRequest,
+    options: gax.CallOptions,
+    callback: protosTypes.google.iam.v1.IAMPolicy.SetIamPolicyCallback
+  ) {
+    return this._iamClient.setIamPolicy(request, options, callback);
+  }
+  testIamPermissions(
+    request: protosTypes.google.iam.v1.TestIamPermissionsRequest,
+    options: gax.CallOptions,
+    callback?: protosTypes.google.iam.v1.IAMPolicy.TestIamPermissionsCallback
+  ) {
+    return this._iamClient.testIamPermissions(request, options, callback);
   }
 }
