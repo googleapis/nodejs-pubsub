@@ -247,6 +247,7 @@ export class PubSub {
   getTopicsStream = paginator.streamify('getTopics') as () => ObjectStream<
     Topic
   >;
+  isOpen = true;
 
   constructor(options?: ClientConfig) {
     options = options || {};
@@ -278,6 +279,33 @@ export class PubSub {
     this.projectId = this.options.projectId || PROJECT_ID_PLACEHOLDER;
     if (this.options.promise) {
       this.Promise = this.options.promise;
+    }
+  }
+
+  close(): Promise<void>;
+  close(callback: EmptyCallback): void;
+  /**
+   * Closes out this object, releasing any server connections. Note that once
+   * you close a PubSub object, it may not be used again. Any pending operations
+   * (e.g. queued publish messages) will fail. If you have topic or subscription
+   * objects that may have pending operations, you should call close() on those
+   * first if you want any pending messages to be delivered correctly. The
+   * PubSub class doesn't track those.
+   *
+   * @callback EmptyCallback
+   * @returns {Promise<void>}
+   */
+  close(callback?: EmptyCallback): Promise<void> | void {
+    const definedCallback = callback || (() => {});
+    if (this.isOpen) {
+      this.isOpen = false;
+      this.closeAllClients_()
+        .then(() => {
+          definedCallback(null);
+        })
+        .catch(definedCallback);
+    } else {
+      definedCallback(null);
     }
   }
 
@@ -944,6 +972,23 @@ export class PubSub {
     return gaxClient;
   }
   /**
+   * Close all open client objects.
+   *
+   * @private
+   *
+   * @returns {Promise}
+   */
+  async closeAllClients_(): Promise<void> {
+    const promises = [];
+    for (const clientConfig of Object.keys(this.api)) {
+      const gaxClient = this.api[clientConfig];
+      promises.push(gaxClient.close());
+      delete this.api[clientConfig];
+    }
+
+    await Promise.all(promises);
+  }
+  /**
    * Funnel all API requests through this method, to be sure we have a project
    * ID.
    *
@@ -956,6 +1001,19 @@ export class PubSub {
    * @param {function} [callback] The callback function.
    */
   request<T, R = void>(config: RequestConfig, callback: RequestCallback<T, R>) {
+    // This prevents further requests, in case any publishers were hanging around.
+    if (!this.isOpen) {
+      const statusObject = {
+        code: 0,
+        details: 'Cannot use a closed PubSub object.',
+        metadata: null,
+      };
+      const err = new Error(statusObject.details);
+      Object.assign(err, statusObject);
+      callback(err as ServiceError);
+      return;
+    }
+
     this.getClient_(config, (err, client) => {
       if (err) {
         callback(err as ServiceError);
@@ -1139,7 +1197,7 @@ export class PubSub {
 
 /*! Developer Documentation
  *
- * These methods can be agto-paginated.
+ * These methods can be auto-paginated.
  */
 paginator.extend(PubSub, ['getSnapshots', 'getSubscriptions', 'getTopics']);
 
