@@ -1,26 +1,4 @@
 [
-<<<<<<< HEAD
-<<<<<<< HEAD
   "../../protos/google/iam/v1/logging/audit_data.proto",
   "../../protos/google/pubsub/v1/pubsub.proto"
-=======
-=======
->>>>>>> feat: convert client to typescript
-  "../../protos/google/api/annotations.proto",
-  "../../protos/google/api/client.proto",
-  "../../protos/google/api/field_behavior.proto",
-  "../../protos/google/api/http.proto",
-  "../../protos/google/api/resource.proto",
-  "../../protos/google/iam/v1/logging/audit_data.proto",
-  "../../protos/google/protobuf/descriptor.proto",
-  "../../protos/google/protobuf/duration.proto",
-  "../../protos/google/protobuf/empty.proto",
-  "../../protos/google/protobuf/field_mask.proto",
-  "../../protos/google/protobuf/timestamp.proto",
-  "../../protos/google/pubsub/v1/pubsub.proto",
-  "../../protos/google/type/expr.proto"
-<<<<<<< HEAD
->>>>>>> feat: convert client to typescript
-=======
->>>>>>> feat: convert client to typescript
 ]

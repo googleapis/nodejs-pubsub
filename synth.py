@@ -25,8 +25,8 @@ library = gapic.typescript_library(
         'template': f'typescript_gapic'
     },
     proto_path=f'/google/pubsub/{version}',
-    extra_proto_files=['google/iam/v1/.',
-                       'google/cloud/common_resources.proto']
+    extra_proto_files=['google/iam/v1/', 'google/api/',
+                       'google/type']
 )
 
 # skip index, protos, package.json, and README.md
@@ -77,6 +77,14 @@ for client_name in clients:
     with open('helperMethods.ts.tmpl', 'r') as helper_file:
         content = helper_file.read()
     s.replace(client_file, '^}', content)
+    f.write(new_file.replace('logging/audit_data.proto', 'iam_policy.proto'))
+
+# fix tslint issue due to mismatch gts version with gapic-generator-typescript
+# it should be removed once pubsub upgrade gts 2.0.0
+s.replace('src/v1/publisher_client.ts', '\/\*\ eslint\-disable\ \@typescript\-eslint\/no\-explicit\-any\ \*/',
+          '// tslint:disable-next-line no-any')
+s.replace('src/v1/subscriber_client.ts', '\/\*\ eslint\-disable\ \@typescript\-eslint\/no\-explicit\-any\ \*\/',
+          '// tslint:disable-next-line no-any')
 
 # Node.js specific cleanup
 subprocess.run(['npm', 'install'])
