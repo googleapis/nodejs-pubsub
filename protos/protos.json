@@ -2,1004 +2,277 @@
   "nested": {
     "google": {
       "nested": {
-        "pubsub": {
+        "iam": {
           "nested": {
             "v1": {
               "options": {
                 "cc_enable_arenas": true,
-                "csharp_namespace": "Google.Cloud.PubSub.V1",
-                "go_package": "google.golang.org/genproto/googleapis/pubsub/v1;pubsub",
+                "csharp_namespace": "Google.Cloud.Iam.V1",
+                "go_package": "google.golang.org/genproto/googleapis/iam/v1;iam",
                 "java_multiple_files": true,
-                "java_outer_classname": "PubsubProto",
-                "java_package": "com.google.pubsub.v1",
-                "php_namespace": "Google\\Cloud\\PubSub\\V1",
-                "ruby_package": "Google::Cloud::PubSub::V1"
+                "java_outer_classname": "IamPolicyProto",
+                "java_package": "com.google.iam.v1",
+                "php_namespace": "Google\\Cloud\\Iam\\V1"
               },
               "nested": {
-                "Publisher": {
-                  "options": {
-                    "(google.api.default_host)": "pubsub.googleapis.com",
-                    "(google.api.oauth_scopes)": "https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/pubsub"
-                  },
-                  "methods": {
-                    "CreateTopic": {
-                      "requestType": "Topic",
-                      "responseType": "Topic",
-                      "options": {
-                        "(google.api.http).put": "/v1/{name=projects/*/topics/*}",
-                        "(google.api.http).body": "*",
-                        "(google.api.method_signature)": "name"
-                      }
-                    },
-                    "UpdateTopic": {
-                      "requestType": "UpdateTopicRequest",
-                      "responseType": "Topic",
-                      "options": {
-                        "(google.api.http).patch": "/v1/{topic.name=projects/*/topics/*}",
-                        "(google.api.http).body": "*"
-                      }
-                    },
-                    "Publish": {
-                      "requestType": "PublishRequest",
-                      "responseType": "PublishResponse",
-                      "options": {
-                        "(google.api.http).post": "/v1/{topic=projects/*/topics/*}:publish",
-                        "(google.api.http).body": "*",
-                        "(google.api.method_signature)": "topic,messages"
-                      }
-                    },
-                    "GetTopic": {
-                      "requestType": "GetTopicRequest",
-                      "responseType": "Topic",
-                      "options": {
-                        "(google.api.http).get": "/v1/{topic=projects/*/topics/*}",
-                        "(google.api.method_signature)": "topic"
-                      }
-                    },
-                    "ListTopics": {
-                      "requestType": "ListTopicsRequest",
-                      "responseType": "ListTopicsResponse",
-                      "options": {
-                        "(google.api.http).get": "/v1/{project=projects/*}/topics",
-                        "(google.api.method_signature)": "project"
-                      }
-                    },
-                    "ListTopicSubscriptions": {
-                      "requestType": "ListTopicSubscriptionsRequest",
-                      "responseType": "ListTopicSubscriptionsResponse",
-                      "options": {
-                        "(google.api.http).get": "/v1/{topic=projects/*/topics/*}/subscriptions",
-                        "(google.api.method_signature)": "topic"
-                      }
-                    },
-                    "ListTopicSnapshots": {
-                      "requestType": "ListTopicSnapshotsRequest",
-                      "responseType": "ListTopicSnapshotsResponse",
-                      "options": {
-                        "(google.api.http).get": "/v1/{topic=projects/*/topics/*}/snapshots",
-                        "(google.api.method_signature)": "topic"
-                      }
-                    },
-                    "DeleteTopic": {
-                      "requestType": "DeleteTopicRequest",
-                      "responseType": "google.protobuf.Empty",
-                      "options": {
-                        "(google.api.http).delete": "/v1/{topic=projects/*/topics/*}",
-                        "(google.api.method_signature)": "topic"
-                      }
-                    }
-                  }
-                },
-                "MessageStoragePolicy": {
+                "Policy": {
                   "fields": {
-                    "allowedPersistenceRegions": {
-                      "rule": "repeated",
-                      "type": "string",
+                    "version": {
+                      "type": "int32",
                       "id": 1
-                    }
-                  }
-                },
-                "Topic": {
-                  "options": {
-                    "(google.api.resource).type": "pubsub.googleapis.com/Topic",
-                    "(google.api.resource).pattern": "_deleted-topic_"
-                  },
-                  "fields": {
-                    "name": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
                     },
-                    "labels": {
-                      "keyType": "string",
-                      "type": "string",
-                      "id": 2
+                    "bindings": {
+                      "rule": "repeated",
+                      "type": "Binding",
+                      "id": 4
                     },
-                    "messageStoragePolicy": {
-                      "type": "MessageStoragePolicy",
-                      "id": 3
-                    },
-                    "kmsKeyName": {
-                      "type": "string",
-                      "id": 5
-                    }
-                  }
-                },
-                "PubsubMessage": {
-                  "fields": {
-                    "data": {
+                    "etag": {
                       "type": "bytes",
+                      "id": 3
+                    }
+                  }
+                },
+                "Binding": {
+                  "fields": {
+                    "role": {
+                      "type": "string",
                       "id": 1
                     },
-                    "attributes": {
-                      "keyType": "string",
+                    "members": {
+                      "rule": "repeated",
                       "type": "string",
                       "id": 2
                     },
-                    "messageId": {
+                    "condition": {
+                      "type": "google.type.Expr",
+                      "id": 3
+                    }
+                  }
+                },
+                "PolicyDelta": {
+                  "fields": {
+                    "bindingDeltas": {
+                      "rule": "repeated",
+                      "type": "BindingDelta",
+                      "id": 1
+                    },
+                    "auditConfigDeltas": {
+                      "rule": "repeated",
+                      "type": "AuditConfigDelta",
+                      "id": 2
+                    }
+                  }
+                },
+                "BindingDelta": {
+                  "fields": {
+                    "action": {
+                      "type": "Action",
+                      "id": 1
+                    },
+                    "role": {
+                      "type": "string",
+                      "id": 2
+                    },
+                    "member": {
                       "type": "string",
                       "id": 3
                     },
-                    "publishTime": {
-                      "type": "google.protobuf.Timestamp",
+                    "condition": {
+                      "type": "google.type.Expr",
                       "id": 4
-                    },
-                    "orderingKey": {
-                      "type": "string",
-                      "id": 5
-                    }
-                  }
-                },
-                "GetTopicRequest": {
-                  "fields": {
-                    "topic": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
-                      }
-                    }
-                  }
-                },
-                "UpdateTopicRequest": {
-                  "fields": {
-                    "topic": {
-                      "type": "Topic",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    },
-                    "updateMask": {
-                      "type": "google.protobuf.FieldMask",
-                      "id": 2,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    }
-                  }
-                },
-                "PublishRequest": {
-                  "fields": {
-                    "topic": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
-                      }
-                    },
-                    "messages": {
-                      "rule": "repeated",
-                      "type": "PubsubMessage",
-                      "id": 2,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    }
-                  }
-                },
-                "PublishResponse": {
-                  "fields": {
-                    "messageIds": {
-                      "rule": "repeated",
-                      "type": "string",
-                      "id": 1
-                    }
-                  }
-                },
-                "ListTopicsRequest": {
-                  "fields": {
-                    "project": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
-                      }
-                    },
-                    "pageSize": {
-                      "type": "int32",
-                      "id": 2
-                    },
-                    "pageToken": {
-                      "type": "string",
-                      "id": 3
-                    }
-                  }
-                },
-                "ListTopicsResponse": {
-                  "fields": {
-                    "topics": {
-                      "rule": "repeated",
-                      "type": "Topic",
-                      "id": 1
-                    },
-                    "nextPageToken": {
-                      "type": "string",
-                      "id": 2
-                    }
-                  }
-                },
-                "ListTopicSubscriptionsRequest": {
-                  "fields": {
-                    "topic": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
-                      }
-                    },
-                    "pageSize": {
-                      "type": "int32",
-                      "id": 2
-                    },
-                    "pageToken": {
-                      "type": "string",
-                      "id": 3
-                    }
-                  }
-                },
-                "ListTopicSubscriptionsResponse": {
-                  "fields": {
-                    "subscriptions": {
-                      "rule": "repeated",
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
-                      }
-                    },
-                    "nextPageToken": {
-                      "type": "string",
-                      "id": 2
-                    }
-                  }
-                },
-                "ListTopicSnapshotsRequest": {
-                  "fields": {
-                    "topic": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
-                      }
-                    },
-                    "pageSize": {
-                      "type": "int32",
-                      "id": 2
-                    },
-                    "pageToken": {
-                      "type": "string",
-                      "id": 3
-                    }
-                  }
-                },
-                "ListTopicSnapshotsResponse": {
-                  "fields": {
-                    "snapshots": {
-                      "rule": "repeated",
-                      "type": "string",
-                      "id": 1
-                    },
-                    "nextPageToken": {
-                      "type": "string",
-                      "id": 2
-                    }
-                  }
-                },
-                "DeleteTopicRequest": {
-                  "fields": {
-                    "topic": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
-                      }
-                    }
-                  }
-                },
-                "Subscriber": {
-                  "options": {
-                    "(google.api.default_host)": "pubsub.googleapis.com",
-                    "(google.api.oauth_scopes)": "https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/pubsub"
-                  },
-                  "methods": {
-                    "CreateSubscription": {
-                      "requestType": "Subscription",
-                      "responseType": "Subscription",
-                      "options": {
-                        "(google.api.http).put": "/v1/{name=projects/*/subscriptions/*}",
-                        "(google.api.http).body": "*",
-                        "(google.api.method_signature)": "name,topic,push_config,ack_deadline_seconds"
-                      }
-                    },
-                    "GetSubscription": {
-                      "requestType": "GetSubscriptionRequest",
-                      "responseType": "Subscription",
-                      "options": {
-                        "(google.api.http).get": "/v1/{subscription=projects/*/subscriptions/*}",
-                        "(google.api.method_signature)": "subscription"
-                      }
-                    },
-                    "UpdateSubscription": {
-                      "requestType": "UpdateSubscriptionRequest",
-                      "responseType": "Subscription",
-                      "options": {
-                        "(google.api.http).patch": "/v1/{subscription.name=projects/*/subscriptions/*}",
-                        "(google.api.http).body": "*"
-                      }
-                    },
-                    "ListSubscriptions": {
-                      "requestType": "ListSubscriptionsRequest",
-                      "responseType": "ListSubscriptionsResponse",
-                      "options": {
-                        "(google.api.http).get": "/v1/{project=projects/*}/subscriptions",
-                        "(google.api.method_signature)": "project"
-                      }
-                    },
-                    "DeleteSubscription": {
-                      "requestType": "DeleteSubscriptionRequest",
-                      "responseType": "google.protobuf.Empty",
-                      "options": {
-                        "(google.api.http).delete": "/v1/{subscription=projects/*/subscriptions/*}",
-                        "(google.api.method_signature)": "subscription"
-                      }
-                    },
-                    "ModifyAckDeadline": {
-                      "requestType": "ModifyAckDeadlineRequest",
-                      "responseType": "google.protobuf.Empty",
-                      "options": {
-                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:modifyAckDeadline",
-                        "(google.api.http).body": "*",
-                        "(google.api.method_signature)": "subscription,ack_ids,ack_deadline_seconds"
-                      }
-                    },
-                    "Acknowledge": {
-                      "requestType": "AcknowledgeRequest",
-                      "responseType": "google.protobuf.Empty",
-                      "options": {
-                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:acknowledge",
-                        "(google.api.http).body": "*",
-                        "(google.api.method_signature)": "subscription,ack_ids"
-                      }
-                    },
-                    "Pull": {
-                      "requestType": "PullRequest",
-                      "responseType": "PullResponse",
-                      "options": {
-                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:pull",
-                        "(google.api.http).body": "*",
-                        "(google.api.method_signature)": "subscription,return_immediately,max_messages"
-                      }
-                    },
-                    "StreamingPull": {
-                      "requestType": "StreamingPullRequest",
-                      "requestStream": true,
-                      "responseType": "StreamingPullResponse",
-                      "responseStream": true
-                    },
-                    "ModifyPushConfig": {
-                      "requestType": "ModifyPushConfigRequest",
-                      "responseType": "google.protobuf.Empty",
-                      "options": {
-                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:modifyPushConfig",
-                        "(google.api.http).body": "*",
-                        "(google.api.method_signature)": "subscription,push_config"
-                      }
-                    },
-                    "GetSnapshot": {
-                      "requestType": "GetSnapshotRequest",
-                      "responseType": "Snapshot",
-                      "options": {
-                        "(google.api.http).get": "/v1/{snapshot=projects/*/snapshots/*}",
-                        "(google.api.method_signature)": "snapshot"
-                      }
-                    },
-                    "ListSnapshots": {
-                      "requestType": "ListSnapshotsRequest",
-                      "responseType": "ListSnapshotsResponse",
-                      "options": {
-                        "(google.api.http).get": "/v1/{project=projects/*}/snapshots",
-                        "(google.api.method_signature)": "project"
-                      }
-                    },
-                    "CreateSnapshot": {
-                      "requestType": "CreateSnapshotRequest",
-                      "responseType": "Snapshot",
-                      "options": {
-                        "(google.api.http).put": "/v1/{name=projects/*/snapshots/*}",
-                        "(google.api.http).body": "*",
-                        "(google.api.method_signature)": "name,subscription"
-                      }
-                    },
-                    "UpdateSnapshot": {
-                      "requestType": "UpdateSnapshotRequest",
-                      "responseType": "Snapshot",
-                      "options": {
-                        "(google.api.http).patch": "/v1/{snapshot.name=projects/*/snapshots/*}",
-                        "(google.api.http).body": "*"
-                      }
-                    },
-                    "DeleteSnapshot": {
-                      "requestType": "DeleteSnapshotRequest",
-                      "responseType": "google.protobuf.Empty",
-                      "options": {
-                        "(google.api.http).delete": "/v1/{snapshot=projects/*/snapshots/*}",
-                        "(google.api.method_signature)": "snapshot"
-                      }
-                    },
-                    "Seek": {
-                      "requestType": "SeekRequest",
-                      "responseType": "SeekResponse",
-                      "options": {
-                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:seek",
-                        "(google.api.http).body": "*"
-                      }
-                    }
-                  }
-                },
-                "Subscription": {
-                  "options": {
-                    "(google.api.resource).type": "pubsub.googleapis.com/Subscription",
-                    "(google.api.resource).pattern": "projects/{project}/subscriptions/{subscription}"
-                  },
-                  "fields": {
-                    "name": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    },
-                    "topic": {
-                      "type": "string",
-                      "id": 2,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
-                      }
-                    },
-                    "pushConfig": {
-                      "type": "PushConfig",
-                      "id": 4
-                    },
-                    "ackDeadlineSeconds": {
-                      "type": "int32",
-                      "id": 5
-                    },
-                    "retainAckedMessages": {
-                      "type": "bool",
-                      "id": 7
-                    },
-                    "messageRetentionDuration": {
-                      "type": "google.protobuf.Duration",
-                      "id": 8
-                    },
-                    "labels": {
-                      "keyType": "string",
-                      "type": "string",
-                      "id": 9
-                    },
-                    "enableMessageOrdering": {
-                      "type": "bool",
-                      "id": 10
-                    },
-                    "expirationPolicy": {
-                      "type": "ExpirationPolicy",
-                      "id": 11
-                    },
-                    "filter": {
-                      "type": "string",
-                      "id": 12
-                    },
-                    "deadLetterPolicy": {
-                      "type": "DeadLetterPolicy",
-                      "id": 13
-                    },
-                    "retryPolicy": {
-                      "type": "RetryPolicy",
-                      "id": 14
-                    }
-                  }
-                },
-                "RetryPolicy": {
-                  "fields": {
-                    "minimumBackoff": {
-                      "type": "google.protobuf.Duration",
-                      "id": 1
-                    },
-                    "maximumBackoff": {
-                      "type": "google.protobuf.Duration",
-                      "id": 2
-                    }
-                  }
-                },
-                "DeadLetterPolicy": {
-                  "fields": {
-                    "deadLetterTopic": {
-                      "type": "string",
-                      "id": 1
-                    },
-                    "maxDeliveryAttempts": {
-                      "type": "int32",
-                      "id": 2
-                    }
-                  }
-                },
-                "ExpirationPolicy": {
-                  "fields": {
-                    "ttl": {
-                      "type": "google.protobuf.Duration",
-                      "id": 1
-                    }
-                  }
-                },
-                "PushConfig": {
-                  "oneofs": {
-                    "authenticationMethod": {
-                      "oneof": [
-                        "oidcToken"
-                      ]
-                    }
-                  },
-                  "fields": {
-                    "pushEndpoint": {
-                      "type": "string",
-                      "id": 1
-                    },
-                    "attributes": {
-                      "keyType": "string",
-                      "type": "string",
-                      "id": 2
-                    },
-                    "oidcToken": {
-                      "type": "OidcToken",
-                      "id": 3
                     }
                   },
                   "nested": {
-                    "OidcToken": {
+                    "Action": {
+                      "values": {
+                        "ACTION_UNSPECIFIED": 0,
+                        "ADD": 1,
+                        "REMOVE": 2
+                      }
+                    }
+                  }
+                },
+                "AuditConfigDelta": {
+                  "fields": {
+                    "action": {
+                      "type": "Action",
+                      "id": 1
+                    },
+                    "service": {
+                      "type": "string",
+                      "id": 2
+                    },
+                    "exemptedMember": {
+                      "type": "string",
+                      "id": 3
+                    },
+                    "logType": {
+                      "type": "string",
+                      "id": 4
+                    }
+                  },
+                  "nested": {
+                    "Action": {
+                      "values": {
+                        "ACTION_UNSPECIFIED": 0,
+                        "ADD": 1,
+                        "REMOVE": 2
+                      }
+                    }
+                  }
+                },
+                "GetPolicyOptions": {
+                  "fields": {
+                    "requestedPolicyVersion": {
+                      "type": "int32",
+                      "id": 1
+                    }
+                  }
+                },
+                "IAMPolicy": {
+                  "options": {
+                    "(google.api.default_host)": "iam-meta-api.googleapis.com"
+                  },
+                  "methods": {
+                    "SetIamPolicy": {
+                      "requestType": "SetIamPolicyRequest",
+                      "responseType": "Policy",
+                      "options": {
+                        "(google.api.http).post": "/v1/{resource=**}:setIamPolicy",
+                        "(google.api.http).body": "*"
+                      }
+                    },
+                    "GetIamPolicy": {
+                      "requestType": "GetIamPolicyRequest",
+                      "responseType": "Policy",
+                      "options": {
+                        "(google.api.http).post": "/v1/{resource=**}:getIamPolicy",
+                        "(google.api.http).body": "*"
+                      }
+                    },
+                    "TestIamPermissions": {
+                      "requestType": "TestIamPermissionsRequest",
+                      "responseType": "TestIamPermissionsResponse",
+                      "options": {
+                        "(google.api.http).post": "/v1/{resource=**}:testIamPermissions",
+                        "(google.api.http).body": "*"
+                      }
+                    }
+                  }
+                },
+                "SetIamPolicyRequest": {
+                  "fields": {
+                    "resource": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "*"
+                      }
+                    },
+                    "policy": {
+                      "type": "Policy",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "GetIamPolicyRequest": {
+                  "fields": {
+                    "resource": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "*"
+                      }
+                    },
+                    "options": {
+                      "type": "GetPolicyOptions",
+                      "id": 2
+                    }
+                  }
+                },
+                "TestIamPermissionsRequest": {
+                  "fields": {
+                    "resource": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "*"
+                      }
+                    },
+                    "permissions": {
+                      "rule": "repeated",
+                      "type": "string",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "TestIamPermissionsResponse": {
+                  "fields": {
+                    "permissions": {
+                      "rule": "repeated",
+                      "type": "string",
+                      "id": 1
+                    }
+                  }
+                },
+                "logging": {
+                  "options": {
+                    "csharp_namespace": "Google.Cloud.Iam.V1.Logging",
+                    "go_package": "google.golang.org/genproto/googleapis/iam/v1/logging;logging",
+                    "java_multiple_files": true,
+                    "java_outer_classname": "AuditDataProto",
+                    "java_package": "com.google.iam.v1.logging"
+                  },
+                  "nested": {
+                    "AuditData": {
                       "fields": {
-                        "serviceAccountEmail": {
-                          "type": "string",
-                          "id": 1
-                        },
-                        "audience": {
-                          "type": "string",
+                        "policyDelta": {
+                          "type": "google.iam.v1.PolicyDelta",
                           "id": 2
                         }
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        },
+        "type": {
+          "options": {
+            "go_package": "google.golang.org/genproto/googleapis/type/expr;expr",
+            "java_multiple_files": true,
+            "java_outer_classname": "ExprProto",
+            "java_package": "com.google.type",
+            "objc_class_prefix": "GTP"
+          },
+          "nested": {
+            "Expr": {
+              "fields": {
+                "expression": {
+                  "type": "string",
+                  "id": 1
                 },
-                "ReceivedMessage": {
-                  "fields": {
-                    "ackId": {
-                      "type": "string",
-                      "id": 1
-                    },
-                    "message": {
-                      "type": "PubsubMessage",
-                      "id": 2
-                    },
-                    "deliveryAttempt": {
-                      "type": "int32",
-                      "id": 3
-                    }
-                  }
+                "title": {
+                  "type": "string",
+                  "id": 2
                 },
-                "GetSubscriptionRequest": {
-                  "fields": {
-                    "subscription": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
-                      }
-                    }
-                  }
+                "description": {
+                  "type": "string",
+                  "id": 3
                 },
-                "UpdateSubscriptionRequest": {
-                  "fields": {
-                    "subscription": {
-                      "type": "Subscription",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    },
-                    "updateMask": {
-                      "type": "google.protobuf.FieldMask",
-                      "id": 2,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    }
-                  }
-                },
-                "ListSubscriptionsRequest": {
-                  "fields": {
-                    "project": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
-                      }
-                    },
-                    "pageSize": {
-                      "type": "int32",
-                      "id": 2
-                    },
-                    "pageToken": {
-                      "type": "string",
-                      "id": 3
-                    }
-                  }
-                },
-                "ListSubscriptionsResponse": {
-                  "fields": {
-                    "subscriptions": {
-                      "rule": "repeated",
-                      "type": "Subscription",
-                      "id": 1
-                    },
-                    "nextPageToken": {
-                      "type": "string",
-                      "id": 2
-                    }
-                  }
-                },
-                "DeleteSubscriptionRequest": {
-                  "fields": {
-                    "subscription": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
-                      }
-                    }
-                  }
-                },
-                "ModifyPushConfigRequest": {
-                  "fields": {
-                    "subscription": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
-                      }
-                    },
-                    "pushConfig": {
-                      "type": "PushConfig",
-                      "id": 2,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    }
-                  }
-                },
-                "PullRequest": {
-                  "fields": {
-                    "subscription": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
-                      }
-                    },
-                    "returnImmediately": {
-                      "type": "bool",
-                      "id": 2,
-                      "options": {
-                        "deprecated": true,
-                        "(google.api.field_behavior)": "OPTIONAL"
-                      }
-                    },
-                    "maxMessages": {
-                      "type": "int32",
-                      "id": 3,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    }
-                  }
-                },
-                "PullResponse": {
-                  "fields": {
-                    "receivedMessages": {
-                      "rule": "repeated",
-                      "type": "ReceivedMessage",
-                      "id": 1
-                    }
-                  }
-                },
-                "ModifyAckDeadlineRequest": {
-                  "fields": {
-                    "subscription": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
-                      }
-                    },
-                    "ackIds": {
-                      "rule": "repeated",
-                      "type": "string",
-                      "id": 4,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    },
-                    "ackDeadlineSeconds": {
-                      "type": "int32",
-                      "id": 3,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    }
-                  }
-                },
-                "AcknowledgeRequest": {
-                  "fields": {
-                    "subscription": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
-                      }
-                    },
-                    "ackIds": {
-                      "rule": "repeated",
-                      "type": "string",
-                      "id": 2,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    }
-                  }
-                },
-                "StreamingPullRequest": {
-                  "fields": {
-                    "subscription": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
-                      }
-                    },
-                    "ackIds": {
-                      "rule": "repeated",
-                      "type": "string",
-                      "id": 2
-                    },
-                    "modifyDeadlineSeconds": {
-                      "rule": "repeated",
-                      "type": "int32",
-                      "id": 3
-                    },
-                    "modifyDeadlineAckIds": {
-                      "rule": "repeated",
-                      "type": "string",
-                      "id": 4
-                    },
-                    "streamAckDeadlineSeconds": {
-                      "type": "int32",
-                      "id": 5,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    },
-                    "clientId": {
-                      "type": "string",
-                      "id": 6
-                    }
-                  }
-                },
-                "StreamingPullResponse": {
-                  "fields": {
-                    "receivedMessages": {
-                      "rule": "repeated",
-                      "type": "ReceivedMessage",
-                      "id": 1
-                    }
-                  }
-                },
-                "CreateSnapshotRequest": {
-                  "fields": {
-                    "name": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
-                      }
-                    },
-                    "subscription": {
-                      "type": "string",
-                      "id": 2,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
-                      }
-                    },
-                    "labels": {
-                      "keyType": "string",
-                      "type": "string",
-                      "id": 3
-                    }
-                  }
-                },
-                "UpdateSnapshotRequest": {
-                  "fields": {
-                    "snapshot": {
-                      "type": "Snapshot",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    },
-                    "updateMask": {
-                      "type": "google.protobuf.FieldMask",
-                      "id": 2,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    }
-                  }
-                },
-                "Snapshot": {
-                  "options": {
-                    "(google.api.resource).type": "pubsub.googleapis.com/Snapshot",
-                    "(google.api.resource).pattern": "projects/{project}/snapshots/{snapshot}"
-                  },
-                  "fields": {
-                    "name": {
-                      "type": "string",
-                      "id": 1
-                    },
-                    "topic": {
-                      "type": "string",
-                      "id": 2,
-                      "options": {
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
-                      }
-                    },
-                    "expireTime": {
-                      "type": "google.protobuf.Timestamp",
-                      "id": 3
-                    },
-                    "labels": {
-                      "keyType": "string",
-                      "type": "string",
-                      "id": 4
-                    }
-                  }
-                },
-                "GetSnapshotRequest": {
-                  "fields": {
-                    "snapshot": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
-                      }
-                    }
-                  }
-                },
-                "ListSnapshotsRequest": {
-                  "fields": {
-                    "project": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
-                      }
-                    },
-                    "pageSize": {
-                      "type": "int32",
-                      "id": 2
-                    },
-                    "pageToken": {
-                      "type": "string",
-                      "id": 3
-                    }
-                  }
-                },
-                "ListSnapshotsResponse": {
-                  "fields": {
-                    "snapshots": {
-                      "rule": "repeated",
-                      "type": "Snapshot",
-                      "id": 1
-                    },
-                    "nextPageToken": {
-                      "type": "string",
-                      "id": 2
-                    }
-                  }
-                },
-                "DeleteSnapshotRequest": {
-                  "fields": {
-                    "snapshot": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
-                      }
-                    }
-                  }
-                },
-                "SeekRequest": {
-                  "oneofs": {
-                    "target": {
-                      "oneof": [
-                        "time",
-                        "snapshot"
-                      ]
-                    }
-                  },
-                  "fields": {
-                    "subscription": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
-                      }
-                    },
-                    "time": {
-                      "type": "google.protobuf.Timestamp",
-                      "id": 2
-                    },
-                    "snapshot": {
-                      "type": "string",
-                      "id": 3,
-                      "options": {
-                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
-                      }
-                    }
-                  }
-                },
-                "SeekResponse": {
-                  "fields": {}
+                "location": {
+                  "type": "string",
+                  "id": 4
                 }
               }
             }
@@ -2131,258 +1404,1004 @@
             }
           }
         },
-        "iam": {
+        "pubsub": {
           "nested": {
             "v1": {
               "options": {
                 "cc_enable_arenas": true,
-                "csharp_namespace": "Google.Cloud.Iam.V1",
-                "go_package": "google.golang.org/genproto/googleapis/iam/v1;iam",
+                "csharp_namespace": "Google.Cloud.PubSub.V1",
+                "go_package": "google.golang.org/genproto/googleapis/pubsub/v1;pubsub",
                 "java_multiple_files": true,
-                "java_outer_classname": "PolicyProto",
-                "java_package": "com.google.iam.v1",
-                "php_namespace": "Google\\Cloud\\Iam\\V1"
+                "java_outer_classname": "PubsubProto",
+                "java_package": "com.google.pubsub.v1",
+                "php_namespace": "Google\\Cloud\\PubSub\\V1",
+                "ruby_package": "Google::Cloud::PubSub::V1"
               },
               "nested": {
-                "IAMPolicy": {
+                "Publisher": {
                   "options": {
-                    "(google.api.default_host)": "iam-meta-api.googleapis.com"
+                    "(google.api.default_host)": "pubsub.googleapis.com",
+                    "(google.api.oauth_scopes)": "https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/pubsub"
                   },
                   "methods": {
-                    "SetIamPolicy": {
-                      "requestType": "SetIamPolicyRequest",
-                      "responseType": "Policy",
+                    "CreateTopic": {
+                      "requestType": "Topic",
+                      "responseType": "Topic",
                       "options": {
-                        "(google.api.http).post": "/v1/{resource=**}:setIamPolicy",
+                        "(google.api.http).put": "/v1/{name=projects/*/topics/*}",
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "name"
+                      }
+                    },
+                    "UpdateTopic": {
+                      "requestType": "UpdateTopicRequest",
+                      "responseType": "Topic",
+                      "options": {
+                        "(google.api.http).patch": "/v1/{topic.name=projects/*/topics/*}",
                         "(google.api.http).body": "*"
                       }
                     },
-                    "GetIamPolicy": {
-                      "requestType": "GetIamPolicyRequest",
-                      "responseType": "Policy",
+                    "Publish": {
+                      "requestType": "PublishRequest",
+                      "responseType": "PublishResponse",
                       "options": {
-                        "(google.api.http).post": "/v1/{resource=**}:getIamPolicy",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).post": "/v1/{topic=projects/*/topics/*}:publish",
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "topic,messages"
                       }
                     },
-                    "TestIamPermissions": {
-                      "requestType": "TestIamPermissionsRequest",
-                      "responseType": "TestIamPermissionsResponse",
+                    "GetTopic": {
+                      "requestType": "GetTopicRequest",
+                      "responseType": "Topic",
                       "options": {
-                        "(google.api.http).post": "/v1/{resource=**}:testIamPermissions",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).get": "/v1/{topic=projects/*/topics/*}",
+                        "(google.api.method_signature)": "topic"
+                      }
+                    },
+                    "ListTopics": {
+                      "requestType": "ListTopicsRequest",
+                      "responseType": "ListTopicsResponse",
+                      "options": {
+                        "(google.api.http).get": "/v1/{project=projects/*}/topics",
+                        "(google.api.method_signature)": "project"
+                      }
+                    },
+                    "ListTopicSubscriptions": {
+                      "requestType": "ListTopicSubscriptionsRequest",
+                      "responseType": "ListTopicSubscriptionsResponse",
+                      "options": {
+                        "(google.api.http).get": "/v1/{topic=projects/*/topics/*}/subscriptions",
+                        "(google.api.method_signature)": "topic"
+                      }
+                    },
+                    "ListTopicSnapshots": {
+                      "requestType": "ListTopicSnapshotsRequest",
+                      "responseType": "ListTopicSnapshotsResponse",
+                      "options": {
+                        "(google.api.http).get": "/v1/{topic=projects/*/topics/*}/snapshots",
+                        "(google.api.method_signature)": "topic"
+                      }
+                    },
+                    "DeleteTopic": {
+                      "requestType": "DeleteTopicRequest",
+                      "responseType": "google.protobuf.Empty",
+                      "options": {
+                        "(google.api.http).delete": "/v1/{topic=projects/*/topics/*}",
+                        "(google.api.method_signature)": "topic"
                       }
                     }
                   }
                 },
-                "SetIamPolicyRequest": {
+                "MessageStoragePolicy": {
                   "fields": {
-                    "resource": {
+                    "allowedPersistenceRegions": {
+                      "rule": "repeated",
+                      "type": "string",
+                      "id": 1
+                    }
+                  }
+                },
+                "Topic": {
+                  "options": {
+                    "(google.api.resource).type": "pubsub.googleapis.com/Topic",
+                    "(google.api.resource).pattern": "_deleted-topic_"
+                  },
+                  "fields": {
+                    "name": {
                       "type": "string",
                       "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "*"
-                      }
-                    },
-                    "policy": {
-                      "type": "Policy",
-                      "id": 2,
                       "options": {
                         "(google.api.field_behavior)": "REQUIRED"
                       }
-                    }
-                  }
-                },
-                "GetIamPolicyRequest": {
-                  "fields": {
-                    "resource": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "*"
-                      }
                     },
-                    "options": {
-                      "type": "GetPolicyOptions",
+                    "labels": {
+                      "keyType": "string",
+                      "type": "string",
                       "id": 2
-                    }
-                  }
-                },
-                "TestIamPermissionsRequest": {
-                  "fields": {
-                    "resource": {
-                      "type": "string",
-                      "id": 1,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
-                        "(google.api.resource_reference).type": "*"
-                      }
                     },
-                    "permissions": {
-                      "rule": "repeated",
-                      "type": "string",
-                      "id": 2,
-                      "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
-                      }
-                    }
-                  }
-                },
-                "TestIamPermissionsResponse": {
-                  "fields": {
-                    "permissions": {
-                      "rule": "repeated",
-                      "type": "string",
-                      "id": 1
-                    }
-                  }
-                },
-                "GetPolicyOptions": {
-                  "fields": {
-                    "requestedPolicyVersion": {
-                      "type": "int32",
-                      "id": 1
-                    }
-                  }
-                },
-                "Policy": {
-                  "fields": {
-                    "version": {
-                      "type": "int32",
-                      "id": 1
+                    "messageStoragePolicy": {
+                      "type": "MessageStoragePolicy",
+                      "id": 3
                     },
-                    "bindings": {
-                      "rule": "repeated",
-                      "type": "Binding",
-                      "id": 4
-                    },
-                    "etag": {
+                    "kmsKeyName": {
+                      "type": "string",
+                      "id": 5
+                    }
+                  }
+                },
+                "PubsubMessage": {
+                  "fields": {
+                    "data": {
                       "type": "bytes",
-                      "id": 3
-                    }
-                  }
-                },
-                "Binding": {
-                  "fields": {
-                    "role": {
-                      "type": "string",
                       "id": 1
                     },
-                    "members": {
-                      "rule": "repeated",
+                    "attributes": {
+                      "keyType": "string",
                       "type": "string",
                       "id": 2
                     },
-                    "condition": {
-                      "type": "google.type.Expr",
-                      "id": 3
-                    }
-                  }
-                },
-                "PolicyDelta": {
-                  "fields": {
-                    "bindingDeltas": {
-                      "rule": "repeated",
-                      "type": "BindingDelta",
-                      "id": 1
-                    },
-                    "auditConfigDeltas": {
-                      "rule": "repeated",
-                      "type": "AuditConfigDelta",
-                      "id": 2
-                    }
-                  }
-                },
-                "BindingDelta": {
-                  "fields": {
-                    "action": {
-                      "type": "Action",
-                      "id": 1
-                    },
-                    "role": {
-                      "type": "string",
-                      "id": 2
-                    },
-                    "member": {
+                    "messageId": {
                       "type": "string",
                       "id": 3
                     },
-                    "condition": {
-                      "type": "google.type.Expr",
+                    "publishTime": {
+                      "type": "google.protobuf.Timestamp",
                       "id": 4
+                    },
+                    "orderingKey": {
+                      "type": "string",
+                      "id": 5
                     }
-                  },
-                  "nested": {
-                    "Action": {
-                      "values": {
-                        "ACTION_UNSPECIFIED": 0,
-                        "ADD": 1,
-                        "REMOVE": 2
+                  }
+                },
+                "GetTopicRequest": {
+                  "fields": {
+                    "topic": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
                       }
                     }
                   }
                 },
-                "AuditConfigDelta": {
+                "UpdateTopicRequest": {
                   "fields": {
-                    "action": {
-                      "type": "Action",
-                      "id": 1
+                    "topic": {
+                      "type": "Topic",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     },
-                    "service": {
-                      "type": "string",
-                      "id": 2
-                    },
-                    "exemptedMember": {
-                      "type": "string",
-                      "id": 3
-                    },
-                    "logType": {
-                      "type": "string",
-                      "id": 4
-                    }
-                  },
-                  "nested": {
-                    "Action": {
-                      "values": {
-                        "ACTION_UNSPECIFIED": 0,
-                        "ADD": 1,
-                        "REMOVE": 2
+                    "updateMask": {
+                      "type": "google.protobuf.FieldMask",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
                       }
                     }
                   }
-                }
-              }
-            }
-          }
-        },
-        "type": {
-          "options": {
-            "go_package": "google.golang.org/genproto/googleapis/type/expr;expr",
-            "java_multiple_files": true,
-            "java_outer_classname": "ExprProto",
-            "java_package": "com.google.type",
-            "objc_class_prefix": "GTP"
-          },
-          "nested": {
-            "Expr": {
-              "fields": {
-                "expression": {
-                  "type": "string",
-                  "id": 1
                 },
-                "title": {
-                  "type": "string",
-                  "id": 2
+                "PublishRequest": {
+                  "fields": {
+                    "topic": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
+                    },
+                    "messages": {
+                      "rule": "repeated",
+                      "type": "PubsubMessage",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
                 },
-                "description": {
-                  "type": "string",
-                  "id": 3
+                "PublishResponse": {
+                  "fields": {
+                    "messageIds": {
+                      "rule": "repeated",
+                      "type": "string",
+                      "id": 1
+                    }
+                  }
                 },
-                "location": {
-                  "type": "string",
-                  "id": 4
+                "ListTopicsRequest": {
+                  "fields": {
+                    "project": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
+                      }
+                    },
+                    "pageSize": {
+                      "type": "int32",
+                      "id": 2
+                    },
+                    "pageToken": {
+                      "type": "string",
+                      "id": 3
+                    }
+                  }
+                },
+                "ListTopicsResponse": {
+                  "fields": {
+                    "topics": {
+                      "rule": "repeated",
+                      "type": "Topic",
+                      "id": 1
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "id": 2
+                    }
+                  }
+                },
+                "ListTopicSubscriptionsRequest": {
+                  "fields": {
+                    "topic": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
+                    },
+                    "pageSize": {
+                      "type": "int32",
+                      "id": 2
+                    },
+                    "pageToken": {
+                      "type": "string",
+                      "id": 3
+                    }
+                  }
+                },
+                "ListTopicSubscriptionsResponse": {
+                  "fields": {
+                    "subscriptions": {
+                      "rule": "repeated",
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "id": 2
+                    }
+                  }
+                },
+                "ListTopicSnapshotsRequest": {
+                  "fields": {
+                    "topic": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
+                    },
+                    "pageSize": {
+                      "type": "int32",
+                      "id": 2
+                    },
+                    "pageToken": {
+                      "type": "string",
+                      "id": 3
+                    }
+                  }
+                },
+                "ListTopicSnapshotsResponse": {
+                  "fields": {
+                    "snapshots": {
+                      "rule": "repeated",
+                      "type": "string",
+                      "id": 1
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "id": 2
+                    }
+                  }
+                },
+                "DeleteTopicRequest": {
+                  "fields": {
+                    "topic": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
+                    }
+                  }
+                },
+                "Subscriber": {
+                  "options": {
+                    "(google.api.default_host)": "pubsub.googleapis.com",
+                    "(google.api.oauth_scopes)": "https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/pubsub"
+                  },
+                  "methods": {
+                    "CreateSubscription": {
+                      "requestType": "Subscription",
+                      "responseType": "Subscription",
+                      "options": {
+                        "(google.api.http).put": "/v1/{name=projects/*/subscriptions/*}",
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "name,topic,push_config,ack_deadline_seconds"
+                      }
+                    },
+                    "GetSubscription": {
+                      "requestType": "GetSubscriptionRequest",
+                      "responseType": "Subscription",
+                      "options": {
+                        "(google.api.http).get": "/v1/{subscription=projects/*/subscriptions/*}",
+                        "(google.api.method_signature)": "subscription"
+                      }
+                    },
+                    "UpdateSubscription": {
+                      "requestType": "UpdateSubscriptionRequest",
+                      "responseType": "Subscription",
+                      "options": {
+                        "(google.api.http).patch": "/v1/{subscription.name=projects/*/subscriptions/*}",
+                        "(google.api.http).body": "*"
+                      }
+                    },
+                    "ListSubscriptions": {
+                      "requestType": "ListSubscriptionsRequest",
+                      "responseType": "ListSubscriptionsResponse",
+                      "options": {
+                        "(google.api.http).get": "/v1/{project=projects/*}/subscriptions",
+                        "(google.api.method_signature)": "project"
+                      }
+                    },
+                    "DeleteSubscription": {
+                      "requestType": "DeleteSubscriptionRequest",
+                      "responseType": "google.protobuf.Empty",
+                      "options": {
+                        "(google.api.http).delete": "/v1/{subscription=projects/*/subscriptions/*}",
+                        "(google.api.method_signature)": "subscription"
+                      }
+                    },
+                    "ModifyAckDeadline": {
+                      "requestType": "ModifyAckDeadlineRequest",
+                      "responseType": "google.protobuf.Empty",
+                      "options": {
+                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:modifyAckDeadline",
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "subscription,ack_ids,ack_deadline_seconds"
+                      }
+                    },
+                    "Acknowledge": {
+                      "requestType": "AcknowledgeRequest",
+                      "responseType": "google.protobuf.Empty",
+                      "options": {
+                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:acknowledge",
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "subscription,ack_ids"
+                      }
+                    },
+                    "Pull": {
+                      "requestType": "PullRequest",
+                      "responseType": "PullResponse",
+                      "options": {
+                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:pull",
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "subscription,return_immediately,max_messages"
+                      }
+                    },
+                    "StreamingPull": {
+                      "requestType": "StreamingPullRequest",
+                      "requestStream": true,
+                      "responseType": "StreamingPullResponse",
+                      "responseStream": true
+                    },
+                    "ModifyPushConfig": {
+                      "requestType": "ModifyPushConfigRequest",
+                      "responseType": "google.protobuf.Empty",
+                      "options": {
+                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:modifyPushConfig",
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "subscription,push_config"
+                      }
+                    },
+                    "GetSnapshot": {
+                      "requestType": "GetSnapshotRequest",
+                      "responseType": "Snapshot",
+                      "options": {
+                        "(google.api.http).get": "/v1/{snapshot=projects/*/snapshots/*}",
+                        "(google.api.method_signature)": "snapshot"
+                      }
+                    },
+                    "ListSnapshots": {
+                      "requestType": "ListSnapshotsRequest",
+                      "responseType": "ListSnapshotsResponse",
+                      "options": {
+                        "(google.api.http).get": "/v1/{project=projects/*}/snapshots",
+                        "(google.api.method_signature)": "project"
+                      }
+                    },
+                    "CreateSnapshot": {
+                      "requestType": "CreateSnapshotRequest",
+                      "responseType": "Snapshot",
+                      "options": {
+                        "(google.api.http).put": "/v1/{name=projects/*/snapshots/*}",
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "name,subscription"
+                      }
+                    },
+                    "UpdateSnapshot": {
+                      "requestType": "UpdateSnapshotRequest",
+                      "responseType": "Snapshot",
+                      "options": {
+                        "(google.api.http).patch": "/v1/{snapshot.name=projects/*/snapshots/*}",
+                        "(google.api.http).body": "*"
+                      }
+                    },
+                    "DeleteSnapshot": {
+                      "requestType": "DeleteSnapshotRequest",
+                      "responseType": "google.protobuf.Empty",
+                      "options": {
+                        "(google.api.http).delete": "/v1/{snapshot=projects/*/snapshots/*}",
+                        "(google.api.method_signature)": "snapshot"
+                      }
+                    },
+                    "Seek": {
+                      "requestType": "SeekRequest",
+                      "responseType": "SeekResponse",
+                      "options": {
+                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:seek",
+                        "(google.api.http).body": "*"
+                      }
+                    }
+                  }
+                },
+                "Subscription": {
+                  "options": {
+                    "(google.api.resource).type": "pubsub.googleapis.com/Subscription",
+                    "(google.api.resource).pattern": "projects/{project}/subscriptions/{subscription}"
+                  },
+                  "fields": {
+                    "name": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "topic": {
+                      "type": "string",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
+                    },
+                    "pushConfig": {
+                      "type": "PushConfig",
+                      "id": 4
+                    },
+                    "ackDeadlineSeconds": {
+                      "type": "int32",
+                      "id": 5
+                    },
+                    "retainAckedMessages": {
+                      "type": "bool",
+                      "id": 7
+                    },
+                    "messageRetentionDuration": {
+                      "type": "google.protobuf.Duration",
+                      "id": 8
+                    },
+                    "labels": {
+                      "keyType": "string",
+                      "type": "string",
+                      "id": 9
+                    },
+                    "enableMessageOrdering": {
+                      "type": "bool",
+                      "id": 10
+                    },
+                    "expirationPolicy": {
+                      "type": "ExpirationPolicy",
+                      "id": 11
+                    },
+                    "filter": {
+                      "type": "string",
+                      "id": 12
+                    },
+                    "deadLetterPolicy": {
+                      "type": "DeadLetterPolicy",
+                      "id": 13
+                    },
+                    "retryPolicy": {
+                      "type": "RetryPolicy",
+                      "id": 14
+                    }
+                  }
+                },
+                "RetryPolicy": {
+                  "fields": {
+                    "minimumBackoff": {
+                      "type": "google.protobuf.Duration",
+                      "id": 1
+                    },
+                    "maximumBackoff": {
+                      "type": "google.protobuf.Duration",
+                      "id": 2
+                    }
+                  }
+                },
+                "DeadLetterPolicy": {
+                  "fields": {
+                    "deadLetterTopic": {
+                      "type": "string",
+                      "id": 1
+                    },
+                    "maxDeliveryAttempts": {
+                      "type": "int32",
+                      "id": 2
+                    }
+                  }
+                },
+                "ExpirationPolicy": {
+                  "fields": {
+                    "ttl": {
+                      "type": "google.protobuf.Duration",
+                      "id": 1
+                    }
+                  }
+                },
+                "PushConfig": {
+                  "oneofs": {
+                    "authenticationMethod": {
+                      "oneof": [
+                        "oidcToken"
+                      ]
+                    }
+                  },
+                  "fields": {
+                    "pushEndpoint": {
+                      "type": "string",
+                      "id": 1
+                    },
+                    "attributes": {
+                      "keyType": "string",
+                      "type": "string",
+                      "id": 2
+                    },
+                    "oidcToken": {
+                      "type": "OidcToken",
+                      "id": 3
+                    }
+                  },
+                  "nested": {
+                    "OidcToken": {
+                      "fields": {
+                        "serviceAccountEmail": {
+                          "type": "string",
+                          "id": 1
+                        },
+                        "audience": {
+                          "type": "string",
+                          "id": 2
+                        }
+                      }
+                    }
+                  }
+                },
+                "ReceivedMessage": {
+                  "fields": {
+                    "ackId": {
+                      "type": "string",
+                      "id": 1
+                    },
+                    "message": {
+                      "type": "PubsubMessage",
+                      "id": 2
+                    },
+                    "deliveryAttempt": {
+                      "type": "int32",
+                      "id": 3
+                    }
+                  }
+                },
+                "GetSubscriptionRequest": {
+                  "fields": {
+                    "subscription": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    }
+                  }
+                },
+                "UpdateSubscriptionRequest": {
+                  "fields": {
+                    "subscription": {
+                      "type": "Subscription",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "updateMask": {
+                      "type": "google.protobuf.FieldMask",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "ListSubscriptionsRequest": {
+                  "fields": {
+                    "project": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
+                      }
+                    },
+                    "pageSize": {
+                      "type": "int32",
+                      "id": 2
+                    },
+                    "pageToken": {
+                      "type": "string",
+                      "id": 3
+                    }
+                  }
+                },
+                "ListSubscriptionsResponse": {
+                  "fields": {
+                    "subscriptions": {
+                      "rule": "repeated",
+                      "type": "Subscription",
+                      "id": 1
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "id": 2
+                    }
+                  }
+                },
+                "DeleteSubscriptionRequest": {
+                  "fields": {
+                    "subscription": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    }
+                  }
+                },
+                "ModifyPushConfigRequest": {
+                  "fields": {
+                    "subscription": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    },
+                    "pushConfig": {
+                      "type": "PushConfig",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "PullRequest": {
+                  "fields": {
+                    "subscription": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    },
+                    "returnImmediately": {
+                      "type": "bool",
+                      "id": 2,
+                      "options": {
+                        "deprecated": true,
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "maxMessages": {
+                      "type": "int32",
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "PullResponse": {
+                  "fields": {
+                    "receivedMessages": {
+                      "rule": "repeated",
+                      "type": "ReceivedMessage",
+                      "id": 1
+                    }
+                  }
+                },
+                "ModifyAckDeadlineRequest": {
+                  "fields": {
+                    "subscription": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    },
+                    "ackIds": {
+                      "rule": "repeated",
+                      "type": "string",
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "ackDeadlineSeconds": {
+                      "type": "int32",
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "AcknowledgeRequest": {
+                  "fields": {
+                    "subscription": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    },
+                    "ackIds": {
+                      "rule": "repeated",
+                      "type": "string",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "StreamingPullRequest": {
+                  "fields": {
+                    "subscription": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    },
+                    "ackIds": {
+                      "rule": "repeated",
+                      "type": "string",
+                      "id": 2
+                    },
+                    "modifyDeadlineSeconds": {
+                      "rule": "repeated",
+                      "type": "int32",
+                      "id": 3
+                    },
+                    "modifyDeadlineAckIds": {
+                      "rule": "repeated",
+                      "type": "string",
+                      "id": 4
+                    },
+                    "streamAckDeadlineSeconds": {
+                      "type": "int32",
+                      "id": 5,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "clientId": {
+                      "type": "string",
+                      "id": 6
+                    }
+                  }
+                },
+                "StreamingPullResponse": {
+                  "fields": {
+                    "receivedMessages": {
+                      "rule": "repeated",
+                      "type": "ReceivedMessage",
+                      "id": 1
+                    }
+                  }
+                },
+                "CreateSnapshotRequest": {
+                  "fields": {
+                    "name": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
+                      }
+                    },
+                    "subscription": {
+                      "type": "string",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    },
+                    "labels": {
+                      "keyType": "string",
+                      "type": "string",
+                      "id": 3
+                    }
+                  }
+                },
+                "UpdateSnapshotRequest": {
+                  "fields": {
+                    "snapshot": {
+                      "type": "Snapshot",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "updateMask": {
+                      "type": "google.protobuf.FieldMask",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "Snapshot": {
+                  "options": {
+                    "(google.api.resource).type": "pubsub.googleapis.com/Snapshot",
+                    "(google.api.resource).pattern": "projects/{project}/snapshots/{snapshot}"
+                  },
+                  "fields": {
+                    "name": {
+                      "type": "string",
+                      "id": 1
+                    },
+                    "topic": {
+                      "type": "string",
+                      "id": 2,
+                      "options": {
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
+                      }
+                    },
+                    "expireTime": {
+                      "type": "google.protobuf.Timestamp",
+                      "id": 3
+                    },
+                    "labels": {
+                      "keyType": "string",
+                      "type": "string",
+                      "id": 4
+                    }
+                  }
+                },
+                "GetSnapshotRequest": {
+                  "fields": {
+                    "snapshot": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
+                      }
+                    }
+                  }
+                },
+                "ListSnapshotsRequest": {
+                  "fields": {
+                    "project": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
+                      }
+                    },
+                    "pageSize": {
+                      "type": "int32",
+                      "id": 2
+                    },
+                    "pageToken": {
+                      "type": "string",
+                      "id": 3
+                    }
+                  }
+                },
+                "ListSnapshotsResponse": {
+                  "fields": {
+                    "snapshots": {
+                      "rule": "repeated",
+                      "type": "Snapshot",
+                      "id": 1
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "id": 2
+                    }
+                  }
+                },
+                "DeleteSnapshotRequest": {
+                  "fields": {
+                    "snapshot": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
+                      }
+                    }
+                  }
+                },
+                "SeekRequest": {
+                  "oneofs": {
+                    "target": {
+                      "oneof": [
+                        "time",
+                        "snapshot"
+                      ]
+                    }
+                  },
+                  "fields": {
+                    "subscription": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    },
+                    "time": {
+                      "type": "google.protobuf.Timestamp",
+                      "id": 2
+                    },
+                    "snapshot": {
+                      "type": "string",
+                      "id": 3,
+                      "options": {
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
+                      }
+                    }
+                  }
+                },
+                "SeekResponse": {
+                  "fields": {}
                 }
               }
             }

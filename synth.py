@@ -25,8 +25,7 @@ library = gapic.typescript_library(
         'template': f'typescript_gapic'
     },
     proto_path=f'/google/pubsub/{version}',
-    extra_proto_files=['google/iam/v1/', 'google/api/',
-                       'google/type']
+    extra_proto_files=['google/iam/v1/']
 )
 
 # skip index, protos, package.json, and README.md
@@ -51,14 +50,32 @@ for list_json in list_jsons:
             [(x not in item) for x in remove_proto_keywords])]
         new_file = json.dumps(content, indent=2) + '\n'
     with open(list_json, 'w') as f:
-        f.write(new_file.replace('logging/audit_data.proto', 'iam_policy.proto'))
+        f.write(new_file)
 
-# fix tslint issue due to mismatch gts version with gapic-generator-typescript
-# it should be removed once pubsub upgrade gts 2.0.0
-s.replace('src/v1/publisher_client.ts', '\/\*\ eslint\-disable\ \@typescript\-eslint\/no\-explicit\-any\ \*/',
-          '// tslint:disable-next-line no-any')
-s.replace('src/v1/subscriber_client.ts', '\/\*\ eslint\-disable\ \@typescript\-eslint\/no\-explicit\-any\ \*\/',
-          '// tslint:disable-next-line no-any')
+# surgery in client.ts file
+clients = ['publisher', 'subscriber']
+for client_name in clients:
+    client_file = f'src/v1/{client_name}_client.ts'
+    s.replace(client_file,
+              f'import \* as gapicConfig from \'\.\/{client_name}_client_config\.json\';',
+              f'import * as gapicConfig from \'./%s_client_config.json\';\nimport {{IamClient}} from \'../helper\';' % client_name,
+              )
+
+    s.replace(client_file,
+              'private \_terminated = false;',
+              'private _terminated = false; \n private _iamClient: IamClient;')
+
+    s.replace(client_file,
+              '\/\/ Determine the client header string.',
+              'this._iamClient = new IamClient(opts); \n // Determine the client header string.')
+
+    # fix tslint issue due to mismatch gts version with gapic-generator-typescript
+    # it should be removed once pubsub upgrade gts 2.0.0
+    s.replace(client_file, '\/\*\ eslint\-disable\ \@typescript\-eslint\/no\-explicit\-any\ \*/',
+              '// tslint:disable-next-line no-any')
+    with open('helperMethods.ts.tmpl', 'r') as helper_file:
+        content = helper_file.read()
+    s.replace(client_file, '^}', content)
 
 # Node.js specific cleanup
 subprocess.run(['npm', 'install'])
