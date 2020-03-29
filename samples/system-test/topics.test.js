@@ -178,10 +178,14 @@ describe('topics', () => {
 
     const {data, publishTime} = await _pullOneMessage(subscription);
     const actualWait = publishTime.getTime() - startTime;
-    const acceptableLatency = 100;
+    const acceptableLatency = 150;
 
     assert.strictEqual(data.toString(), expectedMessage.data);
-    assert(actualWait <= waitTime + acceptableLatency);
+    assert.isAtMost(
+      actualWait,
+      waitTime + acceptableLatency,
+      'read is within acceptable latency'
+    );
   });
 
   it('should publish with retry settings', async () => {
