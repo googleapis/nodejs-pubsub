@@ -114,6 +114,9 @@ class FakeGaxClient {
     this.client = new FakeGrpcClient();
     this.subscriberStub = this.getSubscriberStub();
   }
+  initialize() {
+    return this.subscriberStub;
+  }
   async getSubscriberStub(): Promise<FakeGrpcClient> {
     return this.client;
   }
