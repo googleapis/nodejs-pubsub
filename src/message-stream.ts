@@ -95,7 +95,7 @@ export class ChannelError extends Error implements ServiceError {
   constructor(err: Error) {
     super(
       `Failed to connect to channel. Reason: ${
-        process.env.DEBUG_GRPC ? err.stack : err.message
+      process.env.DEBUG_GRPC ? err.stack : err.message
       }`
     );
     this.code = err.message.includes('deadline')
@@ -258,6 +258,7 @@ export class MessageStream extends PassThrough {
    */
   private async _getClient(): Promise<ClientStub> {
     const client = await this._subscriber.getClient();
+    client.initialize();
     return client.subscriberStub as Promise<ClientStub>;
   }
   /**
