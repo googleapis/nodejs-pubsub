@@ -27,7 +27,7 @@
 //   description: Creates a new topic.
 //   usage: node createTopic.js <topic-name>
 
-async function main(topicName = 'YOUR_TOPIC_NAME') {
+function main(topicName = 'YOUR_TOPIC_NAME') {
   // [START pubsub_create_topic]
   /**
    * TODO(developer): Uncomment this variable before running the sample.
@@ -46,11 +46,8 @@ async function main(topicName = 'YOUR_TOPIC_NAME') {
     console.log(`Topic ${topicName} created.`);
   }
 
-  createTopic();
+  createTopic().catch(console.error);
   // [END pubsub_create_topic]
 }
 
-main(...process.argv.slice(2)).catch(e => {
-  console.error(e);
-  process.exitCode = -1;
-});
+main(...process.argv.slice(2));

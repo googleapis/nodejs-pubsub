@@ -47,7 +47,6 @@ class FakeQueue extends EventEmitter {
     this.publisher = publisher;
   }
   add(message: p.PubsubMessage, callback: p.PublishCallback): void {}
-  publish(callback: (err: Error | null) => void) {}
 }
 
 class FakeOrderedQueue extends FakeQueue {
@@ -58,7 +57,6 @@ class FakeOrderedQueue extends FakeQueue {
     this.orderingKey = key;
   }
   resumePublishing(): void {}
-  publish(callback: (err: Error | null) => void) {}
 }
 
 describe('Publisher', () => {
@@ -241,34 +239,6 @@ describe('Publisher', () => {
 
         assert.strictEqual(publisher.orderedQueues.size, 0);
       });
-
-      it('should drain any ordered queues on flush', done => {
-        // We have to stub out the regular queue as well, so that the flush() operation finishes.
-        sandbox
-          .stub(FakeQueue.prototype, 'publish')
-          .callsFake((callback: (err: Error | null) => void) => {
-            callback(null);
-          });
-
-        sandbox
-          .stub(FakeOrderedQueue.prototype, 'publish')
-          .callsFake((callback: (err: Error | null) => void) => {
-            const queue = (publisher.orderedQueues.get(
-              orderingKey
-            ) as unknown) as FakeOrderedQueue;
-            queue.emit('drain');
-            callback(null);
-          });
-
-        publisher.orderedQueues.clear();
-        publisher.publishMessage(fakeMessage, spy);
-
-        publisher.flush(err => {
-          assert.strictEqual(err, null);
-          assert.strictEqual(publisher.orderedQueues.size, 0);
-          done();
-        });
-      });
     });
   });
 
@@ -343,25 +313,6 @@ describe('Publisher', () => {
 
       const expected = 1000;
       assert.strictEqual(publisher.settings.batching!.maxMessages, 1000);
-    });
-  });
-
-  describe('flush', () => {
-    // The ordered queue drain test is above with the ordered queue tests.
-    it('should drain the main publish queue', done => {
-      sandbox.stub(publisher.queue, 'publish').callsFake(cb => {
-        if (cb) {
-          cb(null);
-        }
-      });
-      publisher.flush(err => {
-        assert.strictEqual(err, null);
-        assert.strictEqual(
-          !publisher.queue.batch || publisher.queue.batch.messages.length === 0,
-          true
-        );
-        done();
-      });
     });
   });
 });

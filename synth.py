@@ -6,9 +6,6 @@ import os
 
 logging.basicConfig(level=logging.DEBUG)
 
-AUTOSYNTH_MULTIPLE_COMMITS = True
-
-
 gapic = gcp.GAPICGenerator()
 common_templates = gcp.CommonTemplates()
 

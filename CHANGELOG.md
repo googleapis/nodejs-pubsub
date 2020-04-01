@@ -4,13 +4,6 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
-## [1.7.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.6.0...v1.7.0) (2020-03-29)
-
-
-### Features
-
-* add a close() method to PubSub, and a flush() method to Topic/Publisher ([#916](https://www.github.com/googleapis/nodejs-pubsub/issues/916)) ([4097995](https://www.github.com/googleapis/nodejs-pubsub/commit/4097995a85a8ca3fb73c2c2a8cb0649cdd4274be))
-
 ## [1.6.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.5.0...v1.6.0) (2020-03-04)
 
 

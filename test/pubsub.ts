@@ -153,14 +153,6 @@ describe('PubSub', () => {
 
   const PUBSUB_EMULATOR_HOST = process.env.PUBSUB_EMULATOR_HOST;
 
-  interface PostCloseCallback {
-    (err: Error | null): void;
-  }
-
-  interface PostCloseTest {
-    (callback: PostCloseCallback): void;
-  }
-
   before(() => {
     delete process.env.PUBSUB_EMULATOR_HOST;
     PubSub = proxyquire('../src/pubsub', {
@@ -249,15 +241,6 @@ describe('PubSub', () => {
 
     it('should initialize the API object', () => {
       assert.deepStrictEqual(pubsub.api, {});
-    });
-
-    it('should default to the opened state', () => {
-      assert.strictEqual(pubsub.isOpen, true);
-    });
-
-    it('should not be in the opened state after close()', async () => {
-      await pubsub.close();
-      assert.strictEqual(pubsub.isOpen, false);
     });
 
     it('should cache a local google-auth-library instance', () => {
@@ -1058,21 +1041,6 @@ describe('PubSub', () => {
       };
     });
 
-    it('should throw if the PubSub is already closed', done => {
-      pubsub.close((err: Error | null) => {
-        assert.strictEqual(err, null);
-
-        pubsub.request(CONFIG, (errInner: Error | null) => {
-          assert.notStrictEqual(errInner, null);
-          assert.strictEqual(
-            errInner!.message.indexOf('closed PubSub object') >= 0,
-            true
-          );
-          done();
-        });
-      });
-    });
-
     it('should call getClient_ with the correct config', done => {
       pubsub.getClient_ = config => {
         assert.strictEqual(config, CONFIG);
@@ -1120,9 +1088,7 @@ describe('PubSub', () => {
   });
 
   describe('getClientAsync_', () => {
-    const FAKE_CLIENT_INSTANCE = class {
-      close() {}
-    };
+    const FAKE_CLIENT_INSTANCE = class {};
     const CONFIG = ({
       client: 'FakeClient',
     } as {}) as pubsubTypes.GetClientConfig;
@@ -1133,19 +1099,6 @@ describe('PubSub', () => {
     });
 
     afterEach(() => sandbox.restore());
-
-    describe('closeAllClients_', () => {
-      it('should close out any open client', async () => {
-        // Create a client that we'll close.
-        const client = await pubsub.getClientAsync_(CONFIG);
-
-        // Stub out its close method, and verify it gets called.
-        const stub = sandbox.stub(client, 'close').resolves();
-        await pubsub.closeAllClients_();
-
-        assert.strictEqual(stub.called, true);
-      });
-    });
 
     describe('project ID', () => {
       beforeEach(() => {

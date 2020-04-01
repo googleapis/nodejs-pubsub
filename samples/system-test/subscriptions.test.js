@@ -15,23 +15,35 @@
 'use strict';
 
 const {PubSub} = require('@google-cloud/pubsub');
+const assertRejects = require('assert').rejects;
 const {assert} = require('chai');
 const {describe, it, before, after} = require('mocha');
 const cp = require('child_process');
 const uuid = require('uuid');
 
 const execSync = cmd => cp.execSync(cmd, {encoding: 'utf-8'});
+const execPromise = cmd =>
+  new Promise((resolve, reject) => {
+    cp.exec(cmd, {encoding: 'utf-8'}, (err, stdout, stderr) => {
+      if (err) {
+        err.stderr = stderr;
+        reject(err);
+        return;
+      }
+      resolve(stdout);
+    });
+  });
 
 describe('subscriptions', () => {
   const projectId = process.env.GCLOUD_PROJECT;
   const pubsub = new PubSub({projectId});
-  const runId = uuid.v4();
-  const topicNameOne = `topic1-${runId}`;
-  const topicNameTwo = `topic2-${runId}`;
-  const subscriptionNameOne = `sub1-${runId}`;
-  const subscriptionNameTwo = `sub2-${runId}`;
-  const subscriptionNameThree = `sub3-${runId}`;
-  const subscriptionNameFour = `sub4-${runId}`;
+
+  const topicNameOne = `nodejs-docs-samples-test-${uuid.v4()}`;
+  const topicNameTwo = `nodejs-docs-samples-test-${uuid.v4()}`;
+  const subscriptionNameOne = `nodejs-docs-samples-test-sub-${uuid.v4()}`;
+  const subscriptionNameTwo = `nodejs-docs-samples-test-sub-${uuid.v4()}`;
+  const subscriptionNameThree = `nodejs-docs-samples-test-sub-${uuid.v4()}`;
+  const subscriptionNameFour = `nodejs-docs-samples-test-sub-${uuid.v4()}`;
   const fullTopicNameOne = `projects/${projectId}/topics/${topicNameOne}`;
   const fullSubscriptionNameOne = `projects/${projectId}/subscriptions/${subscriptionNameOne}`;
   const fullSubscriptionNameTwo = `projects/${projectId}/subscriptions/${subscriptionNameTwo}`;
@@ -41,24 +53,22 @@ describe('subscriptions', () => {
     return `node ${action}.js`;
   }
 
-  before(async () => {
+  before(() => {
     return Promise.all([
       pubsub.createTopic(topicNameOne),
       pubsub.createTopic(topicNameTwo),
     ]);
   });
 
-  after(async () => {
-    const [subscriptions] = await pubsub.getSubscriptions();
-    const runSubs = subscriptions.filter(x => x.name.endsWith(runId));
-    for (const sub of runSubs) {
-      await sub.delete();
-    }
-    const [topics] = await pubsub.getTopics();
-    const runTops = topics.filter(x => x.name.endsWith(runId));
-    for (const t of runTops) {
-      await t.delete();
-    }
+  after(() => {
+    return Promise.all([
+      pubsub.subscription(subscriptionNameOne).delete(),
+      pubsub.subscription(subscriptionNameTwo).delete(),
+      pubsub.subscription(subscriptionNameThree).delete(),
+      pubsub.subscription(subscriptionNameFour).delete(),
+      pubsub.topic(topicNameOne).delete(),
+      pubsub.topic(topicNameTwo).delete(),
+    ]).catch(console.error);
   });
 
   it('should create a subscription', async () => {
@@ -168,13 +178,6 @@ describe('subscriptions', () => {
     assert(subscriptions.some(s => s.name === fullSubscriptionNameFour));
   });
 
-  it('should listen for error messages', () => {
-    assert.throws(
-      () => execSync(`node listenForErrors nonexistent-subscription`),
-      /Resource not found/
-    );
-  });
-
   it('should listen for ordered messages', async () => {
     const timeout = 5;
     const subscriptions = require('../listenForOrderedMessages');
@@ -234,6 +237,16 @@ describe('subscriptions', () => {
       {counterId: '3'},
     ]);
     console.log = log; // eslint-disable-line require-atomic-updates
+  });
+
+  it('should listen for error messages', async () => {
+    assertRejects(
+      () =>
+        execPromise(
+          `${commandFor('listenForErrors')} nonexistent-subscription`
+        ),
+      /Resource not found/
+    );
   });
 
   it('should set the IAM policy for a subscription', async () => {

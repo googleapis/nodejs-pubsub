@@ -181,22 +181,6 @@ export class Topic {
     this.iam = new IAM(pubsub, this.name);
   }
 
-  flush(): Promise<void>;
-  flush(callback: EmptyCallback): void;
-  /**
-   * Immediately sends all remaining queued data. This is mostly useful
-   * if you are planning to call close() on the PubSub object that holds
-   * the server connections.
-   *
-   * @param {EmptyCallback} [callback] Callback function.
-   * @returns {Promise<EmptyResponse>}
-   */
-  flush(callback?: EmptyCallback): Promise<void> | void {
-    // It doesn't matter here if callback is undefined; the Publisher
-    // flush() will handle it.
-    this.publisher.flush(callback!);
-  }
-
   create(gaxOpts?: CallOptions): Promise<CreateTopicResponse>;
   create(callback: CreateTopicCallback): void;
   create(gaxOpts: CallOptions, callback: CreateTopicCallback): void;
@@ -850,7 +834,7 @@ export class Topic {
   /**
    * Updates the topic.
    *
-   * @see [UpdateTopicRequest API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rpc/google.pubsub.v1#google.pubsub.v1.UpdateTopicRequest}
+   * @see [UpdateTopicRequest API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/UpdateTopicRequest}
    *
    * @param {object} metadata The fields to update. This should be structured
    *     like a {@link

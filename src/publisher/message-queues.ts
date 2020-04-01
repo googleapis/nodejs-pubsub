@@ -131,7 +131,7 @@ export class Queue extends MessageQueue {
   /**
    * Cancels any pending publishes and calls _publish immediately.
    */
-  publish(callback?: PublishDone): void {
+  publish(): void {
     const {messages, callbacks} = this.batch;
 
     this.batch = new MessageBatch(this.batchOptions);
@@ -141,7 +141,7 @@ export class Queue extends MessageQueue {
       delete this.pending;
     }
 
-    this._publish(messages, callbacks, callback);
+    this._publish(messages, callbacks);
   }
 }
 
@@ -259,8 +259,7 @@ export class OrderedQueue extends MessageQueue {
    *
    * @fires OrderedQueue#drain
    */
-  publish(callback?: PublishDone): void {
-    const definedCallback = callback || (() => {});
+  publish(): void {
     this.inFlight = true;
 
     if (this.pending) {
@@ -275,12 +274,10 @@ export class OrderedQueue extends MessageQueue {
 
       if (err) {
         this.handlePublishFailure(err);
-        definedCallback(err);
       } else if (this.batches.length) {
         this.beginNextPublish();
       } else {
         this.emit('drain');
-        definedCallback(null);
       }
     });
   }

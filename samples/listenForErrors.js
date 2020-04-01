@@ -27,7 +27,7 @@
 //   description: Listens to messages and errors for a subscription.
 //   usage: node listenForErrors.js <subscription-name> [timeout-in-seconds]
 
-async function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 10) {
+function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 10) {
   timeout = Number(timeout);
 
   // [START pubsub_subscriber_error_listener]
@@ -43,7 +43,7 @@ async function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 10) {
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
-  function listenForErrors() {
+  async function listenForErrors() {
     // References an existing subscription
     const subscription = pubSubClient.subscription(subscriptionName);
 
@@ -60,7 +60,6 @@ async function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 10) {
     const errorHandler = function(error) {
       // Do something with the error
       console.error(`ERROR: ${error}`);
-      throw error;
     };
 
     // Listen for new messages/errors until timeout is hit
@@ -73,11 +72,8 @@ async function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 10) {
     }, timeout * 1000);
   }
 
-  listenForErrors();
+  listenForErrors().catch(console.error);
   // [END pubsub_subscriber_error_listener]
 }
 
-main(...process.argv.slice(2)).catch(e => {
-  console.error(e);
-  process.exitCode = -1;
-});
+main(...process.argv.slice(2));
