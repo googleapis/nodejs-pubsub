@@ -4138,6 +4138,7 @@
                      * @property {boolean|null} [enableMessageOrdering] Subscription enableMessageOrdering
                      * @property {google.pubsub.v1.IExpirationPolicy|null} [expirationPolicy] Subscription expirationPolicy
                      * @property {google.pubsub.v1.IDeadLetterPolicy|null} [deadLetterPolicy] Subscription deadLetterPolicy
+                     * @property {google.pubsub.v1.IRetryPolicy|null} [retryPolicy] Subscription retryPolicy
                      */
     
                     /**
@@ -4237,6 +4238,14 @@
                     Subscription.prototype.deadLetterPolicy = null;
     
                     /**
+                     * Subscription retryPolicy.
+                     * @member {google.pubsub.v1.IRetryPolicy|null|undefined} retryPolicy
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.retryPolicy = null;
+    
+                    /**
                      * Creates a new Subscription instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Subscription
@@ -4281,6 +4290,8 @@
                             $root.google.pubsub.v1.ExpirationPolicy.encode(message.expirationPolicy, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
                         if (message.deadLetterPolicy != null && message.hasOwnProperty("deadLetterPolicy"))
                             $root.google.pubsub.v1.DeadLetterPolicy.encode(message.deadLetterPolicy, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
+                        if (message.retryPolicy != null && message.hasOwnProperty("retryPolicy"))
+                            $root.google.pubsub.v1.RetryPolicy.encode(message.retryPolicy, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
                         return writer;
                     };
     
@@ -4349,6 +4360,9 @@
                                 break;
                             case 13:
                                 message.deadLetterPolicy = $root.google.pubsub.v1.DeadLetterPolicy.decode(reader, reader.uint32());
+                                break;
+                            case 14:
+                                message.retryPolicy = $root.google.pubsub.v1.RetryPolicy.decode(reader, reader.uint32());
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -4428,6 +4442,11 @@
                             if (error)
                                 return "deadLetterPolicy." + error;
                         }
+                        if (message.retryPolicy != null && message.hasOwnProperty("retryPolicy")) {
+                            var error = $root.google.pubsub.v1.RetryPolicy.verify(message.retryPolicy);
+                            if (error)
+                                return "retryPolicy." + error;
+                        }
                         return null;
                     };
     
@@ -4480,6 +4499,11 @@
                                 throw TypeError(".google.pubsub.v1.Subscription.deadLetterPolicy: object expected");
                             message.deadLetterPolicy = $root.google.pubsub.v1.DeadLetterPolicy.fromObject(object.deadLetterPolicy);
                         }
+                        if (object.retryPolicy != null) {
+                            if (typeof object.retryPolicy !== "object")
+                                throw TypeError(".google.pubsub.v1.Subscription.retryPolicy: object expected");
+                            message.retryPolicy = $root.google.pubsub.v1.RetryPolicy.fromObject(object.retryPolicy);
+                        }
                         return message;
                     };
     
@@ -4508,6 +4532,7 @@
                             object.enableMessageOrdering = false;
                             object.expirationPolicy = null;
                             object.deadLetterPolicy = null;
+                            object.retryPolicy = null;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
                             object.name = message.name;
@@ -4533,6 +4558,8 @@
                             object.expirationPolicy = $root.google.pubsub.v1.ExpirationPolicy.toObject(message.expirationPolicy, options);
                         if (message.deadLetterPolicy != null && message.hasOwnProperty("deadLetterPolicy"))
                             object.deadLetterPolicy = $root.google.pubsub.v1.DeadLetterPolicy.toObject(message.deadLetterPolicy, options);
+                        if (message.retryPolicy != null && message.hasOwnProperty("retryPolicy"))
+                            object.retryPolicy = $root.google.pubsub.v1.RetryPolicy.toObject(message.retryPolicy, options);
                         return object;
                     };
     
@@ -4548,6 +4575,226 @@
                     };
     
                     return Subscription;
+                })();
+    
+                v1.RetryPolicy = (function() {
+    
+                    /**
+                     * Properties of a RetryPolicy.
+                     * @memberof google.pubsub.v1
+                     * @interface IRetryPolicy
+                     * @property {google.protobuf.IDuration|null} [minimumBackoff] RetryPolicy minimumBackoff
+                     * @property {google.protobuf.IDuration|null} [maximumBackoff] RetryPolicy maximumBackoff
+                     */
+    
+                    /**
+                     * Constructs a new RetryPolicy.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a RetryPolicy.
+                     * @implements IRetryPolicy
+                     * @constructor
+                     * @param {google.pubsub.v1.IRetryPolicy=} [properties] Properties to set
+                     */
+                    function RetryPolicy(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * RetryPolicy minimumBackoff.
+                     * @member {google.protobuf.IDuration|null|undefined} minimumBackoff
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @instance
+                     */
+                    RetryPolicy.prototype.minimumBackoff = null;
+    
+                    /**
+                     * RetryPolicy maximumBackoff.
+                     * @member {google.protobuf.IDuration|null|undefined} maximumBackoff
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @instance
+                     */
+                    RetryPolicy.prototype.maximumBackoff = null;
+    
+                    /**
+                     * Creates a new RetryPolicy instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {google.pubsub.v1.IRetryPolicy=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.RetryPolicy} RetryPolicy instance
+                     */
+                    RetryPolicy.create = function create(properties) {
+                        return new RetryPolicy(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified RetryPolicy message. Does not implicitly {@link google.pubsub.v1.RetryPolicy.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {google.pubsub.v1.IRetryPolicy} message RetryPolicy message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    RetryPolicy.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.minimumBackoff != null && message.hasOwnProperty("minimumBackoff"))
+                            $root.google.protobuf.Duration.encode(message.minimumBackoff, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        if (message.maximumBackoff != null && message.hasOwnProperty("maximumBackoff"))
+                            $root.google.protobuf.Duration.encode(message.maximumBackoff, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified RetryPolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.RetryPolicy.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {google.pubsub.v1.IRetryPolicy} message RetryPolicy message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    RetryPolicy.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a RetryPolicy message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.RetryPolicy} RetryPolicy
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    RetryPolicy.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.RetryPolicy();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.minimumBackoff = $root.google.protobuf.Duration.decode(reader, reader.uint32());
+                                break;
+                            case 2:
+                                message.maximumBackoff = $root.google.protobuf.Duration.decode(reader, reader.uint32());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a RetryPolicy message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.RetryPolicy} RetryPolicy
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    RetryPolicy.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a RetryPolicy message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    RetryPolicy.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.minimumBackoff != null && message.hasOwnProperty("minimumBackoff")) {
+                            var error = $root.google.protobuf.Duration.verify(message.minimumBackoff);
+                            if (error)
+                                return "minimumBackoff." + error;
+                        }
+                        if (message.maximumBackoff != null && message.hasOwnProperty("maximumBackoff")) {
+                            var error = $root.google.protobuf.Duration.verify(message.maximumBackoff);
+                            if (error)
+                                return "maximumBackoff." + error;
+                        }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a RetryPolicy message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.RetryPolicy} RetryPolicy
+                     */
+                    RetryPolicy.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.RetryPolicy)
+                            return object;
+                        var message = new $root.google.pubsub.v1.RetryPolicy();
+                        if (object.minimumBackoff != null) {
+                            if (typeof object.minimumBackoff !== "object")
+                                throw TypeError(".google.pubsub.v1.RetryPolicy.minimumBackoff: object expected");
+                            message.minimumBackoff = $root.google.protobuf.Duration.fromObject(object.minimumBackoff);
+                        }
+                        if (object.maximumBackoff != null) {
+                            if (typeof object.maximumBackoff !== "object")
+                                throw TypeError(".google.pubsub.v1.RetryPolicy.maximumBackoff: object expected");
+                            message.maximumBackoff = $root.google.protobuf.Duration.fromObject(object.maximumBackoff);
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a RetryPolicy message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @static
+                     * @param {google.pubsub.v1.RetryPolicy} message RetryPolicy
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    RetryPolicy.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.minimumBackoff = null;
+                            object.maximumBackoff = null;
+                        }
+                        if (message.minimumBackoff != null && message.hasOwnProperty("minimumBackoff"))
+                            object.minimumBackoff = $root.google.protobuf.Duration.toObject(message.minimumBackoff, options);
+                        if (message.maximumBackoff != null && message.hasOwnProperty("maximumBackoff"))
+                            object.maximumBackoff = $root.google.protobuf.Duration.toObject(message.maximumBackoff, options);
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this RetryPolicy to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.RetryPolicy
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    RetryPolicy.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return RetryPolicy;
                 })();
     
                 v1.DeadLetterPolicy = (function() {

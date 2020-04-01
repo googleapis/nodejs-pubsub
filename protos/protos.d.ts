@@ -1975,6 +1975,9 @@ export namespace google {
 
                 /** Subscription deadLetterPolicy */
                 deadLetterPolicy?: (google.pubsub.v1.IDeadLetterPolicy|null);
+
+                /** Subscription retryPolicy */
+                retryPolicy?: (google.pubsub.v1.IRetryPolicy|null);
             }
 
             /** Represents a Subscription. */
@@ -2015,6 +2018,9 @@ export namespace google {
 
                 /** Subscription deadLetterPolicy. */
                 public deadLetterPolicy?: (google.pubsub.v1.IDeadLetterPolicy|null);
+
+                /** Subscription retryPolicy. */
+                public retryPolicy?: (google.pubsub.v1.IRetryPolicy|null);
 
                 /**
                  * Creates a new Subscription instance using the specified properties.
@@ -2082,6 +2088,102 @@ export namespace google {
 
                 /**
                  * Converts this Subscription to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a RetryPolicy. */
+            interface IRetryPolicy {
+
+                /** RetryPolicy minimumBackoff */
+                minimumBackoff?: (google.protobuf.IDuration|null);
+
+                /** RetryPolicy maximumBackoff */
+                maximumBackoff?: (google.protobuf.IDuration|null);
+            }
+
+            /** Represents a RetryPolicy. */
+            class RetryPolicy implements IRetryPolicy {
+
+                /**
+                 * Constructs a new RetryPolicy.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IRetryPolicy);
+
+                /** RetryPolicy minimumBackoff. */
+                public minimumBackoff?: (google.protobuf.IDuration|null);
+
+                /** RetryPolicy maximumBackoff. */
+                public maximumBackoff?: (google.protobuf.IDuration|null);
+
+                /**
+                 * Creates a new RetryPolicy instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RetryPolicy instance
+                 */
+                public static create(properties?: google.pubsub.v1.IRetryPolicy): google.pubsub.v1.RetryPolicy;
+
+                /**
+                 * Encodes the specified RetryPolicy message. Does not implicitly {@link google.pubsub.v1.RetryPolicy.verify|verify} messages.
+                 * @param message RetryPolicy message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IRetryPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified RetryPolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.RetryPolicy.verify|verify} messages.
+                 * @param message RetryPolicy message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IRetryPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RetryPolicy message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RetryPolicy
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.RetryPolicy;
+
+                /**
+                 * Decodes a RetryPolicy message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns RetryPolicy
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.RetryPolicy;
+
+                /**
+                 * Verifies a RetryPolicy message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a RetryPolicy message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RetryPolicy
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.RetryPolicy;
+
+                /**
+                 * Creates a plain object from a RetryPolicy message. Also converts values to other types if specified.
+                 * @param message RetryPolicy
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.RetryPolicy, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RetryPolicy to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
