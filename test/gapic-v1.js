@@ -733,12 +733,14 @@ describe('SubscriberClient', () => {
       const ackDeadlineSeconds = 2135351438;
       const retainAckedMessages = false;
       const enableMessageOrdering = true;
+      const filter = 'filter-1274492040';
       const expectedResponse = {
         name: name2,
         topic: topic2,
         ackDeadlineSeconds: ackDeadlineSeconds,
         retainAckedMessages: retainAckedMessages,
         enableMessageOrdering: enableMessageOrdering,
+        filter: filter,
       };
 
       // Mock Grpc layer
@@ -809,12 +811,14 @@ describe('SubscriberClient', () => {
       const ackDeadlineSeconds = 2135351438;
       const retainAckedMessages = false;
       const enableMessageOrdering = true;
+      const filter = 'filter-1274492040';
       const expectedResponse = {
         name: name,
         topic: topic,
         ackDeadlineSeconds: ackDeadlineSeconds,
         retainAckedMessages: retainAckedMessages,
         enableMessageOrdering: enableMessageOrdering,
+        filter: filter,
       };
 
       // Mock Grpc layer
@@ -889,12 +893,14 @@ describe('SubscriberClient', () => {
       const ackDeadlineSeconds2 = 921632575;
       const retainAckedMessages = false;
       const enableMessageOrdering = true;
+      const filter = 'filter-1274492040';
       const expectedResponse = {
         name: name,
         topic: topic,
         ackDeadlineSeconds: ackDeadlineSeconds2,
         retainAckedMessages: retainAckedMessages,
         enableMessageOrdering: enableMessageOrdering,
+        filter: filter,
       };
 
       // Mock Grpc layer
