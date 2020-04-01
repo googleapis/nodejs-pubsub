@@ -501,10 +501,10 @@ describe('PublisherClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      const resource = 'resource-341064690';
       const policy = {};
       const request = {
-        resource: formattedResource,
+        resource: resource,
         policy: policy,
       };
 
@@ -536,10 +536,10 @@ describe('PublisherClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      const resource = 'resource-341064690';
       const policy = {};
       const request = {
-        resource: formattedResource,
+        resource: resource,
         policy: policy,
       };
 
@@ -567,9 +567,9 @@ describe('PublisherClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      const resource = 'resource-341064690';
       const request = {
-        resource: formattedResource,
+        resource: resource,
       };
 
       // Mock response
@@ -600,9 +600,9 @@ describe('PublisherClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      const resource = 'resource-341064690';
       const request = {
-        resource: formattedResource,
+        resource: resource,
       };
 
       // Mock Grpc layer
@@ -629,10 +629,10 @@ describe('PublisherClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      const resource = 'resource-341064690';
       const permissions = [];
       const request = {
-        resource: formattedResource,
+        resource: resource,
         permissions: permissions,
       };
 
@@ -659,10 +659,10 @@ describe('PublisherClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+      const resource = 'resource-341064690';
       const permissions = [];
       const request = {
-        resource: formattedResource,
+        resource: resource,
         permissions: permissions,
       };
 
@@ -1273,11 +1273,7 @@ describe('SubscriberClient', () => {
       };
 
       // Mock response
-      const receivedMessagesElement = {};
-      const receivedMessages = [receivedMessagesElement];
-      const expectedResponse = {
-        receivedMessages: receivedMessages,
-      };
+      const expectedResponse = {};
 
       // Mock Grpc layer
       client._innerApiCalls.streamingPull = mockBidiStreamingGrpcMethod(
@@ -1737,13 +1733,10 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      const resource = 'resource-341064690';
       const policy = {};
       const request = {
-        resource: formattedResource,
+        resource: resource,
         policy: policy,
       };
 
@@ -1775,13 +1768,10 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      const resource = 'resource-341064690';
       const policy = {};
       const request = {
-        resource: formattedResource,
+        resource: resource,
         policy: policy,
       };
 
@@ -1809,12 +1799,9 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      const resource = 'resource-341064690';
       const request = {
-        resource: formattedResource,
+        resource: resource,
       };
 
       // Mock response
@@ -1845,12 +1832,9 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      const resource = 'resource-341064690';
       const request = {
-        resource: formattedResource,
+        resource: resource,
       };
 
       // Mock Grpc layer
@@ -1877,13 +1861,10 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      const resource = 'resource-341064690';
       const permissions = [];
       const request = {
-        resource: formattedResource,
+        resource: resource,
         permissions: permissions,
       };
 
@@ -1910,13 +1891,10 @@ describe('SubscriberClient', () => {
       });
 
       // Mock request
-      const formattedResource = client.subscriptionPath(
-        '[PROJECT]',
-        '[SUBSCRIPTION]'
-      );
+      const resource = 'resource-341064690';
       const permissions = [];
       const request = {
-        resource: formattedResource,
+        resource: resource,
         permissions: permissions,
       };
 

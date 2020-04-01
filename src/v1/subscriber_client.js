@@ -1648,10 +1648,10 @@ class SubscriberClient {
    *   // optional auth parameters.
    * });
    *
-   * const formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const resource = '';
    * const policy = {};
    * const request = {
-   *   resource: formattedResource,
+   *   resource: resource,
    *   policy: policy,
    * };
    * client.setIamPolicy(request)
@@ -1714,8 +1714,8 @@ class SubscriberClient {
    *   // optional auth parameters.
    * });
    *
-   * const formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
-   * client.getIamPolicy({resource: formattedResource})
+   * const resource = '';
+   * client.getIamPolicy({resource: resource})
    *   .then(responses => {
    *     const response = responses[0];
    *     // doThingsWith(response)
@@ -1780,10 +1780,10 @@ class SubscriberClient {
    *   // optional auth parameters.
    * });
    *
-   * const formattedResource = client.subscriptionPath('[PROJECT]', '[SUBSCRIPTION]');
+   * const resource = '';
    * const permissions = [];
    * const request = {
-   *   resource: formattedResource,
+   *   resource: resource,
    *   permissions: permissions,
    * };
    * client.testIamPermissions(request)

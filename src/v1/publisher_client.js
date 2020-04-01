@@ -975,10 +975,10 @@ class PublisherClient {
    *   // optional auth parameters.
    * });
    *
-   * const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const resource = '';
    * const policy = {};
    * const request = {
-   *   resource: formattedResource,
+   *   resource: resource,
    *   policy: policy,
    * };
    * client.setIamPolicy(request)
@@ -1041,8 +1041,8 @@ class PublisherClient {
    *   // optional auth parameters.
    * });
    *
-   * const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
-   * client.getIamPolicy({resource: formattedResource})
+   * const resource = '';
+   * client.getIamPolicy({resource: resource})
    *   .then(responses => {
    *     const response = responses[0];
    *     // doThingsWith(response)
@@ -1107,10 +1107,10 @@ class PublisherClient {
    *   // optional auth parameters.
    * });
    *
-   * const formattedResource = client.topicPath('[PROJECT]', '[TOPIC]');
+   * const resource = '';
    * const permissions = [];
    * const request = {
-   *   resource: formattedResource,
+   *   resource: resource,
    *   permissions: permissions,
    * };
    * client.testIamPermissions(request)
