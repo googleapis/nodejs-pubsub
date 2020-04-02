@@ -8,6 +8,7 @@ import os
 logging.basicConfig(level=logging.DEBUG)
 
 gapic = gcp.GAPICMicrogenerator()
+
 common_templates = gcp.CommonTemplates()
 
 # tasks has two product names, and a poorly named artman yaml
