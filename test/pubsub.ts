@@ -295,10 +295,6 @@ describe('PubSub', () => {
     it('should set isEmulator to false by default', () => {
       assert.strictEqual(pubsub.isEmulator, false);
     });
-
-    it('should localize a Promise override', () => {
-      assert.strictEqual(pubsub.Promise, OPTIONS.promise);
-    });
   });
 
   describe('createSubscription', () => {
