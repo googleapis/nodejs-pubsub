@@ -11,7 +11,7 @@
     "node": ">=10"
   },
   "scripts": {
-    "test": "mocha system-test --timeout 800000"
+    "test": "mocha system-test --timeout 600000"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^1.7.0"
