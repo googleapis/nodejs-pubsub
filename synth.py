@@ -18,14 +18,14 @@ library = gapic.typescript_library(
     'pubsub',
     version,
     generator_args={
-        'grpc_service_config': f'google/pubsub/{version}/pubsub_grpc_service_config.json',
+        'grpc-service-config': f'google/pubsub/{version}/pubsub_grpc_service_config.json',
         'package-name': f'@google-cloud/pubsub',
         'main-service': f'pubsub',
-        'bundle-config': f'google/pubsub/{version}/pubsub_gapic.yaml',
+        'bundle-request': f'google/pubsub/{version}/pubsub_gapic.yaml',
         'template': f'typescript_gapic'
     },
     proto_path=f'/google/pubsub/{version}',
-    extra_proto_files=['google/cloud/common_resources.proto']
+    extra_proto_files=['google/iam/v1/']
 )
 
 # skip index, protos, package.json, and README.md
@@ -35,20 +35,6 @@ s.copy(
 
 templates = common_templates.node_library(source_location='build/src')
 s.copy(templates)
-
-# fix tslint issue due to mismatch gts version with gapic-generator-typescript
-# it should be removed once pubsub upgrade gts 2.0.0
-clients = ['publisher', 'subscriber']
-for client_name in clients:
-    client_file = f'src/v1/{client_name}_client.ts'
-
-    s.replace(client_file, '\/\/ eslint\-disable\-next\-line\ \@typescript\-eslint\/no\-explicit\-any',
-              '// tslint:disable-next-line no-any')
-
-    with open('helperMethods.ts.tmpl', 'r') as helper_file:
-        content = helper_file.read()
-    s.replace(client_file, '^}', content)
-    f.write(new_file.replace('logging/audit_data.proto', 'iam_policy.proto'))
 
 # surgery in client.ts file
 clients = ['publisher', 'subscriber']

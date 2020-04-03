@@ -18,18 +18,17 @@
 
 import * as gax from 'google-gax';
 import {
+  APICallback,
   Callback,
   CallOptions,
   Descriptors,
   ClientOptions,
   PaginationCallback,
-  GaxCall,
 } from 'google-gax';
 import * as path from 'path';
 
 import {Transform} from 'stream';
-import {RequestType} from 'google-gax/build/src/apitypes';
-import * as protos from '../../protos/protos';
+import * as protosTypes from '../../protos/protos';
 import * as gapicConfig from './publisher_client_config.json';
 
 const version = require('../../../package.json').version;
@@ -41,6 +40,14 @@ const version = require('../../../package.json').version;
  * @memberof v1
  */
 export class PublisherClient {
+  private _descriptors: Descriptors = {
+    page: {},
+    stream: {},
+    longrunning: {},
+    batching: {},
+  };
+  private _innerApiCalls: {[name: string]: Function};
+  private _pathTemplates: {[name: string]: gax.PathTemplate};
   private _terminated = false;
   private _opts: ClientOptions;
   private _gaxModule: typeof gax | typeof gax.fallback;
@@ -48,14 +55,6 @@ export class PublisherClient {
   private _protos: {};
   private _defaults: {[method: string]: gax.CallSettings};
   auth: gax.GoogleAuth;
-  descriptors: Descriptors = {
-    page: {},
-    stream: {},
-    longrunning: {},
-    batching: {},
-  };
-  innerApiCalls: {[name: string]: Function};
-  pathTemplates: {[name: string]: gax.PathTemplate};
   publisherStub?: Promise<{[name: string]: Function}>;
 
   /**
@@ -147,19 +146,13 @@ export class PublisherClient {
       'protos.json'
     );
     this._protos = this._gaxGrpc.loadProto(
-      opts.fallback
-        ? // eslint-disable-next-line @typescript-eslint/no-var-requires
-          require('../../protos/protos.json')
-        : nodejsProtoPath
+      opts.fallback ? require('../../protos/protos.json') : nodejsProtoPath
     );
 
     // This API contains "path templates"; forward-slash-separated
     // identifiers to uniquely identify resources within the API.
     // Create useful helper objects for these.
-    this.pathTemplates = {
-      projectPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}'
-      ),
+    this._pathTemplates = {
       projectTopicPathTemplate: new this._gaxModule.PathTemplate(
         'projects/{project}/topics/{topic}'
       ),
@@ -174,7 +167,7 @@ export class PublisherClient {
     // Some of the methods on this service return "paged" results,
     // (e.g. 50 results at a time, with tokens to get subsequent
     // pages). Denote the keys used for pagination and results.
-    this.descriptors.page = {
+    this._descriptors.page = {
       listTopics: new this._gaxModule.PageDescriptor(
         'pageToken',
         'nextPageToken',
@@ -192,31 +185,6 @@ export class PublisherClient {
       ),
     };
 
-    // This API contains "long-running operations", which return a
-    // an Operation object that allows for tracking of the operation,
-    // rather than holding a request open.
-    const protoFilesRoot = opts.fallback
-      ? this._gaxModule.protobuf.Root.fromJSON(
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          require('../../protos/protos.json')
-        )
-      : this._gaxModule.protobuf.loadSync(nodejsProtoPath);
-
-    // Some methods on this API support automatically batching
-    // requests; denote this.
-
-    this.descriptors.batching = {
-      Publish: new this._gaxModule.BundleDescriptor(
-        'messages',
-        ['topic'],
-        'message_ids',
-        gax.createByteLengthFunction(
-          // tslint:disable-next-line no-any
-          protoFilesRoot.lookupType('google.pubsub.v1.PubsubMessage') as any
-        )
-      ),
-    };
-
     // Put together the default options sent with requests.
     this._defaults = this._gaxGrpc.constructSettings(
       'google.pubsub.v1.Publisher',
@@ -228,7 +196,7 @@ export class PublisherClient {
     // Set up a dictionary of "inner API calls"; the core implementation
     // of calling the API is handled in `google-gax`, with this code
     // merely providing the destination and request information.
-    this.innerApiCalls = {};
+    this._innerApiCalls = {};
   }
 
   /**
@@ -272,8 +240,9 @@ export class PublisherClient {
       'listTopicSnapshots',
       'deleteTopic',
     ];
+
     for (const methodName of publisherStubMethods) {
-      const callPromise = this.publisherStub.then(
+      const innerCallPromise = this.publisherStub.then(
         stub => (...args: Array<{}>) => {
           if (this._terminated) {
             return Promise.reject('The client has already been closed.');
@@ -287,14 +256,20 @@ export class PublisherClient {
       );
 
       const apiCall = this._gaxModule.createApiCall(
-        callPromise,
+        innerCallPromise,
         this._defaults[methodName],
         this._descriptors.page[methodName] ||
         this._descriptors.stream[methodName] ||
         this._descriptors.longrunning[methodName]
       );
 
-      this.innerApiCalls[methodName] = apiCall;
+      this._innerApiCalls[methodName] = (
+        argument: {},
+        callOptions?: CallOptions,
+        callback?: APICallback
+      ) => {
+        return apiCall(argument, callOptions, callback);
+      };
     }
 
     return this.publisherStub;
@@ -354,30 +329,22 @@ export class PublisherClient {
   // -- Service calls --
   // -------------------
   createTopic(
-    request: protos.google.pubsub.v1.ITopic,
+    request: protosTypes.google.pubsub.v1.ITopic,
     options?: gax.CallOptions
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.ITopic | undefined,
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.ITopic | undefined,
       {} | undefined
     ]
   >;
   createTopic(
-    request: protos.google.pubsub.v1.ITopic,
+    request: protosTypes.google.pubsub.v1.ITopic,
     options: gax.CallOptions,
     callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.ITopic | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  createTopic(
-    request: protos.google.pubsub.v1.ITopic,
-    callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.ITopic | null | undefined,
-      {} | null | undefined
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.ITopic | undefined,
+      {} | undefined
     >
   ): void;
   /**
@@ -413,7 +380,7 @@ export class PublisherClient {
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   createTopic(
-    request: protos.google.pubsub.v1.ITopic,
+    request: protosTypes.google.pubsub.v1.ITopic,
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
@@ -422,14 +389,14 @@ export class PublisherClient {
         {} | undefined
       >,
     callback?: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.ITopic | null | undefined,
-      {} | null | undefined
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.ITopic | undefined,
+      {} | undefined
     >
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.ITopic | undefined,
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.ITopic | undefined,
       {} | undefined
     ]
   > | void {
@@ -450,33 +417,25 @@ export class PublisherClient {
       name: request.name || '',
     });
     this.initialize();
-    return this.innerApiCalls.createTopic(request, options, callback);
+    return this._innerApiCalls.createTopic(request, options, callback);
   }
   updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
+    request: protosTypes.google.pubsub.v1.IUpdateTopicRequest,
     options?: gax.CallOptions
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IUpdateTopicRequest | undefined,
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.IUpdateTopicRequest | undefined,
       {} | undefined
     ]
   >;
   updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
+    request: protosTypes.google.pubsub.v1.IUpdateTopicRequest,
     options: gax.CallOptions,
     callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
-      {} | null | undefined
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.IUpdateTopicRequest | undefined,
+      {} | undefined
     >
   ): void;
   /**
@@ -500,7 +459,7 @@ export class PublisherClient {
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
+    request: protosTypes.google.pubsub.v1.IUpdateTopicRequest,
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
@@ -509,14 +468,14 @@ export class PublisherClient {
         {} | undefined
       >,
     callback?: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
-      {} | null | undefined
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.IUpdateTopicRequest | undefined,
+      {} | undefined
     >
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IUpdateTopicRequest | undefined,
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.IUpdateTopicRequest | undefined,
       {} | undefined
     ]
   > | void {
@@ -537,33 +496,25 @@ export class PublisherClient {
       'topic.name': request.topic!.name || '',
     });
     this.initialize();
-    return this.innerApiCalls.updateTopic(request, options, callback);
+    return this._innerApiCalls.updateTopic(request, options, callback);
   }
   publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
+    request: protosTypes.google.pubsub.v1.IPublishRequest,
     options?: gax.CallOptions
   ): Promise<
     [
-      protos.google.pubsub.v1.IPublishResponse,
-      protos.google.pubsub.v1.IPublishRequest | undefined,
+      protosTypes.google.pubsub.v1.IPublishResponse,
+      protosTypes.google.pubsub.v1.IPublishRequest | undefined,
       {} | undefined
     ]
   >;
   publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
+    request: protosTypes.google.pubsub.v1.IPublishRequest,
     options: gax.CallOptions,
     callback: Callback<
-      protos.google.pubsub.v1.IPublishResponse,
-      protos.google.pubsub.v1.IPublishRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.IPublishResponse,
-      protos.google.pubsub.v1.IPublishRequest | null | undefined,
-      {} | null | undefined
+      protosTypes.google.pubsub.v1.IPublishResponse,
+      protosTypes.google.pubsub.v1.IPublishRequest | undefined,
+      {} | undefined
     >
   ): void;
   /**
@@ -584,7 +535,7 @@ export class PublisherClient {
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
+    request: protosTypes.google.pubsub.v1.IPublishRequest,
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
@@ -593,14 +544,14 @@ export class PublisherClient {
         {} | undefined
       >,
     callback?: Callback<
-      protos.google.pubsub.v1.IPublishResponse,
-      protos.google.pubsub.v1.IPublishRequest | null | undefined,
-      {} | null | undefined
+      protosTypes.google.pubsub.v1.IPublishResponse,
+      protosTypes.google.pubsub.v1.IPublishRequest | undefined,
+      {} | undefined
     >
   ): Promise<
     [
-      protos.google.pubsub.v1.IPublishResponse,
-      protos.google.pubsub.v1.IPublishRequest | undefined,
+      protosTypes.google.pubsub.v1.IPublishResponse,
+      protosTypes.google.pubsub.v1.IPublishRequest | undefined,
       {} | undefined
     ]
   > | void {
@@ -621,33 +572,25 @@ export class PublisherClient {
       topic: request.topic || '',
     });
     this.initialize();
-    return this.innerApiCalls.publish(request, options, callback);
+    return this._innerApiCalls.publish(request, options, callback);
   }
   getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
+    request: protosTypes.google.pubsub.v1.IGetTopicRequest,
     options?: gax.CallOptions
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IGetTopicRequest | undefined,
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.IGetTopicRequest | undefined,
       {} | undefined
     ]
   >;
   getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
+    request: protosTypes.google.pubsub.v1.IGetTopicRequest,
     options: gax.CallOptions,
     callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
-      {} | null | undefined
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.IGetTopicRequest | undefined,
+      {} | undefined
     >
   ): void;
   /**
@@ -665,7 +608,7 @@ export class PublisherClient {
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
+    request: protosTypes.google.pubsub.v1.IGetTopicRequest,
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
@@ -674,14 +617,14 @@ export class PublisherClient {
         {} | undefined
       >,
     callback?: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
-      {} | null | undefined
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.IGetTopicRequest | undefined,
+      {} | undefined
     >
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IGetTopicRequest | undefined,
+      protosTypes.google.pubsub.v1.ITopic,
+      protosTypes.google.pubsub.v1.IGetTopicRequest | undefined,
       {} | undefined
     ]
   > | void {
@@ -702,33 +645,25 @@ export class PublisherClient {
       topic: request.topic || '',
     });
     this.initialize();
-    return this.innerApiCalls.getTopic(request, options, callback);
+    return this._innerApiCalls.getTopic(request, options, callback);
   }
   deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
+    request: protosTypes.google.pubsub.v1.IDeleteTopicRequest,
     options?: gax.CallOptions
   ): Promise<
     [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteTopicRequest | undefined,
+      protosTypes.google.protobuf.IEmpty,
+      protosTypes.google.pubsub.v1.IDeleteTopicRequest | undefined,
       {} | undefined
     ]
   >;
   deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
+    request: protosTypes.google.pubsub.v1.IDeleteTopicRequest,
     options: gax.CallOptions,
     callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
-    callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
-      {} | null | undefined
+      protosTypes.google.protobuf.IEmpty,
+      protosTypes.google.pubsub.v1.IDeleteTopicRequest | undefined,
+      {} | undefined
     >
   ): void;
   /**
@@ -750,7 +685,7 @@ export class PublisherClient {
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
+    request: protosTypes.google.pubsub.v1.IDeleteTopicRequest,
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
@@ -759,14 +694,14 @@ export class PublisherClient {
         {} | undefined
       >,
     callback?: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
-      {} | null | undefined
+      protosTypes.google.protobuf.IEmpty,
+      protosTypes.google.pubsub.v1.IDeleteTopicRequest | undefined,
+      {} | undefined
     >
   ): Promise<
     [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteTopicRequest | undefined,
+      protosTypes.google.protobuf.IEmpty,
+      protosTypes.google.pubsub.v1.IDeleteTopicRequest | undefined,
       {} | undefined
     ]
   > | void {
@@ -787,34 +722,26 @@ export class PublisherClient {
       topic: request.topic || '',
     });
     this.initialize();
-    return this.innerApiCalls.deleteTopic(request, options, callback);
+    return this._innerApiCalls.deleteTopic(request, options, callback);
   }
 
   listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
+    request: protosTypes.google.pubsub.v1.IListTopicsRequest,
     options?: gax.CallOptions
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic[],
-      protos.google.pubsub.v1.IListTopicsRequest | null,
-      protos.google.pubsub.v1.IListTopicsResponse
+      protosTypes.google.pubsub.v1.ITopic[],
+      protosTypes.google.pubsub.v1.IListTopicsRequest | null,
+      protosTypes.google.pubsub.v1.IListTopicsResponse
     ]
   >;
   listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
+    request: protosTypes.google.pubsub.v1.IListTopicsRequest,
     options: gax.CallOptions,
     callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicsRequest,
-      protos.google.pubsub.v1.IListTopicsResponse | null | undefined,
-      protos.google.pubsub.v1.ITopic
-    >
-  ): void;
-  listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicsRequest,
-      protos.google.pubsub.v1.IListTopicsResponse | null | undefined,
-      protos.google.pubsub.v1.ITopic
+      protosTypes.google.pubsub.v1.ITopic[],
+      protosTypes.google.pubsub.v1.IListTopicsRequest | null,
+      protosTypes.google.pubsub.v1.IListTopicsResponse
     >
   ): void;
   /**
@@ -850,7 +777,7 @@ export class PublisherClient {
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
+    request: protosTypes.google.pubsub.v1.IListTopicsRequest,
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
@@ -865,9 +792,9 @@ export class PublisherClient {
     >
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic[],
-      protos.google.pubsub.v1.IListTopicsRequest | null,
-      protos.google.pubsub.v1.IListTopicsResponse
+      protosTypes.google.pubsub.v1.ITopic[],
+      protosTypes.google.pubsub.v1.IListTopicsRequest | null,
+      protosTypes.google.pubsub.v1.IListTopicsResponse
     ]
   > | void {
     request = request || {};
@@ -887,7 +814,7 @@ export class PublisherClient {
       project: request.project || '',
     });
     this.initialize();
-    return this.innerApiCalls.listTopics(request, options, callback);
+    return this._innerApiCalls.listTopics(request, options, callback);
   }
 
   /**
@@ -920,7 +847,7 @@ export class PublisherClient {
    *   An object stream which emits an object representing [Topic]{@link google.pubsub.v1.Topic} on 'data' event.
    */
   listTopicsStream(
-    request?: protos.google.pubsub.v1.IListTopicsRequest,
+    request?: protosTypes.google.pubsub.v1.IListTopicsRequest,
     options?: gax.CallOptions
   ): Transform {
     request = request || {};
@@ -934,85 +861,29 @@ export class PublisherClient {
     });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
-    return this.descriptors.page.listTopics.createStream(
-      this.innerApiCalls.listTopics as gax.GaxCall,
+    return this._descriptors.page.listTopics.createStream(
+      this._innerApiCalls.listTopics as gax.GaxCall,
       request,
       callSettings
     );
   }
-
-  /**
-   * Equivalent to {@link listTopics}, but returns an iterable object.
-   *
-   * for-await-of syntax is used with the iterable to recursively get response element on-demand.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.project
-   *   Required. The name of the project in which to list topics.
-   *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of topics to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicsResponse`; indicates that this is
-   *   a continuation of a prior `ListTopics` call, and that the system should
-   *   return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Object}
-   *   An iterable Object that conforms to @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols.
-   */
-  listTopicsAsync(
-    request?: protos.google.pubsub.v1.IListTopicsRequest,
-    options?: gax.CallOptions
-  ): AsyncIterable<protos.google.pubsub.v1.ITopic> {
-    request = request || {};
-    options = options || {};
-    options.otherArgs = options.otherArgs || {};
-    options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      project: request.project || '',
-    });
-    options = options || {};
-    const callSettings = new gax.CallSettings(options);
-    this.initialize();
-    return this.descriptors.page.listTopics.asyncIterate(
-      this.innerApiCalls['listTopics'] as GaxCall,
-      (request as unknown) as RequestType,
-      callSettings
-    ) as AsyncIterable<protos.google.pubsub.v1.ITopic>;
-  }
   listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+    request: protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest,
     options?: gax.CallOptions
   ): Promise<
     [
       string[],
-      protos.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListTopicSubscriptionsResponse
+      protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
+      protosTypes.google.pubsub.v1.IListTopicSubscriptionsResponse
     ]
   >;
   listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+    request: protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest,
     options: gax.CallOptions,
     callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-      | protos.google.pubsub.v1.IListTopicSubscriptionsResponse
-      | null
-      | undefined,
-      string
-    >
-  ): void;
-  listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-      | protos.google.pubsub.v1.IListTopicSubscriptionsResponse
-      | null
-      | undefined,
-      string
+      string[],
+      protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
+      protosTypes.google.pubsub.v1.IListTopicSubscriptionsResponse
     >
   ): void;
   /**
@@ -1048,7 +919,7 @@ export class PublisherClient {
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+    request: protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest,
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
@@ -1064,8 +935,8 @@ export class PublisherClient {
   ): Promise<
     [
       string[],
-      protos.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListTopicSubscriptionsResponse
+      protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
+      protosTypes.google.pubsub.v1.IListTopicSubscriptionsResponse
     ]
   > | void {
     request = request || {};
@@ -1085,7 +956,7 @@ export class PublisherClient {
       topic: request.topic || '',
     });
     this.initialize();
-    return this.innerApiCalls.listTopicSubscriptions(
+    return this._innerApiCalls.listTopicSubscriptions(
       request,
       options,
       callback
@@ -1122,7 +993,7 @@ export class PublisherClient {
    *   An object stream which emits an object representing string on 'data' event.
    */
   listTopicSubscriptionsStream(
-    request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+    request?: protosTypes.google.pubsub.v1.IListTopicSubscriptionsRequest,
     options?: gax.CallOptions
   ): Transform {
     request = request || {};
@@ -1136,81 +1007,29 @@ export class PublisherClient {
     });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
-    return this.descriptors.page.listTopicSubscriptions.createStream(
-      this.innerApiCalls.listTopicSubscriptions as gax.GaxCall,
+    return this._descriptors.page.listTopicSubscriptions.createStream(
+      this._innerApiCalls.listTopicSubscriptions as gax.GaxCall,
       request,
       callSettings
     );
   }
-
-  /**
-   * Equivalent to {@link listTopicSubscriptions}, but returns an iterable object.
-   *
-   * for-await-of syntax is used with the iterable to recursively get response element on-demand.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.topic
-   *   Required. The name of the topic that subscriptions are attached to.
-   *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number} request.pageSize
-   *   Maximum number of subscription names to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSubscriptionsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSubscriptions` call, and
-   *   that the system should return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Object}
-   *   An iterable Object that conforms to @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols.
-   */
-  listTopicSubscriptionsAsync(
-    request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-    options?: gax.CallOptions
-  ): AsyncIterable<string> {
-    request = request || {};
-    options = options || {};
-    options.otherArgs = options.otherArgs || {};
-    options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      topic: request.topic || '',
-    });
-    options = options || {};
-    const callSettings = new gax.CallSettings(options);
-    this.initialize();
-    return this.descriptors.page.listTopicSubscriptions.asyncIterate(
-      this.innerApiCalls['listTopicSubscriptions'] as GaxCall,
-      (request as unknown) as RequestType,
-      callSettings
-    ) as AsyncIterable<string>;
-  }
   listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
+    request: protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest,
     options?: gax.CallOptions
   ): Promise<
     [
       string[],
-      protos.google.pubsub.v1.IListTopicSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse
+      protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest | null,
+      protosTypes.google.pubsub.v1.IListTopicSnapshotsResponse
     ]
   >;
   listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
+    request: protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest,
     options: gax.CallOptions,
     callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse | null | undefined,
-      string
-    >
-  ): void;
-  listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse | null | undefined,
-      string
+      string[],
+      protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest | null,
+      protosTypes.google.pubsub.v1.IListTopicSnapshotsResponse
     >
   ): void;
   /**
@@ -1251,7 +1070,7 @@ export class PublisherClient {
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
+    request: protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest,
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
@@ -1267,8 +1086,8 @@ export class PublisherClient {
   ): Promise<
     [
       string[],
-      protos.google.pubsub.v1.IListTopicSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse
+      protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest | null,
+      protosTypes.google.pubsub.v1.IListTopicSnapshotsResponse
     ]
   > | void {
     request = request || {};
@@ -1288,7 +1107,7 @@ export class PublisherClient {
       topic: request.topic || '',
     });
     this.initialize();
-    return this.innerApiCalls.listTopicSnapshots(request, options, callback);
+    return this._innerApiCalls.listTopicSnapshots(request, options, callback);
   }
 
   /**
@@ -1321,7 +1140,7 @@ export class PublisherClient {
    *   An object stream which emits an object representing string on 'data' event.
    */
   listTopicSnapshotsStream(
-    request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
+    request?: protosTypes.google.pubsub.v1.IListTopicSnapshotsRequest,
     options?: gax.CallOptions
   ): Transform {
     request = request || {};
@@ -1335,82 +1154,15 @@ export class PublisherClient {
     });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
-    return this.descriptors.page.listTopicSnapshots.createStream(
-      this.innerApiCalls.listTopicSnapshots as gax.GaxCall,
+    return this._descriptors.page.listTopicSnapshots.createStream(
+      this._innerApiCalls.listTopicSnapshots as gax.GaxCall,
       request,
       callSettings
     );
   }
-
-  /**
-   * Equivalent to {@link listTopicSnapshots}, but returns an iterable object.
-   *
-   * for-await-of syntax is used with the iterable to recursively get response element on-demand.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.topic
-   *   Required. The name of the topic that snapshots are attached to.
-   *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshot names to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSnapshotsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSnapshots` call, and
-   *   that the system should return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Object}
-   *   An iterable Object that conforms to @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols.
-   */
-  listTopicSnapshotsAsync(
-    request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options?: gax.CallOptions
-  ): AsyncIterable<string> {
-    request = request || {};
-    options = options || {};
-    options.otherArgs = options.otherArgs || {};
-    options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      topic: request.topic || '',
-    });
-    options = options || {};
-    const callSettings = new gax.CallSettings(options);
-    this.initialize();
-    return this.descriptors.page.listTopicSnapshots.asyncIterate(
-      this.innerApiCalls['listTopicSnapshots'] as GaxCall,
-      (request as unknown) as RequestType,
-      callSettings
-    ) as AsyncIterable<string>;
-  }
   // --------------------
   // -- Path templates --
   // --------------------
-
-  /**
-   * Return a fully-qualified project resource name string.
-   *
-   * @param {string} project
-   * @returns {string} Resource name string.
-   */
-  projectPath(project: string) {
-    return this.pathTemplates.projectPathTemplate.render({
-      project,
-    });
-  }
-
-  /**
-   * Parse the project from Project resource.
-   *
-   * @param {string} projectName
-   *   A fully-qualified path representing Project resource.
-   * @returns {string} A string representing the project.
-   */
-  matchProjectFromProjectName(projectName: string) {
-    return this.pathTemplates.projectPathTemplate.match(projectName).project;
-  }
 
   /**
    * Return a fully-qualified projectTopic resource name string.
@@ -1420,7 +1172,7 @@ export class PublisherClient {
    * @returns {string} Resource name string.
    */
   projectTopicPath(project: string, topic: string) {
-    return this.pathTemplates.projectTopicPathTemplate.render({
+    return this._pathTemplates.projectTopicPathTemplate.render({
       project,
       topic,
     });
@@ -1434,7 +1186,7 @@ export class PublisherClient {
    * @returns {string} A string representing the project.
    */
   matchProjectFromProjectTopicName(projectTopicName: string) {
-    return this.pathTemplates.projectTopicPathTemplate.match(projectTopicName)
+    return this._pathTemplates.projectTopicPathTemplate.match(projectTopicName)
       .project;
   }
 
@@ -1446,7 +1198,7 @@ export class PublisherClient {
    * @returns {string} A string representing the topic.
    */
   matchTopicFromProjectTopicName(projectTopicName: string) {
-    return this.pathTemplates.projectTopicPathTemplate.match(projectTopicName)
+    return this._pathTemplates.projectTopicPathTemplate.match(projectTopicName)
       .topic;
   }
 
@@ -1458,7 +1210,7 @@ export class PublisherClient {
    * @returns {string} Resource name string.
    */
   snapshotPath(project: string, snapshot: string) {
-    return this.pathTemplates.snapshotPathTemplate.render({
+    return this._pathTemplates.snapshotPathTemplate.render({
       project,
       snapshot,
     });
@@ -1472,7 +1224,7 @@ export class PublisherClient {
    * @returns {string} A string representing the project.
    */
   matchProjectFromSnapshotName(snapshotName: string) {
-    return this.pathTemplates.snapshotPathTemplate.match(snapshotName).project;
+    return this._pathTemplates.snapshotPathTemplate.match(snapshotName).project;
   }
 
   /**
@@ -1483,7 +1235,8 @@ export class PublisherClient {
    * @returns {string} A string representing the snapshot.
    */
   matchSnapshotFromSnapshotName(snapshotName: string) {
-    return this.pathTemplates.snapshotPathTemplate.match(snapshotName).snapshot;
+    return this._pathTemplates.snapshotPathTemplate.match(snapshotName)
+      .snapshot;
   }
 
   /**
@@ -1494,7 +1247,7 @@ export class PublisherClient {
    * @returns {string} Resource name string.
    */
   subscriptionPath(project: string, subscription: string) {
-    return this.pathTemplates.subscriptionPathTemplate.render({
+    return this._pathTemplates.subscriptionPathTemplate.render({
       project,
       subscription,
     });
@@ -1508,7 +1261,7 @@ export class PublisherClient {
    * @returns {string} A string representing the project.
    */
   matchProjectFromSubscriptionName(subscriptionName: string) {
-    return this.pathTemplates.subscriptionPathTemplate.match(subscriptionName)
+    return this._pathTemplates.subscriptionPathTemplate.match(subscriptionName)
       .project;
   }
 
@@ -1520,7 +1273,7 @@ export class PublisherClient {
    * @returns {string} A string representing the subscription.
    */
   matchSubscriptionFromSubscriptionName(subscriptionName: string) {
-    return this.pathTemplates.subscriptionPathTemplate.match(subscriptionName)
+    return this._pathTemplates.subscriptionPathTemplate.match(subscriptionName)
       .subscription;
   }
 
@@ -1538,5 +1291,37 @@ export class PublisherClient {
       });
     }
     return Promise.resolve();
+  }
+  /**
+   * This part will be added into src/v1/key_management_service_client.ts by synth.py.
+   * KMS service requires IAM client for [setIamPolicy, getIamPolicy, testIamPerssion] methods.
+   * But we don't support it now in micro-generators for rerouting one service to another and mix them in.
+   * New feature request link: [https://github.com/googleapis/gapic-generator-typescript/issues/315]
+   *
+   * So this is manually written for providing methods to the KMS client.
+   * IamClient is created for KMS client in the constructor using src/helper.ts.
+   * [setIamPolicy, getIamPolicy, testIamPerssion] methods are created which is calling the corresponding methods from IamClient in `helper.ts`.
+   */
+
+  getIamPolicy(
+    request: protosTypes.google.iam.v1.GetIamPolicyRequest,
+    options: gax.CallOptions,
+    callback: protosTypes.google.iam.v1.IAMPolicy.GetIamPolicyCallback
+  ) {
+    return this._iamClient.getIamPolicy(request, options, callback);
+  }
+  setIamPolicy(
+    request: protosTypes.google.iam.v1.SetIamPolicyRequest,
+    options: gax.CallOptions,
+    callback: protosTypes.google.iam.v1.IAMPolicy.SetIamPolicyCallback
+  ) {
+    return this._iamClient.setIamPolicy(request, options, callback);
+  }
+  testIamPermissions(
+    request: protosTypes.google.iam.v1.TestIamPermissionsRequest,
+    options: gax.CallOptions,
+    callback?: protosTypes.google.iam.v1.IAMPolicy.TestIamPermissionsCallback
+  ) {
+    return this._iamClient.testIamPermissions(request, options, callback);
   }
 }
