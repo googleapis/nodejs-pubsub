@@ -57,6 +57,1186 @@
                  */
                 var v1 = {};
     
+                v1.IAMPolicy = (function() {
+    
+                    /**
+                     * Constructs a new IAMPolicy service.
+                     * @memberof google.iam.v1
+                     * @classdesc Represents a IAMPolicy
+                     * @extends $protobuf.rpc.Service
+                     * @constructor
+                     * @param {$protobuf.RPCImpl} rpcImpl RPC implementation
+                     * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
+                     * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
+                     */
+                    function IAMPolicy(rpcImpl, requestDelimited, responseDelimited) {
+                        $protobuf.rpc.Service.call(this, rpcImpl, requestDelimited, responseDelimited);
+                    }
+    
+                    (IAMPolicy.prototype = Object.create($protobuf.rpc.Service.prototype)).constructor = IAMPolicy;
+    
+                    /**
+                     * Creates new IAMPolicy service using the specified rpc implementation.
+                     * @function create
+                     * @memberof google.iam.v1.IAMPolicy
+                     * @static
+                     * @param {$protobuf.RPCImpl} rpcImpl RPC implementation
+                     * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
+                     * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
+                     * @returns {IAMPolicy} RPC service. Useful where requests and/or responses are streamed.
+                     */
+                    IAMPolicy.create = function create(rpcImpl, requestDelimited, responseDelimited) {
+                        return new this(rpcImpl, requestDelimited, responseDelimited);
+                    };
+    
+                    /**
+                     * Callback as used by {@link google.iam.v1.IAMPolicy#setIamPolicy}.
+                     * @memberof google.iam.v1.IAMPolicy
+                     * @typedef SetIamPolicyCallback
+                     * @type {function}
+                     * @param {Error|null} error Error, if any
+                     * @param {google.iam.v1.Policy} [response] Policy
+                     */
+    
+                    /**
+                     * Calls SetIamPolicy.
+                     * @function setIamPolicy
+                     * @memberof google.iam.v1.IAMPolicy
+                     * @instance
+                     * @param {google.iam.v1.ISetIamPolicyRequest} request SetIamPolicyRequest message or plain object
+                     * @param {google.iam.v1.IAMPolicy.SetIamPolicyCallback} callback Node-style callback called with the error, if any, and Policy
+                     * @returns {undefined}
+                     * @variation 1
+                     */
+                    Object.defineProperty(IAMPolicy.prototype.setIamPolicy = function setIamPolicy(request, callback) {
+                        return this.rpcCall(setIamPolicy, $root.google.iam.v1.SetIamPolicyRequest, $root.google.iam.v1.Policy, request, callback);
+                    }, "name", { value: "SetIamPolicy" });
+    
+                    /**
+                     * Calls SetIamPolicy.
+                     * @function setIamPolicy
+                     * @memberof google.iam.v1.IAMPolicy
+                     * @instance
+                     * @param {google.iam.v1.ISetIamPolicyRequest} request SetIamPolicyRequest message or plain object
+                     * @returns {Promise<google.iam.v1.Policy>} Promise
+                     * @variation 2
+                     */
+    
+                    /**
+                     * Callback as used by {@link google.iam.v1.IAMPolicy#getIamPolicy}.
+                     * @memberof google.iam.v1.IAMPolicy
+                     * @typedef GetIamPolicyCallback
+                     * @type {function}
+                     * @param {Error|null} error Error, if any
+                     * @param {google.iam.v1.Policy} [response] Policy
+                     */
+    
+                    /**
+                     * Calls GetIamPolicy.
+                     * @function getIamPolicy
+                     * @memberof google.iam.v1.IAMPolicy
+                     * @instance
+                     * @param {google.iam.v1.IGetIamPolicyRequest} request GetIamPolicyRequest message or plain object
+                     * @param {google.iam.v1.IAMPolicy.GetIamPolicyCallback} callback Node-style callback called with the error, if any, and Policy
+                     * @returns {undefined}
+                     * @variation 1
+                     */
+                    Object.defineProperty(IAMPolicy.prototype.getIamPolicy = function getIamPolicy(request, callback) {
+                        return this.rpcCall(getIamPolicy, $root.google.iam.v1.GetIamPolicyRequest, $root.google.iam.v1.Policy, request, callback);
+                    }, "name", { value: "GetIamPolicy" });
+    
+                    /**
+                     * Calls GetIamPolicy.
+                     * @function getIamPolicy
+                     * @memberof google.iam.v1.IAMPolicy
+                     * @instance
+                     * @param {google.iam.v1.IGetIamPolicyRequest} request GetIamPolicyRequest message or plain object
+                     * @returns {Promise<google.iam.v1.Policy>} Promise
+                     * @variation 2
+                     */
+    
+                    /**
+                     * Callback as used by {@link google.iam.v1.IAMPolicy#testIamPermissions}.
+                     * @memberof google.iam.v1.IAMPolicy
+                     * @typedef TestIamPermissionsCallback
+                     * @type {function}
+                     * @param {Error|null} error Error, if any
+                     * @param {google.iam.v1.TestIamPermissionsResponse} [response] TestIamPermissionsResponse
+                     */
+    
+                    /**
+                     * Calls TestIamPermissions.
+                     * @function testIamPermissions
+                     * @memberof google.iam.v1.IAMPolicy
+                     * @instance
+                     * @param {google.iam.v1.ITestIamPermissionsRequest} request TestIamPermissionsRequest message or plain object
+                     * @param {google.iam.v1.IAMPolicy.TestIamPermissionsCallback} callback Node-style callback called with the error, if any, and TestIamPermissionsResponse
+                     * @returns {undefined}
+                     * @variation 1
+                     */
+                    Object.defineProperty(IAMPolicy.prototype.testIamPermissions = function testIamPermissions(request, callback) {
+                        return this.rpcCall(testIamPermissions, $root.google.iam.v1.TestIamPermissionsRequest, $root.google.iam.v1.TestIamPermissionsResponse, request, callback);
+                    }, "name", { value: "TestIamPermissions" });
+    
+                    /**
+                     * Calls TestIamPermissions.
+                     * @function testIamPermissions
+                     * @memberof google.iam.v1.IAMPolicy
+                     * @instance
+                     * @param {google.iam.v1.ITestIamPermissionsRequest} request TestIamPermissionsRequest message or plain object
+                     * @returns {Promise<google.iam.v1.TestIamPermissionsResponse>} Promise
+                     * @variation 2
+                     */
+    
+                    return IAMPolicy;
+                })();
+    
+                v1.SetIamPolicyRequest = (function() {
+    
+                    /**
+                     * Properties of a SetIamPolicyRequest.
+                     * @memberof google.iam.v1
+                     * @interface ISetIamPolicyRequest
+                     * @property {string|null} [resource] SetIamPolicyRequest resource
+                     * @property {google.iam.v1.IPolicy|null} [policy] SetIamPolicyRequest policy
+                     */
+    
+                    /**
+                     * Constructs a new SetIamPolicyRequest.
+                     * @memberof google.iam.v1
+                     * @classdesc Represents a SetIamPolicyRequest.
+                     * @implements ISetIamPolicyRequest
+                     * @constructor
+                     * @param {google.iam.v1.ISetIamPolicyRequest=} [properties] Properties to set
+                     */
+                    function SetIamPolicyRequest(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * SetIamPolicyRequest resource.
+                     * @member {string} resource
+                     * @memberof google.iam.v1.SetIamPolicyRequest
+                     * @instance
+                     */
+                    SetIamPolicyRequest.prototype.resource = "";
+    
+                    /**
+                     * SetIamPolicyRequest policy.
+                     * @member {google.iam.v1.IPolicy|null|undefined} policy
+                     * @memberof google.iam.v1.SetIamPolicyRequest
+                     * @instance
+                     */
+                    SetIamPolicyRequest.prototype.policy = null;
+    
+                    /**
+                     * Creates a new SetIamPolicyRequest instance using the specified properties.
+                     * @function create
+                     * @memberof google.iam.v1.SetIamPolicyRequest
+                     * @static
+                     * @param {google.iam.v1.ISetIamPolicyRequest=} [properties] Properties to set
+                     * @returns {google.iam.v1.SetIamPolicyRequest} SetIamPolicyRequest instance
+                     */
+                    SetIamPolicyRequest.create = function create(properties) {
+                        return new SetIamPolicyRequest(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified SetIamPolicyRequest message. Does not implicitly {@link google.iam.v1.SetIamPolicyRequest.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.iam.v1.SetIamPolicyRequest
+                     * @static
+                     * @param {google.iam.v1.ISetIamPolicyRequest} message SetIamPolicyRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    SetIamPolicyRequest.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.resource != null && message.hasOwnProperty("resource"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.resource);
+                        if (message.policy != null && message.hasOwnProperty("policy"))
+                            $root.google.iam.v1.Policy.encode(message.policy, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified SetIamPolicyRequest message, length delimited. Does not implicitly {@link google.iam.v1.SetIamPolicyRequest.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.iam.v1.SetIamPolicyRequest
+                     * @static
+                     * @param {google.iam.v1.ISetIamPolicyRequest} message SetIamPolicyRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    SetIamPolicyRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a SetIamPolicyRequest message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.iam.v1.SetIamPolicyRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.iam.v1.SetIamPolicyRequest} SetIamPolicyRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    SetIamPolicyRequest.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.iam.v1.SetIamPolicyRequest();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.resource = reader.string();
+                                break;
+                            case 2:
+                                message.policy = $root.google.iam.v1.Policy.decode(reader, reader.uint32());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a SetIamPolicyRequest message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.iam.v1.SetIamPolicyRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.iam.v1.SetIamPolicyRequest} SetIamPolicyRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    SetIamPolicyRequest.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a SetIamPolicyRequest message.
+                     * @function verify
+                     * @memberof google.iam.v1.SetIamPolicyRequest
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    SetIamPolicyRequest.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.resource != null && message.hasOwnProperty("resource"))
+                            if (!$util.isString(message.resource))
+                                return "resource: string expected";
+                        if (message.policy != null && message.hasOwnProperty("policy")) {
+                            var error = $root.google.iam.v1.Policy.verify(message.policy);
+                            if (error)
+                                return "policy." + error;
+                        }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a SetIamPolicyRequest message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.iam.v1.SetIamPolicyRequest
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.iam.v1.SetIamPolicyRequest} SetIamPolicyRequest
+                     */
+                    SetIamPolicyRequest.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.iam.v1.SetIamPolicyRequest)
+                            return object;
+                        var message = new $root.google.iam.v1.SetIamPolicyRequest();
+                        if (object.resource != null)
+                            message.resource = String(object.resource);
+                        if (object.policy != null) {
+                            if (typeof object.policy !== "object")
+                                throw TypeError(".google.iam.v1.SetIamPolicyRequest.policy: object expected");
+                            message.policy = $root.google.iam.v1.Policy.fromObject(object.policy);
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a SetIamPolicyRequest message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.iam.v1.SetIamPolicyRequest
+                     * @static
+                     * @param {google.iam.v1.SetIamPolicyRequest} message SetIamPolicyRequest
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    SetIamPolicyRequest.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.resource = "";
+                            object.policy = null;
+                        }
+                        if (message.resource != null && message.hasOwnProperty("resource"))
+                            object.resource = message.resource;
+                        if (message.policy != null && message.hasOwnProperty("policy"))
+                            object.policy = $root.google.iam.v1.Policy.toObject(message.policy, options);
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this SetIamPolicyRequest to JSON.
+                     * @function toJSON
+                     * @memberof google.iam.v1.SetIamPolicyRequest
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    SetIamPolicyRequest.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return SetIamPolicyRequest;
+                })();
+    
+                v1.GetIamPolicyRequest = (function() {
+    
+                    /**
+                     * Properties of a GetIamPolicyRequest.
+                     * @memberof google.iam.v1
+                     * @interface IGetIamPolicyRequest
+                     * @property {string|null} [resource] GetIamPolicyRequest resource
+                     * @property {google.iam.v1.IGetPolicyOptions|null} [options] GetIamPolicyRequest options
+                     */
+    
+                    /**
+                     * Constructs a new GetIamPolicyRequest.
+                     * @memberof google.iam.v1
+                     * @classdesc Represents a GetIamPolicyRequest.
+                     * @implements IGetIamPolicyRequest
+                     * @constructor
+                     * @param {google.iam.v1.IGetIamPolicyRequest=} [properties] Properties to set
+                     */
+                    function GetIamPolicyRequest(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * GetIamPolicyRequest resource.
+                     * @member {string} resource
+                     * @memberof google.iam.v1.GetIamPolicyRequest
+                     * @instance
+                     */
+                    GetIamPolicyRequest.prototype.resource = "";
+    
+                    /**
+                     * GetIamPolicyRequest options.
+                     * @member {google.iam.v1.IGetPolicyOptions|null|undefined} options
+                     * @memberof google.iam.v1.GetIamPolicyRequest
+                     * @instance
+                     */
+                    GetIamPolicyRequest.prototype.options = null;
+    
+                    /**
+                     * Creates a new GetIamPolicyRequest instance using the specified properties.
+                     * @function create
+                     * @memberof google.iam.v1.GetIamPolicyRequest
+                     * @static
+                     * @param {google.iam.v1.IGetIamPolicyRequest=} [properties] Properties to set
+                     * @returns {google.iam.v1.GetIamPolicyRequest} GetIamPolicyRequest instance
+                     */
+                    GetIamPolicyRequest.create = function create(properties) {
+                        return new GetIamPolicyRequest(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified GetIamPolicyRequest message. Does not implicitly {@link google.iam.v1.GetIamPolicyRequest.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.iam.v1.GetIamPolicyRequest
+                     * @static
+                     * @param {google.iam.v1.IGetIamPolicyRequest} message GetIamPolicyRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    GetIamPolicyRequest.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.resource != null && message.hasOwnProperty("resource"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.resource);
+                        if (message.options != null && message.hasOwnProperty("options"))
+                            $root.google.iam.v1.GetPolicyOptions.encode(message.options, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified GetIamPolicyRequest message, length delimited. Does not implicitly {@link google.iam.v1.GetIamPolicyRequest.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.iam.v1.GetIamPolicyRequest
+                     * @static
+                     * @param {google.iam.v1.IGetIamPolicyRequest} message GetIamPolicyRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    GetIamPolicyRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a GetIamPolicyRequest message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.iam.v1.GetIamPolicyRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.iam.v1.GetIamPolicyRequest} GetIamPolicyRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    GetIamPolicyRequest.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.iam.v1.GetIamPolicyRequest();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.resource = reader.string();
+                                break;
+                            case 2:
+                                message.options = $root.google.iam.v1.GetPolicyOptions.decode(reader, reader.uint32());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a GetIamPolicyRequest message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.iam.v1.GetIamPolicyRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.iam.v1.GetIamPolicyRequest} GetIamPolicyRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    GetIamPolicyRequest.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a GetIamPolicyRequest message.
+                     * @function verify
+                     * @memberof google.iam.v1.GetIamPolicyRequest
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    GetIamPolicyRequest.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.resource != null && message.hasOwnProperty("resource"))
+                            if (!$util.isString(message.resource))
+                                return "resource: string expected";
+                        if (message.options != null && message.hasOwnProperty("options")) {
+                            var error = $root.google.iam.v1.GetPolicyOptions.verify(message.options);
+                            if (error)
+                                return "options." + error;
+                        }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a GetIamPolicyRequest message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.iam.v1.GetIamPolicyRequest
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.iam.v1.GetIamPolicyRequest} GetIamPolicyRequest
+                     */
+                    GetIamPolicyRequest.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.iam.v1.GetIamPolicyRequest)
+                            return object;
+                        var message = new $root.google.iam.v1.GetIamPolicyRequest();
+                        if (object.resource != null)
+                            message.resource = String(object.resource);
+                        if (object.options != null) {
+                            if (typeof object.options !== "object")
+                                throw TypeError(".google.iam.v1.GetIamPolicyRequest.options: object expected");
+                            message.options = $root.google.iam.v1.GetPolicyOptions.fromObject(object.options);
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a GetIamPolicyRequest message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.iam.v1.GetIamPolicyRequest
+                     * @static
+                     * @param {google.iam.v1.GetIamPolicyRequest} message GetIamPolicyRequest
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    GetIamPolicyRequest.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.resource = "";
+                            object.options = null;
+                        }
+                        if (message.resource != null && message.hasOwnProperty("resource"))
+                            object.resource = message.resource;
+                        if (message.options != null && message.hasOwnProperty("options"))
+                            object.options = $root.google.iam.v1.GetPolicyOptions.toObject(message.options, options);
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this GetIamPolicyRequest to JSON.
+                     * @function toJSON
+                     * @memberof google.iam.v1.GetIamPolicyRequest
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    GetIamPolicyRequest.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return GetIamPolicyRequest;
+                })();
+    
+                v1.TestIamPermissionsRequest = (function() {
+    
+                    /**
+                     * Properties of a TestIamPermissionsRequest.
+                     * @memberof google.iam.v1
+                     * @interface ITestIamPermissionsRequest
+                     * @property {string|null} [resource] TestIamPermissionsRequest resource
+                     * @property {Array.<string>|null} [permissions] TestIamPermissionsRequest permissions
+                     */
+    
+                    /**
+                     * Constructs a new TestIamPermissionsRequest.
+                     * @memberof google.iam.v1
+                     * @classdesc Represents a TestIamPermissionsRequest.
+                     * @implements ITestIamPermissionsRequest
+                     * @constructor
+                     * @param {google.iam.v1.ITestIamPermissionsRequest=} [properties] Properties to set
+                     */
+                    function TestIamPermissionsRequest(properties) {
+                        this.permissions = [];
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * TestIamPermissionsRequest resource.
+                     * @member {string} resource
+                     * @memberof google.iam.v1.TestIamPermissionsRequest
+                     * @instance
+                     */
+                    TestIamPermissionsRequest.prototype.resource = "";
+    
+                    /**
+                     * TestIamPermissionsRequest permissions.
+                     * @member {Array.<string>} permissions
+                     * @memberof google.iam.v1.TestIamPermissionsRequest
+                     * @instance
+                     */
+                    TestIamPermissionsRequest.prototype.permissions = $util.emptyArray;
+    
+                    /**
+                     * Creates a new TestIamPermissionsRequest instance using the specified properties.
+                     * @function create
+                     * @memberof google.iam.v1.TestIamPermissionsRequest
+                     * @static
+                     * @param {google.iam.v1.ITestIamPermissionsRequest=} [properties] Properties to set
+                     * @returns {google.iam.v1.TestIamPermissionsRequest} TestIamPermissionsRequest instance
+                     */
+                    TestIamPermissionsRequest.create = function create(properties) {
+                        return new TestIamPermissionsRequest(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified TestIamPermissionsRequest message. Does not implicitly {@link google.iam.v1.TestIamPermissionsRequest.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.iam.v1.TestIamPermissionsRequest
+                     * @static
+                     * @param {google.iam.v1.ITestIamPermissionsRequest} message TestIamPermissionsRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    TestIamPermissionsRequest.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.resource != null && message.hasOwnProperty("resource"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.resource);
+                        if (message.permissions != null && message.permissions.length)
+                            for (var i = 0; i < message.permissions.length; ++i)
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.permissions[i]);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified TestIamPermissionsRequest message, length delimited. Does not implicitly {@link google.iam.v1.TestIamPermissionsRequest.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.iam.v1.TestIamPermissionsRequest
+                     * @static
+                     * @param {google.iam.v1.ITestIamPermissionsRequest} message TestIamPermissionsRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    TestIamPermissionsRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a TestIamPermissionsRequest message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.iam.v1.TestIamPermissionsRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.iam.v1.TestIamPermissionsRequest} TestIamPermissionsRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    TestIamPermissionsRequest.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.iam.v1.TestIamPermissionsRequest();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.resource = reader.string();
+                                break;
+                            case 2:
+                                if (!(message.permissions && message.permissions.length))
+                                    message.permissions = [];
+                                message.permissions.push(reader.string());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a TestIamPermissionsRequest message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.iam.v1.TestIamPermissionsRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.iam.v1.TestIamPermissionsRequest} TestIamPermissionsRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    TestIamPermissionsRequest.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a TestIamPermissionsRequest message.
+                     * @function verify
+                     * @memberof google.iam.v1.TestIamPermissionsRequest
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    TestIamPermissionsRequest.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.resource != null && message.hasOwnProperty("resource"))
+                            if (!$util.isString(message.resource))
+                                return "resource: string expected";
+                        if (message.permissions != null && message.hasOwnProperty("permissions")) {
+                            if (!Array.isArray(message.permissions))
+                                return "permissions: array expected";
+                            for (var i = 0; i < message.permissions.length; ++i)
+                                if (!$util.isString(message.permissions[i]))
+                                    return "permissions: string[] expected";
+                        }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a TestIamPermissionsRequest message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.iam.v1.TestIamPermissionsRequest
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.iam.v1.TestIamPermissionsRequest} TestIamPermissionsRequest
+                     */
+                    TestIamPermissionsRequest.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.iam.v1.TestIamPermissionsRequest)
+                            return object;
+                        var message = new $root.google.iam.v1.TestIamPermissionsRequest();
+                        if (object.resource != null)
+                            message.resource = String(object.resource);
+                        if (object.permissions) {
+                            if (!Array.isArray(object.permissions))
+                                throw TypeError(".google.iam.v1.TestIamPermissionsRequest.permissions: array expected");
+                            message.permissions = [];
+                            for (var i = 0; i < object.permissions.length; ++i)
+                                message.permissions[i] = String(object.permissions[i]);
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a TestIamPermissionsRequest message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.iam.v1.TestIamPermissionsRequest
+                     * @static
+                     * @param {google.iam.v1.TestIamPermissionsRequest} message TestIamPermissionsRequest
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    TestIamPermissionsRequest.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.arrays || options.defaults)
+                            object.permissions = [];
+                        if (options.defaults)
+                            object.resource = "";
+                        if (message.resource != null && message.hasOwnProperty("resource"))
+                            object.resource = message.resource;
+                        if (message.permissions && message.permissions.length) {
+                            object.permissions = [];
+                            for (var j = 0; j < message.permissions.length; ++j)
+                                object.permissions[j] = message.permissions[j];
+                        }
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this TestIamPermissionsRequest to JSON.
+                     * @function toJSON
+                     * @memberof google.iam.v1.TestIamPermissionsRequest
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    TestIamPermissionsRequest.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return TestIamPermissionsRequest;
+                })();
+    
+                v1.TestIamPermissionsResponse = (function() {
+    
+                    /**
+                     * Properties of a TestIamPermissionsResponse.
+                     * @memberof google.iam.v1
+                     * @interface ITestIamPermissionsResponse
+                     * @property {Array.<string>|null} [permissions] TestIamPermissionsResponse permissions
+                     */
+    
+                    /**
+                     * Constructs a new TestIamPermissionsResponse.
+                     * @memberof google.iam.v1
+                     * @classdesc Represents a TestIamPermissionsResponse.
+                     * @implements ITestIamPermissionsResponse
+                     * @constructor
+                     * @param {google.iam.v1.ITestIamPermissionsResponse=} [properties] Properties to set
+                     */
+                    function TestIamPermissionsResponse(properties) {
+                        this.permissions = [];
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * TestIamPermissionsResponse permissions.
+                     * @member {Array.<string>} permissions
+                     * @memberof google.iam.v1.TestIamPermissionsResponse
+                     * @instance
+                     */
+                    TestIamPermissionsResponse.prototype.permissions = $util.emptyArray;
+    
+                    /**
+                     * Creates a new TestIamPermissionsResponse instance using the specified properties.
+                     * @function create
+                     * @memberof google.iam.v1.TestIamPermissionsResponse
+                     * @static
+                     * @param {google.iam.v1.ITestIamPermissionsResponse=} [properties] Properties to set
+                     * @returns {google.iam.v1.TestIamPermissionsResponse} TestIamPermissionsResponse instance
+                     */
+                    TestIamPermissionsResponse.create = function create(properties) {
+                        return new TestIamPermissionsResponse(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified TestIamPermissionsResponse message. Does not implicitly {@link google.iam.v1.TestIamPermissionsResponse.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.iam.v1.TestIamPermissionsResponse
+                     * @static
+                     * @param {google.iam.v1.ITestIamPermissionsResponse} message TestIamPermissionsResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    TestIamPermissionsResponse.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.permissions != null && message.permissions.length)
+                            for (var i = 0; i < message.permissions.length; ++i)
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.permissions[i]);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified TestIamPermissionsResponse message, length delimited. Does not implicitly {@link google.iam.v1.TestIamPermissionsResponse.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.iam.v1.TestIamPermissionsResponse
+                     * @static
+                     * @param {google.iam.v1.ITestIamPermissionsResponse} message TestIamPermissionsResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    TestIamPermissionsResponse.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a TestIamPermissionsResponse message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.iam.v1.TestIamPermissionsResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.iam.v1.TestIamPermissionsResponse} TestIamPermissionsResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    TestIamPermissionsResponse.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.iam.v1.TestIamPermissionsResponse();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                if (!(message.permissions && message.permissions.length))
+                                    message.permissions = [];
+                                message.permissions.push(reader.string());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a TestIamPermissionsResponse message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.iam.v1.TestIamPermissionsResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.iam.v1.TestIamPermissionsResponse} TestIamPermissionsResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    TestIamPermissionsResponse.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a TestIamPermissionsResponse message.
+                     * @function verify
+                     * @memberof google.iam.v1.TestIamPermissionsResponse
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    TestIamPermissionsResponse.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.permissions != null && message.hasOwnProperty("permissions")) {
+                            if (!Array.isArray(message.permissions))
+                                return "permissions: array expected";
+                            for (var i = 0; i < message.permissions.length; ++i)
+                                if (!$util.isString(message.permissions[i]))
+                                    return "permissions: string[] expected";
+                        }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a TestIamPermissionsResponse message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.iam.v1.TestIamPermissionsResponse
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.iam.v1.TestIamPermissionsResponse} TestIamPermissionsResponse
+                     */
+                    TestIamPermissionsResponse.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.iam.v1.TestIamPermissionsResponse)
+                            return object;
+                        var message = new $root.google.iam.v1.TestIamPermissionsResponse();
+                        if (object.permissions) {
+                            if (!Array.isArray(object.permissions))
+                                throw TypeError(".google.iam.v1.TestIamPermissionsResponse.permissions: array expected");
+                            message.permissions = [];
+                            for (var i = 0; i < object.permissions.length; ++i)
+                                message.permissions[i] = String(object.permissions[i]);
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a TestIamPermissionsResponse message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.iam.v1.TestIamPermissionsResponse
+                     * @static
+                     * @param {google.iam.v1.TestIamPermissionsResponse} message TestIamPermissionsResponse
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    TestIamPermissionsResponse.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.arrays || options.defaults)
+                            object.permissions = [];
+                        if (message.permissions && message.permissions.length) {
+                            object.permissions = [];
+                            for (var j = 0; j < message.permissions.length; ++j)
+                                object.permissions[j] = message.permissions[j];
+                        }
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this TestIamPermissionsResponse to JSON.
+                     * @function toJSON
+                     * @memberof google.iam.v1.TestIamPermissionsResponse
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    TestIamPermissionsResponse.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return TestIamPermissionsResponse;
+                })();
+    
+                v1.GetPolicyOptions = (function() {
+    
+                    /**
+                     * Properties of a GetPolicyOptions.
+                     * @memberof google.iam.v1
+                     * @interface IGetPolicyOptions
+                     * @property {number|null} [requestedPolicyVersion] GetPolicyOptions requestedPolicyVersion
+                     */
+    
+                    /**
+                     * Constructs a new GetPolicyOptions.
+                     * @memberof google.iam.v1
+                     * @classdesc Represents a GetPolicyOptions.
+                     * @implements IGetPolicyOptions
+                     * @constructor
+                     * @param {google.iam.v1.IGetPolicyOptions=} [properties] Properties to set
+                     */
+                    function GetPolicyOptions(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * GetPolicyOptions requestedPolicyVersion.
+                     * @member {number} requestedPolicyVersion
+                     * @memberof google.iam.v1.GetPolicyOptions
+                     * @instance
+                     */
+                    GetPolicyOptions.prototype.requestedPolicyVersion = 0;
+    
+                    /**
+                     * Creates a new GetPolicyOptions instance using the specified properties.
+                     * @function create
+                     * @memberof google.iam.v1.GetPolicyOptions
+                     * @static
+                     * @param {google.iam.v1.IGetPolicyOptions=} [properties] Properties to set
+                     * @returns {google.iam.v1.GetPolicyOptions} GetPolicyOptions instance
+                     */
+                    GetPolicyOptions.create = function create(properties) {
+                        return new GetPolicyOptions(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified GetPolicyOptions message. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.iam.v1.GetPolicyOptions
+                     * @static
+                     * @param {google.iam.v1.IGetPolicyOptions} message GetPolicyOptions message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    GetPolicyOptions.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.requestedPolicyVersion != null && message.hasOwnProperty("requestedPolicyVersion"))
+                            writer.uint32(/* id 1, wireType 0 =*/8).int32(message.requestedPolicyVersion);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified GetPolicyOptions message, length delimited. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.iam.v1.GetPolicyOptions
+                     * @static
+                     * @param {google.iam.v1.IGetPolicyOptions} message GetPolicyOptions message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    GetPolicyOptions.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a GetPolicyOptions message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.iam.v1.GetPolicyOptions
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.iam.v1.GetPolicyOptions} GetPolicyOptions
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    GetPolicyOptions.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.iam.v1.GetPolicyOptions();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.requestedPolicyVersion = reader.int32();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a GetPolicyOptions message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.iam.v1.GetPolicyOptions
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.iam.v1.GetPolicyOptions} GetPolicyOptions
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    GetPolicyOptions.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a GetPolicyOptions message.
+                     * @function verify
+                     * @memberof google.iam.v1.GetPolicyOptions
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    GetPolicyOptions.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.requestedPolicyVersion != null && message.hasOwnProperty("requestedPolicyVersion"))
+                            if (!$util.isInteger(message.requestedPolicyVersion))
+                                return "requestedPolicyVersion: integer expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a GetPolicyOptions message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.iam.v1.GetPolicyOptions
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.iam.v1.GetPolicyOptions} GetPolicyOptions
+                     */
+                    GetPolicyOptions.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.iam.v1.GetPolicyOptions)
+                            return object;
+                        var message = new $root.google.iam.v1.GetPolicyOptions();
+                        if (object.requestedPolicyVersion != null)
+                            message.requestedPolicyVersion = object.requestedPolicyVersion | 0;
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a GetPolicyOptions message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.iam.v1.GetPolicyOptions
+                     * @static
+                     * @param {google.iam.v1.GetPolicyOptions} message GetPolicyOptions
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    GetPolicyOptions.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults)
+                            object.requestedPolicyVersion = 0;
+                        if (message.requestedPolicyVersion != null && message.hasOwnProperty("requestedPolicyVersion"))
+                            object.requestedPolicyVersion = message.requestedPolicyVersion;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this GetPolicyOptions to JSON.
+                     * @function toJSON
+                     * @memberof google.iam.v1.GetPolicyOptions
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    GetPolicyOptions.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return GetPolicyOptions;
+                })();
+    
                 v1.Policy = (function() {
     
                     /**
@@ -1407,1456 +2587,10 @@
                     return AuditConfigDelta;
                 })();
     
-                v1.GetPolicyOptions = (function() {
-    
-                    /**
-                     * Properties of a GetPolicyOptions.
-                     * @memberof google.iam.v1
-                     * @interface IGetPolicyOptions
-                     * @property {number|null} [requestedPolicyVersion] GetPolicyOptions requestedPolicyVersion
-                     */
-    
-                    /**
-                     * Constructs a new GetPolicyOptions.
-                     * @memberof google.iam.v1
-                     * @classdesc Represents a GetPolicyOptions.
-                     * @implements IGetPolicyOptions
-                     * @constructor
-                     * @param {google.iam.v1.IGetPolicyOptions=} [properties] Properties to set
-                     */
-                    function GetPolicyOptions(properties) {
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * GetPolicyOptions requestedPolicyVersion.
-                     * @member {number} requestedPolicyVersion
-                     * @memberof google.iam.v1.GetPolicyOptions
-                     * @instance
-                     */
-                    GetPolicyOptions.prototype.requestedPolicyVersion = 0;
-    
-                    /**
-                     * Creates a new GetPolicyOptions instance using the specified properties.
-                     * @function create
-                     * @memberof google.iam.v1.GetPolicyOptions
-                     * @static
-                     * @param {google.iam.v1.IGetPolicyOptions=} [properties] Properties to set
-                     * @returns {google.iam.v1.GetPolicyOptions} GetPolicyOptions instance
-                     */
-                    GetPolicyOptions.create = function create(properties) {
-                        return new GetPolicyOptions(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified GetPolicyOptions message. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.iam.v1.GetPolicyOptions
-                     * @static
-                     * @param {google.iam.v1.IGetPolicyOptions} message GetPolicyOptions message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    GetPolicyOptions.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.requestedPolicyVersion != null && message.hasOwnProperty("requestedPolicyVersion"))
-                            writer.uint32(/* id 1, wireType 0 =*/8).int32(message.requestedPolicyVersion);
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified GetPolicyOptions message, length delimited. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.iam.v1.GetPolicyOptions
-                     * @static
-                     * @param {google.iam.v1.IGetPolicyOptions} message GetPolicyOptions message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    GetPolicyOptions.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a GetPolicyOptions message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.iam.v1.GetPolicyOptions
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.iam.v1.GetPolicyOptions} GetPolicyOptions
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    GetPolicyOptions.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.iam.v1.GetPolicyOptions();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.requestedPolicyVersion = reader.int32();
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a GetPolicyOptions message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.iam.v1.GetPolicyOptions
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.iam.v1.GetPolicyOptions} GetPolicyOptions
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    GetPolicyOptions.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a GetPolicyOptions message.
-                     * @function verify
-                     * @memberof google.iam.v1.GetPolicyOptions
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    GetPolicyOptions.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.requestedPolicyVersion != null && message.hasOwnProperty("requestedPolicyVersion"))
-                            if (!$util.isInteger(message.requestedPolicyVersion))
-                                return "requestedPolicyVersion: integer expected";
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a GetPolicyOptions message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.iam.v1.GetPolicyOptions
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.iam.v1.GetPolicyOptions} GetPolicyOptions
-                     */
-                    GetPolicyOptions.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.iam.v1.GetPolicyOptions)
-                            return object;
-                        var message = new $root.google.iam.v1.GetPolicyOptions();
-                        if (object.requestedPolicyVersion != null)
-                            message.requestedPolicyVersion = object.requestedPolicyVersion | 0;
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a GetPolicyOptions message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.iam.v1.GetPolicyOptions
-                     * @static
-                     * @param {google.iam.v1.GetPolicyOptions} message GetPolicyOptions
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    GetPolicyOptions.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.defaults)
-                            object.requestedPolicyVersion = 0;
-                        if (message.requestedPolicyVersion != null && message.hasOwnProperty("requestedPolicyVersion"))
-                            object.requestedPolicyVersion = message.requestedPolicyVersion;
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this GetPolicyOptions to JSON.
-                     * @function toJSON
-                     * @memberof google.iam.v1.GetPolicyOptions
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    GetPolicyOptions.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return GetPolicyOptions;
-                })();
-    
-                v1.IAMPolicy = (function() {
-    
-                    /**
-                     * Constructs a new IAMPolicy service.
-                     * @memberof google.iam.v1
-                     * @classdesc Represents a IAMPolicy
-                     * @extends $protobuf.rpc.Service
-                     * @constructor
-                     * @param {$protobuf.RPCImpl} rpcImpl RPC implementation
-                     * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
-                     * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
-                     */
-                    function IAMPolicy(rpcImpl, requestDelimited, responseDelimited) {
-                        $protobuf.rpc.Service.call(this, rpcImpl, requestDelimited, responseDelimited);
-                    }
-    
-                    (IAMPolicy.prototype = Object.create($protobuf.rpc.Service.prototype)).constructor = IAMPolicy;
-    
-                    /**
-                     * Creates new IAMPolicy service using the specified rpc implementation.
-                     * @function create
-                     * @memberof google.iam.v1.IAMPolicy
-                     * @static
-                     * @param {$protobuf.RPCImpl} rpcImpl RPC implementation
-                     * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
-                     * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
-                     * @returns {IAMPolicy} RPC service. Useful where requests and/or responses are streamed.
-                     */
-                    IAMPolicy.create = function create(rpcImpl, requestDelimited, responseDelimited) {
-                        return new this(rpcImpl, requestDelimited, responseDelimited);
-                    };
-    
-                    /**
-                     * Callback as used by {@link google.iam.v1.IAMPolicy#setIamPolicy}.
-                     * @memberof google.iam.v1.IAMPolicy
-                     * @typedef SetIamPolicyCallback
-                     * @type {function}
-                     * @param {Error|null} error Error, if any
-                     * @param {google.iam.v1.Policy} [response] Policy
-                     */
-    
-                    /**
-                     * Calls SetIamPolicy.
-                     * @function setIamPolicy
-                     * @memberof google.iam.v1.IAMPolicy
-                     * @instance
-                     * @param {google.iam.v1.ISetIamPolicyRequest} request SetIamPolicyRequest message or plain object
-                     * @param {google.iam.v1.IAMPolicy.SetIamPolicyCallback} callback Node-style callback called with the error, if any, and Policy
-                     * @returns {undefined}
-                     * @variation 1
-                     */
-                    Object.defineProperty(IAMPolicy.prototype.setIamPolicy = function setIamPolicy(request, callback) {
-                        return this.rpcCall(setIamPolicy, $root.google.iam.v1.SetIamPolicyRequest, $root.google.iam.v1.Policy, request, callback);
-                    }, "name", { value: "SetIamPolicy" });
-    
-                    /**
-                     * Calls SetIamPolicy.
-                     * @function setIamPolicy
-                     * @memberof google.iam.v1.IAMPolicy
-                     * @instance
-                     * @param {google.iam.v1.ISetIamPolicyRequest} request SetIamPolicyRequest message or plain object
-                     * @returns {Promise<google.iam.v1.Policy>} Promise
-                     * @variation 2
-                     */
-    
-                    /**
-                     * Callback as used by {@link google.iam.v1.IAMPolicy#getIamPolicy}.
-                     * @memberof google.iam.v1.IAMPolicy
-                     * @typedef GetIamPolicyCallback
-                     * @type {function}
-                     * @param {Error|null} error Error, if any
-                     * @param {google.iam.v1.Policy} [response] Policy
-                     */
-    
-                    /**
-                     * Calls GetIamPolicy.
-                     * @function getIamPolicy
-                     * @memberof google.iam.v1.IAMPolicy
-                     * @instance
-                     * @param {google.iam.v1.IGetIamPolicyRequest} request GetIamPolicyRequest message or plain object
-                     * @param {google.iam.v1.IAMPolicy.GetIamPolicyCallback} callback Node-style callback called with the error, if any, and Policy
-                     * @returns {undefined}
-                     * @variation 1
-                     */
-                    Object.defineProperty(IAMPolicy.prototype.getIamPolicy = function getIamPolicy(request, callback) {
-                        return this.rpcCall(getIamPolicy, $root.google.iam.v1.GetIamPolicyRequest, $root.google.iam.v1.Policy, request, callback);
-                    }, "name", { value: "GetIamPolicy" });
-    
-                    /**
-                     * Calls GetIamPolicy.
-                     * @function getIamPolicy
-                     * @memberof google.iam.v1.IAMPolicy
-                     * @instance
-                     * @param {google.iam.v1.IGetIamPolicyRequest} request GetIamPolicyRequest message or plain object
-                     * @returns {Promise<google.iam.v1.Policy>} Promise
-                     * @variation 2
-                     */
-    
-                    /**
-                     * Callback as used by {@link google.iam.v1.IAMPolicy#testIamPermissions}.
-                     * @memberof google.iam.v1.IAMPolicy
-                     * @typedef TestIamPermissionsCallback
-                     * @type {function}
-                     * @param {Error|null} error Error, if any
-                     * @param {google.iam.v1.TestIamPermissionsResponse} [response] TestIamPermissionsResponse
-                     */
-    
-                    /**
-                     * Calls TestIamPermissions.
-                     * @function testIamPermissions
-                     * @memberof google.iam.v1.IAMPolicy
-                     * @instance
-                     * @param {google.iam.v1.ITestIamPermissionsRequest} request TestIamPermissionsRequest message or plain object
-                     * @param {google.iam.v1.IAMPolicy.TestIamPermissionsCallback} callback Node-style callback called with the error, if any, and TestIamPermissionsResponse
-                     * @returns {undefined}
-                     * @variation 1
-                     */
-                    Object.defineProperty(IAMPolicy.prototype.testIamPermissions = function testIamPermissions(request, callback) {
-                        return this.rpcCall(testIamPermissions, $root.google.iam.v1.TestIamPermissionsRequest, $root.google.iam.v1.TestIamPermissionsResponse, request, callback);
-                    }, "name", { value: "TestIamPermissions" });
-    
-                    /**
-                     * Calls TestIamPermissions.
-                     * @function testIamPermissions
-                     * @memberof google.iam.v1.IAMPolicy
-                     * @instance
-                     * @param {google.iam.v1.ITestIamPermissionsRequest} request TestIamPermissionsRequest message or plain object
-                     * @returns {Promise<google.iam.v1.TestIamPermissionsResponse>} Promise
-                     * @variation 2
-                     */
-    
-                    return IAMPolicy;
-                })();
-    
-                v1.SetIamPolicyRequest = (function() {
-    
-                    /**
-                     * Properties of a SetIamPolicyRequest.
-                     * @memberof google.iam.v1
-                     * @interface ISetIamPolicyRequest
-                     * @property {string|null} [resource] SetIamPolicyRequest resource
-                     * @property {google.iam.v1.IPolicy|null} [policy] SetIamPolicyRequest policy
-                     */
-    
-                    /**
-                     * Constructs a new SetIamPolicyRequest.
-                     * @memberof google.iam.v1
-                     * @classdesc Represents a SetIamPolicyRequest.
-                     * @implements ISetIamPolicyRequest
-                     * @constructor
-                     * @param {google.iam.v1.ISetIamPolicyRequest=} [properties] Properties to set
-                     */
-                    function SetIamPolicyRequest(properties) {
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * SetIamPolicyRequest resource.
-                     * @member {string} resource
-                     * @memberof google.iam.v1.SetIamPolicyRequest
-                     * @instance
-                     */
-                    SetIamPolicyRequest.prototype.resource = "";
-    
-                    /**
-                     * SetIamPolicyRequest policy.
-                     * @member {google.iam.v1.IPolicy|null|undefined} policy
-                     * @memberof google.iam.v1.SetIamPolicyRequest
-                     * @instance
-                     */
-                    SetIamPolicyRequest.prototype.policy = null;
-    
-                    /**
-                     * Creates a new SetIamPolicyRequest instance using the specified properties.
-                     * @function create
-                     * @memberof google.iam.v1.SetIamPolicyRequest
-                     * @static
-                     * @param {google.iam.v1.ISetIamPolicyRequest=} [properties] Properties to set
-                     * @returns {google.iam.v1.SetIamPolicyRequest} SetIamPolicyRequest instance
-                     */
-                    SetIamPolicyRequest.create = function create(properties) {
-                        return new SetIamPolicyRequest(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified SetIamPolicyRequest message. Does not implicitly {@link google.iam.v1.SetIamPolicyRequest.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.iam.v1.SetIamPolicyRequest
-                     * @static
-                     * @param {google.iam.v1.ISetIamPolicyRequest} message SetIamPolicyRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    SetIamPolicyRequest.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.resource != null && message.hasOwnProperty("resource"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.resource);
-                        if (message.policy != null && message.hasOwnProperty("policy"))
-                            $root.google.iam.v1.Policy.encode(message.policy, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified SetIamPolicyRequest message, length delimited. Does not implicitly {@link google.iam.v1.SetIamPolicyRequest.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.iam.v1.SetIamPolicyRequest
-                     * @static
-                     * @param {google.iam.v1.ISetIamPolicyRequest} message SetIamPolicyRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    SetIamPolicyRequest.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a SetIamPolicyRequest message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.iam.v1.SetIamPolicyRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.iam.v1.SetIamPolicyRequest} SetIamPolicyRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    SetIamPolicyRequest.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.iam.v1.SetIamPolicyRequest();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.resource = reader.string();
-                                break;
-                            case 2:
-                                message.policy = $root.google.iam.v1.Policy.decode(reader, reader.uint32());
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a SetIamPolicyRequest message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.iam.v1.SetIamPolicyRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.iam.v1.SetIamPolicyRequest} SetIamPolicyRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    SetIamPolicyRequest.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a SetIamPolicyRequest message.
-                     * @function verify
-                     * @memberof google.iam.v1.SetIamPolicyRequest
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    SetIamPolicyRequest.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.resource != null && message.hasOwnProperty("resource"))
-                            if (!$util.isString(message.resource))
-                                return "resource: string expected";
-                        if (message.policy != null && message.hasOwnProperty("policy")) {
-                            var error = $root.google.iam.v1.Policy.verify(message.policy);
-                            if (error)
-                                return "policy." + error;
-                        }
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a SetIamPolicyRequest message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.iam.v1.SetIamPolicyRequest
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.iam.v1.SetIamPolicyRequest} SetIamPolicyRequest
-                     */
-                    SetIamPolicyRequest.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.iam.v1.SetIamPolicyRequest)
-                            return object;
-                        var message = new $root.google.iam.v1.SetIamPolicyRequest();
-                        if (object.resource != null)
-                            message.resource = String(object.resource);
-                        if (object.policy != null) {
-                            if (typeof object.policy !== "object")
-                                throw TypeError(".google.iam.v1.SetIamPolicyRequest.policy: object expected");
-                            message.policy = $root.google.iam.v1.Policy.fromObject(object.policy);
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a SetIamPolicyRequest message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.iam.v1.SetIamPolicyRequest
-                     * @static
-                     * @param {google.iam.v1.SetIamPolicyRequest} message SetIamPolicyRequest
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    SetIamPolicyRequest.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.defaults) {
-                            object.resource = "";
-                            object.policy = null;
-                        }
-                        if (message.resource != null && message.hasOwnProperty("resource"))
-                            object.resource = message.resource;
-                        if (message.policy != null && message.hasOwnProperty("policy"))
-                            object.policy = $root.google.iam.v1.Policy.toObject(message.policy, options);
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this SetIamPolicyRequest to JSON.
-                     * @function toJSON
-                     * @memberof google.iam.v1.SetIamPolicyRequest
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    SetIamPolicyRequest.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return SetIamPolicyRequest;
-                })();
-    
-                v1.GetIamPolicyRequest = (function() {
-    
-                    /**
-                     * Properties of a GetIamPolicyRequest.
-                     * @memberof google.iam.v1
-                     * @interface IGetIamPolicyRequest
-                     * @property {string|null} [resource] GetIamPolicyRequest resource
-                     * @property {google.iam.v1.IGetPolicyOptions|null} [options] GetIamPolicyRequest options
-                     */
-    
-                    /**
-                     * Constructs a new GetIamPolicyRequest.
-                     * @memberof google.iam.v1
-                     * @classdesc Represents a GetIamPolicyRequest.
-                     * @implements IGetIamPolicyRequest
-                     * @constructor
-                     * @param {google.iam.v1.IGetIamPolicyRequest=} [properties] Properties to set
-                     */
-                    function GetIamPolicyRequest(properties) {
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * GetIamPolicyRequest resource.
-                     * @member {string} resource
-                     * @memberof google.iam.v1.GetIamPolicyRequest
-                     * @instance
-                     */
-                    GetIamPolicyRequest.prototype.resource = "";
-    
-                    /**
-                     * GetIamPolicyRequest options.
-                     * @member {google.iam.v1.IGetPolicyOptions|null|undefined} options
-                     * @memberof google.iam.v1.GetIamPolicyRequest
-                     * @instance
-                     */
-                    GetIamPolicyRequest.prototype.options = null;
-    
-                    /**
-                     * Creates a new GetIamPolicyRequest instance using the specified properties.
-                     * @function create
-                     * @memberof google.iam.v1.GetIamPolicyRequest
-                     * @static
-                     * @param {google.iam.v1.IGetIamPolicyRequest=} [properties] Properties to set
-                     * @returns {google.iam.v1.GetIamPolicyRequest} GetIamPolicyRequest instance
-                     */
-                    GetIamPolicyRequest.create = function create(properties) {
-                        return new GetIamPolicyRequest(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified GetIamPolicyRequest message. Does not implicitly {@link google.iam.v1.GetIamPolicyRequest.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.iam.v1.GetIamPolicyRequest
-                     * @static
-                     * @param {google.iam.v1.IGetIamPolicyRequest} message GetIamPolicyRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    GetIamPolicyRequest.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.resource != null && message.hasOwnProperty("resource"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.resource);
-                        if (message.options != null && message.hasOwnProperty("options"))
-                            $root.google.iam.v1.GetPolicyOptions.encode(message.options, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified GetIamPolicyRequest message, length delimited. Does not implicitly {@link google.iam.v1.GetIamPolicyRequest.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.iam.v1.GetIamPolicyRequest
-                     * @static
-                     * @param {google.iam.v1.IGetIamPolicyRequest} message GetIamPolicyRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    GetIamPolicyRequest.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a GetIamPolicyRequest message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.iam.v1.GetIamPolicyRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.iam.v1.GetIamPolicyRequest} GetIamPolicyRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    GetIamPolicyRequest.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.iam.v1.GetIamPolicyRequest();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.resource = reader.string();
-                                break;
-                            case 2:
-                                message.options = $root.google.iam.v1.GetPolicyOptions.decode(reader, reader.uint32());
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a GetIamPolicyRequest message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.iam.v1.GetIamPolicyRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.iam.v1.GetIamPolicyRequest} GetIamPolicyRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    GetIamPolicyRequest.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a GetIamPolicyRequest message.
-                     * @function verify
-                     * @memberof google.iam.v1.GetIamPolicyRequest
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    GetIamPolicyRequest.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.resource != null && message.hasOwnProperty("resource"))
-                            if (!$util.isString(message.resource))
-                                return "resource: string expected";
-                        if (message.options != null && message.hasOwnProperty("options")) {
-                            var error = $root.google.iam.v1.GetPolicyOptions.verify(message.options);
-                            if (error)
-                                return "options." + error;
-                        }
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a GetIamPolicyRequest message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.iam.v1.GetIamPolicyRequest
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.iam.v1.GetIamPolicyRequest} GetIamPolicyRequest
-                     */
-                    GetIamPolicyRequest.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.iam.v1.GetIamPolicyRequest)
-                            return object;
-                        var message = new $root.google.iam.v1.GetIamPolicyRequest();
-                        if (object.resource != null)
-                            message.resource = String(object.resource);
-                        if (object.options != null) {
-                            if (typeof object.options !== "object")
-                                throw TypeError(".google.iam.v1.GetIamPolicyRequest.options: object expected");
-                            message.options = $root.google.iam.v1.GetPolicyOptions.fromObject(object.options);
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a GetIamPolicyRequest message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.iam.v1.GetIamPolicyRequest
-                     * @static
-                     * @param {google.iam.v1.GetIamPolicyRequest} message GetIamPolicyRequest
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    GetIamPolicyRequest.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.defaults) {
-                            object.resource = "";
-                            object.options = null;
-                        }
-                        if (message.resource != null && message.hasOwnProperty("resource"))
-                            object.resource = message.resource;
-                        if (message.options != null && message.hasOwnProperty("options"))
-                            object.options = $root.google.iam.v1.GetPolicyOptions.toObject(message.options, options);
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this GetIamPolicyRequest to JSON.
-                     * @function toJSON
-                     * @memberof google.iam.v1.GetIamPolicyRequest
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    GetIamPolicyRequest.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return GetIamPolicyRequest;
-                })();
-    
-                v1.TestIamPermissionsRequest = (function() {
-    
-                    /**
-                     * Properties of a TestIamPermissionsRequest.
-                     * @memberof google.iam.v1
-                     * @interface ITestIamPermissionsRequest
-                     * @property {string|null} [resource] TestIamPermissionsRequest resource
-                     * @property {Array.<string>|null} [permissions] TestIamPermissionsRequest permissions
-                     */
-    
-                    /**
-                     * Constructs a new TestIamPermissionsRequest.
-                     * @memberof google.iam.v1
-                     * @classdesc Represents a TestIamPermissionsRequest.
-                     * @implements ITestIamPermissionsRequest
-                     * @constructor
-                     * @param {google.iam.v1.ITestIamPermissionsRequest=} [properties] Properties to set
-                     */
-                    function TestIamPermissionsRequest(properties) {
-                        this.permissions = [];
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * TestIamPermissionsRequest resource.
-                     * @member {string} resource
-                     * @memberof google.iam.v1.TestIamPermissionsRequest
-                     * @instance
-                     */
-                    TestIamPermissionsRequest.prototype.resource = "";
-    
-                    /**
-                     * TestIamPermissionsRequest permissions.
-                     * @member {Array.<string>} permissions
-                     * @memberof google.iam.v1.TestIamPermissionsRequest
-                     * @instance
-                     */
-                    TestIamPermissionsRequest.prototype.permissions = $util.emptyArray;
-    
-                    /**
-                     * Creates a new TestIamPermissionsRequest instance using the specified properties.
-                     * @function create
-                     * @memberof google.iam.v1.TestIamPermissionsRequest
-                     * @static
-                     * @param {google.iam.v1.ITestIamPermissionsRequest=} [properties] Properties to set
-                     * @returns {google.iam.v1.TestIamPermissionsRequest} TestIamPermissionsRequest instance
-                     */
-                    TestIamPermissionsRequest.create = function create(properties) {
-                        return new TestIamPermissionsRequest(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified TestIamPermissionsRequest message. Does not implicitly {@link google.iam.v1.TestIamPermissionsRequest.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.iam.v1.TestIamPermissionsRequest
-                     * @static
-                     * @param {google.iam.v1.ITestIamPermissionsRequest} message TestIamPermissionsRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    TestIamPermissionsRequest.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.resource != null && message.hasOwnProperty("resource"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.resource);
-                        if (message.permissions != null && message.permissions.length)
-                            for (var i = 0; i < message.permissions.length; ++i)
-                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.permissions[i]);
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified TestIamPermissionsRequest message, length delimited. Does not implicitly {@link google.iam.v1.TestIamPermissionsRequest.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.iam.v1.TestIamPermissionsRequest
-                     * @static
-                     * @param {google.iam.v1.ITestIamPermissionsRequest} message TestIamPermissionsRequest message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    TestIamPermissionsRequest.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a TestIamPermissionsRequest message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.iam.v1.TestIamPermissionsRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.iam.v1.TestIamPermissionsRequest} TestIamPermissionsRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    TestIamPermissionsRequest.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.iam.v1.TestIamPermissionsRequest();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.resource = reader.string();
-                                break;
-                            case 2:
-                                if (!(message.permissions && message.permissions.length))
-                                    message.permissions = [];
-                                message.permissions.push(reader.string());
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a TestIamPermissionsRequest message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.iam.v1.TestIamPermissionsRequest
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.iam.v1.TestIamPermissionsRequest} TestIamPermissionsRequest
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    TestIamPermissionsRequest.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a TestIamPermissionsRequest message.
-                     * @function verify
-                     * @memberof google.iam.v1.TestIamPermissionsRequest
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    TestIamPermissionsRequest.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.resource != null && message.hasOwnProperty("resource"))
-                            if (!$util.isString(message.resource))
-                                return "resource: string expected";
-                        if (message.permissions != null && message.hasOwnProperty("permissions")) {
-                            if (!Array.isArray(message.permissions))
-                                return "permissions: array expected";
-                            for (var i = 0; i < message.permissions.length; ++i)
-                                if (!$util.isString(message.permissions[i]))
-                                    return "permissions: string[] expected";
-                        }
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a TestIamPermissionsRequest message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.iam.v1.TestIamPermissionsRequest
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.iam.v1.TestIamPermissionsRequest} TestIamPermissionsRequest
-                     */
-                    TestIamPermissionsRequest.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.iam.v1.TestIamPermissionsRequest)
-                            return object;
-                        var message = new $root.google.iam.v1.TestIamPermissionsRequest();
-                        if (object.resource != null)
-                            message.resource = String(object.resource);
-                        if (object.permissions) {
-                            if (!Array.isArray(object.permissions))
-                                throw TypeError(".google.iam.v1.TestIamPermissionsRequest.permissions: array expected");
-                            message.permissions = [];
-                            for (var i = 0; i < object.permissions.length; ++i)
-                                message.permissions[i] = String(object.permissions[i]);
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a TestIamPermissionsRequest message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.iam.v1.TestIamPermissionsRequest
-                     * @static
-                     * @param {google.iam.v1.TestIamPermissionsRequest} message TestIamPermissionsRequest
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    TestIamPermissionsRequest.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.arrays || options.defaults)
-                            object.permissions = [];
-                        if (options.defaults)
-                            object.resource = "";
-                        if (message.resource != null && message.hasOwnProperty("resource"))
-                            object.resource = message.resource;
-                        if (message.permissions && message.permissions.length) {
-                            object.permissions = [];
-                            for (var j = 0; j < message.permissions.length; ++j)
-                                object.permissions[j] = message.permissions[j];
-                        }
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this TestIamPermissionsRequest to JSON.
-                     * @function toJSON
-                     * @memberof google.iam.v1.TestIamPermissionsRequest
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    TestIamPermissionsRequest.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return TestIamPermissionsRequest;
-                })();
-    
-                v1.TestIamPermissionsResponse = (function() {
-    
-                    /**
-                     * Properties of a TestIamPermissionsResponse.
-                     * @memberof google.iam.v1
-                     * @interface ITestIamPermissionsResponse
-                     * @property {Array.<string>|null} [permissions] TestIamPermissionsResponse permissions
-                     */
-    
-                    /**
-                     * Constructs a new TestIamPermissionsResponse.
-                     * @memberof google.iam.v1
-                     * @classdesc Represents a TestIamPermissionsResponse.
-                     * @implements ITestIamPermissionsResponse
-                     * @constructor
-                     * @param {google.iam.v1.ITestIamPermissionsResponse=} [properties] Properties to set
-                     */
-                    function TestIamPermissionsResponse(properties) {
-                        this.permissions = [];
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-    
-                    /**
-                     * TestIamPermissionsResponse permissions.
-                     * @member {Array.<string>} permissions
-                     * @memberof google.iam.v1.TestIamPermissionsResponse
-                     * @instance
-                     */
-                    TestIamPermissionsResponse.prototype.permissions = $util.emptyArray;
-    
-                    /**
-                     * Creates a new TestIamPermissionsResponse instance using the specified properties.
-                     * @function create
-                     * @memberof google.iam.v1.TestIamPermissionsResponse
-                     * @static
-                     * @param {google.iam.v1.ITestIamPermissionsResponse=} [properties] Properties to set
-                     * @returns {google.iam.v1.TestIamPermissionsResponse} TestIamPermissionsResponse instance
-                     */
-                    TestIamPermissionsResponse.create = function create(properties) {
-                        return new TestIamPermissionsResponse(properties);
-                    };
-    
-                    /**
-                     * Encodes the specified TestIamPermissionsResponse message. Does not implicitly {@link google.iam.v1.TestIamPermissionsResponse.verify|verify} messages.
-                     * @function encode
-                     * @memberof google.iam.v1.TestIamPermissionsResponse
-                     * @static
-                     * @param {google.iam.v1.ITestIamPermissionsResponse} message TestIamPermissionsResponse message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    TestIamPermissionsResponse.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.permissions != null && message.permissions.length)
-                            for (var i = 0; i < message.permissions.length; ++i)
-                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.permissions[i]);
-                        return writer;
-                    };
-    
-                    /**
-                     * Encodes the specified TestIamPermissionsResponse message, length delimited. Does not implicitly {@link google.iam.v1.TestIamPermissionsResponse.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof google.iam.v1.TestIamPermissionsResponse
-                     * @static
-                     * @param {google.iam.v1.ITestIamPermissionsResponse} message TestIamPermissionsResponse message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    TestIamPermissionsResponse.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-    
-                    /**
-                     * Decodes a TestIamPermissionsResponse message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof google.iam.v1.TestIamPermissionsResponse
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {google.iam.v1.TestIamPermissionsResponse} TestIamPermissionsResponse
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    TestIamPermissionsResponse.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.iam.v1.TestIamPermissionsResponse();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                if (!(message.permissions && message.permissions.length))
-                                    message.permissions = [];
-                                message.permissions.push(reader.string());
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Decodes a TestIamPermissionsResponse message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof google.iam.v1.TestIamPermissionsResponse
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {google.iam.v1.TestIamPermissionsResponse} TestIamPermissionsResponse
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    TestIamPermissionsResponse.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-    
-                    /**
-                     * Verifies a TestIamPermissionsResponse message.
-                     * @function verify
-                     * @memberof google.iam.v1.TestIamPermissionsResponse
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    TestIamPermissionsResponse.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.permissions != null && message.hasOwnProperty("permissions")) {
-                            if (!Array.isArray(message.permissions))
-                                return "permissions: array expected";
-                            for (var i = 0; i < message.permissions.length; ++i)
-                                if (!$util.isString(message.permissions[i]))
-                                    return "permissions: string[] expected";
-                        }
-                        return null;
-                    };
-    
-                    /**
-                     * Creates a TestIamPermissionsResponse message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof google.iam.v1.TestIamPermissionsResponse
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {google.iam.v1.TestIamPermissionsResponse} TestIamPermissionsResponse
-                     */
-                    TestIamPermissionsResponse.fromObject = function fromObject(object) {
-                        if (object instanceof $root.google.iam.v1.TestIamPermissionsResponse)
-                            return object;
-                        var message = new $root.google.iam.v1.TestIamPermissionsResponse();
-                        if (object.permissions) {
-                            if (!Array.isArray(object.permissions))
-                                throw TypeError(".google.iam.v1.TestIamPermissionsResponse.permissions: array expected");
-                            message.permissions = [];
-                            for (var i = 0; i < object.permissions.length; ++i)
-                                message.permissions[i] = String(object.permissions[i]);
-                        }
-                        return message;
-                    };
-    
-                    /**
-                     * Creates a plain object from a TestIamPermissionsResponse message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof google.iam.v1.TestIamPermissionsResponse
-                     * @static
-                     * @param {google.iam.v1.TestIamPermissionsResponse} message TestIamPermissionsResponse
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    TestIamPermissionsResponse.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.arrays || options.defaults)
-                            object.permissions = [];
-                        if (message.permissions && message.permissions.length) {
-                            object.permissions = [];
-                            for (var j = 0; j < message.permissions.length; ++j)
-                                object.permissions[j] = message.permissions[j];
-                        }
-                        return object;
-                    };
-    
-                    /**
-                     * Converts this TestIamPermissionsResponse to JSON.
-                     * @function toJSON
-                     * @memberof google.iam.v1.TestIamPermissionsResponse
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    TestIamPermissionsResponse.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-    
-                    return TestIamPermissionsResponse;
-                })();
-    
                 return v1;
             })();
     
             return iam;
-        })();
-    
-        google.type = (function() {
-    
-            /**
-             * Namespace type.
-             * @memberof google
-             * @namespace
-             */
-            var type = {};
-    
-            type.Expr = (function() {
-    
-                /**
-                 * Properties of an Expr.
-                 * @memberof google.type
-                 * @interface IExpr
-                 * @property {string|null} [expression] Expr expression
-                 * @property {string|null} [title] Expr title
-                 * @property {string|null} [description] Expr description
-                 * @property {string|null} [location] Expr location
-                 */
-    
-                /**
-                 * Constructs a new Expr.
-                 * @memberof google.type
-                 * @classdesc Represents an Expr.
-                 * @implements IExpr
-                 * @constructor
-                 * @param {google.type.IExpr=} [properties] Properties to set
-                 */
-                function Expr(properties) {
-                    if (properties)
-                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                            if (properties[keys[i]] != null)
-                                this[keys[i]] = properties[keys[i]];
-                }
-    
-                /**
-                 * Expr expression.
-                 * @member {string} expression
-                 * @memberof google.type.Expr
-                 * @instance
-                 */
-                Expr.prototype.expression = "";
-    
-                /**
-                 * Expr title.
-                 * @member {string} title
-                 * @memberof google.type.Expr
-                 * @instance
-                 */
-                Expr.prototype.title = "";
-    
-                /**
-                 * Expr description.
-                 * @member {string} description
-                 * @memberof google.type.Expr
-                 * @instance
-                 */
-                Expr.prototype.description = "";
-    
-                /**
-                 * Expr location.
-                 * @member {string} location
-                 * @memberof google.type.Expr
-                 * @instance
-                 */
-                Expr.prototype.location = "";
-    
-                /**
-                 * Creates a new Expr instance using the specified properties.
-                 * @function create
-                 * @memberof google.type.Expr
-                 * @static
-                 * @param {google.type.IExpr=} [properties] Properties to set
-                 * @returns {google.type.Expr} Expr instance
-                 */
-                Expr.create = function create(properties) {
-                    return new Expr(properties);
-                };
-    
-                /**
-                 * Encodes the specified Expr message. Does not implicitly {@link google.type.Expr.verify|verify} messages.
-                 * @function encode
-                 * @memberof google.type.Expr
-                 * @static
-                 * @param {google.type.IExpr} message Expr message or plain object to encode
-                 * @param {$protobuf.Writer} [writer] Writer to encode to
-                 * @returns {$protobuf.Writer} Writer
-                 */
-                Expr.encode = function encode(message, writer) {
-                    if (!writer)
-                        writer = $Writer.create();
-                    if (message.expression != null && message.hasOwnProperty("expression"))
-                        writer.uint32(/* id 1, wireType 2 =*/10).string(message.expression);
-                    if (message.title != null && message.hasOwnProperty("title"))
-                        writer.uint32(/* id 2, wireType 2 =*/18).string(message.title);
-                    if (message.description != null && message.hasOwnProperty("description"))
-                        writer.uint32(/* id 3, wireType 2 =*/26).string(message.description);
-                    if (message.location != null && message.hasOwnProperty("location"))
-                        writer.uint32(/* id 4, wireType 2 =*/34).string(message.location);
-                    return writer;
-                };
-    
-                /**
-                 * Encodes the specified Expr message, length delimited. Does not implicitly {@link google.type.Expr.verify|verify} messages.
-                 * @function encodeDelimited
-                 * @memberof google.type.Expr
-                 * @static
-                 * @param {google.type.IExpr} message Expr message or plain object to encode
-                 * @param {$protobuf.Writer} [writer] Writer to encode to
-                 * @returns {$protobuf.Writer} Writer
-                 */
-                Expr.encodeDelimited = function encodeDelimited(message, writer) {
-                    return this.encode(message, writer).ldelim();
-                };
-    
-                /**
-                 * Decodes an Expr message from the specified reader or buffer.
-                 * @function decode
-                 * @memberof google.type.Expr
-                 * @static
-                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                 * @param {number} [length] Message length if known beforehand
-                 * @returns {google.type.Expr} Expr
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                Expr.decode = function decode(reader, length) {
-                    if (!(reader instanceof $Reader))
-                        reader = $Reader.create(reader);
-                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.type.Expr();
-                    while (reader.pos < end) {
-                        var tag = reader.uint32();
-                        switch (tag >>> 3) {
-                        case 1:
-                            message.expression = reader.string();
-                            break;
-                        case 2:
-                            message.title = reader.string();
-                            break;
-                        case 3:
-                            message.description = reader.string();
-                            break;
-                        case 4:
-                            message.location = reader.string();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
-                        }
-                    }
-                    return message;
-                };
-    
-                /**
-                 * Decodes an Expr message from the specified reader or buffer, length delimited.
-                 * @function decodeDelimited
-                 * @memberof google.type.Expr
-                 * @static
-                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                 * @returns {google.type.Expr} Expr
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                Expr.decodeDelimited = function decodeDelimited(reader) {
-                    if (!(reader instanceof $Reader))
-                        reader = new $Reader(reader);
-                    return this.decode(reader, reader.uint32());
-                };
-    
-                /**
-                 * Verifies an Expr message.
-                 * @function verify
-                 * @memberof google.type.Expr
-                 * @static
-                 * @param {Object.<string,*>} message Plain object to verify
-                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                 */
-                Expr.verify = function verify(message) {
-                    if (typeof message !== "object" || message === null)
-                        return "object expected";
-                    if (message.expression != null && message.hasOwnProperty("expression"))
-                        if (!$util.isString(message.expression))
-                            return "expression: string expected";
-                    if (message.title != null && message.hasOwnProperty("title"))
-                        if (!$util.isString(message.title))
-                            return "title: string expected";
-                    if (message.description != null && message.hasOwnProperty("description"))
-                        if (!$util.isString(message.description))
-                            return "description: string expected";
-                    if (message.location != null && message.hasOwnProperty("location"))
-                        if (!$util.isString(message.location))
-                            return "location: string expected";
-                    return null;
-                };
-    
-                /**
-                 * Creates an Expr message from a plain object. Also converts values to their respective internal types.
-                 * @function fromObject
-                 * @memberof google.type.Expr
-                 * @static
-                 * @param {Object.<string,*>} object Plain object
-                 * @returns {google.type.Expr} Expr
-                 */
-                Expr.fromObject = function fromObject(object) {
-                    if (object instanceof $root.google.type.Expr)
-                        return object;
-                    var message = new $root.google.type.Expr();
-                    if (object.expression != null)
-                        message.expression = String(object.expression);
-                    if (object.title != null)
-                        message.title = String(object.title);
-                    if (object.description != null)
-                        message.description = String(object.description);
-                    if (object.location != null)
-                        message.location = String(object.location);
-                    return message;
-                };
-    
-                /**
-                 * Creates a plain object from an Expr message. Also converts values to other types if specified.
-                 * @function toObject
-                 * @memberof google.type.Expr
-                 * @static
-                 * @param {google.type.Expr} message Expr
-                 * @param {$protobuf.IConversionOptions} [options] Conversion options
-                 * @returns {Object.<string,*>} Plain object
-                 */
-                Expr.toObject = function toObject(message, options) {
-                    if (!options)
-                        options = {};
-                    var object = {};
-                    if (options.defaults) {
-                        object.expression = "";
-                        object.title = "";
-                        object.description = "";
-                        object.location = "";
-                    }
-                    if (message.expression != null && message.hasOwnProperty("expression"))
-                        object.expression = message.expression;
-                    if (message.title != null && message.hasOwnProperty("title"))
-                        object.title = message.title;
-                    if (message.description != null && message.hasOwnProperty("description"))
-                        object.description = message.description;
-                    if (message.location != null && message.hasOwnProperty("location"))
-                        object.location = message.location;
-                    return object;
-                };
-    
-                /**
-                 * Converts this Expr to JSON.
-                 * @function toJSON
-                 * @memberof google.type.Expr
-                 * @instance
-                 * @returns {Object.<string,*>} JSON object
-                 */
-                Expr.prototype.toJSON = function toJSON() {
-                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                };
-    
-                return Expr;
-            })();
-    
-            return type;
         })();
     
         google.api = (function() {
@@ -13830,6 +13564,272 @@
             })();
     
             return protobuf;
+        })();
+    
+        google.type = (function() {
+    
+            /**
+             * Namespace type.
+             * @memberof google
+             * @namespace
+             */
+            var type = {};
+    
+            type.Expr = (function() {
+    
+                /**
+                 * Properties of an Expr.
+                 * @memberof google.type
+                 * @interface IExpr
+                 * @property {string|null} [expression] Expr expression
+                 * @property {string|null} [title] Expr title
+                 * @property {string|null} [description] Expr description
+                 * @property {string|null} [location] Expr location
+                 */
+    
+                /**
+                 * Constructs a new Expr.
+                 * @memberof google.type
+                 * @classdesc Represents an Expr.
+                 * @implements IExpr
+                 * @constructor
+                 * @param {google.type.IExpr=} [properties] Properties to set
+                 */
+                function Expr(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+    
+                /**
+                 * Expr expression.
+                 * @member {string} expression
+                 * @memberof google.type.Expr
+                 * @instance
+                 */
+                Expr.prototype.expression = "";
+    
+                /**
+                 * Expr title.
+                 * @member {string} title
+                 * @memberof google.type.Expr
+                 * @instance
+                 */
+                Expr.prototype.title = "";
+    
+                /**
+                 * Expr description.
+                 * @member {string} description
+                 * @memberof google.type.Expr
+                 * @instance
+                 */
+                Expr.prototype.description = "";
+    
+                /**
+                 * Expr location.
+                 * @member {string} location
+                 * @memberof google.type.Expr
+                 * @instance
+                 */
+                Expr.prototype.location = "";
+    
+                /**
+                 * Creates a new Expr instance using the specified properties.
+                 * @function create
+                 * @memberof google.type.Expr
+                 * @static
+                 * @param {google.type.IExpr=} [properties] Properties to set
+                 * @returns {google.type.Expr} Expr instance
+                 */
+                Expr.create = function create(properties) {
+                    return new Expr(properties);
+                };
+    
+                /**
+                 * Encodes the specified Expr message. Does not implicitly {@link google.type.Expr.verify|verify} messages.
+                 * @function encode
+                 * @memberof google.type.Expr
+                 * @static
+                 * @param {google.type.IExpr} message Expr message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                Expr.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.expression != null && message.hasOwnProperty("expression"))
+                        writer.uint32(/* id 1, wireType 2 =*/10).string(message.expression);
+                    if (message.title != null && message.hasOwnProperty("title"))
+                        writer.uint32(/* id 2, wireType 2 =*/18).string(message.title);
+                    if (message.description != null && message.hasOwnProperty("description"))
+                        writer.uint32(/* id 3, wireType 2 =*/26).string(message.description);
+                    if (message.location != null && message.hasOwnProperty("location"))
+                        writer.uint32(/* id 4, wireType 2 =*/34).string(message.location);
+                    return writer;
+                };
+    
+                /**
+                 * Encodes the specified Expr message, length delimited. Does not implicitly {@link google.type.Expr.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof google.type.Expr
+                 * @static
+                 * @param {google.type.IExpr} message Expr message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                Expr.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+    
+                /**
+                 * Decodes an Expr message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof google.type.Expr
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {google.type.Expr} Expr
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                Expr.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.type.Expr();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1:
+                            message.expression = reader.string();
+                            break;
+                        case 2:
+                            message.title = reader.string();
+                            break;
+                        case 3:
+                            message.description = reader.string();
+                            break;
+                        case 4:
+                            message.location = reader.string();
+                            break;
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+    
+                /**
+                 * Decodes an Expr message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof google.type.Expr
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {google.type.Expr} Expr
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                Expr.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+    
+                /**
+                 * Verifies an Expr message.
+                 * @function verify
+                 * @memberof google.type.Expr
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                Expr.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.expression != null && message.hasOwnProperty("expression"))
+                        if (!$util.isString(message.expression))
+                            return "expression: string expected";
+                    if (message.title != null && message.hasOwnProperty("title"))
+                        if (!$util.isString(message.title))
+                            return "title: string expected";
+                    if (message.description != null && message.hasOwnProperty("description"))
+                        if (!$util.isString(message.description))
+                            return "description: string expected";
+                    if (message.location != null && message.hasOwnProperty("location"))
+                        if (!$util.isString(message.location))
+                            return "location: string expected";
+                    return null;
+                };
+    
+                /**
+                 * Creates an Expr message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof google.type.Expr
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {google.type.Expr} Expr
+                 */
+                Expr.fromObject = function fromObject(object) {
+                    if (object instanceof $root.google.type.Expr)
+                        return object;
+                    var message = new $root.google.type.Expr();
+                    if (object.expression != null)
+                        message.expression = String(object.expression);
+                    if (object.title != null)
+                        message.title = String(object.title);
+                    if (object.description != null)
+                        message.description = String(object.description);
+                    if (object.location != null)
+                        message.location = String(object.location);
+                    return message;
+                };
+    
+                /**
+                 * Creates a plain object from an Expr message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof google.type.Expr
+                 * @static
+                 * @param {google.type.Expr} message Expr
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                Expr.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    var object = {};
+                    if (options.defaults) {
+                        object.expression = "";
+                        object.title = "";
+                        object.description = "";
+                        object.location = "";
+                    }
+                    if (message.expression != null && message.hasOwnProperty("expression"))
+                        object.expression = message.expression;
+                    if (message.title != null && message.hasOwnProperty("title"))
+                        object.title = message.title;
+                    if (message.description != null && message.hasOwnProperty("description"))
+                        object.description = message.description;
+                    if (message.location != null && message.hasOwnProperty("location"))
+                        object.location = message.location;
+                    return object;
+                };
+    
+                /**
+                 * Converts this Expr to JSON.
+                 * @function toJSON
+                 * @memberof google.type.Expr
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                Expr.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+    
+                return Expr;
+            })();
+    
+            return type;
         })();
     
         google.pubsub = (function() {
