@@ -219,6 +219,7 @@ class PublisherClient {
         : protos.google.pubsub.v1.Publisher,
       opts
     );
+    this.publisherStub = publisherStub;
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
@@ -1201,6 +1202,17 @@ class PublisherClient {
    */
   matchTopicFromTopicName(topicName) {
     return this._pathTemplates.topicPathTemplate.match(topicName).topic;
+  }
+
+  /**
+   * Terminate the GRPC channel and close the client.
+   *
+   * The client will no longer be usable and all future behavior is undefined.
+   */
+  close() {
+    return this.publisherStub.then(stub => {
+      stub.close();
+    });
   }
 }
 
