@@ -17,14 +17,14 @@ library = gapic.typescript_library(
     'pubsub',
     version,
     generator_args={
-        'grpc-service-config': f'google/pubsub/{version}/pubsub_grpc_service_config.json',
+        'grpc_service_config': f'google/pubsub/{version}/pubsub_grpc_service_config.json',
         'package-name': f'@google-cloud/pubsub',
         'main-service': f'pubsub',
-        'bundle-request': f'google/pubsub/{version}/pubsub_gapic.yaml',
+        'bundle-config': f'google/pubsub/{version}/pubsub_gapic.yaml',
         'template': f'typescript_gapic'
     },
     proto_path=f'/google/pubsub/{version}',
-    extra_proto_files=['google/iam/v1/']
+    extra_proto_files=['google/cloud/common_resources.proto']
 )
 
 # skip index, protos, package.json, and README.md
@@ -70,11 +70,17 @@ for client_name in clients:
 
     # fix tslint issue due to mismatch gts version with gapic-generator-typescript
     # it should be removed once pubsub upgrade gts 2.0.0
-    s.replace(client_file, '\/\*\ eslint\-disable\ \@typescript\-eslint\/no\-explicit\-any\ \*/',
+    s.replace(client_file, '\/\/ eslint\-disable\-next\-line\ \@typescript\-eslint\/no\-explicit\-any',
               '// tslint:disable-next-line no-any')
+
     with open('helperMethods.ts.tmpl', 'r') as helper_file:
         content = helper_file.read()
     s.replace(client_file, '^}', content)
+
+# fix tslint issue due to mismatch gts version with gapic-generator-typescript
+# it should be removed once pubsub upgrade gts 2.0.0
+s.replace('test/gapic_publisher_v1.ts', 'const\ expectedResponse\ \=\ \[new\ String\(\)\,\ new\ String\(\)\,\ new\ String\(\)\];',
+          'const expectedResponse: string[] | undefined = [];')
 
 # Node.js specific cleanup
 subprocess.run(['npm', 'install'])
