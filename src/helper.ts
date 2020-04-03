@@ -42,8 +42,8 @@ export class IamClient {
       opts && opts.servicePath
         ? opts.servicePath
         : opts && opts.apiEndpoint
-          ? opts.apiEndpoint
-          : staticMembers.servicePath;
+        ? opts.apiEndpoint
+        : staticMembers.servicePath;
     const port = opts && opts.port ? opts.port : staticMembers.port;
 
     if (!opts) {
@@ -96,7 +96,7 @@ export class IamClient {
       opts.fallback
         ? (protos as protobuf.Root).lookupService('google.iam.v1.IAMPolicy')
         : // tslint:disable-next-line no-any
-        (protos as any).google.iam.v1.IAMPolicy,
+          (protos as any).google.iam.v1.IAMPolicy,
       opts
     ) as Promise<{[method: string]: Function}>;
     this._innerApiCalls = {};
