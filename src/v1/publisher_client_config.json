@@ -6,6 +6,23 @@
         "idempotent": [
           "DEADLINE_EXCEEDED",
           "UNAVAILABLE"
+        ],
+        "unavailable": [
+          "UNAVAILABLE"
+        ],
+        "cancelled_unknown_deadline_exceeded_resource_exhausted_aborted_internal_unavailable": [
+          "CANCELLED",
+          "UNKNOWN",
+          "DEADLINE_EXCEEDED",
+          "RESOURCE_EXHAUSTED",
+          "ABORTED",
+          "INTERNAL",
+          "UNAVAILABLE"
+        ],
+        "unknown_aborted_unavailable": [
+          "UNKNOWN",
+          "ABORTED",
+          "UNAVAILABLE"
         ]
       },
       "retry_params": {
@@ -21,35 +38,49 @@
       },
       "methods": {
         "CreateTopic": {
-          "retry_codes_name": "non_idempotent",
+          "timeout_millis": 60000,
+          "retry_codes_name": "unavailable",
           "retry_params_name": "default"
         },
         "UpdateTopic": {
-          "retry_codes_name": "non_idempotent",
+          "timeout_millis": 60000,
+          "retry_codes_name": "unavailable",
           "retry_params_name": "default"
         },
         "Publish": {
-          "retry_codes_name": "non_idempotent",
-          "retry_params_name": "default"
+          "timeout_millis": 60000,
+          "retry_codes_name": "cancelled_unknown_deadline_exceeded_resource_exhausted_aborted_internal_unavailable",
+          "retry_params_name": "default",
+          "bundling": {
+            "element_count_threshold": 100,
+            "request_byte_threshold": 1048576,
+            "delay_threshold_millis": 10,
+            "element_count_limit": 1000
+          }
         },
         "GetTopic": {
-          "retry_codes_name": "non_idempotent",
+          "timeout_millis": 60000,
+          "retry_codes_name": "unknown_aborted_unavailable",
           "retry_params_name": "default"
         },
         "ListTopics": {
-          "retry_codes_name": "non_idempotent",
+          "timeout_millis": 60000,
+          "retry_codes_name": "unknown_aborted_unavailable",
           "retry_params_name": "default"
         },
         "ListTopicSubscriptions": {
-          "retry_codes_name": "non_idempotent",
+          "timeout_millis": 60000,
+          "retry_codes_name": "unknown_aborted_unavailable",
           "retry_params_name": "default"
         },
         "ListTopicSnapshots": {
-          "retry_codes_name": "non_idempotent",
+          "timeout_millis": 60000,
+          "retry_codes_name": "unknown_aborted_unavailable",
           "retry_params_name": "default"
         },
         "DeleteTopic": {
-          "retry_codes_name": "non_idempotent",
+          "timeout_millis": 60000,
+          "retry_codes_name": "unavailable",
           "retry_params_name": "default"
         }
       }
