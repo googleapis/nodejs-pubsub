@@ -17,14 +17,14 @@ library = gapic.typescript_library(
     'pubsub',
     version,
     generator_args={
-        'grpc_service_config': f'google/pubsub/{version}/pubsub_grpc_service_config.json',
+        'grpc-service-config': f'google/pubsub/{version}/pubsub_grpc_service_config.json',
         'package-name': f'@google-cloud/pubsub',
         'main-service': f'pubsub',
-        'bundle-config': f'google/pubsub/{version}/pubsub_gapic.yaml',
+        'bundle-request': f'google/pubsub/{version}/pubsub_gapic.yaml',
         'template': f'typescript_gapic'
     },
     proto_path=f'/google/pubsub/{version}',
-    extra_proto_files=['google/cloud/common_resources.proto']
+    extra_proto_files=['google/iam/v1/']
 )
 
 # skip index, protos, package.json, and README.md
@@ -41,12 +41,17 @@ clients = ['publisher', 'subscriber']
 for client_name in clients:
     client_file = f'src/v1/{client_name}_client.ts'
 
-    s.replace(client_file, '\/\/ eslint\-disable\-next\-line\ \@typescript\-eslint\/no\-explicit\-any',
-              '// tslint:disable-next-line no-any')
+    s.replace(client_file,
+              '\/\/ Determine the client header string.',
+              'this._iamClient = new IamClient(opts); \n // Determine the client header string.')
 
-# Remove this replace once https://github.com/googleapis/gapic-generator-typescript/issues/380 resolved
-s.replace('test/gapic_publisher_v1.ts', 'const\ expectedResponse\ \=\ \[new\ String\(\)\,\ new\ String\(\)\,\ new\ String\(\)\];',
-          'const expectedResponse: string[] | undefined = [];')
+    # fix tslint issue due to mismatch gts version with gapic-generator-typescript
+    # it should be removed once pubsub upgrade gts 2.0.0
+    s.replace(client_file, '\/\*\ eslint\-disable\ \@typescript\-eslint\/no\-explicit\-any\ \*/',
+              '// tslint:disable-next-line no-any')
+    with open('helperMethods.ts.tmpl', 'r') as helper_file:
+        content = helper_file.read()
+    s.replace(client_file, '^}', content)
 
 # Node.js specific cleanup
 subprocess.run(['npm', 'install'])

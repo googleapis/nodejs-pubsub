@@ -1,3 +1,4 @@
 [
+  "../../protos/google/iam/v1/logging/audit_data.proto",
   "../../protos/google/pubsub/v1/pubsub.proto"
 ]
