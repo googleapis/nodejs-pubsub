@@ -888,4 +888,17 @@ describe('pubsub', () => {
       });
     });
   });
+
+  it('should allow closing of publisher clients', async () => {
+    // The full call stack of close() is tested in unit tests; this is mostly
+    // to verify that the close() method is actually there and doesn't error.
+    const localPubsub = new PubSub();
+
+    // Just use the client object to make sure it has opened a connection.
+    await pubsub.getTopics();
+
+    // Tell it to close, and validate that it's marked closed.
+    await localPubsub.close();
+    assert.strictEqual(localPubsub.isOpen, false);
+  });
 });
