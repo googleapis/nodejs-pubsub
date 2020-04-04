@@ -37,6 +37,29 @@ s.replace("src/v1/subscriber_client.js",
           "    };\n"
           "\g<0>")
 
+# The JavaScript generator didn't implement close(). TypeScript gapic does,
+# so this should be removed when we merge that.
+s.replace("src/v1/publisher_client.js",
+          "   \* Parse the projectName from a project resource.\n",
+          "   * Terminate the GRPC channel and close the client.\n"
+          "   * note: editing generated code\n"
+          "   *\n"
+          "   * The client will no longer be usable and all future behavior is undefined.\n"
+          "   */\n"
+          "  close() {\n"
+          "    return this.publisherStub.then(stub => {\n"
+          "      stub.close();\n"
+          "    });\n"
+          "  }\n"
+          "  \n"
+          "  /**\n"
+          "  \g<0>")
+s.replace("src/v1/publisher_client.js",
+          "    const publisherStubMethods = \\[\n",
+          "    // note: editing generated code\n"
+          "    this.publisherStub = publisherStub;\n"
+          "    \g<0>")
+
 # Update path discovery due to build/ dir and TypeScript conversion.
 s.replace("src/v1/publisher_client.js", "../../package.json", "../../../package.json")
 s.replace("src/v1/subscriber_client.js", "../../package.json", "../../../package.json")
