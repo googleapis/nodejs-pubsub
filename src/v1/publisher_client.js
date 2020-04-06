@@ -222,6 +222,8 @@ class PublisherClient {
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
+    // note: editing generated code
+    this.publisherStub = publisherStub;
     const publisherStubMethods = [
       'createTopic',
       'updateTopic',
@@ -1167,6 +1169,18 @@ class PublisherClient {
     return this._pathTemplates.topicPathTemplate.render({
       project: project,
       topic: topic,
+    });
+  }
+
+  /**
+   * Terminate the GRPC channel and close the client.
+   * note: editing generated code
+   *
+   * The client will no longer be usable and all future behavior is undefined.
+   */
+  close() {
+    return this.publisherStub.then(stub => {
+      stub.close();
     });
   }
 
