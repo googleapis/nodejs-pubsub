@@ -297,7 +297,7 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.createTopic(request);
       }, expectedError);
       assert(
@@ -414,7 +414,7 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.updateTopic(request);
       }, expectedError);
       assert(
@@ -525,7 +525,7 @@ describe('v1.PublisherClient', () => {
       };
       const expectedError = new Error('expected');
       client.innerApiCalls.publish = stubSimpleCall(undefined, expectedError);
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.publish(request);
       }, expectedError);
       assert(
@@ -636,7 +636,7 @@ describe('v1.PublisherClient', () => {
       };
       const expectedError = new Error('expected');
       client.innerApiCalls.getTopic = stubSimpleCall(undefined, expectedError);
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.getTopic(request);
       }, expectedError);
       assert(
@@ -750,7 +750,7 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.deleteTopic(request);
       }, expectedError);
       assert(
@@ -868,7 +868,7 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.listTopics(request);
       }, expectedError);
       assert(
@@ -954,7 +954,7 @@ describe('v1.PublisherClient', () => {
           reject(err);
         });
       });
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await promise;
       }, expectedError);
       assert(
@@ -1026,7 +1026,7 @@ describe('v1.PublisherClient', () => {
         expectedError
       );
       const iterable = client.listTopicsAsync(request);
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         const responses: protos.google.pubsub.v1.ITopic[] = [];
         for await (const resource of iterable) {
           responses.push(resource!);
@@ -1145,7 +1145,7 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.listTopicSubscriptions(request);
       }, expectedError);
       assert(
@@ -1229,7 +1229,7 @@ describe('v1.PublisherClient', () => {
           reject(err);
         });
       });
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await promise;
       }, expectedError);
       assert(
@@ -1299,7 +1299,7 @@ describe('v1.PublisherClient', () => {
         expectedError
       );
       const iterable = client.listTopicSubscriptionsAsync(request);
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         const responses: string[] = [];
         for await (const resource of iterable) {
           responses.push(resource!);
@@ -1418,7 +1418,7 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.listTopicSnapshots(request);
       }, expectedError);
       assert(
@@ -1501,7 +1501,7 @@ describe('v1.PublisherClient', () => {
           reject(err);
         });
       });
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await promise;
       }, expectedError);
       assert(
@@ -1570,7 +1570,7 @@ describe('v1.PublisherClient', () => {
         expectedError
       );
       const iterable = client.listTopicSnapshotsAsync(request);
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         const responses: string[] = [];
         for await (const resource of iterable) {
           responses.push(resource!);

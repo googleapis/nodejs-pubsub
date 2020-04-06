@@ -61,9 +61,13 @@ for client_name in clients:
         content = helper_file.read()
     s.replace(client_file, '^}', content)
 
-# Remove this replace once https://github.com/googleapis/gapic-generator-typescript/issues/380 resolved
+# TODO: Remove this replace once https://github.com/googleapis/gapic-generator-typescript/issues/380 resolved
 s.replace('test/gapic_publisher_v1.ts',
           'const\ expectedResponse\ \=\ \[new\ String\(\)\,\ new\ String\(\)\,\ new\ String\(\)\];', 'const expectedResponse: string[] | undefined = [];')
+
+# TODO: This line could be removed once Pub/Sub deprecate Node 8
+s.replace('.github/workflows/ci.yaml',
+          'node\:\ \[10\,\ 12\,\ 13\]', 'node: [8, 10, 12, 13]')
 
 # Node.js specific cleanup
 subprocess.run(['npm', 'install'])
