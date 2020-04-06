@@ -313,7 +313,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.createSubscription(request);
       }, expectedError);
       assert(
@@ -427,7 +427,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.getSubscription(request);
       }, expectedError);
       assert(
@@ -546,7 +546,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.updateSubscription(request);
       }, expectedError);
       assert(
@@ -662,7 +662,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.deleteSubscription(request);
       }, expectedError);
       assert(
@@ -776,7 +776,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.modifyAckDeadline(request);
       }, expectedError);
       assert(
@@ -890,7 +890,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.acknowledge(request);
       }, expectedError);
       assert(
@@ -999,7 +999,7 @@ describe('v1.SubscriberClient', () => {
       };
       const expectedError = new Error('expected');
       client.innerApiCalls.pull = stubSimpleCall(undefined, expectedError);
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.pull(request);
       }, expectedError);
       assert(
@@ -1113,7 +1113,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.modifyPushConfig(request);
       }, expectedError);
       assert(
@@ -1227,7 +1227,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.getSnapshot(request);
       }, expectedError);
       assert(
@@ -1341,7 +1341,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.createSnapshot(request);
       }, expectedError);
       assert(
@@ -1458,7 +1458,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.updateSnapshot(request);
       }, expectedError);
       assert(
@@ -1572,7 +1572,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.deleteSnapshot(request);
       }, expectedError);
       assert(
@@ -1681,7 +1681,7 @@ describe('v1.SubscriberClient', () => {
       };
       const expectedError = new Error('expected');
       client.innerApiCalls.seek = stubSimpleCall(undefined, expectedError);
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.seek(request);
       }, expectedError);
       assert(
@@ -1765,7 +1765,7 @@ describe('v1.SubscriberClient', () => {
         stream.write(request);
         stream.end();
       });
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await promise;
       }, expectedError);
       assert(
@@ -1889,7 +1889,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.listSubscriptions(request);
       }, expectedError);
       assert(
@@ -1976,7 +1976,7 @@ describe('v1.SubscriberClient', () => {
           reject(err);
         });
       });
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await promise;
       }, expectedError);
       assert(
@@ -2049,7 +2049,7 @@ describe('v1.SubscriberClient', () => {
         expectedError
       );
       const iterable = client.listSubscriptionsAsync(request);
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         const responses: protos.google.pubsub.v1.ISubscription[] = [];
         for await (const resource of iterable) {
           responses.push(resource!);
@@ -2177,7 +2177,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await client.listSnapshots(request);
       }, expectedError);
       assert(
@@ -2264,7 +2264,7 @@ describe('v1.SubscriberClient', () => {
           reject(err);
         });
       });
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         await promise;
       }, expectedError);
       assert(
@@ -2337,7 +2337,7 @@ describe('v1.SubscriberClient', () => {
         expectedError
       );
       const iterable = client.listSnapshotsAsync(request);
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         const responses: protos.google.pubsub.v1.ISnapshot[] = [];
         for await (const resource of iterable) {
           responses.push(resource!);

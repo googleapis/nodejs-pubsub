@@ -150,7 +150,7 @@ describe('pubsub', () => {
   describe('Topic', () => {
     it('should be listed', async () => {
       const [topics] = await pubsub.getTopics();
-      const results = topics.filter((topic: Topic) => {
+      const results = topics.filter(topic => {
         const name = getTopicName(topic);
         return TOPIC_FULL_NAMES.indexOf(name) !== -1;
       });
@@ -187,7 +187,7 @@ describe('pubsub', () => {
 
     it('should be created and deleted', done => {
       const TOPIC_NAME = generateTopicName();
-      pubsub.createTopic(TOPIC_NAME, (err: ServiceError | null) => {
+      pubsub.createTopic(TOPIC_NAME, err => {
         assert.ifError(err);
         pubsub.topic(TOPIC_NAME).delete(done);
       });
