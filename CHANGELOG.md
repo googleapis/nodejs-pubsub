@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [1.7.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.7.0...v1.7.1) (2020-04-06)
+
+
+### Bug Fixes
+
+* provide missing close() method in the generated gapic client ([#941](https://www.github.com/googleapis/nodejs-pubsub/issues/941)) ([6bf8f14](https://www.github.com/googleapis/nodejs-pubsub/commit/6bf8f1481a1dea051c47697488e13b6facf20a26))
+
 ## [1.7.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.6.0...v1.7.0) (2020-03-29)
 
 
