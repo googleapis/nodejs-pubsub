@@ -48,7 +48,7 @@
     "benchwrapper": "node bin/benchwrapper.js"
   },
   "dependencies": {
-    "@google-cloud/paginator": "^2.0.0",
+    "@google-cloud/paginator": "^3.0.0",
     "@google-cloud/precise-date": "^2.0.0",
     "@google-cloud/projectify": "^1.0.0",
     "@google-cloud/promisify": "^2.0.0",
