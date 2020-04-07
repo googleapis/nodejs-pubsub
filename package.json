@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "@google-cloud/paginator": "^2.0.0",
-    "@google-cloud/precise-date": "^1.0.0",
+    "@google-cloud/precise-date": "^2.0.0",
     "@google-cloud/projectify": "^1.0.0",
     "@google-cloud/promisify": "^1.0.0",
     "@types/duplexify": "^3.6.0",
