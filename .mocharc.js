@@ -1,10 +1,4 @@
-<< << << < HEAD
-  // Copyright 2020 Google LLC
-  ===
-  === =
-  // Copyright 2019 Google LLC
-  >>>
-  >>> > feat: convert client to typescript
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,8 +25,4 @@ if (process.env.MOCHA_REPORTER) {
 if (process.env.MOCHA_REPORTER_OUTPUT) {
   config['reporter-option'] = `output=${process.env.MOCHA_REPORTER_OUTPUT}`;
 }
-module.exports = config <<
-  << << < HEAD ===
-  === = >>>
-  >>> > feat: convert client to typescript: .mocharc.js >>>
-  >>> > feat: convert client to typescript
+module.exports = config

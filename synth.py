@@ -36,7 +36,8 @@ s.copy(
 templates = common_templates.node_library(source_location='build/src')
 s.copy(templates)
 
-# surgery in client.ts file
+# TODO: remove this surgery once IAM service injected in nodejs-gax https://github.com/googleapis/gax-nodejs/pull/762/
+# surgery in client.ts file to call IAM service
 clients = ['publisher', 'subscriber']
 for client_name in clients:
     client_file = f'src/v1/{client_name}_client.ts'
@@ -53,8 +54,8 @@ for client_name in clients:
               '\/\/ Determine the client header string.',
               'this._iamClient = new IamClient(opts); \n // Determine the client header string.')
 
+    # TODO: it should be removed once pubsub upgrade gts 2.0.0
     # fix tslint issue due to mismatch gts version with gapic-generator-typescript
-    # it should be removed once pubsub upgrade gts 2.0.0
     s.replace(client_file, '\/\/ eslint\-disable\-next\-line\ \@typescript\-eslint\/no\-explicit\-any',
               '// tslint:disable-next-line no-any')
 

@@ -94,8 +94,8 @@ export class SubscriberClient {
       opts && opts.servicePath
         ? opts.servicePath
         : opts && opts.apiEndpoint
-          ? opts.apiEndpoint
-          : staticMembers.servicePath;
+        ? opts.apiEndpoint
+        : staticMembers.servicePath;
     const port = opts && opts.port ? opts.port : staticMembers.port;
 
     if (!opts) {
@@ -153,7 +153,7 @@ export class SubscriberClient {
     this._protos = this._gaxGrpc.loadProto(
       opts.fallback
         ? // eslint-disable-next-line @typescript-eslint/no-var-requires
-        require('../../protos/protos.json')
+          require('../../protos/protos.json')
         : nodejsProtoPath
     );
 
@@ -235,10 +235,10 @@ export class SubscriberClient {
     this.subscriberStub = this._gaxGrpc.createStub(
       this._opts.fallback
         ? (this._protos as protobuf.Root).lookupService(
-          'google.pubsub.v1.Subscriber'
-        )
+            'google.pubsub.v1.Subscriber'
+          )
         : // tslint:disable-next-line no-any
-        (this._protos as any).google.pubsub.v1.Subscriber,
+          (this._protos as any).google.pubsub.v1.Subscriber,
       this._opts
     ) as Promise<{[method: string]: Function}>;
 
@@ -280,8 +280,8 @@ export class SubscriberClient {
         callPromise,
         this._defaults[methodName],
         this.descriptors.page[methodName] ||
-        this.descriptors.stream[methodName] ||
-        this.descriptors.longrunning[methodName]
+          this.descriptors.stream[methodName] ||
+          this.descriptors.longrunning[methodName]
       );
 
       this.innerApiCalls[methodName] = apiCall;
@@ -498,10 +498,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.pubsub.v1.ISubscription,
-        protos.google.pubsub.v1.ISubscription | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.ISubscription | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.ISubscription | null | undefined,
@@ -579,10 +579,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.pubsub.v1.ISubscription,
-        protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
@@ -663,10 +663,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.pubsub.v1.ISubscription,
-        protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
@@ -748,10 +748,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.protobuf.IEmpty,
-        protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
@@ -844,10 +844,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.protobuf.IEmpty,
-        protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
@@ -935,10 +935,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.protobuf.IEmpty,
-        protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
@@ -1030,10 +1030,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.pubsub.v1.IPullResponse,
-        protos.google.pubsub.v1.IPullRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.pubsub.v1.IPullResponse,
+          protos.google.pubsub.v1.IPullRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.pubsub.v1.IPullResponse,
       protos.google.pubsub.v1.IPullRequest | null | undefined,
@@ -1123,10 +1123,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.protobuf.IEmpty,
-        protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
@@ -1208,10 +1208,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.pubsub.v1.ISnapshot,
-        protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
@@ -1323,10 +1323,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.pubsub.v1.ISnapshot,
-        protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
@@ -1411,10 +1411,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.pubsub.v1.ISnapshot,
-        protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
@@ -1501,10 +1501,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.protobuf.IEmpty,
-        protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
@@ -1604,10 +1604,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | Callback<
-        protos.google.pubsub.v1.ISeekResponse,
-        protos.google.pubsub.v1.ISeekRequest | null | undefined,
-        {} | null | undefined
-      >,
+          protos.google.pubsub.v1.ISeekResponse,
+          protos.google.pubsub.v1.ISeekRequest | null | undefined,
+          {} | null | undefined
+        >,
     callback?: Callback<
       protos.google.pubsub.v1.ISeekResponse,
       protos.google.pubsub.v1.ISeekRequest | null | undefined,
@@ -1725,10 +1725,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | PaginationCallback<
-        protos.google.pubsub.v1.IListSubscriptionsRequest,
-        protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
-        protos.google.pubsub.v1.ISubscription
-      >,
+          protos.google.pubsub.v1.IListSubscriptionsRequest,
+          protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
+          protos.google.pubsub.v1.ISubscription
+        >,
     callback?: PaginationCallback<
       protos.google.pubsub.v1.IListSubscriptionsRequest,
       protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
@@ -1924,10 +1924,10 @@ export class SubscriberClient {
     optionsOrCallback?:
       | gax.CallOptions
       | PaginationCallback<
-        protos.google.pubsub.v1.IListSnapshotsRequest,
-        protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
-        protos.google.pubsub.v1.ISnapshot
-      >,
+          protos.google.pubsub.v1.IListSnapshotsRequest,
+          protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
+          protos.google.pubsub.v1.ISnapshot
+        >,
     callback?: PaginationCallback<
       protos.google.pubsub.v1.IListSnapshotsRequest,
       protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
