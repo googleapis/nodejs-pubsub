@@ -50,7 +50,7 @@
   "dependencies": {
     "@google-cloud/paginator": "^3.0.0",
     "@google-cloud/precise-date": "^2.0.0",
-    "@google-cloud/projectify": "^1.0.0",
+    "@google-cloud/projectify": "^2.0.0",
     "@google-cloud/promisify": "^2.0.0",
     "@types/duplexify": "^3.6.0",
     "@types/long": "^4.0.0",
