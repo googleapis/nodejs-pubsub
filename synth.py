@@ -65,10 +65,6 @@ for client_name in clients:
 s.replace('test/gapic_publisher_v1.ts',
           'const\ expectedResponse\ \=\ \[new\ String\(\)\,\ new\ String\(\)\,\ new\ String\(\)\];', 'const expectedResponse: string[] | undefined = [];')
 
-# TODO: This line could be removed once Pub/Sub deprecate Node 8
-s.replace('.github/workflows/ci.yaml',
-          'node\:\ \[10\,\ 12\,\ 13\]', 'node: [8, 10, 12, 13]')
-
 # Node.js specific cleanup
 subprocess.run(['npm', 'install'])
 subprocess.run(['npm', 'run', 'fix'])
