@@ -1,12 +1,13 @@
 {
-  "updateTime": "2020-04-07T22:00:47.696086Z",
+  "updateTime": "2020-04-07T22:25:38.020435Z",
   "sources": [
     {
       "git": {
         "name": "googleapis",
         "remote": "https://github.com/googleapis/googleapis.git",
-        "sha": "0669a37c66d76bd413343da69420bb75c49062e7",
-        "internalRef": "305340308"
+        "sha": "bf85ee3ed64951c14b19ef8577689f43ee6f0f41",
+        "internalRef": "305349873",
+        "log": "bf85ee3ed64951c14b19ef8577689f43ee6f0f41\nchore: enable gapicv2 for cloudbuild/v1 API\n\nCommitter: @miraleung\nPiperOrigin-RevId: 305349873\n\nf497c7aa912df121e11772767e667fdbc10a63d9\nchore: enable gapic v2 and proto annotation for Web Security Scanner v1alpha API.\n\ncommitter: @noahdietz\nPiperOrigin-RevId: 305349342\n\n"
       }
     },
     {
