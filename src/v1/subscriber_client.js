@@ -220,6 +220,8 @@ class SubscriberClient {
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
+    // note: editing generated code
+    this.subscriberStub = subscriberStub;
     const subscriberStubMethods = [
       'createSubscription',
       'getSubscription',
@@ -1855,6 +1857,18 @@ class SubscriberClient {
     return this._pathTemplates.topicPathTemplate.render({
       project: project,
       topic: topic,
+    });
+  }
+
+  /**
+   * Terminate the GRPC channel and close the client.
+   * note: editing generated code
+   *
+   * The client will no longer be usable and all future behavior is undefined.
+   */
+  close() {
+    return this.subscriberStub.then(stub => {
+      stub.close();
     });
   }
 
