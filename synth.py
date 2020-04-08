@@ -61,7 +61,8 @@ for client_name in clients:
         content = helper_file.read()
     s.replace(client_file, '^}', content)
 
-# TODO: Remove this replace once https://github.com/googleapis/gapic-generator-typescript/issues/380 resolved
+# TODO: it should be removed once pubsub upgrade gts 2.0.0
+# fix tslint issue due to mismatch gts version with gapic-generator-typescript
 s.replace('test/gapic_publisher_v1.ts',
           'const\ expectedResponse\ \=\ \[new\ String\(\)\,\ new\ String\(\)\,\ new\ String\(\)\];', 'const expectedResponse: string[] | undefined = [];')
 

@@ -1,20 +1,19 @@
 {
-  "updateTime": "2020-04-08T00:04:36.532333Z",
+  "updateTime": "2020-04-08T18:29:29.306214Z",
   "sources": [
     {
       "git": {
         "name": "googleapis",
         "remote": "https://github.com/googleapis/googleapis.git",
-        "sha": "83d7f20c06182cb6ada9a3b47daf17b2fd22b020",
-        "internalRef": "305358314",
-        "log": "83d7f20c06182cb6ada9a3b47daf17b2fd22b020\nMigrate dialogflow from gapic v1 to gapic v2.\nIncluding breaking changes (resource pattern change) introduced in cl/304043500.\n\ncommitter: @hzyi-google\nPiperOrigin-RevId: 305358314\n\nf8a97692250a6c781d87528995a5c72d41ca7762\nchore: enable gapic v2 and proto annotation for Grafeas API.\n\ncommitter: @noahdietz\nPiperOrigin-RevId: 305354660\n\nb1a5ca68468eb1587168972c9d15928e98ba92b0\nEnable gapicv2 for v1/osconfig\n\nCommitter: @miraleung\nPiperOrigin-RevId: 305351235\n\n"
+        "sha": "d398d687aad9eab4c6ceee9cd5e012fa61f7e28c",
+        "internalRef": "305496764"
       }
     },
     {
       "git": {
         "name": "synthtool",
         "remote": "https://github.com/googleapis/synthtool.git",
-        "sha": "980baaa738a1ad8fa02b4fdbd56be075ee77ece5"
+        "sha": "8cf0f5d93a70c3dcb0b4999d3152c46d4d9264bf"
       }
     }
   ],
