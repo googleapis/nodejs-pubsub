@@ -30,7 +30,7 @@
     "presystem-test": "npm run compile",
     "system-test": "mocha build/system-test --timeout 600000",
     "samples-test": "cd samples/ && npm link ../ && npm install && npm test && cd ../",
-    "test": "c8 mocha build/test --timeout 60000",
+    "test": "c8 mocha build/test",
     "lint": "gts check",
     "predocs": "npm run compile",
     "docs": "jsdoc -c .jsdoc.js",

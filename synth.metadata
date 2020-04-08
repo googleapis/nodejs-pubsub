@@ -1,13 +1,13 @@
 {
-  "updateTime": "2020-04-07T22:45:44.919342Z",
+  "updateTime": "2020-04-08T00:04:36.532333Z",
   "sources": [
     {
       "git": {
         "name": "googleapis",
         "remote": "https://github.com/googleapis/googleapis.git",
-        "sha": "c803327f9b1dd2583b070645b5b86e5e7ead3161",
-        "internalRef": "305350472",
-        "log": "c803327f9b1dd2583b070645b5b86e5e7ead3161\nEnable gapicv2 for osconfig/agentendpoint/v1beta\n\nCommitter: @miraleung\nPiperOrigin-RevId: 305350472\n\n99dddf1de598f95a71d3536f5c170d84f0c0ef87\nchore: enable gapicv2 for build/v1 API\n\nCommitter: @miraleung\nPiperOrigin-RevId: 305349884\n\n"
+        "sha": "83d7f20c06182cb6ada9a3b47daf17b2fd22b020",
+        "internalRef": "305358314",
+        "log": "83d7f20c06182cb6ada9a3b47daf17b2fd22b020\nMigrate dialogflow from gapic v1 to gapic v2.\nIncluding breaking changes (resource pattern change) introduced in cl/304043500.\n\ncommitter: @hzyi-google\nPiperOrigin-RevId: 305358314\n\nf8a97692250a6c781d87528995a5c72d41ca7762\nchore: enable gapic v2 and proto annotation for Grafeas API.\n\ncommitter: @noahdietz\nPiperOrigin-RevId: 305354660\n\nb1a5ca68468eb1587168972c9d15928e98ba92b0\nEnable gapicv2 for v1/osconfig\n\nCommitter: @miraleung\nPiperOrigin-RevId: 305351235\n\n"
       }
     },
     {
