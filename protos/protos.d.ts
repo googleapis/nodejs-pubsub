@@ -17,17 +17,643 @@ import * as $protobuf from "protobufjs";
 /** Namespace google. */
 export namespace google {
 
-    /** Namespace pubsub. */
-    namespace pubsub {
+    /** Namespace iam. */
+    namespace iam {
 
         /** Namespace v1. */
         namespace v1 {
 
-            /** Represents a Publisher */
-            class Publisher extends $protobuf.rpc.Service {
+            /** Properties of a Policy. */
+            interface IPolicy {
+
+                /** Policy version */
+                version?: (number|null);
+
+                /** Policy bindings */
+                bindings?: (google.iam.v1.IBinding[]|null);
+
+                /** Policy etag */
+                etag?: (Uint8Array|string|null);
+            }
+
+            /** Represents a Policy. */
+            class Policy implements IPolicy {
 
                 /**
-                 * Constructs a new Publisher service.
+                 * Constructs a new Policy.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.iam.v1.IPolicy);
+
+                /** Policy version. */
+                public version: number;
+
+                /** Policy bindings. */
+                public bindings: google.iam.v1.IBinding[];
+
+                /** Policy etag. */
+                public etag: (Uint8Array|string);
+
+                /**
+                 * Creates a new Policy instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Policy instance
+                 */
+                public static create(properties?: google.iam.v1.IPolicy): google.iam.v1.Policy;
+
+                /**
+                 * Encodes the specified Policy message. Does not implicitly {@link google.iam.v1.Policy.verify|verify} messages.
+                 * @param message Policy message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.iam.v1.IPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified Policy message, length delimited. Does not implicitly {@link google.iam.v1.Policy.verify|verify} messages.
+                 * @param message Policy message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.iam.v1.IPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Policy message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Policy
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.Policy;
+
+                /**
+                 * Decodes a Policy message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns Policy
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.Policy;
+
+                /**
+                 * Verifies a Policy message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a Policy message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Policy
+                 */
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.Policy;
+
+                /**
+                 * Creates a plain object from a Policy message. Also converts values to other types if specified.
+                 * @param message Policy
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.iam.v1.Policy, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Policy to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a Binding. */
+            interface IBinding {
+
+                /** Binding role */
+                role?: (string|null);
+
+                /** Binding members */
+                members?: (string[]|null);
+
+                /** Binding condition */
+                condition?: (google.type.IExpr|null);
+            }
+
+            /** Represents a Binding. */
+            class Binding implements IBinding {
+
+                /**
+                 * Constructs a new Binding.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.iam.v1.IBinding);
+
+                /** Binding role. */
+                public role: string;
+
+                /** Binding members. */
+                public members: string[];
+
+                /** Binding condition. */
+                public condition?: (google.type.IExpr|null);
+
+                /**
+                 * Creates a new Binding instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Binding instance
+                 */
+                public static create(properties?: google.iam.v1.IBinding): google.iam.v1.Binding;
+
+                /**
+                 * Encodes the specified Binding message. Does not implicitly {@link google.iam.v1.Binding.verify|verify} messages.
+                 * @param message Binding message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.iam.v1.IBinding, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified Binding message, length delimited. Does not implicitly {@link google.iam.v1.Binding.verify|verify} messages.
+                 * @param message Binding message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.iam.v1.IBinding, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Binding message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Binding
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.Binding;
+
+                /**
+                 * Decodes a Binding message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns Binding
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.Binding;
+
+                /**
+                 * Verifies a Binding message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a Binding message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Binding
+                 */
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.Binding;
+
+                /**
+                 * Creates a plain object from a Binding message. Also converts values to other types if specified.
+                 * @param message Binding
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.iam.v1.Binding, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Binding to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a PolicyDelta. */
+            interface IPolicyDelta {
+
+                /** PolicyDelta bindingDeltas */
+                bindingDeltas?: (google.iam.v1.IBindingDelta[]|null);
+
+                /** PolicyDelta auditConfigDeltas */
+                auditConfigDeltas?: (google.iam.v1.IAuditConfigDelta[]|null);
+            }
+
+            /** Represents a PolicyDelta. */
+            class PolicyDelta implements IPolicyDelta {
+
+                /**
+                 * Constructs a new PolicyDelta.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.iam.v1.IPolicyDelta);
+
+                /** PolicyDelta bindingDeltas. */
+                public bindingDeltas: google.iam.v1.IBindingDelta[];
+
+                /** PolicyDelta auditConfigDeltas. */
+                public auditConfigDeltas: google.iam.v1.IAuditConfigDelta[];
+
+                /**
+                 * Creates a new PolicyDelta instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns PolicyDelta instance
+                 */
+                public static create(properties?: google.iam.v1.IPolicyDelta): google.iam.v1.PolicyDelta;
+
+                /**
+                 * Encodes the specified PolicyDelta message. Does not implicitly {@link google.iam.v1.PolicyDelta.verify|verify} messages.
+                 * @param message PolicyDelta message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.iam.v1.IPolicyDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified PolicyDelta message, length delimited. Does not implicitly {@link google.iam.v1.PolicyDelta.verify|verify} messages.
+                 * @param message PolicyDelta message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.iam.v1.IPolicyDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a PolicyDelta message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns PolicyDelta
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.PolicyDelta;
+
+                /**
+                 * Decodes a PolicyDelta message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns PolicyDelta
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.PolicyDelta;
+
+                /**
+                 * Verifies a PolicyDelta message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a PolicyDelta message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns PolicyDelta
+                 */
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.PolicyDelta;
+
+                /**
+                 * Creates a plain object from a PolicyDelta message. Also converts values to other types if specified.
+                 * @param message PolicyDelta
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.iam.v1.PolicyDelta, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this PolicyDelta to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a BindingDelta. */
+            interface IBindingDelta {
+
+                /** BindingDelta action */
+                action?: (google.iam.v1.BindingDelta.Action|keyof typeof google.iam.v1.BindingDelta.Action|null);
+
+                /** BindingDelta role */
+                role?: (string|null);
+
+                /** BindingDelta member */
+                member?: (string|null);
+
+                /** BindingDelta condition */
+                condition?: (google.type.IExpr|null);
+            }
+
+            /** Represents a BindingDelta. */
+            class BindingDelta implements IBindingDelta {
+
+                /**
+                 * Constructs a new BindingDelta.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.iam.v1.IBindingDelta);
+
+                /** BindingDelta action. */
+                public action: (google.iam.v1.BindingDelta.Action|keyof typeof google.iam.v1.BindingDelta.Action);
+
+                /** BindingDelta role. */
+                public role: string;
+
+                /** BindingDelta member. */
+                public member: string;
+
+                /** BindingDelta condition. */
+                public condition?: (google.type.IExpr|null);
+
+                /**
+                 * Creates a new BindingDelta instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns BindingDelta instance
+                 */
+                public static create(properties?: google.iam.v1.IBindingDelta): google.iam.v1.BindingDelta;
+
+                /**
+                 * Encodes the specified BindingDelta message. Does not implicitly {@link google.iam.v1.BindingDelta.verify|verify} messages.
+                 * @param message BindingDelta message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.iam.v1.IBindingDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified BindingDelta message, length delimited. Does not implicitly {@link google.iam.v1.BindingDelta.verify|verify} messages.
+                 * @param message BindingDelta message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.iam.v1.IBindingDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a BindingDelta message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns BindingDelta
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.BindingDelta;
+
+                /**
+                 * Decodes a BindingDelta message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns BindingDelta
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.BindingDelta;
+
+                /**
+                 * Verifies a BindingDelta message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a BindingDelta message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns BindingDelta
+                 */
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.BindingDelta;
+
+                /**
+                 * Creates a plain object from a BindingDelta message. Also converts values to other types if specified.
+                 * @param message BindingDelta
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.iam.v1.BindingDelta, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this BindingDelta to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            namespace BindingDelta {
+
+                /** Action enum. */
+                enum Action {
+                    ACTION_UNSPECIFIED = 0,
+                    ADD = 1,
+                    REMOVE = 2
+                }
+            }
+
+            /** Properties of an AuditConfigDelta. */
+            interface IAuditConfigDelta {
+
+                /** AuditConfigDelta action */
+                action?: (google.iam.v1.AuditConfigDelta.Action|keyof typeof google.iam.v1.AuditConfigDelta.Action|null);
+
+                /** AuditConfigDelta service */
+                service?: (string|null);
+
+                /** AuditConfigDelta exemptedMember */
+                exemptedMember?: (string|null);
+
+                /** AuditConfigDelta logType */
+                logType?: (string|null);
+            }
+
+            /** Represents an AuditConfigDelta. */
+            class AuditConfigDelta implements IAuditConfigDelta {
+
+                /**
+                 * Constructs a new AuditConfigDelta.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.iam.v1.IAuditConfigDelta);
+
+                /** AuditConfigDelta action. */
+                public action: (google.iam.v1.AuditConfigDelta.Action|keyof typeof google.iam.v1.AuditConfigDelta.Action);
+
+                /** AuditConfigDelta service. */
+                public service: string;
+
+                /** AuditConfigDelta exemptedMember. */
+                public exemptedMember: string;
+
+                /** AuditConfigDelta logType. */
+                public logType: string;
+
+                /**
+                 * Creates a new AuditConfigDelta instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns AuditConfigDelta instance
+                 */
+                public static create(properties?: google.iam.v1.IAuditConfigDelta): google.iam.v1.AuditConfigDelta;
+
+                /**
+                 * Encodes the specified AuditConfigDelta message. Does not implicitly {@link google.iam.v1.AuditConfigDelta.verify|verify} messages.
+                 * @param message AuditConfigDelta message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.iam.v1.IAuditConfigDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified AuditConfigDelta message, length delimited. Does not implicitly {@link google.iam.v1.AuditConfigDelta.verify|verify} messages.
+                 * @param message AuditConfigDelta message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.iam.v1.IAuditConfigDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an AuditConfigDelta message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns AuditConfigDelta
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.AuditConfigDelta;
+
+                /**
+                 * Decodes an AuditConfigDelta message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns AuditConfigDelta
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.AuditConfigDelta;
+
+                /**
+                 * Verifies an AuditConfigDelta message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates an AuditConfigDelta message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns AuditConfigDelta
+                 */
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.AuditConfigDelta;
+
+                /**
+                 * Creates a plain object from an AuditConfigDelta message. Also converts values to other types if specified.
+                 * @param message AuditConfigDelta
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.iam.v1.AuditConfigDelta, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this AuditConfigDelta to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            namespace AuditConfigDelta {
+
+                /** Action enum. */
+                enum Action {
+                    ACTION_UNSPECIFIED = 0,
+                    ADD = 1,
+                    REMOVE = 2
+                }
+            }
+
+            /** Properties of a GetPolicyOptions. */
+            interface IGetPolicyOptions {
+
+                /** GetPolicyOptions requestedPolicyVersion */
+                requestedPolicyVersion?: (number|null);
+            }
+
+            /** Represents a GetPolicyOptions. */
+            class GetPolicyOptions implements IGetPolicyOptions {
+
+                /**
+                 * Constructs a new GetPolicyOptions.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.iam.v1.IGetPolicyOptions);
+
+                /** GetPolicyOptions requestedPolicyVersion. */
+                public requestedPolicyVersion: number;
+
+                /**
+                 * Creates a new GetPolicyOptions instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns GetPolicyOptions instance
+                 */
+                public static create(properties?: google.iam.v1.IGetPolicyOptions): google.iam.v1.GetPolicyOptions;
+
+                /**
+                 * Encodes the specified GetPolicyOptions message. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
+                 * @param message GetPolicyOptions message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.iam.v1.IGetPolicyOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified GetPolicyOptions message, length delimited. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
+                 * @param message GetPolicyOptions message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.iam.v1.IGetPolicyOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a GetPolicyOptions message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns GetPolicyOptions
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.GetPolicyOptions;
+
+                /**
+                 * Decodes a GetPolicyOptions message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns GetPolicyOptions
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.GetPolicyOptions;
+
+                /**
+                 * Verifies a GetPolicyOptions message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a GetPolicyOptions message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns GetPolicyOptions
+                 */
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.GetPolicyOptions;
+
+                /**
+                 * Creates a plain object from a GetPolicyOptions message. Also converts values to other types if specified.
+                 * @param message GetPolicyOptions
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.iam.v1.GetPolicyOptions, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this GetPolicyOptions to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Represents a IAMPolicy */
+            class IAMPolicy extends $protobuf.rpc.Service {
+
+                /**
+                 * Constructs a new IAMPolicy service.
                  * @param rpcImpl RPC implementation
                  * @param [requestDelimited=false] Whether requests are length-delimited
                  * @param [responseDelimited=false] Whether responses are length-delimited
@@ -35,4592 +661,570 @@ export namespace google {
                 constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
 
                 /**
-                 * Creates new Publisher service using the specified rpc implementation.
+                 * Creates new IAMPolicy service using the specified rpc implementation.
                  * @param rpcImpl RPC implementation
                  * @param [requestDelimited=false] Whether requests are length-delimited
                  * @param [responseDelimited=false] Whether responses are length-delimited
                  * @returns RPC service. Useful where requests and/or responses are streamed.
                  */
-                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): Publisher;
+                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): IAMPolicy;
 
                 /**
-                 * Calls CreateTopic.
-                 * @param request Topic message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Topic
+                 * Calls SetIamPolicy.
+                 * @param request SetIamPolicyRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Policy
                  */
-                public createTopic(request: google.pubsub.v1.ITopic, callback: google.pubsub.v1.Publisher.CreateTopicCallback): void;
+                public setIamPolicy(request: google.iam.v1.ISetIamPolicyRequest, callback: google.iam.v1.IAMPolicy.SetIamPolicyCallback): void;
 
                 /**
-                 * Calls CreateTopic.
-                 * @param request Topic message or plain object
+                 * Calls SetIamPolicy.
+                 * @param request SetIamPolicyRequest message or plain object
                  * @returns Promise
                  */
-                public createTopic(request: google.pubsub.v1.ITopic): Promise<google.pubsub.v1.Topic>;
+                public setIamPolicy(request: google.iam.v1.ISetIamPolicyRequest): Promise<google.iam.v1.Policy>;
 
                 /**
-                 * Calls UpdateTopic.
-                 * @param request UpdateTopicRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Topic
+                 * Calls GetIamPolicy.
+                 * @param request GetIamPolicyRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Policy
                  */
-                public updateTopic(request: google.pubsub.v1.IUpdateTopicRequest, callback: google.pubsub.v1.Publisher.UpdateTopicCallback): void;
+                public getIamPolicy(request: google.iam.v1.IGetIamPolicyRequest, callback: google.iam.v1.IAMPolicy.GetIamPolicyCallback): void;
 
                 /**
-                 * Calls UpdateTopic.
-                 * @param request UpdateTopicRequest message or plain object
+                 * Calls GetIamPolicy.
+                 * @param request GetIamPolicyRequest message or plain object
                  * @returns Promise
                  */
-                public updateTopic(request: google.pubsub.v1.IUpdateTopicRequest): Promise<google.pubsub.v1.Topic>;
+                public getIamPolicy(request: google.iam.v1.IGetIamPolicyRequest): Promise<google.iam.v1.Policy>;
 
                 /**
-                 * Calls Publish.
-                 * @param request PublishRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and PublishResponse
+                 * Calls TestIamPermissions.
+                 * @param request TestIamPermissionsRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and TestIamPermissionsResponse
                  */
-                public publish(request: google.pubsub.v1.IPublishRequest, callback: google.pubsub.v1.Publisher.PublishCallback): void;
+                public testIamPermissions(request: google.iam.v1.ITestIamPermissionsRequest, callback: google.iam.v1.IAMPolicy.TestIamPermissionsCallback): void;
 
                 /**
-                 * Calls Publish.
-                 * @param request PublishRequest message or plain object
+                 * Calls TestIamPermissions.
+                 * @param request TestIamPermissionsRequest message or plain object
                  * @returns Promise
                  */
-                public publish(request: google.pubsub.v1.IPublishRequest): Promise<google.pubsub.v1.PublishResponse>;
-
-                /**
-                 * Calls GetTopic.
-                 * @param request GetTopicRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Topic
-                 */
-                public getTopic(request: google.pubsub.v1.IGetTopicRequest, callback: google.pubsub.v1.Publisher.GetTopicCallback): void;
-
-                /**
-                 * Calls GetTopic.
-                 * @param request GetTopicRequest message or plain object
-                 * @returns Promise
-                 */
-                public getTopic(request: google.pubsub.v1.IGetTopicRequest): Promise<google.pubsub.v1.Topic>;
-
-                /**
-                 * Calls ListTopics.
-                 * @param request ListTopicsRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and ListTopicsResponse
-                 */
-                public listTopics(request: google.pubsub.v1.IListTopicsRequest, callback: google.pubsub.v1.Publisher.ListTopicsCallback): void;
-
-                /**
-                 * Calls ListTopics.
-                 * @param request ListTopicsRequest message or plain object
-                 * @returns Promise
-                 */
-                public listTopics(request: google.pubsub.v1.IListTopicsRequest): Promise<google.pubsub.v1.ListTopicsResponse>;
-
-                /**
-                 * Calls ListTopicSubscriptions.
-                 * @param request ListTopicSubscriptionsRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and ListTopicSubscriptionsResponse
-                 */
-                public listTopicSubscriptions(request: google.pubsub.v1.IListTopicSubscriptionsRequest, callback: google.pubsub.v1.Publisher.ListTopicSubscriptionsCallback): void;
-
-                /**
-                 * Calls ListTopicSubscriptions.
-                 * @param request ListTopicSubscriptionsRequest message or plain object
-                 * @returns Promise
-                 */
-                public listTopicSubscriptions(request: google.pubsub.v1.IListTopicSubscriptionsRequest): Promise<google.pubsub.v1.ListTopicSubscriptionsResponse>;
-
-                /**
-                 * Calls ListTopicSnapshots.
-                 * @param request ListTopicSnapshotsRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and ListTopicSnapshotsResponse
-                 */
-                public listTopicSnapshots(request: google.pubsub.v1.IListTopicSnapshotsRequest, callback: google.pubsub.v1.Publisher.ListTopicSnapshotsCallback): void;
-
-                /**
-                 * Calls ListTopicSnapshots.
-                 * @param request ListTopicSnapshotsRequest message or plain object
-                 * @returns Promise
-                 */
-                public listTopicSnapshots(request: google.pubsub.v1.IListTopicSnapshotsRequest): Promise<google.pubsub.v1.ListTopicSnapshotsResponse>;
-
-                /**
-                 * Calls DeleteTopic.
-                 * @param request DeleteTopicRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Empty
-                 */
-                public deleteTopic(request: google.pubsub.v1.IDeleteTopicRequest, callback: google.pubsub.v1.Publisher.DeleteTopicCallback): void;
-
-                /**
-                 * Calls DeleteTopic.
-                 * @param request DeleteTopicRequest message or plain object
-                 * @returns Promise
-                 */
-                public deleteTopic(request: google.pubsub.v1.IDeleteTopicRequest): Promise<google.protobuf.Empty>;
+                public testIamPermissions(request: google.iam.v1.ITestIamPermissionsRequest): Promise<google.iam.v1.TestIamPermissionsResponse>;
             }
 
-            namespace Publisher {
+            namespace IAMPolicy {
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#createTopic}.
+                 * Callback as used by {@link google.iam.v1.IAMPolicy#setIamPolicy}.
                  * @param error Error, if any
-                 * @param [response] Topic
+                 * @param [response] Policy
                  */
-                type CreateTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
+                type SetIamPolicyCallback = (error: (Error|null), response?: google.iam.v1.Policy) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#updateTopic}.
+                 * Callback as used by {@link google.iam.v1.IAMPolicy#getIamPolicy}.
                  * @param error Error, if any
-                 * @param [response] Topic
+                 * @param [response] Policy
                  */
-                type UpdateTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
+                type GetIamPolicyCallback = (error: (Error|null), response?: google.iam.v1.Policy) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#publish}.
+                 * Callback as used by {@link google.iam.v1.IAMPolicy#testIamPermissions}.
                  * @param error Error, if any
-                 * @param [response] PublishResponse
+                 * @param [response] TestIamPermissionsResponse
                  */
-                type PublishCallback = (error: (Error|null), response?: google.pubsub.v1.PublishResponse) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#getTopic}.
-                 * @param error Error, if any
-                 * @param [response] Topic
-                 */
-                type GetTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopics}.
-                 * @param error Error, if any
-                 * @param [response] ListTopicsResponse
-                 */
-                type ListTopicsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicsResponse) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSubscriptions}.
-                 * @param error Error, if any
-                 * @param [response] ListTopicSubscriptionsResponse
-                 */
-                type ListTopicSubscriptionsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicSubscriptionsResponse) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSnapshots}.
-                 * @param error Error, if any
-                 * @param [response] ListTopicSnapshotsResponse
-                 */
-                type ListTopicSnapshotsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicSnapshotsResponse) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#deleteTopic}.
-                 * @param error Error, if any
-                 * @param [response] Empty
-                 */
-                type DeleteTopicCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+                type TestIamPermissionsCallback = (error: (Error|null), response?: google.iam.v1.TestIamPermissionsResponse) => void;
             }
 
-            /** Properties of a MessageStoragePolicy. */
-            interface IMessageStoragePolicy {
+            /** Properties of a SetIamPolicyRequest. */
+            interface ISetIamPolicyRequest {
 
-                /** MessageStoragePolicy allowedPersistenceRegions */
-                allowedPersistenceRegions?: (string[]|null);
+                /** SetIamPolicyRequest resource */
+                resource?: (string|null);
+
+                /** SetIamPolicyRequest policy */
+                policy?: (google.iam.v1.IPolicy|null);
             }
 
-            /** Represents a MessageStoragePolicy. */
-            class MessageStoragePolicy implements IMessageStoragePolicy {
+            /** Represents a SetIamPolicyRequest. */
+            class SetIamPolicyRequest implements ISetIamPolicyRequest {
 
                 /**
-                 * Constructs a new MessageStoragePolicy.
+                 * Constructs a new SetIamPolicyRequest.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.pubsub.v1.IMessageStoragePolicy);
+                constructor(properties?: google.iam.v1.ISetIamPolicyRequest);
 
-                /** MessageStoragePolicy allowedPersistenceRegions. */
-                public allowedPersistenceRegions: string[];
+                /** SetIamPolicyRequest resource. */
+                public resource: string;
+
+                /** SetIamPolicyRequest policy. */
+                public policy?: (google.iam.v1.IPolicy|null);
 
                 /**
-                 * Creates a new MessageStoragePolicy instance using the specified properties.
+                 * Creates a new SetIamPolicyRequest instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns MessageStoragePolicy instance
+                 * @returns SetIamPolicyRequest instance
                  */
-                public static create(properties?: google.pubsub.v1.IMessageStoragePolicy): google.pubsub.v1.MessageStoragePolicy;
+                public static create(properties?: google.iam.v1.ISetIamPolicyRequest): google.iam.v1.SetIamPolicyRequest;
 
                 /**
-                 * Encodes the specified MessageStoragePolicy message. Does not implicitly {@link google.pubsub.v1.MessageStoragePolicy.verify|verify} messages.
-                 * @param message MessageStoragePolicy message or plain object to encode
+                 * Encodes the specified SetIamPolicyRequest message. Does not implicitly {@link google.iam.v1.SetIamPolicyRequest.verify|verify} messages.
+                 * @param message SetIamPolicyRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.pubsub.v1.IMessageStoragePolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.iam.v1.ISetIamPolicyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified MessageStoragePolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.MessageStoragePolicy.verify|verify} messages.
-                 * @param message MessageStoragePolicy message or plain object to encode
+                 * Encodes the specified SetIamPolicyRequest message, length delimited. Does not implicitly {@link google.iam.v1.SetIamPolicyRequest.verify|verify} messages.
+                 * @param message SetIamPolicyRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.pubsub.v1.IMessageStoragePolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.iam.v1.ISetIamPolicyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a MessageStoragePolicy message from the specified reader or buffer.
+                 * Decodes a SetIamPolicyRequest message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns MessageStoragePolicy
+                 * @returns SetIamPolicyRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.MessageStoragePolicy;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.SetIamPolicyRequest;
 
                 /**
-                 * Decodes a MessageStoragePolicy message from the specified reader or buffer, length delimited.
+                 * Decodes a SetIamPolicyRequest message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns MessageStoragePolicy
+                 * @returns SetIamPolicyRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.MessageStoragePolicy;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.SetIamPolicyRequest;
 
                 /**
-                 * Verifies a MessageStoragePolicy message.
+                 * Verifies a SetIamPolicyRequest message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a MessageStoragePolicy message from a plain object. Also converts values to their respective internal types.
+                 * Creates a SetIamPolicyRequest message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns MessageStoragePolicy
+                 * @returns SetIamPolicyRequest
                  */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.MessageStoragePolicy;
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.SetIamPolicyRequest;
 
                 /**
-                 * Creates a plain object from a MessageStoragePolicy message. Also converts values to other types if specified.
-                 * @param message MessageStoragePolicy
+                 * Creates a plain object from a SetIamPolicyRequest message. Also converts values to other types if specified.
+                 * @param message SetIamPolicyRequest
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.pubsub.v1.MessageStoragePolicy, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.iam.v1.SetIamPolicyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this MessageStoragePolicy to JSON.
+                 * Converts this SetIamPolicyRequest to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            /** Properties of a Topic. */
-            interface ITopic {
+            /** Properties of a GetIamPolicyRequest. */
+            interface IGetIamPolicyRequest {
 
-                /** Topic name */
-                name?: (string|null);
+                /** GetIamPolicyRequest resource */
+                resource?: (string|null);
 
-                /** Topic labels */
-                labels?: ({ [k: string]: string }|null);
-
-                /** Topic messageStoragePolicy */
-                messageStoragePolicy?: (google.pubsub.v1.IMessageStoragePolicy|null);
-
-                /** Topic kmsKeyName */
-                kmsKeyName?: (string|null);
+                /** GetIamPolicyRequest options */
+                options?: (google.iam.v1.IGetPolicyOptions|null);
             }
 
-            /** Represents a Topic. */
-            class Topic implements ITopic {
+            /** Represents a GetIamPolicyRequest. */
+            class GetIamPolicyRequest implements IGetIamPolicyRequest {
 
                 /**
-                 * Constructs a new Topic.
+                 * Constructs a new GetIamPolicyRequest.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.pubsub.v1.ITopic);
+                constructor(properties?: google.iam.v1.IGetIamPolicyRequest);
 
-                /** Topic name. */
-                public name: string;
+                /** GetIamPolicyRequest resource. */
+                public resource: string;
 
-                /** Topic labels. */
-                public labels: { [k: string]: string };
-
-                /** Topic messageStoragePolicy. */
-                public messageStoragePolicy?: (google.pubsub.v1.IMessageStoragePolicy|null);
-
-                /** Topic kmsKeyName. */
-                public kmsKeyName: string;
+                /** GetIamPolicyRequest options. */
+                public options?: (google.iam.v1.IGetPolicyOptions|null);
 
                 /**
-                 * Creates a new Topic instance using the specified properties.
+                 * Creates a new GetIamPolicyRequest instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns Topic instance
+                 * @returns GetIamPolicyRequest instance
                  */
-                public static create(properties?: google.pubsub.v1.ITopic): google.pubsub.v1.Topic;
+                public static create(properties?: google.iam.v1.IGetIamPolicyRequest): google.iam.v1.GetIamPolicyRequest;
 
                 /**
-                 * Encodes the specified Topic message. Does not implicitly {@link google.pubsub.v1.Topic.verify|verify} messages.
-                 * @param message Topic message or plain object to encode
+                 * Encodes the specified GetIamPolicyRequest message. Does not implicitly {@link google.iam.v1.GetIamPolicyRequest.verify|verify} messages.
+                 * @param message GetIamPolicyRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.pubsub.v1.ITopic, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.iam.v1.IGetIamPolicyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified Topic message, length delimited. Does not implicitly {@link google.pubsub.v1.Topic.verify|verify} messages.
-                 * @param message Topic message or plain object to encode
+                 * Encodes the specified GetIamPolicyRequest message, length delimited. Does not implicitly {@link google.iam.v1.GetIamPolicyRequest.verify|verify} messages.
+                 * @param message GetIamPolicyRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.pubsub.v1.ITopic, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.iam.v1.IGetIamPolicyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a Topic message from the specified reader or buffer.
+                 * Decodes a GetIamPolicyRequest message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns Topic
+                 * @returns GetIamPolicyRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.Topic;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.GetIamPolicyRequest;
 
                 /**
-                 * Decodes a Topic message from the specified reader or buffer, length delimited.
+                 * Decodes a GetIamPolicyRequest message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns Topic
+                 * @returns GetIamPolicyRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.Topic;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.GetIamPolicyRequest;
 
                 /**
-                 * Verifies a Topic message.
+                 * Verifies a GetIamPolicyRequest message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a Topic message from a plain object. Also converts values to their respective internal types.
+                 * Creates a GetIamPolicyRequest message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns Topic
+                 * @returns GetIamPolicyRequest
                  */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.Topic;
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.GetIamPolicyRequest;
 
                 /**
-                 * Creates a plain object from a Topic message. Also converts values to other types if specified.
-                 * @param message Topic
+                 * Creates a plain object from a GetIamPolicyRequest message. Also converts values to other types if specified.
+                 * @param message GetIamPolicyRequest
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.pubsub.v1.Topic, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.iam.v1.GetIamPolicyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this Topic to JSON.
+                 * Converts this GetIamPolicyRequest to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            /** Properties of a PubsubMessage. */
-            interface IPubsubMessage {
+            /** Properties of a TestIamPermissionsRequest. */
+            interface ITestIamPermissionsRequest {
 
-                /** PubsubMessage data */
-                data?: (Uint8Array|string|null);
+                /** TestIamPermissionsRequest resource */
+                resource?: (string|null);
 
-                /** PubsubMessage attributes */
-                attributes?: ({ [k: string]: string }|null);
-
-                /** PubsubMessage messageId */
-                messageId?: (string|null);
-
-                /** PubsubMessage publishTime */
-                publishTime?: (google.protobuf.ITimestamp|null);
-
-                /** PubsubMessage orderingKey */
-                orderingKey?: (string|null);
+                /** TestIamPermissionsRequest permissions */
+                permissions?: (string[]|null);
             }
 
-            /** Represents a PubsubMessage. */
-            class PubsubMessage implements IPubsubMessage {
+            /** Represents a TestIamPermissionsRequest. */
+            class TestIamPermissionsRequest implements ITestIamPermissionsRequest {
 
                 /**
-                 * Constructs a new PubsubMessage.
+                 * Constructs a new TestIamPermissionsRequest.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.pubsub.v1.IPubsubMessage);
+                constructor(properties?: google.iam.v1.ITestIamPermissionsRequest);
 
-                /** PubsubMessage data. */
-                public data: (Uint8Array|string);
+                /** TestIamPermissionsRequest resource. */
+                public resource: string;
 
-                /** PubsubMessage attributes. */
-                public attributes: { [k: string]: string };
-
-                /** PubsubMessage messageId. */
-                public messageId: string;
-
-                /** PubsubMessage publishTime. */
-                public publishTime?: (google.protobuf.ITimestamp|null);
-
-                /** PubsubMessage orderingKey. */
-                public orderingKey: string;
+                /** TestIamPermissionsRequest permissions. */
+                public permissions: string[];
 
                 /**
-                 * Creates a new PubsubMessage instance using the specified properties.
+                 * Creates a new TestIamPermissionsRequest instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns PubsubMessage instance
+                 * @returns TestIamPermissionsRequest instance
                  */
-                public static create(properties?: google.pubsub.v1.IPubsubMessage): google.pubsub.v1.PubsubMessage;
+                public static create(properties?: google.iam.v1.ITestIamPermissionsRequest): google.iam.v1.TestIamPermissionsRequest;
 
                 /**
-                 * Encodes the specified PubsubMessage message. Does not implicitly {@link google.pubsub.v1.PubsubMessage.verify|verify} messages.
-                 * @param message PubsubMessage message or plain object to encode
+                 * Encodes the specified TestIamPermissionsRequest message. Does not implicitly {@link google.iam.v1.TestIamPermissionsRequest.verify|verify} messages.
+                 * @param message TestIamPermissionsRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.pubsub.v1.IPubsubMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.iam.v1.ITestIamPermissionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified PubsubMessage message, length delimited. Does not implicitly {@link google.pubsub.v1.PubsubMessage.verify|verify} messages.
-                 * @param message PubsubMessage message or plain object to encode
+                 * Encodes the specified TestIamPermissionsRequest message, length delimited. Does not implicitly {@link google.iam.v1.TestIamPermissionsRequest.verify|verify} messages.
+                 * @param message TestIamPermissionsRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.pubsub.v1.IPubsubMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.iam.v1.ITestIamPermissionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a PubsubMessage message from the specified reader or buffer.
+                 * Decodes a TestIamPermissionsRequest message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns PubsubMessage
+                 * @returns TestIamPermissionsRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PubsubMessage;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.TestIamPermissionsRequest;
 
                 /**
-                 * Decodes a PubsubMessage message from the specified reader or buffer, length delimited.
+                 * Decodes a TestIamPermissionsRequest message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns PubsubMessage
+                 * @returns TestIamPermissionsRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PubsubMessage;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.TestIamPermissionsRequest;
 
                 /**
-                 * Verifies a PubsubMessage message.
+                 * Verifies a TestIamPermissionsRequest message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a PubsubMessage message from a plain object. Also converts values to their respective internal types.
+                 * Creates a TestIamPermissionsRequest message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns PubsubMessage
+                 * @returns TestIamPermissionsRequest
                  */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PubsubMessage;
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.TestIamPermissionsRequest;
 
                 /**
-                 * Creates a plain object from a PubsubMessage message. Also converts values to other types if specified.
-                 * @param message PubsubMessage
+                 * Creates a plain object from a TestIamPermissionsRequest message. Also converts values to other types if specified.
+                 * @param message TestIamPermissionsRequest
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.pubsub.v1.PubsubMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.iam.v1.TestIamPermissionsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this PubsubMessage to JSON.
+                 * Converts this TestIamPermissionsRequest to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            /** Properties of a GetTopicRequest. */
-            interface IGetTopicRequest {
+            /** Properties of a TestIamPermissionsResponse. */
+            interface ITestIamPermissionsResponse {
 
-                /** GetTopicRequest topic */
-                topic?: (string|null);
+                /** TestIamPermissionsResponse permissions */
+                permissions?: (string[]|null);
             }
 
-            /** Represents a GetTopicRequest. */
-            class GetTopicRequest implements IGetTopicRequest {
+            /** Represents a TestIamPermissionsResponse. */
+            class TestIamPermissionsResponse implements ITestIamPermissionsResponse {
 
                 /**
-                 * Constructs a new GetTopicRequest.
+                 * Constructs a new TestIamPermissionsResponse.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.pubsub.v1.IGetTopicRequest);
+                constructor(properties?: google.iam.v1.ITestIamPermissionsResponse);
 
-                /** GetTopicRequest topic. */
-                public topic: string;
+                /** TestIamPermissionsResponse permissions. */
+                public permissions: string[];
 
                 /**
-                 * Creates a new GetTopicRequest instance using the specified properties.
+                 * Creates a new TestIamPermissionsResponse instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns GetTopicRequest instance
+                 * @returns TestIamPermissionsResponse instance
                  */
-                public static create(properties?: google.pubsub.v1.IGetTopicRequest): google.pubsub.v1.GetTopicRequest;
+                public static create(properties?: google.iam.v1.ITestIamPermissionsResponse): google.iam.v1.TestIamPermissionsResponse;
 
                 /**
-                 * Encodes the specified GetTopicRequest message. Does not implicitly {@link google.pubsub.v1.GetTopicRequest.verify|verify} messages.
-                 * @param message GetTopicRequest message or plain object to encode
+                 * Encodes the specified TestIamPermissionsResponse message. Does not implicitly {@link google.iam.v1.TestIamPermissionsResponse.verify|verify} messages.
+                 * @param message TestIamPermissionsResponse message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.pubsub.v1.IGetTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.iam.v1.ITestIamPermissionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified GetTopicRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.GetTopicRequest.verify|verify} messages.
-                 * @param message GetTopicRequest message or plain object to encode
+                 * Encodes the specified TestIamPermissionsResponse message, length delimited. Does not implicitly {@link google.iam.v1.TestIamPermissionsResponse.verify|verify} messages.
+                 * @param message TestIamPermissionsResponse message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.pubsub.v1.IGetTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.iam.v1.ITestIamPermissionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a GetTopicRequest message from the specified reader or buffer.
+                 * Decodes a TestIamPermissionsResponse message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns GetTopicRequest
+                 * @returns TestIamPermissionsResponse
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.GetTopicRequest;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.TestIamPermissionsResponse;
 
                 /**
-                 * Decodes a GetTopicRequest message from the specified reader or buffer, length delimited.
+                 * Decodes a TestIamPermissionsResponse message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns GetTopicRequest
+                 * @returns TestIamPermissionsResponse
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.GetTopicRequest;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.TestIamPermissionsResponse;
 
                 /**
-                 * Verifies a GetTopicRequest message.
+                 * Verifies a TestIamPermissionsResponse message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a GetTopicRequest message from a plain object. Also converts values to their respective internal types.
+                 * Creates a TestIamPermissionsResponse message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns GetTopicRequest
+                 * @returns TestIamPermissionsResponse
                  */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.GetTopicRequest;
+                public static fromObject(object: { [k: string]: any }): google.iam.v1.TestIamPermissionsResponse;
 
                 /**
-                 * Creates a plain object from a GetTopicRequest message. Also converts values to other types if specified.
-                 * @param message GetTopicRequest
+                 * Creates a plain object from a TestIamPermissionsResponse message. Also converts values to other types if specified.
+                 * @param message TestIamPermissionsResponse
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.pubsub.v1.GetTopicRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.iam.v1.TestIamPermissionsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this GetTopicRequest to JSON.
+                 * Converts this TestIamPermissionsResponse to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
-
-            /** Properties of an UpdateTopicRequest. */
-            interface IUpdateTopicRequest {
-
-                /** UpdateTopicRequest topic */
-                topic?: (google.pubsub.v1.ITopic|null);
-
-                /** UpdateTopicRequest updateMask */
-                updateMask?: (google.protobuf.IFieldMask|null);
-            }
-
-            /** Represents an UpdateTopicRequest. */
-            class UpdateTopicRequest implements IUpdateTopicRequest {
-
-                /**
-                 * Constructs a new UpdateTopicRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IUpdateTopicRequest);
-
-                /** UpdateTopicRequest topic. */
-                public topic?: (google.pubsub.v1.ITopic|null);
-
-                /** UpdateTopicRequest updateMask. */
-                public updateMask?: (google.protobuf.IFieldMask|null);
-
-                /**
-                 * Creates a new UpdateTopicRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns UpdateTopicRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IUpdateTopicRequest): google.pubsub.v1.UpdateTopicRequest;
-
-                /**
-                 * Encodes the specified UpdateTopicRequest message. Does not implicitly {@link google.pubsub.v1.UpdateTopicRequest.verify|verify} messages.
-                 * @param message UpdateTopicRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IUpdateTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified UpdateTopicRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.UpdateTopicRequest.verify|verify} messages.
-                 * @param message UpdateTopicRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IUpdateTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes an UpdateTopicRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns UpdateTopicRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.UpdateTopicRequest;
-
-                /**
-                 * Decodes an UpdateTopicRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns UpdateTopicRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.UpdateTopicRequest;
-
-                /**
-                 * Verifies an UpdateTopicRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates an UpdateTopicRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns UpdateTopicRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.UpdateTopicRequest;
-
-                /**
-                 * Creates a plain object from an UpdateTopicRequest message. Also converts values to other types if specified.
-                 * @param message UpdateTopicRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.UpdateTopicRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this UpdateTopicRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a PublishRequest. */
-            interface IPublishRequest {
-
-                /** PublishRequest topic */
-                topic?: (string|null);
-
-                /** PublishRequest messages */
-                messages?: (google.pubsub.v1.IPubsubMessage[]|null);
-            }
-
-            /** Represents a PublishRequest. */
-            class PublishRequest implements IPublishRequest {
-
-                /**
-                 * Constructs a new PublishRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IPublishRequest);
-
-                /** PublishRequest topic. */
-                public topic: string;
-
-                /** PublishRequest messages. */
-                public messages: google.pubsub.v1.IPubsubMessage[];
-
-                /**
-                 * Creates a new PublishRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns PublishRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IPublishRequest): google.pubsub.v1.PublishRequest;
-
-                /**
-                 * Encodes the specified PublishRequest message. Does not implicitly {@link google.pubsub.v1.PublishRequest.verify|verify} messages.
-                 * @param message PublishRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IPublishRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified PublishRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.PublishRequest.verify|verify} messages.
-                 * @param message PublishRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IPublishRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a PublishRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns PublishRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PublishRequest;
-
-                /**
-                 * Decodes a PublishRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns PublishRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PublishRequest;
-
-                /**
-                 * Verifies a PublishRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a PublishRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns PublishRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PublishRequest;
-
-                /**
-                 * Creates a plain object from a PublishRequest message. Also converts values to other types if specified.
-                 * @param message PublishRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.PublishRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this PublishRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a PublishResponse. */
-            interface IPublishResponse {
-
-                /** PublishResponse messageIds */
-                messageIds?: (string[]|null);
-            }
-
-            /** Represents a PublishResponse. */
-            class PublishResponse implements IPublishResponse {
-
-                /**
-                 * Constructs a new PublishResponse.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IPublishResponse);
-
-                /** PublishResponse messageIds. */
-                public messageIds: string[];
-
-                /**
-                 * Creates a new PublishResponse instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns PublishResponse instance
-                 */
-                public static create(properties?: google.pubsub.v1.IPublishResponse): google.pubsub.v1.PublishResponse;
-
-                /**
-                 * Encodes the specified PublishResponse message. Does not implicitly {@link google.pubsub.v1.PublishResponse.verify|verify} messages.
-                 * @param message PublishResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IPublishResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified PublishResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.PublishResponse.verify|verify} messages.
-                 * @param message PublishResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IPublishResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a PublishResponse message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns PublishResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PublishResponse;
-
-                /**
-                 * Decodes a PublishResponse message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns PublishResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PublishResponse;
-
-                /**
-                 * Verifies a PublishResponse message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a PublishResponse message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns PublishResponse
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PublishResponse;
-
-                /**
-                 * Creates a plain object from a PublishResponse message. Also converts values to other types if specified.
-                 * @param message PublishResponse
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.PublishResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this PublishResponse to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ListTopicsRequest. */
-            interface IListTopicsRequest {
-
-                /** ListTopicsRequest project */
-                project?: (string|null);
-
-                /** ListTopicsRequest pageSize */
-                pageSize?: (number|null);
-
-                /** ListTopicsRequest pageToken */
-                pageToken?: (string|null);
-            }
-
-            /** Represents a ListTopicsRequest. */
-            class ListTopicsRequest implements IListTopicsRequest {
-
-                /**
-                 * Constructs a new ListTopicsRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IListTopicsRequest);
-
-                /** ListTopicsRequest project. */
-                public project: string;
-
-                /** ListTopicsRequest pageSize. */
-                public pageSize: number;
-
-                /** ListTopicsRequest pageToken. */
-                public pageToken: string;
-
-                /**
-                 * Creates a new ListTopicsRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ListTopicsRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IListTopicsRequest): google.pubsub.v1.ListTopicsRequest;
-
-                /**
-                 * Encodes the specified ListTopicsRequest message. Does not implicitly {@link google.pubsub.v1.ListTopicsRequest.verify|verify} messages.
-                 * @param message ListTopicsRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IListTopicsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ListTopicsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicsRequest.verify|verify} messages.
-                 * @param message ListTopicsRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IListTopicsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ListTopicsRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ListTopicsRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicsRequest;
-
-                /**
-                 * Decodes a ListTopicsRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ListTopicsRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicsRequest;
-
-                /**
-                 * Verifies a ListTopicsRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ListTopicsRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ListTopicsRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicsRequest;
-
-                /**
-                 * Creates a plain object from a ListTopicsRequest message. Also converts values to other types if specified.
-                 * @param message ListTopicsRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ListTopicsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ListTopicsRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ListTopicsResponse. */
-            interface IListTopicsResponse {
-
-                /** ListTopicsResponse topics */
-                topics?: (google.pubsub.v1.ITopic[]|null);
-
-                /** ListTopicsResponse nextPageToken */
-                nextPageToken?: (string|null);
-            }
-
-            /** Represents a ListTopicsResponse. */
-            class ListTopicsResponse implements IListTopicsResponse {
-
-                /**
-                 * Constructs a new ListTopicsResponse.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IListTopicsResponse);
-
-                /** ListTopicsResponse topics. */
-                public topics: google.pubsub.v1.ITopic[];
-
-                /** ListTopicsResponse nextPageToken. */
-                public nextPageToken: string;
-
-                /**
-                 * Creates a new ListTopicsResponse instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ListTopicsResponse instance
-                 */
-                public static create(properties?: google.pubsub.v1.IListTopicsResponse): google.pubsub.v1.ListTopicsResponse;
-
-                /**
-                 * Encodes the specified ListTopicsResponse message. Does not implicitly {@link google.pubsub.v1.ListTopicsResponse.verify|verify} messages.
-                 * @param message ListTopicsResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IListTopicsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ListTopicsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicsResponse.verify|verify} messages.
-                 * @param message ListTopicsResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IListTopicsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ListTopicsResponse message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ListTopicsResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicsResponse;
-
-                /**
-                 * Decodes a ListTopicsResponse message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ListTopicsResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicsResponse;
-
-                /**
-                 * Verifies a ListTopicsResponse message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ListTopicsResponse message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ListTopicsResponse
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicsResponse;
-
-                /**
-                 * Creates a plain object from a ListTopicsResponse message. Also converts values to other types if specified.
-                 * @param message ListTopicsResponse
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ListTopicsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ListTopicsResponse to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ListTopicSubscriptionsRequest. */
-            interface IListTopicSubscriptionsRequest {
-
-                /** ListTopicSubscriptionsRequest topic */
-                topic?: (string|null);
-
-                /** ListTopicSubscriptionsRequest pageSize */
-                pageSize?: (number|null);
-
-                /** ListTopicSubscriptionsRequest pageToken */
-                pageToken?: (string|null);
-            }
-
-            /** Represents a ListTopicSubscriptionsRequest. */
-            class ListTopicSubscriptionsRequest implements IListTopicSubscriptionsRequest {
-
-                /**
-                 * Constructs a new ListTopicSubscriptionsRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IListTopicSubscriptionsRequest);
-
-                /** ListTopicSubscriptionsRequest topic. */
-                public topic: string;
-
-                /** ListTopicSubscriptionsRequest pageSize. */
-                public pageSize: number;
-
-                /** ListTopicSubscriptionsRequest pageToken. */
-                public pageToken: string;
-
-                /**
-                 * Creates a new ListTopicSubscriptionsRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ListTopicSubscriptionsRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IListTopicSubscriptionsRequest): google.pubsub.v1.ListTopicSubscriptionsRequest;
-
-                /**
-                 * Encodes the specified ListTopicSubscriptionsRequest message. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsRequest.verify|verify} messages.
-                 * @param message ListTopicSubscriptionsRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IListTopicSubscriptionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ListTopicSubscriptionsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsRequest.verify|verify} messages.
-                 * @param message ListTopicSubscriptionsRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IListTopicSubscriptionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ListTopicSubscriptionsRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ListTopicSubscriptionsRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicSubscriptionsRequest;
-
-                /**
-                 * Decodes a ListTopicSubscriptionsRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ListTopicSubscriptionsRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicSubscriptionsRequest;
-
-                /**
-                 * Verifies a ListTopicSubscriptionsRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ListTopicSubscriptionsRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ListTopicSubscriptionsRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicSubscriptionsRequest;
-
-                /**
-                 * Creates a plain object from a ListTopicSubscriptionsRequest message. Also converts values to other types if specified.
-                 * @param message ListTopicSubscriptionsRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ListTopicSubscriptionsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ListTopicSubscriptionsRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ListTopicSubscriptionsResponse. */
-            interface IListTopicSubscriptionsResponse {
-
-                /** ListTopicSubscriptionsResponse subscriptions */
-                subscriptions?: (string[]|null);
-
-                /** ListTopicSubscriptionsResponse nextPageToken */
-                nextPageToken?: (string|null);
-            }
-
-            /** Represents a ListTopicSubscriptionsResponse. */
-            class ListTopicSubscriptionsResponse implements IListTopicSubscriptionsResponse {
-
-                /**
-                 * Constructs a new ListTopicSubscriptionsResponse.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IListTopicSubscriptionsResponse);
-
-                /** ListTopicSubscriptionsResponse subscriptions. */
-                public subscriptions: string[];
-
-                /** ListTopicSubscriptionsResponse nextPageToken. */
-                public nextPageToken: string;
-
-                /**
-                 * Creates a new ListTopicSubscriptionsResponse instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ListTopicSubscriptionsResponse instance
-                 */
-                public static create(properties?: google.pubsub.v1.IListTopicSubscriptionsResponse): google.pubsub.v1.ListTopicSubscriptionsResponse;
-
-                /**
-                 * Encodes the specified ListTopicSubscriptionsResponse message. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsResponse.verify|verify} messages.
-                 * @param message ListTopicSubscriptionsResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IListTopicSubscriptionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ListTopicSubscriptionsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsResponse.verify|verify} messages.
-                 * @param message ListTopicSubscriptionsResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IListTopicSubscriptionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ListTopicSubscriptionsResponse message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ListTopicSubscriptionsResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicSubscriptionsResponse;
-
-                /**
-                 * Decodes a ListTopicSubscriptionsResponse message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ListTopicSubscriptionsResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicSubscriptionsResponse;
-
-                /**
-                 * Verifies a ListTopicSubscriptionsResponse message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ListTopicSubscriptionsResponse message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ListTopicSubscriptionsResponse
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicSubscriptionsResponse;
-
-                /**
-                 * Creates a plain object from a ListTopicSubscriptionsResponse message. Also converts values to other types if specified.
-                 * @param message ListTopicSubscriptionsResponse
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ListTopicSubscriptionsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ListTopicSubscriptionsResponse to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ListTopicSnapshotsRequest. */
-            interface IListTopicSnapshotsRequest {
-
-                /** ListTopicSnapshotsRequest topic */
-                topic?: (string|null);
-
-                /** ListTopicSnapshotsRequest pageSize */
-                pageSize?: (number|null);
-
-                /** ListTopicSnapshotsRequest pageToken */
-                pageToken?: (string|null);
-            }
-
-            /** Represents a ListTopicSnapshotsRequest. */
-            class ListTopicSnapshotsRequest implements IListTopicSnapshotsRequest {
-
-                /**
-                 * Constructs a new ListTopicSnapshotsRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IListTopicSnapshotsRequest);
-
-                /** ListTopicSnapshotsRequest topic. */
-                public topic: string;
-
-                /** ListTopicSnapshotsRequest pageSize. */
-                public pageSize: number;
-
-                /** ListTopicSnapshotsRequest pageToken. */
-                public pageToken: string;
-
-                /**
-                 * Creates a new ListTopicSnapshotsRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ListTopicSnapshotsRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IListTopicSnapshotsRequest): google.pubsub.v1.ListTopicSnapshotsRequest;
-
-                /**
-                 * Encodes the specified ListTopicSnapshotsRequest message. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsRequest.verify|verify} messages.
-                 * @param message ListTopicSnapshotsRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IListTopicSnapshotsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ListTopicSnapshotsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsRequest.verify|verify} messages.
-                 * @param message ListTopicSnapshotsRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IListTopicSnapshotsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ListTopicSnapshotsRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ListTopicSnapshotsRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicSnapshotsRequest;
-
-                /**
-                 * Decodes a ListTopicSnapshotsRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ListTopicSnapshotsRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicSnapshotsRequest;
-
-                /**
-                 * Verifies a ListTopicSnapshotsRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ListTopicSnapshotsRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ListTopicSnapshotsRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicSnapshotsRequest;
-
-                /**
-                 * Creates a plain object from a ListTopicSnapshotsRequest message. Also converts values to other types if specified.
-                 * @param message ListTopicSnapshotsRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ListTopicSnapshotsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ListTopicSnapshotsRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ListTopicSnapshotsResponse. */
-            interface IListTopicSnapshotsResponse {
-
-                /** ListTopicSnapshotsResponse snapshots */
-                snapshots?: (string[]|null);
-
-                /** ListTopicSnapshotsResponse nextPageToken */
-                nextPageToken?: (string|null);
-            }
-
-            /** Represents a ListTopicSnapshotsResponse. */
-            class ListTopicSnapshotsResponse implements IListTopicSnapshotsResponse {
-
-                /**
-                 * Constructs a new ListTopicSnapshotsResponse.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IListTopicSnapshotsResponse);
-
-                /** ListTopicSnapshotsResponse snapshots. */
-                public snapshots: string[];
-
-                /** ListTopicSnapshotsResponse nextPageToken. */
-                public nextPageToken: string;
-
-                /**
-                 * Creates a new ListTopicSnapshotsResponse instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ListTopicSnapshotsResponse instance
-                 */
-                public static create(properties?: google.pubsub.v1.IListTopicSnapshotsResponse): google.pubsub.v1.ListTopicSnapshotsResponse;
-
-                /**
-                 * Encodes the specified ListTopicSnapshotsResponse message. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsResponse.verify|verify} messages.
-                 * @param message ListTopicSnapshotsResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IListTopicSnapshotsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ListTopicSnapshotsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsResponse.verify|verify} messages.
-                 * @param message ListTopicSnapshotsResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IListTopicSnapshotsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ListTopicSnapshotsResponse message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ListTopicSnapshotsResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicSnapshotsResponse;
-
-                /**
-                 * Decodes a ListTopicSnapshotsResponse message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ListTopicSnapshotsResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicSnapshotsResponse;
-
-                /**
-                 * Verifies a ListTopicSnapshotsResponse message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ListTopicSnapshotsResponse message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ListTopicSnapshotsResponse
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicSnapshotsResponse;
-
-                /**
-                 * Creates a plain object from a ListTopicSnapshotsResponse message. Also converts values to other types if specified.
-                 * @param message ListTopicSnapshotsResponse
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ListTopicSnapshotsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ListTopicSnapshotsResponse to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a DeleteTopicRequest. */
-            interface IDeleteTopicRequest {
-
-                /** DeleteTopicRequest topic */
-                topic?: (string|null);
-            }
-
-            /** Represents a DeleteTopicRequest. */
-            class DeleteTopicRequest implements IDeleteTopicRequest {
-
-                /**
-                 * Constructs a new DeleteTopicRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IDeleteTopicRequest);
-
-                /** DeleteTopicRequest topic. */
-                public topic: string;
-
-                /**
-                 * Creates a new DeleteTopicRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns DeleteTopicRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IDeleteTopicRequest): google.pubsub.v1.DeleteTopicRequest;
-
-                /**
-                 * Encodes the specified DeleteTopicRequest message. Does not implicitly {@link google.pubsub.v1.DeleteTopicRequest.verify|verify} messages.
-                 * @param message DeleteTopicRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IDeleteTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified DeleteTopicRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteTopicRequest.verify|verify} messages.
-                 * @param message DeleteTopicRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IDeleteTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a DeleteTopicRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns DeleteTopicRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DeleteTopicRequest;
-
-                /**
-                 * Decodes a DeleteTopicRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns DeleteTopicRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DeleteTopicRequest;
-
-                /**
-                 * Verifies a DeleteTopicRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a DeleteTopicRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns DeleteTopicRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DeleteTopicRequest;
-
-                /**
-                 * Creates a plain object from a DeleteTopicRequest message. Also converts values to other types if specified.
-                 * @param message DeleteTopicRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.DeleteTopicRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this DeleteTopicRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Represents a Subscriber */
-            class Subscriber extends $protobuf.rpc.Service {
-
-                /**
-                 * Constructs a new Subscriber service.
-                 * @param rpcImpl RPC implementation
-                 * @param [requestDelimited=false] Whether requests are length-delimited
-                 * @param [responseDelimited=false] Whether responses are length-delimited
-                 */
-                constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
-
-                /**
-                 * Creates new Subscriber service using the specified rpc implementation.
-                 * @param rpcImpl RPC implementation
-                 * @param [requestDelimited=false] Whether requests are length-delimited
-                 * @param [responseDelimited=false] Whether responses are length-delimited
-                 * @returns RPC service. Useful where requests and/or responses are streamed.
-                 */
-                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): Subscriber;
-
-                /**
-                 * Calls CreateSubscription.
-                 * @param request Subscription message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Subscription
-                 */
-                public createSubscription(request: google.pubsub.v1.ISubscription, callback: google.pubsub.v1.Subscriber.CreateSubscriptionCallback): void;
-
-                /**
-                 * Calls CreateSubscription.
-                 * @param request Subscription message or plain object
-                 * @returns Promise
-                 */
-                public createSubscription(request: google.pubsub.v1.ISubscription): Promise<google.pubsub.v1.Subscription>;
-
-                /**
-                 * Calls GetSubscription.
-                 * @param request GetSubscriptionRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Subscription
-                 */
-                public getSubscription(request: google.pubsub.v1.IGetSubscriptionRequest, callback: google.pubsub.v1.Subscriber.GetSubscriptionCallback): void;
-
-                /**
-                 * Calls GetSubscription.
-                 * @param request GetSubscriptionRequest message or plain object
-                 * @returns Promise
-                 */
-                public getSubscription(request: google.pubsub.v1.IGetSubscriptionRequest): Promise<google.pubsub.v1.Subscription>;
-
-                /**
-                 * Calls UpdateSubscription.
-                 * @param request UpdateSubscriptionRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Subscription
-                 */
-                public updateSubscription(request: google.pubsub.v1.IUpdateSubscriptionRequest, callback: google.pubsub.v1.Subscriber.UpdateSubscriptionCallback): void;
-
-                /**
-                 * Calls UpdateSubscription.
-                 * @param request UpdateSubscriptionRequest message or plain object
-                 * @returns Promise
-                 */
-                public updateSubscription(request: google.pubsub.v1.IUpdateSubscriptionRequest): Promise<google.pubsub.v1.Subscription>;
-
-                /**
-                 * Calls ListSubscriptions.
-                 * @param request ListSubscriptionsRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and ListSubscriptionsResponse
-                 */
-                public listSubscriptions(request: google.pubsub.v1.IListSubscriptionsRequest, callback: google.pubsub.v1.Subscriber.ListSubscriptionsCallback): void;
-
-                /**
-                 * Calls ListSubscriptions.
-                 * @param request ListSubscriptionsRequest message or plain object
-                 * @returns Promise
-                 */
-                public listSubscriptions(request: google.pubsub.v1.IListSubscriptionsRequest): Promise<google.pubsub.v1.ListSubscriptionsResponse>;
-
-                /**
-                 * Calls DeleteSubscription.
-                 * @param request DeleteSubscriptionRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Empty
-                 */
-                public deleteSubscription(request: google.pubsub.v1.IDeleteSubscriptionRequest, callback: google.pubsub.v1.Subscriber.DeleteSubscriptionCallback): void;
-
-                /**
-                 * Calls DeleteSubscription.
-                 * @param request DeleteSubscriptionRequest message or plain object
-                 * @returns Promise
-                 */
-                public deleteSubscription(request: google.pubsub.v1.IDeleteSubscriptionRequest): Promise<google.protobuf.Empty>;
-
-                /**
-                 * Calls ModifyAckDeadline.
-                 * @param request ModifyAckDeadlineRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Empty
-                 */
-                public modifyAckDeadline(request: google.pubsub.v1.IModifyAckDeadlineRequest, callback: google.pubsub.v1.Subscriber.ModifyAckDeadlineCallback): void;
-
-                /**
-                 * Calls ModifyAckDeadline.
-                 * @param request ModifyAckDeadlineRequest message or plain object
-                 * @returns Promise
-                 */
-                public modifyAckDeadline(request: google.pubsub.v1.IModifyAckDeadlineRequest): Promise<google.protobuf.Empty>;
-
-                /**
-                 * Calls Acknowledge.
-                 * @param request AcknowledgeRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Empty
-                 */
-                public acknowledge(request: google.pubsub.v1.IAcknowledgeRequest, callback: google.pubsub.v1.Subscriber.AcknowledgeCallback): void;
-
-                /**
-                 * Calls Acknowledge.
-                 * @param request AcknowledgeRequest message or plain object
-                 * @returns Promise
-                 */
-                public acknowledge(request: google.pubsub.v1.IAcknowledgeRequest): Promise<google.protobuf.Empty>;
-
-                /**
-                 * Calls Pull.
-                 * @param request PullRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and PullResponse
-                 */
-                public pull(request: google.pubsub.v1.IPullRequest, callback: google.pubsub.v1.Subscriber.PullCallback): void;
-
-                /**
-                 * Calls Pull.
-                 * @param request PullRequest message or plain object
-                 * @returns Promise
-                 */
-                public pull(request: google.pubsub.v1.IPullRequest): Promise<google.pubsub.v1.PullResponse>;
-
-                /**
-                 * Calls StreamingPull.
-                 * @param request StreamingPullRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and StreamingPullResponse
-                 */
-                public streamingPull(request: google.pubsub.v1.IStreamingPullRequest, callback: google.pubsub.v1.Subscriber.StreamingPullCallback): void;
-
-                /**
-                 * Calls StreamingPull.
-                 * @param request StreamingPullRequest message or plain object
-                 * @returns Promise
-                 */
-                public streamingPull(request: google.pubsub.v1.IStreamingPullRequest): Promise<google.pubsub.v1.StreamingPullResponse>;
-
-                /**
-                 * Calls ModifyPushConfig.
-                 * @param request ModifyPushConfigRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Empty
-                 */
-                public modifyPushConfig(request: google.pubsub.v1.IModifyPushConfigRequest, callback: google.pubsub.v1.Subscriber.ModifyPushConfigCallback): void;
-
-                /**
-                 * Calls ModifyPushConfig.
-                 * @param request ModifyPushConfigRequest message or plain object
-                 * @returns Promise
-                 */
-                public modifyPushConfig(request: google.pubsub.v1.IModifyPushConfigRequest): Promise<google.protobuf.Empty>;
-
-                /**
-                 * Calls GetSnapshot.
-                 * @param request GetSnapshotRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Snapshot
-                 */
-                public getSnapshot(request: google.pubsub.v1.IGetSnapshotRequest, callback: google.pubsub.v1.Subscriber.GetSnapshotCallback): void;
-
-                /**
-                 * Calls GetSnapshot.
-                 * @param request GetSnapshotRequest message or plain object
-                 * @returns Promise
-                 */
-                public getSnapshot(request: google.pubsub.v1.IGetSnapshotRequest): Promise<google.pubsub.v1.Snapshot>;
-
-                /**
-                 * Calls ListSnapshots.
-                 * @param request ListSnapshotsRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and ListSnapshotsResponse
-                 */
-                public listSnapshots(request: google.pubsub.v1.IListSnapshotsRequest, callback: google.pubsub.v1.Subscriber.ListSnapshotsCallback): void;
-
-                /**
-                 * Calls ListSnapshots.
-                 * @param request ListSnapshotsRequest message or plain object
-                 * @returns Promise
-                 */
-                public listSnapshots(request: google.pubsub.v1.IListSnapshotsRequest): Promise<google.pubsub.v1.ListSnapshotsResponse>;
-
-                /**
-                 * Calls CreateSnapshot.
-                 * @param request CreateSnapshotRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Snapshot
-                 */
-                public createSnapshot(request: google.pubsub.v1.ICreateSnapshotRequest, callback: google.pubsub.v1.Subscriber.CreateSnapshotCallback): void;
-
-                /**
-                 * Calls CreateSnapshot.
-                 * @param request CreateSnapshotRequest message or plain object
-                 * @returns Promise
-                 */
-                public createSnapshot(request: google.pubsub.v1.ICreateSnapshotRequest): Promise<google.pubsub.v1.Snapshot>;
-
-                /**
-                 * Calls UpdateSnapshot.
-                 * @param request UpdateSnapshotRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Snapshot
-                 */
-                public updateSnapshot(request: google.pubsub.v1.IUpdateSnapshotRequest, callback: google.pubsub.v1.Subscriber.UpdateSnapshotCallback): void;
-
-                /**
-                 * Calls UpdateSnapshot.
-                 * @param request UpdateSnapshotRequest message or plain object
-                 * @returns Promise
-                 */
-                public updateSnapshot(request: google.pubsub.v1.IUpdateSnapshotRequest): Promise<google.pubsub.v1.Snapshot>;
-
-                /**
-                 * Calls DeleteSnapshot.
-                 * @param request DeleteSnapshotRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Empty
-                 */
-                public deleteSnapshot(request: google.pubsub.v1.IDeleteSnapshotRequest, callback: google.pubsub.v1.Subscriber.DeleteSnapshotCallback): void;
-
-                /**
-                 * Calls DeleteSnapshot.
-                 * @param request DeleteSnapshotRequest message or plain object
-                 * @returns Promise
-                 */
-                public deleteSnapshot(request: google.pubsub.v1.IDeleteSnapshotRequest): Promise<google.protobuf.Empty>;
-
-                /**
-                 * Calls Seek.
-                 * @param request SeekRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and SeekResponse
-                 */
-                public seek(request: google.pubsub.v1.ISeekRequest, callback: google.pubsub.v1.Subscriber.SeekCallback): void;
-
-                /**
-                 * Calls Seek.
-                 * @param request SeekRequest message or plain object
-                 * @returns Promise
-                 */
-                public seek(request: google.pubsub.v1.ISeekRequest): Promise<google.pubsub.v1.SeekResponse>;
-            }
-
-            namespace Subscriber {
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#createSubscription}.
-                 * @param error Error, if any
-                 * @param [response] Subscription
-                 */
-                type CreateSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#getSubscription}.
-                 * @param error Error, if any
-                 * @param [response] Subscription
-                 */
-                type GetSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#updateSubscription}.
-                 * @param error Error, if any
-                 * @param [response] Subscription
-                 */
-                type UpdateSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#listSubscriptions}.
-                 * @param error Error, if any
-                 * @param [response] ListSubscriptionsResponse
-                 */
-                type ListSubscriptionsCallback = (error: (Error|null), response?: google.pubsub.v1.ListSubscriptionsResponse) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSubscription}.
-                 * @param error Error, if any
-                 * @param [response] Empty
-                 */
-                type DeleteSubscriptionCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#modifyAckDeadline}.
-                 * @param error Error, if any
-                 * @param [response] Empty
-                 */
-                type ModifyAckDeadlineCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#acknowledge}.
-                 * @param error Error, if any
-                 * @param [response] Empty
-                 */
-                type AcknowledgeCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#pull}.
-                 * @param error Error, if any
-                 * @param [response] PullResponse
-                 */
-                type PullCallback = (error: (Error|null), response?: google.pubsub.v1.PullResponse) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#streamingPull}.
-                 * @param error Error, if any
-                 * @param [response] StreamingPullResponse
-                 */
-                type StreamingPullCallback = (error: (Error|null), response?: google.pubsub.v1.StreamingPullResponse) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#modifyPushConfig}.
-                 * @param error Error, if any
-                 * @param [response] Empty
-                 */
-                type ModifyPushConfigCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#getSnapshot}.
-                 * @param error Error, if any
-                 * @param [response] Snapshot
-                 */
-                type GetSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#listSnapshots}.
-                 * @param error Error, if any
-                 * @param [response] ListSnapshotsResponse
-                 */
-                type ListSnapshotsCallback = (error: (Error|null), response?: google.pubsub.v1.ListSnapshotsResponse) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#createSnapshot}.
-                 * @param error Error, if any
-                 * @param [response] Snapshot
-                 */
-                type CreateSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#updateSnapshot}.
-                 * @param error Error, if any
-                 * @param [response] Snapshot
-                 */
-                type UpdateSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSnapshot}.
-                 * @param error Error, if any
-                 * @param [response] Empty
-                 */
-                type DeleteSnapshotCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
-
-                /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#seek}.
-                 * @param error Error, if any
-                 * @param [response] SeekResponse
-                 */
-                type SeekCallback = (error: (Error|null), response?: google.pubsub.v1.SeekResponse) => void;
-            }
-
-            /** Properties of a Subscription. */
-            interface ISubscription {
-
-                /** Subscription name */
-                name?: (string|null);
-
-                /** Subscription topic */
-                topic?: (string|null);
-
-                /** Subscription pushConfig */
-                pushConfig?: (google.pubsub.v1.IPushConfig|null);
-
-                /** Subscription ackDeadlineSeconds */
-                ackDeadlineSeconds?: (number|null);
-
-                /** Subscription retainAckedMessages */
-                retainAckedMessages?: (boolean|null);
-
-                /** Subscription messageRetentionDuration */
-                messageRetentionDuration?: (google.protobuf.IDuration|null);
-
-                /** Subscription labels */
-                labels?: ({ [k: string]: string }|null);
-
-                /** Subscription enableMessageOrdering */
-                enableMessageOrdering?: (boolean|null);
-
-                /** Subscription expirationPolicy */
-                expirationPolicy?: (google.pubsub.v1.IExpirationPolicy|null);
-
-                /** Subscription deadLetterPolicy */
-                deadLetterPolicy?: (google.pubsub.v1.IDeadLetterPolicy|null);
-            }
-
-            /** Represents a Subscription. */
-            class Subscription implements ISubscription {
-
-                /**
-                 * Constructs a new Subscription.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.ISubscription);
-
-                /** Subscription name. */
-                public name: string;
-
-                /** Subscription topic. */
-                public topic: string;
-
-                /** Subscription pushConfig. */
-                public pushConfig?: (google.pubsub.v1.IPushConfig|null);
-
-                /** Subscription ackDeadlineSeconds. */
-                public ackDeadlineSeconds: number;
-
-                /** Subscription retainAckedMessages. */
-                public retainAckedMessages: boolean;
-
-                /** Subscription messageRetentionDuration. */
-                public messageRetentionDuration?: (google.protobuf.IDuration|null);
-
-                /** Subscription labels. */
-                public labels: { [k: string]: string };
-
-                /** Subscription enableMessageOrdering. */
-                public enableMessageOrdering: boolean;
-
-                /** Subscription expirationPolicy. */
-                public expirationPolicy?: (google.pubsub.v1.IExpirationPolicy|null);
-
-                /** Subscription deadLetterPolicy. */
-                public deadLetterPolicy?: (google.pubsub.v1.IDeadLetterPolicy|null);
-
-                /**
-                 * Creates a new Subscription instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns Subscription instance
-                 */
-                public static create(properties?: google.pubsub.v1.ISubscription): google.pubsub.v1.Subscription;
-
-                /**
-                 * Encodes the specified Subscription message. Does not implicitly {@link google.pubsub.v1.Subscription.verify|verify} messages.
-                 * @param message Subscription message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.ISubscription, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified Subscription message, length delimited. Does not implicitly {@link google.pubsub.v1.Subscription.verify|verify} messages.
-                 * @param message Subscription message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.ISubscription, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a Subscription message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns Subscription
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.Subscription;
-
-                /**
-                 * Decodes a Subscription message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns Subscription
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.Subscription;
-
-                /**
-                 * Verifies a Subscription message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a Subscription message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns Subscription
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.Subscription;
-
-                /**
-                 * Creates a plain object from a Subscription message. Also converts values to other types if specified.
-                 * @param message Subscription
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.Subscription, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this Subscription to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a DeadLetterPolicy. */
-            interface IDeadLetterPolicy {
-
-                /** DeadLetterPolicy deadLetterTopic */
-                deadLetterTopic?: (string|null);
-
-                /** DeadLetterPolicy maxDeliveryAttempts */
-                maxDeliveryAttempts?: (number|null);
-            }
-
-            /** Represents a DeadLetterPolicy. */
-            class DeadLetterPolicy implements IDeadLetterPolicy {
-
-                /**
-                 * Constructs a new DeadLetterPolicy.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IDeadLetterPolicy);
-
-                /** DeadLetterPolicy deadLetterTopic. */
-                public deadLetterTopic: string;
-
-                /** DeadLetterPolicy maxDeliveryAttempts. */
-                public maxDeliveryAttempts: number;
-
-                /**
-                 * Creates a new DeadLetterPolicy instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns DeadLetterPolicy instance
-                 */
-                public static create(properties?: google.pubsub.v1.IDeadLetterPolicy): google.pubsub.v1.DeadLetterPolicy;
-
-                /**
-                 * Encodes the specified DeadLetterPolicy message. Does not implicitly {@link google.pubsub.v1.DeadLetterPolicy.verify|verify} messages.
-                 * @param message DeadLetterPolicy message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IDeadLetterPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified DeadLetterPolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.DeadLetterPolicy.verify|verify} messages.
-                 * @param message DeadLetterPolicy message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IDeadLetterPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a DeadLetterPolicy message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns DeadLetterPolicy
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DeadLetterPolicy;
-
-                /**
-                 * Decodes a DeadLetterPolicy message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns DeadLetterPolicy
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DeadLetterPolicy;
-
-                /**
-                 * Verifies a DeadLetterPolicy message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a DeadLetterPolicy message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns DeadLetterPolicy
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DeadLetterPolicy;
-
-                /**
-                 * Creates a plain object from a DeadLetterPolicy message. Also converts values to other types if specified.
-                 * @param message DeadLetterPolicy
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.DeadLetterPolicy, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this DeadLetterPolicy to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of an ExpirationPolicy. */
-            interface IExpirationPolicy {
-
-                /** ExpirationPolicy ttl */
-                ttl?: (google.protobuf.IDuration|null);
-            }
-
-            /** Represents an ExpirationPolicy. */
-            class ExpirationPolicy implements IExpirationPolicy {
-
-                /**
-                 * Constructs a new ExpirationPolicy.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IExpirationPolicy);
-
-                /** ExpirationPolicy ttl. */
-                public ttl?: (google.protobuf.IDuration|null);
-
-                /**
-                 * Creates a new ExpirationPolicy instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ExpirationPolicy instance
-                 */
-                public static create(properties?: google.pubsub.v1.IExpirationPolicy): google.pubsub.v1.ExpirationPolicy;
-
-                /**
-                 * Encodes the specified ExpirationPolicy message. Does not implicitly {@link google.pubsub.v1.ExpirationPolicy.verify|verify} messages.
-                 * @param message ExpirationPolicy message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IExpirationPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ExpirationPolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.ExpirationPolicy.verify|verify} messages.
-                 * @param message ExpirationPolicy message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IExpirationPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes an ExpirationPolicy message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ExpirationPolicy
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ExpirationPolicy;
-
-                /**
-                 * Decodes an ExpirationPolicy message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ExpirationPolicy
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ExpirationPolicy;
-
-                /**
-                 * Verifies an ExpirationPolicy message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates an ExpirationPolicy message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ExpirationPolicy
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ExpirationPolicy;
-
-                /**
-                 * Creates a plain object from an ExpirationPolicy message. Also converts values to other types if specified.
-                 * @param message ExpirationPolicy
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ExpirationPolicy, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ExpirationPolicy to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a PushConfig. */
-            interface IPushConfig {
-
-                /** PushConfig pushEndpoint */
-                pushEndpoint?: (string|null);
-
-                /** PushConfig attributes */
-                attributes?: ({ [k: string]: string }|null);
-
-                /** PushConfig oidcToken */
-                oidcToken?: (google.pubsub.v1.PushConfig.IOidcToken|null);
-            }
-
-            /** Represents a PushConfig. */
-            class PushConfig implements IPushConfig {
-
-                /**
-                 * Constructs a new PushConfig.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IPushConfig);
-
-                /** PushConfig pushEndpoint. */
-                public pushEndpoint: string;
-
-                /** PushConfig attributes. */
-                public attributes: { [k: string]: string };
-
-                /** PushConfig oidcToken. */
-                public oidcToken?: (google.pubsub.v1.PushConfig.IOidcToken|null);
-
-                /** PushConfig authenticationMethod. */
-                public authenticationMethod?: "oidcToken";
-
-                /**
-                 * Creates a new PushConfig instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns PushConfig instance
-                 */
-                public static create(properties?: google.pubsub.v1.IPushConfig): google.pubsub.v1.PushConfig;
-
-                /**
-                 * Encodes the specified PushConfig message. Does not implicitly {@link google.pubsub.v1.PushConfig.verify|verify} messages.
-                 * @param message PushConfig message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IPushConfig, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified PushConfig message, length delimited. Does not implicitly {@link google.pubsub.v1.PushConfig.verify|verify} messages.
-                 * @param message PushConfig message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IPushConfig, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a PushConfig message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns PushConfig
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PushConfig;
-
-                /**
-                 * Decodes a PushConfig message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns PushConfig
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PushConfig;
-
-                /**
-                 * Verifies a PushConfig message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a PushConfig message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns PushConfig
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PushConfig;
-
-                /**
-                 * Creates a plain object from a PushConfig message. Also converts values to other types if specified.
-                 * @param message PushConfig
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.PushConfig, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this PushConfig to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            namespace PushConfig {
-
-                /** Properties of an OidcToken. */
-                interface IOidcToken {
-
-                    /** OidcToken serviceAccountEmail */
-                    serviceAccountEmail?: (string|null);
-
-                    /** OidcToken audience */
-                    audience?: (string|null);
-                }
-
-                /** Represents an OidcToken. */
-                class OidcToken implements IOidcToken {
-
-                    /**
-                     * Constructs a new OidcToken.
-                     * @param [properties] Properties to set
-                     */
-                    constructor(properties?: google.pubsub.v1.PushConfig.IOidcToken);
-
-                    /** OidcToken serviceAccountEmail. */
-                    public serviceAccountEmail: string;
-
-                    /** OidcToken audience. */
-                    public audience: string;
-
-                    /**
-                     * Creates a new OidcToken instance using the specified properties.
-                     * @param [properties] Properties to set
-                     * @returns OidcToken instance
-                     */
-                    public static create(properties?: google.pubsub.v1.PushConfig.IOidcToken): google.pubsub.v1.PushConfig.OidcToken;
-
-                    /**
-                     * Encodes the specified OidcToken message. Does not implicitly {@link google.pubsub.v1.PushConfig.OidcToken.verify|verify} messages.
-                     * @param message OidcToken message or plain object to encode
-                     * @param [writer] Writer to encode to
-                     * @returns Writer
-                     */
-                    public static encode(message: google.pubsub.v1.PushConfig.IOidcToken, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                    /**
-                     * Encodes the specified OidcToken message, length delimited. Does not implicitly {@link google.pubsub.v1.PushConfig.OidcToken.verify|verify} messages.
-                     * @param message OidcToken message or plain object to encode
-                     * @param [writer] Writer to encode to
-                     * @returns Writer
-                     */
-                    public static encodeDelimited(message: google.pubsub.v1.PushConfig.IOidcToken, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                    /**
-                     * Decodes an OidcToken message from the specified reader or buffer.
-                     * @param reader Reader or buffer to decode from
-                     * @param [length] Message length if known beforehand
-                     * @returns OidcToken
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PushConfig.OidcToken;
-
-                    /**
-                     * Decodes an OidcToken message from the specified reader or buffer, length delimited.
-                     * @param reader Reader or buffer to decode from
-                     * @returns OidcToken
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PushConfig.OidcToken;
-
-                    /**
-                     * Verifies an OidcToken message.
-                     * @param message Plain object to verify
-                     * @returns `null` if valid, otherwise the reason why it is not
-                     */
-                    public static verify(message: { [k: string]: any }): (string|null);
-
-                    /**
-                     * Creates an OidcToken message from a plain object. Also converts values to their respective internal types.
-                     * @param object Plain object
-                     * @returns OidcToken
-                     */
-                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PushConfig.OidcToken;
-
-                    /**
-                     * Creates a plain object from an OidcToken message. Also converts values to other types if specified.
-                     * @param message OidcToken
-                     * @param [options] Conversion options
-                     * @returns Plain object
-                     */
-                    public static toObject(message: google.pubsub.v1.PushConfig.OidcToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                    /**
-                     * Converts this OidcToken to JSON.
-                     * @returns JSON object
-                     */
-                    public toJSON(): { [k: string]: any };
-                }
-            }
-
-            /** Properties of a ReceivedMessage. */
-            interface IReceivedMessage {
-
-                /** ReceivedMessage ackId */
-                ackId?: (string|null);
-
-                /** ReceivedMessage message */
-                message?: (google.pubsub.v1.IPubsubMessage|null);
-
-                /** ReceivedMessage deliveryAttempt */
-                deliveryAttempt?: (number|null);
-            }
-
-            /** Represents a ReceivedMessage. */
-            class ReceivedMessage implements IReceivedMessage {
-
-                /**
-                 * Constructs a new ReceivedMessage.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IReceivedMessage);
-
-                /** ReceivedMessage ackId. */
-                public ackId: string;
-
-                /** ReceivedMessage message. */
-                public message?: (google.pubsub.v1.IPubsubMessage|null);
-
-                /** ReceivedMessage deliveryAttempt. */
-                public deliveryAttempt: number;
-
-                /**
-                 * Creates a new ReceivedMessage instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ReceivedMessage instance
-                 */
-                public static create(properties?: google.pubsub.v1.IReceivedMessage): google.pubsub.v1.ReceivedMessage;
-
-                /**
-                 * Encodes the specified ReceivedMessage message. Does not implicitly {@link google.pubsub.v1.ReceivedMessage.verify|verify} messages.
-                 * @param message ReceivedMessage message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IReceivedMessage, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ReceivedMessage message, length delimited. Does not implicitly {@link google.pubsub.v1.ReceivedMessage.verify|verify} messages.
-                 * @param message ReceivedMessage message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IReceivedMessage, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ReceivedMessage message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ReceivedMessage
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ReceivedMessage;
-
-                /**
-                 * Decodes a ReceivedMessage message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ReceivedMessage
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ReceivedMessage;
-
-                /**
-                 * Verifies a ReceivedMessage message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ReceivedMessage message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ReceivedMessage
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ReceivedMessage;
-
-                /**
-                 * Creates a plain object from a ReceivedMessage message. Also converts values to other types if specified.
-                 * @param message ReceivedMessage
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ReceivedMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ReceivedMessage to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a GetSubscriptionRequest. */
-            interface IGetSubscriptionRequest {
-
-                /** GetSubscriptionRequest subscription */
-                subscription?: (string|null);
-            }
-
-            /** Represents a GetSubscriptionRequest. */
-            class GetSubscriptionRequest implements IGetSubscriptionRequest {
-
-                /**
-                 * Constructs a new GetSubscriptionRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IGetSubscriptionRequest);
-
-                /** GetSubscriptionRequest subscription. */
-                public subscription: string;
-
-                /**
-                 * Creates a new GetSubscriptionRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns GetSubscriptionRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IGetSubscriptionRequest): google.pubsub.v1.GetSubscriptionRequest;
-
-                /**
-                 * Encodes the specified GetSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.GetSubscriptionRequest.verify|verify} messages.
-                 * @param message GetSubscriptionRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IGetSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified GetSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.GetSubscriptionRequest.verify|verify} messages.
-                 * @param message GetSubscriptionRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IGetSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a GetSubscriptionRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns GetSubscriptionRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.GetSubscriptionRequest;
-
-                /**
-                 * Decodes a GetSubscriptionRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns GetSubscriptionRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.GetSubscriptionRequest;
-
-                /**
-                 * Verifies a GetSubscriptionRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a GetSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns GetSubscriptionRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.GetSubscriptionRequest;
-
-                /**
-                 * Creates a plain object from a GetSubscriptionRequest message. Also converts values to other types if specified.
-                 * @param message GetSubscriptionRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.GetSubscriptionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this GetSubscriptionRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of an UpdateSubscriptionRequest. */
-            interface IUpdateSubscriptionRequest {
-
-                /** UpdateSubscriptionRequest subscription */
-                subscription?: (google.pubsub.v1.ISubscription|null);
-
-                /** UpdateSubscriptionRequest updateMask */
-                updateMask?: (google.protobuf.IFieldMask|null);
-            }
-
-            /** Represents an UpdateSubscriptionRequest. */
-            class UpdateSubscriptionRequest implements IUpdateSubscriptionRequest {
-
-                /**
-                 * Constructs a new UpdateSubscriptionRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IUpdateSubscriptionRequest);
-
-                /** UpdateSubscriptionRequest subscription. */
-                public subscription?: (google.pubsub.v1.ISubscription|null);
-
-                /** UpdateSubscriptionRequest updateMask. */
-                public updateMask?: (google.protobuf.IFieldMask|null);
-
-                /**
-                 * Creates a new UpdateSubscriptionRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns UpdateSubscriptionRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IUpdateSubscriptionRequest): google.pubsub.v1.UpdateSubscriptionRequest;
-
-                /**
-                 * Encodes the specified UpdateSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.UpdateSubscriptionRequest.verify|verify} messages.
-                 * @param message UpdateSubscriptionRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IUpdateSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified UpdateSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.UpdateSubscriptionRequest.verify|verify} messages.
-                 * @param message UpdateSubscriptionRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IUpdateSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes an UpdateSubscriptionRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns UpdateSubscriptionRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.UpdateSubscriptionRequest;
-
-                /**
-                 * Decodes an UpdateSubscriptionRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns UpdateSubscriptionRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.UpdateSubscriptionRequest;
-
-                /**
-                 * Verifies an UpdateSubscriptionRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates an UpdateSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns UpdateSubscriptionRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.UpdateSubscriptionRequest;
-
-                /**
-                 * Creates a plain object from an UpdateSubscriptionRequest message. Also converts values to other types if specified.
-                 * @param message UpdateSubscriptionRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.UpdateSubscriptionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this UpdateSubscriptionRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ListSubscriptionsRequest. */
-            interface IListSubscriptionsRequest {
-
-                /** ListSubscriptionsRequest project */
-                project?: (string|null);
-
-                /** ListSubscriptionsRequest pageSize */
-                pageSize?: (number|null);
-
-                /** ListSubscriptionsRequest pageToken */
-                pageToken?: (string|null);
-            }
-
-            /** Represents a ListSubscriptionsRequest. */
-            class ListSubscriptionsRequest implements IListSubscriptionsRequest {
-
-                /**
-                 * Constructs a new ListSubscriptionsRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IListSubscriptionsRequest);
-
-                /** ListSubscriptionsRequest project. */
-                public project: string;
-
-                /** ListSubscriptionsRequest pageSize. */
-                public pageSize: number;
-
-                /** ListSubscriptionsRequest pageToken. */
-                public pageToken: string;
-
-                /**
-                 * Creates a new ListSubscriptionsRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ListSubscriptionsRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IListSubscriptionsRequest): google.pubsub.v1.ListSubscriptionsRequest;
-
-                /**
-                 * Encodes the specified ListSubscriptionsRequest message. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsRequest.verify|verify} messages.
-                 * @param message ListSubscriptionsRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IListSubscriptionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ListSubscriptionsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsRequest.verify|verify} messages.
-                 * @param message ListSubscriptionsRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IListSubscriptionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ListSubscriptionsRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ListSubscriptionsRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSubscriptionsRequest;
-
-                /**
-                 * Decodes a ListSubscriptionsRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ListSubscriptionsRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSubscriptionsRequest;
-
-                /**
-                 * Verifies a ListSubscriptionsRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ListSubscriptionsRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ListSubscriptionsRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSubscriptionsRequest;
-
-                /**
-                 * Creates a plain object from a ListSubscriptionsRequest message. Also converts values to other types if specified.
-                 * @param message ListSubscriptionsRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ListSubscriptionsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ListSubscriptionsRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ListSubscriptionsResponse. */
-            interface IListSubscriptionsResponse {
-
-                /** ListSubscriptionsResponse subscriptions */
-                subscriptions?: (google.pubsub.v1.ISubscription[]|null);
-
-                /** ListSubscriptionsResponse nextPageToken */
-                nextPageToken?: (string|null);
-            }
-
-            /** Represents a ListSubscriptionsResponse. */
-            class ListSubscriptionsResponse implements IListSubscriptionsResponse {
-
-                /**
-                 * Constructs a new ListSubscriptionsResponse.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IListSubscriptionsResponse);
-
-                /** ListSubscriptionsResponse subscriptions. */
-                public subscriptions: google.pubsub.v1.ISubscription[];
-
-                /** ListSubscriptionsResponse nextPageToken. */
-                public nextPageToken: string;
-
-                /**
-                 * Creates a new ListSubscriptionsResponse instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ListSubscriptionsResponse instance
-                 */
-                public static create(properties?: google.pubsub.v1.IListSubscriptionsResponse): google.pubsub.v1.ListSubscriptionsResponse;
-
-                /**
-                 * Encodes the specified ListSubscriptionsResponse message. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsResponse.verify|verify} messages.
-                 * @param message ListSubscriptionsResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IListSubscriptionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ListSubscriptionsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsResponse.verify|verify} messages.
-                 * @param message ListSubscriptionsResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IListSubscriptionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ListSubscriptionsResponse message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ListSubscriptionsResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSubscriptionsResponse;
-
-                /**
-                 * Decodes a ListSubscriptionsResponse message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ListSubscriptionsResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSubscriptionsResponse;
-
-                /**
-                 * Verifies a ListSubscriptionsResponse message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ListSubscriptionsResponse message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ListSubscriptionsResponse
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSubscriptionsResponse;
-
-                /**
-                 * Creates a plain object from a ListSubscriptionsResponse message. Also converts values to other types if specified.
-                 * @param message ListSubscriptionsResponse
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ListSubscriptionsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ListSubscriptionsResponse to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a DeleteSubscriptionRequest. */
-            interface IDeleteSubscriptionRequest {
-
-                /** DeleteSubscriptionRequest subscription */
-                subscription?: (string|null);
-            }
-
-            /** Represents a DeleteSubscriptionRequest. */
-            class DeleteSubscriptionRequest implements IDeleteSubscriptionRequest {
-
-                /**
-                 * Constructs a new DeleteSubscriptionRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IDeleteSubscriptionRequest);
-
-                /** DeleteSubscriptionRequest subscription. */
-                public subscription: string;
-
-                /**
-                 * Creates a new DeleteSubscriptionRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns DeleteSubscriptionRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IDeleteSubscriptionRequest): google.pubsub.v1.DeleteSubscriptionRequest;
-
-                /**
-                 * Encodes the specified DeleteSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.DeleteSubscriptionRequest.verify|verify} messages.
-                 * @param message DeleteSubscriptionRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IDeleteSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified DeleteSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteSubscriptionRequest.verify|verify} messages.
-                 * @param message DeleteSubscriptionRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IDeleteSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a DeleteSubscriptionRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns DeleteSubscriptionRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DeleteSubscriptionRequest;
-
-                /**
-                 * Decodes a DeleteSubscriptionRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns DeleteSubscriptionRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DeleteSubscriptionRequest;
-
-                /**
-                 * Verifies a DeleteSubscriptionRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a DeleteSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns DeleteSubscriptionRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DeleteSubscriptionRequest;
-
-                /**
-                 * Creates a plain object from a DeleteSubscriptionRequest message. Also converts values to other types if specified.
-                 * @param message DeleteSubscriptionRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.DeleteSubscriptionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this DeleteSubscriptionRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ModifyPushConfigRequest. */
-            interface IModifyPushConfigRequest {
-
-                /** ModifyPushConfigRequest subscription */
-                subscription?: (string|null);
-
-                /** ModifyPushConfigRequest pushConfig */
-                pushConfig?: (google.pubsub.v1.IPushConfig|null);
-            }
-
-            /** Represents a ModifyPushConfigRequest. */
-            class ModifyPushConfigRequest implements IModifyPushConfigRequest {
-
-                /**
-                 * Constructs a new ModifyPushConfigRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IModifyPushConfigRequest);
-
-                /** ModifyPushConfigRequest subscription. */
-                public subscription: string;
-
-                /** ModifyPushConfigRequest pushConfig. */
-                public pushConfig?: (google.pubsub.v1.IPushConfig|null);
-
-                /**
-                 * Creates a new ModifyPushConfigRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ModifyPushConfigRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IModifyPushConfigRequest): google.pubsub.v1.ModifyPushConfigRequest;
-
-                /**
-                 * Encodes the specified ModifyPushConfigRequest message. Does not implicitly {@link google.pubsub.v1.ModifyPushConfigRequest.verify|verify} messages.
-                 * @param message ModifyPushConfigRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IModifyPushConfigRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ModifyPushConfigRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ModifyPushConfigRequest.verify|verify} messages.
-                 * @param message ModifyPushConfigRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IModifyPushConfigRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ModifyPushConfigRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ModifyPushConfigRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ModifyPushConfigRequest;
-
-                /**
-                 * Decodes a ModifyPushConfigRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ModifyPushConfigRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ModifyPushConfigRequest;
-
-                /**
-                 * Verifies a ModifyPushConfigRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ModifyPushConfigRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ModifyPushConfigRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ModifyPushConfigRequest;
-
-                /**
-                 * Creates a plain object from a ModifyPushConfigRequest message. Also converts values to other types if specified.
-                 * @param message ModifyPushConfigRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ModifyPushConfigRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ModifyPushConfigRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a PullRequest. */
-            interface IPullRequest {
-
-                /** PullRequest subscription */
-                subscription?: (string|null);
-
-                /** PullRequest returnImmediately */
-                returnImmediately?: (boolean|null);
-
-                /** PullRequest maxMessages */
-                maxMessages?: (number|null);
-            }
-
-            /** Represents a PullRequest. */
-            class PullRequest implements IPullRequest {
-
-                /**
-                 * Constructs a new PullRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IPullRequest);
-
-                /** PullRequest subscription. */
-                public subscription: string;
-
-                /** PullRequest returnImmediately. */
-                public returnImmediately: boolean;
-
-                /** PullRequest maxMessages. */
-                public maxMessages: number;
-
-                /**
-                 * Creates a new PullRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns PullRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IPullRequest): google.pubsub.v1.PullRequest;
-
-                /**
-                 * Encodes the specified PullRequest message. Does not implicitly {@link google.pubsub.v1.PullRequest.verify|verify} messages.
-                 * @param message PullRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IPullRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified PullRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.PullRequest.verify|verify} messages.
-                 * @param message PullRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IPullRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a PullRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns PullRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PullRequest;
-
-                /**
-                 * Decodes a PullRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns PullRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PullRequest;
-
-                /**
-                 * Verifies a PullRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a PullRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns PullRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PullRequest;
-
-                /**
-                 * Creates a plain object from a PullRequest message. Also converts values to other types if specified.
-                 * @param message PullRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.PullRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this PullRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a PullResponse. */
-            interface IPullResponse {
-
-                /** PullResponse receivedMessages */
-                receivedMessages?: (google.pubsub.v1.IReceivedMessage[]|null);
-            }
-
-            /** Represents a PullResponse. */
-            class PullResponse implements IPullResponse {
-
-                /**
-                 * Constructs a new PullResponse.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IPullResponse);
-
-                /** PullResponse receivedMessages. */
-                public receivedMessages: google.pubsub.v1.IReceivedMessage[];
-
-                /**
-                 * Creates a new PullResponse instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns PullResponse instance
-                 */
-                public static create(properties?: google.pubsub.v1.IPullResponse): google.pubsub.v1.PullResponse;
-
-                /**
-                 * Encodes the specified PullResponse message. Does not implicitly {@link google.pubsub.v1.PullResponse.verify|verify} messages.
-                 * @param message PullResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IPullResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified PullResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.PullResponse.verify|verify} messages.
-                 * @param message PullResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IPullResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a PullResponse message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns PullResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PullResponse;
-
-                /**
-                 * Decodes a PullResponse message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns PullResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PullResponse;
-
-                /**
-                 * Verifies a PullResponse message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a PullResponse message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns PullResponse
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PullResponse;
-
-                /**
-                 * Creates a plain object from a PullResponse message. Also converts values to other types if specified.
-                 * @param message PullResponse
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.PullResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this PullResponse to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ModifyAckDeadlineRequest. */
-            interface IModifyAckDeadlineRequest {
-
-                /** ModifyAckDeadlineRequest subscription */
-                subscription?: (string|null);
-
-                /** ModifyAckDeadlineRequest ackIds */
-                ackIds?: (string[]|null);
-
-                /** ModifyAckDeadlineRequest ackDeadlineSeconds */
-                ackDeadlineSeconds?: (number|null);
-            }
-
-            /** Represents a ModifyAckDeadlineRequest. */
-            class ModifyAckDeadlineRequest implements IModifyAckDeadlineRequest {
-
-                /**
-                 * Constructs a new ModifyAckDeadlineRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IModifyAckDeadlineRequest);
-
-                /** ModifyAckDeadlineRequest subscription. */
-                public subscription: string;
-
-                /** ModifyAckDeadlineRequest ackIds. */
-                public ackIds: string[];
-
-                /** ModifyAckDeadlineRequest ackDeadlineSeconds. */
-                public ackDeadlineSeconds: number;
-
-                /**
-                 * Creates a new ModifyAckDeadlineRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ModifyAckDeadlineRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IModifyAckDeadlineRequest): google.pubsub.v1.ModifyAckDeadlineRequest;
-
-                /**
-                 * Encodes the specified ModifyAckDeadlineRequest message. Does not implicitly {@link google.pubsub.v1.ModifyAckDeadlineRequest.verify|verify} messages.
-                 * @param message ModifyAckDeadlineRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IModifyAckDeadlineRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ModifyAckDeadlineRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ModifyAckDeadlineRequest.verify|verify} messages.
-                 * @param message ModifyAckDeadlineRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IModifyAckDeadlineRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ModifyAckDeadlineRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ModifyAckDeadlineRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ModifyAckDeadlineRequest;
-
-                /**
-                 * Decodes a ModifyAckDeadlineRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ModifyAckDeadlineRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ModifyAckDeadlineRequest;
-
-                /**
-                 * Verifies a ModifyAckDeadlineRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ModifyAckDeadlineRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ModifyAckDeadlineRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ModifyAckDeadlineRequest;
-
-                /**
-                 * Creates a plain object from a ModifyAckDeadlineRequest message. Also converts values to other types if specified.
-                 * @param message ModifyAckDeadlineRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ModifyAckDeadlineRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ModifyAckDeadlineRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of an AcknowledgeRequest. */
-            interface IAcknowledgeRequest {
-
-                /** AcknowledgeRequest subscription */
-                subscription?: (string|null);
-
-                /** AcknowledgeRequest ackIds */
-                ackIds?: (string[]|null);
-            }
-
-            /** Represents an AcknowledgeRequest. */
-            class AcknowledgeRequest implements IAcknowledgeRequest {
-
-                /**
-                 * Constructs a new AcknowledgeRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IAcknowledgeRequest);
-
-                /** AcknowledgeRequest subscription. */
-                public subscription: string;
-
-                /** AcknowledgeRequest ackIds. */
-                public ackIds: string[];
-
-                /**
-                 * Creates a new AcknowledgeRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns AcknowledgeRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IAcknowledgeRequest): google.pubsub.v1.AcknowledgeRequest;
-
-                /**
-                 * Encodes the specified AcknowledgeRequest message. Does not implicitly {@link google.pubsub.v1.AcknowledgeRequest.verify|verify} messages.
-                 * @param message AcknowledgeRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IAcknowledgeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified AcknowledgeRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.AcknowledgeRequest.verify|verify} messages.
-                 * @param message AcknowledgeRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IAcknowledgeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes an AcknowledgeRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns AcknowledgeRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.AcknowledgeRequest;
-
-                /**
-                 * Decodes an AcknowledgeRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns AcknowledgeRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.AcknowledgeRequest;
-
-                /**
-                 * Verifies an AcknowledgeRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates an AcknowledgeRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns AcknowledgeRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.AcknowledgeRequest;
-
-                /**
-                 * Creates a plain object from an AcknowledgeRequest message. Also converts values to other types if specified.
-                 * @param message AcknowledgeRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.AcknowledgeRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this AcknowledgeRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a StreamingPullRequest. */
-            interface IStreamingPullRequest {
-
-                /** StreamingPullRequest subscription */
-                subscription?: (string|null);
-
-                /** StreamingPullRequest ackIds */
-                ackIds?: (string[]|null);
-
-                /** StreamingPullRequest modifyDeadlineSeconds */
-                modifyDeadlineSeconds?: (number[]|null);
-
-                /** StreamingPullRequest modifyDeadlineAckIds */
-                modifyDeadlineAckIds?: (string[]|null);
-
-                /** StreamingPullRequest streamAckDeadlineSeconds */
-                streamAckDeadlineSeconds?: (number|null);
-
-                /** StreamingPullRequest clientId */
-                clientId?: (string|null);
-            }
-
-            /** Represents a StreamingPullRequest. */
-            class StreamingPullRequest implements IStreamingPullRequest {
-
-                /**
-                 * Constructs a new StreamingPullRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IStreamingPullRequest);
-
-                /** StreamingPullRequest subscription. */
-                public subscription: string;
-
-                /** StreamingPullRequest ackIds. */
-                public ackIds: string[];
-
-                /** StreamingPullRequest modifyDeadlineSeconds. */
-                public modifyDeadlineSeconds: number[];
-
-                /** StreamingPullRequest modifyDeadlineAckIds. */
-                public modifyDeadlineAckIds: string[];
-
-                /** StreamingPullRequest streamAckDeadlineSeconds. */
-                public streamAckDeadlineSeconds: number;
-
-                /** StreamingPullRequest clientId. */
-                public clientId: string;
-
-                /**
-                 * Creates a new StreamingPullRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns StreamingPullRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IStreamingPullRequest): google.pubsub.v1.StreamingPullRequest;
-
-                /**
-                 * Encodes the specified StreamingPullRequest message. Does not implicitly {@link google.pubsub.v1.StreamingPullRequest.verify|verify} messages.
-                 * @param message StreamingPullRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IStreamingPullRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified StreamingPullRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullRequest.verify|verify} messages.
-                 * @param message StreamingPullRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IStreamingPullRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a StreamingPullRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns StreamingPullRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.StreamingPullRequest;
-
-                /**
-                 * Decodes a StreamingPullRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns StreamingPullRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.StreamingPullRequest;
-
-                /**
-                 * Verifies a StreamingPullRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a StreamingPullRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns StreamingPullRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.StreamingPullRequest;
-
-                /**
-                 * Creates a plain object from a StreamingPullRequest message. Also converts values to other types if specified.
-                 * @param message StreamingPullRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.StreamingPullRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this StreamingPullRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a StreamingPullResponse. */
-            interface IStreamingPullResponse {
-
-                /** StreamingPullResponse receivedMessages */
-                receivedMessages?: (google.pubsub.v1.IReceivedMessage[]|null);
-            }
-
-            /** Represents a StreamingPullResponse. */
-            class StreamingPullResponse implements IStreamingPullResponse {
-
-                /**
-                 * Constructs a new StreamingPullResponse.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IStreamingPullResponse);
-
-                /** StreamingPullResponse receivedMessages. */
-                public receivedMessages: google.pubsub.v1.IReceivedMessage[];
-
-                /**
-                 * Creates a new StreamingPullResponse instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns StreamingPullResponse instance
-                 */
-                public static create(properties?: google.pubsub.v1.IStreamingPullResponse): google.pubsub.v1.StreamingPullResponse;
-
-                /**
-                 * Encodes the specified StreamingPullResponse message. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.verify|verify} messages.
-                 * @param message StreamingPullResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IStreamingPullResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified StreamingPullResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.verify|verify} messages.
-                 * @param message StreamingPullResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IStreamingPullResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a StreamingPullResponse message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns StreamingPullResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.StreamingPullResponse;
-
-                /**
-                 * Decodes a StreamingPullResponse message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns StreamingPullResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.StreamingPullResponse;
-
-                /**
-                 * Verifies a StreamingPullResponse message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a StreamingPullResponse message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns StreamingPullResponse
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.StreamingPullResponse;
-
-                /**
-                 * Creates a plain object from a StreamingPullResponse message. Also converts values to other types if specified.
-                 * @param message StreamingPullResponse
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.StreamingPullResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this StreamingPullResponse to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a CreateSnapshotRequest. */
-            interface ICreateSnapshotRequest {
-
-                /** CreateSnapshotRequest name */
-                name?: (string|null);
-
-                /** CreateSnapshotRequest subscription */
-                subscription?: (string|null);
-
-                /** CreateSnapshotRequest labels */
-                labels?: ({ [k: string]: string }|null);
-            }
-
-            /** Represents a CreateSnapshotRequest. */
-            class CreateSnapshotRequest implements ICreateSnapshotRequest {
-
-                /**
-                 * Constructs a new CreateSnapshotRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.ICreateSnapshotRequest);
-
-                /** CreateSnapshotRequest name. */
-                public name: string;
-
-                /** CreateSnapshotRequest subscription. */
-                public subscription: string;
-
-                /** CreateSnapshotRequest labels. */
-                public labels: { [k: string]: string };
-
-                /**
-                 * Creates a new CreateSnapshotRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns CreateSnapshotRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.ICreateSnapshotRequest): google.pubsub.v1.CreateSnapshotRequest;
-
-                /**
-                 * Encodes the specified CreateSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.CreateSnapshotRequest.verify|verify} messages.
-                 * @param message CreateSnapshotRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.ICreateSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified CreateSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.CreateSnapshotRequest.verify|verify} messages.
-                 * @param message CreateSnapshotRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.ICreateSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a CreateSnapshotRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns CreateSnapshotRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.CreateSnapshotRequest;
-
-                /**
-                 * Decodes a CreateSnapshotRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns CreateSnapshotRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.CreateSnapshotRequest;
-
-                /**
-                 * Verifies a CreateSnapshotRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a CreateSnapshotRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns CreateSnapshotRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.CreateSnapshotRequest;
-
-                /**
-                 * Creates a plain object from a CreateSnapshotRequest message. Also converts values to other types if specified.
-                 * @param message CreateSnapshotRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.CreateSnapshotRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this CreateSnapshotRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of an UpdateSnapshotRequest. */
-            interface IUpdateSnapshotRequest {
-
-                /** UpdateSnapshotRequest snapshot */
-                snapshot?: (google.pubsub.v1.ISnapshot|null);
-
-                /** UpdateSnapshotRequest updateMask */
-                updateMask?: (google.protobuf.IFieldMask|null);
-            }
-
-            /** Represents an UpdateSnapshotRequest. */
-            class UpdateSnapshotRequest implements IUpdateSnapshotRequest {
-
-                /**
-                 * Constructs a new UpdateSnapshotRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IUpdateSnapshotRequest);
-
-                /** UpdateSnapshotRequest snapshot. */
-                public snapshot?: (google.pubsub.v1.ISnapshot|null);
-
-                /** UpdateSnapshotRequest updateMask. */
-                public updateMask?: (google.protobuf.IFieldMask|null);
-
-                /**
-                 * Creates a new UpdateSnapshotRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns UpdateSnapshotRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IUpdateSnapshotRequest): google.pubsub.v1.UpdateSnapshotRequest;
-
-                /**
-                 * Encodes the specified UpdateSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.UpdateSnapshotRequest.verify|verify} messages.
-                 * @param message UpdateSnapshotRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IUpdateSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified UpdateSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.UpdateSnapshotRequest.verify|verify} messages.
-                 * @param message UpdateSnapshotRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IUpdateSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes an UpdateSnapshotRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns UpdateSnapshotRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.UpdateSnapshotRequest;
-
-                /**
-                 * Decodes an UpdateSnapshotRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns UpdateSnapshotRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.UpdateSnapshotRequest;
-
-                /**
-                 * Verifies an UpdateSnapshotRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates an UpdateSnapshotRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns UpdateSnapshotRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.UpdateSnapshotRequest;
-
-                /**
-                 * Creates a plain object from an UpdateSnapshotRequest message. Also converts values to other types if specified.
-                 * @param message UpdateSnapshotRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.UpdateSnapshotRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this UpdateSnapshotRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a Snapshot. */
-            interface ISnapshot {
-
-                /** Snapshot name */
-                name?: (string|null);
-
-                /** Snapshot topic */
-                topic?: (string|null);
-
-                /** Snapshot expireTime */
-                expireTime?: (google.protobuf.ITimestamp|null);
-
-                /** Snapshot labels */
-                labels?: ({ [k: string]: string }|null);
-            }
-
-            /** Represents a Snapshot. */
-            class Snapshot implements ISnapshot {
-
-                /**
-                 * Constructs a new Snapshot.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.ISnapshot);
-
-                /** Snapshot name. */
-                public name: string;
-
-                /** Snapshot topic. */
-                public topic: string;
-
-                /** Snapshot expireTime. */
-                public expireTime?: (google.protobuf.ITimestamp|null);
-
-                /** Snapshot labels. */
-                public labels: { [k: string]: string };
-
-                /**
-                 * Creates a new Snapshot instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns Snapshot instance
-                 */
-                public static create(properties?: google.pubsub.v1.ISnapshot): google.pubsub.v1.Snapshot;
-
-                /**
-                 * Encodes the specified Snapshot message. Does not implicitly {@link google.pubsub.v1.Snapshot.verify|verify} messages.
-                 * @param message Snapshot message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.ISnapshot, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified Snapshot message, length delimited. Does not implicitly {@link google.pubsub.v1.Snapshot.verify|verify} messages.
-                 * @param message Snapshot message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.ISnapshot, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a Snapshot message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns Snapshot
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.Snapshot;
-
-                /**
-                 * Decodes a Snapshot message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns Snapshot
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.Snapshot;
-
-                /**
-                 * Verifies a Snapshot message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a Snapshot message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns Snapshot
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.Snapshot;
-
-                /**
-                 * Creates a plain object from a Snapshot message. Also converts values to other types if specified.
-                 * @param message Snapshot
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.Snapshot, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this Snapshot to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a GetSnapshotRequest. */
-            interface IGetSnapshotRequest {
-
-                /** GetSnapshotRequest snapshot */
-                snapshot?: (string|null);
-            }
-
-            /** Represents a GetSnapshotRequest. */
-            class GetSnapshotRequest implements IGetSnapshotRequest {
-
-                /**
-                 * Constructs a new GetSnapshotRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IGetSnapshotRequest);
-
-                /** GetSnapshotRequest snapshot. */
-                public snapshot: string;
-
-                /**
-                 * Creates a new GetSnapshotRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns GetSnapshotRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IGetSnapshotRequest): google.pubsub.v1.GetSnapshotRequest;
-
-                /**
-                 * Encodes the specified GetSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.GetSnapshotRequest.verify|verify} messages.
-                 * @param message GetSnapshotRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IGetSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified GetSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.GetSnapshotRequest.verify|verify} messages.
-                 * @param message GetSnapshotRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IGetSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a GetSnapshotRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns GetSnapshotRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.GetSnapshotRequest;
-
-                /**
-                 * Decodes a GetSnapshotRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns GetSnapshotRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.GetSnapshotRequest;
-
-                /**
-                 * Verifies a GetSnapshotRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a GetSnapshotRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns GetSnapshotRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.GetSnapshotRequest;
-
-                /**
-                 * Creates a plain object from a GetSnapshotRequest message. Also converts values to other types if specified.
-                 * @param message GetSnapshotRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.GetSnapshotRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this GetSnapshotRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ListSnapshotsRequest. */
-            interface IListSnapshotsRequest {
-
-                /** ListSnapshotsRequest project */
-                project?: (string|null);
-
-                /** ListSnapshotsRequest pageSize */
-                pageSize?: (number|null);
-
-                /** ListSnapshotsRequest pageToken */
-                pageToken?: (string|null);
-            }
-
-            /** Represents a ListSnapshotsRequest. */
-            class ListSnapshotsRequest implements IListSnapshotsRequest {
-
-                /**
-                 * Constructs a new ListSnapshotsRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IListSnapshotsRequest);
-
-                /** ListSnapshotsRequest project. */
-                public project: string;
-
-                /** ListSnapshotsRequest pageSize. */
-                public pageSize: number;
-
-                /** ListSnapshotsRequest pageToken. */
-                public pageToken: string;
-
-                /**
-                 * Creates a new ListSnapshotsRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ListSnapshotsRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IListSnapshotsRequest): google.pubsub.v1.ListSnapshotsRequest;
-
-                /**
-                 * Encodes the specified ListSnapshotsRequest message. Does not implicitly {@link google.pubsub.v1.ListSnapshotsRequest.verify|verify} messages.
-                 * @param message ListSnapshotsRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IListSnapshotsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ListSnapshotsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSnapshotsRequest.verify|verify} messages.
-                 * @param message ListSnapshotsRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IListSnapshotsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ListSnapshotsRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ListSnapshotsRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSnapshotsRequest;
-
-                /**
-                 * Decodes a ListSnapshotsRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ListSnapshotsRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSnapshotsRequest;
-
-                /**
-                 * Verifies a ListSnapshotsRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ListSnapshotsRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ListSnapshotsRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSnapshotsRequest;
-
-                /**
-                 * Creates a plain object from a ListSnapshotsRequest message. Also converts values to other types if specified.
-                 * @param message ListSnapshotsRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ListSnapshotsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ListSnapshotsRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a ListSnapshotsResponse. */
-            interface IListSnapshotsResponse {
-
-                /** ListSnapshotsResponse snapshots */
-                snapshots?: (google.pubsub.v1.ISnapshot[]|null);
-
-                /** ListSnapshotsResponse nextPageToken */
-                nextPageToken?: (string|null);
-            }
-
-            /** Represents a ListSnapshotsResponse. */
-            class ListSnapshotsResponse implements IListSnapshotsResponse {
-
-                /**
-                 * Constructs a new ListSnapshotsResponse.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IListSnapshotsResponse);
-
-                /** ListSnapshotsResponse snapshots. */
-                public snapshots: google.pubsub.v1.ISnapshot[];
-
-                /** ListSnapshotsResponse nextPageToken. */
-                public nextPageToken: string;
-
-                /**
-                 * Creates a new ListSnapshotsResponse instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ListSnapshotsResponse instance
-                 */
-                public static create(properties?: google.pubsub.v1.IListSnapshotsResponse): google.pubsub.v1.ListSnapshotsResponse;
-
-                /**
-                 * Encodes the specified ListSnapshotsResponse message. Does not implicitly {@link google.pubsub.v1.ListSnapshotsResponse.verify|verify} messages.
-                 * @param message ListSnapshotsResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IListSnapshotsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified ListSnapshotsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSnapshotsResponse.verify|verify} messages.
-                 * @param message ListSnapshotsResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IListSnapshotsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a ListSnapshotsResponse message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ListSnapshotsResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSnapshotsResponse;
-
-                /**
-                 * Decodes a ListSnapshotsResponse message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns ListSnapshotsResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSnapshotsResponse;
-
-                /**
-                 * Verifies a ListSnapshotsResponse message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a ListSnapshotsResponse message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ListSnapshotsResponse
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSnapshotsResponse;
-
-                /**
-                 * Creates a plain object from a ListSnapshotsResponse message. Also converts values to other types if specified.
-                 * @param message ListSnapshotsResponse
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.ListSnapshotsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ListSnapshotsResponse to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a DeleteSnapshotRequest. */
-            interface IDeleteSnapshotRequest {
-
-                /** DeleteSnapshotRequest snapshot */
-                snapshot?: (string|null);
-            }
-
-            /** Represents a DeleteSnapshotRequest. */
-            class DeleteSnapshotRequest implements IDeleteSnapshotRequest {
-
-                /**
-                 * Constructs a new DeleteSnapshotRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.IDeleteSnapshotRequest);
-
-                /** DeleteSnapshotRequest snapshot. */
-                public snapshot: string;
-
-                /**
-                 * Creates a new DeleteSnapshotRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns DeleteSnapshotRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.IDeleteSnapshotRequest): google.pubsub.v1.DeleteSnapshotRequest;
-
-                /**
-                 * Encodes the specified DeleteSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.DeleteSnapshotRequest.verify|verify} messages.
-                 * @param message DeleteSnapshotRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.IDeleteSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified DeleteSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteSnapshotRequest.verify|verify} messages.
-                 * @param message DeleteSnapshotRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.IDeleteSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a DeleteSnapshotRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns DeleteSnapshotRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DeleteSnapshotRequest;
-
-                /**
-                 * Decodes a DeleteSnapshotRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns DeleteSnapshotRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DeleteSnapshotRequest;
-
-                /**
-                 * Verifies a DeleteSnapshotRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a DeleteSnapshotRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns DeleteSnapshotRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DeleteSnapshotRequest;
-
-                /**
-                 * Creates a plain object from a DeleteSnapshotRequest message. Also converts values to other types if specified.
-                 * @param message DeleteSnapshotRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.DeleteSnapshotRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this DeleteSnapshotRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a SeekRequest. */
-            interface ISeekRequest {
-
-                /** SeekRequest subscription */
-                subscription?: (string|null);
-
-                /** SeekRequest time */
-                time?: (google.protobuf.ITimestamp|null);
-
-                /** SeekRequest snapshot */
-                snapshot?: (string|null);
-            }
-
-            /** Represents a SeekRequest. */
-            class SeekRequest implements ISeekRequest {
-
-                /**
-                 * Constructs a new SeekRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.ISeekRequest);
-
-                /** SeekRequest subscription. */
-                public subscription: string;
-
-                /** SeekRequest time. */
-                public time?: (google.protobuf.ITimestamp|null);
-
-                /** SeekRequest snapshot. */
-                public snapshot: string;
-
-                /** SeekRequest target. */
-                public target?: ("time"|"snapshot");
-
-                /**
-                 * Creates a new SeekRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns SeekRequest instance
-                 */
-                public static create(properties?: google.pubsub.v1.ISeekRequest): google.pubsub.v1.SeekRequest;
-
-                /**
-                 * Encodes the specified SeekRequest message. Does not implicitly {@link google.pubsub.v1.SeekRequest.verify|verify} messages.
-                 * @param message SeekRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.ISeekRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified SeekRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.SeekRequest.verify|verify} messages.
-                 * @param message SeekRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.ISeekRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a SeekRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns SeekRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.SeekRequest;
-
-                /**
-                 * Decodes a SeekRequest message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns SeekRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.SeekRequest;
-
-                /**
-                 * Verifies a SeekRequest message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a SeekRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns SeekRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.SeekRequest;
-
-                /**
-                 * Creates a plain object from a SeekRequest message. Also converts values to other types if specified.
-                 * @param message SeekRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.SeekRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this SeekRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-
-            /** Properties of a SeekResponse. */
-            interface ISeekResponse {
-            }
-
-            /** Represents a SeekResponse. */
-            class SeekResponse implements ISeekResponse {
-
-                /**
-                 * Constructs a new SeekResponse.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: google.pubsub.v1.ISeekResponse);
-
-                /**
-                 * Creates a new SeekResponse instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns SeekResponse instance
-                 */
-                public static create(properties?: google.pubsub.v1.ISeekResponse): google.pubsub.v1.SeekResponse;
-
-                /**
-                 * Encodes the specified SeekResponse message. Does not implicitly {@link google.pubsub.v1.SeekResponse.verify|verify} messages.
-                 * @param message SeekResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: google.pubsub.v1.ISeekResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified SeekResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.SeekResponse.verify|verify} messages.
-                 * @param message SeekResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: google.pubsub.v1.ISeekResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a SeekResponse message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns SeekResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.SeekResponse;
-
-                /**
-                 * Decodes a SeekResponse message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns SeekResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.SeekResponse;
-
-                /**
-                 * Verifies a SeekResponse message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a SeekResponse message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns SeekResponse
-                 */
-                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.SeekResponse;
-
-                /**
-                 * Creates a plain object from a SeekResponse message. Also converts values to other types if specified.
-                 * @param message SeekResponse
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: google.pubsub.v1.SeekResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this SeekResponse to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
+        }
+    }
+
+    /** Namespace type. */
+    namespace type {
+
+        /** Properties of an Expr. */
+        interface IExpr {
+
+            /** Expr expression */
+            expression?: (string|null);
+
+            /** Expr title */
+            title?: (string|null);
+
+            /** Expr description */
+            description?: (string|null);
+
+            /** Expr location */
+            location?: (string|null);
+        }
+
+        /** Represents an Expr. */
+        class Expr implements IExpr {
+
+            /**
+             * Constructs a new Expr.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: google.type.IExpr);
+
+            /** Expr expression. */
+            public expression: string;
+
+            /** Expr title. */
+            public title: string;
+
+            /** Expr description. */
+            public description: string;
+
+            /** Expr location. */
+            public location: string;
+
+            /**
+             * Creates a new Expr instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns Expr instance
+             */
+            public static create(properties?: google.type.IExpr): google.type.Expr;
+
+            /**
+             * Encodes the specified Expr message. Does not implicitly {@link google.type.Expr.verify|verify} messages.
+             * @param message Expr message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: google.type.IExpr, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified Expr message, length delimited. Does not implicitly {@link google.type.Expr.verify|verify} messages.
+             * @param message Expr message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: google.type.IExpr, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an Expr message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns Expr
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.type.Expr;
+
+            /**
+             * Decodes an Expr message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns Expr
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.type.Expr;
+
+            /**
+             * Verifies an Expr message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an Expr message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Expr
+             */
+            public static fromObject(object: { [k: string]: any }): google.type.Expr;
+
+            /**
+             * Creates a plain object from an Expr message. Also converts values to other types if specified.
+             * @param message Expr
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: google.type.Expr, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Expr to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
         }
     }
 
@@ -8693,17 +5297,17 @@ export namespace google {
         }
     }
 
-    /** Namespace iam. */
-    namespace iam {
+    /** Namespace pubsub. */
+    namespace pubsub {
 
         /** Namespace v1. */
         namespace v1 {
 
-            /** Represents a IAMPolicy */
-            class IAMPolicy extends $protobuf.rpc.Service {
+            /** Represents a Publisher */
+            class Publisher extends $protobuf.rpc.Service {
 
                 /**
-                 * Constructs a new IAMPolicy service.
+                 * Constructs a new Publisher service.
                  * @param rpcImpl RPC implementation
                  * @param [requestDelimited=false] Whether requests are length-delimited
                  * @param [responseDelimited=false] Whether responses are length-delimited
@@ -8711,1196 +5315,4700 @@ export namespace google {
                 constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
 
                 /**
-                 * Creates new IAMPolicy service using the specified rpc implementation.
+                 * Creates new Publisher service using the specified rpc implementation.
                  * @param rpcImpl RPC implementation
                  * @param [requestDelimited=false] Whether requests are length-delimited
                  * @param [responseDelimited=false] Whether responses are length-delimited
                  * @returns RPC service. Useful where requests and/or responses are streamed.
                  */
-                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): IAMPolicy;
+                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): Publisher;
 
                 /**
-                 * Calls SetIamPolicy.
-                 * @param request SetIamPolicyRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Policy
+                 * Calls CreateTopic.
+                 * @param request Topic message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Topic
                  */
-                public setIamPolicy(request: google.iam.v1.ISetIamPolicyRequest, callback: google.iam.v1.IAMPolicy.SetIamPolicyCallback): void;
+                public createTopic(request: google.pubsub.v1.ITopic, callback: google.pubsub.v1.Publisher.CreateTopicCallback): void;
 
                 /**
-                 * Calls SetIamPolicy.
-                 * @param request SetIamPolicyRequest message or plain object
+                 * Calls CreateTopic.
+                 * @param request Topic message or plain object
                  * @returns Promise
                  */
-                public setIamPolicy(request: google.iam.v1.ISetIamPolicyRequest): Promise<google.iam.v1.Policy>;
+                public createTopic(request: google.pubsub.v1.ITopic): Promise<google.pubsub.v1.Topic>;
 
                 /**
-                 * Calls GetIamPolicy.
-                 * @param request GetIamPolicyRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Policy
+                 * Calls UpdateTopic.
+                 * @param request UpdateTopicRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Topic
                  */
-                public getIamPolicy(request: google.iam.v1.IGetIamPolicyRequest, callback: google.iam.v1.IAMPolicy.GetIamPolicyCallback): void;
+                public updateTopic(request: google.pubsub.v1.IUpdateTopicRequest, callback: google.pubsub.v1.Publisher.UpdateTopicCallback): void;
 
                 /**
-                 * Calls GetIamPolicy.
-                 * @param request GetIamPolicyRequest message or plain object
+                 * Calls UpdateTopic.
+                 * @param request UpdateTopicRequest message or plain object
                  * @returns Promise
                  */
-                public getIamPolicy(request: google.iam.v1.IGetIamPolicyRequest): Promise<google.iam.v1.Policy>;
+                public updateTopic(request: google.pubsub.v1.IUpdateTopicRequest): Promise<google.pubsub.v1.Topic>;
 
                 /**
-                 * Calls TestIamPermissions.
-                 * @param request TestIamPermissionsRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and TestIamPermissionsResponse
+                 * Calls Publish.
+                 * @param request PublishRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and PublishResponse
                  */
-                public testIamPermissions(request: google.iam.v1.ITestIamPermissionsRequest, callback: google.iam.v1.IAMPolicy.TestIamPermissionsCallback): void;
+                public publish(request: google.pubsub.v1.IPublishRequest, callback: google.pubsub.v1.Publisher.PublishCallback): void;
 
                 /**
-                 * Calls TestIamPermissions.
-                 * @param request TestIamPermissionsRequest message or plain object
+                 * Calls Publish.
+                 * @param request PublishRequest message or plain object
                  * @returns Promise
                  */
-                public testIamPermissions(request: google.iam.v1.ITestIamPermissionsRequest): Promise<google.iam.v1.TestIamPermissionsResponse>;
-            }
-
-            namespace IAMPolicy {
+                public publish(request: google.pubsub.v1.IPublishRequest): Promise<google.pubsub.v1.PublishResponse>;
 
                 /**
-                 * Callback as used by {@link google.iam.v1.IAMPolicy#setIamPolicy}.
+                 * Calls GetTopic.
+                 * @param request GetTopicRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Topic
+                 */
+                public getTopic(request: google.pubsub.v1.IGetTopicRequest, callback: google.pubsub.v1.Publisher.GetTopicCallback): void;
+
+                /**
+                 * Calls GetTopic.
+                 * @param request GetTopicRequest message or plain object
+                 * @returns Promise
+                 */
+                public getTopic(request: google.pubsub.v1.IGetTopicRequest): Promise<google.pubsub.v1.Topic>;
+
+                /**
+                 * Calls ListTopics.
+                 * @param request ListTopicsRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and ListTopicsResponse
+                 */
+                public listTopics(request: google.pubsub.v1.IListTopicsRequest, callback: google.pubsub.v1.Publisher.ListTopicsCallback): void;
+
+                /**
+                 * Calls ListTopics.
+                 * @param request ListTopicsRequest message or plain object
+                 * @returns Promise
+                 */
+                public listTopics(request: google.pubsub.v1.IListTopicsRequest): Promise<google.pubsub.v1.ListTopicsResponse>;
+
+                /**
+                 * Calls ListTopicSubscriptions.
+                 * @param request ListTopicSubscriptionsRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and ListTopicSubscriptionsResponse
+                 */
+                public listTopicSubscriptions(request: google.pubsub.v1.IListTopicSubscriptionsRequest, callback: google.pubsub.v1.Publisher.ListTopicSubscriptionsCallback): void;
+
+                /**
+                 * Calls ListTopicSubscriptions.
+                 * @param request ListTopicSubscriptionsRequest message or plain object
+                 * @returns Promise
+                 */
+                public listTopicSubscriptions(request: google.pubsub.v1.IListTopicSubscriptionsRequest): Promise<google.pubsub.v1.ListTopicSubscriptionsResponse>;
+
+                /**
+                 * Calls ListTopicSnapshots.
+                 * @param request ListTopicSnapshotsRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and ListTopicSnapshotsResponse
+                 */
+                public listTopicSnapshots(request: google.pubsub.v1.IListTopicSnapshotsRequest, callback: google.pubsub.v1.Publisher.ListTopicSnapshotsCallback): void;
+
+                /**
+                 * Calls ListTopicSnapshots.
+                 * @param request ListTopicSnapshotsRequest message or plain object
+                 * @returns Promise
+                 */
+                public listTopicSnapshots(request: google.pubsub.v1.IListTopicSnapshotsRequest): Promise<google.pubsub.v1.ListTopicSnapshotsResponse>;
+
+                /**
+                 * Calls DeleteTopic.
+                 * @param request DeleteTopicRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Empty
+                 */
+                public deleteTopic(request: google.pubsub.v1.IDeleteTopicRequest, callback: google.pubsub.v1.Publisher.DeleteTopicCallback): void;
+
+                /**
+                 * Calls DeleteTopic.
+                 * @param request DeleteTopicRequest message or plain object
+                 * @returns Promise
+                 */
+                public deleteTopic(request: google.pubsub.v1.IDeleteTopicRequest): Promise<google.protobuf.Empty>;
+            }
+
+            namespace Publisher {
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Publisher#createTopic}.
                  * @param error Error, if any
-                 * @param [response] Policy
+                 * @param [response] Topic
                  */
-                type SetIamPolicyCallback = (error: (Error|null), response?: google.iam.v1.Policy) => void;
+                type CreateTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
 
                 /**
-                 * Callback as used by {@link google.iam.v1.IAMPolicy#getIamPolicy}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher#updateTopic}.
                  * @param error Error, if any
-                 * @param [response] Policy
+                 * @param [response] Topic
                  */
-                type GetIamPolicyCallback = (error: (Error|null), response?: google.iam.v1.Policy) => void;
+                type UpdateTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
 
                 /**
-                 * Callback as used by {@link google.iam.v1.IAMPolicy#testIamPermissions}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher#publish}.
                  * @param error Error, if any
-                 * @param [response] TestIamPermissionsResponse
+                 * @param [response] PublishResponse
                  */
-                type TestIamPermissionsCallback = (error: (Error|null), response?: google.iam.v1.TestIamPermissionsResponse) => void;
+                type PublishCallback = (error: (Error|null), response?: google.pubsub.v1.PublishResponse) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Publisher#getTopic}.
+                 * @param error Error, if any
+                 * @param [response] Topic
+                 */
+                type GetTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopics}.
+                 * @param error Error, if any
+                 * @param [response] ListTopicsResponse
+                 */
+                type ListTopicsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicsResponse) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSubscriptions}.
+                 * @param error Error, if any
+                 * @param [response] ListTopicSubscriptionsResponse
+                 */
+                type ListTopicSubscriptionsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicSubscriptionsResponse) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSnapshots}.
+                 * @param error Error, if any
+                 * @param [response] ListTopicSnapshotsResponse
+                 */
+                type ListTopicSnapshotsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicSnapshotsResponse) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Publisher#deleteTopic}.
+                 * @param error Error, if any
+                 * @param [response] Empty
+                 */
+                type DeleteTopicCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
             }
 
-            /** Properties of a SetIamPolicyRequest. */
-            interface ISetIamPolicyRequest {
+            /** Properties of a MessageStoragePolicy. */
+            interface IMessageStoragePolicy {
 
-                /** SetIamPolicyRequest resource */
-                resource?: (string|null);
-
-                /** SetIamPolicyRequest policy */
-                policy?: (google.iam.v1.IPolicy|null);
+                /** MessageStoragePolicy allowedPersistenceRegions */
+                allowedPersistenceRegions?: (string[]|null);
             }
 
-            /** Represents a SetIamPolicyRequest. */
-            class SetIamPolicyRequest implements ISetIamPolicyRequest {
+            /** Represents a MessageStoragePolicy. */
+            class MessageStoragePolicy implements IMessageStoragePolicy {
 
                 /**
-                 * Constructs a new SetIamPolicyRequest.
+                 * Constructs a new MessageStoragePolicy.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.iam.v1.ISetIamPolicyRequest);
+                constructor(properties?: google.pubsub.v1.IMessageStoragePolicy);
 
-                /** SetIamPolicyRequest resource. */
-                public resource: string;
-
-                /** SetIamPolicyRequest policy. */
-                public policy?: (google.iam.v1.IPolicy|null);
+                /** MessageStoragePolicy allowedPersistenceRegions. */
+                public allowedPersistenceRegions: string[];
 
                 /**
-                 * Creates a new SetIamPolicyRequest instance using the specified properties.
+                 * Creates a new MessageStoragePolicy instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns SetIamPolicyRequest instance
+                 * @returns MessageStoragePolicy instance
                  */
-                public static create(properties?: google.iam.v1.ISetIamPolicyRequest): google.iam.v1.SetIamPolicyRequest;
+                public static create(properties?: google.pubsub.v1.IMessageStoragePolicy): google.pubsub.v1.MessageStoragePolicy;
 
                 /**
-                 * Encodes the specified SetIamPolicyRequest message. Does not implicitly {@link google.iam.v1.SetIamPolicyRequest.verify|verify} messages.
-                 * @param message SetIamPolicyRequest message or plain object to encode
+                 * Encodes the specified MessageStoragePolicy message. Does not implicitly {@link google.pubsub.v1.MessageStoragePolicy.verify|verify} messages.
+                 * @param message MessageStoragePolicy message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.iam.v1.ISetIamPolicyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.pubsub.v1.IMessageStoragePolicy, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified SetIamPolicyRequest message, length delimited. Does not implicitly {@link google.iam.v1.SetIamPolicyRequest.verify|verify} messages.
-                 * @param message SetIamPolicyRequest message or plain object to encode
+                 * Encodes the specified MessageStoragePolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.MessageStoragePolicy.verify|verify} messages.
+                 * @param message MessageStoragePolicy message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.iam.v1.ISetIamPolicyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.pubsub.v1.IMessageStoragePolicy, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a SetIamPolicyRequest message from the specified reader or buffer.
+                 * Decodes a MessageStoragePolicy message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns SetIamPolicyRequest
+                 * @returns MessageStoragePolicy
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.SetIamPolicyRequest;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.MessageStoragePolicy;
 
                 /**
-                 * Decodes a SetIamPolicyRequest message from the specified reader or buffer, length delimited.
+                 * Decodes a MessageStoragePolicy message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns SetIamPolicyRequest
+                 * @returns MessageStoragePolicy
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.SetIamPolicyRequest;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.MessageStoragePolicy;
 
                 /**
-                 * Verifies a SetIamPolicyRequest message.
+                 * Verifies a MessageStoragePolicy message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a SetIamPolicyRequest message from a plain object. Also converts values to their respective internal types.
+                 * Creates a MessageStoragePolicy message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns SetIamPolicyRequest
+                 * @returns MessageStoragePolicy
                  */
-                public static fromObject(object: { [k: string]: any }): google.iam.v1.SetIamPolicyRequest;
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.MessageStoragePolicy;
 
                 /**
-                 * Creates a plain object from a SetIamPolicyRequest message. Also converts values to other types if specified.
-                 * @param message SetIamPolicyRequest
+                 * Creates a plain object from a MessageStoragePolicy message. Also converts values to other types if specified.
+                 * @param message MessageStoragePolicy
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.iam.v1.SetIamPolicyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.pubsub.v1.MessageStoragePolicy, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this SetIamPolicyRequest to JSON.
+                 * Converts this MessageStoragePolicy to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            /** Properties of a GetIamPolicyRequest. */
-            interface IGetIamPolicyRequest {
+            /** Properties of a Topic. */
+            interface ITopic {
 
-                /** GetIamPolicyRequest resource */
-                resource?: (string|null);
+                /** Topic name */
+                name?: (string|null);
 
-                /** GetIamPolicyRequest options */
-                options?: (google.iam.v1.IGetPolicyOptions|null);
+                /** Topic labels */
+                labels?: ({ [k: string]: string }|null);
+
+                /** Topic messageStoragePolicy */
+                messageStoragePolicy?: (google.pubsub.v1.IMessageStoragePolicy|null);
+
+                /** Topic kmsKeyName */
+                kmsKeyName?: (string|null);
             }
 
-            /** Represents a GetIamPolicyRequest. */
-            class GetIamPolicyRequest implements IGetIamPolicyRequest {
+            /** Represents a Topic. */
+            class Topic implements ITopic {
 
                 /**
-                 * Constructs a new GetIamPolicyRequest.
+                 * Constructs a new Topic.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.iam.v1.IGetIamPolicyRequest);
+                constructor(properties?: google.pubsub.v1.ITopic);
 
-                /** GetIamPolicyRequest resource. */
-                public resource: string;
+                /** Topic name. */
+                public name: string;
 
-                /** GetIamPolicyRequest options. */
-                public options?: (google.iam.v1.IGetPolicyOptions|null);
+                /** Topic labels. */
+                public labels: { [k: string]: string };
+
+                /** Topic messageStoragePolicy. */
+                public messageStoragePolicy?: (google.pubsub.v1.IMessageStoragePolicy|null);
+
+                /** Topic kmsKeyName. */
+                public kmsKeyName: string;
 
                 /**
-                 * Creates a new GetIamPolicyRequest instance using the specified properties.
+                 * Creates a new Topic instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns GetIamPolicyRequest instance
+                 * @returns Topic instance
                  */
-                public static create(properties?: google.iam.v1.IGetIamPolicyRequest): google.iam.v1.GetIamPolicyRequest;
+                public static create(properties?: google.pubsub.v1.ITopic): google.pubsub.v1.Topic;
 
                 /**
-                 * Encodes the specified GetIamPolicyRequest message. Does not implicitly {@link google.iam.v1.GetIamPolicyRequest.verify|verify} messages.
-                 * @param message GetIamPolicyRequest message or plain object to encode
+                 * Encodes the specified Topic message. Does not implicitly {@link google.pubsub.v1.Topic.verify|verify} messages.
+                 * @param message Topic message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.iam.v1.IGetIamPolicyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.pubsub.v1.ITopic, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified GetIamPolicyRequest message, length delimited. Does not implicitly {@link google.iam.v1.GetIamPolicyRequest.verify|verify} messages.
-                 * @param message GetIamPolicyRequest message or plain object to encode
+                 * Encodes the specified Topic message, length delimited. Does not implicitly {@link google.pubsub.v1.Topic.verify|verify} messages.
+                 * @param message Topic message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.iam.v1.IGetIamPolicyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.pubsub.v1.ITopic, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a GetIamPolicyRequest message from the specified reader or buffer.
+                 * Decodes a Topic message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns GetIamPolicyRequest
+                 * @returns Topic
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.GetIamPolicyRequest;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.Topic;
 
                 /**
-                 * Decodes a GetIamPolicyRequest message from the specified reader or buffer, length delimited.
+                 * Decodes a Topic message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns GetIamPolicyRequest
+                 * @returns Topic
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.GetIamPolicyRequest;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.Topic;
 
                 /**
-                 * Verifies a GetIamPolicyRequest message.
+                 * Verifies a Topic message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a GetIamPolicyRequest message from a plain object. Also converts values to their respective internal types.
+                 * Creates a Topic message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns GetIamPolicyRequest
+                 * @returns Topic
                  */
-                public static fromObject(object: { [k: string]: any }): google.iam.v1.GetIamPolicyRequest;
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.Topic;
 
                 /**
-                 * Creates a plain object from a GetIamPolicyRequest message. Also converts values to other types if specified.
-                 * @param message GetIamPolicyRequest
+                 * Creates a plain object from a Topic message. Also converts values to other types if specified.
+                 * @param message Topic
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.iam.v1.GetIamPolicyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.pubsub.v1.Topic, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this GetIamPolicyRequest to JSON.
+                 * Converts this Topic to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            /** Properties of a TestIamPermissionsRequest. */
-            interface ITestIamPermissionsRequest {
+            /** Properties of a PubsubMessage. */
+            interface IPubsubMessage {
 
-                /** TestIamPermissionsRequest resource */
-                resource?: (string|null);
+                /** PubsubMessage data */
+                data?: (Uint8Array|string|null);
 
-                /** TestIamPermissionsRequest permissions */
-                permissions?: (string[]|null);
+                /** PubsubMessage attributes */
+                attributes?: ({ [k: string]: string }|null);
+
+                /** PubsubMessage messageId */
+                messageId?: (string|null);
+
+                /** PubsubMessage publishTime */
+                publishTime?: (google.protobuf.ITimestamp|null);
+
+                /** PubsubMessage orderingKey */
+                orderingKey?: (string|null);
             }
 
-            /** Represents a TestIamPermissionsRequest. */
-            class TestIamPermissionsRequest implements ITestIamPermissionsRequest {
+            /** Represents a PubsubMessage. */
+            class PubsubMessage implements IPubsubMessage {
 
                 /**
-                 * Constructs a new TestIamPermissionsRequest.
+                 * Constructs a new PubsubMessage.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.iam.v1.ITestIamPermissionsRequest);
+                constructor(properties?: google.pubsub.v1.IPubsubMessage);
 
-                /** TestIamPermissionsRequest resource. */
-                public resource: string;
+                /** PubsubMessage data. */
+                public data: (Uint8Array|string);
 
-                /** TestIamPermissionsRequest permissions. */
-                public permissions: string[];
+                /** PubsubMessage attributes. */
+                public attributes: { [k: string]: string };
+
+                /** PubsubMessage messageId. */
+                public messageId: string;
+
+                /** PubsubMessage publishTime. */
+                public publishTime?: (google.protobuf.ITimestamp|null);
+
+                /** PubsubMessage orderingKey. */
+                public orderingKey: string;
 
                 /**
-                 * Creates a new TestIamPermissionsRequest instance using the specified properties.
+                 * Creates a new PubsubMessage instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns TestIamPermissionsRequest instance
+                 * @returns PubsubMessage instance
                  */
-                public static create(properties?: google.iam.v1.ITestIamPermissionsRequest): google.iam.v1.TestIamPermissionsRequest;
+                public static create(properties?: google.pubsub.v1.IPubsubMessage): google.pubsub.v1.PubsubMessage;
 
                 /**
-                 * Encodes the specified TestIamPermissionsRequest message. Does not implicitly {@link google.iam.v1.TestIamPermissionsRequest.verify|verify} messages.
-                 * @param message TestIamPermissionsRequest message or plain object to encode
+                 * Encodes the specified PubsubMessage message. Does not implicitly {@link google.pubsub.v1.PubsubMessage.verify|verify} messages.
+                 * @param message PubsubMessage message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.iam.v1.ITestIamPermissionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.pubsub.v1.IPubsubMessage, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified TestIamPermissionsRequest message, length delimited. Does not implicitly {@link google.iam.v1.TestIamPermissionsRequest.verify|verify} messages.
-                 * @param message TestIamPermissionsRequest message or plain object to encode
+                 * Encodes the specified PubsubMessage message, length delimited. Does not implicitly {@link google.pubsub.v1.PubsubMessage.verify|verify} messages.
+                 * @param message PubsubMessage message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.iam.v1.ITestIamPermissionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.pubsub.v1.IPubsubMessage, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a TestIamPermissionsRequest message from the specified reader or buffer.
+                 * Decodes a PubsubMessage message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns TestIamPermissionsRequest
+                 * @returns PubsubMessage
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.TestIamPermissionsRequest;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PubsubMessage;
 
                 /**
-                 * Decodes a TestIamPermissionsRequest message from the specified reader or buffer, length delimited.
+                 * Decodes a PubsubMessage message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns TestIamPermissionsRequest
+                 * @returns PubsubMessage
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.TestIamPermissionsRequest;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PubsubMessage;
 
                 /**
-                 * Verifies a TestIamPermissionsRequest message.
+                 * Verifies a PubsubMessage message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a TestIamPermissionsRequest message from a plain object. Also converts values to their respective internal types.
+                 * Creates a PubsubMessage message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns TestIamPermissionsRequest
+                 * @returns PubsubMessage
                  */
-                public static fromObject(object: { [k: string]: any }): google.iam.v1.TestIamPermissionsRequest;
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PubsubMessage;
 
                 /**
-                 * Creates a plain object from a TestIamPermissionsRequest message. Also converts values to other types if specified.
-                 * @param message TestIamPermissionsRequest
+                 * Creates a plain object from a PubsubMessage message. Also converts values to other types if specified.
+                 * @param message PubsubMessage
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.iam.v1.TestIamPermissionsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.pubsub.v1.PubsubMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this TestIamPermissionsRequest to JSON.
+                 * Converts this PubsubMessage to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            /** Properties of a TestIamPermissionsResponse. */
-            interface ITestIamPermissionsResponse {
+            /** Properties of a GetTopicRequest. */
+            interface IGetTopicRequest {
 
-                /** TestIamPermissionsResponse permissions */
-                permissions?: (string[]|null);
+                /** GetTopicRequest topic */
+                topic?: (string|null);
             }
 
-            /** Represents a TestIamPermissionsResponse. */
-            class TestIamPermissionsResponse implements ITestIamPermissionsResponse {
+            /** Represents a GetTopicRequest. */
+            class GetTopicRequest implements IGetTopicRequest {
 
                 /**
-                 * Constructs a new TestIamPermissionsResponse.
+                 * Constructs a new GetTopicRequest.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.iam.v1.ITestIamPermissionsResponse);
+                constructor(properties?: google.pubsub.v1.IGetTopicRequest);
 
-                /** TestIamPermissionsResponse permissions. */
-                public permissions: string[];
+                /** GetTopicRequest topic. */
+                public topic: string;
 
                 /**
-                 * Creates a new TestIamPermissionsResponse instance using the specified properties.
+                 * Creates a new GetTopicRequest instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns TestIamPermissionsResponse instance
+                 * @returns GetTopicRequest instance
                  */
-                public static create(properties?: google.iam.v1.ITestIamPermissionsResponse): google.iam.v1.TestIamPermissionsResponse;
+                public static create(properties?: google.pubsub.v1.IGetTopicRequest): google.pubsub.v1.GetTopicRequest;
 
                 /**
-                 * Encodes the specified TestIamPermissionsResponse message. Does not implicitly {@link google.iam.v1.TestIamPermissionsResponse.verify|verify} messages.
-                 * @param message TestIamPermissionsResponse message or plain object to encode
+                 * Encodes the specified GetTopicRequest message. Does not implicitly {@link google.pubsub.v1.GetTopicRequest.verify|verify} messages.
+                 * @param message GetTopicRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.iam.v1.ITestIamPermissionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.pubsub.v1.IGetTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified TestIamPermissionsResponse message, length delimited. Does not implicitly {@link google.iam.v1.TestIamPermissionsResponse.verify|verify} messages.
-                 * @param message TestIamPermissionsResponse message or plain object to encode
+                 * Encodes the specified GetTopicRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.GetTopicRequest.verify|verify} messages.
+                 * @param message GetTopicRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.iam.v1.ITestIamPermissionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.pubsub.v1.IGetTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a TestIamPermissionsResponse message from the specified reader or buffer.
+                 * Decodes a GetTopicRequest message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns TestIamPermissionsResponse
+                 * @returns GetTopicRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.TestIamPermissionsResponse;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.GetTopicRequest;
 
                 /**
-                 * Decodes a TestIamPermissionsResponse message from the specified reader or buffer, length delimited.
+                 * Decodes a GetTopicRequest message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns TestIamPermissionsResponse
+                 * @returns GetTopicRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.TestIamPermissionsResponse;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.GetTopicRequest;
 
                 /**
-                 * Verifies a TestIamPermissionsResponse message.
+                 * Verifies a GetTopicRequest message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a TestIamPermissionsResponse message from a plain object. Also converts values to their respective internal types.
+                 * Creates a GetTopicRequest message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns TestIamPermissionsResponse
+                 * @returns GetTopicRequest
                  */
-                public static fromObject(object: { [k: string]: any }): google.iam.v1.TestIamPermissionsResponse;
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.GetTopicRequest;
 
                 /**
-                 * Creates a plain object from a TestIamPermissionsResponse message. Also converts values to other types if specified.
-                 * @param message TestIamPermissionsResponse
+                 * Creates a plain object from a GetTopicRequest message. Also converts values to other types if specified.
+                 * @param message GetTopicRequest
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.iam.v1.TestIamPermissionsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.pubsub.v1.GetTopicRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this TestIamPermissionsResponse to JSON.
+                 * Converts this GetTopicRequest to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            /** Properties of a GetPolicyOptions. */
-            interface IGetPolicyOptions {
+            /** Properties of an UpdateTopicRequest. */
+            interface IUpdateTopicRequest {
 
-                /** GetPolicyOptions requestedPolicyVersion */
-                requestedPolicyVersion?: (number|null);
+                /** UpdateTopicRequest topic */
+                topic?: (google.pubsub.v1.ITopic|null);
+
+                /** UpdateTopicRequest updateMask */
+                updateMask?: (google.protobuf.IFieldMask|null);
             }
 
-            /** Represents a GetPolicyOptions. */
-            class GetPolicyOptions implements IGetPolicyOptions {
+            /** Represents an UpdateTopicRequest. */
+            class UpdateTopicRequest implements IUpdateTopicRequest {
 
                 /**
-                 * Constructs a new GetPolicyOptions.
+                 * Constructs a new UpdateTopicRequest.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.iam.v1.IGetPolicyOptions);
+                constructor(properties?: google.pubsub.v1.IUpdateTopicRequest);
 
-                /** GetPolicyOptions requestedPolicyVersion. */
-                public requestedPolicyVersion: number;
+                /** UpdateTopicRequest topic. */
+                public topic?: (google.pubsub.v1.ITopic|null);
+
+                /** UpdateTopicRequest updateMask. */
+                public updateMask?: (google.protobuf.IFieldMask|null);
 
                 /**
-                 * Creates a new GetPolicyOptions instance using the specified properties.
+                 * Creates a new UpdateTopicRequest instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns GetPolicyOptions instance
+                 * @returns UpdateTopicRequest instance
                  */
-                public static create(properties?: google.iam.v1.IGetPolicyOptions): google.iam.v1.GetPolicyOptions;
+                public static create(properties?: google.pubsub.v1.IUpdateTopicRequest): google.pubsub.v1.UpdateTopicRequest;
 
                 /**
-                 * Encodes the specified GetPolicyOptions message. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
-                 * @param message GetPolicyOptions message or plain object to encode
+                 * Encodes the specified UpdateTopicRequest message. Does not implicitly {@link google.pubsub.v1.UpdateTopicRequest.verify|verify} messages.
+                 * @param message UpdateTopicRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.iam.v1.IGetPolicyOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.pubsub.v1.IUpdateTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified GetPolicyOptions message, length delimited. Does not implicitly {@link google.iam.v1.GetPolicyOptions.verify|verify} messages.
-                 * @param message GetPolicyOptions message or plain object to encode
+                 * Encodes the specified UpdateTopicRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.UpdateTopicRequest.verify|verify} messages.
+                 * @param message UpdateTopicRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.iam.v1.IGetPolicyOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.pubsub.v1.IUpdateTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a GetPolicyOptions message from the specified reader or buffer.
+                 * Decodes an UpdateTopicRequest message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns GetPolicyOptions
+                 * @returns UpdateTopicRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.GetPolicyOptions;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.UpdateTopicRequest;
 
                 /**
-                 * Decodes a GetPolicyOptions message from the specified reader or buffer, length delimited.
+                 * Decodes an UpdateTopicRequest message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns GetPolicyOptions
+                 * @returns UpdateTopicRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.GetPolicyOptions;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.UpdateTopicRequest;
 
                 /**
-                 * Verifies a GetPolicyOptions message.
+                 * Verifies an UpdateTopicRequest message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a GetPolicyOptions message from a plain object. Also converts values to their respective internal types.
+                 * Creates an UpdateTopicRequest message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns GetPolicyOptions
+                 * @returns UpdateTopicRequest
                  */
-                public static fromObject(object: { [k: string]: any }): google.iam.v1.GetPolicyOptions;
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.UpdateTopicRequest;
 
                 /**
-                 * Creates a plain object from a GetPolicyOptions message. Also converts values to other types if specified.
-                 * @param message GetPolicyOptions
+                 * Creates a plain object from an UpdateTopicRequest message. Also converts values to other types if specified.
+                 * @param message UpdateTopicRequest
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.iam.v1.GetPolicyOptions, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.pubsub.v1.UpdateTopicRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this GetPolicyOptions to JSON.
+                 * Converts this UpdateTopicRequest to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            /** Properties of a Policy. */
-            interface IPolicy {
+            /** Properties of a PublishRequest. */
+            interface IPublishRequest {
 
-                /** Policy version */
-                version?: (number|null);
+                /** PublishRequest topic */
+                topic?: (string|null);
 
-                /** Policy bindings */
-                bindings?: (google.iam.v1.IBinding[]|null);
-
-                /** Policy etag */
-                etag?: (Uint8Array|string|null);
+                /** PublishRequest messages */
+                messages?: (google.pubsub.v1.IPubsubMessage[]|null);
             }
 
-            /** Represents a Policy. */
-            class Policy implements IPolicy {
+            /** Represents a PublishRequest. */
+            class PublishRequest implements IPublishRequest {
 
                 /**
-                 * Constructs a new Policy.
+                 * Constructs a new PublishRequest.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.iam.v1.IPolicy);
+                constructor(properties?: google.pubsub.v1.IPublishRequest);
 
-                /** Policy version. */
-                public version: number;
+                /** PublishRequest topic. */
+                public topic: string;
 
-                /** Policy bindings. */
-                public bindings: google.iam.v1.IBinding[];
-
-                /** Policy etag. */
-                public etag: (Uint8Array|string);
+                /** PublishRequest messages. */
+                public messages: google.pubsub.v1.IPubsubMessage[];
 
                 /**
-                 * Creates a new Policy instance using the specified properties.
+                 * Creates a new PublishRequest instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns Policy instance
+                 * @returns PublishRequest instance
                  */
-                public static create(properties?: google.iam.v1.IPolicy): google.iam.v1.Policy;
+                public static create(properties?: google.pubsub.v1.IPublishRequest): google.pubsub.v1.PublishRequest;
 
                 /**
-                 * Encodes the specified Policy message. Does not implicitly {@link google.iam.v1.Policy.verify|verify} messages.
-                 * @param message Policy message or plain object to encode
+                 * Encodes the specified PublishRequest message. Does not implicitly {@link google.pubsub.v1.PublishRequest.verify|verify} messages.
+                 * @param message PublishRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.iam.v1.IPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.pubsub.v1.IPublishRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified Policy message, length delimited. Does not implicitly {@link google.iam.v1.Policy.verify|verify} messages.
-                 * @param message Policy message or plain object to encode
+                 * Encodes the specified PublishRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.PublishRequest.verify|verify} messages.
+                 * @param message PublishRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.iam.v1.IPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.pubsub.v1.IPublishRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a Policy message from the specified reader or buffer.
+                 * Decodes a PublishRequest message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns Policy
+                 * @returns PublishRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.Policy;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PublishRequest;
 
                 /**
-                 * Decodes a Policy message from the specified reader or buffer, length delimited.
+                 * Decodes a PublishRequest message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns Policy
+                 * @returns PublishRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.Policy;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PublishRequest;
 
                 /**
-                 * Verifies a Policy message.
+                 * Verifies a PublishRequest message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a Policy message from a plain object. Also converts values to their respective internal types.
+                 * Creates a PublishRequest message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns Policy
+                 * @returns PublishRequest
                  */
-                public static fromObject(object: { [k: string]: any }): google.iam.v1.Policy;
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PublishRequest;
 
                 /**
-                 * Creates a plain object from a Policy message. Also converts values to other types if specified.
-                 * @param message Policy
+                 * Creates a plain object from a PublishRequest message. Also converts values to other types if specified.
+                 * @param message PublishRequest
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.iam.v1.Policy, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.pubsub.v1.PublishRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this Policy to JSON.
+                 * Converts this PublishRequest to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            /** Properties of a Binding. */
-            interface IBinding {
+            /** Properties of a PublishResponse. */
+            interface IPublishResponse {
 
-                /** Binding role */
-                role?: (string|null);
-
-                /** Binding members */
-                members?: (string[]|null);
-
-                /** Binding condition */
-                condition?: (google.type.IExpr|null);
+                /** PublishResponse messageIds */
+                messageIds?: (string[]|null);
             }
 
-            /** Represents a Binding. */
-            class Binding implements IBinding {
+            /** Represents a PublishResponse. */
+            class PublishResponse implements IPublishResponse {
 
                 /**
-                 * Constructs a new Binding.
+                 * Constructs a new PublishResponse.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.iam.v1.IBinding);
+                constructor(properties?: google.pubsub.v1.IPublishResponse);
 
-                /** Binding role. */
-                public role: string;
-
-                /** Binding members. */
-                public members: string[];
-
-                /** Binding condition. */
-                public condition?: (google.type.IExpr|null);
+                /** PublishResponse messageIds. */
+                public messageIds: string[];
 
                 /**
-                 * Creates a new Binding instance using the specified properties.
+                 * Creates a new PublishResponse instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns Binding instance
+                 * @returns PublishResponse instance
                  */
-                public static create(properties?: google.iam.v1.IBinding): google.iam.v1.Binding;
+                public static create(properties?: google.pubsub.v1.IPublishResponse): google.pubsub.v1.PublishResponse;
 
                 /**
-                 * Encodes the specified Binding message. Does not implicitly {@link google.iam.v1.Binding.verify|verify} messages.
-                 * @param message Binding message or plain object to encode
+                 * Encodes the specified PublishResponse message. Does not implicitly {@link google.pubsub.v1.PublishResponse.verify|verify} messages.
+                 * @param message PublishResponse message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.iam.v1.IBinding, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.pubsub.v1.IPublishResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified Binding message, length delimited. Does not implicitly {@link google.iam.v1.Binding.verify|verify} messages.
-                 * @param message Binding message or plain object to encode
+                 * Encodes the specified PublishResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.PublishResponse.verify|verify} messages.
+                 * @param message PublishResponse message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.iam.v1.IBinding, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.pubsub.v1.IPublishResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a Binding message from the specified reader or buffer.
+                 * Decodes a PublishResponse message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns Binding
+                 * @returns PublishResponse
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.Binding;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PublishResponse;
 
                 /**
-                 * Decodes a Binding message from the specified reader or buffer, length delimited.
+                 * Decodes a PublishResponse message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns Binding
+                 * @returns PublishResponse
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.Binding;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PublishResponse;
 
                 /**
-                 * Verifies a Binding message.
+                 * Verifies a PublishResponse message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a Binding message from a plain object. Also converts values to their respective internal types.
+                 * Creates a PublishResponse message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns Binding
+                 * @returns PublishResponse
                  */
-                public static fromObject(object: { [k: string]: any }): google.iam.v1.Binding;
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PublishResponse;
 
                 /**
-                 * Creates a plain object from a Binding message. Also converts values to other types if specified.
-                 * @param message Binding
+                 * Creates a plain object from a PublishResponse message. Also converts values to other types if specified.
+                 * @param message PublishResponse
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.iam.v1.Binding, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.pubsub.v1.PublishResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this Binding to JSON.
+                 * Converts this PublishResponse to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            /** Properties of a PolicyDelta. */
-            interface IPolicyDelta {
+            /** Properties of a ListTopicsRequest. */
+            interface IListTopicsRequest {
 
-                /** PolicyDelta bindingDeltas */
-                bindingDeltas?: (google.iam.v1.IBindingDelta[]|null);
+                /** ListTopicsRequest project */
+                project?: (string|null);
 
-                /** PolicyDelta auditConfigDeltas */
-                auditConfigDeltas?: (google.iam.v1.IAuditConfigDelta[]|null);
+                /** ListTopicsRequest pageSize */
+                pageSize?: (number|null);
+
+                /** ListTopicsRequest pageToken */
+                pageToken?: (string|null);
             }
 
-            /** Represents a PolicyDelta. */
-            class PolicyDelta implements IPolicyDelta {
+            /** Represents a ListTopicsRequest. */
+            class ListTopicsRequest implements IListTopicsRequest {
 
                 /**
-                 * Constructs a new PolicyDelta.
+                 * Constructs a new ListTopicsRequest.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.iam.v1.IPolicyDelta);
+                constructor(properties?: google.pubsub.v1.IListTopicsRequest);
 
-                /** PolicyDelta bindingDeltas. */
-                public bindingDeltas: google.iam.v1.IBindingDelta[];
+                /** ListTopicsRequest project. */
+                public project: string;
 
-                /** PolicyDelta auditConfigDeltas. */
-                public auditConfigDeltas: google.iam.v1.IAuditConfigDelta[];
+                /** ListTopicsRequest pageSize. */
+                public pageSize: number;
+
+                /** ListTopicsRequest pageToken. */
+                public pageToken: string;
 
                 /**
-                 * Creates a new PolicyDelta instance using the specified properties.
+                 * Creates a new ListTopicsRequest instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns PolicyDelta instance
+                 * @returns ListTopicsRequest instance
                  */
-                public static create(properties?: google.iam.v1.IPolicyDelta): google.iam.v1.PolicyDelta;
+                public static create(properties?: google.pubsub.v1.IListTopicsRequest): google.pubsub.v1.ListTopicsRequest;
 
                 /**
-                 * Encodes the specified PolicyDelta message. Does not implicitly {@link google.iam.v1.PolicyDelta.verify|verify} messages.
-                 * @param message PolicyDelta message or plain object to encode
+                 * Encodes the specified ListTopicsRequest message. Does not implicitly {@link google.pubsub.v1.ListTopicsRequest.verify|verify} messages.
+                 * @param message ListTopicsRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.iam.v1.IPolicyDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.pubsub.v1.IListTopicsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified PolicyDelta message, length delimited. Does not implicitly {@link google.iam.v1.PolicyDelta.verify|verify} messages.
-                 * @param message PolicyDelta message or plain object to encode
+                 * Encodes the specified ListTopicsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicsRequest.verify|verify} messages.
+                 * @param message ListTopicsRequest message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.iam.v1.IPolicyDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.pubsub.v1.IListTopicsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a PolicyDelta message from the specified reader or buffer.
+                 * Decodes a ListTopicsRequest message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns PolicyDelta
+                 * @returns ListTopicsRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.PolicyDelta;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicsRequest;
 
                 /**
-                 * Decodes a PolicyDelta message from the specified reader or buffer, length delimited.
+                 * Decodes a ListTopicsRequest message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns PolicyDelta
+                 * @returns ListTopicsRequest
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.PolicyDelta;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicsRequest;
 
                 /**
-                 * Verifies a PolicyDelta message.
+                 * Verifies a ListTopicsRequest message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a PolicyDelta message from a plain object. Also converts values to their respective internal types.
+                 * Creates a ListTopicsRequest message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns PolicyDelta
+                 * @returns ListTopicsRequest
                  */
-                public static fromObject(object: { [k: string]: any }): google.iam.v1.PolicyDelta;
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicsRequest;
 
                 /**
-                 * Creates a plain object from a PolicyDelta message. Also converts values to other types if specified.
-                 * @param message PolicyDelta
+                 * Creates a plain object from a ListTopicsRequest message. Also converts values to other types if specified.
+                 * @param message ListTopicsRequest
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.iam.v1.PolicyDelta, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.pubsub.v1.ListTopicsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this PolicyDelta to JSON.
+                 * Converts this ListTopicsRequest to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            /** Properties of a BindingDelta. */
-            interface IBindingDelta {
+            /** Properties of a ListTopicsResponse. */
+            interface IListTopicsResponse {
 
-                /** BindingDelta action */
-                action?: (google.iam.v1.BindingDelta.Action|keyof typeof google.iam.v1.BindingDelta.Action|null);
+                /** ListTopicsResponse topics */
+                topics?: (google.pubsub.v1.ITopic[]|null);
 
-                /** BindingDelta role */
-                role?: (string|null);
-
-                /** BindingDelta member */
-                member?: (string|null);
-
-                /** BindingDelta condition */
-                condition?: (google.type.IExpr|null);
+                /** ListTopicsResponse nextPageToken */
+                nextPageToken?: (string|null);
             }
 
-            /** Represents a BindingDelta. */
-            class BindingDelta implements IBindingDelta {
+            /** Represents a ListTopicsResponse. */
+            class ListTopicsResponse implements IListTopicsResponse {
 
                 /**
-                 * Constructs a new BindingDelta.
+                 * Constructs a new ListTopicsResponse.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.iam.v1.IBindingDelta);
+                constructor(properties?: google.pubsub.v1.IListTopicsResponse);
 
-                /** BindingDelta action. */
-                public action: (google.iam.v1.BindingDelta.Action|keyof typeof google.iam.v1.BindingDelta.Action);
+                /** ListTopicsResponse topics. */
+                public topics: google.pubsub.v1.ITopic[];
 
-                /** BindingDelta role. */
-                public role: string;
-
-                /** BindingDelta member. */
-                public member: string;
-
-                /** BindingDelta condition. */
-                public condition?: (google.type.IExpr|null);
+                /** ListTopicsResponse nextPageToken. */
+                public nextPageToken: string;
 
                 /**
-                 * Creates a new BindingDelta instance using the specified properties.
+                 * Creates a new ListTopicsResponse instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns BindingDelta instance
+                 * @returns ListTopicsResponse instance
                  */
-                public static create(properties?: google.iam.v1.IBindingDelta): google.iam.v1.BindingDelta;
+                public static create(properties?: google.pubsub.v1.IListTopicsResponse): google.pubsub.v1.ListTopicsResponse;
 
                 /**
-                 * Encodes the specified BindingDelta message. Does not implicitly {@link google.iam.v1.BindingDelta.verify|verify} messages.
-                 * @param message BindingDelta message or plain object to encode
+                 * Encodes the specified ListTopicsResponse message. Does not implicitly {@link google.pubsub.v1.ListTopicsResponse.verify|verify} messages.
+                 * @param message ListTopicsResponse message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.iam.v1.IBindingDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.pubsub.v1.IListTopicsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified BindingDelta message, length delimited. Does not implicitly {@link google.iam.v1.BindingDelta.verify|verify} messages.
-                 * @param message BindingDelta message or plain object to encode
+                 * Encodes the specified ListTopicsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicsResponse.verify|verify} messages.
+                 * @param message ListTopicsResponse message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.iam.v1.IBindingDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.pubsub.v1.IListTopicsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes a BindingDelta message from the specified reader or buffer.
+                 * Decodes a ListTopicsResponse message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns BindingDelta
+                 * @returns ListTopicsResponse
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.BindingDelta;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicsResponse;
 
                 /**
-                 * Decodes a BindingDelta message from the specified reader or buffer, length delimited.
+                 * Decodes a ListTopicsResponse message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns BindingDelta
+                 * @returns ListTopicsResponse
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.BindingDelta;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicsResponse;
 
                 /**
-                 * Verifies a BindingDelta message.
+                 * Verifies a ListTopicsResponse message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates a BindingDelta message from a plain object. Also converts values to their respective internal types.
+                 * Creates a ListTopicsResponse message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns BindingDelta
+                 * @returns ListTopicsResponse
                  */
-                public static fromObject(object: { [k: string]: any }): google.iam.v1.BindingDelta;
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicsResponse;
 
                 /**
-                 * Creates a plain object from a BindingDelta message. Also converts values to other types if specified.
-                 * @param message BindingDelta
+                 * Creates a plain object from a ListTopicsResponse message. Also converts values to other types if specified.
+                 * @param message ListTopicsResponse
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.iam.v1.BindingDelta, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.pubsub.v1.ListTopicsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this BindingDelta to JSON.
+                 * Converts this ListTopicsResponse to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            namespace BindingDelta {
+            /** Properties of a ListTopicSubscriptionsRequest. */
+            interface IListTopicSubscriptionsRequest {
 
-                /** Action enum. */
-                enum Action {
-                    ACTION_UNSPECIFIED = 0,
-                    ADD = 1,
-                    REMOVE = 2
+                /** ListTopicSubscriptionsRequest topic */
+                topic?: (string|null);
+
+                /** ListTopicSubscriptionsRequest pageSize */
+                pageSize?: (number|null);
+
+                /** ListTopicSubscriptionsRequest pageToken */
+                pageToken?: (string|null);
+            }
+
+            /** Represents a ListTopicSubscriptionsRequest. */
+            class ListTopicSubscriptionsRequest implements IListTopicSubscriptionsRequest {
+
+                /**
+                 * Constructs a new ListTopicSubscriptionsRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListTopicSubscriptionsRequest);
+
+                /** ListTopicSubscriptionsRequest topic. */
+                public topic: string;
+
+                /** ListTopicSubscriptionsRequest pageSize. */
+                public pageSize: number;
+
+                /** ListTopicSubscriptionsRequest pageToken. */
+                public pageToken: string;
+
+                /**
+                 * Creates a new ListTopicSubscriptionsRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListTopicSubscriptionsRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListTopicSubscriptionsRequest): google.pubsub.v1.ListTopicSubscriptionsRequest;
+
+                /**
+                 * Encodes the specified ListTopicSubscriptionsRequest message. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsRequest.verify|verify} messages.
+                 * @param message ListTopicSubscriptionsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListTopicSubscriptionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListTopicSubscriptionsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsRequest.verify|verify} messages.
+                 * @param message ListTopicSubscriptionsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListTopicSubscriptionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListTopicSubscriptionsRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListTopicSubscriptionsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicSubscriptionsRequest;
+
+                /**
+                 * Decodes a ListTopicSubscriptionsRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListTopicSubscriptionsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicSubscriptionsRequest;
+
+                /**
+                 * Verifies a ListTopicSubscriptionsRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListTopicSubscriptionsRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListTopicSubscriptionsRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicSubscriptionsRequest;
+
+                /**
+                 * Creates a plain object from a ListTopicSubscriptionsRequest message. Also converts values to other types if specified.
+                 * @param message ListTopicSubscriptionsRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListTopicSubscriptionsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListTopicSubscriptionsRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ListTopicSubscriptionsResponse. */
+            interface IListTopicSubscriptionsResponse {
+
+                /** ListTopicSubscriptionsResponse subscriptions */
+                subscriptions?: (string[]|null);
+
+                /** ListTopicSubscriptionsResponse nextPageToken */
+                nextPageToken?: (string|null);
+            }
+
+            /** Represents a ListTopicSubscriptionsResponse. */
+            class ListTopicSubscriptionsResponse implements IListTopicSubscriptionsResponse {
+
+                /**
+                 * Constructs a new ListTopicSubscriptionsResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListTopicSubscriptionsResponse);
+
+                /** ListTopicSubscriptionsResponse subscriptions. */
+                public subscriptions: string[];
+
+                /** ListTopicSubscriptionsResponse nextPageToken. */
+                public nextPageToken: string;
+
+                /**
+                 * Creates a new ListTopicSubscriptionsResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListTopicSubscriptionsResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListTopicSubscriptionsResponse): google.pubsub.v1.ListTopicSubscriptionsResponse;
+
+                /**
+                 * Encodes the specified ListTopicSubscriptionsResponse message. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsResponse.verify|verify} messages.
+                 * @param message ListTopicSubscriptionsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListTopicSubscriptionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListTopicSubscriptionsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSubscriptionsResponse.verify|verify} messages.
+                 * @param message ListTopicSubscriptionsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListTopicSubscriptionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListTopicSubscriptionsResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListTopicSubscriptionsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicSubscriptionsResponse;
+
+                /**
+                 * Decodes a ListTopicSubscriptionsResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListTopicSubscriptionsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicSubscriptionsResponse;
+
+                /**
+                 * Verifies a ListTopicSubscriptionsResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListTopicSubscriptionsResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListTopicSubscriptionsResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicSubscriptionsResponse;
+
+                /**
+                 * Creates a plain object from a ListTopicSubscriptionsResponse message. Also converts values to other types if specified.
+                 * @param message ListTopicSubscriptionsResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListTopicSubscriptionsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListTopicSubscriptionsResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ListTopicSnapshotsRequest. */
+            interface IListTopicSnapshotsRequest {
+
+                /** ListTopicSnapshotsRequest topic */
+                topic?: (string|null);
+
+                /** ListTopicSnapshotsRequest pageSize */
+                pageSize?: (number|null);
+
+                /** ListTopicSnapshotsRequest pageToken */
+                pageToken?: (string|null);
+            }
+
+            /** Represents a ListTopicSnapshotsRequest. */
+            class ListTopicSnapshotsRequest implements IListTopicSnapshotsRequest {
+
+                /**
+                 * Constructs a new ListTopicSnapshotsRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListTopicSnapshotsRequest);
+
+                /** ListTopicSnapshotsRequest topic. */
+                public topic: string;
+
+                /** ListTopicSnapshotsRequest pageSize. */
+                public pageSize: number;
+
+                /** ListTopicSnapshotsRequest pageToken. */
+                public pageToken: string;
+
+                /**
+                 * Creates a new ListTopicSnapshotsRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListTopicSnapshotsRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListTopicSnapshotsRequest): google.pubsub.v1.ListTopicSnapshotsRequest;
+
+                /**
+                 * Encodes the specified ListTopicSnapshotsRequest message. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsRequest.verify|verify} messages.
+                 * @param message ListTopicSnapshotsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListTopicSnapshotsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListTopicSnapshotsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsRequest.verify|verify} messages.
+                 * @param message ListTopicSnapshotsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListTopicSnapshotsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListTopicSnapshotsRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListTopicSnapshotsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicSnapshotsRequest;
+
+                /**
+                 * Decodes a ListTopicSnapshotsRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListTopicSnapshotsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicSnapshotsRequest;
+
+                /**
+                 * Verifies a ListTopicSnapshotsRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListTopicSnapshotsRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListTopicSnapshotsRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicSnapshotsRequest;
+
+                /**
+                 * Creates a plain object from a ListTopicSnapshotsRequest message. Also converts values to other types if specified.
+                 * @param message ListTopicSnapshotsRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListTopicSnapshotsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListTopicSnapshotsRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ListTopicSnapshotsResponse. */
+            interface IListTopicSnapshotsResponse {
+
+                /** ListTopicSnapshotsResponse snapshots */
+                snapshots?: (string[]|null);
+
+                /** ListTopicSnapshotsResponse nextPageToken */
+                nextPageToken?: (string|null);
+            }
+
+            /** Represents a ListTopicSnapshotsResponse. */
+            class ListTopicSnapshotsResponse implements IListTopicSnapshotsResponse {
+
+                /**
+                 * Constructs a new ListTopicSnapshotsResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListTopicSnapshotsResponse);
+
+                /** ListTopicSnapshotsResponse snapshots. */
+                public snapshots: string[];
+
+                /** ListTopicSnapshotsResponse nextPageToken. */
+                public nextPageToken: string;
+
+                /**
+                 * Creates a new ListTopicSnapshotsResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListTopicSnapshotsResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListTopicSnapshotsResponse): google.pubsub.v1.ListTopicSnapshotsResponse;
+
+                /**
+                 * Encodes the specified ListTopicSnapshotsResponse message. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsResponse.verify|verify} messages.
+                 * @param message ListTopicSnapshotsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListTopicSnapshotsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListTopicSnapshotsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListTopicSnapshotsResponse.verify|verify} messages.
+                 * @param message ListTopicSnapshotsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListTopicSnapshotsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListTopicSnapshotsResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListTopicSnapshotsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListTopicSnapshotsResponse;
+
+                /**
+                 * Decodes a ListTopicSnapshotsResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListTopicSnapshotsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListTopicSnapshotsResponse;
+
+                /**
+                 * Verifies a ListTopicSnapshotsResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListTopicSnapshotsResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListTopicSnapshotsResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListTopicSnapshotsResponse;
+
+                /**
+                 * Creates a plain object from a ListTopicSnapshotsResponse message. Also converts values to other types if specified.
+                 * @param message ListTopicSnapshotsResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListTopicSnapshotsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListTopicSnapshotsResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a DeleteTopicRequest. */
+            interface IDeleteTopicRequest {
+
+                /** DeleteTopicRequest topic */
+                topic?: (string|null);
+            }
+
+            /** Represents a DeleteTopicRequest. */
+            class DeleteTopicRequest implements IDeleteTopicRequest {
+
+                /**
+                 * Constructs a new DeleteTopicRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IDeleteTopicRequest);
+
+                /** DeleteTopicRequest topic. */
+                public topic: string;
+
+                /**
+                 * Creates a new DeleteTopicRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns DeleteTopicRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IDeleteTopicRequest): google.pubsub.v1.DeleteTopicRequest;
+
+                /**
+                 * Encodes the specified DeleteTopicRequest message. Does not implicitly {@link google.pubsub.v1.DeleteTopicRequest.verify|verify} messages.
+                 * @param message DeleteTopicRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IDeleteTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified DeleteTopicRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteTopicRequest.verify|verify} messages.
+                 * @param message DeleteTopicRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IDeleteTopicRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a DeleteTopicRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns DeleteTopicRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DeleteTopicRequest;
+
+                /**
+                 * Decodes a DeleteTopicRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns DeleteTopicRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DeleteTopicRequest;
+
+                /**
+                 * Verifies a DeleteTopicRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a DeleteTopicRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns DeleteTopicRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DeleteTopicRequest;
+
+                /**
+                 * Creates a plain object from a DeleteTopicRequest message. Also converts values to other types if specified.
+                 * @param message DeleteTopicRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.DeleteTopicRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this DeleteTopicRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Represents a Subscriber */
+            class Subscriber extends $protobuf.rpc.Service {
+
+                /**
+                 * Constructs a new Subscriber service.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 */
+                constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
+
+                /**
+                 * Creates new Subscriber service using the specified rpc implementation.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 * @returns RPC service. Useful where requests and/or responses are streamed.
+                 */
+                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): Subscriber;
+
+                /**
+                 * Calls CreateSubscription.
+                 * @param request Subscription message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Subscription
+                 */
+                public createSubscription(request: google.pubsub.v1.ISubscription, callback: google.pubsub.v1.Subscriber.CreateSubscriptionCallback): void;
+
+                /**
+                 * Calls CreateSubscription.
+                 * @param request Subscription message or plain object
+                 * @returns Promise
+                 */
+                public createSubscription(request: google.pubsub.v1.ISubscription): Promise<google.pubsub.v1.Subscription>;
+
+                /**
+                 * Calls GetSubscription.
+                 * @param request GetSubscriptionRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Subscription
+                 */
+                public getSubscription(request: google.pubsub.v1.IGetSubscriptionRequest, callback: google.pubsub.v1.Subscriber.GetSubscriptionCallback): void;
+
+                /**
+                 * Calls GetSubscription.
+                 * @param request GetSubscriptionRequest message or plain object
+                 * @returns Promise
+                 */
+                public getSubscription(request: google.pubsub.v1.IGetSubscriptionRequest): Promise<google.pubsub.v1.Subscription>;
+
+                /**
+                 * Calls UpdateSubscription.
+                 * @param request UpdateSubscriptionRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Subscription
+                 */
+                public updateSubscription(request: google.pubsub.v1.IUpdateSubscriptionRequest, callback: google.pubsub.v1.Subscriber.UpdateSubscriptionCallback): void;
+
+                /**
+                 * Calls UpdateSubscription.
+                 * @param request UpdateSubscriptionRequest message or plain object
+                 * @returns Promise
+                 */
+                public updateSubscription(request: google.pubsub.v1.IUpdateSubscriptionRequest): Promise<google.pubsub.v1.Subscription>;
+
+                /**
+                 * Calls ListSubscriptions.
+                 * @param request ListSubscriptionsRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and ListSubscriptionsResponse
+                 */
+                public listSubscriptions(request: google.pubsub.v1.IListSubscriptionsRequest, callback: google.pubsub.v1.Subscriber.ListSubscriptionsCallback): void;
+
+                /**
+                 * Calls ListSubscriptions.
+                 * @param request ListSubscriptionsRequest message or plain object
+                 * @returns Promise
+                 */
+                public listSubscriptions(request: google.pubsub.v1.IListSubscriptionsRequest): Promise<google.pubsub.v1.ListSubscriptionsResponse>;
+
+                /**
+                 * Calls DeleteSubscription.
+                 * @param request DeleteSubscriptionRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Empty
+                 */
+                public deleteSubscription(request: google.pubsub.v1.IDeleteSubscriptionRequest, callback: google.pubsub.v1.Subscriber.DeleteSubscriptionCallback): void;
+
+                /**
+                 * Calls DeleteSubscription.
+                 * @param request DeleteSubscriptionRequest message or plain object
+                 * @returns Promise
+                 */
+                public deleteSubscription(request: google.pubsub.v1.IDeleteSubscriptionRequest): Promise<google.protobuf.Empty>;
+
+                /**
+                 * Calls ModifyAckDeadline.
+                 * @param request ModifyAckDeadlineRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Empty
+                 */
+                public modifyAckDeadline(request: google.pubsub.v1.IModifyAckDeadlineRequest, callback: google.pubsub.v1.Subscriber.ModifyAckDeadlineCallback): void;
+
+                /**
+                 * Calls ModifyAckDeadline.
+                 * @param request ModifyAckDeadlineRequest message or plain object
+                 * @returns Promise
+                 */
+                public modifyAckDeadline(request: google.pubsub.v1.IModifyAckDeadlineRequest): Promise<google.protobuf.Empty>;
+
+                /**
+                 * Calls Acknowledge.
+                 * @param request AcknowledgeRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Empty
+                 */
+                public acknowledge(request: google.pubsub.v1.IAcknowledgeRequest, callback: google.pubsub.v1.Subscriber.AcknowledgeCallback): void;
+
+                /**
+                 * Calls Acknowledge.
+                 * @param request AcknowledgeRequest message or plain object
+                 * @returns Promise
+                 */
+                public acknowledge(request: google.pubsub.v1.IAcknowledgeRequest): Promise<google.protobuf.Empty>;
+
+                /**
+                 * Calls Pull.
+                 * @param request PullRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and PullResponse
+                 */
+                public pull(request: google.pubsub.v1.IPullRequest, callback: google.pubsub.v1.Subscriber.PullCallback): void;
+
+                /**
+                 * Calls Pull.
+                 * @param request PullRequest message or plain object
+                 * @returns Promise
+                 */
+                public pull(request: google.pubsub.v1.IPullRequest): Promise<google.pubsub.v1.PullResponse>;
+
+                /**
+                 * Calls StreamingPull.
+                 * @param request StreamingPullRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and StreamingPullResponse
+                 */
+                public streamingPull(request: google.pubsub.v1.IStreamingPullRequest, callback: google.pubsub.v1.Subscriber.StreamingPullCallback): void;
+
+                /**
+                 * Calls StreamingPull.
+                 * @param request StreamingPullRequest message or plain object
+                 * @returns Promise
+                 */
+                public streamingPull(request: google.pubsub.v1.IStreamingPullRequest): Promise<google.pubsub.v1.StreamingPullResponse>;
+
+                /**
+                 * Calls ModifyPushConfig.
+                 * @param request ModifyPushConfigRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Empty
+                 */
+                public modifyPushConfig(request: google.pubsub.v1.IModifyPushConfigRequest, callback: google.pubsub.v1.Subscriber.ModifyPushConfigCallback): void;
+
+                /**
+                 * Calls ModifyPushConfig.
+                 * @param request ModifyPushConfigRequest message or plain object
+                 * @returns Promise
+                 */
+                public modifyPushConfig(request: google.pubsub.v1.IModifyPushConfigRequest): Promise<google.protobuf.Empty>;
+
+                /**
+                 * Calls GetSnapshot.
+                 * @param request GetSnapshotRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Snapshot
+                 */
+                public getSnapshot(request: google.pubsub.v1.IGetSnapshotRequest, callback: google.pubsub.v1.Subscriber.GetSnapshotCallback): void;
+
+                /**
+                 * Calls GetSnapshot.
+                 * @param request GetSnapshotRequest message or plain object
+                 * @returns Promise
+                 */
+                public getSnapshot(request: google.pubsub.v1.IGetSnapshotRequest): Promise<google.pubsub.v1.Snapshot>;
+
+                /**
+                 * Calls ListSnapshots.
+                 * @param request ListSnapshotsRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and ListSnapshotsResponse
+                 */
+                public listSnapshots(request: google.pubsub.v1.IListSnapshotsRequest, callback: google.pubsub.v1.Subscriber.ListSnapshotsCallback): void;
+
+                /**
+                 * Calls ListSnapshots.
+                 * @param request ListSnapshotsRequest message or plain object
+                 * @returns Promise
+                 */
+                public listSnapshots(request: google.pubsub.v1.IListSnapshotsRequest): Promise<google.pubsub.v1.ListSnapshotsResponse>;
+
+                /**
+                 * Calls CreateSnapshot.
+                 * @param request CreateSnapshotRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Snapshot
+                 */
+                public createSnapshot(request: google.pubsub.v1.ICreateSnapshotRequest, callback: google.pubsub.v1.Subscriber.CreateSnapshotCallback): void;
+
+                /**
+                 * Calls CreateSnapshot.
+                 * @param request CreateSnapshotRequest message or plain object
+                 * @returns Promise
+                 */
+                public createSnapshot(request: google.pubsub.v1.ICreateSnapshotRequest): Promise<google.pubsub.v1.Snapshot>;
+
+                /**
+                 * Calls UpdateSnapshot.
+                 * @param request UpdateSnapshotRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Snapshot
+                 */
+                public updateSnapshot(request: google.pubsub.v1.IUpdateSnapshotRequest, callback: google.pubsub.v1.Subscriber.UpdateSnapshotCallback): void;
+
+                /**
+                 * Calls UpdateSnapshot.
+                 * @param request UpdateSnapshotRequest message or plain object
+                 * @returns Promise
+                 */
+                public updateSnapshot(request: google.pubsub.v1.IUpdateSnapshotRequest): Promise<google.pubsub.v1.Snapshot>;
+
+                /**
+                 * Calls DeleteSnapshot.
+                 * @param request DeleteSnapshotRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Empty
+                 */
+                public deleteSnapshot(request: google.pubsub.v1.IDeleteSnapshotRequest, callback: google.pubsub.v1.Subscriber.DeleteSnapshotCallback): void;
+
+                /**
+                 * Calls DeleteSnapshot.
+                 * @param request DeleteSnapshotRequest message or plain object
+                 * @returns Promise
+                 */
+                public deleteSnapshot(request: google.pubsub.v1.IDeleteSnapshotRequest): Promise<google.protobuf.Empty>;
+
+                /**
+                 * Calls Seek.
+                 * @param request SeekRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and SeekResponse
+                 */
+                public seek(request: google.pubsub.v1.ISeekRequest, callback: google.pubsub.v1.Subscriber.SeekCallback): void;
+
+                /**
+                 * Calls Seek.
+                 * @param request SeekRequest message or plain object
+                 * @returns Promise
+                 */
+                public seek(request: google.pubsub.v1.ISeekRequest): Promise<google.pubsub.v1.SeekResponse>;
+            }
+
+            namespace Subscriber {
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#createSubscription}.
+                 * @param error Error, if any
+                 * @param [response] Subscription
+                 */
+                type CreateSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#getSubscription}.
+                 * @param error Error, if any
+                 * @param [response] Subscription
+                 */
+                type GetSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#updateSubscription}.
+                 * @param error Error, if any
+                 * @param [response] Subscription
+                 */
+                type UpdateSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#listSubscriptions}.
+                 * @param error Error, if any
+                 * @param [response] ListSubscriptionsResponse
+                 */
+                type ListSubscriptionsCallback = (error: (Error|null), response?: google.pubsub.v1.ListSubscriptionsResponse) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSubscription}.
+                 * @param error Error, if any
+                 * @param [response] Empty
+                 */
+                type DeleteSubscriptionCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#modifyAckDeadline}.
+                 * @param error Error, if any
+                 * @param [response] Empty
+                 */
+                type ModifyAckDeadlineCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#acknowledge}.
+                 * @param error Error, if any
+                 * @param [response] Empty
+                 */
+                type AcknowledgeCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#pull}.
+                 * @param error Error, if any
+                 * @param [response] PullResponse
+                 */
+                type PullCallback = (error: (Error|null), response?: google.pubsub.v1.PullResponse) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#streamingPull}.
+                 * @param error Error, if any
+                 * @param [response] StreamingPullResponse
+                 */
+                type StreamingPullCallback = (error: (Error|null), response?: google.pubsub.v1.StreamingPullResponse) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#modifyPushConfig}.
+                 * @param error Error, if any
+                 * @param [response] Empty
+                 */
+                type ModifyPushConfigCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#getSnapshot}.
+                 * @param error Error, if any
+                 * @param [response] Snapshot
+                 */
+                type GetSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#listSnapshots}.
+                 * @param error Error, if any
+                 * @param [response] ListSnapshotsResponse
+                 */
+                type ListSnapshotsCallback = (error: (Error|null), response?: google.pubsub.v1.ListSnapshotsResponse) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#createSnapshot}.
+                 * @param error Error, if any
+                 * @param [response] Snapshot
+                 */
+                type CreateSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#updateSnapshot}.
+                 * @param error Error, if any
+                 * @param [response] Snapshot
+                 */
+                type UpdateSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSnapshot}.
+                 * @param error Error, if any
+                 * @param [response] Empty
+                 */
+                type DeleteSnapshotCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#seek}.
+                 * @param error Error, if any
+                 * @param [response] SeekResponse
+                 */
+                type SeekCallback = (error: (Error|null), response?: google.pubsub.v1.SeekResponse) => void;
+            }
+
+            /** Properties of a Subscription. */
+            interface ISubscription {
+
+                /** Subscription name */
+                name?: (string|null);
+
+                /** Subscription topic */
+                topic?: (string|null);
+
+                /** Subscription pushConfig */
+                pushConfig?: (google.pubsub.v1.IPushConfig|null);
+
+                /** Subscription ackDeadlineSeconds */
+                ackDeadlineSeconds?: (number|null);
+
+                /** Subscription retainAckedMessages */
+                retainAckedMessages?: (boolean|null);
+
+                /** Subscription messageRetentionDuration */
+                messageRetentionDuration?: (google.protobuf.IDuration|null);
+
+                /** Subscription labels */
+                labels?: ({ [k: string]: string }|null);
+
+                /** Subscription enableMessageOrdering */
+                enableMessageOrdering?: (boolean|null);
+
+                /** Subscription expirationPolicy */
+                expirationPolicy?: (google.pubsub.v1.IExpirationPolicy|null);
+
+                /** Subscription filter */
+                filter?: (string|null);
+
+                /** Subscription deadLetterPolicy */
+                deadLetterPolicy?: (google.pubsub.v1.IDeadLetterPolicy|null);
+
+                /** Subscription retryPolicy */
+                retryPolicy?: (google.pubsub.v1.IRetryPolicy|null);
+            }
+
+            /** Represents a Subscription. */
+            class Subscription implements ISubscription {
+
+                /**
+                 * Constructs a new Subscription.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.ISubscription);
+
+                /** Subscription name. */
+                public name: string;
+
+                /** Subscription topic. */
+                public topic: string;
+
+                /** Subscription pushConfig. */
+                public pushConfig?: (google.pubsub.v1.IPushConfig|null);
+
+                /** Subscription ackDeadlineSeconds. */
+                public ackDeadlineSeconds: number;
+
+                /** Subscription retainAckedMessages. */
+                public retainAckedMessages: boolean;
+
+                /** Subscription messageRetentionDuration. */
+                public messageRetentionDuration?: (google.protobuf.IDuration|null);
+
+                /** Subscription labels. */
+                public labels: { [k: string]: string };
+
+                /** Subscription enableMessageOrdering. */
+                public enableMessageOrdering: boolean;
+
+                /** Subscription expirationPolicy. */
+                public expirationPolicy?: (google.pubsub.v1.IExpirationPolicy|null);
+
+                /** Subscription filter. */
+                public filter: string;
+
+                /** Subscription deadLetterPolicy. */
+                public deadLetterPolicy?: (google.pubsub.v1.IDeadLetterPolicy|null);
+
+                /** Subscription retryPolicy. */
+                public retryPolicy?: (google.pubsub.v1.IRetryPolicy|null);
+
+                /**
+                 * Creates a new Subscription instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Subscription instance
+                 */
+                public static create(properties?: google.pubsub.v1.ISubscription): google.pubsub.v1.Subscription;
+
+                /**
+                 * Encodes the specified Subscription message. Does not implicitly {@link google.pubsub.v1.Subscription.verify|verify} messages.
+                 * @param message Subscription message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.ISubscription, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified Subscription message, length delimited. Does not implicitly {@link google.pubsub.v1.Subscription.verify|verify} messages.
+                 * @param message Subscription message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.ISubscription, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Subscription message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Subscription
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.Subscription;
+
+                /**
+                 * Decodes a Subscription message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns Subscription
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.Subscription;
+
+                /**
+                 * Verifies a Subscription message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a Subscription message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Subscription
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.Subscription;
+
+                /**
+                 * Creates a plain object from a Subscription message. Also converts values to other types if specified.
+                 * @param message Subscription
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.Subscription, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Subscription to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a RetryPolicy. */
+            interface IRetryPolicy {
+
+                /** RetryPolicy minimumBackoff */
+                minimumBackoff?: (google.protobuf.IDuration|null);
+
+                /** RetryPolicy maximumBackoff */
+                maximumBackoff?: (google.protobuf.IDuration|null);
+            }
+
+            /** Represents a RetryPolicy. */
+            class RetryPolicy implements IRetryPolicy {
+
+                /**
+                 * Constructs a new RetryPolicy.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IRetryPolicy);
+
+                /** RetryPolicy minimumBackoff. */
+                public minimumBackoff?: (google.protobuf.IDuration|null);
+
+                /** RetryPolicy maximumBackoff. */
+                public maximumBackoff?: (google.protobuf.IDuration|null);
+
+                /**
+                 * Creates a new RetryPolicy instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RetryPolicy instance
+                 */
+                public static create(properties?: google.pubsub.v1.IRetryPolicy): google.pubsub.v1.RetryPolicy;
+
+                /**
+                 * Encodes the specified RetryPolicy message. Does not implicitly {@link google.pubsub.v1.RetryPolicy.verify|verify} messages.
+                 * @param message RetryPolicy message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IRetryPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified RetryPolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.RetryPolicy.verify|verify} messages.
+                 * @param message RetryPolicy message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IRetryPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RetryPolicy message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RetryPolicy
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.RetryPolicy;
+
+                /**
+                 * Decodes a RetryPolicy message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns RetryPolicy
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.RetryPolicy;
+
+                /**
+                 * Verifies a RetryPolicy message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a RetryPolicy message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RetryPolicy
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.RetryPolicy;
+
+                /**
+                 * Creates a plain object from a RetryPolicy message. Also converts values to other types if specified.
+                 * @param message RetryPolicy
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.RetryPolicy, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RetryPolicy to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a DeadLetterPolicy. */
+            interface IDeadLetterPolicy {
+
+                /** DeadLetterPolicy deadLetterTopic */
+                deadLetterTopic?: (string|null);
+
+                /** DeadLetterPolicy maxDeliveryAttempts */
+                maxDeliveryAttempts?: (number|null);
+            }
+
+            /** Represents a DeadLetterPolicy. */
+            class DeadLetterPolicy implements IDeadLetterPolicy {
+
+                /**
+                 * Constructs a new DeadLetterPolicy.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IDeadLetterPolicy);
+
+                /** DeadLetterPolicy deadLetterTopic. */
+                public deadLetterTopic: string;
+
+                /** DeadLetterPolicy maxDeliveryAttempts. */
+                public maxDeliveryAttempts: number;
+
+                /**
+                 * Creates a new DeadLetterPolicy instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns DeadLetterPolicy instance
+                 */
+                public static create(properties?: google.pubsub.v1.IDeadLetterPolicy): google.pubsub.v1.DeadLetterPolicy;
+
+                /**
+                 * Encodes the specified DeadLetterPolicy message. Does not implicitly {@link google.pubsub.v1.DeadLetterPolicy.verify|verify} messages.
+                 * @param message DeadLetterPolicy message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IDeadLetterPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified DeadLetterPolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.DeadLetterPolicy.verify|verify} messages.
+                 * @param message DeadLetterPolicy message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IDeadLetterPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a DeadLetterPolicy message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns DeadLetterPolicy
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DeadLetterPolicy;
+
+                /**
+                 * Decodes a DeadLetterPolicy message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns DeadLetterPolicy
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DeadLetterPolicy;
+
+                /**
+                 * Verifies a DeadLetterPolicy message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a DeadLetterPolicy message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns DeadLetterPolicy
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DeadLetterPolicy;
+
+                /**
+                 * Creates a plain object from a DeadLetterPolicy message. Also converts values to other types if specified.
+                 * @param message DeadLetterPolicy
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.DeadLetterPolicy, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this DeadLetterPolicy to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of an ExpirationPolicy. */
+            interface IExpirationPolicy {
+
+                /** ExpirationPolicy ttl */
+                ttl?: (google.protobuf.IDuration|null);
+            }
+
+            /** Represents an ExpirationPolicy. */
+            class ExpirationPolicy implements IExpirationPolicy {
+
+                /**
+                 * Constructs a new ExpirationPolicy.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IExpirationPolicy);
+
+                /** ExpirationPolicy ttl. */
+                public ttl?: (google.protobuf.IDuration|null);
+
+                /**
+                 * Creates a new ExpirationPolicy instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ExpirationPolicy instance
+                 */
+                public static create(properties?: google.pubsub.v1.IExpirationPolicy): google.pubsub.v1.ExpirationPolicy;
+
+                /**
+                 * Encodes the specified ExpirationPolicy message. Does not implicitly {@link google.pubsub.v1.ExpirationPolicy.verify|verify} messages.
+                 * @param message ExpirationPolicy message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IExpirationPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ExpirationPolicy message, length delimited. Does not implicitly {@link google.pubsub.v1.ExpirationPolicy.verify|verify} messages.
+                 * @param message ExpirationPolicy message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IExpirationPolicy, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an ExpirationPolicy message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ExpirationPolicy
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ExpirationPolicy;
+
+                /**
+                 * Decodes an ExpirationPolicy message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ExpirationPolicy
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ExpirationPolicy;
+
+                /**
+                 * Verifies an ExpirationPolicy message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates an ExpirationPolicy message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ExpirationPolicy
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ExpirationPolicy;
+
+                /**
+                 * Creates a plain object from an ExpirationPolicy message. Also converts values to other types if specified.
+                 * @param message ExpirationPolicy
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ExpirationPolicy, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ExpirationPolicy to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a PushConfig. */
+            interface IPushConfig {
+
+                /** PushConfig pushEndpoint */
+                pushEndpoint?: (string|null);
+
+                /** PushConfig attributes */
+                attributes?: ({ [k: string]: string }|null);
+
+                /** PushConfig oidcToken */
+                oidcToken?: (google.pubsub.v1.PushConfig.IOidcToken|null);
+            }
+
+            /** Represents a PushConfig. */
+            class PushConfig implements IPushConfig {
+
+                /**
+                 * Constructs a new PushConfig.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IPushConfig);
+
+                /** PushConfig pushEndpoint. */
+                public pushEndpoint: string;
+
+                /** PushConfig attributes. */
+                public attributes: { [k: string]: string };
+
+                /** PushConfig oidcToken. */
+                public oidcToken?: (google.pubsub.v1.PushConfig.IOidcToken|null);
+
+                /** PushConfig authenticationMethod. */
+                public authenticationMethod?: "oidcToken";
+
+                /**
+                 * Creates a new PushConfig instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns PushConfig instance
+                 */
+                public static create(properties?: google.pubsub.v1.IPushConfig): google.pubsub.v1.PushConfig;
+
+                /**
+                 * Encodes the specified PushConfig message. Does not implicitly {@link google.pubsub.v1.PushConfig.verify|verify} messages.
+                 * @param message PushConfig message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IPushConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified PushConfig message, length delimited. Does not implicitly {@link google.pubsub.v1.PushConfig.verify|verify} messages.
+                 * @param message PushConfig message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IPushConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a PushConfig message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns PushConfig
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PushConfig;
+
+                /**
+                 * Decodes a PushConfig message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns PushConfig
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PushConfig;
+
+                /**
+                 * Verifies a PushConfig message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a PushConfig message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns PushConfig
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PushConfig;
+
+                /**
+                 * Creates a plain object from a PushConfig message. Also converts values to other types if specified.
+                 * @param message PushConfig
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.PushConfig, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this PushConfig to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            namespace PushConfig {
+
+                /** Properties of an OidcToken. */
+                interface IOidcToken {
+
+                    /** OidcToken serviceAccountEmail */
+                    serviceAccountEmail?: (string|null);
+
+                    /** OidcToken audience */
+                    audience?: (string|null);
+                }
+
+                /** Represents an OidcToken. */
+                class OidcToken implements IOidcToken {
+
+                    /**
+                     * Constructs a new OidcToken.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.PushConfig.IOidcToken);
+
+                    /** OidcToken serviceAccountEmail. */
+                    public serviceAccountEmail: string;
+
+                    /** OidcToken audience. */
+                    public audience: string;
+
+                    /**
+                     * Creates a new OidcToken instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns OidcToken instance
+                     */
+                    public static create(properties?: google.pubsub.v1.PushConfig.IOidcToken): google.pubsub.v1.PushConfig.OidcToken;
+
+                    /**
+                     * Encodes the specified OidcToken message. Does not implicitly {@link google.pubsub.v1.PushConfig.OidcToken.verify|verify} messages.
+                     * @param message OidcToken message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.PushConfig.IOidcToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified OidcToken message, length delimited. Does not implicitly {@link google.pubsub.v1.PushConfig.OidcToken.verify|verify} messages.
+                     * @param message OidcToken message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.PushConfig.IOidcToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes an OidcToken message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns OidcToken
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PushConfig.OidcToken;
+
+                    /**
+                     * Decodes an OidcToken message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns OidcToken
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PushConfig.OidcToken;
+
+                    /**
+                     * Verifies an OidcToken message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates an OidcToken message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns OidcToken
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PushConfig.OidcToken;
+
+                    /**
+                     * Creates a plain object from an OidcToken message. Also converts values to other types if specified.
+                     * @param message OidcToken
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.PushConfig.OidcToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this OidcToken to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
                 }
             }
 
-            /** Properties of an AuditConfigDelta. */
-            interface IAuditConfigDelta {
+            /** Properties of a ReceivedMessage. */
+            interface IReceivedMessage {
 
-                /** AuditConfigDelta action */
-                action?: (google.iam.v1.AuditConfigDelta.Action|keyof typeof google.iam.v1.AuditConfigDelta.Action|null);
+                /** ReceivedMessage ackId */
+                ackId?: (string|null);
 
-                /** AuditConfigDelta service */
-                service?: (string|null);
+                /** ReceivedMessage message */
+                message?: (google.pubsub.v1.IPubsubMessage|null);
 
-                /** AuditConfigDelta exemptedMember */
-                exemptedMember?: (string|null);
-
-                /** AuditConfigDelta logType */
-                logType?: (string|null);
+                /** ReceivedMessage deliveryAttempt */
+                deliveryAttempt?: (number|null);
             }
 
-            /** Represents an AuditConfigDelta. */
-            class AuditConfigDelta implements IAuditConfigDelta {
+            /** Represents a ReceivedMessage. */
+            class ReceivedMessage implements IReceivedMessage {
 
                 /**
-                 * Constructs a new AuditConfigDelta.
+                 * Constructs a new ReceivedMessage.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: google.iam.v1.IAuditConfigDelta);
+                constructor(properties?: google.pubsub.v1.IReceivedMessage);
 
-                /** AuditConfigDelta action. */
-                public action: (google.iam.v1.AuditConfigDelta.Action|keyof typeof google.iam.v1.AuditConfigDelta.Action);
+                /** ReceivedMessage ackId. */
+                public ackId: string;
 
-                /** AuditConfigDelta service. */
-                public service: string;
+                /** ReceivedMessage message. */
+                public message?: (google.pubsub.v1.IPubsubMessage|null);
 
-                /** AuditConfigDelta exemptedMember. */
-                public exemptedMember: string;
-
-                /** AuditConfigDelta logType. */
-                public logType: string;
+                /** ReceivedMessage deliveryAttempt. */
+                public deliveryAttempt: number;
 
                 /**
-                 * Creates a new AuditConfigDelta instance using the specified properties.
+                 * Creates a new ReceivedMessage instance using the specified properties.
                  * @param [properties] Properties to set
-                 * @returns AuditConfigDelta instance
+                 * @returns ReceivedMessage instance
                  */
-                public static create(properties?: google.iam.v1.IAuditConfigDelta): google.iam.v1.AuditConfigDelta;
+                public static create(properties?: google.pubsub.v1.IReceivedMessage): google.pubsub.v1.ReceivedMessage;
 
                 /**
-                 * Encodes the specified AuditConfigDelta message. Does not implicitly {@link google.iam.v1.AuditConfigDelta.verify|verify} messages.
-                 * @param message AuditConfigDelta message or plain object to encode
+                 * Encodes the specified ReceivedMessage message. Does not implicitly {@link google.pubsub.v1.ReceivedMessage.verify|verify} messages.
+                 * @param message ReceivedMessage message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: google.iam.v1.IAuditConfigDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: google.pubsub.v1.IReceivedMessage, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified AuditConfigDelta message, length delimited. Does not implicitly {@link google.iam.v1.AuditConfigDelta.verify|verify} messages.
-                 * @param message AuditConfigDelta message or plain object to encode
+                 * Encodes the specified ReceivedMessage message, length delimited. Does not implicitly {@link google.pubsub.v1.ReceivedMessage.verify|verify} messages.
+                 * @param message ReceivedMessage message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: google.iam.v1.IAuditConfigDelta, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: google.pubsub.v1.IReceivedMessage, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Decodes an AuditConfigDelta message from the specified reader or buffer.
+                 * Decodes a ReceivedMessage message from the specified reader or buffer.
                  * @param reader Reader or buffer to decode from
                  * @param [length] Message length if known beforehand
-                 * @returns AuditConfigDelta
+                 * @returns ReceivedMessage
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.iam.v1.AuditConfigDelta;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ReceivedMessage;
 
                 /**
-                 * Decodes an AuditConfigDelta message from the specified reader or buffer, length delimited.
+                 * Decodes a ReceivedMessage message from the specified reader or buffer, length delimited.
                  * @param reader Reader or buffer to decode from
-                 * @returns AuditConfigDelta
+                 * @returns ReceivedMessage
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.iam.v1.AuditConfigDelta;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ReceivedMessage;
 
                 /**
-                 * Verifies an AuditConfigDelta message.
+                 * Verifies a ReceivedMessage message.
                  * @param message Plain object to verify
                  * @returns `null` if valid, otherwise the reason why it is not
                  */
                 public static verify(message: { [k: string]: any }): (string|null);
 
                 /**
-                 * Creates an AuditConfigDelta message from a plain object. Also converts values to their respective internal types.
+                 * Creates a ReceivedMessage message from a plain object. Also converts values to their respective internal types.
                  * @param object Plain object
-                 * @returns AuditConfigDelta
+                 * @returns ReceivedMessage
                  */
-                public static fromObject(object: { [k: string]: any }): google.iam.v1.AuditConfigDelta;
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ReceivedMessage;
 
                 /**
-                 * Creates a plain object from an AuditConfigDelta message. Also converts values to other types if specified.
-                 * @param message AuditConfigDelta
+                 * Creates a plain object from a ReceivedMessage message. Also converts values to other types if specified.
+                 * @param message ReceivedMessage
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: google.iam.v1.AuditConfigDelta, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: google.pubsub.v1.ReceivedMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
-                 * Converts this AuditConfigDelta to JSON.
+                 * Converts this ReceivedMessage to JSON.
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
             }
 
-            namespace AuditConfigDelta {
+            /** Properties of a GetSubscriptionRequest. */
+            interface IGetSubscriptionRequest {
 
-                /** Action enum. */
-                enum Action {
-                    ACTION_UNSPECIFIED = 0,
-                    ADD = 1,
-                    REMOVE = 2
-                }
+                /** GetSubscriptionRequest subscription */
+                subscription?: (string|null);
             }
-        }
-    }
 
-    /** Namespace type. */
-    namespace type {
+            /** Represents a GetSubscriptionRequest. */
+            class GetSubscriptionRequest implements IGetSubscriptionRequest {
 
-        /** Properties of an Expr. */
-        interface IExpr {
+                /**
+                 * Constructs a new GetSubscriptionRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IGetSubscriptionRequest);
 
-            /** Expr expression */
-            expression?: (string|null);
+                /** GetSubscriptionRequest subscription. */
+                public subscription: string;
 
-            /** Expr title */
-            title?: (string|null);
+                /**
+                 * Creates a new GetSubscriptionRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns GetSubscriptionRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IGetSubscriptionRequest): google.pubsub.v1.GetSubscriptionRequest;
 
-            /** Expr description */
-            description?: (string|null);
+                /**
+                 * Encodes the specified GetSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.GetSubscriptionRequest.verify|verify} messages.
+                 * @param message GetSubscriptionRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IGetSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
-            /** Expr location */
-            location?: (string|null);
-        }
+                /**
+                 * Encodes the specified GetSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.GetSubscriptionRequest.verify|verify} messages.
+                 * @param message GetSubscriptionRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IGetSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
-        /** Represents an Expr. */
-        class Expr implements IExpr {
+                /**
+                 * Decodes a GetSubscriptionRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns GetSubscriptionRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.GetSubscriptionRequest;
 
-            /**
-             * Constructs a new Expr.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: google.type.IExpr);
+                /**
+                 * Decodes a GetSubscriptionRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns GetSubscriptionRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.GetSubscriptionRequest;
 
-            /** Expr expression. */
-            public expression: string;
+                /**
+                 * Verifies a GetSubscriptionRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
 
-            /** Expr title. */
-            public title: string;
+                /**
+                 * Creates a GetSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns GetSubscriptionRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.GetSubscriptionRequest;
 
-            /** Expr description. */
-            public description: string;
+                /**
+                 * Creates a plain object from a GetSubscriptionRequest message. Also converts values to other types if specified.
+                 * @param message GetSubscriptionRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.GetSubscriptionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
-            /** Expr location. */
-            public location: string;
+                /**
+                 * Converts this GetSubscriptionRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
 
-            /**
-             * Creates a new Expr instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns Expr instance
-             */
-            public static create(properties?: google.type.IExpr): google.type.Expr;
+            /** Properties of an UpdateSubscriptionRequest. */
+            interface IUpdateSubscriptionRequest {
 
-            /**
-             * Encodes the specified Expr message. Does not implicitly {@link google.type.Expr.verify|verify} messages.
-             * @param message Expr message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: google.type.IExpr, writer?: $protobuf.Writer): $protobuf.Writer;
+                /** UpdateSubscriptionRequest subscription */
+                subscription?: (google.pubsub.v1.ISubscription|null);
 
-            /**
-             * Encodes the specified Expr message, length delimited. Does not implicitly {@link google.type.Expr.verify|verify} messages.
-             * @param message Expr message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: google.type.IExpr, writer?: $protobuf.Writer): $protobuf.Writer;
+                /** UpdateSubscriptionRequest updateMask */
+                updateMask?: (google.protobuf.IFieldMask|null);
+            }
 
-            /**
-             * Decodes an Expr message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns Expr
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.type.Expr;
+            /** Represents an UpdateSubscriptionRequest. */
+            class UpdateSubscriptionRequest implements IUpdateSubscriptionRequest {
 
-            /**
-             * Decodes an Expr message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns Expr
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.type.Expr;
+                /**
+                 * Constructs a new UpdateSubscriptionRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IUpdateSubscriptionRequest);
 
-            /**
-             * Verifies an Expr message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
+                /** UpdateSubscriptionRequest subscription. */
+                public subscription?: (google.pubsub.v1.ISubscription|null);
 
-            /**
-             * Creates an Expr message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns Expr
-             */
-            public static fromObject(object: { [k: string]: any }): google.type.Expr;
+                /** UpdateSubscriptionRequest updateMask. */
+                public updateMask?: (google.protobuf.IFieldMask|null);
 
-            /**
-             * Creates a plain object from an Expr message. Also converts values to other types if specified.
-             * @param message Expr
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: google.type.Expr, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                /**
+                 * Creates a new UpdateSubscriptionRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns UpdateSubscriptionRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IUpdateSubscriptionRequest): google.pubsub.v1.UpdateSubscriptionRequest;
 
-            /**
-             * Converts this Expr to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
+                /**
+                 * Encodes the specified UpdateSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.UpdateSubscriptionRequest.verify|verify} messages.
+                 * @param message UpdateSubscriptionRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IUpdateSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified UpdateSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.UpdateSubscriptionRequest.verify|verify} messages.
+                 * @param message UpdateSubscriptionRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IUpdateSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an UpdateSubscriptionRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns UpdateSubscriptionRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.UpdateSubscriptionRequest;
+
+                /**
+                 * Decodes an UpdateSubscriptionRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns UpdateSubscriptionRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.UpdateSubscriptionRequest;
+
+                /**
+                 * Verifies an UpdateSubscriptionRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates an UpdateSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns UpdateSubscriptionRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.UpdateSubscriptionRequest;
+
+                /**
+                 * Creates a plain object from an UpdateSubscriptionRequest message. Also converts values to other types if specified.
+                 * @param message UpdateSubscriptionRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.UpdateSubscriptionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this UpdateSubscriptionRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ListSubscriptionsRequest. */
+            interface IListSubscriptionsRequest {
+
+                /** ListSubscriptionsRequest project */
+                project?: (string|null);
+
+                /** ListSubscriptionsRequest pageSize */
+                pageSize?: (number|null);
+
+                /** ListSubscriptionsRequest pageToken */
+                pageToken?: (string|null);
+            }
+
+            /** Represents a ListSubscriptionsRequest. */
+            class ListSubscriptionsRequest implements IListSubscriptionsRequest {
+
+                /**
+                 * Constructs a new ListSubscriptionsRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListSubscriptionsRequest);
+
+                /** ListSubscriptionsRequest project. */
+                public project: string;
+
+                /** ListSubscriptionsRequest pageSize. */
+                public pageSize: number;
+
+                /** ListSubscriptionsRequest pageToken. */
+                public pageToken: string;
+
+                /**
+                 * Creates a new ListSubscriptionsRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListSubscriptionsRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListSubscriptionsRequest): google.pubsub.v1.ListSubscriptionsRequest;
+
+                /**
+                 * Encodes the specified ListSubscriptionsRequest message. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsRequest.verify|verify} messages.
+                 * @param message ListSubscriptionsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListSubscriptionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListSubscriptionsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsRequest.verify|verify} messages.
+                 * @param message ListSubscriptionsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListSubscriptionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListSubscriptionsRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListSubscriptionsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSubscriptionsRequest;
+
+                /**
+                 * Decodes a ListSubscriptionsRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListSubscriptionsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSubscriptionsRequest;
+
+                /**
+                 * Verifies a ListSubscriptionsRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListSubscriptionsRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListSubscriptionsRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSubscriptionsRequest;
+
+                /**
+                 * Creates a plain object from a ListSubscriptionsRequest message. Also converts values to other types if specified.
+                 * @param message ListSubscriptionsRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListSubscriptionsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListSubscriptionsRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ListSubscriptionsResponse. */
+            interface IListSubscriptionsResponse {
+
+                /** ListSubscriptionsResponse subscriptions */
+                subscriptions?: (google.pubsub.v1.ISubscription[]|null);
+
+                /** ListSubscriptionsResponse nextPageToken */
+                nextPageToken?: (string|null);
+            }
+
+            /** Represents a ListSubscriptionsResponse. */
+            class ListSubscriptionsResponse implements IListSubscriptionsResponse {
+
+                /**
+                 * Constructs a new ListSubscriptionsResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListSubscriptionsResponse);
+
+                /** ListSubscriptionsResponse subscriptions. */
+                public subscriptions: google.pubsub.v1.ISubscription[];
+
+                /** ListSubscriptionsResponse nextPageToken. */
+                public nextPageToken: string;
+
+                /**
+                 * Creates a new ListSubscriptionsResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListSubscriptionsResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListSubscriptionsResponse): google.pubsub.v1.ListSubscriptionsResponse;
+
+                /**
+                 * Encodes the specified ListSubscriptionsResponse message. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsResponse.verify|verify} messages.
+                 * @param message ListSubscriptionsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListSubscriptionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListSubscriptionsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSubscriptionsResponse.verify|verify} messages.
+                 * @param message ListSubscriptionsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListSubscriptionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListSubscriptionsResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListSubscriptionsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSubscriptionsResponse;
+
+                /**
+                 * Decodes a ListSubscriptionsResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListSubscriptionsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSubscriptionsResponse;
+
+                /**
+                 * Verifies a ListSubscriptionsResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListSubscriptionsResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListSubscriptionsResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSubscriptionsResponse;
+
+                /**
+                 * Creates a plain object from a ListSubscriptionsResponse message. Also converts values to other types if specified.
+                 * @param message ListSubscriptionsResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListSubscriptionsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListSubscriptionsResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a DeleteSubscriptionRequest. */
+            interface IDeleteSubscriptionRequest {
+
+                /** DeleteSubscriptionRequest subscription */
+                subscription?: (string|null);
+            }
+
+            /** Represents a DeleteSubscriptionRequest. */
+            class DeleteSubscriptionRequest implements IDeleteSubscriptionRequest {
+
+                /**
+                 * Constructs a new DeleteSubscriptionRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IDeleteSubscriptionRequest);
+
+                /** DeleteSubscriptionRequest subscription. */
+                public subscription: string;
+
+                /**
+                 * Creates a new DeleteSubscriptionRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns DeleteSubscriptionRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IDeleteSubscriptionRequest): google.pubsub.v1.DeleteSubscriptionRequest;
+
+                /**
+                 * Encodes the specified DeleteSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.DeleteSubscriptionRequest.verify|verify} messages.
+                 * @param message DeleteSubscriptionRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IDeleteSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified DeleteSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteSubscriptionRequest.verify|verify} messages.
+                 * @param message DeleteSubscriptionRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IDeleteSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a DeleteSubscriptionRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns DeleteSubscriptionRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DeleteSubscriptionRequest;
+
+                /**
+                 * Decodes a DeleteSubscriptionRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns DeleteSubscriptionRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DeleteSubscriptionRequest;
+
+                /**
+                 * Verifies a DeleteSubscriptionRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a DeleteSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns DeleteSubscriptionRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DeleteSubscriptionRequest;
+
+                /**
+                 * Creates a plain object from a DeleteSubscriptionRequest message. Also converts values to other types if specified.
+                 * @param message DeleteSubscriptionRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.DeleteSubscriptionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this DeleteSubscriptionRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ModifyPushConfigRequest. */
+            interface IModifyPushConfigRequest {
+
+                /** ModifyPushConfigRequest subscription */
+                subscription?: (string|null);
+
+                /** ModifyPushConfigRequest pushConfig */
+                pushConfig?: (google.pubsub.v1.IPushConfig|null);
+            }
+
+            /** Represents a ModifyPushConfigRequest. */
+            class ModifyPushConfigRequest implements IModifyPushConfigRequest {
+
+                /**
+                 * Constructs a new ModifyPushConfigRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IModifyPushConfigRequest);
+
+                /** ModifyPushConfigRequest subscription. */
+                public subscription: string;
+
+                /** ModifyPushConfigRequest pushConfig. */
+                public pushConfig?: (google.pubsub.v1.IPushConfig|null);
+
+                /**
+                 * Creates a new ModifyPushConfigRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ModifyPushConfigRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IModifyPushConfigRequest): google.pubsub.v1.ModifyPushConfigRequest;
+
+                /**
+                 * Encodes the specified ModifyPushConfigRequest message. Does not implicitly {@link google.pubsub.v1.ModifyPushConfigRequest.verify|verify} messages.
+                 * @param message ModifyPushConfigRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IModifyPushConfigRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ModifyPushConfigRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ModifyPushConfigRequest.verify|verify} messages.
+                 * @param message ModifyPushConfigRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IModifyPushConfigRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ModifyPushConfigRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ModifyPushConfigRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ModifyPushConfigRequest;
+
+                /**
+                 * Decodes a ModifyPushConfigRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ModifyPushConfigRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ModifyPushConfigRequest;
+
+                /**
+                 * Verifies a ModifyPushConfigRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ModifyPushConfigRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ModifyPushConfigRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ModifyPushConfigRequest;
+
+                /**
+                 * Creates a plain object from a ModifyPushConfigRequest message. Also converts values to other types if specified.
+                 * @param message ModifyPushConfigRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ModifyPushConfigRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ModifyPushConfigRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a PullRequest. */
+            interface IPullRequest {
+
+                /** PullRequest subscription */
+                subscription?: (string|null);
+
+                /** PullRequest returnImmediately */
+                returnImmediately?: (boolean|null);
+
+                /** PullRequest maxMessages */
+                maxMessages?: (number|null);
+            }
+
+            /** Represents a PullRequest. */
+            class PullRequest implements IPullRequest {
+
+                /**
+                 * Constructs a new PullRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IPullRequest);
+
+                /** PullRequest subscription. */
+                public subscription: string;
+
+                /** PullRequest returnImmediately. */
+                public returnImmediately: boolean;
+
+                /** PullRequest maxMessages. */
+                public maxMessages: number;
+
+                /**
+                 * Creates a new PullRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns PullRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IPullRequest): google.pubsub.v1.PullRequest;
+
+                /**
+                 * Encodes the specified PullRequest message. Does not implicitly {@link google.pubsub.v1.PullRequest.verify|verify} messages.
+                 * @param message PullRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IPullRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified PullRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.PullRequest.verify|verify} messages.
+                 * @param message PullRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IPullRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a PullRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns PullRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PullRequest;
+
+                /**
+                 * Decodes a PullRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns PullRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PullRequest;
+
+                /**
+                 * Verifies a PullRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a PullRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns PullRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PullRequest;
+
+                /**
+                 * Creates a plain object from a PullRequest message. Also converts values to other types if specified.
+                 * @param message PullRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.PullRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this PullRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a PullResponse. */
+            interface IPullResponse {
+
+                /** PullResponse receivedMessages */
+                receivedMessages?: (google.pubsub.v1.IReceivedMessage[]|null);
+            }
+
+            /** Represents a PullResponse. */
+            class PullResponse implements IPullResponse {
+
+                /**
+                 * Constructs a new PullResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IPullResponse);
+
+                /** PullResponse receivedMessages. */
+                public receivedMessages: google.pubsub.v1.IReceivedMessage[];
+
+                /**
+                 * Creates a new PullResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns PullResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.IPullResponse): google.pubsub.v1.PullResponse;
+
+                /**
+                 * Encodes the specified PullResponse message. Does not implicitly {@link google.pubsub.v1.PullResponse.verify|verify} messages.
+                 * @param message PullResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IPullResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified PullResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.PullResponse.verify|verify} messages.
+                 * @param message PullResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IPullResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a PullResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns PullResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PullResponse;
+
+                /**
+                 * Decodes a PullResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns PullResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PullResponse;
+
+                /**
+                 * Verifies a PullResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a PullResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns PullResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PullResponse;
+
+                /**
+                 * Creates a plain object from a PullResponse message. Also converts values to other types if specified.
+                 * @param message PullResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.PullResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this PullResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ModifyAckDeadlineRequest. */
+            interface IModifyAckDeadlineRequest {
+
+                /** ModifyAckDeadlineRequest subscription */
+                subscription?: (string|null);
+
+                /** ModifyAckDeadlineRequest ackIds */
+                ackIds?: (string[]|null);
+
+                /** ModifyAckDeadlineRequest ackDeadlineSeconds */
+                ackDeadlineSeconds?: (number|null);
+            }
+
+            /** Represents a ModifyAckDeadlineRequest. */
+            class ModifyAckDeadlineRequest implements IModifyAckDeadlineRequest {
+
+                /**
+                 * Constructs a new ModifyAckDeadlineRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IModifyAckDeadlineRequest);
+
+                /** ModifyAckDeadlineRequest subscription. */
+                public subscription: string;
+
+                /** ModifyAckDeadlineRequest ackIds. */
+                public ackIds: string[];
+
+                /** ModifyAckDeadlineRequest ackDeadlineSeconds. */
+                public ackDeadlineSeconds: number;
+
+                /**
+                 * Creates a new ModifyAckDeadlineRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ModifyAckDeadlineRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IModifyAckDeadlineRequest): google.pubsub.v1.ModifyAckDeadlineRequest;
+
+                /**
+                 * Encodes the specified ModifyAckDeadlineRequest message. Does not implicitly {@link google.pubsub.v1.ModifyAckDeadlineRequest.verify|verify} messages.
+                 * @param message ModifyAckDeadlineRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IModifyAckDeadlineRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ModifyAckDeadlineRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ModifyAckDeadlineRequest.verify|verify} messages.
+                 * @param message ModifyAckDeadlineRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IModifyAckDeadlineRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ModifyAckDeadlineRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ModifyAckDeadlineRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ModifyAckDeadlineRequest;
+
+                /**
+                 * Decodes a ModifyAckDeadlineRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ModifyAckDeadlineRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ModifyAckDeadlineRequest;
+
+                /**
+                 * Verifies a ModifyAckDeadlineRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ModifyAckDeadlineRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ModifyAckDeadlineRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ModifyAckDeadlineRequest;
+
+                /**
+                 * Creates a plain object from a ModifyAckDeadlineRequest message. Also converts values to other types if specified.
+                 * @param message ModifyAckDeadlineRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ModifyAckDeadlineRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ModifyAckDeadlineRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of an AcknowledgeRequest. */
+            interface IAcknowledgeRequest {
+
+                /** AcknowledgeRequest subscription */
+                subscription?: (string|null);
+
+                /** AcknowledgeRequest ackIds */
+                ackIds?: (string[]|null);
+            }
+
+            /** Represents an AcknowledgeRequest. */
+            class AcknowledgeRequest implements IAcknowledgeRequest {
+
+                /**
+                 * Constructs a new AcknowledgeRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IAcknowledgeRequest);
+
+                /** AcknowledgeRequest subscription. */
+                public subscription: string;
+
+                /** AcknowledgeRequest ackIds. */
+                public ackIds: string[];
+
+                /**
+                 * Creates a new AcknowledgeRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns AcknowledgeRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IAcknowledgeRequest): google.pubsub.v1.AcknowledgeRequest;
+
+                /**
+                 * Encodes the specified AcknowledgeRequest message. Does not implicitly {@link google.pubsub.v1.AcknowledgeRequest.verify|verify} messages.
+                 * @param message AcknowledgeRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IAcknowledgeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified AcknowledgeRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.AcknowledgeRequest.verify|verify} messages.
+                 * @param message AcknowledgeRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IAcknowledgeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an AcknowledgeRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns AcknowledgeRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.AcknowledgeRequest;
+
+                /**
+                 * Decodes an AcknowledgeRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns AcknowledgeRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.AcknowledgeRequest;
+
+                /**
+                 * Verifies an AcknowledgeRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates an AcknowledgeRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns AcknowledgeRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.AcknowledgeRequest;
+
+                /**
+                 * Creates a plain object from an AcknowledgeRequest message. Also converts values to other types if specified.
+                 * @param message AcknowledgeRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.AcknowledgeRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this AcknowledgeRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a StreamingPullRequest. */
+            interface IStreamingPullRequest {
+
+                /** StreamingPullRequest subscription */
+                subscription?: (string|null);
+
+                /** StreamingPullRequest ackIds */
+                ackIds?: (string[]|null);
+
+                /** StreamingPullRequest modifyDeadlineSeconds */
+                modifyDeadlineSeconds?: (number[]|null);
+
+                /** StreamingPullRequest modifyDeadlineAckIds */
+                modifyDeadlineAckIds?: (string[]|null);
+
+                /** StreamingPullRequest streamAckDeadlineSeconds */
+                streamAckDeadlineSeconds?: (number|null);
+
+                /** StreamingPullRequest clientId */
+                clientId?: (string|null);
+            }
+
+            /** Represents a StreamingPullRequest. */
+            class StreamingPullRequest implements IStreamingPullRequest {
+
+                /**
+                 * Constructs a new StreamingPullRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IStreamingPullRequest);
+
+                /** StreamingPullRequest subscription. */
+                public subscription: string;
+
+                /** StreamingPullRequest ackIds. */
+                public ackIds: string[];
+
+                /** StreamingPullRequest modifyDeadlineSeconds. */
+                public modifyDeadlineSeconds: number[];
+
+                /** StreamingPullRequest modifyDeadlineAckIds. */
+                public modifyDeadlineAckIds: string[];
+
+                /** StreamingPullRequest streamAckDeadlineSeconds. */
+                public streamAckDeadlineSeconds: number;
+
+                /** StreamingPullRequest clientId. */
+                public clientId: string;
+
+                /**
+                 * Creates a new StreamingPullRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns StreamingPullRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IStreamingPullRequest): google.pubsub.v1.StreamingPullRequest;
+
+                /**
+                 * Encodes the specified StreamingPullRequest message. Does not implicitly {@link google.pubsub.v1.StreamingPullRequest.verify|verify} messages.
+                 * @param message StreamingPullRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IStreamingPullRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified StreamingPullRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullRequest.verify|verify} messages.
+                 * @param message StreamingPullRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IStreamingPullRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a StreamingPullRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns StreamingPullRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.StreamingPullRequest;
+
+                /**
+                 * Decodes a StreamingPullRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns StreamingPullRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.StreamingPullRequest;
+
+                /**
+                 * Verifies a StreamingPullRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a StreamingPullRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns StreamingPullRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.StreamingPullRequest;
+
+                /**
+                 * Creates a plain object from a StreamingPullRequest message. Also converts values to other types if specified.
+                 * @param message StreamingPullRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.StreamingPullRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this StreamingPullRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a StreamingPullResponse. */
+            interface IStreamingPullResponse {
+
+                /** StreamingPullResponse receivedMessages */
+                receivedMessages?: (google.pubsub.v1.IReceivedMessage[]|null);
+            }
+
+            /** Represents a StreamingPullResponse. */
+            class StreamingPullResponse implements IStreamingPullResponse {
+
+                /**
+                 * Constructs a new StreamingPullResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IStreamingPullResponse);
+
+                /** StreamingPullResponse receivedMessages. */
+                public receivedMessages: google.pubsub.v1.IReceivedMessage[];
+
+                /**
+                 * Creates a new StreamingPullResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns StreamingPullResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.IStreamingPullResponse): google.pubsub.v1.StreamingPullResponse;
+
+                /**
+                 * Encodes the specified StreamingPullResponse message. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.verify|verify} messages.
+                 * @param message StreamingPullResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IStreamingPullResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified StreamingPullResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.verify|verify} messages.
+                 * @param message StreamingPullResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IStreamingPullResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a StreamingPullResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns StreamingPullResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.StreamingPullResponse;
+
+                /**
+                 * Decodes a StreamingPullResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns StreamingPullResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.StreamingPullResponse;
+
+                /**
+                 * Verifies a StreamingPullResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a StreamingPullResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns StreamingPullResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.StreamingPullResponse;
+
+                /**
+                 * Creates a plain object from a StreamingPullResponse message. Also converts values to other types if specified.
+                 * @param message StreamingPullResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.StreamingPullResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this StreamingPullResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a CreateSnapshotRequest. */
+            interface ICreateSnapshotRequest {
+
+                /** CreateSnapshotRequest name */
+                name?: (string|null);
+
+                /** CreateSnapshotRequest subscription */
+                subscription?: (string|null);
+
+                /** CreateSnapshotRequest labels */
+                labels?: ({ [k: string]: string }|null);
+            }
+
+            /** Represents a CreateSnapshotRequest. */
+            class CreateSnapshotRequest implements ICreateSnapshotRequest {
+
+                /**
+                 * Constructs a new CreateSnapshotRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.ICreateSnapshotRequest);
+
+                /** CreateSnapshotRequest name. */
+                public name: string;
+
+                /** CreateSnapshotRequest subscription. */
+                public subscription: string;
+
+                /** CreateSnapshotRequest labels. */
+                public labels: { [k: string]: string };
+
+                /**
+                 * Creates a new CreateSnapshotRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns CreateSnapshotRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.ICreateSnapshotRequest): google.pubsub.v1.CreateSnapshotRequest;
+
+                /**
+                 * Encodes the specified CreateSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.CreateSnapshotRequest.verify|verify} messages.
+                 * @param message CreateSnapshotRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.ICreateSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified CreateSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.CreateSnapshotRequest.verify|verify} messages.
+                 * @param message CreateSnapshotRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.ICreateSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a CreateSnapshotRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns CreateSnapshotRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.CreateSnapshotRequest;
+
+                /**
+                 * Decodes a CreateSnapshotRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns CreateSnapshotRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.CreateSnapshotRequest;
+
+                /**
+                 * Verifies a CreateSnapshotRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a CreateSnapshotRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns CreateSnapshotRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.CreateSnapshotRequest;
+
+                /**
+                 * Creates a plain object from a CreateSnapshotRequest message. Also converts values to other types if specified.
+                 * @param message CreateSnapshotRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.CreateSnapshotRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this CreateSnapshotRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of an UpdateSnapshotRequest. */
+            interface IUpdateSnapshotRequest {
+
+                /** UpdateSnapshotRequest snapshot */
+                snapshot?: (google.pubsub.v1.ISnapshot|null);
+
+                /** UpdateSnapshotRequest updateMask */
+                updateMask?: (google.protobuf.IFieldMask|null);
+            }
+
+            /** Represents an UpdateSnapshotRequest. */
+            class UpdateSnapshotRequest implements IUpdateSnapshotRequest {
+
+                /**
+                 * Constructs a new UpdateSnapshotRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IUpdateSnapshotRequest);
+
+                /** UpdateSnapshotRequest snapshot. */
+                public snapshot?: (google.pubsub.v1.ISnapshot|null);
+
+                /** UpdateSnapshotRequest updateMask. */
+                public updateMask?: (google.protobuf.IFieldMask|null);
+
+                /**
+                 * Creates a new UpdateSnapshotRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns UpdateSnapshotRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IUpdateSnapshotRequest): google.pubsub.v1.UpdateSnapshotRequest;
+
+                /**
+                 * Encodes the specified UpdateSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.UpdateSnapshotRequest.verify|verify} messages.
+                 * @param message UpdateSnapshotRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IUpdateSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified UpdateSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.UpdateSnapshotRequest.verify|verify} messages.
+                 * @param message UpdateSnapshotRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IUpdateSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an UpdateSnapshotRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns UpdateSnapshotRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.UpdateSnapshotRequest;
+
+                /**
+                 * Decodes an UpdateSnapshotRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns UpdateSnapshotRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.UpdateSnapshotRequest;
+
+                /**
+                 * Verifies an UpdateSnapshotRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates an UpdateSnapshotRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns UpdateSnapshotRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.UpdateSnapshotRequest;
+
+                /**
+                 * Creates a plain object from an UpdateSnapshotRequest message. Also converts values to other types if specified.
+                 * @param message UpdateSnapshotRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.UpdateSnapshotRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this UpdateSnapshotRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a Snapshot. */
+            interface ISnapshot {
+
+                /** Snapshot name */
+                name?: (string|null);
+
+                /** Snapshot topic */
+                topic?: (string|null);
+
+                /** Snapshot expireTime */
+                expireTime?: (google.protobuf.ITimestamp|null);
+
+                /** Snapshot labels */
+                labels?: ({ [k: string]: string }|null);
+            }
+
+            /** Represents a Snapshot. */
+            class Snapshot implements ISnapshot {
+
+                /**
+                 * Constructs a new Snapshot.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.ISnapshot);
+
+                /** Snapshot name. */
+                public name: string;
+
+                /** Snapshot topic. */
+                public topic: string;
+
+                /** Snapshot expireTime. */
+                public expireTime?: (google.protobuf.ITimestamp|null);
+
+                /** Snapshot labels. */
+                public labels: { [k: string]: string };
+
+                /**
+                 * Creates a new Snapshot instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Snapshot instance
+                 */
+                public static create(properties?: google.pubsub.v1.ISnapshot): google.pubsub.v1.Snapshot;
+
+                /**
+                 * Encodes the specified Snapshot message. Does not implicitly {@link google.pubsub.v1.Snapshot.verify|verify} messages.
+                 * @param message Snapshot message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.ISnapshot, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified Snapshot message, length delimited. Does not implicitly {@link google.pubsub.v1.Snapshot.verify|verify} messages.
+                 * @param message Snapshot message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.ISnapshot, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Snapshot message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Snapshot
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.Snapshot;
+
+                /**
+                 * Decodes a Snapshot message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns Snapshot
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.Snapshot;
+
+                /**
+                 * Verifies a Snapshot message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a Snapshot message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Snapshot
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.Snapshot;
+
+                /**
+                 * Creates a plain object from a Snapshot message. Also converts values to other types if specified.
+                 * @param message Snapshot
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.Snapshot, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Snapshot to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a GetSnapshotRequest. */
+            interface IGetSnapshotRequest {
+
+                /** GetSnapshotRequest snapshot */
+                snapshot?: (string|null);
+            }
+
+            /** Represents a GetSnapshotRequest. */
+            class GetSnapshotRequest implements IGetSnapshotRequest {
+
+                /**
+                 * Constructs a new GetSnapshotRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IGetSnapshotRequest);
+
+                /** GetSnapshotRequest snapshot. */
+                public snapshot: string;
+
+                /**
+                 * Creates a new GetSnapshotRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns GetSnapshotRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IGetSnapshotRequest): google.pubsub.v1.GetSnapshotRequest;
+
+                /**
+                 * Encodes the specified GetSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.GetSnapshotRequest.verify|verify} messages.
+                 * @param message GetSnapshotRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IGetSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified GetSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.GetSnapshotRequest.verify|verify} messages.
+                 * @param message GetSnapshotRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IGetSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a GetSnapshotRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns GetSnapshotRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.GetSnapshotRequest;
+
+                /**
+                 * Decodes a GetSnapshotRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns GetSnapshotRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.GetSnapshotRequest;
+
+                /**
+                 * Verifies a GetSnapshotRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a GetSnapshotRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns GetSnapshotRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.GetSnapshotRequest;
+
+                /**
+                 * Creates a plain object from a GetSnapshotRequest message. Also converts values to other types if specified.
+                 * @param message GetSnapshotRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.GetSnapshotRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this GetSnapshotRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ListSnapshotsRequest. */
+            interface IListSnapshotsRequest {
+
+                /** ListSnapshotsRequest project */
+                project?: (string|null);
+
+                /** ListSnapshotsRequest pageSize */
+                pageSize?: (number|null);
+
+                /** ListSnapshotsRequest pageToken */
+                pageToken?: (string|null);
+            }
+
+            /** Represents a ListSnapshotsRequest. */
+            class ListSnapshotsRequest implements IListSnapshotsRequest {
+
+                /**
+                 * Constructs a new ListSnapshotsRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListSnapshotsRequest);
+
+                /** ListSnapshotsRequest project. */
+                public project: string;
+
+                /** ListSnapshotsRequest pageSize. */
+                public pageSize: number;
+
+                /** ListSnapshotsRequest pageToken. */
+                public pageToken: string;
+
+                /**
+                 * Creates a new ListSnapshotsRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListSnapshotsRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListSnapshotsRequest): google.pubsub.v1.ListSnapshotsRequest;
+
+                /**
+                 * Encodes the specified ListSnapshotsRequest message. Does not implicitly {@link google.pubsub.v1.ListSnapshotsRequest.verify|verify} messages.
+                 * @param message ListSnapshotsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListSnapshotsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListSnapshotsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSnapshotsRequest.verify|verify} messages.
+                 * @param message ListSnapshotsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListSnapshotsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListSnapshotsRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListSnapshotsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSnapshotsRequest;
+
+                /**
+                 * Decodes a ListSnapshotsRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListSnapshotsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSnapshotsRequest;
+
+                /**
+                 * Verifies a ListSnapshotsRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListSnapshotsRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListSnapshotsRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSnapshotsRequest;
+
+                /**
+                 * Creates a plain object from a ListSnapshotsRequest message. Also converts values to other types if specified.
+                 * @param message ListSnapshotsRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListSnapshotsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListSnapshotsRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ListSnapshotsResponse. */
+            interface IListSnapshotsResponse {
+
+                /** ListSnapshotsResponse snapshots */
+                snapshots?: (google.pubsub.v1.ISnapshot[]|null);
+
+                /** ListSnapshotsResponse nextPageToken */
+                nextPageToken?: (string|null);
+            }
+
+            /** Represents a ListSnapshotsResponse. */
+            class ListSnapshotsResponse implements IListSnapshotsResponse {
+
+                /**
+                 * Constructs a new ListSnapshotsResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListSnapshotsResponse);
+
+                /** ListSnapshotsResponse snapshots. */
+                public snapshots: google.pubsub.v1.ISnapshot[];
+
+                /** ListSnapshotsResponse nextPageToken. */
+                public nextPageToken: string;
+
+                /**
+                 * Creates a new ListSnapshotsResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListSnapshotsResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListSnapshotsResponse): google.pubsub.v1.ListSnapshotsResponse;
+
+                /**
+                 * Encodes the specified ListSnapshotsResponse message. Does not implicitly {@link google.pubsub.v1.ListSnapshotsResponse.verify|verify} messages.
+                 * @param message ListSnapshotsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListSnapshotsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListSnapshotsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSnapshotsResponse.verify|verify} messages.
+                 * @param message ListSnapshotsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListSnapshotsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListSnapshotsResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListSnapshotsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSnapshotsResponse;
+
+                /**
+                 * Decodes a ListSnapshotsResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListSnapshotsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSnapshotsResponse;
+
+                /**
+                 * Verifies a ListSnapshotsResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListSnapshotsResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListSnapshotsResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSnapshotsResponse;
+
+                /**
+                 * Creates a plain object from a ListSnapshotsResponse message. Also converts values to other types if specified.
+                 * @param message ListSnapshotsResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListSnapshotsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListSnapshotsResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a DeleteSnapshotRequest. */
+            interface IDeleteSnapshotRequest {
+
+                /** DeleteSnapshotRequest snapshot */
+                snapshot?: (string|null);
+            }
+
+            /** Represents a DeleteSnapshotRequest. */
+            class DeleteSnapshotRequest implements IDeleteSnapshotRequest {
+
+                /**
+                 * Constructs a new DeleteSnapshotRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IDeleteSnapshotRequest);
+
+                /** DeleteSnapshotRequest snapshot. */
+                public snapshot: string;
+
+                /**
+                 * Creates a new DeleteSnapshotRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns DeleteSnapshotRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IDeleteSnapshotRequest): google.pubsub.v1.DeleteSnapshotRequest;
+
+                /**
+                 * Encodes the specified DeleteSnapshotRequest message. Does not implicitly {@link google.pubsub.v1.DeleteSnapshotRequest.verify|verify} messages.
+                 * @param message DeleteSnapshotRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IDeleteSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified DeleteSnapshotRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteSnapshotRequest.verify|verify} messages.
+                 * @param message DeleteSnapshotRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IDeleteSnapshotRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a DeleteSnapshotRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns DeleteSnapshotRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DeleteSnapshotRequest;
+
+                /**
+                 * Decodes a DeleteSnapshotRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns DeleteSnapshotRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DeleteSnapshotRequest;
+
+                /**
+                 * Verifies a DeleteSnapshotRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a DeleteSnapshotRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns DeleteSnapshotRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DeleteSnapshotRequest;
+
+                /**
+                 * Creates a plain object from a DeleteSnapshotRequest message. Also converts values to other types if specified.
+                 * @param message DeleteSnapshotRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.DeleteSnapshotRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this DeleteSnapshotRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a SeekRequest. */
+            interface ISeekRequest {
+
+                /** SeekRequest subscription */
+                subscription?: (string|null);
+
+                /** SeekRequest time */
+                time?: (google.protobuf.ITimestamp|null);
+
+                /** SeekRequest snapshot */
+                snapshot?: (string|null);
+            }
+
+            /** Represents a SeekRequest. */
+            class SeekRequest implements ISeekRequest {
+
+                /**
+                 * Constructs a new SeekRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.ISeekRequest);
+
+                /** SeekRequest subscription. */
+                public subscription: string;
+
+                /** SeekRequest time. */
+                public time?: (google.protobuf.ITimestamp|null);
+
+                /** SeekRequest snapshot. */
+                public snapshot: string;
+
+                /** SeekRequest target. */
+                public target?: ("time"|"snapshot");
+
+                /**
+                 * Creates a new SeekRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns SeekRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.ISeekRequest): google.pubsub.v1.SeekRequest;
+
+                /**
+                 * Encodes the specified SeekRequest message. Does not implicitly {@link google.pubsub.v1.SeekRequest.verify|verify} messages.
+                 * @param message SeekRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.ISeekRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified SeekRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.SeekRequest.verify|verify} messages.
+                 * @param message SeekRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.ISeekRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a SeekRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns SeekRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.SeekRequest;
+
+                /**
+                 * Decodes a SeekRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns SeekRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.SeekRequest;
+
+                /**
+                 * Verifies a SeekRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a SeekRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns SeekRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.SeekRequest;
+
+                /**
+                 * Creates a plain object from a SeekRequest message. Also converts values to other types if specified.
+                 * @param message SeekRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.SeekRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this SeekRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a SeekResponse. */
+            interface ISeekResponse {
+            }
+
+            /** Represents a SeekResponse. */
+            class SeekResponse implements ISeekResponse {
+
+                /**
+                 * Constructs a new SeekResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.ISeekResponse);
+
+                /**
+                 * Creates a new SeekResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns SeekResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.ISeekResponse): google.pubsub.v1.SeekResponse;
+
+                /**
+                 * Encodes the specified SeekResponse message. Does not implicitly {@link google.pubsub.v1.SeekResponse.verify|verify} messages.
+                 * @param message SeekResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.ISeekResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified SeekResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.SeekResponse.verify|verify} messages.
+                 * @param message SeekResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.ISeekResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a SeekResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns SeekResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.SeekResponse;
+
+                /**
+                 * Decodes a SeekResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns SeekResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.SeekResponse;
+
+                /**
+                 * Verifies a SeekResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a SeekResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns SeekResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.SeekResponse;
+
+                /**
+                 * Creates a plain object from a SeekResponse message. Also converts values to other types if specified.
+                 * @param message SeekResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.SeekResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this SeekResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
         }
     }
 }

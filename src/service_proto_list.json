@@ -1,1 +1,5 @@
-["../protos/google/pubsub/v1/pubsub.proto"]
+[
+  "../../protos/google/iam/v1/policy.proto",
+  "../../protos/google/iam/v1/options.proto",
+  "../../protos/google/iam/v1/iam_policy.proto"
+]

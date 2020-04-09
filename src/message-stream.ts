@@ -28,7 +28,7 @@ import {PassThrough} from 'stream';
 
 import {PullRetry} from './pull-retry';
 import {Subscriber} from './subscriber';
-import {google} from '../proto/pubsub';
+import {google} from '../protos/protos';
 import {defaultOptions} from './default-options';
 
 /*!
@@ -258,7 +258,8 @@ export class MessageStream extends PassThrough {
    */
   private async _getClient(): Promise<ClientStub> {
     const client = await this._subscriber.getClient();
-    return client.getSubscriberStub();
+    client.initialize();
+    return client.subscriberStub as Promise<ClientStub>;
   }
   /**
    * Since we do not use the streams to ack/modAck messages, they will close

@@ -17,9 +17,9 @@
 import {promisifyAll} from '@google-cloud/promisify';
 import {CallOptions} from 'google-gax';
 
-import {google} from '../proto/pubsub';
+import {google} from '../protos/protos';
 
-import {PubSub} from './index';
+import {PubSub} from './pubsub';
 import {
   EmptyCallback,
   EmptyResponse,

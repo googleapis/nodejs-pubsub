@@ -2,84 +2,69 @@ import synthtool as s
 import synthtool.gcp as gcp
 import logging
 import subprocess
+import json
 import os
 
 logging.basicConfig(level=logging.DEBUG)
 
-AUTOSYNTH_MULTIPLE_COMMITS = True
-
-
-gapic = gcp.GAPICGenerator()
+gapic = gcp.GAPICMicrogenerator()
 common_templates = gcp.CommonTemplates()
 
 # tasks has two product names, and a poorly named artman yaml
 version = 'v1'
-library = gapic.node_library(
-    'pubsub', version, config_path="/google/pubsub/artman_pubsub.yaml")
+library = gapic.typescript_library(
+    'pubsub',
+    version,
+    generator_args={
+        'grpc-service-config': f'google/pubsub/{version}/pubsub_grpc_service_config.json',
+        'package-name': f'@google-cloud/pubsub',
+        'main-service': f'pubsub',
+        'bundle-config': f'google/pubsub/{version}/pubsub_gapic.yaml',
+        'template': f'typescript_gapic'
+    },
+    proto_path=f'/google/pubsub/{version}',
+    extra_proto_files=['google/cloud/common_resources.proto']
+)
 
 # skip index, protos, package.json, and README.md
 s.copy(
     library,
-    excludes=['package.json', 'README.md', 'src/index.js'])
+    excludes=['package.json', 'README.md', 'src/index.ts'])
 
 templates = common_templates.node_library(source_location='build/src')
 s.copy(templates)
 
-# https://github.com/googleapis/gapic-generator/issues/2127
-s.replace("src/v1/subscriber_client.js",
-          "  }\n\s*/\*\*\n\s+\* The DNS address for this API service\.",
-          "\n    // note: editing generated code\n"
-          "    this.waitForReady = function(deadline, callback) {\n"
-          "      return subscriberStub.then(\n"
-          "        stub => stub.waitForReady(deadline, callback),\n"
-          "        callback\n"
-          "      );\n"
-          "    };\n"
-          "    this.getSubscriberStub = function() {\n"
-          "      return subscriberStub;\n"
-          "    };\n"
-          "\g<0>")
+# TODO: remove this surgery once IAM service injected in nodejs-gax https://github.com/googleapis/gax-nodejs/pull/762/
+# surgery in client.ts file to call IAM service
+clients = ['publisher', 'subscriber']
+for client_name in clients:
+    client_file = f'src/v1/{client_name}_client.ts'
+    s.replace(client_file,
+              f'import \* as gapicConfig from \'\.\/{client_name}_client_config\.json\';',
+              f'import * as gapicConfig from \'./%s_client_config.json\';\nimport {{IamClient}} from \'../helper\';' % client_name,
+              )
 
-# The JavaScript generator didn't implement close(). TypeScript gapic does,
-# so this should be removed when we merge that.
-s.replace("src/v1/publisher_client.js",
-          "   \* Parse the projectName from a project resource.\n",
-          "   * Terminate the GRPC channel and close the client.\n"
-          "   * note: editing generated code\n"
-          "   *\n"
-          "   * The client will no longer be usable and all future behavior is undefined.\n"
-          "   */\n"
-          "  close() {\n"
-          "    return this.publisherStub.then(stub => {\n"
-          "      stub.close();\n"
-          "    });\n"
-          "  }\n"
-          "  \n"
-          "  /**\n"
-          "  \g<0>")
-s.replace("src/v1/publisher_client.js",
-          "    const publisherStubMethods = \\[\n",
-          "    // note: editing generated code\n"
-          "    this.publisherStub = publisherStub;\n"
-          "    \g<0>")
+    s.replace(client_file,
+              'private \_terminated = false;',
+              'private _terminated = false; \n private _iamClient: IamClient;')
 
-# Update path discovery due to build/ dir and TypeScript conversion.
-s.replace("src/v1/publisher_client.js", "../../package.json", "../../../package.json")
-s.replace("src/v1/subscriber_client.js", "../../package.json", "../../../package.json")
+    s.replace(client_file,
+              '\/\/ Determine the client header string.',
+              'this._iamClient = new IamClient(opts); \n // Determine the client header string.')
 
-# [START fix-dead-link]
-s.replace('src/**/doc/google/protobuf/doc_timestamp.js',
-        'https:\/\/cloud\.google\.com[\s\*]*http:\/\/(.*)[\s\*]*\)',
-        r"https://\1)")
+    # TODO: it should be removed once pubsub upgrade gts 2.0.0
+    # fix tslint issue due to mismatch gts version with gapic-generator-typescript
+    s.replace(client_file, '\/\/ eslint\-disable\-next\-line\ \@typescript\-eslint\/no\-explicit\-any',
+              '// tslint:disable-next-line no-any')
 
-s.replace('src/**/doc/google/protobuf/doc_timestamp.js',
-        'toISOString\]',
-        'toISOString)')
-# [END fix-dead-link]
+    with open('helperMethods.ts.tmpl', 'r') as helper_file:
+        content = helper_file.read()
+    s.replace(client_file, '^}', content)
 
-# No browser support for TypeScript libraries yet
-os.unlink('webpack.config.js')
-os.unlink('src/browser.js')
+# TODO: it should be removed once pubsub upgrade gts 2.0.0
+# fix tslint issue due to mismatch gts version with gapic-generator-typescript
+s.replace('test/gapic_publisher_v1.ts',
+          'const\ expectedResponse\ \=\ \[new\ String\(\)\,\ new\ String\(\)\,\ new\ String\(\)\];', 'const expectedResponse: string[] | undefined = [];')
 
 # Node.js specific cleanup
 subprocess.run(['npm', 'install'])

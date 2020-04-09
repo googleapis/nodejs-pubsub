@@ -45,7 +45,7 @@ import {
 import {PublishOptions} from './publisher';
 import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
-import {google} from '../proto/pubsub';
+import {google} from '../protos/protos';
 
 const opts = {} as gax.GrpcClientOptions;
 
@@ -277,9 +277,6 @@ export class PubSub {
     this.api = {};
     this.auth = new GoogleAuth(this.options);
     this.projectId = this.options.projectId || PROJECT_ID_PLACEHOLDER;
-    if (this.options.promise) {
-      this.Promise = this.options.promise;
-    }
   }
 
   close(): Promise<void>;
@@ -665,11 +662,13 @@ export class PubSub {
         let snapshots: Snapshot[];
 
         if (rawSnapshots) {
-          snapshots = rawSnapshots.map(snapshot => {
-            const snapshotInstance = this.snapshot(snapshot.name!);
-            snapshotInstance.metadata = snapshot;
-            return snapshotInstance;
-          });
+          snapshots = rawSnapshots.map(
+            (snapshot: google.pubsub.v1.ISnapshot) => {
+              const snapshotInstance = this.snapshot(snapshot.name!);
+              snapshotInstance.metadata = snapshot;
+              return snapshotInstance;
+            }
+          );
         }
 
         callback!(err, snapshots!, ...args);
@@ -789,7 +788,7 @@ export class PubSub {
         let subscriptions: Subscription[];
 
         if (rawSubs) {
-          subscriptions = rawSubs.map(sub => {
+          subscriptions = rawSubs.map((sub: google.pubsub.v1.ISubscription) => {
             const subscriptionInstance = this.subscription(sub.name!);
             subscriptionInstance.metadata = sub;
             return subscriptionInstance;

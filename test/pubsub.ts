@@ -23,7 +23,7 @@ import {CallOptions, ChannelCredentials, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
-import {google} from '../proto/pubsub';
+import {google} from '../protos/protos';
 import * as pubsubTypes from '../src/pubsub';
 import {Snapshot} from '../src/snapshot';
 import * as subby from '../src/subscription';
@@ -294,10 +294,6 @@ describe('PubSub', () => {
 
     it('should set isEmulator to false by default', () => {
       assert.strictEqual(pubsub.isEmulator, false);
-    });
-
-    it('should localize a Promise override', () => {
-      assert.strictEqual(pubsub.Promise, OPTIONS.promise);
     });
   });
 
@@ -784,7 +780,8 @@ describe('PubSub', () => {
         return snapshot as Snapshot;
       });
 
-      pubsub.getSnapshots((err, snapshots) => {
+      // tslint:disable-next-line: no-any
+      pubsub.getSnapshots((err: any, snapshots: any) => {
         assert.ifError(err);
         assert.strictEqual(snapshots![0], snapshot);
         assert.strictEqual(snapshots![0].metadata, apiResponse.snapshots[0]);
@@ -1009,7 +1006,8 @@ describe('PubSub', () => {
         return topic as Topic;
       };
 
-      pubsub.getTopics((err, topics) => {
+      // tslint:disable-next-line: no-any
+      pubsub.getTopics((err: any, topics: any) => {
         assert.ifError(err);
         assert.strictEqual(topics![0], topic);
         assert.strictEqual(topics![0].metadata, apiResponse.topics[0]);
