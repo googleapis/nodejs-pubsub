@@ -569,7 +569,7 @@ const ExpirationPolicy = {
  *
  * @property {string} pushEndpoint
  *   A URL locating the endpoint to which messages should be pushed.
- *   For example, a Webhook endpoint might use "https://example.com/push".
+ *   For example, a Webhook endpoint might use `https://example.com/push`.
  *
  * @property {Object.<string, string>} attributes
  *   Endpoint configuration attributes that can be used to control different
