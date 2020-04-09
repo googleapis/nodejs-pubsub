@@ -518,6 +518,22 @@
                     "deadLetterPolicy": {
                       "type": "DeadLetterPolicy",
                       "id": 13
+                    },
+                    "retryPolicy": {
+                      "type": "RetryPolicy",
+                      "id": 14
+                    }
+                  }
+                },
+                "RetryPolicy": {
+                  "fields": {
+                    "minimumBackoff": {
+                      "type": "google.protobuf.Duration",
+                      "id": 1
+                    },
+                    "maximumBackoff": {
+                      "type": "google.protobuf.Duration",
+                      "id": 2
                     }
                   }
                 },

@@ -418,6 +418,19 @@ class SubscriberClient {
    *   for production use. It is not subject to any SLA or deprecation policy.
    *
    *   This object should have the same structure as [DeadLetterPolicy]{@link google.pubsub.v1.DeadLetterPolicy}
+   * @param {Object} [request.retryPolicy]
+   *   A policy that specifies how Cloud Pub/Sub retries message delivery for this
+   *   subscription.
+   *
+   *   If not set, the default retry policy is applied. This generally implies
+   *   that messages will be retried as soon as possible for healthy subscribers.
+   *   RetryPolicy will be triggered on NACKs or acknowledgement deadline
+   *   exceeded events for a given message.
+   *   <b>EXPERIMENTAL:</b> This API might be changed in backward-incompatible
+   *   ways and is not recommended for production use. It is not subject to any
+   *   SLA or deprecation policy.
+   *
+   *   This object should have the same structure as [RetryPolicy]{@link google.pubsub.v1.RetryPolicy}
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
