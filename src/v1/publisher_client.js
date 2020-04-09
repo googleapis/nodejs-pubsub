@@ -146,6 +146,11 @@ class PublisherClient {
         'nextPageToken',
         'subscriptions'
       ),
+      listTopicSnapshots: new gaxModule.PageDescriptor(
+        'pageToken',
+        'nextPageToken',
+        'snapshots'
+      ),
     };
 
     const protoFilesRoot = opts.fallback
@@ -231,6 +236,7 @@ class PublisherClient {
       'getTopic',
       'listTopics',
       'listTopicSubscriptions',
+      'listTopicSnapshots',
       'deleteTopic',
     ];
     for (const methodName of publisherStubMethods) {
@@ -883,6 +889,170 @@ class PublisherClient {
 
     return this._descriptors.page.listTopicSubscriptions.createStream(
       this._innerApiCalls.listTopicSubscriptions,
+      request,
+      options
+    );
+  }
+
+  /**
+   * Lists the names of the snapshots on this topic. Snapshots are used in
+   * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
+   * operations, which allow
+   * you to manage message acknowledgments in bulk. That is, you can set the
+   * acknowledgment state of messages in an existing subscription to the state
+   * captured by a snapshot.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.topic
+   *   Required. The name of the topic that snapshots are attached to.
+   *   Format is `projects/{project}/topics/{topic}`.
+   * @param {number} [request.pageSize]
+   *   The maximum number of resources contained in the underlying API
+   *   response. If page streaming is performed per-resource, this
+   *   parameter does not affect the return value. If page streaming is
+   *   performed per-page, this determines the maximum number of
+   *   resources in a page.
+   * @param {Object} [options]
+   *   Optional parameters. You can override the default settings for this call, e.g, timeout,
+   *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
+   * @param {function(?Error, ?Array, ?Object, ?Object)} [callback]
+   *   The function which will be called with the result of the API call.
+   *
+   *   The second parameter to the callback is Array of string.
+   *
+   *   When autoPaginate: false is specified through options, it contains the result
+   *   in a single response. If the response indicates the next page exists, the third
+   *   parameter is set to be used for the next request object. The fourth parameter keeps
+   *   the raw response object of an object representing [ListTopicSnapshotsResponse]{@link google.pubsub.v1.ListTopicSnapshotsResponse}.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is Array of string.
+   *
+   *   When autoPaginate: false is specified through options, the array has three elements.
+   *   The first element is Array of string in a single response.
+   *   The second element is the next request object if the response
+   *   indicates the next page exists, or null. The third element is
+   *   an object representing [ListTopicSnapshotsResponse]{@link google.pubsub.v1.ListTopicSnapshotsResponse}.
+   *
+   *   The promise has a method named "cancel" which cancels the ongoing API call.
+   *
+   * @example
+   *
+   * const pubsub = require('@google-cloud/pubsub');
+   *
+   * const client = new pubsub.v1.PublisherClient({
+   *   // optional auth parameters.
+   * });
+   *
+   * // Iterate over all elements.
+   * const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+   *
+   * client.listTopicSnapshots({topic: formattedTopic})
+   *   .then(responses => {
+   *     const resources = responses[0];
+   *     for (const resource of resources) {
+   *       // doThingsWith(resource)
+   *     }
+   *   })
+   *   .catch(err => {
+   *     console.error(err);
+   *   });
+   *
+   * // Or obtain the paged response.
+   * const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+   *
+   *
+   * const options = {autoPaginate: false};
+   * const callback = responses => {
+   *   // The actual resources in a response.
+   *   const resources = responses[0];
+   *   // The next request if the response shows that there are more responses.
+   *   const nextRequest = responses[1];
+   *   // The actual response object, if necessary.
+   *   // const rawResponse = responses[2];
+   *   for (const resource of resources) {
+   *     // doThingsWith(resource);
+   *   }
+   *   if (nextRequest) {
+   *     // Fetch the next page.
+   *     return client.listTopicSnapshots(nextRequest, options).then(callback);
+   *   }
+   * }
+   * client.listTopicSnapshots({topic: formattedTopic}, options)
+   *   .then(callback)
+   *   .catch(err => {
+   *     console.error(err);
+   *   });
+   */
+  listTopicSnapshots(request, options, callback) {
+    if (options instanceof Function && callback === undefined) {
+      callback = options;
+      options = {};
+    }
+    request = request || {};
+    options = options || {};
+    options.otherArgs = options.otherArgs || {};
+    options.otherArgs.headers = options.otherArgs.headers || {};
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      topic: request.topic,
+    });
+
+    return this._innerApiCalls.listTopicSnapshots(request, options, callback);
+  }
+
+  /**
+   * Equivalent to {@link listTopicSnapshots}, but returns a NodeJS Stream object.
+   *
+   * This fetches the paged responses for {@link listTopicSnapshots} continuously
+   * and invokes the callback registered for 'data' event for each element in the
+   * responses.
+   *
+   * The returned object has 'end' method when no more elements are required.
+   *
+   * autoPaginate option will be ignored.
+   *
+   * @see {@link https://nodejs.org/api/stream.html}
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.topic
+   *   Required. The name of the topic that snapshots are attached to.
+   *   Format is `projects/{project}/topics/{topic}`.
+   * @param {number} [request.pageSize]
+   *   The maximum number of resources contained in the underlying API
+   *   response. If page streaming is performed per-resource, this
+   *   parameter does not affect the return value. If page streaming is
+   *   performed per-page, this determines the maximum number of
+   *   resources in a page.
+   * @param {Object} [options]
+   *   Optional parameters. You can override the default settings for this call, e.g, timeout,
+   *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
+   * @returns {Stream}
+   *   An object stream which emits a string on 'data' event.
+   *
+   * @example
+   *
+   * const pubsub = require('@google-cloud/pubsub');
+   *
+   * const client = new pubsub.v1.PublisherClient({
+   *   // optional auth parameters.
+   * });
+   *
+   * const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+   * client.listTopicSnapshotsStream({topic: formattedTopic})
+   *   .on('data', element => {
+   *     // doThingsWith(element)
+   *   }).on('error', err => {
+   *     console.log(err);
+   *   });
+   */
+  listTopicSnapshotsStream(request, options) {
+    options = options || {};
+
+    return this._descriptors.page.listTopicSnapshots.createStream(
+      this._innerApiCalls.listTopicSnapshots,
       request,
       options
     );

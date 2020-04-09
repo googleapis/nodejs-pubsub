@@ -444,6 +444,73 @@ describe('PublisherClient', () => {
     });
   });
 
+  describe('listTopicSnapshots', () => {
+    it('invokes listTopicSnapshots without error', done => {
+      const client = new pubsubModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+
+      // Mock request
+      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      const request = {
+        topic: formattedTopic,
+      };
+
+      // Mock response
+      const nextPageToken = '';
+      const snapshotsElement = 'snapshotsElement1339034092';
+      const snapshots = [snapshotsElement];
+      const expectedResponse = {
+        nextPageToken: nextPageToken,
+        snapshots: snapshots,
+      };
+
+      // Mock Grpc layer
+      client._innerApiCalls.listTopicSnapshots = (
+        actualRequest,
+        options,
+        callback
+      ) => {
+        assert.deepStrictEqual(actualRequest, request);
+        callback(null, expectedResponse.snapshots);
+      };
+
+      client.listTopicSnapshots(request, (err, response) => {
+        assert.ifError(err);
+        assert.deepStrictEqual(response, expectedResponse.snapshots);
+        done();
+      });
+    });
+
+    it('invokes listTopicSnapshots with error', done => {
+      const client = new pubsubModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+
+      // Mock request
+      const formattedTopic = client.topicPath('[PROJECT]', '[TOPIC]');
+      const request = {
+        topic: formattedTopic,
+      };
+
+      // Mock Grpc layer
+      client._innerApiCalls.listTopicSnapshots = mockSimpleGrpcMethod(
+        request,
+        null,
+        error
+      );
+
+      client.listTopicSnapshots(request, (err, response) => {
+        assert(err instanceof Error);
+        assert.strictEqual(err.code, FAKE_STATUS_CODE);
+        assert(typeof response === 'undefined');
+        done();
+      });
+    });
+  });
+
   describe('deleteTopic', () => {
     it('invokes deleteTopic without error', done => {
       const client = new pubsubModule.v1.PublisherClient({
@@ -1070,6 +1137,68 @@ describe('SubscriberClient', () => {
       client.deleteSubscription(request, err => {
         assert(err instanceof Error);
         assert.strictEqual(err.code, FAKE_STATUS_CODE);
+        done();
+      });
+    });
+  });
+
+  describe('getSnapshot', () => {
+    it('invokes getSnapshot without error', done => {
+      const client = new pubsubModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+
+      // Mock request
+      const formattedSnapshot = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
+      const request = {
+        snapshot: formattedSnapshot,
+      };
+
+      // Mock response
+      const name = 'name3373707';
+      const topic = 'topic110546223';
+      const expectedResponse = {
+        name: name,
+        topic: topic,
+      };
+
+      // Mock Grpc layer
+      client._innerApiCalls.getSnapshot = mockSimpleGrpcMethod(
+        request,
+        expectedResponse
+      );
+
+      client.getSnapshot(request, (err, response) => {
+        assert.ifError(err);
+        assert.deepStrictEqual(response, expectedResponse);
+        done();
+      });
+    });
+
+    it('invokes getSnapshot with error', done => {
+      const client = new pubsubModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+
+      // Mock request
+      const formattedSnapshot = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
+      const request = {
+        snapshot: formattedSnapshot,
+      };
+
+      // Mock Grpc layer
+      client._innerApiCalls.getSnapshot = mockSimpleGrpcMethod(
+        request,
+        null,
+        error
+      );
+
+      client.getSnapshot(request, (err, response) => {
+        assert(err instanceof Error);
+        assert.strictEqual(err.code, FAKE_STATUS_CODE);
+        assert(typeof response === 'undefined');
         done();
       });
     });

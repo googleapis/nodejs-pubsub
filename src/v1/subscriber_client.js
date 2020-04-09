@@ -226,6 +226,7 @@ class SubscriberClient {
       'updateSubscription',
       'listSubscriptions',
       'deleteSubscription',
+      'getSnapshot',
       'modifyAckDeadline',
       'acknowledge',
       'pull',
@@ -828,6 +829,65 @@ class SubscriberClient {
     });
 
     return this._innerApiCalls.deleteSubscription(request, options, callback);
+  }
+
+  /**
+   * Gets the configuration details of a snapshot. Snapshots are used in
+   * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
+   * operations, which allow you to manage message acknowledgments in bulk. That
+   * is, you can set the acknowledgment state of messages in an existing
+   * subscription to the state captured by a snapshot.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.snapshot
+   *   Required. The name of the snapshot to get.
+   *   Format is `projects/{project}/snapshots/{snap}`.
+   * @param {Object} [options]
+   *   Optional parameters. You can override the default settings for this call, e.g, timeout,
+   *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
+   * @param {function(?Error, ?Object)} [callback]
+   *   The function which will be called with the result of the API call.
+   *
+   *   The second parameter to the callback is an object representing [Snapshot]{@link google.pubsub.v1.Snapshot}.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is an object representing [Snapshot]{@link google.pubsub.v1.Snapshot}.
+   *   The promise has a method named "cancel" which cancels the ongoing API call.
+   *
+   * @example
+   *
+   * const pubsub = require('@google-cloud/pubsub');
+   *
+   * const client = new pubsub.v1.SubscriberClient({
+   *   // optional auth parameters.
+   * });
+   *
+   * const formattedSnapshot = client.snapshotPath('[PROJECT]', '[SNAPSHOT]');
+   * client.getSnapshot({snapshot: formattedSnapshot})
+   *   .then(responses => {
+   *     const response = responses[0];
+   *     // doThingsWith(response)
+   *   })
+   *   .catch(err => {
+   *     console.error(err);
+   *   });
+   */
+  getSnapshot(request, options, callback) {
+    if (options instanceof Function && callback === undefined) {
+      callback = options;
+      options = {};
+    }
+    request = request || {};
+    options = options || {};
+    options.otherArgs = options.otherArgs || {};
+    options.otherArgs.headers = options.otherArgs.headers || {};
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      snapshot: request.snapshot,
+    });
+
+    return this._innerApiCalls.getSnapshot(request, options, callback);
   }
 
   /**
