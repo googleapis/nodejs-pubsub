@@ -4,6 +4,14 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [1.7.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.7.1...v1.7.2) (2020-04-08)
+
+This fix release was manually pushed to legacy-8.
+
+### Bug Fixes
+
+* add a close() method to the generated SubscriberClient for 1.x ([#937](https://github.com/googleapis/nodejs-pubsub/issues/937)) ([PR](https://github.com/googleapis/nodejs-pubsub/pull/948))
+
 ### [1.7.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.7.0...v1.7.1) (2020-04-06)
 
 
