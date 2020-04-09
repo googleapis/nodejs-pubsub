@@ -422,6 +422,15 @@ const DeleteTopicRequest = {
  *
  *   This object should have the same structure as [ExpirationPolicy]{@link google.pubsub.v1.ExpirationPolicy}
  *
+ * @property {string} filter
+ *   An expression written in the Cloud Pub/Sub filter language. If non-empty,
+ *   then only `PubsubMessage`s whose `attributes` field matches the filter are
+ *   delivered on this subscription. If empty, then no messages are filtered
+ *   out.
+ *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+ *   API might be changed in backward-incompatible ways and is not recommended
+ *   for production use. It is not subject to any SLA or deprecation policy.
+ *
  * @property {Object} deadLetterPolicy
  *   A policy that specifies the conditions for dead lettering messages in
  *   this subscription. If dead_letter_policy is not set, dead lettering

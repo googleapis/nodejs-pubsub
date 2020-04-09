@@ -515,6 +515,10 @@
                       "type": "ExpirationPolicy",
                       "id": 11
                     },
+                    "filter": {
+                      "type": "string",
+                      "id": 12
+                    },
                     "deadLetterPolicy": {
                       "type": "DeadLetterPolicy",
                       "id": 13

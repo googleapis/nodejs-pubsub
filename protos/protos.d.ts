@@ -1973,6 +1973,9 @@ export namespace google {
                 /** Subscription expirationPolicy */
                 expirationPolicy?: (google.pubsub.v1.IExpirationPolicy|null);
 
+                /** Subscription filter */
+                filter?: (string|null);
+
                 /** Subscription deadLetterPolicy */
                 deadLetterPolicy?: (google.pubsub.v1.IDeadLetterPolicy|null);
 
@@ -2015,6 +2018,9 @@ export namespace google {
 
                 /** Subscription expirationPolicy. */
                 public expirationPolicy?: (google.pubsub.v1.IExpirationPolicy|null);
+
+                /** Subscription filter. */
+                public filter: string;
 
                 /** Subscription deadLetterPolicy. */
                 public deadLetterPolicy?: (google.pubsub.v1.IDeadLetterPolicy|null);

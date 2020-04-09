@@ -4137,6 +4137,7 @@
                      * @property {Object.<string,string>|null} [labels] Subscription labels
                      * @property {boolean|null} [enableMessageOrdering] Subscription enableMessageOrdering
                      * @property {google.pubsub.v1.IExpirationPolicy|null} [expirationPolicy] Subscription expirationPolicy
+                     * @property {string|null} [filter] Subscription filter
                      * @property {google.pubsub.v1.IDeadLetterPolicy|null} [deadLetterPolicy] Subscription deadLetterPolicy
                      * @property {google.pubsub.v1.IRetryPolicy|null} [retryPolicy] Subscription retryPolicy
                      */
@@ -4230,6 +4231,14 @@
                     Subscription.prototype.expirationPolicy = null;
     
                     /**
+                     * Subscription filter.
+                     * @member {string} filter
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.filter = "";
+    
+                    /**
                      * Subscription deadLetterPolicy.
                      * @member {google.pubsub.v1.IDeadLetterPolicy|null|undefined} deadLetterPolicy
                      * @memberof google.pubsub.v1.Subscription
@@ -4288,6 +4297,8 @@
                             writer.uint32(/* id 10, wireType 0 =*/80).bool(message.enableMessageOrdering);
                         if (message.expirationPolicy != null && message.hasOwnProperty("expirationPolicy"))
                             $root.google.pubsub.v1.ExpirationPolicy.encode(message.expirationPolicy, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
+                        if (message.filter != null && message.hasOwnProperty("filter"))
+                            writer.uint32(/* id 12, wireType 2 =*/98).string(message.filter);
                         if (message.deadLetterPolicy != null && message.hasOwnProperty("deadLetterPolicy"))
                             $root.google.pubsub.v1.DeadLetterPolicy.encode(message.deadLetterPolicy, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
                         if (message.retryPolicy != null && message.hasOwnProperty("retryPolicy"))
@@ -4357,6 +4368,9 @@
                                 break;
                             case 11:
                                 message.expirationPolicy = $root.google.pubsub.v1.ExpirationPolicy.decode(reader, reader.uint32());
+                                break;
+                            case 12:
+                                message.filter = reader.string();
                                 break;
                             case 13:
                                 message.deadLetterPolicy = $root.google.pubsub.v1.DeadLetterPolicy.decode(reader, reader.uint32());
@@ -4437,6 +4451,9 @@
                             if (error)
                                 return "expirationPolicy." + error;
                         }
+                        if (message.filter != null && message.hasOwnProperty("filter"))
+                            if (!$util.isString(message.filter))
+                                return "filter: string expected";
                         if (message.deadLetterPolicy != null && message.hasOwnProperty("deadLetterPolicy")) {
                             var error = $root.google.pubsub.v1.DeadLetterPolicy.verify(message.deadLetterPolicy);
                             if (error)
@@ -4494,6 +4511,8 @@
                                 throw TypeError(".google.pubsub.v1.Subscription.expirationPolicy: object expected");
                             message.expirationPolicy = $root.google.pubsub.v1.ExpirationPolicy.fromObject(object.expirationPolicy);
                         }
+                        if (object.filter != null)
+                            message.filter = String(object.filter);
                         if (object.deadLetterPolicy != null) {
                             if (typeof object.deadLetterPolicy !== "object")
                                 throw TypeError(".google.pubsub.v1.Subscription.deadLetterPolicy: object expected");
@@ -4531,6 +4550,7 @@
                             object.messageRetentionDuration = null;
                             object.enableMessageOrdering = false;
                             object.expirationPolicy = null;
+                            object.filter = "";
                             object.deadLetterPolicy = null;
                             object.retryPolicy = null;
                         }
@@ -4556,6 +4576,8 @@
                             object.enableMessageOrdering = message.enableMessageOrdering;
                         if (message.expirationPolicy != null && message.hasOwnProperty("expirationPolicy"))
                             object.expirationPolicy = $root.google.pubsub.v1.ExpirationPolicy.toObject(message.expirationPolicy, options);
+                        if (message.filter != null && message.hasOwnProperty("filter"))
+                            object.filter = message.filter;
                         if (message.deadLetterPolicy != null && message.hasOwnProperty("deadLetterPolicy"))
                             object.deadLetterPolicy = $root.google.pubsub.v1.DeadLetterPolicy.toObject(message.deadLetterPolicy, options);
                         if (message.retryPolicy != null && message.hasOwnProperty("retryPolicy"))
