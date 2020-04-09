@@ -23,6 +23,7 @@ import {Metadata, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import * as uuid from 'uuid';
+import defer = require('p-defer');
 
 import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
@@ -76,13 +77,13 @@ describe('MessageQueues', () => {
   // tslint:disable-next-line variable-name
   let ModAckQueue: typeof messageTypes.ModAckQueue;
 
+  type QueuedMessages = Array<[string, number?]>;
+
   before(() => {
     const queues = proxyquire('../src/message-queues.js', {});
 
     AckQueue = queues.AckQueue;
     ModAckQueue = queues.ModAckQueue;
-
-    type QueuedMessages = Array<[string, number?]>;
 
     MessageQueue = class MessageQueue extends queues.MessageQueue {
       batches = [] as QueuedMessages[];
@@ -210,6 +211,35 @@ describe('MessageQueues', () => {
         setImmediate(() => messageQueue.flush());
         return promise;
       });
+
+      it('should resolve onDrain only after all in-flight messages have been flushed', async () => {
+        const log: string[] = [];
+        const sendDone = defer();
+        sandbox.stub(messageQueue, '_sendBatch').callsFake(async () => {
+          log.push('send:start');
+          await sendDone.promise;
+          log.push('send:end');
+        });
+
+        const message = new FakeMessage();
+        const deadline = 10;
+        const onDrainBeforeFlush = messageQueue
+          .onDrain()
+          .then(() => log.push('drain1'));
+        messageQueue.add(message as Message, deadline);
+        messageQueue.flush();
+        assert.deepStrictEqual(log, ['send:start']);
+        sendDone.resolve();
+        await messageQueue.onDrain().then(() => log.push('drain2'));
+        await onDrainBeforeFlush;
+
+        assert.deepStrictEqual(log, [
+          'send:start',
+          'send:end',
+          'drain1',
+          'drain2',
+        ]);
+      });
     });
 
     describe('onFlush', () => {
@@ -222,6 +252,21 @@ describe('MessageQueues', () => {
       it('should re-use existing promises', () => {
         const promise1 = messageQueue.onFlush();
         const promise2 = messageQueue.onFlush();
+
+        assert.strictEqual(promise1, promise2);
+      });
+    });
+
+    describe('onDrain', () => {
+      it('should create a promise', () => {
+        const promise = messageQueue.onDrain();
+
+        assert(promise instanceof Promise);
+      });
+
+      it('should re-use existing promises', () => {
+        const promise1 = messageQueue.onDrain();
+        const promise2 = messageQueue.onDrain();
 
         assert.strictEqual(promise1, promise2);
       });
