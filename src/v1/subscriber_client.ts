@@ -17,18 +17,11 @@
 // ** All changes to this file may be overwritten. **
 
 import * as gax from 'google-gax';
-import {
-  Callback,
-  CallOptions,
-  Descriptors,
-  ClientOptions,
-  PaginationCallback,
-  GaxCall,
-} from 'google-gax';
+import {Callback, CallOptions, Descriptors, ClientOptions, PaginationCallback, GaxCall} from 'google-gax';
 import * as path from 'path';
 
-import {Transform} from 'stream';
-import {RequestType} from 'google-gax/build/src/apitypes';
+import { Transform } from 'stream';
+import { RequestType } from 'google-gax/build/src/apitypes';
 import * as protos from '../../protos/protos';
 import * as gapicConfig from './subscriber_client_config.json';
 import {IamClient} from '../helper';
@@ -43,20 +36,15 @@ const version = require('../../../package.json').version;
  * @memberof v1
  */
 export class SubscriberClient {
-  private _terminated = false;
-  private _iamClient: IamClient;
+  private _terminated = false; 
+ private _iamClient: IamClient;
   private _opts: ClientOptions;
   private _gaxModule: typeof gax | typeof gax.fallback;
   private _gaxGrpc: gax.GrpcClient | gax.fallback.GrpcClient;
   private _protos: {};
   private _defaults: {[method: string]: gax.CallSettings};
   auth: gax.GoogleAuth;
-  descriptors: Descriptors = {
-    page: {},
-    stream: {},
-    longrunning: {},
-    batching: {},
-  };
+  descriptors: Descriptors = {page: {}, stream: {}, longrunning: {}, batching: {}};
   innerApiCalls: {[name: string]: Function};
   pathTemplates: {[name: string]: gax.PathTemplate};
   subscriberStub?: Promise<{[name: string]: Function}>;
@@ -90,12 +78,10 @@ export class SubscriberClient {
   constructor(opts?: ClientOptions) {
     // Ensure that options include the service address and port.
     const staticMembers = this.constructor as typeof SubscriberClient;
-    const servicePath =
-      opts && opts.servicePath
-        ? opts.servicePath
-        : opts && opts.apiEndpoint
-        ? opts.apiEndpoint
-        : staticMembers.servicePath;
+    const servicePath = opts && opts.servicePath ?
+        opts.servicePath :
+        ((opts && opts.apiEndpoint) ? opts.apiEndpoint :
+                                      staticMembers.servicePath);
     const port = opts && opts.port ? opts.port : staticMembers.port;
 
     if (!opts) {
@@ -105,8 +91,8 @@ export class SubscriberClient {
     opts.port = opts.port || port;
     opts.clientConfig = opts.clientConfig || {};
 
-    const isBrowser = typeof window !== 'undefined';
-    if (isBrowser) {
+    const isBrowser = (typeof window !== 'undefined');
+    if (isBrowser){
       opts.fallback = true;
     }
     // If we are in browser, we are already using fallback because of the
@@ -123,11 +109,14 @@ export class SubscriberClient {
     this._opts = opts;
 
     // Save the auth object to the client, for use by other methods.
-    this.auth = this._gaxGrpc.auth as gax.GoogleAuth;
+    this.auth = (this._gaxGrpc.auth as gax.GoogleAuth);
 
-    this._iamClient = new IamClient(opts);
-    // Determine the client header string.
-    const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${version}`];
+    this._iamClient = new IamClient(opts); 
+ // Determine the client header string.
+    const clientHeader = [
+      `gax/${this._gaxModule.version}`,
+      `gapic/${version}`,
+    ];
     if (typeof process !== 'undefined' && 'versions' in process) {
       clientHeader.push(`gl-node/${process.versions.node}`);
     } else {
@@ -143,18 +132,12 @@ export class SubscriberClient {
     // For Node.js, pass the path to JSON proto file.
     // For browsers, pass the JSON content.
 
-    const nodejsProtoPath = path.join(
-      __dirname,
-      '..',
-      '..',
-      'protos',
-      'protos.json'
-    );
+    const nodejsProtoPath = path.join(__dirname, '..', '..', 'protos', 'protos.json');
     this._protos = this._gaxGrpc.loadProto(
-      opts.fallback
-        ? // eslint-disable-next-line @typescript-eslint/no-var-requires
-          require('../../protos/protos.json')
-        : nodejsProtoPath
+      opts.fallback ?
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        require("../../protos/protos.json") :
+        nodejsProtoPath
     );
 
     // This API contains "path templates"; forward-slash-separated
@@ -179,33 +162,22 @@ export class SubscriberClient {
     // (e.g. 50 results at a time, with tokens to get subsequent
     // pages). Denote the keys used for pagination and results.
     this.descriptors.page = {
-      listSubscriptions: new this._gaxModule.PageDescriptor(
-        'pageToken',
-        'nextPageToken',
-        'subscriptions'
-      ),
-      listSnapshots: new this._gaxModule.PageDescriptor(
-        'pageToken',
-        'nextPageToken',
-        'snapshots'
-      ),
+      listSubscriptions:
+          new this._gaxModule.PageDescriptor('pageToken', 'nextPageToken', 'subscriptions'),
+      listSnapshots:
+          new this._gaxModule.PageDescriptor('pageToken', 'nextPageToken', 'snapshots')
     };
 
     // Some of the methods on this service provide streaming responses.
     // Provide descriptors for these.
     this.descriptors.stream = {
-      streamingPull: new this._gaxModule.StreamDescriptor(
-        gax.StreamType.BIDI_STREAMING
-      ),
+      streamingPull: new this._gaxModule.StreamDescriptor(gax.StreamType.BIDI_STREAMING)
     };
 
     // Put together the default options sent with requests.
     this._defaults = this._gaxGrpc.constructSettings(
-      'google.pubsub.v1.Subscriber',
-      gapicConfig as gax.ClientConfig,
-      opts.clientConfig || {},
-      {'x-goog-api-client': clientHeader.join(' ')}
-    );
+        'google.pubsub.v1.Subscriber', gapicConfig as gax.ClientConfig,
+        opts.clientConfig || {}, {'x-goog-api-client': clientHeader.join(' ')});
 
     // Set up a dictionary of "inner API calls"; the core implementation
     // of calling the API is handled in `google-gax`, with this code
@@ -233,35 +205,16 @@ export class SubscriberClient {
     // Put together the "service stub" for
     // google.pubsub.v1.Subscriber.
     this.subscriberStub = this._gaxGrpc.createStub(
-      this._opts.fallback
-        ? (this._protos as protobuf.Root).lookupService(
-            'google.pubsub.v1.Subscriber'
-          )
-        : // tslint:disable-next-line no-any
+        this._opts.fallback ?
+          (this._protos as protobuf.Root).lookupService('google.pubsub.v1.Subscriber') :
+          // tslint:disable-next-line no-any
           (this._protos as any).google.pubsub.v1.Subscriber,
-      this._opts
-    ) as Promise<{[method: string]: Function}>;
+        this._opts) as Promise<{[method: string]: Function}>;
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
-    const subscriberStubMethods = [
-      'createSubscription',
-      'getSubscription',
-      'updateSubscription',
-      'listSubscriptions',
-      'deleteSubscription',
-      'modifyAckDeadline',
-      'acknowledge',
-      'pull',
-      'streamingPull',
-      'modifyPushConfig',
-      'getSnapshot',
-      'listSnapshots',
-      'createSnapshot',
-      'updateSnapshot',
-      'deleteSnapshot',
-      'seek',
-    ];
+    const subscriberStubMethods =
+        ['createSubscription', 'getSubscription', 'updateSubscription', 'listSubscriptions', 'deleteSubscription', 'modifyAckDeadline', 'acknowledge', 'pull', 'streamingPull', 'modifyPushConfig', 'getSnapshot', 'listSnapshots', 'createSnapshot', 'updateSnapshot', 'deleteSnapshot', 'seek'];
     for (const methodName of subscriberStubMethods) {
       const callPromise = this.subscriberStub.then(
         stub => (...args: Array<{}>) => {
@@ -271,17 +224,16 @@ export class SubscriberClient {
           const func = stub[methodName];
           return func.apply(stub, args);
         },
-        (err: Error | null | undefined) => () => {
+        (err: Error|null|undefined) => () => {
           throw err;
-        }
-      );
+        });
 
       const apiCall = this._gaxModule.createApiCall(
         callPromise,
         this._defaults[methodName],
         this.descriptors.page[methodName] ||
-          this.descriptors.stream[methodName] ||
-          this.descriptors.longrunning[methodName]
+            this.descriptors.stream[methodName] ||
+            this.descriptors.longrunning[methodName]
       );
 
       this.innerApiCalls[methodName] = apiCall;
@@ -319,7 +271,7 @@ export class SubscriberClient {
   static get scopes() {
     return [
       'https://www.googleapis.com/auth/cloud-platform',
-      'https://www.googleapis.com/auth/pubsub',
+      'https://www.googleapis.com/auth/pubsub'
     ];
   }
 
@@ -330,9 +282,8 @@ export class SubscriberClient {
    * @param {function(Error, string)} callback - the callback to
    *   be called with the current project Id.
    */
-  getProjectId(
-    callback?: Callback<string, undefined, undefined>
-  ): Promise<string> | void {
+  getProjectId(callback?: Callback<string, undefined, undefined>):
+      Promise<string>|void {
     if (callback) {
       this.auth.getProjectId(callback);
       return;
@@ -344,182 +295,169 @@ export class SubscriberClient {
   // -- Service calls --
   // -------------------
   createSubscription(
-    request: protos.google.pubsub.v1.ISubscription,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.ISubscription | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.ISubscription,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.pubsub.v1.ISubscription,
+        protos.google.pubsub.v1.ISubscription|undefined, {}|undefined
+      ]>;
   createSubscription(
-    request: protos.google.pubsub.v1.ISubscription,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.ISubscription | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  createSubscription(
-    request: protos.google.pubsub.v1.ISubscription,
-    callback: Callback<
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.ISubscription | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Creates a subscription to a given topic. See the
-   * <a href="https://cloud.google.com/pubsub/docs/admin#resource_names">
-   * resource name rules</a>.
-   * If the subscription already exists, returns `ALREADY_EXISTS`.
-   * If the corresponding topic doesn't exist, returns `NOT_FOUND`.
-   *
-   * If the name is not provided in the request, the server will assign a random
-   * name for this subscription on the same project as the topic, conforming
-   * to the
-   * [resource name
-   * format](https://cloud.google.com/pubsub/docs/admin#resource_names). The
-   * generated name is populated in the returned Subscription object. Note that
-   * for REST API requests, you must specify a name in the request.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.name
-   *   Required. The name of the subscription. It must have the format
-   *   `"projects/{project}/subscriptions/{subscription}"`. `{subscription}` must
-   *   start with a letter, and contain only letters (`[A-Za-z]`), numbers
-   *   (`[0-9]`), dashes (`-`), underscores (`_`), periods (`.`), tildes (`~`),
-   *   plus (`+`) or percent signs (`%`). It must be between 3 and 255 characters
-   *   in length, and it must not start with `"goog"`.
-   * @param {string} request.topic
-   *   Required. The name of the topic from which this subscription is receiving
-   *   messages. Format is `projects/{project}/topics/{topic}`. The value of this
-   *   field will be `_deleted-topic_` if the topic has been deleted.
-   * @param {google.pubsub.v1.PushConfig} request.pushConfig
-   *   If push delivery is used with this subscription, this field is
-   *   used to configure it. An empty `pushConfig` signifies that the subscriber
-   *   will pull and ack messages using API methods.
-   * @param {number} request.ackDeadlineSeconds
-   *   The approximate amount of time (on a best-effort basis) Pub/Sub waits for
-   *   the subscriber to acknowledge receipt before resending the message. In the
-   *   interval after the message is delivered and before it is acknowledged, it
-   *   is considered to be <i>outstanding</i>. During that time period, the
-   *   message will not be redelivered (on a best-effort basis).
-   *
-   *   For pull subscriptions, this value is used as the initial value for the ack
-   *   deadline. To override this value for a given message, call
-   *   `ModifyAckDeadline` with the corresponding `ack_id` if using
-   *   non-streaming pull or send the `ack_id` in a
-   *   `StreamingModifyAckDeadlineRequest` if using streaming pull.
-   *   The minimum custom deadline you can specify is 10 seconds.
-   *   The maximum custom deadline you can specify is 600 seconds (10 minutes).
-   *   If this parameter is 0, a default value of 10 seconds is used.
-   *
-   *   For push delivery, this value is also used to set the request timeout for
-   *   the call to the push endpoint.
-   *
-   *   If the subscriber never acknowledges the message, the Pub/Sub
-   *   system will eventually redeliver the message.
-   * @param {boolean} request.retainAckedMessages
-   *   Indicates whether to retain acknowledged messages. If true, then
-   *   messages are not expunged from the subscription's backlog, even if they are
-   *   acknowledged, until they fall out of the `message_retention_duration`
-   *   window. This must be true if you would like to
-   *   <a
-   *   href="https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time">
-   *   Seek to a timestamp</a>.
-   * @param {google.protobuf.Duration} request.messageRetentionDuration
-   *   How long to retain unacknowledged messages in the subscription's backlog,
-   *   from the moment a message is published.
-   *   If `retain_acked_messages` is true, then this also configures the retention
-   *   of acknowledged messages, and thus configures how far back in time a `Seek`
-   *   can be done. Defaults to 7 days. Cannot be more than 7 days or less than 10
-   *   minutes.
-   * @param {number[]} request.labels
-   *   See <a href="https://cloud.google.com/pubsub/docs/labels"> Creating and
-   *   managing labels</a>.
-   * @param {boolean} request.enableMessageOrdering
-   *   If true, messages published with the same `ordering_key` in `PubsubMessage`
-   *   will be delivered to the subscribers in the order in which they
-   *   are received by the Pub/Sub system. Otherwise, they may be delivered in
-   *   any order.
-   *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
-   *   API might be changed in backward-incompatible ways and is not recommended
-   *   for production use. It is not subject to any SLA or deprecation policy.
-   * @param {google.pubsub.v1.ExpirationPolicy} request.expirationPolicy
-   *   A policy that specifies the conditions for this subscription's expiration.
-   *   A subscription is considered active as long as any connected subscriber is
-   *   successfully consuming messages from the subscription or is issuing
-   *   operations on the subscription. If `expiration_policy` is not set, a
-   *   *default policy* with `ttl` of 31 days will be used. The minimum allowed
-   *   value for `expiration_policy.ttl` is 1 day.
-   * @param {string} request.filter
-   *   An expression written in the Cloud Pub/Sub filter language. If non-empty,
-   *   then only `PubsubMessage`s whose `attributes` field matches the filter are
-   *   delivered on this subscription. If empty, then no messages are filtered
-   *   out.
-   *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
-   *   API might be changed in backward-incompatible ways and is not recommended
-   *   for production use. It is not subject to any SLA or deprecation policy.
-   * @param {google.pubsub.v1.DeadLetterPolicy} request.deadLetterPolicy
-   *   A policy that specifies the conditions for dead lettering messages in
-   *   this subscription. If dead_letter_policy is not set, dead lettering
-   *   is disabled.
-   *
-   *   The Cloud Pub/Sub service account associated with this subscriptions's
-   *   parent project (i.e.,
-   *   service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have
-   *   permission to Acknowledge() messages on this subscription.
-   *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
-   *   API might be changed in backward-incompatible ways and is not recommended
-   *   for production use. It is not subject to any SLA or deprecation policy.
-   * @param {google.pubsub.v1.RetryPolicy} request.retryPolicy
-   *   A policy that specifies how Cloud Pub/Sub retries message delivery for this
-   *   subscription.
-   *
-   *   If not set, the default retry policy is applied. This generally implies
-   *   that messages will be retried as soon as possible for healthy subscribers.
-   *   RetryPolicy will be triggered on NACKs or acknowledgement deadline
-   *   exceeded events for a given message.
-   *   <b>EXPERIMENTAL:</b> This API might be changed in backward-incompatible
-   *   ways and is not recommended for production use. It is not subject to any
-   *   SLA or deprecation policy.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Subscription]{@link google.pubsub.v1.Subscription}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  createSubscription(
-    request: protos.google.pubsub.v1.ISubscription,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.ISubscription,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.pubsub.v1.ISubscription,
-          protos.google.pubsub.v1.ISubscription | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.ISubscription | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.ISubscription | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.ISubscription|null|undefined,
+          {}|null|undefined>): void;
+  createSubscription(
+      request: protos.google.pubsub.v1.ISubscription,
+      callback: Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.ISubscription|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Creates a subscription to a given topic. See the
+ * <a href="https://cloud.google.com/pubsub/docs/admin#resource_names">
+ * resource name rules</a>.
+ * If the subscription already exists, returns `ALREADY_EXISTS`.
+ * If the corresponding topic doesn't exist, returns `NOT_FOUND`.
+ *
+ * If the name is not provided in the request, the server will assign a random
+ * name for this subscription on the same project as the topic, conforming
+ * to the
+ * [resource name
+ * format](https://cloud.google.com/pubsub/docs/admin#resource_names). The
+ * generated name is populated in the returned Subscription object. Note that
+ * for REST API requests, you must specify a name in the request.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.name
+ *   Required. The name of the subscription. It must have the format
+ *   `"projects/{project}/subscriptions/{subscription}"`. `{subscription}` must
+ *   start with a letter, and contain only letters (`[A-Za-z]`), numbers
+ *   (`[0-9]`), dashes (`-`), underscores (`_`), periods (`.`), tildes (`~`),
+ *   plus (`+`) or percent signs (`%`). It must be between 3 and 255 characters
+ *   in length, and it must not start with `"goog"`.
+ * @param {string} request.topic
+ *   Required. The name of the topic from which this subscription is receiving
+ *   messages. Format is `projects/{project}/topics/{topic}`. The value of this
+ *   field will be `_deleted-topic_` if the topic has been deleted.
+ * @param {google.pubsub.v1.PushConfig} request.pushConfig
+ *   If push delivery is used with this subscription, this field is
+ *   used to configure it. An empty `pushConfig` signifies that the subscriber
+ *   will pull and ack messages using API methods.
+ * @param {number} request.ackDeadlineSeconds
+ *   The approximate amount of time (on a best-effort basis) Pub/Sub waits for
+ *   the subscriber to acknowledge receipt before resending the message. In the
+ *   interval after the message is delivered and before it is acknowledged, it
+ *   is considered to be <i>outstanding</i>. During that time period, the
+ *   message will not be redelivered (on a best-effort basis).
+ *
+ *   For pull subscriptions, this value is used as the initial value for the ack
+ *   deadline. To override this value for a given message, call
+ *   `ModifyAckDeadline` with the corresponding `ack_id` if using
+ *   non-streaming pull or send the `ack_id` in a
+ *   `StreamingModifyAckDeadlineRequest` if using streaming pull.
+ *   The minimum custom deadline you can specify is 10 seconds.
+ *   The maximum custom deadline you can specify is 600 seconds (10 minutes).
+ *   If this parameter is 0, a default value of 10 seconds is used.
+ *
+ *   For push delivery, this value is also used to set the request timeout for
+ *   the call to the push endpoint.
+ *
+ *   If the subscriber never acknowledges the message, the Pub/Sub
+ *   system will eventually redeliver the message.
+ * @param {boolean} request.retainAckedMessages
+ *   Indicates whether to retain acknowledged messages. If true, then
+ *   messages are not expunged from the subscription's backlog, even if they are
+ *   acknowledged, until they fall out of the `message_retention_duration`
+ *   window. This must be true if you would like to
+ *   <a
+ *   href="https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time">
+ *   Seek to a timestamp</a>.
+ * @param {google.protobuf.Duration} request.messageRetentionDuration
+ *   How long to retain unacknowledged messages in the subscription's backlog,
+ *   from the moment a message is published.
+ *   If `retain_acked_messages` is true, then this also configures the retention
+ *   of acknowledged messages, and thus configures how far back in time a `Seek`
+ *   can be done. Defaults to 7 days. Cannot be more than 7 days or less than 10
+ *   minutes.
+ * @param {number[]} request.labels
+ *   See <a href="https://cloud.google.com/pubsub/docs/labels"> Creating and
+ *   managing labels</a>.
+ * @param {boolean} request.enableMessageOrdering
+ *   If true, messages published with the same `ordering_key` in `PubsubMessage`
+ *   will be delivered to the subscribers in the order in which they
+ *   are received by the Pub/Sub system. Otherwise, they may be delivered in
+ *   any order.
+ *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+ *   API might be changed in backward-incompatible ways and is not recommended
+ *   for production use. It is not subject to any SLA or deprecation policy.
+ * @param {google.pubsub.v1.ExpirationPolicy} request.expirationPolicy
+ *   A policy that specifies the conditions for this subscription's expiration.
+ *   A subscription is considered active as long as any connected subscriber is
+ *   successfully consuming messages from the subscription or is issuing
+ *   operations on the subscription. If `expiration_policy` is not set, a
+ *   *default policy* with `ttl` of 31 days will be used. The minimum allowed
+ *   value for `expiration_policy.ttl` is 1 day.
+ * @param {string} request.filter
+ *   An expression written in the Cloud Pub/Sub filter language. If non-empty,
+ *   then only `PubsubMessage`s whose `attributes` field matches the filter are
+ *   delivered on this subscription. If empty, then no messages are filtered
+ *   out.
+ *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+ *   API might be changed in backward-incompatible ways and is not recommended
+ *   for production use. It is not subject to any SLA or deprecation policy.
+ * @param {google.pubsub.v1.DeadLetterPolicy} request.deadLetterPolicy
+ *   A policy that specifies the conditions for dead lettering messages in
+ *   this subscription. If dead_letter_policy is not set, dead lettering
+ *   is disabled.
+ *
+ *   The Cloud Pub/Sub service account associated with this subscriptions's
+ *   parent project (i.e.,
+ *   service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have
+ *   permission to Acknowledge() messages on this subscription.
+ *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
+ *   API might be changed in backward-incompatible ways and is not recommended
+ *   for production use. It is not subject to any SLA or deprecation policy.
+ * @param {google.pubsub.v1.RetryPolicy} request.retryPolicy
+ *   A policy that specifies how Cloud Pub/Sub retries message delivery for this
+ *   subscription.
+ *
+ *   If not set, the default retry policy is applied. This generally implies
+ *   that messages will be retried as soon as possible for healthy subscribers.
+ *   RetryPolicy will be triggered on NACKs or acknowledgement deadline
+ *   exceeded events for a given message.
+ *   <b>EXPERIMENTAL:</b> This API might be changed in backward-incompatible
+ *   ways and is not recommended for production use. It is not subject to any
+ *   SLA or deprecation policy.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [Subscription]{@link google.pubsub.v1.Subscription}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  createSubscription(
+      request: protos.google.pubsub.v1.ISubscription,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.ISubscription|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.ISubscription|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.pubsub.v1.ISubscription,
+        protos.google.pubsub.v1.ISubscription|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -528,79 +466,66 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      name: request.name || '',
+      'name': request.name || '',
     });
     this.initialize();
     return this.innerApiCalls.createSubscription(request, options, callback);
   }
   getSubscription(
-    request: protos.google.pubsub.v1.IGetSubscriptionRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.IGetSubscriptionRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.IGetSubscriptionRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.pubsub.v1.ISubscription,
+        protos.google.pubsub.v1.IGetSubscriptionRequest|undefined, {}|undefined
+      ]>;
   getSubscription(
-    request: protos.google.pubsub.v1.IGetSubscriptionRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  getSubscription(
-    request: protos.google.pubsub.v1.IGetSubscriptionRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Gets the configuration details of a subscription.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.subscription
-   *   Required. The name of the subscription to get.
-   *   Format is `projects/{project}/subscriptions/{sub}`.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Subscription]{@link google.pubsub.v1.Subscription}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  getSubscription(
-    request: protos.google.pubsub.v1.IGetSubscriptionRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.IGetSubscriptionRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.pubsub.v1.ISubscription,
-          protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.IGetSubscriptionRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.IGetSubscriptionRequest|null|undefined,
+          {}|null|undefined>): void;
+  getSubscription(
+      request: protos.google.pubsub.v1.IGetSubscriptionRequest,
+      callback: Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IGetSubscriptionRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Gets the configuration details of a subscription.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.subscription
+ *   Required. The name of the subscription to get.
+ *   Format is `projects/{project}/subscriptions/{sub}`.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [Subscription]{@link google.pubsub.v1.Subscription}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  getSubscription(
+      request: protos.google.pubsub.v1.IGetSubscriptionRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IGetSubscriptionRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IGetSubscriptionRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.pubsub.v1.ISubscription,
+        protos.google.pubsub.v1.IGetSubscriptionRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -609,82 +534,69 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      subscription: request.subscription || '',
+      'subscription': request.subscription || '',
     });
     this.initialize();
     return this.innerApiCalls.getSubscription(request, options, callback);
   }
   updateSubscription(
-    request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.IUpdateSubscriptionRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.pubsub.v1.ISubscription,
+        protos.google.pubsub.v1.IUpdateSubscriptionRequest|undefined, {}|undefined
+      ]>;
   updateSubscription(
-    request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  updateSubscription(
-    request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Updates an existing subscription. Note that certain properties of a
-   * subscription, such as its topic, are not modifiable.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {google.pubsub.v1.Subscription} request.subscription
-   *   Required. The updated subscription object.
-   * @param {google.protobuf.FieldMask} request.updateMask
-   *   Required. Indicates which fields in the provided subscription to update.
-   *   Must be specified and non-empty.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Subscription]{@link google.pubsub.v1.Subscription}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  updateSubscription(
-    request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.pubsub.v1.ISubscription,
-          protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISubscription,
-      protos.google.pubsub.v1.IUpdateSubscriptionRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.IUpdateSubscriptionRequest|null|undefined,
+          {}|null|undefined>): void;
+  updateSubscription(
+      request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
+      callback: Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IUpdateSubscriptionRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Updates an existing subscription. Note that certain properties of a
+ * subscription, such as its topic, are not modifiable.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {google.pubsub.v1.Subscription} request.subscription
+ *   Required. The updated subscription object.
+ * @param {google.protobuf.FieldMask} request.updateMask
+ *   Required. Indicates which fields in the provided subscription to update.
+ *   Must be specified and non-empty.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [Subscription]{@link google.pubsub.v1.Subscription}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  updateSubscription(
+      request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IUpdateSubscriptionRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IUpdateSubscriptionRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.pubsub.v1.ISubscription,
+        protos.google.pubsub.v1.IUpdateSubscriptionRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -699,77 +611,64 @@ export class SubscriberClient {
     return this.innerApiCalls.updateSubscription(request, options, callback);
   }
   deleteSubscription(
-    request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteSubscriptionRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.protobuf.IEmpty,
+        protos.google.pubsub.v1.IDeleteSubscriptionRequest|undefined, {}|undefined
+      ]>;
   deleteSubscription(
-    request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  deleteSubscription(
-    request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
-    callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Deletes an existing subscription. All messages retained in the subscription
-   * are immediately dropped. Calls to `Pull` after deletion will return
-   * `NOT_FOUND`. After a subscription is deleted, a new one may be created with
-   * the same name, but the new one has no association with the old
-   * subscription or its topic unless the same topic is specified.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.subscription
-   *   Required. The subscription to delete.
-   *   Format is `projects/{project}/subscriptions/{sub}`.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  deleteSubscription(
-    request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.protobuf.IEmpty,
-          protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteSubscriptionRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.IDeleteSubscriptionRequest|null|undefined,
+          {}|null|undefined>): void;
+  deleteSubscription(
+      request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
+      callback: Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSubscriptionRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Deletes an existing subscription. All messages retained in the subscription
+ * are immediately dropped. Calls to `Pull` after deletion will return
+ * `NOT_FOUND`. After a subscription is deleted, a new one may be created with
+ * the same name, but the new one has no association with the old
+ * subscription or its topic unless the same topic is specified.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.subscription
+ *   Required. The subscription to delete.
+ *   Format is `projects/{project}/subscriptions/{sub}`.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  deleteSubscription(
+      request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSubscriptionRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSubscriptionRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.protobuf.IEmpty,
+        protos.google.pubsub.v1.IDeleteSubscriptionRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -778,94 +677,81 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      subscription: request.subscription || '',
+      'subscription': request.subscription || '',
     });
     this.initialize();
     return this.innerApiCalls.deleteSubscription(request, options, callback);
   }
   modifyAckDeadline(
-    request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IModifyAckDeadlineRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.protobuf.IEmpty,
+        protos.google.pubsub.v1.IModifyAckDeadlineRequest|undefined, {}|undefined
+      ]>;
   modifyAckDeadline(
-    request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  modifyAckDeadline(
-    request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
-    callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Modifies the ack deadline for a specific message. This method is useful
-   * to indicate that more time is needed to process a message by the
-   * subscriber, or to make the message available for redelivery if the
-   * processing was interrupted. Note that this does not modify the
-   * subscription-level `ackDeadlineSeconds` used for subsequent messages.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.subscription
-   *   Required. The name of the subscription.
-   *   Format is `projects/{project}/subscriptions/{sub}`.
-   * @param {string[]} request.ackIds
-   *   Required. List of acknowledgment IDs.
-   * @param {number} request.ackDeadlineSeconds
-   *   Required. The new ack deadline with respect to the time this request was
-   *   sent to the Pub/Sub system. For example, if the value is 10, the new ack
-   *   deadline will expire 10 seconds after the `ModifyAckDeadline` call was
-   *   made. Specifying zero might immediately make the message available for
-   *   delivery to another subscriber client. This typically results in an
-   *   increase in the rate of message redeliveries (that is, duplicates).
-   *   The minimum deadline you can specify is 0 seconds.
-   *   The maximum deadline you can specify is 600 seconds (10 minutes).
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  modifyAckDeadline(
-    request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.protobuf.IEmpty,
-          protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IModifyAckDeadlineRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.IModifyAckDeadlineRequest|null|undefined,
+          {}|null|undefined>): void;
+  modifyAckDeadline(
+      request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
+      callback: Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyAckDeadlineRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Modifies the ack deadline for a specific message. This method is useful
+ * to indicate that more time is needed to process a message by the
+ * subscriber, or to make the message available for redelivery if the
+ * processing was interrupted. Note that this does not modify the
+ * subscription-level `ackDeadlineSeconds` used for subsequent messages.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.subscription
+ *   Required. The name of the subscription.
+ *   Format is `projects/{project}/subscriptions/{sub}`.
+ * @param {string[]} request.ackIds
+ *   Required. List of acknowledgment IDs.
+ * @param {number} request.ackDeadlineSeconds
+ *   Required. The new ack deadline with respect to the time this request was
+ *   sent to the Pub/Sub system. For example, if the value is 10, the new ack
+ *   deadline will expire 10 seconds after the `ModifyAckDeadline` call was
+ *   made. Specifying zero might immediately make the message available for
+ *   delivery to another subscriber client. This typically results in an
+ *   increase in the rate of message redeliveries (that is, duplicates).
+ *   The minimum deadline you can specify is 0 seconds.
+ *   The maximum deadline you can specify is 600 seconds (10 minutes).
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  modifyAckDeadline(
+      request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyAckDeadlineRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyAckDeadlineRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.protobuf.IEmpty,
+        protos.google.pubsub.v1.IModifyAckDeadlineRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -874,89 +760,76 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      subscription: request.subscription || '',
+      'subscription': request.subscription || '',
     });
     this.initialize();
     return this.innerApiCalls.modifyAckDeadline(request, options, callback);
   }
   acknowledge(
-    request: protos.google.pubsub.v1.IAcknowledgeRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IAcknowledgeRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.IAcknowledgeRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.protobuf.IEmpty,
+        protos.google.pubsub.v1.IAcknowledgeRequest|undefined, {}|undefined
+      ]>;
   acknowledge(
-    request: protos.google.pubsub.v1.IAcknowledgeRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  acknowledge(
-    request: protos.google.pubsub.v1.IAcknowledgeRequest,
-    callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Acknowledges the messages associated with the `ack_ids` in the
-   * `AcknowledgeRequest`. The Pub/Sub system can remove the relevant messages
-   * from the subscription.
-   *
-   * Acknowledging a message whose ack deadline has expired may succeed,
-   * but such a message may be redelivered later. Acknowledging a message more
-   * than once will not result in an error.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.subscription
-   *   Required. The subscription whose message is being acknowledged.
-   *   Format is `projects/{project}/subscriptions/{sub}`.
-   * @param {string[]} request.ackIds
-   *   Required. The acknowledgment ID for the messages being acknowledged that
-   *   was returned by the Pub/Sub system in the `Pull` response. Must not be
-   *   empty.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  acknowledge(
-    request: protos.google.pubsub.v1.IAcknowledgeRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.IAcknowledgeRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.protobuf.IEmpty,
-          protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IAcknowledgeRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.IAcknowledgeRequest|null|undefined,
+          {}|null|undefined>): void;
+  acknowledge(
+      request: protos.google.pubsub.v1.IAcknowledgeRequest,
+      callback: Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IAcknowledgeRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Acknowledges the messages associated with the `ack_ids` in the
+ * `AcknowledgeRequest`. The Pub/Sub system can remove the relevant messages
+ * from the subscription.
+ *
+ * Acknowledging a message whose ack deadline has expired may succeed,
+ * but such a message may be redelivered later. Acknowledging a message more
+ * than once will not result in an error.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.subscription
+ *   Required. The subscription whose message is being acknowledged.
+ *   Format is `projects/{project}/subscriptions/{sub}`.
+ * @param {string[]} request.ackIds
+ *   Required. The acknowledgment ID for the messages being acknowledged that
+ *   was returned by the Pub/Sub system in the `Pull` response. Must not be
+ *   empty.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  acknowledge(
+      request: protos.google.pubsub.v1.IAcknowledgeRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IAcknowledgeRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IAcknowledgeRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.protobuf.IEmpty,
+        protos.google.pubsub.v1.IAcknowledgeRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -965,93 +838,80 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      subscription: request.subscription || '',
+      'subscription': request.subscription || '',
     });
     this.initialize();
     return this.innerApiCalls.acknowledge(request, options, callback);
   }
   pull(
-    request: protos.google.pubsub.v1.IPullRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.IPullResponse,
-      protos.google.pubsub.v1.IPullRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.IPullRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.pubsub.v1.IPullResponse,
+        protos.google.pubsub.v1.IPullRequest|undefined, {}|undefined
+      ]>;
   pull(
-    request: protos.google.pubsub.v1.IPullRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.IPullResponse,
-      protos.google.pubsub.v1.IPullRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  pull(
-    request: protos.google.pubsub.v1.IPullRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.IPullResponse,
-      protos.google.pubsub.v1.IPullRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Pulls messages from the server. The server may return `UNAVAILABLE` if
-   * there are too many concurrent pull requests pending for the given
-   * subscription.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.subscription
-   *   Required. The subscription from which messages should be pulled.
-   *   Format is `projects/{project}/subscriptions/{sub}`.
-   * @param {boolean} [request.returnImmediately]
-   *   Optional. If this field set to true, the system will respond immediately
-   *   even if it there are no messages available to return in the `Pull`
-   *   response. Otherwise, the system may wait (for a bounded amount of time)
-   *   until at least one message is available, rather than returning no messages.
-   *   Warning: setting this field to `true` is discouraged because it adversely
-   *   impacts the performance of `Pull` operations. We recommend that users do
-   *   not set this field.
-   * @param {number} request.maxMessages
-   *   Required. The maximum number of messages to return for this request. Must
-   *   be a positive integer. The Pub/Sub system may return fewer than the number
-   *   specified.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [PullResponse]{@link google.pubsub.v1.PullResponse}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  pull(
-    request: protos.google.pubsub.v1.IPullRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.IPullRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.pubsub.v1.IPullResponse,
-          protos.google.pubsub.v1.IPullRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.pubsub.v1.IPullResponse,
-      protos.google.pubsub.v1.IPullRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.IPullResponse,
-      protos.google.pubsub.v1.IPullRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.IPullRequest|null|undefined,
+          {}|null|undefined>): void;
+  pull(
+      request: protos.google.pubsub.v1.IPullRequest,
+      callback: Callback<
+          protos.google.pubsub.v1.IPullResponse,
+          protos.google.pubsub.v1.IPullRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Pulls messages from the server. The server may return `UNAVAILABLE` if
+ * there are too many concurrent pull requests pending for the given
+ * subscription.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.subscription
+ *   Required. The subscription from which messages should be pulled.
+ *   Format is `projects/{project}/subscriptions/{sub}`.
+ * @param {boolean} [request.returnImmediately]
+ *   Optional. If this field set to true, the system will respond immediately
+ *   even if it there are no messages available to return in the `Pull`
+ *   response. Otherwise, the system may wait (for a bounded amount of time)
+ *   until at least one message is available, rather than returning no messages.
+ *   Warning: setting this field to `true` is discouraged because it adversely
+ *   impacts the performance of `Pull` operations. We recommend that users do
+ *   not set this field.
+ * @param {number} request.maxMessages
+ *   Required. The maximum number of messages to return for this request. Must
+ *   be a positive integer. The Pub/Sub system may return fewer than the number
+ *   specified.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [PullResponse]{@link google.pubsub.v1.PullResponse}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  pull(
+      request: protos.google.pubsub.v1.IPullRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.pubsub.v1.IPullResponse,
+          protos.google.pubsub.v1.IPullRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.pubsub.v1.IPullResponse,
+          protos.google.pubsub.v1.IPullRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.pubsub.v1.IPullResponse,
+        protos.google.pubsub.v1.IPullRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -1060,91 +920,78 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      subscription: request.subscription || '',
+      'subscription': request.subscription || '',
     });
     this.initialize();
     return this.innerApiCalls.pull(request, options, callback);
   }
   modifyPushConfig(
-    request: protos.google.pubsub.v1.IModifyPushConfigRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IModifyPushConfigRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.IModifyPushConfigRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.protobuf.IEmpty,
+        protos.google.pubsub.v1.IModifyPushConfigRequest|undefined, {}|undefined
+      ]>;
   modifyPushConfig(
-    request: protos.google.pubsub.v1.IModifyPushConfigRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  modifyPushConfig(
-    request: protos.google.pubsub.v1.IModifyPushConfigRequest,
-    callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Modifies the `PushConfig` for a specified subscription.
-   *
-   * This may be used to change a push subscription to a pull one (signified by
-   * an empty `PushConfig`) or vice versa, or change the endpoint URL and other
-   * attributes of a push subscription. Messages will accumulate for delivery
-   * continuously through the call regardless of changes to the `PushConfig`.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.subscription
-   *   Required. The name of the subscription.
-   *   Format is `projects/{project}/subscriptions/{sub}`.
-   * @param {google.pubsub.v1.PushConfig} request.pushConfig
-   *   Required. The push configuration for future deliveries.
-   *
-   *   An empty `pushConfig` indicates that the Pub/Sub system should
-   *   stop pushing messages from the given subscription and allow
-   *   messages to be pulled and acknowledged - effectively pausing
-   *   the subscription if `Pull` or `StreamingPull` is not called.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  modifyPushConfig(
-    request: protos.google.pubsub.v1.IModifyPushConfigRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.IModifyPushConfigRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.protobuf.IEmpty,
-          protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IModifyPushConfigRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.IModifyPushConfigRequest|null|undefined,
+          {}|null|undefined>): void;
+  modifyPushConfig(
+      request: protos.google.pubsub.v1.IModifyPushConfigRequest,
+      callback: Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyPushConfigRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Modifies the `PushConfig` for a specified subscription.
+ *
+ * This may be used to change a push subscription to a pull one (signified by
+ * an empty `PushConfig`) or vice versa, or change the endpoint URL and other
+ * attributes of a push subscription. Messages will accumulate for delivery
+ * continuously through the call regardless of changes to the `PushConfig`.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.subscription
+ *   Required. The name of the subscription.
+ *   Format is `projects/{project}/subscriptions/{sub}`.
+ * @param {google.pubsub.v1.PushConfig} request.pushConfig
+ *   Required. The push configuration for future deliveries.
+ *
+ *   An empty `pushConfig` indicates that the Pub/Sub system should
+ *   stop pushing messages from the given subscription and allow
+ *   messages to be pulled and acknowledged - effectively pausing
+ *   the subscription if `Pull` or `StreamingPull` is not called.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  modifyPushConfig(
+      request: protos.google.pubsub.v1.IModifyPushConfigRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyPushConfigRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyPushConfigRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.protobuf.IEmpty,
+        protos.google.pubsub.v1.IModifyPushConfigRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -1153,83 +1000,70 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      subscription: request.subscription || '',
+      'subscription': request.subscription || '',
     });
     this.initialize();
     return this.innerApiCalls.modifyPushConfig(request, options, callback);
   }
   getSnapshot(
-    request: protos.google.pubsub.v1.IGetSnapshotRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.IGetSnapshotRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.IGetSnapshotRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.pubsub.v1.ISnapshot,
+        protos.google.pubsub.v1.IGetSnapshotRequest|undefined, {}|undefined
+      ]>;
   getSnapshot(
-    request: protos.google.pubsub.v1.IGetSnapshotRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  getSnapshot(
-    request: protos.google.pubsub.v1.IGetSnapshotRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Gets the configuration details of a snapshot. Snapshots are used in
-   * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
-   * operations, which allow you to manage message acknowledgments in bulk. That
-   * is, you can set the acknowledgment state of messages in an existing
-   * subscription to the state captured by a snapshot.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.snapshot
-   *   Required. The name of the snapshot to get.
-   *   Format is `projects/{project}/snapshots/{snap}`.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Snapshot]{@link google.pubsub.v1.Snapshot}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  getSnapshot(
-    request: protos.google.pubsub.v1.IGetSnapshotRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.IGetSnapshotRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.pubsub.v1.ISnapshot,
-          protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.IGetSnapshotRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.IGetSnapshotRequest|null|undefined,
+          {}|null|undefined>): void;
+  getSnapshot(
+      request: protos.google.pubsub.v1.IGetSnapshotRequest,
+      callback: Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IGetSnapshotRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Gets the configuration details of a snapshot. Snapshots are used in
+ * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
+ * operations, which allow you to manage message acknowledgments in bulk. That
+ * is, you can set the acknowledgment state of messages in an existing
+ * subscription to the state captured by a snapshot.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.snapshot
+ *   Required. The name of the snapshot to get.
+ *   Format is `projects/{project}/snapshots/{snap}`.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [Snapshot]{@link google.pubsub.v1.Snapshot}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  getSnapshot(
+      request: protos.google.pubsub.v1.IGetSnapshotRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IGetSnapshotRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IGetSnapshotRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.pubsub.v1.ISnapshot,
+        protos.google.pubsub.v1.IGetSnapshotRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -1238,113 +1072,100 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      snapshot: request.snapshot || '',
+      'snapshot': request.snapshot || '',
     });
     this.initialize();
     return this.innerApiCalls.getSnapshot(request, options, callback);
   }
   createSnapshot(
-    request: protos.google.pubsub.v1.ICreateSnapshotRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.ICreateSnapshotRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.ICreateSnapshotRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.pubsub.v1.ISnapshot,
+        protos.google.pubsub.v1.ICreateSnapshotRequest|undefined, {}|undefined
+      ]>;
   createSnapshot(
-    request: protos.google.pubsub.v1.ICreateSnapshotRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  createSnapshot(
-    request: protos.google.pubsub.v1.ICreateSnapshotRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Creates a snapshot from the requested subscription. Snapshots are used in
-   * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
-   * operations, which allow
-   * you to manage message acknowledgments in bulk. That is, you can set the
-   * acknowledgment state of messages in an existing subscription to the state
-   * captured by a snapshot.
-   * <br><br>If the snapshot already exists, returns `ALREADY_EXISTS`.
-   * If the requested subscription doesn't exist, returns `NOT_FOUND`.
-   * If the backlog in the subscription is too old -- and the resulting snapshot
-   * would expire in less than 1 hour -- then `FAILED_PRECONDITION` is returned.
-   * See also the `Snapshot.expire_time` field. If the name is not provided in
-   * the request, the server will assign a random
-   * name for this snapshot on the same project as the subscription, conforming
-   * to the
-   * [resource name
-   * format](https://cloud.google.com/pubsub/docs/admin#resource_names). The
-   * generated name is populated in the returned Snapshot object. Note that for
-   * REST API requests, you must specify a name in the request.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.name
-   *   Required. User-provided name for this snapshot. If the name is not provided
-   *   in the request, the server will assign a random name for this snapshot on
-   *   the same project as the subscription. Note that for REST API requests, you
-   *   must specify a name.  See the <a
-   *   href="https://cloud.google.com/pubsub/docs/admin#resource_names"> resource
-   *   name rules</a>. Format is `projects/{project}/snapshots/{snap}`.
-   * @param {string} request.subscription
-   *   Required. The subscription whose backlog the snapshot retains.
-   *   Specifically, the created snapshot is guaranteed to retain:
-   *    (a) The existing backlog on the subscription. More precisely, this is
-   *        defined as the messages in the subscription's backlog that are
-   *        unacknowledged upon the successful completion of the
-   *        `CreateSnapshot` request; as well as:
-   *    (b) Any messages published to the subscription's topic following the
-   *        successful completion of the CreateSnapshot request.
-   *   Format is `projects/{project}/subscriptions/{sub}`.
-   * @param {number[]} request.labels
-   *   See <a href="https://cloud.google.com/pubsub/docs/labels"> Creating and
-   *   managing labels</a>.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Snapshot]{@link google.pubsub.v1.Snapshot}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  createSnapshot(
-    request: protos.google.pubsub.v1.ICreateSnapshotRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.ICreateSnapshotRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.pubsub.v1.ISnapshot,
-          protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.ICreateSnapshotRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.ICreateSnapshotRequest|null|undefined,
+          {}|null|undefined>): void;
+  createSnapshot(
+      request: protos.google.pubsub.v1.ICreateSnapshotRequest,
+      callback: Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.ICreateSnapshotRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Creates a snapshot from the requested subscription. Snapshots are used in
+ * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
+ * operations, which allow
+ * you to manage message acknowledgments in bulk. That is, you can set the
+ * acknowledgment state of messages in an existing subscription to the state
+ * captured by a snapshot.
+ * <br><br>If the snapshot already exists, returns `ALREADY_EXISTS`.
+ * If the requested subscription doesn't exist, returns `NOT_FOUND`.
+ * If the backlog in the subscription is too old -- and the resulting snapshot
+ * would expire in less than 1 hour -- then `FAILED_PRECONDITION` is returned.
+ * See also the `Snapshot.expire_time` field. If the name is not provided in
+ * the request, the server will assign a random
+ * name for this snapshot on the same project as the subscription, conforming
+ * to the
+ * [resource name
+ * format](https://cloud.google.com/pubsub/docs/admin#resource_names). The
+ * generated name is populated in the returned Snapshot object. Note that for
+ * REST API requests, you must specify a name in the request.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.name
+ *   Required. User-provided name for this snapshot. If the name is not provided
+ *   in the request, the server will assign a random name for this snapshot on
+ *   the same project as the subscription. Note that for REST API requests, you
+ *   must specify a name.  See the <a
+ *   href="https://cloud.google.com/pubsub/docs/admin#resource_names"> resource
+ *   name rules</a>. Format is `projects/{project}/snapshots/{snap}`.
+ * @param {string} request.subscription
+ *   Required. The subscription whose backlog the snapshot retains.
+ *   Specifically, the created snapshot is guaranteed to retain:
+ *    (a) The existing backlog on the subscription. More precisely, this is
+ *        defined as the messages in the subscription's backlog that are
+ *        unacknowledged upon the successful completion of the
+ *        `CreateSnapshot` request; as well as:
+ *    (b) Any messages published to the subscription's topic following the
+ *        successful completion of the CreateSnapshot request.
+ *   Format is `projects/{project}/subscriptions/{sub}`.
+ * @param {number[]} request.labels
+ *   See <a href="https://cloud.google.com/pubsub/docs/labels"> Creating and
+ *   managing labels</a>.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [Snapshot]{@link google.pubsub.v1.Snapshot}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  createSnapshot(
+      request: protos.google.pubsub.v1.ICreateSnapshotRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.ICreateSnapshotRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.ICreateSnapshotRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.pubsub.v1.ISnapshot,
+        protos.google.pubsub.v1.ICreateSnapshotRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -1353,86 +1174,73 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      name: request.name || '',
+      'name': request.name || '',
     });
     this.initialize();
     return this.innerApiCalls.createSnapshot(request, options, callback);
   }
   updateSnapshot(
-    request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.IUpdateSnapshotRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.pubsub.v1.ISnapshot,
+        protos.google.pubsub.v1.IUpdateSnapshotRequest|undefined, {}|undefined
+      ]>;
   updateSnapshot(
-    request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  updateSnapshot(
-    request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Updates an existing snapshot. Snapshots are used in
-   * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
-   * operations, which allow
-   * you to manage message acknowledgments in bulk. That is, you can set the
-   * acknowledgment state of messages in an existing subscription to the state
-   * captured by a snapshot.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {google.pubsub.v1.Snapshot} request.snapshot
-   *   Required. The updated snapshot object.
-   * @param {google.protobuf.FieldMask} request.updateMask
-   *   Required. Indicates which fields in the provided snapshot to update.
-   *   Must be specified and non-empty.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Snapshot]{@link google.pubsub.v1.Snapshot}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  updateSnapshot(
-    request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.pubsub.v1.ISnapshot,
-          protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISnapshot,
-      protos.google.pubsub.v1.IUpdateSnapshotRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.IUpdateSnapshotRequest|null|undefined,
+          {}|null|undefined>): void;
+  updateSnapshot(
+      request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
+      callback: Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IUpdateSnapshotRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Updates an existing snapshot. Snapshots are used in
+ * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
+ * operations, which allow
+ * you to manage message acknowledgments in bulk. That is, you can set the
+ * acknowledgment state of messages in an existing subscription to the state
+ * captured by a snapshot.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {google.pubsub.v1.Snapshot} request.snapshot
+ *   Required. The updated snapshot object.
+ * @param {google.protobuf.FieldMask} request.updateMask
+ *   Required. Indicates which fields in the provided snapshot to update.
+ *   Must be specified and non-empty.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [Snapshot]{@link google.pubsub.v1.Snapshot}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  updateSnapshot(
+      request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IUpdateSnapshotRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IUpdateSnapshotRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.pubsub.v1.ISnapshot,
+        protos.google.pubsub.v1.IUpdateSnapshotRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -1447,82 +1255,69 @@ export class SubscriberClient {
     return this.innerApiCalls.updateSnapshot(request, options, callback);
   }
   deleteSnapshot(
-    request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteSnapshotRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.protobuf.IEmpty,
+        protos.google.pubsub.v1.IDeleteSnapshotRequest|undefined, {}|undefined
+      ]>;
   deleteSnapshot(
-    request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  deleteSnapshot(
-    request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
-    callback: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Removes an existing snapshot. Snapshots are used in
-   * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
-   * operations, which allow
-   * you to manage message acknowledgments in bulk. That is, you can set the
-   * acknowledgment state of messages in an existing subscription to the state
-   * captured by a snapshot.<br><br>
-   * When the snapshot is deleted, all messages retained in the snapshot
-   * are immediately dropped. After a snapshot is deleted, a new one may be
-   * created with the same name, but the new one has no association with the old
-   * snapshot or its subscription, unless the same subscription is specified.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.snapshot
-   *   Required. The name of the snapshot to delete.
-   *   Format is `projects/{project}/snapshots/{snap}`.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  deleteSnapshot(
-    request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.protobuf.IEmpty,
-          protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteSnapshotRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.IDeleteSnapshotRequest|null|undefined,
+          {}|null|undefined>): void;
+  deleteSnapshot(
+      request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
+      callback: Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSnapshotRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Removes an existing snapshot. Snapshots are used in
+ * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
+ * operations, which allow
+ * you to manage message acknowledgments in bulk. That is, you can set the
+ * acknowledgment state of messages in an existing subscription to the state
+ * captured by a snapshot.<br><br>
+ * When the snapshot is deleted, all messages retained in the snapshot
+ * are immediately dropped. After a snapshot is deleted, a new one may be
+ * created with the same name, but the new one has no association with the old
+ * snapshot or its subscription, unless the same subscription is specified.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.snapshot
+ *   Required. The name of the snapshot to delete.
+ *   Format is `projects/{project}/snapshots/{snap}`.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  deleteSnapshot(
+      request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSnapshotRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSnapshotRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.protobuf.IEmpty,
+        protos.google.pubsub.v1.IDeleteSnapshotRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -1531,101 +1326,88 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      snapshot: request.snapshot || '',
+      'snapshot': request.snapshot || '',
     });
     this.initialize();
     return this.innerApiCalls.deleteSnapshot(request, options, callback);
   }
   seek(
-    request: protos.google.pubsub.v1.ISeekRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISeekResponse,
-      protos.google.pubsub.v1.ISeekRequest | undefined,
-      {} | undefined
-    ]
-  >;
+      request: protos.google.pubsub.v1.ISeekRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.pubsub.v1.ISeekResponse,
+        protos.google.pubsub.v1.ISeekRequest|undefined, {}|undefined
+      ]>;
   seek(
-    request: protos.google.pubsub.v1.ISeekRequest,
-    options: gax.CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.ISeekResponse,
-      protos.google.pubsub.v1.ISeekRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  seek(
-    request: protos.google.pubsub.v1.ISeekRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.ISeekResponse,
-      protos.google.pubsub.v1.ISeekRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Seeks an existing subscription to a point in time or to a given snapshot,
-   * whichever is provided in the request. Snapshots are used in
-   * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
-   * operations, which allow
-   * you to manage message acknowledgments in bulk. That is, you can set the
-   * acknowledgment state of messages in an existing subscription to the state
-   * captured by a snapshot. Note that both the subscription and the snapshot
-   * must be on the same topic.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.subscription
-   *   Required. The subscription to affect.
-   * @param {google.protobuf.Timestamp} request.time
-   *   The time to seek to.
-   *   Messages retained in the subscription that were published before this
-   *   time are marked as acknowledged, and messages retained in the
-   *   subscription that were published after this time are marked as
-   *   unacknowledged. Note that this operation affects only those messages
-   *   retained in the subscription (configured by the combination of
-   *   `message_retention_duration` and `retain_acked_messages`). For example,
-   *   if `time` corresponds to a point before the message retention
-   *   window (or to a point before the system's notion of the subscription
-   *   creation time), only retained messages will be marked as unacknowledged,
-   *   and already-expunged messages will not be restored.
-   * @param {string} request.snapshot
-   *   The snapshot to seek to. The snapshot's topic must be the same as that of
-   *   the provided subscription.
-   *   Format is `projects/{project}/snapshots/{snap}`.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [SeekResponse]{@link google.pubsub.v1.SeekResponse}.
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  seek(
-    request: protos.google.pubsub.v1.ISeekRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | Callback<
+      request: protos.google.pubsub.v1.ISeekRequest,
+      options: gax.CallOptions,
+      callback: Callback<
           protos.google.pubsub.v1.ISeekResponse,
-          protos.google.pubsub.v1.ISeekRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.pubsub.v1.ISeekResponse,
-      protos.google.pubsub.v1.ISeekRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISeekResponse,
-      protos.google.pubsub.v1.ISeekRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
+          protos.google.pubsub.v1.ISeekRequest|null|undefined,
+          {}|null|undefined>): void;
+  seek(
+      request: protos.google.pubsub.v1.ISeekRequest,
+      callback: Callback<
+          protos.google.pubsub.v1.ISeekResponse,
+          protos.google.pubsub.v1.ISeekRequest|null|undefined,
+          {}|null|undefined>): void;
+/**
+ * Seeks an existing subscription to a point in time or to a given snapshot,
+ * whichever is provided in the request. Snapshots are used in
+ * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
+ * operations, which allow
+ * you to manage message acknowledgments in bulk. That is, you can set the
+ * acknowledgment state of messages in an existing subscription to the state
+ * captured by a snapshot. Note that both the subscription and the snapshot
+ * must be on the same topic.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.subscription
+ *   Required. The subscription to affect.
+ * @param {google.protobuf.Timestamp} request.time
+ *   The time to seek to.
+ *   Messages retained in the subscription that were published before this
+ *   time are marked as acknowledged, and messages retained in the
+ *   subscription that were published after this time are marked as
+ *   unacknowledged. Note that this operation affects only those messages
+ *   retained in the subscription (configured by the combination of
+ *   `message_retention_duration` and `retain_acked_messages`). For example,
+ *   if `time` corresponds to a point before the message retention
+ *   window (or to a point before the system's notion of the subscription
+ *   creation time), only retained messages will be marked as unacknowledged,
+ *   and already-expunged messages will not be restored.
+ * @param {string} request.snapshot
+ *   The snapshot to seek to. The snapshot's topic must be the same as that of
+ *   the provided subscription.
+ *   Format is `projects/{project}/snapshots/{snap}`.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is an object representing [SeekResponse]{@link google.pubsub.v1.SeekResponse}.
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  seek(
+      request: protos.google.pubsub.v1.ISeekRequest,
+      optionsOrCallback?: gax.CallOptions|Callback<
+          protos.google.pubsub.v1.ISeekResponse,
+          protos.google.pubsub.v1.ISeekRequest|null|undefined,
+          {}|null|undefined>,
+      callback?: Callback<
+          protos.google.pubsub.v1.ISeekResponse,
+          protos.google.pubsub.v1.ISeekRequest|null|undefined,
+          {}|null|undefined>):
+      Promise<[
+        protos.google.pubsub.v1.ISeekResponse,
+        protos.google.pubsub.v1.ISeekRequest|undefined, {}|undefined
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -1634,119 +1416,110 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      subscription: request.subscription || '',
+      'subscription': request.subscription || '',
     });
     this.initialize();
     return this.innerApiCalls.seek(request, options, callback);
   }
 
-  /**
-   * Establishes a stream with the server, which sends messages down to the
-   * client. The client streams acknowledgements and ack deadline modifications
-   * back to the server. The server will close the stream and return the status
-   * on any error. The server may close the stream with status `UNAVAILABLE` to
-   * reassign server-side resources, in which case, the client should
-   * re-establish the stream. Flow control can be achieved by configuring the
-   * underlying RPC channel.
-   *
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Stream}
-   *   An object stream which is both readable and writable. It accepts objects
-   *   representing [StreamingPullRequest]{@link google.pubsub.v1.StreamingPullRequest} for write() method, and
-   *   will emit objects representing [StreamingPullResponse]{@link google.pubsub.v1.StreamingPullResponse} on 'data' event asynchronously.
-   */
-  streamingPull(options?: gax.CallOptions): gax.CancellableStream {
+/**
+ * Establishes a stream with the server, which sends messages down to the
+ * client. The client streams acknowledgements and ack deadline modifications
+ * back to the server. The server will close the stream and return the status
+ * on any error. The server may close the stream with status `UNAVAILABLE` to
+ * reassign server-side resources, in which case, the client should
+ * re-establish the stream. Flow control can be achieved by configuring the
+ * underlying RPC channel.
+ *
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Stream}
+ *   An object stream which is both readable and writable. It accepts objects
+ *   representing [StreamingPullRequest]{@link google.pubsub.v1.StreamingPullRequest} for write() method, and
+ *   will emit objects representing [StreamingPullResponse]{@link google.pubsub.v1.StreamingPullResponse} on 'data' event asynchronously.
+ */
+  streamingPull(
+      options?: gax.CallOptions):
+    gax.CancellableStream {
     this.initialize();
     return this.innerApiCalls.streamingPull(options);
   }
 
   listSubscriptions(
-    request: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISubscription[],
-      protos.google.pubsub.v1.IListSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListSubscriptionsResponse
-    ]
-  >;
+      request: protos.google.pubsub.v1.IListSubscriptionsRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.pubsub.v1.ISubscription[],
+        protos.google.pubsub.v1.IListSubscriptionsRequest|null,
+        protos.google.pubsub.v1.IListSubscriptionsResponse
+      ]>;
   listSubscriptions(
-    request: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options: gax.CallOptions,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListSubscriptionsRequest,
-      protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
-      protos.google.pubsub.v1.ISubscription
-    >
-  ): void;
-  listSubscriptions(
-    request: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListSubscriptionsRequest,
-      protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
-      protos.google.pubsub.v1.ISubscription
-    >
-  ): void;
-  /**
-   * Lists matching subscriptions.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.project
-   *   Required. The name of the project in which to list subscriptions.
-   *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of subscriptions to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSubscriptionsResponse`; indicates that
-   *   this is a continuation of a prior `ListSubscriptions` call, and that the
-   *   system should return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is Array of [Subscription]{@link google.pubsub.v1.Subscription}.
-   *   The client library support auto-pagination by default: it will call the API as many
-   *   times as needed and will merge results from all the pages into this array.
-   *
-   *   When autoPaginate: false is specified through options, the array has three elements.
-   *   The first element is Array of [Subscription]{@link google.pubsub.v1.Subscription} that corresponds to
-   *   the one page received from the API server.
-   *   If the second element is not null it contains the request object of type [ListSubscriptionsRequest]{@link google.pubsub.v1.ListSubscriptionsRequest}
-   *   that can be used to obtain the next page of the results.
-   *   If it is null, the next page does not exist.
-   *   The third element contains the raw response received from the API server. Its type is
-   *   [ListSubscriptionsResponse]{@link google.pubsub.v1.ListSubscriptionsResponse}.
-   *
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  listSubscriptions(
-    request: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | PaginationCallback<
+      request: protos.google.pubsub.v1.IListSubscriptionsRequest,
+      options: gax.CallOptions,
+      callback: PaginationCallback<
           protos.google.pubsub.v1.IListSubscriptionsRequest,
-          protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
-          protos.google.pubsub.v1.ISubscription
-        >,
-    callback?: PaginationCallback<
-      protos.google.pubsub.v1.IListSubscriptionsRequest,
-      protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
-      protos.google.pubsub.v1.ISubscription
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISubscription[],
-      protos.google.pubsub.v1.IListSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListSubscriptionsResponse
-    ]
-  > | void {
+          protos.google.pubsub.v1.IListSubscriptionsResponse|null|undefined,
+          protos.google.pubsub.v1.ISubscription>): void;
+  listSubscriptions(
+      request: protos.google.pubsub.v1.IListSubscriptionsRequest,
+      callback: PaginationCallback<
+          protos.google.pubsub.v1.IListSubscriptionsRequest,
+          protos.google.pubsub.v1.IListSubscriptionsResponse|null|undefined,
+          protos.google.pubsub.v1.ISubscription>): void;
+/**
+ * Lists matching subscriptions.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.project
+ *   Required. The name of the project in which to list subscriptions.
+ *   Format is `projects/{project-id}`.
+ * @param {number} request.pageSize
+ *   Maximum number of subscriptions to return.
+ * @param {string} request.pageToken
+ *   The value returned by the last `ListSubscriptionsResponse`; indicates that
+ *   this is a continuation of a prior `ListSubscriptions` call, and that the
+ *   system should return the next page of data.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is Array of [Subscription]{@link google.pubsub.v1.Subscription}.
+ *   The client library support auto-pagination by default: it will call the API as many
+ *   times as needed and will merge results from all the pages into this array.
+ *
+ *   When autoPaginate: false is specified through options, the array has three elements.
+ *   The first element is Array of [Subscription]{@link google.pubsub.v1.Subscription} that corresponds to
+ *   the one page received from the API server.
+ *   If the second element is not null it contains the request object of type [ListSubscriptionsRequest]{@link google.pubsub.v1.ListSubscriptionsRequest}
+ *   that can be used to obtain the next page of the results.
+ *   If it is null, the next page does not exist.
+ *   The third element contains the raw response received from the API server. Its type is
+ *   [ListSubscriptionsResponse]{@link google.pubsub.v1.ListSubscriptionsResponse}.
+ *
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  listSubscriptions(
+      request: protos.google.pubsub.v1.IListSubscriptionsRequest,
+      optionsOrCallback?: gax.CallOptions|PaginationCallback<
+          protos.google.pubsub.v1.IListSubscriptionsRequest,
+          protos.google.pubsub.v1.IListSubscriptionsResponse|null|undefined,
+          protos.google.pubsub.v1.ISubscription>,
+      callback?: PaginationCallback<
+          protos.google.pubsub.v1.IListSubscriptionsRequest,
+          protos.google.pubsub.v1.IListSubscriptionsResponse|null|undefined,
+          protos.google.pubsub.v1.ISubscription>):
+      Promise<[
+        protos.google.pubsub.v1.ISubscription[],
+        protos.google.pubsub.v1.IListSubscriptionsRequest|null,
+        protos.google.pubsub.v1.IListSubscriptionsResponse
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -1755,45 +1528,45 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      project: request.project || '',
+      'project': request.project || '',
     });
     this.initialize();
     return this.innerApiCalls.listSubscriptions(request, options, callback);
   }
 
-  /**
-   * Equivalent to {@link listSubscriptions}, but returns a NodeJS Stream object.
-   *
-   * This fetches the paged responses for {@link listSubscriptions} continuously
-   * and invokes the callback registered for 'data' event for each element in the
-   * responses.
-   *
-   * The returned object has 'end' method when no more elements are required.
-   *
-   * autoPaginate option will be ignored.
-   *
-   * @see {@link https://nodejs.org/api/stream.html}
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.project
-   *   Required. The name of the project in which to list subscriptions.
-   *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of subscriptions to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSubscriptionsResponse`; indicates that
-   *   this is a continuation of a prior `ListSubscriptions` call, and that the
-   *   system should return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Stream}
-   *   An object stream which emits an object representing [Subscription]{@link google.pubsub.v1.Subscription} on 'data' event.
-   */
+/**
+ * Equivalent to {@link listSubscriptions}, but returns a NodeJS Stream object.
+ *
+ * This fetches the paged responses for {@link listSubscriptions} continuously
+ * and invokes the callback registered for 'data' event for each element in the
+ * responses.
+ *
+ * The returned object has 'end' method when no more elements are required.
+ *
+ * autoPaginate option will be ignored.
+ *
+ * @see {@link https://nodejs.org/api/stream.html}
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.project
+ *   Required. The name of the project in which to list subscriptions.
+ *   Format is `projects/{project-id}`.
+ * @param {number} request.pageSize
+ *   Maximum number of subscriptions to return.
+ * @param {string} request.pageToken
+ *   The value returned by the last `ListSubscriptionsResponse`; indicates that
+ *   this is a continuation of a prior `ListSubscriptions` call, and that the
+ *   system should return the next page of data.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Stream}
+ *   An object stream which emits an object representing [Subscription]{@link google.pubsub.v1.Subscription} on 'data' event.
+ */
   listSubscriptionsStream(
-    request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: gax.CallOptions
-  ): Transform {
+      request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
+      options?: gax.CallOptions):
+    Transform{
     request = request || {};
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1801,7 +1574,7 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      project: request.project || '',
+      'project': request.project || '',
     });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
@@ -1812,31 +1585,31 @@ export class SubscriberClient {
     );
   }
 
-  /**
-   * Equivalent to {@link listSubscriptions}, but returns an iterable object.
-   *
-   * for-await-of syntax is used with the iterable to recursively get response element on-demand.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.project
-   *   Required. The name of the project in which to list subscriptions.
-   *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of subscriptions to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSubscriptionsResponse`; indicates that
-   *   this is a continuation of a prior `ListSubscriptions` call, and that the
-   *   system should return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Object}
-   *   An iterable Object that conforms to @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols.
-   */
+/**
+ * Equivalent to {@link listSubscriptions}, but returns an iterable object.
+ *
+ * for-await-of syntax is used with the iterable to recursively get response element on-demand.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.project
+ *   Required. The name of the project in which to list subscriptions.
+ *   Format is `projects/{project-id}`.
+ * @param {number} request.pageSize
+ *   Maximum number of subscriptions to return.
+ * @param {string} request.pageToken
+ *   The value returned by the last `ListSubscriptionsResponse`; indicates that
+ *   this is a continuation of a prior `ListSubscriptions` call, and that the
+ *   system should return the next page of data.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Object}
+ *   An iterable Object that conforms to @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols.
+ */
   listSubscriptionsAsync(
-    request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: gax.CallOptions
-  ): AsyncIterable<protos.google.pubsub.v1.ISubscription> {
+      request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
+      options?: gax.CallOptions):
+    AsyncIterable<protos.google.pubsub.v1.ISubscription>{
     request = request || {};
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1844,108 +1617,97 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      project: request.project || '',
+      'project': request.project || '',
     });
     options = options || {};
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listSubscriptions.asyncIterate(
       this.innerApiCalls['listSubscriptions'] as GaxCall,
-      (request as unknown) as RequestType,
+      request as unknown as RequestType,
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ISubscription>;
   }
   listSnapshots(
-    request: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: gax.CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISnapshot[],
-      protos.google.pubsub.v1.IListSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListSnapshotsResponse
-    ]
-  >;
+      request: protos.google.pubsub.v1.IListSnapshotsRequest,
+      options?: gax.CallOptions):
+      Promise<[
+        protos.google.pubsub.v1.ISnapshot[],
+        protos.google.pubsub.v1.IListSnapshotsRequest|null,
+        protos.google.pubsub.v1.IListSnapshotsResponse
+      ]>;
   listSnapshots(
-    request: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options: gax.CallOptions,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListSnapshotsRequest,
-      protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
-      protos.google.pubsub.v1.ISnapshot
-    >
-  ): void;
-  listSnapshots(
-    request: protos.google.pubsub.v1.IListSnapshotsRequest,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListSnapshotsRequest,
-      protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
-      protos.google.pubsub.v1.ISnapshot
-    >
-  ): void;
-  /**
-   * Lists the existing snapshots. Snapshots are used in
-   * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
-   * operations, which allow
-   * you to manage message acknowledgments in bulk. That is, you can set the
-   * acknowledgment state of messages in an existing subscription to the state
-   * captured by a snapshot.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.project
-   *   Required. The name of the project in which to list snapshots.
-   *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshots to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSnapshotsResponse`; indicates that this
-   *   is a continuation of a prior `ListSnapshots` call, and that the system
-   *   should return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is Array of [Snapshot]{@link google.pubsub.v1.Snapshot}.
-   *   The client library support auto-pagination by default: it will call the API as many
-   *   times as needed and will merge results from all the pages into this array.
-   *
-   *   When autoPaginate: false is specified through options, the array has three elements.
-   *   The first element is Array of [Snapshot]{@link google.pubsub.v1.Snapshot} that corresponds to
-   *   the one page received from the API server.
-   *   If the second element is not null it contains the request object of type [ListSnapshotsRequest]{@link google.pubsub.v1.ListSnapshotsRequest}
-   *   that can be used to obtain the next page of the results.
-   *   If it is null, the next page does not exist.
-   *   The third element contains the raw response received from the API server. Its type is
-   *   [ListSnapshotsResponse]{@link google.pubsub.v1.ListSnapshotsResponse}.
-   *
-   *   The promise has a method named "cancel" which cancels the ongoing API call.
-   */
-  listSnapshots(
-    request: protos.google.pubsub.v1.IListSnapshotsRequest,
-    optionsOrCallback?:
-      | gax.CallOptions
-      | PaginationCallback<
+      request: protos.google.pubsub.v1.IListSnapshotsRequest,
+      options: gax.CallOptions,
+      callback: PaginationCallback<
           protos.google.pubsub.v1.IListSnapshotsRequest,
-          protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
-          protos.google.pubsub.v1.ISnapshot
-        >,
-    callback?: PaginationCallback<
-      protos.google.pubsub.v1.IListSnapshotsRequest,
-      protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
-      protos.google.pubsub.v1.ISnapshot
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISnapshot[],
-      protos.google.pubsub.v1.IListSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListSnapshotsResponse
-    ]
-  > | void {
+          protos.google.pubsub.v1.IListSnapshotsResponse|null|undefined,
+          protos.google.pubsub.v1.ISnapshot>): void;
+  listSnapshots(
+      request: protos.google.pubsub.v1.IListSnapshotsRequest,
+      callback: PaginationCallback<
+          protos.google.pubsub.v1.IListSnapshotsRequest,
+          protos.google.pubsub.v1.IListSnapshotsResponse|null|undefined,
+          protos.google.pubsub.v1.ISnapshot>): void;
+/**
+ * Lists the existing snapshots. Snapshots are used in
+ * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
+ * operations, which allow
+ * you to manage message acknowledgments in bulk. That is, you can set the
+ * acknowledgment state of messages in an existing subscription to the state
+ * captured by a snapshot.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.project
+ *   Required. The name of the project in which to list snapshots.
+ *   Format is `projects/{project-id}`.
+ * @param {number} request.pageSize
+ *   Maximum number of snapshots to return.
+ * @param {string} request.pageToken
+ *   The value returned by the last `ListSnapshotsResponse`; indicates that this
+ *   is a continuation of a prior `ListSnapshots` call, and that the system
+ *   should return the next page of data.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Promise} - The promise which resolves to an array.
+ *   The first element of the array is Array of [Snapshot]{@link google.pubsub.v1.Snapshot}.
+ *   The client library support auto-pagination by default: it will call the API as many
+ *   times as needed and will merge results from all the pages into this array.
+ *
+ *   When autoPaginate: false is specified through options, the array has three elements.
+ *   The first element is Array of [Snapshot]{@link google.pubsub.v1.Snapshot} that corresponds to
+ *   the one page received from the API server.
+ *   If the second element is not null it contains the request object of type [ListSnapshotsRequest]{@link google.pubsub.v1.ListSnapshotsRequest}
+ *   that can be used to obtain the next page of the results.
+ *   If it is null, the next page does not exist.
+ *   The third element contains the raw response received from the API server. Its type is
+ *   [ListSnapshotsResponse]{@link google.pubsub.v1.ListSnapshotsResponse}.
+ *
+ *   The promise has a method named "cancel" which cancels the ongoing API call.
+ */
+  listSnapshots(
+      request: protos.google.pubsub.v1.IListSnapshotsRequest,
+      optionsOrCallback?: gax.CallOptions|PaginationCallback<
+          protos.google.pubsub.v1.IListSnapshotsRequest,
+          protos.google.pubsub.v1.IListSnapshotsResponse|null|undefined,
+          protos.google.pubsub.v1.ISnapshot>,
+      callback?: PaginationCallback<
+          protos.google.pubsub.v1.IListSnapshotsRequest,
+          protos.google.pubsub.v1.IListSnapshotsResponse|null|undefined,
+          protos.google.pubsub.v1.ISnapshot>):
+      Promise<[
+        protos.google.pubsub.v1.ISnapshot[],
+        protos.google.pubsub.v1.IListSnapshotsRequest|null,
+        protos.google.pubsub.v1.IListSnapshotsResponse
+      ]>|void {
     request = request || {};
     let options: gax.CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
-    } else {
+    }
+    else {
       options = optionsOrCallback as gax.CallOptions;
     }
     options = options || {};
@@ -1954,45 +1716,45 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      project: request.project || '',
+      'project': request.project || '',
     });
     this.initialize();
     return this.innerApiCalls.listSnapshots(request, options, callback);
   }
 
-  /**
-   * Equivalent to {@link listSnapshots}, but returns a NodeJS Stream object.
-   *
-   * This fetches the paged responses for {@link listSnapshots} continuously
-   * and invokes the callback registered for 'data' event for each element in the
-   * responses.
-   *
-   * The returned object has 'end' method when no more elements are required.
-   *
-   * autoPaginate option will be ignored.
-   *
-   * @see {@link https://nodejs.org/api/stream.html}
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.project
-   *   Required. The name of the project in which to list snapshots.
-   *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshots to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSnapshotsResponse`; indicates that this
-   *   is a continuation of a prior `ListSnapshots` call, and that the system
-   *   should return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Stream}
-   *   An object stream which emits an object representing [Snapshot]{@link google.pubsub.v1.Snapshot} on 'data' event.
-   */
+/**
+ * Equivalent to {@link listSnapshots}, but returns a NodeJS Stream object.
+ *
+ * This fetches the paged responses for {@link listSnapshots} continuously
+ * and invokes the callback registered for 'data' event for each element in the
+ * responses.
+ *
+ * The returned object has 'end' method when no more elements are required.
+ *
+ * autoPaginate option will be ignored.
+ *
+ * @see {@link https://nodejs.org/api/stream.html}
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.project
+ *   Required. The name of the project in which to list snapshots.
+ *   Format is `projects/{project-id}`.
+ * @param {number} request.pageSize
+ *   Maximum number of snapshots to return.
+ * @param {string} request.pageToken
+ *   The value returned by the last `ListSnapshotsResponse`; indicates that this
+ *   is a continuation of a prior `ListSnapshots` call, and that the system
+ *   should return the next page of data.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Stream}
+ *   An object stream which emits an object representing [Snapshot]{@link google.pubsub.v1.Snapshot} on 'data' event.
+ */
   listSnapshotsStream(
-    request?: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: gax.CallOptions
-  ): Transform {
+      request?: protos.google.pubsub.v1.IListSnapshotsRequest,
+      options?: gax.CallOptions):
+    Transform{
     request = request || {};
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -2000,7 +1762,7 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      project: request.project || '',
+      'project': request.project || '',
     });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
@@ -2011,31 +1773,31 @@ export class SubscriberClient {
     );
   }
 
-  /**
-   * Equivalent to {@link listSnapshots}, but returns an iterable object.
-   *
-   * for-await-of syntax is used with the iterable to recursively get response element on-demand.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.project
-   *   Required. The name of the project in which to list snapshots.
-   *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshots to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSnapshotsResponse`; indicates that this
-   *   is a continuation of a prior `ListSnapshots` call, and that the system
-   *   should return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Object}
-   *   An iterable Object that conforms to @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols.
-   */
+/**
+ * Equivalent to {@link listSnapshots}, but returns an iterable object.
+ *
+ * for-await-of syntax is used with the iterable to recursively get response element on-demand.
+ *
+ * @param {Object} request
+ *   The request object that will be sent.
+ * @param {string} request.project
+ *   Required. The name of the project in which to list snapshots.
+ *   Format is `projects/{project-id}`.
+ * @param {number} request.pageSize
+ *   Maximum number of snapshots to return.
+ * @param {string} request.pageToken
+ *   The value returned by the last `ListSnapshotsResponse`; indicates that this
+ *   is a continuation of a prior `ListSnapshots` call, and that the system
+ *   should return the next page of data.
+ * @param {object} [options]
+ *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+ * @returns {Object}
+ *   An iterable Object that conforms to @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols.
+ */
   listSnapshotsAsync(
-    request?: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: gax.CallOptions
-  ): AsyncIterable<protos.google.pubsub.v1.ISnapshot> {
+      request?: protos.google.pubsub.v1.IListSnapshotsRequest,
+      options?: gax.CallOptions):
+    AsyncIterable<protos.google.pubsub.v1.ISnapshot>{
     request = request || {};
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -2043,14 +1805,14 @@ export class SubscriberClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      project: request.project || '',
+      'project': request.project || '',
     });
     options = options || {};
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listSnapshots.asyncIterate(
       this.innerApiCalls['listSnapshots'] as GaxCall,
-      (request as unknown) as RequestType,
+      request as unknown as RequestType,
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ISnapshot>;
   }
@@ -2064,9 +1826,9 @@ export class SubscriberClient {
    * @param {string} project
    * @returns {string} Resource name string.
    */
-  projectPath(project: string) {
+  projectPath(project:string) {
     return this.pathTemplates.projectPathTemplate.render({
-      project,
+      project: project,
     });
   }
 
@@ -2088,10 +1850,10 @@ export class SubscriberClient {
    * @param {string} topic
    * @returns {string} Resource name string.
    */
-  projectTopicPath(project: string, topic: string) {
+  projectTopicPath(project:string,topic:string) {
     return this.pathTemplates.projectTopicPathTemplate.render({
-      project,
-      topic,
+      project: project,
+      topic: topic,
     });
   }
 
@@ -2103,8 +1865,7 @@ export class SubscriberClient {
    * @returns {string} A string representing the project.
    */
   matchProjectFromProjectTopicName(projectTopicName: string) {
-    return this.pathTemplates.projectTopicPathTemplate.match(projectTopicName)
-      .project;
+    return this.pathTemplates.projectTopicPathTemplate.match(projectTopicName).project;
   }
 
   /**
@@ -2115,8 +1876,7 @@ export class SubscriberClient {
    * @returns {string} A string representing the topic.
    */
   matchTopicFromProjectTopicName(projectTopicName: string) {
-    return this.pathTemplates.projectTopicPathTemplate.match(projectTopicName)
-      .topic;
+    return this.pathTemplates.projectTopicPathTemplate.match(projectTopicName).topic;
   }
 
   /**
@@ -2126,10 +1886,10 @@ export class SubscriberClient {
    * @param {string} snapshot
    * @returns {string} Resource name string.
    */
-  snapshotPath(project: string, snapshot: string) {
+  snapshotPath(project:string,snapshot:string) {
     return this.pathTemplates.snapshotPathTemplate.render({
-      project,
-      snapshot,
+      project: project,
+      snapshot: snapshot,
     });
   }
 
@@ -2162,10 +1922,10 @@ export class SubscriberClient {
    * @param {string} subscription
    * @returns {string} Resource name string.
    */
-  subscriptionPath(project: string, subscription: string) {
+  subscriptionPath(project:string,subscription:string) {
     return this.pathTemplates.subscriptionPathTemplate.render({
-      project,
-      subscription,
+      project: project,
+      subscription: subscription,
     });
   }
 
@@ -2177,8 +1937,7 @@ export class SubscriberClient {
    * @returns {string} A string representing the project.
    */
   matchProjectFromSubscriptionName(subscriptionName: string) {
-    return this.pathTemplates.subscriptionPathTemplate.match(subscriptionName)
-      .project;
+    return this.pathTemplates.subscriptionPathTemplate.match(subscriptionName).project;
   }
 
   /**
@@ -2189,8 +1948,7 @@ export class SubscriberClient {
    * @returns {string} A string representing the subscription.
    */
   matchSubscriptionFromSubscriptionName(subscriptionName: string) {
-    return this.pathTemplates.subscriptionPathTemplate.match(subscriptionName)
-      .subscription;
+    return this.pathTemplates.subscriptionPathTemplate.match(subscriptionName).subscription;
   }
 
   /**
@@ -2241,3 +1999,4 @@ export class SubscriberClient {
     return this._iamClient.testIamPermissions(request, options, callback);
   }
 }
+
