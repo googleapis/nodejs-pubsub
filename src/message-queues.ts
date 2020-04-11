@@ -15,6 +15,7 @@
  */
 
 import {CallOptions} from 'google-gax';
+// eslint-disable-next-line node/no-extraneous-import
 import {Metadata, ServiceError, status} from '@grpc/grpc-js';
 import defer = require('p-defer');
 

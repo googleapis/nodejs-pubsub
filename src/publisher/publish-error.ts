@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+// eslint-disable-next-line node/no-extraneous-import
 import {ServiceError, Metadata, status} from '@grpc/grpc-js';
 
 /**

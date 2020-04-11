@@ -47,7 +47,6 @@ import {
   Subscription,
   SubscriptionOptions,
 } from './subscription';
-import * as util from './util';
 
 export type TopicMetadata = google.pubsub.v1.ITopic;
 
@@ -80,7 +79,7 @@ export type GetTopicSubscriptionsResponse = PagedResponse<
   google.pubsub.v1.IListTopicSubscriptionsResponse
 >;
 
-// tslint:disable-next-line no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MessageOptions = PubsubMessage & {json?: any};
 
 /**

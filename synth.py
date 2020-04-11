@@ -55,7 +55,7 @@ for client_name in clients:
     # TODO: it should be removed once pubsub upgrade gts 2.0.0
     # fix tslint issue due to mismatch gts version with gapic-generator-typescript
     s.replace(client_file, '\/\/ eslint\-disable\-next\-line\ \@typescript\-eslint\/no\-explicit\-any',
-              '// tslint:disable-next-line no-any')
+              '// eslint-disable-next-line @typescript-eslint/no-explicit-any')
 
     with open('helperMethods.ts.tmpl', 'r') as helper_file:
         content = helper_file.read()

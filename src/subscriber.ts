@@ -18,11 +18,8 @@ import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
-import {ClientStub} from 'google-gax';
-import {common as protobuf} from 'protobufjs';
 
 import {google} from '../protos/protos';
-
 import {Histogram} from './histogram';
 import {FlowControlOptions, LeaseManager} from './lease-manager';
 import {AckQueue, BatchOptions, ModAckQueue} from './message-queues';

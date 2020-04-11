@@ -15,7 +15,8 @@
  */
 
 import * as assert from 'assert';
-import {describe, it} from 'mocha';
+import {describe, it, before, beforeEach, afterEach, after} from 'mocha';
+// eslint-disable-next-line node/no-extraneous-import
 import {Metadata, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
@@ -104,6 +105,7 @@ class FakeGrpcStream extends Duplex {
   _write(chunk: object, encoding: string, callback: Function): void {
     callback();
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _read(size: number): void {}
 }
 
@@ -285,10 +287,7 @@ describe('MessageStream', () => {
 
         it('should respect the timeout option', done => {
           const timeout = 12345;
-          const expectedDeadline = now + timeout;
-
           messageStream = new MessageStream(subscriber, {timeout});
-
           setImmediate(() => {
             assert.strictEqual(client.deadline, now + timeout);
             done();
@@ -300,9 +299,9 @@ describe('MessageStream', () => {
 
   describe('destroy', () => {
     it('should noop if already destroyed', done => {
-      const stub = sandbox
+      sandbox
         .stub(FakePassThrough.prototype, 'destroy')
-        .callsFake(function(this: Duplex) {
+        .callsFake(function (this: Duplex) {
           if (this === messageStream) {
             done();
           }
@@ -354,7 +353,7 @@ describe('MessageStream', () => {
 
       before(() => {
         destroy = FakePassThrough.prototype.destroy;
-        // tslint:disable-next-line no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         FakePassThrough.prototype.destroy = false as any;
       });
 
@@ -428,7 +427,7 @@ describe('MessageStream', () => {
         const stub = sandbox.stub(client, 'waitForReady');
         const ms = new MessageStream(subscriber);
         const fakeError = new Error('err');
-        const expectedMessage = `Failed to connect to channel. Reason: err`;
+        const expectedMessage = 'Failed to connect to channel. Reason: err';
 
         ms.on('error', (err: ServiceError) => {
           assert.strictEqual(err.code, 2);

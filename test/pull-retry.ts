@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import assert = require('assert');
-import sinon = require('sinon');
+import * as assert from 'assert';
+import * as sinon from 'sinon';
+import {describe, it, beforeEach, afterEach} from 'mocha';
+// eslint-disable-next-line node/no-extraneous-import
 import {StatusObject, status} from '@grpc/grpc-js';
 import {PullRetry} from '../src/pull-retry';
 

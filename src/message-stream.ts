@@ -22,6 +22,7 @@ import {
   ServiceError,
   status,
   StatusObject,
+  // eslint-disable-next-line node/no-extraneous-import
 } from '@grpc/grpc-js';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';

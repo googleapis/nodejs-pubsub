@@ -17,12 +17,14 @@ import * as mv from 'mv';
 import {ncp} from 'ncp';
 import * as tmp from 'tmp';
 import {promisify} from 'util';
+import {describe, it, after} from 'mocha';
 
 const keep = false;
 const mvp = (promisify(mv) as {}) as (...args: string[]) => Promise<void>;
 const ncpp = promisify(ncp);
 const stagingDir = tmp.dirSync({keep, unsafeCleanup: true});
 const stagingPath = stagingDir.name;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../../package.json');
 
 describe('📦 pack and install', () => {

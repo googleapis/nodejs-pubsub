@@ -15,7 +15,7 @@
  */
 
 import * as assert from 'assert';
-import {describe, it} from 'mocha';
+import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import {common as protobuf} from 'protobufjs';
 import * as proxyquire from 'proxyquire';
@@ -191,7 +191,7 @@ describe('Subscriber', () => {
     it('should set any options passed in', () => {
       const stub = sandbox.stub(Subscriber.prototype, 'setOptions');
       const fakeOptions = {};
-      const sub = new Subscriber(subscription, fakeOptions);
+      new Subscriber(subscription, fakeOptions);
 
       const [options] = stub.lastCall.args;
       assert.strictEqual(options, fakeOptions);
@@ -203,10 +203,7 @@ describe('Subscriber', () => {
       const latencies: FakeHistogram = stubs.get('latencies');
       const fakeLatency = 234;
 
-      sandbox
-        .stub(latencies, 'percentile')
-        .withArgs(99)
-        .returns(fakeLatency);
+      sandbox.stub(latencies, 'percentile').withArgs(99).returns(fakeLatency);
 
       const maxMilliseconds = stubs.get('modAckQueue').maxMilliseconds;
       const expectedLatency = fakeLatency * 1000 + maxMilliseconds;
@@ -255,10 +252,7 @@ describe('Subscriber', () => {
 
       const fakeDeadline = 312123;
 
-      sandbox
-        .stub(histogram, 'percentile')
-        .withArgs(99)
-        .returns(fakeDeadline);
+      sandbox.stub(histogram, 'percentile').withArgs(99).returns(fakeDeadline);
 
       subscriber.ack(message);
 

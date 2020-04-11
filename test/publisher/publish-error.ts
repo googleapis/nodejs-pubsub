@@ -15,7 +15,8 @@
  */
 
 import * as assert from 'assert';
-import {describe, it} from 'mocha';
+import {describe, it, beforeEach} from 'mocha';
+// eslint-disable-next-line node/no-extraneous-import
 import {ServiceError, Metadata} from '@grpc/grpc-js';
 import {PublishError} from '../../src/publisher/publish-error';
 

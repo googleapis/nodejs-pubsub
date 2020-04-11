@@ -16,9 +16,11 @@ import * as pjy from '@google-cloud/projectify';
 import * as promisify from '@google-cloud/promisify';
 import arrify = require('arrify');
 import * as assert from 'assert';
-import {describe, it} from 'mocha';
+import {describe, it, before, beforeEach, after, afterEach} from 'mocha';
 import * as gax from 'google-gax';
+// eslint-disable-next-line node/no-extraneous-import
 import * as grpc from '@grpc/grpc-js';
+// eslint-disable-next-line node/no-extraneous-import
 import {CallOptions, ChannelCredentials, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
@@ -30,6 +32,7 @@ import * as subby from '../src/subscription';
 import {Topic} from '../src/topic';
 import * as util from '../src/util';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const PKG = require('../../package.json');
 const sandbox = sinon.createSandbox();
 
@@ -38,7 +41,7 @@ sandbox.stub(grpc.credentials, 'createInsecure').returns(fakeCreds);
 
 const subscriptionCached = subby.Subscription;
 
-// tslint:disable-next-line no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let subscriptionOverride: any;
 
 function Subscription(
@@ -72,22 +75,22 @@ const fakePromisify = Object.assign({}, promisify, {
 });
 
 let pjyOverride: Function;
-function fakePjy() {
-  return (pjyOverride || pjy.replaceProjectIdToken).apply(null, arguments);
+function fakePjy(...args: Array<{}>) {
+  return (pjyOverride || pjy.replaceProjectIdToken)(...args);
 }
 
 class FakeSnapshot {
-  calledWith_: IArguments;
-  constructor() {
-    this.calledWith_ = arguments;
+  calledWith_: Array<{}>;
+  constructor(...args: Array<{}>) {
+    this.calledWith_ = args;
   }
 }
 
 class FakeTopic {
-  calledWith_: IArguments;
+  calledWith_: Array<{}>;
   getSubscriptions?: Function;
-  constructor() {
-    this.calledWith_ = arguments;
+  constructor(...args: Array<{}>) {
+    this.calledWith_ = args;
   }
 }
 
@@ -115,12 +118,12 @@ const fakePaginator = {
 };
 
 let googleAuthOverride: Function | null;
-function fakeGoogleAuth() {
-  return (googleAuthOverride || util.noop).apply(null, arguments);
+function fakeGoogleAuth(...args: Array<{}>) {
+  return (googleAuthOverride || util.noop)(...args);
 }
 
 const v1Override = {};
-// tslint:disable-next-line no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let v1ClientOverrides: any = {};
 
 function defineOverridableClient(clientName: string) {
@@ -155,10 +158,6 @@ describe('PubSub', () => {
 
   interface PostCloseCallback {
     (err: Error | null): void;
-  }
-
-  interface PostCloseTest {
-    (callback: PostCloseCallback): void;
   }
 
   before(() => {
@@ -323,14 +322,14 @@ describe('PubSub', () => {
 
     it('should throw if no Topic is provided', () => {
       assert.throws(() => {
-        // tslint:disable-next-line no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (pubsub as any).createSubscription();
       }, /A Topic is required for a new subscription\./);
     });
 
     it('should throw if no subscription name is provided', () => {
       assert.throws(() => {
-        // tslint:disable-next-line no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (pubsub as any).createSubscription(TOPIC_NAME);
       }, /A subscription name is required./);
     });
@@ -347,7 +346,7 @@ describe('PubSub', () => {
       pubsub.request = (config, callback: Function) => {
         callback(null, apiResponse);
       };
-      // tslint:disable-next-line no-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (pubsub as any).createSubscription(TOPIC, SUB_NAME, undefined, done);
     });
 
@@ -780,7 +779,7 @@ describe('PubSub', () => {
         return snapshot as Snapshot;
       });
 
-      // tslint:disable-next-line: no-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       pubsub.getSnapshots((err: any, snapshots: any) => {
         assert.ifError(err);
         assert.strictEqual(snapshots![0], snapshot);
@@ -1006,7 +1005,7 @@ describe('PubSub', () => {
         return topic as Topic;
       };
 
-      // tslint:disable-next-line: no-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       pubsub.getTopics((err: any, topics: any) => {
         assert.ifError(err);
         assert.strictEqual(topics![0], topic);
@@ -1050,7 +1049,7 @@ describe('PubSub', () => {
         getProjectId: () => Promise.resolve(PROJECT_ID),
       });
 
-      // tslint:disable-next-line no-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       pjyOverride = (reqOpts: any) => {
         return reqOpts;
       };
@@ -1094,7 +1093,7 @@ describe('PubSub', () => {
 
     it('should call client method with correct options', done => {
       const fakeClient = {};
-      // tslint:disable-next-line no-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (fakeClient as any).fakeMethod = (reqOpts: any, gaxOpts: CallOptions) => {
         assert.deepStrictEqual(CONFIG.reqOpts, reqOpts);
         assert.deepStrictEqual(CONFIG.gaxOpts, gaxOpts);
@@ -1107,7 +1106,7 @@ describe('PubSub', () => {
     });
 
     it('should replace the project id token on reqOpts', done => {
-      // tslint:disable-next-line no-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       pjyOverride = (reqOpts: any, projectId: string) => {
         assert.deepStrictEqual(reqOpts, CONFIG.reqOpts);
         assert.strictEqual(projectId, PROJECT_ID);
@@ -1118,6 +1117,7 @@ describe('PubSub', () => {
   });
 
   describe('getClientAsync_', () => {
+    // eslint-disable-next-line @typescript-eslint/class-name-casing
     const FAKE_CLIENT_INSTANCE = class {
       close() {}
     };
@@ -1207,7 +1207,7 @@ describe('PubSub', () => {
       let numTimesFakeClientInstantiated = 0;
 
       // tslint:disable-next-line only-arrow-functions
-      v1ClientOverrides.FakeClient = function() {
+      v1ClientOverrides.FakeClient = function () {
         numTimesFakeClientInstantiated++;
         return FAKE_CLIENT_INSTANCE;
       };
@@ -1221,7 +1221,7 @@ describe('PubSub', () => {
 
     it('should return the correct client', async () => {
       // tslint:disable-next-line only-arrow-functions no-any
-      v1ClientOverrides.FakeClient = function(
+      v1ClientOverrides.FakeClient = function (
         options: pubsubTypes.ClientConfig
       ) {
         assert.strictEqual(options, pubsub.options);
@@ -1276,7 +1276,7 @@ describe('PubSub', () => {
     };
 
     beforeEach(() => {
-      // tslint:disable-next-line no-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       pjyOverride = (reqOpts: any) => {
         return reqOpts;
       };
@@ -1309,7 +1309,7 @@ describe('PubSub', () => {
     });
 
     it('should replace the project id token on reqOpts', done => {
-      // tslint:disable-next-line no-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       pjyOverride = (reqOpts: any, projectId: string) => {
         assert.deepStrictEqual(reqOpts, CONFIG.reqOpts);
         assert.strictEqual(projectId, PROJECT_ID);
@@ -1334,7 +1334,7 @@ describe('PubSub', () => {
       };
 
       const fakeClient = {
-        // tslint:disable-next-line no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         fakeMethod(reqOpts: any, gaxOpts: CallOptions) {
           assert.strictEqual(reqOpts, replacedReqOpts);
           assert.strictEqual(gaxOpts, CONFIG.gaxOpts);
@@ -1353,7 +1353,7 @@ describe('PubSub', () => {
   describe('snapshot', () => {
     it('should throw if a name is not provided', () => {
       assert.throws(() => {
-        // tslint:disable-next-line no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (pubsub as any).snapshot();
       }, /You must supply a valid name for the snapshot\./);
     });
@@ -1375,14 +1375,14 @@ describe('PubSub', () => {
 
     it('should return a Subscription object', () => {
       // tslint:disable-next-line only-arrow-functions
-      subscriptionOverride = function() {};
+      subscriptionOverride = function () {};
       const subscription = pubsub.subscription(SUB_NAME, {});
       assert(subscription instanceof subscriptionOverride);
     });
 
     it('should pass specified name to the Subscription', done => {
       // tslint:disable-next-line only-arrow-functions
-      subscriptionOverride = function(
+      subscriptionOverride = function (
         pubsub: pubsubTypes.PubSub,
         name: string
       ) {
@@ -1394,7 +1394,7 @@ describe('PubSub', () => {
 
     it('should honor settings', done => {
       // tslint:disable-next-line only-arrow-functions
-      subscriptionOverride = function(
+      subscriptionOverride = function (
         pubsub: pubsubTypes.PubSub,
         name: string,
         options: subby.SubscriptionOptions
@@ -1407,7 +1407,7 @@ describe('PubSub', () => {
 
     it('should throw if a name is not provided', () => {
       assert.throws(() => {
-        // tslint:disable-next-line no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (pubsub as any).subscription();
       }, /A name must be specified for a subscription\./);
     });
@@ -1416,7 +1416,7 @@ describe('PubSub', () => {
   describe('topic', () => {
     it('should throw if a name is not provided', () => {
       assert.throws(() => {
-        // tslint:disable-next-line no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (pubsub as any).topic();
       }, /A name must be specified for a topic\./);
     });
