@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as assert from 'assert';
-import {describe, it} from 'mocha';
+import {describe, it, before, after, beforeEach} from 'mocha';
 import * as crypto from 'crypto';
 import defer = require('p-defer');
 import * as uuid from 'uuid';
@@ -28,7 +28,6 @@ import {
 } from '../src';
 import {Policy, IamPermissionsMap} from '../src/iam';
 import {MessageOptions} from '../src/topic';
-import {Metadata, MetadataValue} from 'google-gax';
 import {google} from '../protos/protos';
 
 type Resource = Topic | Subscription | Snapshot;
@@ -39,10 +38,7 @@ const CURRENT_TIME = Date.now();
 const pubsub = new PubSub();
 
 function shortUUID() {
-  return uuid
-    .v1()
-    .split('-')
-    .shift();
+  return uuid.v1().split('-').shift();
 }
 
 describe('pubsub', () => {
@@ -293,6 +289,7 @@ describe('pubsub', () => {
         const {
           input,
           expected,
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
         } = require('../../system-test/fixtures/ordered-messages.json');
 
         const publishes = input.map(({key, message}: Input) => {
@@ -583,7 +580,7 @@ describe('pubsub', () => {
 
       subscription.on('error', done);
 
-      // tslint:disable-next-line: no-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       subscription.on('message', (message: {data: any}) => {
         assert.deepStrictEqual(message.data, Buffer.from('hello'));
 
@@ -660,7 +657,7 @@ describe('pubsub', () => {
 
     // can be ran manually to test options/memory usage/etc.
     // tslint:disable-next-line ban
-    it.skip('should handle a large volume of messages', async function() {
+    it.skip('should handle a large volume of messages', async function () {
       const MESSAGES = 200000;
 
       const deferred = defer();
@@ -681,7 +678,7 @@ describe('pubsub', () => {
       return deferred.promise;
 
       function onmessage(message: Message) {
-        // tslint:disable-next-line no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const testid = (message.attributes as any).testid;
 
         if (!testid) {
@@ -858,7 +855,6 @@ describe('pubsub', () => {
       let subscription: Subscription;
       let snapshot: Snapshot;
       let messageId: string;
-      const snapshotName = generateSnapshotName();
 
       beforeEach(async () => {
         subscription = topic.subscription(generateSubName());
@@ -903,7 +899,7 @@ describe('pubsub', () => {
         subscription.on('error', done);
         subscription.on(
           'message',
-          // tslint:disable-next-line: no-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (message: {id: string; ack: () => void; publishTime: any}) => {
             if (message.id !== messageId) {
               return;

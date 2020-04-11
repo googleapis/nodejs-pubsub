@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {ServiceError} from '@grpc/grpc-js';
+import {ServiceError} from 'google-gax';
 import {EventEmitter} from 'events';
 
 import {BatchPublishOptions, MessageBatch} from './message-batch';
 import {PublishError} from './publish-error';
-import {Publisher, PubsubMessage, PublishCallback, BATCH_LIMITS} from './';
+import {Publisher, PubsubMessage, PublishCallback} from './';
 import {google} from '../../protos/protos';
 
 export interface PublishDone {

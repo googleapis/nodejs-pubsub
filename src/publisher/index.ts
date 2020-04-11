@@ -19,9 +19,9 @@ import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 
 import {BatchPublishOptions} from './message-batch';
-import {Queue, OrderedQueue, PublishDone} from './message-queues';
+import {Queue, OrderedQueue} from './message-queues';
 import {Topic} from '../topic';
-import {RequestCallback, EmptyCallback, EmptyResponse} from '../pubsub';
+import {RequestCallback, EmptyCallback} from '../pubsub';
 import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
 

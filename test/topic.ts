@@ -14,9 +14,8 @@
 
 import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
-import {describe, it} from 'mocha';
-import {CallOptions} from 'google-gax';
-import {ServiceError} from '@grpc/grpc-js';
+import {describe, it, before, beforeEach, afterEach} from 'mocha';
+import {CallOptions, ServiceError} from 'google-gax';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
@@ -84,16 +83,16 @@ const fakePaginator = {
 };
 
 describe('Topic', () => {
-  // tslint:disable-next-line no-any variable-name
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let Topic: any;
-  // tslint:disable-next-line no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let topic: typeof Topic;
 
   const PROJECT_ID = 'test-project';
   const TOPIC_NAME = 'projects/' + PROJECT_ID + '/topics/test-topic';
   const TOPIC_UNFORMATTED_NAME = TOPIC_NAME.split('/').pop();
 
-  // tslint:disable-next-line no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const PUBSUB: any = {
     Promise: {},
     projectId: PROJECT_ID,
@@ -264,7 +263,7 @@ describe('Topic', () => {
 
       topic.getMetadata = (gaxOpts: CallOptions) => {
         assert.strictEqual(gaxOpts, options);
-        // tslint:disable-next-line no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         assert.strictEqual((gaxOpts as any).autoCreate, undefined);
         done();
       };
@@ -559,13 +558,13 @@ describe('Topic', () => {
       const apiResponse_ = {};
 
       topic.request =
-        // tslint:disable-next-line:no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (config: RequestConfig, callback: (...args: any[]) => void) => {
           callback(err_, subs_, nextQuery_, apiResponse_);
         };
 
       topic.getSubscriptions(
-        // tslint:disable-next-line:no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (err: Error, subs: boolean, nextQuery: any, apiResponse: any) => {
           assert.strictEqual(err, err_);
           assert.deepStrictEqual(subs, subs_);

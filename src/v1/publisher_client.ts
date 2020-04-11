@@ -214,7 +214,7 @@ export class PublisherClient {
         ['topic'],
         'message_ids',
         gax.createByteLengthFunction(
-          // tslint:disable-next-line no-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           protoFilesRoot.lookupType('google.pubsub.v1.PubsubMessage') as any
         )
       ),
@@ -258,7 +258,7 @@ export class PublisherClient {
         ? (this._protos as protobuf.Root).lookupService(
             'google.pubsub.v1.Publisher'
           )
-        : // tslint:disable-next-line no-any
+        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (this._protos as any).google.pubsub.v1.Publisher,
       this._opts
     ) as Promise<{[method: string]: Function}>;
@@ -1406,7 +1406,7 @@ export class PublisherClient {
    */
   projectPath(project: string) {
     return this.pathTemplates.projectPathTemplate.render({
-      project,
+      project: project,
     });
   }
 
@@ -1430,8 +1430,8 @@ export class PublisherClient {
    */
   projectTopicPath(project: string, topic: string) {
     return this.pathTemplates.projectTopicPathTemplate.render({
-      project,
-      topic,
+      project: project,
+      topic: topic,
     });
   }
 
@@ -1468,8 +1468,8 @@ export class PublisherClient {
    */
   snapshotPath(project: string, snapshot: string) {
     return this.pathTemplates.snapshotPathTemplate.render({
-      project,
-      snapshot,
+      project: project,
+      snapshot: snapshot,
     });
   }
 
@@ -1504,8 +1504,8 @@ export class PublisherClient {
    */
   subscriptionPath(project: string, subscription: string) {
     return this.pathTemplates.subscriptionPathTemplate.render({
-      project,
-      subscription,
+      project: project,
+      subscription: subscription,
     });
   }
 

@@ -15,9 +15,10 @@
  */
 
 import * as assert from 'assert';
-import {describe, it} from 'mocha';
+import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import {CallOptions} from 'google-gax';
+// eslint-disable-next-line node/no-extraneous-import
 import {Metadata, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
@@ -68,7 +69,7 @@ describe('MessageQueues', () => {
 
   let subscriber: FakeSubscriber;
 
-  // tslint:disable-next-line variable-name no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let MessageQueue: any;
   // tslint:disable-next-line variable-name
   let AckQueue: typeof messageTypes.AckQueue;
@@ -112,7 +113,7 @@ describe('MessageQueues', () => {
       it('should set any provided options', () => {
         const fakeOptions = {};
         const stub = sandbox.stub(MessageQueue.prototype, 'setOptions');
-        const mq = new MessageQueue(subscriber, fakeOptions);
+        new MessageQueue(subscriber, fakeOptions);
 
         const [options] = stub.lastCall.args;
         assert.strictEqual(options, fakeOptions);
@@ -327,7 +328,8 @@ describe('MessageQueues', () => {
       fakeError.code = 2;
       fakeError.metadata = new Metadata();
 
-      const expectedMessage = `Failed to "acknowledge" for 3 message(s). Reason: Err.`;
+      const expectedMessage =
+        'Failed to "acknowledge" for 3 message(s). Reason: Err.';
 
       sandbox.stub(subscriber.client, 'acknowledge').rejects(fakeError);
 
@@ -451,7 +453,8 @@ describe('MessageQueues', () => {
       fakeError.code = 2;
       fakeError.metadata = new Metadata();
 
-      const expectedMessage = `Failed to "modifyAckDeadline" for 3 message(s). Reason: Err.`;
+      const expectedMessage =
+        'Failed to "modifyAckDeadline" for 3 message(s). Reason: Err.';
 
       sandbox.stub(subscriber.client, 'modifyAckDeadline').rejects(fakeError);
 

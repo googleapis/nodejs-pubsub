@@ -18,7 +18,6 @@ import {promisifyAll} from '@google-cloud/promisify';
 import {CallOptions} from 'google-gax';
 
 import {google} from '../protos/protos';
-
 import {PubSub} from './pubsub';
 import {
   EmptyCallback,
@@ -27,7 +26,6 @@ import {
   ResourceCallback,
 } from './pubsub';
 import {Subscription} from './subscription';
-import * as util from './util';
 
 export type CreateSnapshotCallback = ResourceCallback<
   Snapshot,
@@ -206,7 +204,7 @@ export class Snapshot {
   ): void | Promise<CreateSnapshotResponse> {
     if (!(this.parent instanceof Subscription)) {
       throw new Error(
-        `This is only available if you accessed this object through Subscription#snapshot`
+        'This is only available if you accessed this object through Subscription#snapshot'
       );
     }
 
@@ -261,7 +259,7 @@ export class Snapshot {
   ): void | Promise<SeekResponse> {
     if (!(this.parent instanceof Subscription)) {
       throw new Error(
-        `This is only available if you accessed this object through Subscription#snapshot`
+        'This is only available if you accessed this object through Subscription#snapshot'
       );
     }
     return this.parent.seek(this.name, gaxOpts! as CallOptions, callback!);

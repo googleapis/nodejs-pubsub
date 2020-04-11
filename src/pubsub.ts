@@ -20,10 +20,14 @@ import {promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
+// eslint-disable-next-line node/no-extraneous-import
 import * as grpc from '@grpc/grpc-js';
+// eslint-disable-next-line node/no-extraneous-import
 import {ServiceError, ChannelCredentials} from '@grpc/grpc-js';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const PKG = require('../../package.json');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const v1 = require('./v1');
 
 import {Snapshot} from './snapshot';
@@ -46,8 +50,6 @@ import {PublishOptions} from './publisher';
 import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
 import {google} from '../protos/protos';
-
-const opts = {} as gax.GrpcClientOptions;
 
 /**
  * Project ID placeholder.

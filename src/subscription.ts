@@ -43,10 +43,8 @@ import {
 } from './snapshot';
 import {Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';
-import {noop} from './util';
 
 export type PushConfig = google.pubsub.v1.IPushConfig;
-
 export type OidcToken = google.pubsub.v1.PushConfig.IOidcToken;
 
 export type SubscriptionMetadata = {
@@ -1024,7 +1022,7 @@ export class Subscription extends EventEmitter {
       }
     });
 
-    this.on('removeListener', event => {
+    this.on('removeListener', () => {
       if (this.isOpen && this.listenerCount('message') === 0) {
         this._subscriber.close();
       }

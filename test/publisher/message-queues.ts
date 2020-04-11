@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ServiceError} from '@grpc/grpc-js';
+import {ServiceError} from 'google-gax';
 import * as assert from 'assert';
-import {describe, it} from 'mocha';
+import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
@@ -29,6 +29,7 @@ import {PublishError} from '../../src/publisher/publish-error';
 
 class FakeTopic {
   name = 'fake-topic';
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   request<T>(config: RequestConfig, callback: RequestCallback<T>): void {}
 }
 
@@ -54,7 +55,9 @@ class FakeMessageBatch {
     this.messages = [];
     this.options = options;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: p.PubsubMessage, callback: p.PublishCallback): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   canFit(message: p.PubsubMessage): boolean {
     return true;
   }
@@ -78,11 +81,9 @@ class FakePublishError {
 describe('Message Queues', () => {
   const sandbox = sinon.createSandbox();
 
-  // tslint:disable-next-line no-any variable-name
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let MessageQueue: any;
-  // tslint:disable-next-line variable-name
   let Queue: typeof q.Queue;
-  // tslint:disable-next-line variable-name
   let OrderedQueue: typeof q.OrderedQueue;
 
   let topic: FakeTopic;
@@ -401,10 +402,7 @@ describe('Message Queues', () => {
         it('should publish immediately if it cannot fit the message', done => {
           const addStub = sandbox.stub(batch, 'add');
 
-          sandbox
-            .stub(batch, 'canFit')
-            .withArgs(fakeMessage)
-            .returns(false);
+          sandbox.stub(batch, 'canFit').withArgs(fakeMessage).returns(false);
           sandbox
             .stub(queue, 'publish')
             .onCall(0)

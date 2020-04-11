@@ -237,7 +237,7 @@ export class SubscriberClient {
         ? (this._protos as protobuf.Root).lookupService(
             'google.pubsub.v1.Subscriber'
           )
-        : // tslint:disable-next-line no-any
+        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (this._protos as any).google.pubsub.v1.Subscriber,
       this._opts
     ) as Promise<{[method: string]: Function}>;
@@ -2066,7 +2066,7 @@ export class SubscriberClient {
    */
   projectPath(project: string) {
     return this.pathTemplates.projectPathTemplate.render({
-      project,
+      project: project,
     });
   }
 
@@ -2090,8 +2090,8 @@ export class SubscriberClient {
    */
   projectTopicPath(project: string, topic: string) {
     return this.pathTemplates.projectTopicPathTemplate.render({
-      project,
-      topic,
+      project: project,
+      topic: topic,
     });
   }
 
@@ -2128,8 +2128,8 @@ export class SubscriberClient {
    */
   snapshotPath(project: string, snapshot: string) {
     return this.pathTemplates.snapshotPathTemplate.render({
-      project,
-      snapshot,
+      project: project,
+      snapshot: snapshot,
     });
   }
 
@@ -2164,8 +2164,8 @@ export class SubscriberClient {
    */
   subscriptionPath(project: string, subscription: string) {
     return this.pathTemplates.subscriptionPathTemplate.render({
-      project,
-      subscription,
+      project: project,
+      subscription: subscription,
     });
   }
 
