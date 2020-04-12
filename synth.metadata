@@ -1,12 +1,26 @@
 {
-  "updateTime": "2020-04-11T00:41:23.034720Z",
   "sources": [
+    {
+      "git": {
+        "name": ".",
+        "remote": "https://github.com/googleapis/nodejs-pubsub.git",
+        "sha": "544a061b1b6d7fdc4051486c2b8ae5d14e1ec141"
+      }
+    },
+    {
+      "git": {
+        "name": "googleapis",
+        "remote": "https://github.com/googleapis/googleapis.git",
+        "sha": "1bd77e8ce6f953ac641af7966d0c52646afc16a8",
+        "internalRef": "305974465"
+      }
+    },
     {
       "git": {
         "name": "synthtool",
         "remote": "https://github.com/googleapis/synthtool.git",
-        "sha": "6f32150677c9784f3c3a7e1949472bd29c9d72c5",
-        "log": "6f32150677c9784f3c3a7e1949472bd29c9d72c5\nfix: installs test_utils from its common repo (#480)\n\n\n74ce986d3b5431eb66985e9a00c4eb45295a4020\nfix: stop recording update_time in synth.metadata (#478)\n\n\n7f8e62aa3edd225f76347a16f92e400661fdfb52\nchore(java): release-please only updates non maven versions in README (#476)\n\nPrevent release-please and synthtool from fighting over the released library version. Synthtool updates the install snippets from the samples pom.xml files so the bots fight if they are temporarily out of sync after a release.\nc7e0e517d7f46f77bebd27da2e5afcaa6eee7e25\nbuild(java): fix nightly integration test config to run integrations (#465)\n\nThis was only running the units.\nbd69a2aa7b70875f3c988e269706b22fefbef40e\nbuild(java): fix retry_with_backoff when -e option set (#475)\n\n\nd9b173c427bfa0c6cca818233562e7e8841a357c\nfix: record version of working repo in synth.metadata (#473)\n\nPartial revert of b37cf74d12e9a42b9de9e61a4f26133d7cd9c168.\nf73a541770d95a609e5be6bf6b3b220d17cefcbe\nfeat(discogapic): allow local discovery-artifact-manager (#474)\n\n\n"
+        "sha": "21c3b57ae54ae9db6a3a6b48b31c970c6ab56f19",
+        "log": "21c3b57ae54ae9db6a3a6b48b31c970c6ab56f19\nbuild(nodejs): remove unused codecov config (#486)\n\n\n"
       }
     }
   ],
