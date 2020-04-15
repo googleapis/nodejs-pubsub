@@ -26,6 +26,7 @@ import {
   Subscription,
   SubscriptionOptions,
 } from '../src/subscription';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {GetTopicMetadataCallback, Topic} from '../src/topic';
 import * as util from '../src/util';
 
