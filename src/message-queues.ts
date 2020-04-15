@@ -76,7 +76,9 @@ export class BatchError extends Error implements ServiceError {
  */
 export abstract class MessageQueue {
   numPendingRequests: number;
+  numInFlightRequests: number;
   protected _onFlush?: defer.DeferredPromise<void>;
+  protected _onDrain?: defer.DeferredPromise<void>;
   protected _options!: BatchOptions;
   protected _requests: QueuedMessages;
   protected _subscriber: Subscriber;
@@ -84,6 +86,7 @@ export abstract class MessageQueue {
   protected abstract _sendBatch(batch: QueuedMessages): Promise<void>;
   constructor(sub: Subscriber, options = {} as BatchOptions) {
     this.numPendingRequests = 0;
+    this.numInFlightRequests = 0;
     this._requests = [];
     this._subscriber = sub;
 
@@ -110,6 +113,7 @@ export abstract class MessageQueue {
 
     this._requests.push([ackId, deadline]);
     this.numPendingRequests += 1;
+    this.numInFlightRequests += 1;
 
     if (this._requests.length >= maxMessages!) {
       this.flush();
@@ -141,8 +145,14 @@ export abstract class MessageQueue {
       this._subscriber.emit('error', e);
     }
 
+    this.numInFlightRequests -= batchSize;
     if (deferred) {
       deferred.resolve();
+    }
+
+    if (this.numInFlightRequests <= 0 && this._onDrain) {
+      this._onDrain.resolve();
+      delete this._onDrain;
     }
   }
   /**
@@ -156,6 +166,15 @@ export abstract class MessageQueue {
       this._onFlush = defer();
     }
     return this._onFlush.promise;
+  }
+  /**
+   * Returns a promise that resolves when all in-flight messages have settled.
+   */
+  onDrain(): Promise<void> {
+    if (!this._onDrain) {
+      this._onDrain = defer();
+    }
+    return this._onDrain.promise;
   }
   /**
    * Set the batching options.

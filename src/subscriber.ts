@@ -466,6 +466,14 @@ export class Subscriber extends EventEmitter {
       this._modAcks.flush();
     }
 
+    if (this._acks.numInFlightRequests) {
+      promises.push(this._acks.onDrain());
+    }
+
+    if (this._modAcks.numInFlightRequests) {
+      promises.push(this._modAcks.onDrain());
+    }
+
     await Promise.all(promises);
   }
 }
