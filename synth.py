@@ -17,11 +17,11 @@ library = gapic.typescript_library(
     version,
     generator_args={
         'grpc-service-config': f'google/pubsub/{version}/pubsub_grpc_service_config.json',
-        'package-name': f'@google-cloud/pubsub',
-        'main-service': f'pubsub',
+        'package-name': '@google-cloud/pubsub',
+        'main-service': 'pubsub',
         'bundle-config': f'google/pubsub/{version}/pubsub_gapic.yaml',
-        'template': f'typescript_gapic',
-        "iam-service": "true"
+        'template': 'typescript_gapic',
+        'iam-service': 'true'
     },
     proto_path=f'/google/pubsub/{version}',
     extra_proto_files=['google/cloud/common_resources.proto']

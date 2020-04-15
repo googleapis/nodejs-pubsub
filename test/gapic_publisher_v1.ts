@@ -1066,7 +1066,7 @@ describe('v1.PublisherClient', () => {
           },
         },
       };
-      const expectedResponse: string[] | undefined = [];
+      const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSubscriptions = stubSimpleCall(
         expectedResponse
       );
@@ -1097,7 +1097,7 @@ describe('v1.PublisherClient', () => {
           },
         },
       };
-      const expectedResponse: string[] | undefined = [];
+      const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSubscriptions = stubSimpleCallWithCallback(
         expectedResponse
       );
@@ -1166,7 +1166,7 @@ describe('v1.PublisherClient', () => {
       );
       request.topic = '';
       const expectedHeaderRequestParams = 'topic=';
-      const expectedResponse: string[] | undefined = [];
+      const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSubscriptions.createStream = stubPageStreamingCall(
         expectedResponse
       );
@@ -1258,7 +1258,7 @@ describe('v1.PublisherClient', () => {
       );
       request.topic = '';
       const expectedHeaderRequestParams = 'topic=';
-      const expectedResponse: string[] | undefined = [];
+      const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSubscriptions.asyncIterate = stubAsyncIterationCall(
         expectedResponse
       );
@@ -1339,7 +1339,7 @@ describe('v1.PublisherClient', () => {
           },
         },
       };
-      const expectedResponse: string[] | undefined = [];
+      const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSnapshots = stubSimpleCall(
         expectedResponse
       );
@@ -1370,7 +1370,7 @@ describe('v1.PublisherClient', () => {
           },
         },
       };
-      const expectedResponse: string[] | undefined = [];
+      const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSnapshots = stubSimpleCallWithCallback(
         expectedResponse
       );
@@ -1439,7 +1439,7 @@ describe('v1.PublisherClient', () => {
       );
       request.topic = '';
       const expectedHeaderRequestParams = 'topic=';
-      const expectedResponse: string[] | undefined = [];
+      const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSnapshots.createStream = stubPageStreamingCall(
         expectedResponse
       );
@@ -1529,7 +1529,7 @@ describe('v1.PublisherClient', () => {
       );
       request.topic = '';
       const expectedHeaderRequestParams = 'topic=';
-      const expectedResponse: string[] | undefined = [];
+      const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSnapshots.asyncIterate = stubAsyncIterationCall(
         expectedResponse
       );

@@ -1,12 +1,18 @@
 {
-  "updateTime": "2020-04-15T05:12:05.559061Z",
   "sources": [
+    {
+      "git": {
+        "name": ".",
+        "remote": "git@github.com:googleapis/nodejs-pubsub.git",
+        "sha": "e85fcd0e8aa9ff3c67257ebc04a1e7c42b1ec207"
+      }
+    },
     {
       "git": {
         "name": "googleapis",
         "remote": "https://github.com/googleapis/googleapis.git",
-        "sha": "160e3187dc93265ed635ad68e12c483c8ab4f7be",
-        "internalRef": "306560315"
+        "sha": "629e6bea8418ad4a5d081ab9eb48bb327ad368e1",
+        "internalRef": "306660765"
       }
     },
     {
