@@ -46,7 +46,9 @@ class FakeQueue extends EventEmitter {
     super();
     this.publisher = publisher;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: p.PubsubMessage, callback: p.PublishCallback): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   publish(callback: (err: Error | null) => void) {}
 }
 
@@ -58,6 +60,7 @@ class FakeOrderedQueue extends FakeQueue {
     this.orderingKey = key;
   }
   resumePublishing(): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   publish(callback: (err: Error | null) => void) {}
 }
 

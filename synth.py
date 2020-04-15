@@ -17,10 +17,11 @@ library = gapic.typescript_library(
     version,
     generator_args={
         'grpc-service-config': f'google/pubsub/{version}/pubsub_grpc_service_config.json',
-        'package-name': f'@google-cloud/pubsub',
-        'main-service': f'pubsub',
+        'package-name': '@google-cloud/pubsub',
+        'main-service': 'pubsub',
         'bundle-config': f'google/pubsub/{version}/pubsub_gapic.yaml',
-        'template': f'typescript_gapic'
+        'template': 'typescript_gapic',
+        'iam-service': 'true'
     },
     proto_path=f'/google/pubsub/{version}',
     extra_proto_files=['google/cloud/common_resources.proto']
@@ -33,38 +34,6 @@ s.copy(
 
 templates = common_templates.node_library(source_location='build/src')
 s.copy(templates)
-
-# TODO: remove this surgery once IAM service injected in nodejs-gax https://github.com/googleapis/gax-nodejs/pull/762/
-# surgery in client.ts file to call IAM service
-clients = ['publisher', 'subscriber']
-for client_name in clients:
-    client_file = f'src/v1/{client_name}_client.ts'
-    s.replace(client_file,
-              f'import \* as gapicConfig from \'\.\/{client_name}_client_config\.json\';',
-              f'import * as gapicConfig from \'./%s_client_config.json\';\nimport {{IamClient}} from \'../helper\';' % client_name,
-              )
-
-    s.replace(client_file,
-              'private \_terminated = false;',
-              'private _terminated = false; \n private _iamClient: IamClient;')
-
-    s.replace(client_file,
-              '\/\/ Determine the client header string.',
-              'this._iamClient = new IamClient(opts); \n // Determine the client header string.')
-
-    # TODO: it should be removed once pubsub upgrade gts 2.0.0
-    # fix tslint issue due to mismatch gts version with gapic-generator-typescript
-    s.replace(client_file, '\/\/ eslint\-disable\-next\-line\ \@typescript\-eslint\/no\-explicit\-any',
-              '// eslint-disable-next-line @typescript-eslint/no-explicit-any')
-
-    with open('helperMethods.ts.tmpl', 'r') as helper_file:
-        content = helper_file.read()
-    s.replace(client_file, '^}', content)
-
-# TODO: it should be removed once pubsub upgrade gts 2.0.0
-# fix tslint issue due to mismatch gts version with gapic-generator-typescript
-s.replace('test/gapic_publisher_v1.ts',
-          'const\ expectedResponse\ \=\ \[new\ String\(\)\,\ new\ String\(\)\,\ new\ String\(\)\];', 'const expectedResponse: string[] | undefined = [];')
 
 # Node.js specific cleanup
 subprocess.run(['npm', 'install'])

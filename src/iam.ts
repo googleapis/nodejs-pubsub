@@ -20,7 +20,7 @@
 
 import {promisifyAll} from '@google-cloud/promisify';
 import arrify = require('arrify');
-import {CallOptions} from 'google-gax';
+import {CallOptions, IamProtos} from 'google-gax';
 
 import {google} from '../protos/protos';
 
@@ -28,7 +28,7 @@ import {Omit, PubSub, RequestCallback, ResourceCallback} from './pubsub';
 
 export type Policy = {
   etag?: string | Buffer;
-} & Omit<google.iam.v1.IPolicy, 'etag'>;
+} & Omit<IamProtos.google.iam.v1.IPolicy, 'etag'>;
 
 export type GetPolicyCallback = RequestCallback<Policy>;
 export type SetPolicyCallback = RequestCallback<Policy>;
@@ -47,11 +47,11 @@ export interface IamPermissionsMap {
 
 export type TestIamPermissionsResponse = [
   IamPermissionsMap,
-  google.iam.v1.ITestIamPermissionsResponse
+  IamProtos.google.iam.v1.ITestIamPermissionsResponse
 ];
 export type TestIamPermissionsCallback = ResourceCallback<
   IamPermissionsMap,
-  google.iam.v1.ITestIamPermissionsResponse
+  IamProtos.google.iam.v1.ITestIamPermissionsResponse
 >;
 
 /**
@@ -370,7 +370,7 @@ export class IAM {
       permissions: arrify(permissions),
     };
 
-    this.request<google.iam.v1.ITestIamPermissionsResponse>(
+    this.request<IamProtos.google.iam.v1.ITestIamPermissionsResponse>(
       {
         client: 'SubscriberClient',
         method: 'testIamPermissions',

@@ -31,15 +31,19 @@ import {Message, Subscriber} from '../src/subscriber';
 
 class FakeClient {
   async acknowledge(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     reqOpts: {subscription: string; ackIds: string[]},
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     callOptions: CallOptions
   ): Promise<void> {}
   async modifyAckDeadline(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     reqOpts: {
       subscription: string;
       ackIds: string[];
       ackDeadlineSeconds: number;
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     callOptions: CallOptions
   ): Promise<void> {}
 }

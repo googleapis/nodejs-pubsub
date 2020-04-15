@@ -63,7 +63,9 @@ class FakeHistogram {
     const key = options ? 'histogram' : 'latencies';
     stubs.set(key, this);
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(seconds: number): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   percentile(percentile: number): number {
     return 10;
   }
@@ -76,8 +78,10 @@ class FakeLeaseManager extends EventEmitter {
     this.options = options;
     stubs.set('inventory', this);
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: s.Message): void {}
   clear(): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   remove(message: s.Message): void {}
 }
 
@@ -89,6 +93,7 @@ class FakeQueue {
   constructor(sub: s.Subscriber, options: BatchOptions) {
     this.options = options;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: s.Message, deadline?: number): void {}
   async flush(): Promise<void> {}
   async onFlush(): Promise<void> {}
@@ -116,6 +121,7 @@ class FakeMessageStream extends PassThrough {
     this.options = options;
     stubs.set('messageStream', this);
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   destroy(error?: Error): void {}
 }
 
