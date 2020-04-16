@@ -474,9 +474,6 @@ export class SubscriberClient {
    *   parent project (i.e.,
    *   service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have
    *   permission to Acknowledge() messages on this subscription.
-   *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
-   *   API might be changed in backward-incompatible ways and is not recommended
-   *   for production use. It is not subject to any SLA or deprecation policy.
    * @param {google.pubsub.v1.RetryPolicy} request.retryPolicy
    *   A policy that specifies how Cloud Pub/Sub retries message delivery for this
    *   subscription.
