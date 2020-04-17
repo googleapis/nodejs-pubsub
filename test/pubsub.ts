@@ -151,7 +151,6 @@ describe('PubSub', () => {
   let pubsub: pubsubTypes.PubSub;
   const OPTIONS = {
     projectId: PROJECT_ID,
-    promise: {},
   } as pubsubTypes.ClientConfig;
 
   const PUBSUB_EMULATOR_HOST = process.env.PUBSUB_EMULATOR_HOST;

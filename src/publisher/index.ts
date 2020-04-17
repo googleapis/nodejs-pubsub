@@ -56,17 +56,11 @@ export const BATCH_LIMITS: BatchPublishOptions = {
  * @param {PublishOptions} [options] Configuration object.
  */
 export class Publisher {
-  // tslint:disable-next-line variable-name
-  Promise?: PromiseConstructor;
   topic: Topic;
   settings!: PublishOptions;
   queue: Queue;
   orderedQueues: Map<string, OrderedQueue>;
   constructor(topic: Topic, options?: PublishOptions) {
-    if (topic.Promise) {
-      this.Promise = topic.Promise;
-    }
-
     this.setOptions(options);
     this.topic = topic;
     this.queue = new Queue(this);

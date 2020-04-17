@@ -84,12 +84,6 @@ describe('Snapshot', () => {
       assert(promisified);
     });
 
-    it('should localize parent.Promise', () => {
-      const pubsub = new PubSub();
-      snapshot = new Snapshot(pubsub, SNAPSHOT_NAME);
-      assert.strictEqual(snapshot.Promise, pubsub.Promise);
-    });
-
     it('should localize the parent', () => {
       assert.strictEqual(snapshot.parent, SUBSCRIPTION);
     });
