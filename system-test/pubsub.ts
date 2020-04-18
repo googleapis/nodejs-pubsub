@@ -634,7 +634,7 @@ describe('pubsub', () => {
       }
     });
 
-    it.only('should send and receive large messages', done => {
+    it('should send and receive large messages', done => {
       const subscription = topic.subscription(SUB_NAMES[0]);
       const data = crypto.randomBytes(9000000); // 9mb
 
