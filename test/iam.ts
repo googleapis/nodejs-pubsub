@@ -37,7 +37,6 @@ describe('IAM', () => {
 
   const PUBSUB = ({
     options: {},
-    Promise: {},
     request: util.noop,
   } as {}) as PubSub;
   const ID = 'id';
@@ -53,10 +52,6 @@ describe('IAM', () => {
   });
 
   describe('initialization', () => {
-    it('should localize pubsub.Promise', () => {
-      assert.strictEqual(iam.Promise, PUBSUB.Promise);
-    });
-
     it('should localize pubsub', () => {
       assert.strictEqual(iam.pubsub, PUBSUB);
     });

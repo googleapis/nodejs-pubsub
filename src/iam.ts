@@ -93,16 +93,11 @@ export type TestIamPermissionsCallback = ResourceCallback<
  * // subscription.iam
  */
 export class IAM {
-  // tslint:disable-next-line variable-name
-  Promise?: PromiseConstructor;
   pubsub: PubSub;
   request: typeof PubSub.prototype.request;
   id: string;
 
   constructor(pubsub: PubSub, id: string) {
-    if (pubsub.Promise) {
-      this.Promise = pubsub.Promise;
-    }
     this.pubsub = pubsub;
     this.request = pubsub.request.bind(pubsub);
     this.id = id;

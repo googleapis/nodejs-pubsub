@@ -89,7 +89,6 @@ describe('Subscription', () => {
 
   const PUBSUB = ({
     projectId: PROJECT_ID,
-    Promise: {},
     request: util.noop,
     createSubscription: util.noop,
   } as {}) as PubSub;

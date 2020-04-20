@@ -97,12 +97,6 @@ describe('Publisher', () => {
       assert(promisified);
     });
 
-    it('should localize Promise class if set', () => {
-      const t = {Promise} as Topic;
-      publisher = new Publisher(t);
-      assert.strictEqual(publisher.Promise, Promise);
-    });
-
     it('should capture user options', () => {
       const stub = sandbox.stub(Publisher.prototype, 'setOptions');
 
