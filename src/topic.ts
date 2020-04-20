@@ -100,8 +100,6 @@ export type MessageOptions = PubsubMessage & {json?: any};
  * const topic = pubsub.topic('ordered-topic', {enableMessageOrdering: true});
  */
 export class Topic {
-  // tslint:disable-next-line variable-name
-  Promise?: PromiseConstructor;
   name: string;
   parent: PubSub;
   pubsub: PubSub;
@@ -114,9 +112,6 @@ export class Topic {
   ) as () => ObjectStream<Subscription>;
 
   constructor(pubsub: PubSub, name: string, options?: PublishOptions) {
-    if (pubsub.Promise) {
-      this.Promise = pubsub.Promise;
-    }
     /**
      * The fully qualified name of this topic.
      * @name Topic#name

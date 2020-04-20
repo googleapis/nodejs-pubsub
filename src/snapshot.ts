@@ -103,13 +103,8 @@ export type SeekResponse = [google.pubsub.v1.ISeekResponse];
 export class Snapshot {
   parent: Subscription | PubSub;
   name: string;
-  // tslint:disable-next-line variable-name
-  Promise?: PromiseConstructor;
   metadata?: google.pubsub.v1.ISnapshot;
   constructor(parent: Subscription | PubSub, name: string) {
-    if (parent instanceof PubSub) {
-      this.Promise = parent.Promise;
-    }
     this.parent = parent;
     this.name = Snapshot.formatName_(parent.projectId, name);
   }

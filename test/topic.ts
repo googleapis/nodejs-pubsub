@@ -95,7 +95,6 @@ describe('Topic', () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const PUBSUB: any = {
-    Promise: {},
     projectId: PROJECT_ID,
     createTopic: util.noop,
     request: util.noop,
@@ -130,10 +129,6 @@ describe('Topic', () => {
 
     it('should promisify all the things', () => {
       assert(promisified);
-    });
-
-    it('should localize pubsub.Promise', () => {
-      assert.strictEqual(topic.Promise, PUBSUB.Promise);
     });
 
     it('should format the name', () => {
