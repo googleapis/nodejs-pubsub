@@ -84,6 +84,7 @@ class FakeLeaseManager extends EventEmitter {
 class FakeQueue {
   options: BatchOptions;
   numPendingRequests = 0;
+  numInFlightRequests = 0;
   maxMilliseconds = 100;
   constructor(sub: s.Subscriber, options: BatchOptions) {
     this.options = options;
@@ -91,6 +92,7 @@ class FakeQueue {
   add(message: s.Message, deadline?: number): void {}
   async flush(): Promise<void> {}
   async onFlush(): Promise<void> {}
+  async onDrain(): Promise<void> {}
 }
 
 class FakeAckQueue extends FakeQueue {
@@ -386,6 +388,7 @@ describe('Subscriber', () => {
 
         sandbox.stub(ackQueue, 'flush').rejects();
         sandbox.stub(ackQueue, 'onFlush').rejects();
+        sandbox.stub(ackQueue, 'onDrain').rejects();
 
         const modAckQueue: FakeModAckQueue = stubs.get('modAckQueue');
 
@@ -393,6 +396,20 @@ describe('Subscriber', () => {
         sandbox.stub(modAckQueue, 'onFlush').rejects();
 
         return subscriber.close();
+      });
+
+      it('should wait for in-flight messages to drain', async () => {
+        const ackQueue: FakeAckQueue = stubs.get('ackQueue');
+        const modAckQueue: FakeModAckQueue = stubs.get('modAckQueue');
+        const ackOnDrain = sandbox.stub(ackQueue, 'onDrain').resolves();
+        const modAckOnDrain = sandbox.stub(modAckQueue, 'onDrain').resolves();
+
+        ackQueue.numInFlightRequests = 1;
+        modAckQueue.numInFlightRequests = 1;
+        await subscriber.close();
+
+        assert.strictEqual(ackOnDrain.callCount, 1);
+        assert.strictEqual(modAckOnDrain.callCount, 1);
       });
     });
   });

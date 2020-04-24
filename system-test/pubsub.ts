@@ -880,7 +880,7 @@ describe('pubsub', () => {
             subscription.on('error', done);
             subscription.on('message', message => {
               // If we get the default message from before() then this fails.
-              assert.equal(message.data.toString(), testText);
+              assert.strictEqual(message.data.toString(), testText);
               message.ack();
               subscription.close(done);
             });
