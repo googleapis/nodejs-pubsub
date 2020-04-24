@@ -31,7 +31,7 @@
     "system-test": "mocha build/system-test --timeout 600000",
     "samples-test": "cd samples/ && npm link ../ && npm install && npm test && cd ../",
     "test": "c8 mocha build/test",
-    "lint": "gts fix",
+    "lint": "gts check",
     "predocs": "npm run compile",
     "docs": "jsdoc -c .jsdoc.js",
     "fix": "gts fix",
@@ -43,7 +43,8 @@
     "docs-test": "linkinator docs",
     "predocs-test": "npm run docs",
     "benchwrapper": "node bin/benchwrapper.js",
-    "prelint": "cd samples; npm link ../; npm install"
+    "prelint": "cd samples; npm link ../; npm install",
+    "precompile": "gts clean"
   },
   "dependencies": {
     "@google-cloud/paginator": "^3.0.0",
