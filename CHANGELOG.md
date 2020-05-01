@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [1.7.3](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.7.2...v1.7.3) (2020-05-01)
+
+
+### Bug Fixes
+
+* **close:** ensure in-flight messages are drained ([#952](https://www.github.com/googleapis/nodejs-pubsub/issues/952)) ([#980](https://www.github.com/googleapis/nodejs-pubsub/issues/980)) ([4731535](https://www.github.com/googleapis/nodejs-pubsub/commit/473153587024bebfad43e8a5df8dcbd13d120402))
+
 ### [1.7.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.7.1...v1.7.2) (2020-04-08)
 
 This fix release was manually pushed to legacy-8.
