@@ -121,10 +121,6 @@ export class Message {
      * subscribers in the order in which they are received by the Pub/Sub
      * system.
      *
-     * **EXPERIMENTAL:** This feature is part of a closed alpha release. This
-     * API might be changed in backward-incompatible ways and is not recommended
-     * for production use. It is not subject to any SLA or deprecation policy.
-     *
      * @name Message#orderingKey
      * @type {string}
      */
