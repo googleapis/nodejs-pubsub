@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import {CallOptions} from 'google-gax';
-// eslint-disable-next-line node/no-extraneous-import
-import {Metadata, ServiceError, status} from '@grpc/grpc-js';
+import {CallOptions, grpc} from 'google-gax';
 import defer = require('p-defer');
 
 import {Message, Subscriber} from './subscriber';
@@ -37,12 +35,12 @@ export interface BatchOptions {
  * @param {string} message The error message.
  * @param {ServiceError} err The grpc service error.
  */
-export class BatchError extends Error implements ServiceError {
+export class BatchError extends Error implements grpc.ServiceError {
   ackIds: string[];
-  code: status;
+  code: grpc.status;
   details: string;
-  metadata: Metadata;
-  constructor(err: ServiceError, ackIds: string[], rpc: string) {
+  metadata: grpc.Metadata;
+  constructor(err: grpc.ServiceError, ackIds: string[], rpc: string) {
     super(
       `Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${
         process.env.DEBUG_GRPC ? err.stack : err.message

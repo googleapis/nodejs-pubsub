@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-// eslint-disable-next-line node/no-extraneous-import
-import {ServiceError, Metadata, status} from '@grpc/grpc-js';
+import {grpc} from 'google-gax';
 
 /**
  * Exception to be thrown during failed ordered publish.
@@ -23,17 +21,17 @@ import {ServiceError, Metadata, status} from '@grpc/grpc-js';
  * @class
  * @extends Error
  */
-export class PublishError extends Error implements ServiceError {
-  code: status;
+export class PublishError extends Error implements grpc.ServiceError {
+  code: grpc.status;
   details: string;
-  metadata: Metadata;
+  metadata: grpc.Metadata;
   orderingKey: string;
-  error: ServiceError;
-  constructor(key: string, err: ServiceError) {
+  error: grpc.ServiceError;
+  constructor(key: string, err: grpc.ServiceError) {
     super(`Unable to publish for key "${key}". Reason: ${err.message}`);
 
     /**
-     * The gRPC status code.
+     * The gRPC grpc.status code.
      *
      * @name PublishError#code
      * @type {number}
@@ -41,7 +39,7 @@ export class PublishError extends Error implements ServiceError {
     this.code = err.code;
 
     /**
-     * The gRPC status details.
+     * The gRPC grpc.status details.
      *
      * @name PublishError#details
      * @type {string}
@@ -49,9 +47,9 @@ export class PublishError extends Error implements ServiceError {
     this.details = err.details;
 
     /**
-     * The gRPC metadata object.
+     * The gRPC grpc.Metadata object.
      *
-     * @name PublishError#metadata
+     * @name PublishError#grpc.Metadata
      * @type {object}
      */
     this.metadata = err.metadata;

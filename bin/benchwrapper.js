@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const grpc = require('grpc');
+const {grpc} = require('google-gax');
 const protoLoader = require('@grpc/proto-loader');
 const {PubSub} = require('../build/src');
 
@@ -67,5 +67,14 @@ server.addService(pubsubBenchWrapper['PubsubBenchWrapper']['service'], {
   Recv: recv,
 });
 console.log(`starting on localhost:${argv.port}`);
-server.bind(`0.0.0.0:${argv.port}`, grpc.ServerCredentials.createInsecure());
-server.start();
+server.bindAsync(
+  `0.0.0.0:${argv.port}`,
+  grpc.ServerCredentials.createInsecure(),
+  err => {
+    if (err) {
+      throw err;
+    } else {
+      server.start();
+    }
+  }
+);
