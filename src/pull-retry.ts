@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// eslint-disable-next-line node/no-extraneous-import
-import {StatusObject, status} from '@grpc/grpc-js';
+import {grpc} from 'google-gax';
 
 /*!
- * retryable status codes
+ * retryable grpc.status codes
  */
-export const RETRY_CODES: status[] = [
-  status.DEADLINE_EXCEEDED,
-  status.RESOURCE_EXHAUSTED,
-  status.ABORTED,
-  status.INTERNAL,
-  status.UNAVAILABLE,
+export const RETRY_CODES: grpc.status[] = [
+  grpc.status.DEADLINE_EXCEEDED,
+  grpc.status.RESOURCE_EXHAUSTED,
+  grpc.status.ABORTED,
+  grpc.status.INTERNAL,
+  grpc.status.UNAVAILABLE,
 ];
 
 /**
@@ -51,7 +50,7 @@ export class PullRetry {
     return Math.pow(2, this.failures) * 1000 + Math.floor(Math.random() * 1000);
   }
   /**
-   * Determines if a request status should be retried.
+   * Determines if a request grpc.status should be retried.
    *
    * Deadlines behave kind of unexpectedly on streams, rather than using it as
    * an indicator of when to give up trying to connect, it actually dictates
@@ -60,18 +59,21 @@ export class PullRetry {
    * the server closing the stream or if we timed out waiting for a connection.
    *
    * @private
-   * @param {object} status The request status.
+   * @param {object} grpc.status The request grpc.status.
    * @returns {boolean}
    */
-  retry(err: StatusObject): boolean {
-    if (err.code === status.OK || err.code === status.DEADLINE_EXCEEDED) {
+  retry(err: grpc.StatusObject): boolean {
+    if (
+      err.code === grpc.status.OK ||
+      err.code === grpc.status.DEADLINE_EXCEEDED
+    ) {
       this.failures = 0;
     } else {
       this.failures += 1;
     }
 
     if (
-      err.code === status.UNAVAILABLE &&
+      err.code === grpc.status.UNAVAILABLE &&
       err.details &&
       err.details.match(/Server shutdownNow invoked/)
     ) {

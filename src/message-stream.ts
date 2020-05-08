@@ -15,15 +15,7 @@
  */
 
 import {promisify} from '@google-cloud/promisify';
-import {ClientStub} from 'google-gax';
-import {
-  ClientDuplexStream,
-  Metadata,
-  ServiceError,
-  status,
-  StatusObject,
-  // eslint-disable-next-line node/no-extraneous-import
-} from '@grpc/grpc-js';
+import {ClientStub, grpc} from 'google-gax';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
@@ -59,7 +51,10 @@ interface StreamState {
 
 type StreamingPullRequest = google.pubsub.v1.IStreamingPullRequest;
 type PullResponse = google.pubsub.v1.IPullResponse;
-type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse> & {
+type PullStream = grpc.ClientDuplexStream<
+  StreamingPullRequest,
+  PullResponse
+> & {
   _readableState: StreamState;
 };
 
@@ -70,11 +65,11 @@ type PullStream = ClientDuplexStream<StreamingPullRequest, PullResponse> & {
  *
  * @param {object} status The gRPC status object.
  */
-export class StatusError extends Error implements ServiceError {
-  code: status;
+export class StatusError extends Error implements grpc.ServiceError {
+  code: grpc.status;
   details: string;
-  metadata: Metadata;
-  constructor(status: StatusObject) {
+  metadata: grpc.Metadata;
+  constructor(status: grpc.StatusObject) {
     super(status.details);
     this.code = status.code;
     this.details = status.details;
@@ -89,10 +84,10 @@ export class StatusError extends Error implements ServiceError {
  *
  * @param {Error} err The original error.
  */
-export class ChannelError extends Error implements ServiceError {
-  code: status;
+export class ChannelError extends Error implements grpc.ServiceError {
+  code: grpc.status;
   details: string;
-  metadata: Metadata;
+  metadata: grpc.Metadata;
   constructor(err: Error) {
     super(
       `Failed to connect to channel. Reason: ${
@@ -100,10 +95,10 @@ export class ChannelError extends Error implements ServiceError {
       }`
     );
     this.code = err.message.includes('deadline')
-      ? status.DEADLINE_EXCEEDED
-      : status.UNKNOWN;
+      ? grpc.status.DEADLINE_EXCEEDED
+      : grpc.status.UNKNOWN;
     this.details = err.message;
-    this.metadata = new Metadata();
+    this.metadata = new grpc.Metadata();
   }
 }
 
@@ -287,7 +282,7 @@ export class MessageStream extends PassThrough {
    * @param {Duplex} stream The ended stream.
    * @param {object} status The stream status.
    */
-  private _onEnd(stream: PullStream, status: StatusObject): void {
+  private _onEnd(stream: PullStream, status: grpc.StatusObject): void {
     this._removeStream(stream);
 
     if (this._fillHandle) {
@@ -331,7 +326,7 @@ export class MessageStream extends PassThrough {
    * @param {stream} stream The stream that was closed.
    * @param {object} status The status message stating why it was closed.
    */
-  private _onStatus(stream: PullStream, status: StatusObject): void {
+  private _onStatus(stream: PullStream, status: grpc.StatusObject): void {
     if (this.destroyed) {
       return;
     }

@@ -148,10 +148,9 @@ export {
 
 if (process.env.DEBUG_GRPC) {
   console.info('gRPC logging set to verbose');
-  // eslint-disable-next-line
-  const {setLogger, setLogVerbosity, logVerbosity} = require('@grpc/grpc-js');
-  setLogger(console);
-  setLogVerbosity(logVerbosity.DEBUG);
+  const grpc = require('google-gax').grpc;
+  grpc.setLogger(console);
+  grpc.setLogVerbosity(grpc.logVerbosity.DEBUG);
 }
 import * as protos from '../protos/protos';
 export {protos};

@@ -16,8 +16,7 @@
 
 import * as assert from 'assert';
 import {describe, it, before, beforeEach, afterEach, after} from 'mocha';
-// eslint-disable-next-line node/no-extraneous-import
-import {Metadata, ServiceError} from '@grpc/grpc-js';
+import {grpc} from 'google-gax';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {Duplex, PassThrough} from 'stream';
@@ -88,7 +87,7 @@ class FakeGrpcStream extends Duplex {
     const status = {
       code: 1,
       details: 'Canceled.',
-      metadata: new Metadata(),
+      metadata: new grpc.Metadata(),
     };
 
     process.nextTick(() => {
@@ -429,7 +428,7 @@ describe('MessageStream', () => {
         const fakeError = new Error('err');
         const expectedMessage = 'Failed to connect to channel. Reason: err';
 
-        ms.on('error', (err: ServiceError) => {
+        ms.on('error', (err: grpc.ServiceError) => {
           assert.strictEqual(err.code, 2);
           assert.strictEqual(err.message, expectedMessage);
           assert.strictEqual(ms.destroyed, true);
@@ -447,7 +446,7 @@ describe('MessageStream', () => {
         const ms = new MessageStream(subscriber);
         const fakeError = new Error('Failed to connect before the deadline');
 
-        ms.on('error', (err: ServiceError) => {
+        ms.on('error', (err: grpc.ServiceError) => {
           assert.strictEqual(err.code, 4);
           done();
         });
@@ -533,7 +532,7 @@ describe('MessageStream', () => {
           details: 'Err',
         };
 
-        messageStream.on('error', (err: ServiceError) => {
+        messageStream.on('error', (err: grpc.ServiceError) => {
           assert(err instanceof Error);
           assert.strictEqual(err.code, fakeStatus.code);
           assert.strictEqual(err.message, fakeStatus.details);
