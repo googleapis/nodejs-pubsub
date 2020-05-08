@@ -313,9 +313,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.createSubscription(request);
-      }, expectedError);
+      await assert.rejects(client.createSubscription(request), expectedError);
       assert(
         (client.innerApiCalls.createSubscription as SinonStub)
           .getCall(0)
@@ -427,9 +425,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.getSubscription(request);
-      }, expectedError);
+      await assert.rejects(client.getSubscription(request), expectedError);
       assert(
         (client.innerApiCalls.getSubscription as SinonStub)
           .getCall(0)
@@ -546,9 +542,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.updateSubscription(request);
-      }, expectedError);
+      await assert.rejects(client.updateSubscription(request), expectedError);
       assert(
         (client.innerApiCalls.updateSubscription as SinonStub)
           .getCall(0)
@@ -662,9 +656,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.deleteSubscription(request);
-      }, expectedError);
+      await assert.rejects(client.deleteSubscription(request), expectedError);
       assert(
         (client.innerApiCalls.deleteSubscription as SinonStub)
           .getCall(0)
@@ -776,9 +768,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.modifyAckDeadline(request);
-      }, expectedError);
+      await assert.rejects(client.modifyAckDeadline(request), expectedError);
       assert(
         (client.innerApiCalls.modifyAckDeadline as SinonStub)
           .getCall(0)
@@ -890,9 +880,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.acknowledge(request);
-      }, expectedError);
+      await assert.rejects(client.acknowledge(request), expectedError);
       assert(
         (client.innerApiCalls.acknowledge as SinonStub)
           .getCall(0)
@@ -999,9 +987,7 @@ describe('v1.SubscriberClient', () => {
       };
       const expectedError = new Error('expected');
       client.innerApiCalls.pull = stubSimpleCall(undefined, expectedError);
-      await assert.rejects(async () => {
-        await client.pull(request);
-      }, expectedError);
+      await assert.rejects(client.pull(request), expectedError);
       assert(
         (client.innerApiCalls.pull as SinonStub)
           .getCall(0)
@@ -1113,9 +1099,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.modifyPushConfig(request);
-      }, expectedError);
+      await assert.rejects(client.modifyPushConfig(request), expectedError);
       assert(
         (client.innerApiCalls.modifyPushConfig as SinonStub)
           .getCall(0)
@@ -1227,9 +1211,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.getSnapshot(request);
-      }, expectedError);
+      await assert.rejects(client.getSnapshot(request), expectedError);
       assert(
         (client.innerApiCalls.getSnapshot as SinonStub)
           .getCall(0)
@@ -1341,9 +1323,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.createSnapshot(request);
-      }, expectedError);
+      await assert.rejects(client.createSnapshot(request), expectedError);
       assert(
         (client.innerApiCalls.createSnapshot as SinonStub)
           .getCall(0)
@@ -1458,9 +1438,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.updateSnapshot(request);
-      }, expectedError);
+      await assert.rejects(client.updateSnapshot(request), expectedError);
       assert(
         (client.innerApiCalls.updateSnapshot as SinonStub)
           .getCall(0)
@@ -1572,9 +1550,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.deleteSnapshot(request);
-      }, expectedError);
+      await assert.rejects(client.deleteSnapshot(request), expectedError);
       assert(
         (client.innerApiCalls.deleteSnapshot as SinonStub)
           .getCall(0)
@@ -1681,9 +1657,7 @@ describe('v1.SubscriberClient', () => {
       };
       const expectedError = new Error('expected');
       client.innerApiCalls.seek = stubSimpleCall(undefined, expectedError);
-      await assert.rejects(async () => {
-        await client.seek(request);
-      }, expectedError);
+      await assert.rejects(client.seek(request), expectedError);
       assert(
         (client.innerApiCalls.seek as SinonStub)
           .getCall(0)
@@ -1765,9 +1739,7 @@ describe('v1.SubscriberClient', () => {
         stream.write(request);
         stream.end();
       });
-      await assert.rejects(async () => {
-        await promise;
-      }, expectedError);
+      await assert.rejects(promise, expectedError);
       assert(
         (client.innerApiCalls.streamingPull as SinonStub)
           .getCall(0)
@@ -1889,9 +1861,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.listSubscriptions(request);
-      }, expectedError);
+      await assert.rejects(client.listSubscriptions(request), expectedError);
       assert(
         (client.innerApiCalls.listSubscriptions as SinonStub)
           .getCall(0)
@@ -1976,9 +1946,7 @@ describe('v1.SubscriberClient', () => {
           reject(err);
         });
       });
-      await assert.rejects(async () => {
-        await promise;
-      }, expectedError);
+      await assert.rejects(promise, expectedError);
       assert(
         (client.descriptors.page.listSubscriptions.createStream as SinonStub)
           .getCall(0)
@@ -2177,9 +2145,7 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.listSnapshots(request);
-      }, expectedError);
+      await assert.rejects(client.listSnapshots(request), expectedError);
       assert(
         (client.innerApiCalls.listSnapshots as SinonStub)
           .getCall(0)
@@ -2264,9 +2230,7 @@ describe('v1.SubscriberClient', () => {
           reject(err);
         });
       });
-      await assert.rejects(async () => {
-        await promise;
-      }, expectedError);
+      await assert.rejects(promise, expectedError);
       assert(
         (client.descriptors.page.listSnapshots.createStream as SinonStub)
           .getCall(0)
@@ -2452,9 +2416,10 @@ describe('v1.SubscriberClient', () => {
       };
       const expectedError = new Error('expected');
       client.iamClient.getIamPolicy = stubSimpleCall(undefined, expectedError);
-      await assert.rejects(async () => {
-        await client.getIamPolicy(request, expectedOptions);
-      }, expectedError);
+      await assert.rejects(
+        client.getIamPolicy(request, expectedOptions),
+        expectedError
+      );
       assert(
         (client.iamClient.getIamPolicy as SinonStub)
           .getCall(0)
@@ -2557,9 +2522,10 @@ describe('v1.SubscriberClient', () => {
       };
       const expectedError = new Error('expected');
       client.iamClient.setIamPolicy = stubSimpleCall(undefined, expectedError);
-      await assert.rejects(async () => {
-        await client.setIamPolicy(request, expectedOptions);
-      }, expectedError);
+      await assert.rejects(
+        client.setIamPolicy(request, expectedOptions),
+        expectedError
+      );
       assert(
         (client.iamClient.setIamPolicy as SinonStub)
           .getCall(0)
@@ -2668,9 +2634,10 @@ describe('v1.SubscriberClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.testIamPermissions(request, expectedOptions);
-      }, expectedError);
+      await assert.rejects(
+        client.testIamPermissions(request, expectedOptions),
+        expectedError
+      );
       assert(
         (client.iamClient.testIamPermissions as SinonStub)
           .getCall(0)
