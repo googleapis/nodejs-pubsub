@@ -18,10 +18,6 @@ import arrify = require('arrify');
 import * as assert from 'assert';
 import {describe, it, before, beforeEach, after, afterEach} from 'mocha';
 import * as gax from 'google-gax';
-// eslint-disable-next-line node/no-extraneous-import
-import * as grpc from '@grpc/grpc-js';
-// eslint-disable-next-line node/no-extraneous-import
-import {CallOptions, ChannelCredentials, ServiceError} from '@grpc/grpc-js';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
@@ -36,8 +32,8 @@ import * as util from '../src/util';
 const PKG = require('../../package.json');
 const sandbox = sinon.createSandbox();
 
-const fakeCreds = {} as ChannelCredentials;
-sandbox.stub(grpc.credentials, 'createInsecure').returns(fakeCreds);
+const fakeCreds = {} as gax.grpc.ChannelCredentials;
+sandbox.stub(gax.grpc.credentials, 'createInsecure').returns(fakeCreds);
 
 const subscriptionCached = subby.Subscription;
 
@@ -172,7 +168,7 @@ describe('PubSub', () => {
       'google-auth-library': {
         GoogleAuth: fakeGoogleAuth,
       },
-      grpc,
+      grpc: gax.grpc,
       './snapshot': {Snapshot: FakeSnapshot},
       './subscription': {Subscription},
       './topic': {Topic: FakeTopic},
@@ -692,7 +688,7 @@ describe('PubSub', () => {
       };
 
       setHost('localhost');
-      pubsub.options.grpc = (fakeGrpc as unknown) as typeof grpc;
+      pubsub.options.grpc = (fakeGrpc as unknown) as typeof gax.grpc;
       pubsub.determineBaseUrl_();
       assert.strictEqual(pubsub.options.sslCreds, fakeCredentials);
     });
@@ -782,7 +778,11 @@ describe('PubSub', () => {
       pubsub.getSnapshots((err: any, snapshots: any) => {
         assert.ifError(err);
         assert.strictEqual(snapshots![0], snapshot);
-        assert.strictEqual(snapshots![0].metadata, apiResponse.snapshots[0]);
+        assert.strictEqual(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (snapshots![0] as any).metadata,
+          apiResponse.snapshots[0]
+        );
         done();
       });
     });
@@ -869,7 +869,7 @@ describe('PubSub', () => {
     it('should return Subscription instances', done => {
       pubsub.getSubscriptions(
         (
-          err: ServiceError | null,
+          err: gax.grpc.ServiceError | null,
           subscriptions?: subby.Subscription[] | null
         ) => {
           assert.ifError(err);
@@ -891,7 +891,7 @@ describe('PubSub', () => {
 
       pubsub.getSubscriptions(
         (
-          err: ServiceError | null,
+          err: gax.grpc.ServiceError | null,
           subs?: subby.Subscription[] | null,
           apiResponse?: google.pubsub.v1.IListSubscriptionsResponse | null
         ) => {
@@ -1008,7 +1008,8 @@ describe('PubSub', () => {
       pubsub.getTopics((err: any, topics: any) => {
         assert.ifError(err);
         assert.strictEqual(topics![0], topic);
-        assert.strictEqual(topics![0].metadata, apiResponse.topics[0]);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        assert.strictEqual((topics![0] as any).metadata, apiResponse.topics[0]);
         done();
       });
     });
@@ -1084,7 +1085,7 @@ describe('PubSub', () => {
         callback(expectedError);
       };
 
-      pubsub.request(CONFIG, (err: ServiceError | null) => {
+      pubsub.request(CONFIG, (err: gax.grpc.ServiceError | null) => {
         assert.strictEqual(expectedError, err);
         done();
       });
@@ -1093,7 +1094,11 @@ describe('PubSub', () => {
     it('should call client method with correct options', done => {
       const fakeClient = {};
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (fakeClient as any).fakeMethod = (reqOpts: any, gaxOpts: CallOptions) => {
+      (fakeClient as any).fakeMethod = (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        reqOpts: any,
+        gaxOpts: gax.CallOptions
+      ) => {
         assert.deepStrictEqual(CONFIG.reqOpts, reqOpts);
         assert.deepStrictEqual(CONFIG.gaxOpts, gaxOpts);
         done();
@@ -1301,7 +1306,7 @@ describe('PubSub', () => {
         callback(error);
       };
 
-      pubsub.request(CONFIG, (err: ServiceError | null) => {
+      pubsub.request(CONFIG, (err: gax.ServiceError | null) => {
         assert.strictEqual(err, error);
         done();
       });
@@ -1334,7 +1339,7 @@ describe('PubSub', () => {
 
       const fakeClient = {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        fakeMethod(reqOpts: any, gaxOpts: CallOptions) {
+        fakeMethod(reqOpts: any, gaxOpts: gax.CallOptions) {
           assert.strictEqual(reqOpts, replacedReqOpts);
           assert.strictEqual(gaxOpts, CONFIG.gaxOpts);
           done();
