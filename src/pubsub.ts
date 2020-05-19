@@ -350,7 +350,7 @@ export class PubSub {
    *     of un-acked messages to allow before the subscription pauses incoming
    *     messages.
    * @property {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @property {number|google.protobuf.Duration} [messageRetentionDuration] Set
    *     this to override the default duration of 7 days. This value is expected
    *     in seconds. Acceptable values are in the range of 10 minutes and 7
@@ -489,7 +489,7 @@ export class PubSub {
    *
    * @param {string} name Name of the topic.
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {CreateTopicCallback} [callback] Callback function.
    * @returns {Promise<CreateTopicResponse>}
    *
@@ -583,7 +583,7 @@ export class PubSub {
    * @property {boolean} [autoPaginate=true] Have pagination handled
    *     automatically.
    * @property {object} [options.gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @property {number} [options.pageSize] Maximum number of results to return.
    * @property {string} [options.pageToken] Page token.
    */
@@ -689,7 +689,7 @@ export class PubSub {
    * @property {boolean} [autoPaginate=true] Have pagination handled
    *     automatically.
    * @property {object} [options.gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @property {number} [options.pageSize] Maximum number of results to return.
    * @property {string} [options.pageToken] Page token.
    * @param {string|Topic} options.topic - The name of the topic to
@@ -808,7 +808,7 @@ export class PubSub {
    * @property {boolean} [autoPaginate=true] Have pagination handled
    *     automatically.
    * @property {object} [options.gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @property {number} [options.pageSize] Maximum number of results to return.
    * @property {string} [options.pageToken] Page token.
    */

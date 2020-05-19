@@ -119,7 +119,7 @@ export class IAM {
    * Get the IAM policy
    *
    * @param {object} [gaxOptions] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {GetPolicyCallback} [callback] Callback function.
    * @returns {Promise<GetPolicyResponse>}
    *
@@ -193,7 +193,7 @@ export class IAM {
    * @param {Array<object>} [policy.rules] Rules to be applied to the policy.
    * @param {string} [policy.etag] Etags are used to perform a read-modify-write.
    * @param {object} [gaxOptions] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {SetPolicyCallback} callback Callback function.
    * @returns {Promise<SetPolicyResponse>}
    *
@@ -297,7 +297,7 @@ export class IAM {
    *
    * @param {string|string[]} permissions The permission(s) to test for.
    * @param {object} [gaxOptions] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {TestIamPermissionsCallback} [callback] Callback function.
    * @returns {Promise<TestIamPermissionsResponse>}
    *
