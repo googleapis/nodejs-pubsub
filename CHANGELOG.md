@@ -6,10 +6,12 @@
 
 ## [2.0.0](https://www.github.com/googleapis/nodejs-pubsub/compare/vv1.7.1...v2.0.0) (2020-05-20)
 
+Please note that Node 8 is no longer supported, and Node 10 is the new minimum version of the runtime.
 
 ### ⚠ BREAKING CHANGES
 
-* dropp support for custom promises (#970)
+* Please note that Node 8 is no longer supported, and Node 10 is the new minimum version of the runtime.
+* drop support for custom promises (#970)
 * convert to typescript (#923)
 * **deps:** update dependency @google-cloud/projectify to v2 (#929)
 
