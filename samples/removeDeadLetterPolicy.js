@@ -23,22 +23,20 @@
 'use strict';
 
 // sample-metadata:
-//   title: Create Subscription With Dead Letter Policy
-//   description: Creates a new subscription With Dead Letter Policy.
-//   usage: node createSubscriptionWithDeadLetterPolicy.js <topic-name> <subscription-name> <dead-letter-topic-name>
+//   title: Remove Dead Letter Policy
+//   description: Remove Dead Letter Policy from subscription.
+//   usage: node removeDeadLetterPolicy.js <topic-name> <subscription-name>
 
 function main(
   topicName = 'YOUR_TOPIC_NAME',
-  subscriptionName = 'YOUR_SUBSCRIPTION_NAME',
-  deadLetterTopicName = 'YOUR_DEAD_LETTER_TOPIC_NAME'
+  subscriptionName = 'YOUR_SUBSCRIPTION_NAME'
 ) {
-  // [START pubsub_dead_letter_create_subscription]
+  // [START pubsub_dead_letter_remove]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
   // const topicName = 'YOUR_TOPIC_NAME';
   // const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
-  // const deadLetterTopicName = 'YOUR_DEAD_LETTER_TOPIC_NAME';
 
   // Imports the Google Cloud client library
   const {PubSub} = require('@google-cloud/pubsub');
@@ -46,24 +44,23 @@ function main(
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
-  async function createSubscriptionWithDeadLetterPolicy() {
-    // Creates a new subscription
-    await pubSubClient.topic(topicName).createSubscription(subscriptionName, {
-      deadLetterPolicy: {
-        deadLetterTopic: pubSubClient.topic(deadLetterTopicName).name,
-        maxDeliveryAttempts: 10,
-      },
-    });
+  async function removeDeadLetterPolicy() {
+    const metadata = {
+      deadLetterPolicy: null,
+    };
+
+    await pubSubClient
+      .topic(topicName)
+      .subscription(subscriptionName)
+      .setMetadata(metadata);
+
     console.log(
-      `Created subscription ${subscriptionName} with dead letter topic ${deadLetterTopicName}.`
-    );
-    console.log(
-      'To process dead letter messages, remember to add a subscription to your dead letter topic.'
+      `Removed dead letter topic from ${subscriptionName} subscription.`
     );
   }
 
-  createSubscriptionWithDeadLetterPolicy().catch(console.error);
-  // [END pubsub_dead_letter_create_subscription]
+  removeDeadLetterPolicy().catch(console.error);
+  // [END pubsub_dead_letter_remove]
 }
 
 main(...process.argv.slice(2));

@@ -23,22 +23,20 @@
 'use strict';
 
 // sample-metadata:
-//   title: Create Subscription With Dead Letter Policy
-//   description: Creates a new subscription With Dead Letter Policy.
-//   usage: node createSubscriptionWithDeadLetterPolicy.js <topic-name> <subscription-name> <dead-letter-topic-name>
+//   title: Update Dead Letter Policy
+//   description: Update Dead Letter Policy in subscription.
+//   usage: node updateDeadLetterPolicy.js <topic-name> <subscription-name>
 
 function main(
   topicName = 'YOUR_TOPIC_NAME',
-  subscriptionName = 'YOUR_SUBSCRIPTION_NAME',
-  deadLetterTopicName = 'YOUR_DEAD_LETTER_TOPIC_NAME'
+  subscriptionName = 'YOUR_SUBSCRIPTION_NAME'
 ) {
-  // [START pubsub_dead_letter_create_subscription]
+  // [START pubsub_dead_letter_update_subscription]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
   // const topicName = 'YOUR_TOPIC_NAME';
   // const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
-  // const deadLetterTopicName = 'YOUR_DEAD_LETTER_TOPIC_NAME';
 
   // Imports the Google Cloud client library
   const {PubSub} = require('@google-cloud/pubsub');
@@ -46,24 +44,24 @@ function main(
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
-  async function createSubscriptionWithDeadLetterPolicy() {
-    // Creates a new subscription
-    await pubSubClient.topic(topicName).createSubscription(subscriptionName, {
+  async function updateDeadLetterPolicy() {
+    const metadata = {
       deadLetterPolicy: {
-        deadLetterTopic: pubSubClient.topic(deadLetterTopicName).name,
-        maxDeliveryAttempts: 10,
+        deadLetterTopic: pubSubClient.topic(topicName).name,
+        maxDeliveryAttempts: 15,
       },
-    });
-    console.log(
-      `Created subscription ${subscriptionName} with dead letter topic ${deadLetterTopicName}.`
-    );
-    console.log(
-      'To process dead letter messages, remember to add a subscription to your dead letter topic.'
-    );
+    };
+
+    await pubSubClient
+      .topic(topicName)
+      .subscription(subscriptionName)
+      .setMetadata(metadata);
+
+    console.log('Max delivery attempts updated successfully.');
   }
 
-  createSubscriptionWithDeadLetterPolicy().catch(console.error);
-  // [END pubsub_dead_letter_create_subscription]
+  updateDeadLetterPolicy().catch(console.error);
+  // [END pubsub_dead_letter_update_subscription]
 }
 
 main(...process.argv.slice(2));
