@@ -295,7 +295,7 @@ describe('Message Queues', () => {
       });
 
       it('should cancel any pending publish calls', () => {
-        const fakeHandle = (1234 as unknown) as NodeJS.Timer;
+        const fakeHandle = (1234 as unknown) as any;
         const stub = sandbox.stub(global, 'clearTimeout').withArgs(fakeHandle);
 
         queue.pending = fakeHandle;
