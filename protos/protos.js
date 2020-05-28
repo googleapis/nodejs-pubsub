@@ -353,6 +353,39 @@
                      * @variation 2
                      */
     
+                    /**
+                     * Callback as used by {@link google.pubsub.v1.Publisher#detachSubscription}.
+                     * @memberof google.pubsub.v1.Publisher
+                     * @typedef DetachSubscriptionCallback
+                     * @type {function}
+                     * @param {Error|null} error Error, if any
+                     * @param {google.pubsub.v1.DetachSubscriptionResponse} [response] DetachSubscriptionResponse
+                     */
+    
+                    /**
+                     * Calls DetachSubscription.
+                     * @function detachSubscription
+                     * @memberof google.pubsub.v1.Publisher
+                     * @instance
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest} request DetachSubscriptionRequest message or plain object
+                     * @param {google.pubsub.v1.Publisher.DetachSubscriptionCallback} callback Node-style callback called with the error, if any, and DetachSubscriptionResponse
+                     * @returns {undefined}
+                     * @variation 1
+                     */
+                    Object.defineProperty(Publisher.prototype.detachSubscription = function detachSubscription(request, callback) {
+                        return this.rpcCall(detachSubscription, $root.google.pubsub.v1.DetachSubscriptionRequest, $root.google.pubsub.v1.DetachSubscriptionResponse, request, callback);
+                    }, "name", { value: "DetachSubscription" });
+    
+                    /**
+                     * Calls DetachSubscription.
+                     * @function detachSubscription
+                     * @memberof google.pubsub.v1.Publisher
+                     * @instance
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest} request DetachSubscriptionRequest message or plain object
+                     * @returns {Promise<google.pubsub.v1.DetachSubscriptionResponse>} Promise
+                     * @variation 2
+                     */
+    
                     return Publisher;
                 })();
     
@@ -3557,6 +3590,353 @@
                     };
     
                     return DeleteTopicRequest;
+                })();
+    
+                v1.DetachSubscriptionRequest = (function() {
+    
+                    /**
+                     * Properties of a DetachSubscriptionRequest.
+                     * @memberof google.pubsub.v1
+                     * @interface IDetachSubscriptionRequest
+                     * @property {string|null} [subscription] DetachSubscriptionRequest subscription
+                     */
+    
+                    /**
+                     * Constructs a new DetachSubscriptionRequest.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a DetachSubscriptionRequest.
+                     * @implements IDetachSubscriptionRequest
+                     * @constructor
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest=} [properties] Properties to set
+                     */
+                    function DetachSubscriptionRequest(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * DetachSubscriptionRequest subscription.
+                     * @member {string} subscription
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @instance
+                     */
+                    DetachSubscriptionRequest.prototype.subscription = "";
+    
+                    /**
+                     * Creates a new DetachSubscriptionRequest instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.DetachSubscriptionRequest} DetachSubscriptionRequest instance
+                     */
+                    DetachSubscriptionRequest.create = function create(properties) {
+                        return new DetachSubscriptionRequest(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified DetachSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionRequest.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest} message DetachSubscriptionRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    DetachSubscriptionRequest.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.subscription != null && Object.hasOwnProperty.call(message, "subscription"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.subscription);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified DetachSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionRequest.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest} message DetachSubscriptionRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    DetachSubscriptionRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a DetachSubscriptionRequest message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.DetachSubscriptionRequest} DetachSubscriptionRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    DetachSubscriptionRequest.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DetachSubscriptionRequest();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.subscription = reader.string();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a DetachSubscriptionRequest message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.DetachSubscriptionRequest} DetachSubscriptionRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    DetachSubscriptionRequest.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a DetachSubscriptionRequest message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    DetachSubscriptionRequest.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.subscription != null && message.hasOwnProperty("subscription"))
+                            if (!$util.isString(message.subscription))
+                                return "subscription: string expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a DetachSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.DetachSubscriptionRequest} DetachSubscriptionRequest
+                     */
+                    DetachSubscriptionRequest.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.DetachSubscriptionRequest)
+                            return object;
+                        var message = new $root.google.pubsub.v1.DetachSubscriptionRequest();
+                        if (object.subscription != null)
+                            message.subscription = String(object.subscription);
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a DetachSubscriptionRequest message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {google.pubsub.v1.DetachSubscriptionRequest} message DetachSubscriptionRequest
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    DetachSubscriptionRequest.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults)
+                            object.subscription = "";
+                        if (message.subscription != null && message.hasOwnProperty("subscription"))
+                            object.subscription = message.subscription;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this DetachSubscriptionRequest to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    DetachSubscriptionRequest.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return DetachSubscriptionRequest;
+                })();
+    
+                v1.DetachSubscriptionResponse = (function() {
+    
+                    /**
+                     * Properties of a DetachSubscriptionResponse.
+                     * @memberof google.pubsub.v1
+                     * @interface IDetachSubscriptionResponse
+                     */
+    
+                    /**
+                     * Constructs a new DetachSubscriptionResponse.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a DetachSubscriptionResponse.
+                     * @implements IDetachSubscriptionResponse
+                     * @constructor
+                     * @param {google.pubsub.v1.IDetachSubscriptionResponse=} [properties] Properties to set
+                     */
+                    function DetachSubscriptionResponse(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * Creates a new DetachSubscriptionResponse instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionResponse=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.DetachSubscriptionResponse} DetachSubscriptionResponse instance
+                     */
+                    DetachSubscriptionResponse.create = function create(properties) {
+                        return new DetachSubscriptionResponse(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified DetachSubscriptionResponse message. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionResponse.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionResponse} message DetachSubscriptionResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    DetachSubscriptionResponse.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified DetachSubscriptionResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionResponse.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionResponse} message DetachSubscriptionResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    DetachSubscriptionResponse.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a DetachSubscriptionResponse message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.DetachSubscriptionResponse} DetachSubscriptionResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    DetachSubscriptionResponse.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DetachSubscriptionResponse();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a DetachSubscriptionResponse message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.DetachSubscriptionResponse} DetachSubscriptionResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    DetachSubscriptionResponse.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a DetachSubscriptionResponse message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    DetachSubscriptionResponse.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a DetachSubscriptionResponse message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.DetachSubscriptionResponse} DetachSubscriptionResponse
+                     */
+                    DetachSubscriptionResponse.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.DetachSubscriptionResponse)
+                            return object;
+                        return new $root.google.pubsub.v1.DetachSubscriptionResponse();
+                    };
+    
+                    /**
+                     * Creates a plain object from a DetachSubscriptionResponse message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {google.pubsub.v1.DetachSubscriptionResponse} message DetachSubscriptionResponse
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    DetachSubscriptionResponse.toObject = function toObject() {
+                        return {};
+                    };
+    
+                    /**
+                     * Converts this DetachSubscriptionResponse to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    DetachSubscriptionResponse.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return DetachSubscriptionResponse;
                 })();
     
                 v1.Subscriber = (function() {
