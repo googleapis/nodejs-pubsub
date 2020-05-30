@@ -49,6 +49,7 @@ describe('subscriptions', () => {
     return Promise.all([
       pubsub.createTopic(topicNameOne),
       pubsub.createTopic(topicNameTwo),
+      pubsub.createTopic(topicNameThree),
     ]);
   });
 
@@ -290,7 +291,7 @@ describe('subscriptions', () => {
     assert(subscriptions.every(s => s.name !== fullSubscriptionNameOne));
   });
 
-  it('should create a subscription with dead lettter policy.', async () => {
+  it('should create a subscription with dead letter policy.', async () => {
     const output = execSync(
       `${commandFor(
         'createSubscriptionWithDeadLetterPolicy'
@@ -341,7 +342,7 @@ describe('subscriptions', () => {
 
     execSync(
       `${commandFor(
-        'updateDeadLetterPolicyExample'
+        'updateDeadLetterPolicy'
       )} ${topicNameOne} ${subscriptionNameSeven}`
     );
 
