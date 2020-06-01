@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.0.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.0.0...v2.0.1) (2020-06-01)
+
+
+### Bug Fixes
+
+* use any to unblock typescript compilation bug ([#1012](https://www.github.com/googleapis/nodejs-pubsub/issues/1012)) ([1e8ced3](https://www.github.com/googleapis/nodejs-pubsub/commit/1e8ced3f06d12487fdf00b443bb447e1ec1a911b))
+
 ## [2.0.0](https://www.github.com/googleapis/nodejs-pubsub/compare/vv1.7.1...v2.0.0) (2020-05-20)
 
 Please note that Node 8 is no longer supported, and Node 10 is the new minimum version of the runtime.
