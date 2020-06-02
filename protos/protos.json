@@ -87,6 +87,13 @@
                         "(google.api.http).delete": "/v1/{topic=projects/*/topics/*}",
                         "(google.api.method_signature)": "topic"
                       }
+                    },
+                    "DetachSubscription": {
+                      "requestType": "DetachSubscriptionRequest",
+                      "responseType": "DetachSubscriptionResponse",
+                      "options": {
+                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:detach"
+                      }
                     }
                   }
                 },
@@ -324,6 +331,21 @@
                       }
                     }
                   }
+                },
+                "DetachSubscriptionRequest": {
+                  "fields": {
+                    "subscription": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    }
+                  }
+                },
+                "DetachSubscriptionResponse": {
+                  "fields": {}
                 },
                 "Subscriber": {
                   "options": {

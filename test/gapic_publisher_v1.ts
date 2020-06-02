@@ -751,6 +751,120 @@ describe('v1.PublisherClient', () => {
     });
   });
 
+  describe('detachSubscription', () => {
+    it('invokes detachSubscription without error', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedOptions = {
+        otherArgs: {
+          headers: {
+            'x-goog-request-params': expectedHeaderRequestParams,
+          },
+        },
+      };
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.DetachSubscriptionResponse()
+      );
+      client.innerApiCalls.detachSubscription = stubSimpleCall(
+        expectedResponse
+      );
+      const [response] = await client.detachSubscription(request);
+      assert.deepStrictEqual(response, expectedResponse);
+      assert(
+        (client.innerApiCalls.detachSubscription as SinonStub)
+          .getCall(0)
+          .calledWith(request, expectedOptions, undefined)
+      );
+    });
+
+    it('invokes detachSubscription without error using callback', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedOptions = {
+        otherArgs: {
+          headers: {
+            'x-goog-request-params': expectedHeaderRequestParams,
+          },
+        },
+      };
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.DetachSubscriptionResponse()
+      );
+      client.innerApiCalls.detachSubscription = stubSimpleCallWithCallback(
+        expectedResponse
+      );
+      const promise = new Promise((resolve, reject) => {
+        client.detachSubscription(
+          request,
+          (
+            err?: Error | null,
+            result?: protos.google.pubsub.v1.IDetachSubscriptionResponse | null
+          ) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+      });
+      const response = await promise;
+      assert.deepStrictEqual(response, expectedResponse);
+      assert(
+        (client.innerApiCalls.detachSubscription as SinonStub)
+          .getCall(0)
+          .calledWith(request, expectedOptions /*, callback defined above */)
+      );
+    });
+
+    it('invokes detachSubscription with error', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedOptions = {
+        otherArgs: {
+          headers: {
+            'x-goog-request-params': expectedHeaderRequestParams,
+          },
+        },
+      };
+      const expectedError = new Error('expected');
+      client.innerApiCalls.detachSubscription = stubSimpleCall(
+        undefined,
+        expectedError
+      );
+      await assert.rejects(client.detachSubscription(request), expectedError);
+      assert(
+        (client.innerApiCalls.detachSubscription as SinonStub)
+          .getCall(0)
+          .calledWith(request, expectedOptions, undefined)
+      );
+    });
+  });
+
   describe('listTopics', () => {
     it('invokes listTopics without error', async () => {
       const client = new publisherModule.v1.PublisherClient({

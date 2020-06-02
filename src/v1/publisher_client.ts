@@ -275,6 +275,7 @@ export class PublisherClient {
       'listTopicSubscriptions',
       'listTopicSnapshots',
       'deleteTopic',
+      'detachSubscription',
     ];
     for (const methodName of publisherStubMethods) {
       const callPromise = this.publisherStub.then(
@@ -793,6 +794,90 @@ export class PublisherClient {
     this.initialize();
     return this.innerApiCalls.deleteTopic(request, options, callback);
   }
+  detachSubscription(
+    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+    options?: gax.CallOptions
+  ): Promise<
+    [
+      protos.google.pubsub.v1.IDetachSubscriptionResponse,
+      protos.google.pubsub.v1.IDetachSubscriptionRequest | undefined,
+      {} | undefined
+    ]
+  >;
+  detachSubscription(
+    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+    options: gax.CallOptions,
+    callback: Callback<
+      protos.google.pubsub.v1.IDetachSubscriptionResponse,
+      protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
+  detachSubscription(
+    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+    callback: Callback<
+      protos.google.pubsub.v1.IDetachSubscriptionResponse,
+      protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
+  /**
+   * Detaches a subscription from this topic. All messages retained in the
+   * subscription are dropped. Subsequent `Pull` and `StreamingPull` requests
+   * will return FAILED_PRECONDITION. If the subscription is a push
+   * subscription, pushes to the endpoint will stop.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.subscription
+   *   Required. The subscription to detach.
+   *   Format is `projects/{project}/subscriptions/{subscription}`.
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is an object representing [DetachSubscriptionResponse]{@link google.pubsub.v1.DetachSubscriptionResponse}.
+   *   The promise has a method named "cancel" which cancels the ongoing API call.
+   */
+  detachSubscription(
+    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+    optionsOrCallback?:
+      | gax.CallOptions
+      | Callback<
+          protos.google.pubsub.v1.IDetachSubscriptionResponse,
+          protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
+          {} | null | undefined
+        >,
+    callback?: Callback<
+      protos.google.pubsub.v1.IDetachSubscriptionResponse,
+      protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): Promise<
+    [
+      protos.google.pubsub.v1.IDetachSubscriptionResponse,
+      protos.google.pubsub.v1.IDetachSubscriptionRequest | undefined,
+      {} | undefined
+    ]
+  > | void {
+    request = request || {};
+    let options: gax.CallOptions;
+    if (typeof optionsOrCallback === 'function' && callback === undefined) {
+      callback = optionsOrCallback;
+      options = {};
+    } else {
+      options = optionsOrCallback as gax.CallOptions;
+    }
+    options = options || {};
+    options.otherArgs = options.otherArgs || {};
+    options.otherArgs.headers = options.otherArgs.headers || {};
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      subscription: request.subscription || '',
+    });
+    this.initialize();
+    return this.innerApiCalls.detachSubscription(request, options, callback);
+  }
 
   listTopics(
     request: protos.google.pubsub.v1.IListTopicsRequest,
@@ -1020,7 +1105,7 @@ export class PublisherClient {
     >
   ): void;
   /**
-   * Lists the names of the subscriptions on this topic.
+   * Lists the names of the attached subscriptions on this topic.
    *
    * @param {Object} request
    *   The request object that will be sent.
