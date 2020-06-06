@@ -486,6 +486,12 @@ export class SubscriberClient {
    *   that messages will be retried as soon as possible for healthy subscribers.
    *   RetryPolicy will be triggered on NACKs or acknowledgement deadline
    *   exceeded events for a given message.
+   * @param {boolean} request.detached
+   *   Indicates whether the subscription is detached from its topic. Detached
+   *   subscriptions don't receive messages from their topic and don't retain any
+   *   backlog. `Pull` and `StreamingPull` requests will return
+   *   FAILED_PRECONDITION. If the subscription is a push subscription, pushes to
+   *   the endpoint will not be made.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.

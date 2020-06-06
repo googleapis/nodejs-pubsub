@@ -548,6 +548,10 @@
                     "retryPolicy": {
                       "type": "RetryPolicy",
                       "id": 14
+                    },
+                    "detached": {
+                      "type": "bool",
+                      "id": 15
                     }
                   }
                 },
