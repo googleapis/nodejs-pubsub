@@ -46,7 +46,7 @@ export type PullResponse = google.pubsub.v1.IPullResponse;
  *   // {
  *   //   ackId: 'RUFeQBJMJAxESVMrQwsqWBFOBCEhPjA',
  *   //   attributes: {key: 'value'},
- *   //   data: Buffer.from('Hello, world!),
+ *   //   data: Buffer.from('Hello, world!'),
  *   //   id: '1551297743043',
  *   //   orderingKey: 'ordering-key',
  *   //   publishTime: new PreciseDate('2019-02-27T20:02:19.029534186Z'),
