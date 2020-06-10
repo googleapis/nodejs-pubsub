@@ -4520,6 +4520,7 @@
                      * @property {string|null} [filter] Subscription filter
                      * @property {google.pubsub.v1.IDeadLetterPolicy|null} [deadLetterPolicy] Subscription deadLetterPolicy
                      * @property {google.pubsub.v1.IRetryPolicy|null} [retryPolicy] Subscription retryPolicy
+                     * @property {boolean|null} [detached] Subscription detached
                      */
     
                     /**
@@ -4635,6 +4636,14 @@
                     Subscription.prototype.retryPolicy = null;
     
                     /**
+                     * Subscription detached.
+                     * @member {boolean} detached
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.detached = false;
+    
+                    /**
                      * Creates a new Subscription instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Subscription
@@ -4683,6 +4692,8 @@
                             $root.google.pubsub.v1.DeadLetterPolicy.encode(message.deadLetterPolicy, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
                         if (message.retryPolicy != null && Object.hasOwnProperty.call(message, "retryPolicy"))
                             $root.google.pubsub.v1.RetryPolicy.encode(message.retryPolicy, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
+                        if (message.detached != null && Object.hasOwnProperty.call(message, "detached"))
+                            writer.uint32(/* id 15, wireType 0 =*/120).bool(message.detached);
                         return writer;
                     };
     
@@ -4757,6 +4768,9 @@
                                 break;
                             case 14:
                                 message.retryPolicy = $root.google.pubsub.v1.RetryPolicy.decode(reader, reader.uint32());
+                                break;
+                            case 15:
+                                message.detached = reader.bool();
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -4844,6 +4858,9 @@
                             if (error)
                                 return "retryPolicy." + error;
                         }
+                        if (message.detached != null && message.hasOwnProperty("detached"))
+                            if (typeof message.detached !== "boolean")
+                                return "detached: boolean expected";
                         return null;
                     };
     
@@ -4903,6 +4920,8 @@
                                 throw TypeError(".google.pubsub.v1.Subscription.retryPolicy: object expected");
                             message.retryPolicy = $root.google.pubsub.v1.RetryPolicy.fromObject(object.retryPolicy);
                         }
+                        if (object.detached != null)
+                            message.detached = Boolean(object.detached);
                         return message;
                     };
     
@@ -4933,6 +4952,7 @@
                             object.filter = "";
                             object.deadLetterPolicy = null;
                             object.retryPolicy = null;
+                            object.detached = false;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
                             object.name = message.name;
@@ -4962,6 +4982,8 @@
                             object.deadLetterPolicy = $root.google.pubsub.v1.DeadLetterPolicy.toObject(message.deadLetterPolicy, options);
                         if (message.retryPolicy != null && message.hasOwnProperty("retryPolicy"))
                             object.retryPolicy = $root.google.pubsub.v1.RetryPolicy.toObject(message.retryPolicy, options);
+                        if (message.detached != null && message.hasOwnProperty("detached"))
+                            object.detached = message.detached;
                         return object;
                     };
     
