@@ -2176,6 +2176,9 @@ export namespace google {
 
                 /** Subscription retryPolicy */
                 retryPolicy?: (google.pubsub.v1.IRetryPolicy|null);
+
+                /** Subscription detached */
+                detached?: (boolean|null);
             }
 
             /** Represents a Subscription. */
@@ -2222,6 +2225,9 @@ export namespace google {
 
                 /** Subscription retryPolicy. */
                 public retryPolicy?: (google.pubsub.v1.IRetryPolicy|null);
+
+                /** Subscription detached. */
+                public detached: boolean;
 
                 /**
                  * Creates a new Subscription instance using the specified properties.
