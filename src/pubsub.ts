@@ -34,6 +34,8 @@ import {
   CreateSubscriptionOptions,
   CreateSubscriptionCallback,
   CreateSubscriptionResponse,
+  DetachSubscriptionCallback,
+  DetachSubscriptionResponse,
 } from './subscription';
 import {
   Topic,
@@ -541,6 +543,68 @@ export class PubSub {
       }
     );
   }
+
+  detachSubscription(
+    name: string,
+    gaxOpts?: CallOptions
+  ): Promise<DetachSubscriptionResponse>;
+  detachSubscription(name: string, callback: DetachSubscriptionCallback): void;
+  detachSubscription(
+    name: string,
+    gaxOpts: CallOptions,
+    callback: DetachSubscriptionCallback
+  ): void;
+  /**
+   * Detach a subscription with the given name.
+   *
+   * @see [Subscriptions: detach subscription API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics.subscriptions/detach}
+   *
+   * @param {string} name Name of the subscription.
+   * @param {object} [gaxOpts] Request configuration options, outlined
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
+   * @param {DetachSubscriptionCallback} [callback] Callback function.
+   * @returns {Promise<DetachSubscriptionResponse>}
+   *
+   * @example
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * pubsub.detachSubscription('my-sub', function(err, topic, apiResponse) {
+   *   if (!err) {
+   *     // The topic was created successfully.
+   *   }
+   * });
+   *
+   * //-
+   * // If the callback is omitted, we'll return a Promise.
+   * //-
+   * pubsub.detachSubscription('my-sub').then(function(data) {
+   *   const apiResponse = data[0];
+   * });
+   */
+  detachSubscription(
+    name: string,
+    optsOrCallback?: CallOptions | DetachSubscriptionCallback,
+    callback?: DetachSubscriptionCallback
+  ): Promise<DetachSubscriptionResponse> | void {
+    const reqOpts = {
+      name,
+    };
+
+    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
+
+    this.request<google.pubsub.v1.IDetachSubscriptionRequest>(
+      {
+        client: 'PublisherClient',
+        method: 'detachSubscription',
+        reqOpts,
+        gaxOpts: gaxOpts as CallOptions,
+      },
+      callback!
+    );
+  }
+
   /**
    * Determine the appropriate endpoint to use for API requests, first trying
    * the local `apiEndpoint` parameter. If the `apiEndpoint` parameter is null
