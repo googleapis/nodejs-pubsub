@@ -3868,6 +3868,12 @@ export namespace google {
 
                 /** StreamingPullRequest clientId */
                 clientId?: (string|null);
+
+                /** StreamingPullRequest maxOutstandingMessages */
+                maxOutstandingMessages?: (number|Long|string|null);
+
+                /** StreamingPullRequest maxOutstandingBytes */
+                maxOutstandingBytes?: (number|Long|string|null);
             }
 
             /** Represents a StreamingPullRequest. */
@@ -3896,6 +3902,12 @@ export namespace google {
 
                 /** StreamingPullRequest clientId. */
                 public clientId: string;
+
+                /** StreamingPullRequest maxOutstandingMessages. */
+                public maxOutstandingMessages: (number|Long|string);
+
+                /** StreamingPullRequest maxOutstandingBytes. */
+                public maxOutstandingBytes: (number|Long|string);
 
                 /**
                  * Creates a new StreamingPullRequest instance using the specified properties.
