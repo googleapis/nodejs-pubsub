@@ -198,7 +198,7 @@ export class Topic {
    * Create a topic.
    *
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {CreateTopicCallback} [callback] Callback function.
    * @returns {Promise<CreateTopicResponse>}
    *
@@ -304,7 +304,7 @@ export class Topic {
    * @see [Topics: delete API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/delete}
    *
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {function} [callback] The callback function.
    * @param {?error} callback.err An error returned while making this
    *     request.
@@ -411,7 +411,7 @@ export class Topic {
    * Get a topic if it exists.
    *
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {boolean} [gaxOpts.autoCreate=false] Automatically create the topic
    *     does not already exist.
    * @param {GetTopicCallback} [callback] Callback function.
@@ -476,7 +476,7 @@ export class Topic {
    * @see [Topics: get API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/get}
    *
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {GetTopicMetadataCallback} [callback] Callback function.
    * @returns {Promise<GetTopicMetadataResponse>}
    *
@@ -851,7 +851,7 @@ export class Topic {
    * https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics#Topic|Topic
    * object}.
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {SetTopicMetadataCallback} [callback] Callback function.
    * @returns {Promise<SetTopicMetadataResponse>}
    *

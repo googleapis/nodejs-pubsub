@@ -4,6 +4,52 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.1.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.0.0...v2.1.0) (2020-06-02)
+
+
+### Features
+
+* re-generated to pick up changes from googleapis ([#1014](https://www.github.com/googleapis/nodejs-pubsub/issues/1014)) ([1ad3552](https://www.github.com/googleapis/nodejs-pubsub/commit/1ad35528f0d8b5420f9fbe122db2ff1962e32acb))
+
+
+### Bug Fixes
+
+* use any to unblock typescript compilation bug ([#1012](https://www.github.com/googleapis/nodejs-pubsub/issues/1012)) ([1e8ced3](https://www.github.com/googleapis/nodejs-pubsub/commit/1e8ced3f06d12487fdf00b443bb447e1ec1a911b))
+
+## [2.0.0](https://www.github.com/googleapis/nodejs-pubsub/compare/vv1.7.1...v2.0.0) (2020-05-20)
+
+Please note that Node 8 is no longer supported, and Node 10 is the new minimum version of the runtime.
+
+### ⚠ BREAKING CHANGES
+
+* Please note that Node 8 is no longer supported, and Node 10 is the new minimum version of the runtime.
+* drop support for custom promises (#970)
+* convert to typescript (#923)
+* **deps:** update dependency @google-cloud/projectify to v2 (#929)
+
+### Bug Fixes
+
+* **docs:** link to correct gaxOptions docs ([#999](https://www.github.com/googleapis/nodejs-pubsub/issues/999)) ([312e318](https://www.github.com/googleapis/nodejs-pubsub/commit/312e318ceb36eafbeb487ede7e5dbf9ccd5dfb81))
+* regen protos and tests, formatting ([#991](https://www.github.com/googleapis/nodejs-pubsub/issues/991)) ([e350b97](https://www.github.com/googleapis/nodejs-pubsub/commit/e350b97ad19e49e5fe52d5eeb1ad67c8bb6ddf33))
+* remove eslint, update gax, fix generated protos, run the generator ([#955](https://www.github.com/googleapis/nodejs-pubsub/issues/955)) ([544a061](https://www.github.com/googleapis/nodejs-pubsub/commit/544a061b1b6d7fdc4051486c2b8ae5d14e1ec141))
+* remove unused dependencies ([#998](https://www.github.com/googleapis/nodejs-pubsub/issues/998)) ([7b242a3](https://www.github.com/googleapis/nodejs-pubsub/commit/7b242a36212e0871b3918621fe9a5f51d1e6b733))
+* **close:** ensure in-flight messages are drained ([#952](https://www.github.com/googleapis/nodejs-pubsub/issues/952)) ([93a2bd7](https://www.github.com/googleapis/nodejs-pubsub/commit/93a2bd726660b134fbd3e12335bfde29d13a2b78))
+* **deps:** update dependency @google-cloud/paginator to v3 ([#931](https://www.github.com/googleapis/nodejs-pubsub/issues/931)) ([b621854](https://www.github.com/googleapis/nodejs-pubsub/commit/b62185426b7f958ee41a1cff429bc5fb70635b4a))
+* **deps:** update dependency @google-cloud/precise-date to v2 ([#934](https://www.github.com/googleapis/nodejs-pubsub/issues/934)) ([72b8d78](https://www.github.com/googleapis/nodejs-pubsub/commit/72b8d781ed3cbf9049101b9c2675f211fb3924ba))
+* **deps:** update dependency @google-cloud/projectify to v2 ([#929](https://www.github.com/googleapis/nodejs-pubsub/issues/929)) ([45d9880](https://www.github.com/googleapis/nodejs-pubsub/commit/45d988077d2db2fddbb4d22aac43c7f8a77e4dcc))
+* **deps:** update dependency @google-cloud/promisify to v2 ([#928](https://www.github.com/googleapis/nodejs-pubsub/issues/928)) ([3819877](https://www.github.com/googleapis/nodejs-pubsub/commit/3819877752d39cd042364bdd9ed01ff230aeed0b))
+* **deps:** update dependency google-auth-library to v6 ([#935](https://www.github.com/googleapis/nodejs-pubsub/issues/935)) ([73fc887](https://www.github.com/googleapis/nodejs-pubsub/commit/73fc887c662b526690167286d2d5afda0cccad1b))
+
+
+### Build System
+
+* convert to typescript ([#923](https://www.github.com/googleapis/nodejs-pubsub/issues/923)) ([2fc68ba](https://www.github.com/googleapis/nodejs-pubsub/commit/2fc68baff0cc2013468da7ef3dc8d547d4745989))
+
+
+### Miscellaneous Chores
+
+* drop support for custom promises ([#970](https://www.github.com/googleapis/nodejs-pubsub/issues/970)) ([df462d3](https://www.github.com/googleapis/nodejs-pubsub/commit/df462d3dec4f733cb309eb6413aad382424e2125))
+
 ### [1.7.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v1.7.0...v1.7.1) (2020-04-06)
 
 

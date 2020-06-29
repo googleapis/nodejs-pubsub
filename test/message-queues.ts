@@ -17,9 +17,7 @@
 import * as assert from 'assert';
 import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
-import {CallOptions} from 'google-gax';
-// eslint-disable-next-line node/no-extraneous-import
-import {Metadata, ServiceError} from '@grpc/grpc-js';
+import {CallOptions, grpc} from 'google-gax';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import * as uuid from 'uuid';
@@ -373,9 +371,9 @@ describe('MessageQueues', () => {
 
       const ackIds = messages.map(message => message.ackId);
 
-      const fakeError = new Error('Err.') as ServiceError;
+      const fakeError = new Error('Err.') as grpc.ServiceError;
       fakeError.code = 2;
-      fakeError.metadata = new Metadata();
+      fakeError.metadata = new grpc.Metadata();
 
       const expectedMessage =
         'Failed to "acknowledge" for 3 message(s). Reason: Err.';
@@ -498,9 +496,9 @@ describe('MessageQueues', () => {
 
       const ackIds = messages.map(message => message.ackId);
 
-      const fakeError = new Error('Err.') as ServiceError;
+      const fakeError = new Error('Err.') as grpc.ServiceError;
       fakeError.code = 2;
-      fakeError.metadata = new Metadata();
+      fakeError.metadata = new grpc.Metadata();
 
       const expectedMessage =
         'Failed to "modifyAckDeadline" for 3 message(s). Reason: Err.';

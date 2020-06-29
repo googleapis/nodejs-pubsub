@@ -154,6 +154,20 @@ export namespace google {
                  * @returns Promise
                  */
                 public deleteTopic(request: google.pubsub.v1.IDeleteTopicRequest): Promise<google.protobuf.Empty>;
+
+                /**
+                 * Calls DetachSubscription.
+                 * @param request DetachSubscriptionRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and DetachSubscriptionResponse
+                 */
+                public detachSubscription(request: google.pubsub.v1.IDetachSubscriptionRequest, callback: google.pubsub.v1.Publisher.DetachSubscriptionCallback): void;
+
+                /**
+                 * Calls DetachSubscription.
+                 * @param request DetachSubscriptionRequest message or plain object
+                 * @returns Promise
+                 */
+                public detachSubscription(request: google.pubsub.v1.IDetachSubscriptionRequest): Promise<google.pubsub.v1.DetachSubscriptionResponse>;
             }
 
             namespace Publisher {
@@ -213,6 +227,13 @@ export namespace google {
                  * @param [response] Empty
                  */
                 type DeleteTopicCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.Publisher#detachSubscription}.
+                 * @param error Error, if any
+                 * @param [response] DetachSubscriptionResponse
+                 */
+                type DetachSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.DetachSubscriptionResponse) => void;
             }
 
             /** Properties of a MessageStoragePolicy. */
@@ -1583,6 +1604,180 @@ export namespace google {
                 public toJSON(): { [k: string]: any };
             }
 
+            /** Properties of a DetachSubscriptionRequest. */
+            interface IDetachSubscriptionRequest {
+
+                /** DetachSubscriptionRequest subscription */
+                subscription?: (string|null);
+            }
+
+            /** Represents a DetachSubscriptionRequest. */
+            class DetachSubscriptionRequest implements IDetachSubscriptionRequest {
+
+                /**
+                 * Constructs a new DetachSubscriptionRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IDetachSubscriptionRequest);
+
+                /** DetachSubscriptionRequest subscription. */
+                public subscription: string;
+
+                /**
+                 * Creates a new DetachSubscriptionRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns DetachSubscriptionRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IDetachSubscriptionRequest): google.pubsub.v1.DetachSubscriptionRequest;
+
+                /**
+                 * Encodes the specified DetachSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionRequest.verify|verify} messages.
+                 * @param message DetachSubscriptionRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IDetachSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified DetachSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionRequest.verify|verify} messages.
+                 * @param message DetachSubscriptionRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IDetachSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a DetachSubscriptionRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns DetachSubscriptionRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DetachSubscriptionRequest;
+
+                /**
+                 * Decodes a DetachSubscriptionRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns DetachSubscriptionRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DetachSubscriptionRequest;
+
+                /**
+                 * Verifies a DetachSubscriptionRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a DetachSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns DetachSubscriptionRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DetachSubscriptionRequest;
+
+                /**
+                 * Creates a plain object from a DetachSubscriptionRequest message. Also converts values to other types if specified.
+                 * @param message DetachSubscriptionRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.DetachSubscriptionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this DetachSubscriptionRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a DetachSubscriptionResponse. */
+            interface IDetachSubscriptionResponse {
+            }
+
+            /** Represents a DetachSubscriptionResponse. */
+            class DetachSubscriptionResponse implements IDetachSubscriptionResponse {
+
+                /**
+                 * Constructs a new DetachSubscriptionResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IDetachSubscriptionResponse);
+
+                /**
+                 * Creates a new DetachSubscriptionResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns DetachSubscriptionResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.IDetachSubscriptionResponse): google.pubsub.v1.DetachSubscriptionResponse;
+
+                /**
+                 * Encodes the specified DetachSubscriptionResponse message. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionResponse.verify|verify} messages.
+                 * @param message DetachSubscriptionResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IDetachSubscriptionResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified DetachSubscriptionResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionResponse.verify|verify} messages.
+                 * @param message DetachSubscriptionResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IDetachSubscriptionResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a DetachSubscriptionResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns DetachSubscriptionResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DetachSubscriptionResponse;
+
+                /**
+                 * Decodes a DetachSubscriptionResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns DetachSubscriptionResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DetachSubscriptionResponse;
+
+                /**
+                 * Verifies a DetachSubscriptionResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a DetachSubscriptionResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns DetachSubscriptionResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DetachSubscriptionResponse;
+
+                /**
+                 * Creates a plain object from a DetachSubscriptionResponse message. Also converts values to other types if specified.
+                 * @param message DetachSubscriptionResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.DetachSubscriptionResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this DetachSubscriptionResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
             /** Represents a Subscriber */
             class Subscriber extends $protobuf.rpc.Service {
 
@@ -1981,6 +2176,9 @@ export namespace google {
 
                 /** Subscription retryPolicy */
                 retryPolicy?: (google.pubsub.v1.IRetryPolicy|null);
+
+                /** Subscription detached */
+                detached?: (boolean|null);
             }
 
             /** Represents a Subscription. */
@@ -2027,6 +2225,9 @@ export namespace google {
 
                 /** Subscription retryPolicy. */
                 public retryPolicy?: (google.pubsub.v1.IRetryPolicy|null);
+
+                /** Subscription detached. */
+                public detached: boolean;
 
                 /**
                  * Creates a new Subscription instance using the specified properties.
@@ -3667,6 +3868,12 @@ export namespace google {
 
                 /** StreamingPullRequest clientId */
                 clientId?: (string|null);
+
+                /** StreamingPullRequest maxOutstandingMessages */
+                maxOutstandingMessages?: (number|Long|string|null);
+
+                /** StreamingPullRequest maxOutstandingBytes */
+                maxOutstandingBytes?: (number|Long|string|null);
             }
 
             /** Represents a StreamingPullRequest. */
@@ -3695,6 +3902,12 @@ export namespace google {
 
                 /** StreamingPullRequest clientId. */
                 public clientId: string;
+
+                /** StreamingPullRequest maxOutstandingMessages. */
+                public maxOutstandingMessages: (number|Long|string);
+
+                /** StreamingPullRequest maxOutstandingBytes. */
+                public maxOutstandingBytes: (number|Long|string);
 
                 /**
                  * Creates a new StreamingPullRequest instance using the specified properties.
@@ -6027,6 +6240,9 @@ export namespace google {
 
             /** FieldDescriptorProto options */
             options?: (google.protobuf.IFieldOptions|null);
+
+            /** FieldDescriptorProto proto3Optional */
+            proto3Optional?: (boolean|null);
         }
 
         /** Represents a FieldDescriptorProto. */
@@ -6067,6 +6283,9 @@ export namespace google {
 
             /** FieldDescriptorProto options. */
             public options?: (google.protobuf.IFieldOptions|null);
+
+            /** FieldDescriptorProto proto3Optional. */
+            public proto3Optional: boolean;
 
             /**
              * Creates a new FieldDescriptorProto instance using the specified properties.

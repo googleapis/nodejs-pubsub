@@ -409,7 +409,7 @@ export class Subscription extends EventEmitter {
    *
    * @param {string} name Name of the snapshot.
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {CreateSnapshotCallback} [callback] Callback function.
    * @returns {Promise<CreateSnapshotResponse>}
    *
@@ -480,7 +480,7 @@ export class Subscription extends EventEmitter {
    * @see [Subscriptions: delete API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/delete}
    *
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {function} [callback] The callback function.
    * @param {?error} callback.err An error returned while making this
    *     request.
@@ -594,7 +594,7 @@ export class Subscription extends EventEmitter {
    * Get a subscription if it exists.
    *
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {boolean} [gaxOpts.autoCreate=false] Automatically create the
    *     subscription if it does not already exist.
    * @param {GetSubscriptionCallback} [callback] Callback function.
@@ -663,7 +663,7 @@ export class Subscription extends EventEmitter {
    * Fetches the subscriptions metadata.
    *
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {GetSubscriptionMetadataCallback} [callback] Callback function.
    * @returns {Promise<GetSubscriptionMetadataResponse>}
    *
@@ -745,7 +745,7 @@ export class Subscription extends EventEmitter {
    *     request for every pushed message. This object should have the same
    *     structure as [OidcToken]{@link google.pubsub.v1.OidcToken}
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {ModifyPushConfigCallback} [callback] Callback function.
    * @returns {Promise<ModifyPushConfigResponse>}
    *
@@ -853,7 +853,7 @@ export class Subscription extends EventEmitter {
    * @param {string|date} snapshot The point to seek to. This will accept the
    *     name of the snapshot or a Date object.
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {SeekCallback} [callback] Callback function.
    * @returns {Promise<SeekResponse>}
    *
@@ -937,7 +937,7 @@ export class Subscription extends EventEmitter {
    *
    * @param {object} metadata The subscription metadata.
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {SetSubscriptionMetadataCallback} [callback] Callback function.
    * @returns {Promise<SetSubscriptionMetadataResponse>}
    *

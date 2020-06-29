@@ -15,8 +15,7 @@
 import * as assert from 'assert';
 import * as sinon from 'sinon';
 import {describe, it, beforeEach, afterEach} from 'mocha';
-// eslint-disable-next-line node/no-extraneous-import
-import {StatusObject, status} from '@grpc/grpc-js';
+import {grpc} from 'google-gax';
 import {PullRetry} from '../src/pull-retry';
 
 describe('PullRetry', () => {
@@ -43,7 +42,7 @@ describe('PullRetry', () => {
 
       sandbox.stub(global.Math, 'random').returns(random);
 
-      retrier.retry({code: status.CANCELLED} as StatusObject);
+      retrier.retry({code: grpc.status.CANCELLED} as grpc.StatusObject);
       assert.strictEqual(retrier.createTimeout(), expected);
     });
   });
@@ -51,47 +50,47 @@ describe('PullRetry', () => {
   describe('retry', () => {
     it('should return true for retryable errors', () => {
       [
-        status.DEADLINE_EXCEEDED,
-        status.RESOURCE_EXHAUSTED,
-        status.ABORTED,
-        status.INTERNAL,
-        status.UNAVAILABLE,
-      ].forEach((code: status) => {
-        const shouldRetry = retrier.retry({code} as StatusObject);
+        grpc.status.DEADLINE_EXCEEDED,
+        grpc.status.RESOURCE_EXHAUSTED,
+        grpc.status.ABORTED,
+        grpc.status.INTERNAL,
+        grpc.status.UNAVAILABLE,
+      ].forEach((code: grpc.status) => {
+        const shouldRetry = retrier.retry({code} as grpc.StatusObject);
         assert.strictEqual(shouldRetry, true);
       });
 
       const serverShutdown = retrier.retry({
-        code: status.UNAVAILABLE,
+        code: grpc.status.UNAVAILABLE,
         details: 'Server shutdownNow invoked',
-      } as StatusObject);
+      } as grpc.StatusObject);
       assert.strictEqual(serverShutdown, true);
     });
 
     it('should return false for non-retryable errors', () => {
       [
-        status.INVALID_ARGUMENT,
-        status.NOT_FOUND,
-        status.PERMISSION_DENIED,
-        status.FAILED_PRECONDITION,
-        status.OUT_OF_RANGE,
-        status.UNIMPLEMENTED,
-      ].forEach((code: status) => {
-        const shouldRetry = retrier.retry({code} as StatusObject);
+        grpc.status.INVALID_ARGUMENT,
+        grpc.status.NOT_FOUND,
+        grpc.status.PERMISSION_DENIED,
+        grpc.status.FAILED_PRECONDITION,
+        grpc.status.OUT_OF_RANGE,
+        grpc.status.UNIMPLEMENTED,
+      ].forEach((code: grpc.status) => {
+        const shouldRetry = retrier.retry({code} as grpc.StatusObject);
         assert.strictEqual(shouldRetry, false);
       });
     });
 
     it('should reset the failure count on OK', () => {
-      retrier.retry({code: status.CANCELLED} as StatusObject);
-      retrier.retry({code: status.OK} as StatusObject);
+      retrier.retry({code: grpc.status.CANCELLED} as grpc.StatusObject);
+      retrier.retry({code: grpc.status.OK} as grpc.StatusObject);
 
       assert.strictEqual(retrier.createTimeout(), 0);
     });
 
     it('should reset the failure count on DEADLINE_EXCEEDED', () => {
-      retrier.retry({code: status.CANCELLED} as StatusObject);
-      retrier.retry({code: status.DEADLINE_EXCEEDED} as StatusObject);
+      retrier.retry({code: grpc.status.CANCELLED} as grpc.StatusObject);
+      retrier.retry({code: grpc.status.DEADLINE_EXCEEDED} as grpc.StatusObject);
 
       assert.strictEqual(retrier.createTimeout(), 0);
     });

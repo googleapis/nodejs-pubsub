@@ -104,16 +104,20 @@ export class SubscriberClient {
     }
     opts.servicePath = opts.servicePath || servicePath;
     opts.port = opts.port || port;
+
+    // users can override the config from client side, like retry codes name.
+    // The detailed structure of the clientConfig can be found here: https://github.com/googleapis/gax-nodejs/blob/master/src/gax.ts#L546
+    // The way to override client config for Showcase API:
+    //
+    // const customConfig = {"interfaces": {"google.showcase.v1beta1.Echo": {"methods": {"Echo": {"retry_codes_name": "idempotent", "retry_params_name": "default"}}}}}
+    // const showcaseClient = new showcaseClient({ projectId, customConfig });
     opts.clientConfig = opts.clientConfig || {};
 
-    const isBrowser = typeof window !== 'undefined';
-    if (isBrowser) {
-      opts.fallback = true;
-    }
-    // If we are in browser, we are already using fallback because of the
-    // "browser" field in package.json.
-    // But if we were explicitly requested to use fallback, let's do it now.
-    this._gaxModule = !isBrowser && opts.fallback ? gax.fallback : gax;
+    // If we're running in browser, it's OK to omit `fallback` since
+    // google-gax has `browser` field in its `package.json`.
+    // For Electron (which does not respect `browser` field),
+    // pass `{fallback: true}` to the SubscriberClient constructor.
+    this._gaxModule = opts.fallback ? gax.fallback : gax;
 
     // Create a `gaxGrpc` object, with any grpc-specific options
     // sent to the client.
@@ -458,13 +462,11 @@ export class SubscriberClient {
    *   *default policy* with `ttl` of 31 days will be used. The minimum allowed
    *   value for `expiration_policy.ttl` is 1 day.
    * @param {string} request.filter
-   *   An expression written in the Cloud Pub/Sub filter language. If non-empty,
+   *   An expression written in the Pub/Sub [filter
+   *   language](https://cloud.google.com/pubsub/docs/filtering). If non-empty,
    *   then only `PubsubMessage`s whose `attributes` field matches the filter are
    *   delivered on this subscription. If empty, then no messages are filtered
    *   out.
-   *   <b>EXPERIMENTAL:</b> This feature is part of a closed alpha release. This
-   *   API might be changed in backward-incompatible ways and is not recommended
-   *   for production use. It is not subject to any SLA or deprecation policy.
    * @param {google.pubsub.v1.DeadLetterPolicy} request.deadLetterPolicy
    *   A policy that specifies the conditions for dead lettering messages in
    *   this subscription. If dead_letter_policy is not set, dead lettering
@@ -475,16 +477,19 @@ export class SubscriberClient {
    *   service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have
    *   permission to Acknowledge() messages on this subscription.
    * @param {google.pubsub.v1.RetryPolicy} request.retryPolicy
-   *   A policy that specifies how Cloud Pub/Sub retries message delivery for this
+   *   A policy that specifies how Pub/Sub retries message delivery for this
    *   subscription.
    *
    *   If not set, the default retry policy is applied. This generally implies
    *   that messages will be retried as soon as possible for healthy subscribers.
    *   RetryPolicy will be triggered on NACKs or acknowledgement deadline
    *   exceeded events for a given message.
-   *   <b>EXPERIMENTAL:</b> This API might be changed in backward-incompatible
-   *   ways and is not recommended for production use. It is not subject to any
-   *   SLA or deprecation policy.
+   * @param {boolean} request.detached
+   *   Indicates whether the subscription is detached from its topic. Detached
+   *   subscriptions don't receive messages from their topic and don't retain any
+   *   backlog. `Pull` and `StreamingPull` requests will return
+   *   FAILED_PRECONDITION. If the subscription is a push subscription, pushes to
+   *   the endpoint will not be made.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.

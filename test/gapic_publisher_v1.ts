@@ -297,9 +297,7 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.createTopic(request);
-      }, expectedError);
+      await assert.rejects(client.createTopic(request), expectedError);
       assert(
         (client.innerApiCalls.createTopic as SinonStub)
           .getCall(0)
@@ -414,9 +412,7 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.updateTopic(request);
-      }, expectedError);
+      await assert.rejects(client.updateTopic(request), expectedError);
       assert(
         (client.innerApiCalls.updateTopic as SinonStub)
           .getCall(0)
@@ -525,9 +521,7 @@ describe('v1.PublisherClient', () => {
       };
       const expectedError = new Error('expected');
       client.innerApiCalls.publish = stubSimpleCall(undefined, expectedError);
-      await assert.rejects(async () => {
-        await client.publish(request);
-      }, expectedError);
+      await assert.rejects(client.publish(request), expectedError);
       assert(
         (client.innerApiCalls.publish as SinonStub)
           .getCall(0)
@@ -636,9 +630,7 @@ describe('v1.PublisherClient', () => {
       };
       const expectedError = new Error('expected');
       client.innerApiCalls.getTopic = stubSimpleCall(undefined, expectedError);
-      await assert.rejects(async () => {
-        await client.getTopic(request);
-      }, expectedError);
+      await assert.rejects(client.getTopic(request), expectedError);
       assert(
         (client.innerApiCalls.getTopic as SinonStub)
           .getCall(0)
@@ -750,11 +742,123 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.deleteTopic(request);
-      }, expectedError);
+      await assert.rejects(client.deleteTopic(request), expectedError);
       assert(
         (client.innerApiCalls.deleteTopic as SinonStub)
+          .getCall(0)
+          .calledWith(request, expectedOptions, undefined)
+      );
+    });
+  });
+
+  describe('detachSubscription', () => {
+    it('invokes detachSubscription without error', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedOptions = {
+        otherArgs: {
+          headers: {
+            'x-goog-request-params': expectedHeaderRequestParams,
+          },
+        },
+      };
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.DetachSubscriptionResponse()
+      );
+      client.innerApiCalls.detachSubscription = stubSimpleCall(
+        expectedResponse
+      );
+      const [response] = await client.detachSubscription(request);
+      assert.deepStrictEqual(response, expectedResponse);
+      assert(
+        (client.innerApiCalls.detachSubscription as SinonStub)
+          .getCall(0)
+          .calledWith(request, expectedOptions, undefined)
+      );
+    });
+
+    it('invokes detachSubscription without error using callback', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedOptions = {
+        otherArgs: {
+          headers: {
+            'x-goog-request-params': expectedHeaderRequestParams,
+          },
+        },
+      };
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.DetachSubscriptionResponse()
+      );
+      client.innerApiCalls.detachSubscription = stubSimpleCallWithCallback(
+        expectedResponse
+      );
+      const promise = new Promise((resolve, reject) => {
+        client.detachSubscription(
+          request,
+          (
+            err?: Error | null,
+            result?: protos.google.pubsub.v1.IDetachSubscriptionResponse | null
+          ) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+      });
+      const response = await promise;
+      assert.deepStrictEqual(response, expectedResponse);
+      assert(
+        (client.innerApiCalls.detachSubscription as SinonStub)
+          .getCall(0)
+          .calledWith(request, expectedOptions /*, callback defined above */)
+      );
+    });
+
+    it('invokes detachSubscription with error', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedOptions = {
+        otherArgs: {
+          headers: {
+            'x-goog-request-params': expectedHeaderRequestParams,
+          },
+        },
+      };
+      const expectedError = new Error('expected');
+      client.innerApiCalls.detachSubscription = stubSimpleCall(
+        undefined,
+        expectedError
+      );
+      await assert.rejects(client.detachSubscription(request), expectedError);
+      assert(
+        (client.innerApiCalls.detachSubscription as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
@@ -868,9 +972,7 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.listTopics(request);
-      }, expectedError);
+      await assert.rejects(client.listTopics(request), expectedError);
       assert(
         (client.innerApiCalls.listTopics as SinonStub)
           .getCall(0)
@@ -954,9 +1056,7 @@ describe('v1.PublisherClient', () => {
           reject(err);
         });
       });
-      await assert.rejects(async () => {
-        await promise;
-      }, expectedError);
+      await assert.rejects(promise, expectedError);
       assert(
         (client.descriptors.page.listTopics.createStream as SinonStub)
           .getCall(0)
@@ -1145,9 +1245,10 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.listTopicSubscriptions(request);
-      }, expectedError);
+      await assert.rejects(
+        client.listTopicSubscriptions(request),
+        expectedError
+      );
       assert(
         (client.innerApiCalls.listTopicSubscriptions as SinonStub)
           .getCall(0)
@@ -1229,9 +1330,7 @@ describe('v1.PublisherClient', () => {
           reject(err);
         });
       });
-      await assert.rejects(async () => {
-        await promise;
-      }, expectedError);
+      await assert.rejects(promise, expectedError);
       assert(
         (client.descriptors.page.listTopicSubscriptions
           .createStream as SinonStub)
@@ -1418,9 +1517,7 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.listTopicSnapshots(request);
-      }, expectedError);
+      await assert.rejects(client.listTopicSnapshots(request), expectedError);
       assert(
         (client.innerApiCalls.listTopicSnapshots as SinonStub)
           .getCall(0)
@@ -1501,9 +1598,7 @@ describe('v1.PublisherClient', () => {
           reject(err);
         });
       });
-      await assert.rejects(async () => {
-        await promise;
-      }, expectedError);
+      await assert.rejects(promise, expectedError);
       assert(
         (client.descriptors.page.listTopicSnapshots.createStream as SinonStub)
           .getCall(0)
@@ -1685,9 +1780,10 @@ describe('v1.PublisherClient', () => {
       };
       const expectedError = new Error('expected');
       client.iamClient.getIamPolicy = stubSimpleCall(undefined, expectedError);
-      await assert.rejects(async () => {
-        await client.getIamPolicy(request, expectedOptions);
-      }, expectedError);
+      await assert.rejects(
+        client.getIamPolicy(request, expectedOptions),
+        expectedError
+      );
       assert(
         (client.iamClient.getIamPolicy as SinonStub)
           .getCall(0)
@@ -1790,9 +1886,10 @@ describe('v1.PublisherClient', () => {
       };
       const expectedError = new Error('expected');
       client.iamClient.setIamPolicy = stubSimpleCall(undefined, expectedError);
-      await assert.rejects(async () => {
-        await client.setIamPolicy(request, expectedOptions);
-      }, expectedError);
+      await assert.rejects(
+        client.setIamPolicy(request, expectedOptions),
+        expectedError
+      );
       assert(
         (client.iamClient.setIamPolicy as SinonStub)
           .getCall(0)
@@ -1901,9 +1998,10 @@ describe('v1.PublisherClient', () => {
         undefined,
         expectedError
       );
-      await assert.rejects(async () => {
-        await client.testIamPermissions(request, expectedOptions);
-      }, expectedError);
+      await assert.rejects(
+        client.testIamPermissions(request, expectedOptions),
+        expectedError
+      );
       assert(
         (client.iamClient.testIamPermissions as SinonStub)
           .getCall(0)

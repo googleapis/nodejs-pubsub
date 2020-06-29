@@ -20,10 +20,6 @@ import {promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
-// eslint-disable-next-line node/no-extraneous-import
-import * as grpc from '@grpc/grpc-js';
-// eslint-disable-next-line node/no-extraneous-import
-import {ServiceError, ChannelCredentials} from '@grpc/grpc-js';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PKG = require('../../package.json');
@@ -64,7 +60,7 @@ export interface ClientConfig extends gax.GrpcClientOptions {
   apiEndpoint?: string;
   servicePath?: string;
   port?: string | number;
-  sslCreds?: ChannelCredentials;
+  sslCreds?: gax.grpc.ChannelCredentials;
 }
 
 export interface PageOptions {
@@ -132,7 +128,7 @@ export interface RequestConfig extends GetClientConfig {
 
 export interface ResourceCallback<Resource, Response> {
   (
-    err: ServiceError | null,
+    err: gax.grpc.ServiceError | null,
     resource?: Resource | null,
     response?: Response | null
   ): void;
@@ -143,12 +139,12 @@ export type RequestCallback<T, R = void> = R extends void
   : PagedCallback<T, R>;
 
 export interface NormalCallback<TResponse> {
-  (err: ServiceError | null, res?: TResponse | null): void;
+  (err: gax.grpc.ServiceError | null, res?: TResponse | null): void;
 }
 
 export interface PagedCallback<Item, Response> {
   (
-    err: ServiceError | null,
+    err: gax.grpc.ServiceError | null,
     results?: Item[] | null,
     nextQuery?: {} | null,
     response?: Response | null
@@ -354,7 +350,7 @@ export class PubSub {
    *     of un-acked messages to allow before the subscription pauses incoming
    *     messages.
    * @property {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @property {number|google.protobuf.Duration} [messageRetentionDuration] Set
    *     this to override the default duration of 7 days. This value is expected
    *     in seconds. Acceptable values are in the range of 10 minutes and 7
@@ -493,7 +489,7 @@ export class PubSub {
    *
    * @param {string} name Name of the topic.
    * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @param {CreateTopicCallback} [callback] Callback function.
    * @returns {Promise<CreateTopicResponse>}
    *
@@ -559,7 +555,7 @@ export class PubSub {
       return;
     }
 
-    const grpcInstance = this.options.grpc || grpc;
+    const grpcInstance = this.options.grpc || gax.grpc;
     const baseUrl = apiEndpoint || process.env.PUBSUB_EMULATOR_HOST;
     const leadingProtocol = new RegExp('^https*://');
     const trailingSlashes = new RegExp('/*$');
@@ -587,7 +583,7 @@ export class PubSub {
    * @property {boolean} [autoPaginate=true] Have pagination handled
    *     automatically.
    * @property {object} [options.gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @property {number} [options.pageSize] Maximum number of results to return.
    * @property {string} [options.pageToken] Page token.
    */
@@ -693,7 +689,7 @@ export class PubSub {
    * @property {boolean} [autoPaginate=true] Have pagination handled
    *     automatically.
    * @property {object} [options.gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @property {number} [options.pageSize] Maximum number of results to return.
    * @property {string} [options.pageToken] Page token.
    * @param {string|Topic} options.topic - The name of the topic to
@@ -812,7 +808,7 @@ export class PubSub {
    * @property {boolean} [autoPaginate=true] Have pagination handled
    *     automatically.
    * @property {object} [options.gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/CallSettings.html.
+   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @property {number} [options.pageSize] Maximum number of results to return.
    * @property {string} [options.pageToken] Page token.
    */
@@ -1009,13 +1005,13 @@ export class PubSub {
       };
       const err = new Error(statusObject.details);
       Object.assign(err, statusObject);
-      callback(err as ServiceError);
+      callback(err as gax.grpc.ServiceError);
       return;
     }
 
     this.getClient_(config, (err, client) => {
       if (err) {
-        callback(err as ServiceError);
+        callback(err as gax.grpc.ServiceError);
         return;
       }
       let reqOpts = extend(true, {}, config.reqOpts);

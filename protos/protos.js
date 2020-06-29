@@ -28,7 +28,7 @@
     var $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
     
     // Exported root namespace
-    var $root = $protobuf.roots._google_cloud_pubsub_1_7_1_protos || ($protobuf.roots._google_cloud_pubsub_1_7_1_protos = {});
+    var $root = $protobuf.roots._google_cloud_pubsub_protos || ($protobuf.roots._google_cloud_pubsub_protos = {});
     
     $root.google = (function() {
     
@@ -350,6 +350,39 @@
                      * @instance
                      * @param {google.pubsub.v1.IDeleteTopicRequest} request DeleteTopicRequest message or plain object
                      * @returns {Promise<google.protobuf.Empty>} Promise
+                     * @variation 2
+                     */
+    
+                    /**
+                     * Callback as used by {@link google.pubsub.v1.Publisher#detachSubscription}.
+                     * @memberof google.pubsub.v1.Publisher
+                     * @typedef DetachSubscriptionCallback
+                     * @type {function}
+                     * @param {Error|null} error Error, if any
+                     * @param {google.pubsub.v1.DetachSubscriptionResponse} [response] DetachSubscriptionResponse
+                     */
+    
+                    /**
+                     * Calls DetachSubscription.
+                     * @function detachSubscription
+                     * @memberof google.pubsub.v1.Publisher
+                     * @instance
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest} request DetachSubscriptionRequest message or plain object
+                     * @param {google.pubsub.v1.Publisher.DetachSubscriptionCallback} callback Node-style callback called with the error, if any, and DetachSubscriptionResponse
+                     * @returns {undefined}
+                     * @variation 1
+                     */
+                    Object.defineProperty(Publisher.prototype.detachSubscription = function detachSubscription(request, callback) {
+                        return this.rpcCall(detachSubscription, $root.google.pubsub.v1.DetachSubscriptionRequest, $root.google.pubsub.v1.DetachSubscriptionResponse, request, callback);
+                    }, "name", { value: "DetachSubscription" });
+    
+                    /**
+                     * Calls DetachSubscription.
+                     * @function detachSubscription
+                     * @memberof google.pubsub.v1.Publisher
+                     * @instance
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest} request DetachSubscriptionRequest message or plain object
+                     * @returns {Promise<google.pubsub.v1.DetachSubscriptionResponse>} Promise
                      * @variation 2
                      */
     
@@ -3559,6 +3592,353 @@
                     return DeleteTopicRequest;
                 })();
     
+                v1.DetachSubscriptionRequest = (function() {
+    
+                    /**
+                     * Properties of a DetachSubscriptionRequest.
+                     * @memberof google.pubsub.v1
+                     * @interface IDetachSubscriptionRequest
+                     * @property {string|null} [subscription] DetachSubscriptionRequest subscription
+                     */
+    
+                    /**
+                     * Constructs a new DetachSubscriptionRequest.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a DetachSubscriptionRequest.
+                     * @implements IDetachSubscriptionRequest
+                     * @constructor
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest=} [properties] Properties to set
+                     */
+                    function DetachSubscriptionRequest(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * DetachSubscriptionRequest subscription.
+                     * @member {string} subscription
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @instance
+                     */
+                    DetachSubscriptionRequest.prototype.subscription = "";
+    
+                    /**
+                     * Creates a new DetachSubscriptionRequest instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.DetachSubscriptionRequest} DetachSubscriptionRequest instance
+                     */
+                    DetachSubscriptionRequest.create = function create(properties) {
+                        return new DetachSubscriptionRequest(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified DetachSubscriptionRequest message. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionRequest.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest} message DetachSubscriptionRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    DetachSubscriptionRequest.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.subscription != null && Object.hasOwnProperty.call(message, "subscription"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.subscription);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified DetachSubscriptionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionRequest.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionRequest} message DetachSubscriptionRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    DetachSubscriptionRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a DetachSubscriptionRequest message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.DetachSubscriptionRequest} DetachSubscriptionRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    DetachSubscriptionRequest.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DetachSubscriptionRequest();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.subscription = reader.string();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a DetachSubscriptionRequest message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.DetachSubscriptionRequest} DetachSubscriptionRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    DetachSubscriptionRequest.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a DetachSubscriptionRequest message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    DetachSubscriptionRequest.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.subscription != null && message.hasOwnProperty("subscription"))
+                            if (!$util.isString(message.subscription))
+                                return "subscription: string expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a DetachSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.DetachSubscriptionRequest} DetachSubscriptionRequest
+                     */
+                    DetachSubscriptionRequest.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.DetachSubscriptionRequest)
+                            return object;
+                        var message = new $root.google.pubsub.v1.DetachSubscriptionRequest();
+                        if (object.subscription != null)
+                            message.subscription = String(object.subscription);
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a DetachSubscriptionRequest message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @static
+                     * @param {google.pubsub.v1.DetachSubscriptionRequest} message DetachSubscriptionRequest
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    DetachSubscriptionRequest.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults)
+                            object.subscription = "";
+                        if (message.subscription != null && message.hasOwnProperty("subscription"))
+                            object.subscription = message.subscription;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this DetachSubscriptionRequest to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.DetachSubscriptionRequest
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    DetachSubscriptionRequest.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return DetachSubscriptionRequest;
+                })();
+    
+                v1.DetachSubscriptionResponse = (function() {
+    
+                    /**
+                     * Properties of a DetachSubscriptionResponse.
+                     * @memberof google.pubsub.v1
+                     * @interface IDetachSubscriptionResponse
+                     */
+    
+                    /**
+                     * Constructs a new DetachSubscriptionResponse.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a DetachSubscriptionResponse.
+                     * @implements IDetachSubscriptionResponse
+                     * @constructor
+                     * @param {google.pubsub.v1.IDetachSubscriptionResponse=} [properties] Properties to set
+                     */
+                    function DetachSubscriptionResponse(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * Creates a new DetachSubscriptionResponse instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionResponse=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.DetachSubscriptionResponse} DetachSubscriptionResponse instance
+                     */
+                    DetachSubscriptionResponse.create = function create(properties) {
+                        return new DetachSubscriptionResponse(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified DetachSubscriptionResponse message. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionResponse.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionResponse} message DetachSubscriptionResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    DetachSubscriptionResponse.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified DetachSubscriptionResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.DetachSubscriptionResponse.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {google.pubsub.v1.IDetachSubscriptionResponse} message DetachSubscriptionResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    DetachSubscriptionResponse.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a DetachSubscriptionResponse message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.DetachSubscriptionResponse} DetachSubscriptionResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    DetachSubscriptionResponse.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DetachSubscriptionResponse();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a DetachSubscriptionResponse message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.DetachSubscriptionResponse} DetachSubscriptionResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    DetachSubscriptionResponse.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a DetachSubscriptionResponse message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    DetachSubscriptionResponse.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a DetachSubscriptionResponse message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.DetachSubscriptionResponse} DetachSubscriptionResponse
+                     */
+                    DetachSubscriptionResponse.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.DetachSubscriptionResponse)
+                            return object;
+                        return new $root.google.pubsub.v1.DetachSubscriptionResponse();
+                    };
+    
+                    /**
+                     * Creates a plain object from a DetachSubscriptionResponse message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @static
+                     * @param {google.pubsub.v1.DetachSubscriptionResponse} message DetachSubscriptionResponse
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    DetachSubscriptionResponse.toObject = function toObject() {
+                        return {};
+                    };
+    
+                    /**
+                     * Converts this DetachSubscriptionResponse to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.DetachSubscriptionResponse
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    DetachSubscriptionResponse.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return DetachSubscriptionResponse;
+                })();
+    
                 v1.Subscriber = (function() {
     
                     /**
@@ -4140,6 +4520,7 @@
                      * @property {string|null} [filter] Subscription filter
                      * @property {google.pubsub.v1.IDeadLetterPolicy|null} [deadLetterPolicy] Subscription deadLetterPolicy
                      * @property {google.pubsub.v1.IRetryPolicy|null} [retryPolicy] Subscription retryPolicy
+                     * @property {boolean|null} [detached] Subscription detached
                      */
     
                     /**
@@ -4255,6 +4636,14 @@
                     Subscription.prototype.retryPolicy = null;
     
                     /**
+                     * Subscription detached.
+                     * @member {boolean} detached
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.detached = false;
+    
+                    /**
                      * Creates a new Subscription instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Subscription
@@ -4303,6 +4692,8 @@
                             $root.google.pubsub.v1.DeadLetterPolicy.encode(message.deadLetterPolicy, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
                         if (message.retryPolicy != null && Object.hasOwnProperty.call(message, "retryPolicy"))
                             $root.google.pubsub.v1.RetryPolicy.encode(message.retryPolicy, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
+                        if (message.detached != null && Object.hasOwnProperty.call(message, "detached"))
+                            writer.uint32(/* id 15, wireType 0 =*/120).bool(message.detached);
                         return writer;
                     };
     
@@ -4377,6 +4768,9 @@
                                 break;
                             case 14:
                                 message.retryPolicy = $root.google.pubsub.v1.RetryPolicy.decode(reader, reader.uint32());
+                                break;
+                            case 15:
+                                message.detached = reader.bool();
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -4464,6 +4858,9 @@
                             if (error)
                                 return "retryPolicy." + error;
                         }
+                        if (message.detached != null && message.hasOwnProperty("detached"))
+                            if (typeof message.detached !== "boolean")
+                                return "detached: boolean expected";
                         return null;
                     };
     
@@ -4523,6 +4920,8 @@
                                 throw TypeError(".google.pubsub.v1.Subscription.retryPolicy: object expected");
                             message.retryPolicy = $root.google.pubsub.v1.RetryPolicy.fromObject(object.retryPolicy);
                         }
+                        if (object.detached != null)
+                            message.detached = Boolean(object.detached);
                         return message;
                     };
     
@@ -4553,6 +4952,7 @@
                             object.filter = "";
                             object.deadLetterPolicy = null;
                             object.retryPolicy = null;
+                            object.detached = false;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
                             object.name = message.name;
@@ -4582,6 +4982,8 @@
                             object.deadLetterPolicy = $root.google.pubsub.v1.DeadLetterPolicy.toObject(message.deadLetterPolicy, options);
                         if (message.retryPolicy != null && message.hasOwnProperty("retryPolicy"))
                             object.retryPolicy = $root.google.pubsub.v1.RetryPolicy.toObject(message.retryPolicy, options);
+                        if (message.detached != null && message.hasOwnProperty("detached"))
+                            object.detached = message.detached;
                         return object;
                     };
     
@@ -8145,6 +8547,8 @@
                      * @property {Array.<string>|null} [modifyDeadlineAckIds] StreamingPullRequest modifyDeadlineAckIds
                      * @property {number|null} [streamAckDeadlineSeconds] StreamingPullRequest streamAckDeadlineSeconds
                      * @property {string|null} [clientId] StreamingPullRequest clientId
+                     * @property {number|Long|null} [maxOutstandingMessages] StreamingPullRequest maxOutstandingMessages
+                     * @property {number|Long|null} [maxOutstandingBytes] StreamingPullRequest maxOutstandingBytes
                      */
     
                     /**
@@ -8214,6 +8618,22 @@
                     StreamingPullRequest.prototype.clientId = "";
     
                     /**
+                     * StreamingPullRequest maxOutstandingMessages.
+                     * @member {number|Long} maxOutstandingMessages
+                     * @memberof google.pubsub.v1.StreamingPullRequest
+                     * @instance
+                     */
+                    StreamingPullRequest.prototype.maxOutstandingMessages = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                    /**
+                     * StreamingPullRequest maxOutstandingBytes.
+                     * @member {number|Long} maxOutstandingBytes
+                     * @memberof google.pubsub.v1.StreamingPullRequest
+                     * @instance
+                     */
+                    StreamingPullRequest.prototype.maxOutstandingBytes = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                    /**
                      * Creates a new StreamingPullRequest instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.StreamingPullRequest
@@ -8255,6 +8675,10 @@
                             writer.uint32(/* id 5, wireType 0 =*/40).int32(message.streamAckDeadlineSeconds);
                         if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
                             writer.uint32(/* id 6, wireType 2 =*/50).string(message.clientId);
+                        if (message.maxOutstandingMessages != null && Object.hasOwnProperty.call(message, "maxOutstandingMessages"))
+                            writer.uint32(/* id 7, wireType 0 =*/56).int64(message.maxOutstandingMessages);
+                        if (message.maxOutstandingBytes != null && Object.hasOwnProperty.call(message, "maxOutstandingBytes"))
+                            writer.uint32(/* id 8, wireType 0 =*/64).int64(message.maxOutstandingBytes);
                         return writer;
                     };
     
@@ -8317,6 +8741,12 @@
                                 break;
                             case 6:
                                 message.clientId = reader.string();
+                                break;
+                            case 7:
+                                message.maxOutstandingMessages = reader.int64();
+                                break;
+                            case 8:
+                                message.maxOutstandingBytes = reader.int64();
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -8383,6 +8813,12 @@
                         if (message.clientId != null && message.hasOwnProperty("clientId"))
                             if (!$util.isString(message.clientId))
                                 return "clientId: string expected";
+                        if (message.maxOutstandingMessages != null && message.hasOwnProperty("maxOutstandingMessages"))
+                            if (!$util.isInteger(message.maxOutstandingMessages) && !(message.maxOutstandingMessages && $util.isInteger(message.maxOutstandingMessages.low) && $util.isInteger(message.maxOutstandingMessages.high)))
+                                return "maxOutstandingMessages: integer|Long expected";
+                        if (message.maxOutstandingBytes != null && message.hasOwnProperty("maxOutstandingBytes"))
+                            if (!$util.isInteger(message.maxOutstandingBytes) && !(message.maxOutstandingBytes && $util.isInteger(message.maxOutstandingBytes.low) && $util.isInteger(message.maxOutstandingBytes.high)))
+                                return "maxOutstandingBytes: integer|Long expected";
                         return null;
                     };
     
@@ -8425,6 +8861,24 @@
                             message.streamAckDeadlineSeconds = object.streamAckDeadlineSeconds | 0;
                         if (object.clientId != null)
                             message.clientId = String(object.clientId);
+                        if (object.maxOutstandingMessages != null)
+                            if ($util.Long)
+                                (message.maxOutstandingMessages = $util.Long.fromValue(object.maxOutstandingMessages)).unsigned = false;
+                            else if (typeof object.maxOutstandingMessages === "string")
+                                message.maxOutstandingMessages = parseInt(object.maxOutstandingMessages, 10);
+                            else if (typeof object.maxOutstandingMessages === "number")
+                                message.maxOutstandingMessages = object.maxOutstandingMessages;
+                            else if (typeof object.maxOutstandingMessages === "object")
+                                message.maxOutstandingMessages = new $util.LongBits(object.maxOutstandingMessages.low >>> 0, object.maxOutstandingMessages.high >>> 0).toNumber();
+                        if (object.maxOutstandingBytes != null)
+                            if ($util.Long)
+                                (message.maxOutstandingBytes = $util.Long.fromValue(object.maxOutstandingBytes)).unsigned = false;
+                            else if (typeof object.maxOutstandingBytes === "string")
+                                message.maxOutstandingBytes = parseInt(object.maxOutstandingBytes, 10);
+                            else if (typeof object.maxOutstandingBytes === "number")
+                                message.maxOutstandingBytes = object.maxOutstandingBytes;
+                            else if (typeof object.maxOutstandingBytes === "object")
+                                message.maxOutstandingBytes = new $util.LongBits(object.maxOutstandingBytes.low >>> 0, object.maxOutstandingBytes.high >>> 0).toNumber();
                         return message;
                     };
     
@@ -8450,6 +8904,16 @@
                             object.subscription = "";
                             object.streamAckDeadlineSeconds = 0;
                             object.clientId = "";
+                            if ($util.Long) {
+                                var long = new $util.Long(0, 0, false);
+                                object.maxOutstandingMessages = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                            } else
+                                object.maxOutstandingMessages = options.longs === String ? "0" : 0;
+                            if ($util.Long) {
+                                var long = new $util.Long(0, 0, false);
+                                object.maxOutstandingBytes = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                            } else
+                                object.maxOutstandingBytes = options.longs === String ? "0" : 0;
                         }
                         if (message.subscription != null && message.hasOwnProperty("subscription"))
                             object.subscription = message.subscription;
@@ -8472,6 +8936,16 @@
                             object.streamAckDeadlineSeconds = message.streamAckDeadlineSeconds;
                         if (message.clientId != null && message.hasOwnProperty("clientId"))
                             object.clientId = message.clientId;
+                        if (message.maxOutstandingMessages != null && message.hasOwnProperty("maxOutstandingMessages"))
+                            if (typeof message.maxOutstandingMessages === "number")
+                                object.maxOutstandingMessages = options.longs === String ? String(message.maxOutstandingMessages) : message.maxOutstandingMessages;
+                            else
+                                object.maxOutstandingMessages = options.longs === String ? $util.Long.prototype.toString.call(message.maxOutstandingMessages) : options.longs === Number ? new $util.LongBits(message.maxOutstandingMessages.low >>> 0, message.maxOutstandingMessages.high >>> 0).toNumber() : message.maxOutstandingMessages;
+                        if (message.maxOutstandingBytes != null && message.hasOwnProperty("maxOutstandingBytes"))
+                            if (typeof message.maxOutstandingBytes === "number")
+                                object.maxOutstandingBytes = options.longs === String ? String(message.maxOutstandingBytes) : message.maxOutstandingBytes;
+                            else
+                                object.maxOutstandingBytes = options.longs === String ? $util.Long.prototype.toString.call(message.maxOutstandingBytes) : options.longs === Number ? new $util.LongBits(message.maxOutstandingBytes.low >>> 0, message.maxOutstandingBytes.high >>> 0).toNumber() : message.maxOutstandingBytes;
                         return object;
                     };
     
@@ -14242,6 +14716,7 @@
                  * @property {number|null} [oneofIndex] FieldDescriptorProto oneofIndex
                  * @property {string|null} [jsonName] FieldDescriptorProto jsonName
                  * @property {google.protobuf.IFieldOptions|null} [options] FieldDescriptorProto options
+                 * @property {boolean|null} [proto3Optional] FieldDescriptorProto proto3Optional
                  */
     
                 /**
@@ -14340,6 +14815,14 @@
                 FieldDescriptorProto.prototype.options = null;
     
                 /**
+                 * FieldDescriptorProto proto3Optional.
+                 * @member {boolean} proto3Optional
+                 * @memberof google.protobuf.FieldDescriptorProto
+                 * @instance
+                 */
+                FieldDescriptorProto.prototype.proto3Optional = false;
+    
+                /**
                  * Creates a new FieldDescriptorProto instance using the specified properties.
                  * @function create
                  * @memberof google.protobuf.FieldDescriptorProto
@@ -14383,6 +14866,8 @@
                         writer.uint32(/* id 9, wireType 0 =*/72).int32(message.oneofIndex);
                     if (message.jsonName != null && Object.hasOwnProperty.call(message, "jsonName"))
                         writer.uint32(/* id 10, wireType 2 =*/82).string(message.jsonName);
+                    if (message.proto3Optional != null && Object.hasOwnProperty.call(message, "proto3Optional"))
+                        writer.uint32(/* id 17, wireType 0 =*/136).bool(message.proto3Optional);
                     return writer;
                 };
     
@@ -14446,6 +14931,9 @@
                             break;
                         case 8:
                             message.options = $root.google.protobuf.FieldOptions.decode(reader, reader.uint32());
+                            break;
+                        case 17:
+                            message.proto3Optional = reader.bool();
                             break;
                         default:
                             reader.skipType(tag & 7);
@@ -14541,6 +15029,9 @@
                         if (error)
                             return "options." + error;
                     }
+                    if (message.proto3Optional != null && message.hasOwnProperty("proto3Optional"))
+                        if (typeof message.proto3Optional !== "boolean")
+                            return "proto3Optional: boolean expected";
                     return null;
                 };
     
@@ -14663,6 +15154,8 @@
                             throw TypeError(".google.protobuf.FieldDescriptorProto.options: object expected");
                         message.options = $root.google.protobuf.FieldOptions.fromObject(object.options);
                     }
+                    if (object.proto3Optional != null)
+                        message.proto3Optional = Boolean(object.proto3Optional);
                     return message;
                 };
     
@@ -14690,6 +15183,7 @@
                         object.options = null;
                         object.oneofIndex = 0;
                         object.jsonName = "";
+                        object.proto3Optional = false;
                     }
                     if (message.name != null && message.hasOwnProperty("name"))
                         object.name = message.name;
@@ -14711,6 +15205,8 @@
                         object.oneofIndex = message.oneofIndex;
                     if (message.jsonName != null && message.hasOwnProperty("jsonName"))
                         object.jsonName = message.jsonName;
+                    if (message.proto3Optional != null && message.hasOwnProperty("proto3Optional"))
+                        object.proto3Optional = message.proto3Optional;
                     return object;
                 };
     
@@ -16504,7 +17000,7 @@
                  * @memberof google.protobuf.FileOptions
                  * @instance
                  */
-                FileOptions.prototype.ccEnableArenas = false;
+                FileOptions.prototype.ccEnableArenas = true;
     
                 /**
                  * FileOptions objcClassPrefix.
@@ -16990,7 +17486,7 @@
                         object.javaGenerateEqualsAndHash = false;
                         object.deprecated = false;
                         object.javaStringCheckUtf8 = false;
-                        object.ccEnableArenas = false;
+                        object.ccEnableArenas = true;
                         object.objcClassPrefix = "";
                         object.csharpNamespace = "";
                         object.swiftPrefix = "";

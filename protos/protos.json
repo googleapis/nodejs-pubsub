@@ -87,6 +87,13 @@
                         "(google.api.http).delete": "/v1/{topic=projects/*/topics/*}",
                         "(google.api.method_signature)": "topic"
                       }
+                    },
+                    "DetachSubscription": {
+                      "requestType": "DetachSubscriptionRequest",
+                      "responseType": "DetachSubscriptionResponse",
+                      "options": {
+                        "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:detach"
+                      }
                     }
                   }
                 },
@@ -325,6 +332,21 @@
                     }
                   }
                 },
+                "DetachSubscriptionRequest": {
+                  "fields": {
+                    "subscription": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
+                      }
+                    }
+                  }
+                },
+                "DetachSubscriptionResponse": {
+                  "fields": {}
+                },
                 "Subscriber": {
                   "options": {
                     "(google.api.default_host)": "pubsub.googleapis.com",
@@ -526,6 +548,10 @@
                     "retryPolicy": {
                       "type": "RetryPolicy",
                       "id": 14
+                    },
+                    "detached": {
+                      "type": "bool",
+                      "id": 15
                     }
                   }
                 },
@@ -827,6 +853,14 @@
                     "clientId": {
                       "type": "string",
                       "id": 6
+                    },
+                    "maxOutstandingMessages": {
+                      "type": "int64",
+                      "id": 7
+                    },
+                    "maxOutstandingBytes": {
+                      "type": "int64",
+                      "id": 8
                     }
                   }
                 },
@@ -1425,6 +1459,10 @@
                 "options": {
                   "type": "FieldOptions",
                   "id": 8
+                },
+                "proto3Optional": {
+                  "type": "bool",
+                  "id": 17
                 }
               },
               "nested": {
@@ -1660,7 +1698,7 @@
                   "type": "bool",
                   "id": 31,
                   "options": {
-                    "default": false
+                    "default": true
                   }
                 },
                 "objcClassPrefix": {
