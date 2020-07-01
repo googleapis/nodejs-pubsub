@@ -104,6 +104,7 @@ export {
   ExistsCallback,
   ExistsResponse,
   PubSub,
+  ClientConfig,
 } from './pubsub';
 export {
   CreateSnapshotCallback,
