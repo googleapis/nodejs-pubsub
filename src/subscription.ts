@@ -537,7 +537,7 @@ export class Subscription extends EventEmitter {
   /**
    * Detach the subscription from the topic.
    *
-   * @see [Subscriptions: detach subscription API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics.subscriptions/detach}
+   * @see [Admin: Pub/Sub administration API Documentation]{@link https://cloud.google.com/pubsub/docs/admin}
    *
    * @param {object} [gaxOpts] Request configuration options, outlined
    *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.

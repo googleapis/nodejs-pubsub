@@ -557,7 +557,7 @@ export class PubSub {
   /**
    * Detach a subscription with the given name.
    *
-   * @see [Subscriptions: detach subscription API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics.subscriptions/detach}
+   * @see [Admin: Pub/Sub administration API Documentation]{@link https://cloud.google.com/pubsub/docs/admin}
    *
    * @param {string} name Name of the subscription.
    * @param {object} [gaxOpts] Request configuration options, outlined
