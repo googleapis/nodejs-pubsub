@@ -118,6 +118,9 @@ export type EmptyResponse = [google.protobuf.IEmpty];
 export type ExistsCallback = RequestCallback<boolean>;
 export type ExistsResponse = [boolean];
 
+export type DetachedCallback = RequestCallback<boolean>;
+export type DetachedResponse = [boolean];
+
 export interface GetClientConfig {
   client: 'PublisherClient' | 'SubscriberClient';
 }

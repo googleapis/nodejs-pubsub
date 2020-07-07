@@ -25,6 +25,8 @@ import {google} from '../protos/protos';
 import {IAM} from './iam';
 import {FlowControlOptions} from './lease-manager';
 import {
+  DetachedCallback,
+  DetachedResponse,
   EmptyCallback,
   EmptyResponse,
   ExistsCallback,
@@ -569,6 +571,49 @@ export class Subscription extends EventEmitter {
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     this.pubsub.detachSubscription(this.name, gaxOpts, callback!);
+  }
+
+  detached(): Promise<DetachedResponse>;
+  detached(callback: DetachedCallback): void;
+  /**
+   * @typedef {array} SubscriptionDetachedResponse
+   * @property {boolean} 0 Whether the subscription is detached.
+   */
+  /**
+   * @callback SubscriptionDetachedCallback
+   * @param {?Error} err Request error, if any.
+   * @param {boolean} exists Whether the subscription is detached.
+   */
+  /**
+   * Check if a subscription is detached.
+   *
+   * @param {SubscriptionDetachedCallback} [callback] Callback function.
+   * @returns {Promise<SubscriptionDetachedResponse>}
+   *
+   * @example
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * const topic = pubsub.topic('my-topic');
+   * const subscription = topic.subscription('my-subscription');
+   *
+   * subscription.detached((err, exists) => {});
+   *
+   * //-
+   * // If the callback is omitted, we'll return a Promise.
+   * //-
+   * subscription.detached().then((data) => {
+   *   const detached = data[0];
+   * });
+   */
+  detached(callback?: DetachedCallback): void | Promise<DetachedResponse> {
+    this.getMetadata((err, metadata) => {
+      if (err) {
+        callback!(err);
+      } else {
+        callback!(null, metadata!.detached);
+      }
+    });
   }
 
   exists(): Promise<ExistsResponse>;
