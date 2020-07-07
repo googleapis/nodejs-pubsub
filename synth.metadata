@@ -29,8 +29,8 @@
         "source": "googleapis",
         "apiName": "pubsub",
         "apiVersion": "v1",
-        "language": "typescript",
-        "generator": "gapic-generator-typescript"
+        "language": "nodejs",
+        "generator": "bazel"
       }
     }
   ]
