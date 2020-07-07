@@ -8547,6 +8547,8 @@
                      * @property {Array.<string>|null} [modifyDeadlineAckIds] StreamingPullRequest modifyDeadlineAckIds
                      * @property {number|null} [streamAckDeadlineSeconds] StreamingPullRequest streamAckDeadlineSeconds
                      * @property {string|null} [clientId] StreamingPullRequest clientId
+                     * @property {number|Long|null} [maxOutstandingMessages] StreamingPullRequest maxOutstandingMessages
+                     * @property {number|Long|null} [maxOutstandingBytes] StreamingPullRequest maxOutstandingBytes
                      */
     
                     /**
@@ -8616,6 +8618,22 @@
                     StreamingPullRequest.prototype.clientId = "";
     
                     /**
+                     * StreamingPullRequest maxOutstandingMessages.
+                     * @member {number|Long} maxOutstandingMessages
+                     * @memberof google.pubsub.v1.StreamingPullRequest
+                     * @instance
+                     */
+                    StreamingPullRequest.prototype.maxOutstandingMessages = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                    /**
+                     * StreamingPullRequest maxOutstandingBytes.
+                     * @member {number|Long} maxOutstandingBytes
+                     * @memberof google.pubsub.v1.StreamingPullRequest
+                     * @instance
+                     */
+                    StreamingPullRequest.prototype.maxOutstandingBytes = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                    /**
                      * Creates a new StreamingPullRequest instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.StreamingPullRequest
@@ -8657,6 +8675,10 @@
                             writer.uint32(/* id 5, wireType 0 =*/40).int32(message.streamAckDeadlineSeconds);
                         if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
                             writer.uint32(/* id 6, wireType 2 =*/50).string(message.clientId);
+                        if (message.maxOutstandingMessages != null && Object.hasOwnProperty.call(message, "maxOutstandingMessages"))
+                            writer.uint32(/* id 7, wireType 0 =*/56).int64(message.maxOutstandingMessages);
+                        if (message.maxOutstandingBytes != null && Object.hasOwnProperty.call(message, "maxOutstandingBytes"))
+                            writer.uint32(/* id 8, wireType 0 =*/64).int64(message.maxOutstandingBytes);
                         return writer;
                     };
     
@@ -8719,6 +8741,12 @@
                                 break;
                             case 6:
                                 message.clientId = reader.string();
+                                break;
+                            case 7:
+                                message.maxOutstandingMessages = reader.int64();
+                                break;
+                            case 8:
+                                message.maxOutstandingBytes = reader.int64();
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -8785,6 +8813,12 @@
                         if (message.clientId != null && message.hasOwnProperty("clientId"))
                             if (!$util.isString(message.clientId))
                                 return "clientId: string expected";
+                        if (message.maxOutstandingMessages != null && message.hasOwnProperty("maxOutstandingMessages"))
+                            if (!$util.isInteger(message.maxOutstandingMessages) && !(message.maxOutstandingMessages && $util.isInteger(message.maxOutstandingMessages.low) && $util.isInteger(message.maxOutstandingMessages.high)))
+                                return "maxOutstandingMessages: integer|Long expected";
+                        if (message.maxOutstandingBytes != null && message.hasOwnProperty("maxOutstandingBytes"))
+                            if (!$util.isInteger(message.maxOutstandingBytes) && !(message.maxOutstandingBytes && $util.isInteger(message.maxOutstandingBytes.low) && $util.isInteger(message.maxOutstandingBytes.high)))
+                                return "maxOutstandingBytes: integer|Long expected";
                         return null;
                     };
     
@@ -8827,6 +8861,24 @@
                             message.streamAckDeadlineSeconds = object.streamAckDeadlineSeconds | 0;
                         if (object.clientId != null)
                             message.clientId = String(object.clientId);
+                        if (object.maxOutstandingMessages != null)
+                            if ($util.Long)
+                                (message.maxOutstandingMessages = $util.Long.fromValue(object.maxOutstandingMessages)).unsigned = false;
+                            else if (typeof object.maxOutstandingMessages === "string")
+                                message.maxOutstandingMessages = parseInt(object.maxOutstandingMessages, 10);
+                            else if (typeof object.maxOutstandingMessages === "number")
+                                message.maxOutstandingMessages = object.maxOutstandingMessages;
+                            else if (typeof object.maxOutstandingMessages === "object")
+                                message.maxOutstandingMessages = new $util.LongBits(object.maxOutstandingMessages.low >>> 0, object.maxOutstandingMessages.high >>> 0).toNumber();
+                        if (object.maxOutstandingBytes != null)
+                            if ($util.Long)
+                                (message.maxOutstandingBytes = $util.Long.fromValue(object.maxOutstandingBytes)).unsigned = false;
+                            else if (typeof object.maxOutstandingBytes === "string")
+                                message.maxOutstandingBytes = parseInt(object.maxOutstandingBytes, 10);
+                            else if (typeof object.maxOutstandingBytes === "number")
+                                message.maxOutstandingBytes = object.maxOutstandingBytes;
+                            else if (typeof object.maxOutstandingBytes === "object")
+                                message.maxOutstandingBytes = new $util.LongBits(object.maxOutstandingBytes.low >>> 0, object.maxOutstandingBytes.high >>> 0).toNumber();
                         return message;
                     };
     
@@ -8852,6 +8904,16 @@
                             object.subscription = "";
                             object.streamAckDeadlineSeconds = 0;
                             object.clientId = "";
+                            if ($util.Long) {
+                                var long = new $util.Long(0, 0, false);
+                                object.maxOutstandingMessages = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                            } else
+                                object.maxOutstandingMessages = options.longs === String ? "0" : 0;
+                            if ($util.Long) {
+                                var long = new $util.Long(0, 0, false);
+                                object.maxOutstandingBytes = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                            } else
+                                object.maxOutstandingBytes = options.longs === String ? "0" : 0;
                         }
                         if (message.subscription != null && message.hasOwnProperty("subscription"))
                             object.subscription = message.subscription;
@@ -8874,6 +8936,16 @@
                             object.streamAckDeadlineSeconds = message.streamAckDeadlineSeconds;
                         if (message.clientId != null && message.hasOwnProperty("clientId"))
                             object.clientId = message.clientId;
+                        if (message.maxOutstandingMessages != null && message.hasOwnProperty("maxOutstandingMessages"))
+                            if (typeof message.maxOutstandingMessages === "number")
+                                object.maxOutstandingMessages = options.longs === String ? String(message.maxOutstandingMessages) : message.maxOutstandingMessages;
+                            else
+                                object.maxOutstandingMessages = options.longs === String ? $util.Long.prototype.toString.call(message.maxOutstandingMessages) : options.longs === Number ? new $util.LongBits(message.maxOutstandingMessages.low >>> 0, message.maxOutstandingMessages.high >>> 0).toNumber() : message.maxOutstandingMessages;
+                        if (message.maxOutstandingBytes != null && message.hasOwnProperty("maxOutstandingBytes"))
+                            if (typeof message.maxOutstandingBytes === "number")
+                                object.maxOutstandingBytes = options.longs === String ? String(message.maxOutstandingBytes) : message.maxOutstandingBytes;
+                            else
+                                object.maxOutstandingBytes = options.longs === String ? $util.Long.prototype.toString.call(message.maxOutstandingBytes) : options.longs === Number ? new $util.LongBits(message.maxOutstandingBytes.low >>> 0, message.maxOutstandingBytes.high >>> 0).toNumber() : message.maxOutstandingBytes;
                         return object;
                     };
     

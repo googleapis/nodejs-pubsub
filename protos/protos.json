@@ -853,6 +853,14 @@
                     "clientId": {
                       "type": "string",
                       "id": 6
+                    },
+                    "maxOutstandingMessages": {
+                      "type": "int64",
+                      "id": 7
+                    },
+                    "maxOutstandingBytes": {
+                      "type": "int64",
+                      "id": 8
                     }
                   }
                 },
