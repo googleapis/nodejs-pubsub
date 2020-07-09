@@ -3,23 +3,23 @@
     {
       "git": {
         "name": ".",
-        "remote": "https://github.com/googleapis/nodejs-pubsub.git",
-        "sha": "a7dff65c1a4115e75251b775f679e6beb092928e"
+        "remote": "git@github.com:googleapis/nodejs-pubsub.git",
+        "sha": "c2ac083fdb5f3b71dcb3be482b8ee5c9d527342d"
       }
     },
     {
       "git": {
         "name": "googleapis",
         "remote": "https://github.com/googleapis/googleapis.git",
-        "sha": "14f0c2cc9392234707247ab2b0782c118cb179aa",
-        "internalRef": "317914250"
+        "sha": "6c35ede4fe3055d3c8491718c78ce46b7126645c",
+        "internalRef": "320175744"
       }
     },
     {
       "git": {
         "name": "synthtool",
         "remote": "https://github.com/googleapis/synthtool.git",
-        "sha": "dc9caca650c77b7039e2bbc3339ffb34ae78e5b7"
+        "sha": "d53e4b70cf091cba04362c2fac3cda0546121641"
       }
     }
   ],
