@@ -291,6 +291,18 @@ describe('subscriptions', () => {
     assert(subscriptions.every(s => s.name !== fullSubscriptionNameOne));
   });
 
+  it('should detach a subscription', async () => {
+    const output = execSync(
+      `${commandFor('detachSubscription')} ${subscriptionNameOne}`
+    );
+    assert.include(output, "'before' detached status: false");
+    assert.include(output, "'after' detached status: true");
+    const [subscriptionDetached] = await pubsub
+      .subscription(subscriptionNameOne)
+      .detached();
+    assert(subscriptionDetached === true);
+  });
+
   it('should create a subscription with dead letter policy.', async () => {
     const output = execSync(
       `${commandFor(
