@@ -25,14 +25,14 @@
 // sample-metadata:
 //   title: Detach Subscription
 //   description: Detaches a subscription from a topic.
-//   usage: node detachSubscription.js <subscription-name>
+//   usage: node detachSubscription.js <existing-subscription-name>
 
-function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
+function main(subscriptionName = 'YOUR_EXISTING_SUBSCRIPTION_NAME') {
   // [START pubsub_detach_subscription]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
-  // const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
+  // const subscriptionName = 'YOUR_EXISTING_SUBSCRIPTION_NAME';
 
   // Imports the Google Cloud client library
   const {PubSub} = require('@google-cloud/pubsub');
@@ -43,22 +43,26 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME') {
   async function detachSubscription() {
     // Gets the status of the existing subscription
     const sub = pubSubClient.subscription(subscriptionName);
-    const metadata = await sub.getMetadata()[1];
+    const detached = await sub.detached()[0];
     console.log(
-      `Subscription ${subscriptionName} detached status: ${metadata.detached}`
+      `Subscription ${subscriptionName} 'before' detached status: ${detached}`
     );
 
     await sub.detach();
-    console.log(`Subscription ${subscriptionName} detached.`);
+    console.log(`Subscription ${subscriptionName} detach request was sent.`);
 
-    const updatedMetadata = await sub.getMetadata()[1];
+    const updatedDetached = await sub.detached()[0];
     console.log(
-      `Subscription ${subscriptionName} detached status: ${updatedMetadata.detached}`
+      `Subscription ${subscriptionName} 'after' detached status: ${updatedDetached}`
     );
   }
 
-  detachSubscription().catch(console.error);
+  detachSubscription();
   // [END pubsub_detach_subscription]
 }
 
+process.on('unhandledRejection', err => {
+  console.error(err.message);
+  process.exitCode = 1;
+});
 main(...process.argv.slice(2));
