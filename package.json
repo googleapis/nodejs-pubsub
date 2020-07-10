@@ -90,7 +90,7 @@
     "proxyquire": "^2.0.0",
     "sinon": "^9.0.0",
     "tmp": "^0.2.0",
-    "ts-loader": "^7.0.0",
+    "ts-loader": "^8.0.0",
     "typescript": "3.6.4",
     "uuid": "^8.0.0",
     "webpack": "^4.42.0",
