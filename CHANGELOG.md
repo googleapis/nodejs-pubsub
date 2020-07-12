@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.2.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.2.0...v2.2.1) (2020-07-12)
+
+
+### Bug Fixes
+
+* typeo in nodejs .gitattribute ([#1049](https://www.github.com/googleapis/nodejs-pubsub/issues/1049)) ([b4c6dc0](https://www.github.com/googleapis/nodejs-pubsub/commit/b4c6dc0264a4f62283ceb3b5e1e2ae58e06c56c1))
+
 ## [2.2.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.1.0...v2.2.0) (2020-07-09)
 
 
