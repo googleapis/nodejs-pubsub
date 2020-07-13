@@ -140,10 +140,14 @@ class FakeGrpcClient {
 class FakeSubscriber {
   name: string;
   ackDeadline: number;
+  maxMessages: number;
+  maxBytes: number;
   client: FakeGaxClient;
   constructor(client: FakeGaxClient) {
     this.name = uuid.v4();
     this.ackDeadline = Math.floor(Math.random() * 600);
+    this.maxMessages = 20;
+    this.maxBytes = 4000;
     this.client = client;
   }
   async getClient(): Promise<FakeGaxClient> {
