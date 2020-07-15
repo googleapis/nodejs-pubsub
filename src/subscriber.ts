@@ -224,6 +224,8 @@ export interface SubscriberOptions {
  */
 export class Subscriber extends EventEmitter {
   ackDeadline: number;
+  maxMessages: number;
+  maxBytes: number;
   isOpen: boolean;
   private _acks!: AckQueue;
   private _histogram: Histogram;
@@ -239,6 +241,8 @@ export class Subscriber extends EventEmitter {
     super();
 
     this.ackDeadline = 10;
+    this.maxMessages = defaultOptions.subscription.maxOutstandingMessages;
+    this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
     this.isOpen = false;
     this._isUserSetDeadline = false;
     this._histogram = new Histogram({min: 10, max: 600});
@@ -395,15 +399,18 @@ export class Subscriber extends EventEmitter {
       this._isUserSetDeadline = true;
     }
 
-    // In the event that the user has specified the maxMessages option, we want
-    // to make sure that the maxStreams option isn't higher.
-    // It doesn't really make sense to open 5 streams if the user only wants
-    // 1 message at a time.
     if (options.flowControl) {
-      const {
-        maxMessages = defaultOptions.subscription.maxOutstandingMessages,
-      } = options.flowControl;
+      this.maxMessages =
+        options.flowControl!.maxMessages ||
+        defaultOptions.subscription.maxOutstandingMessages;
+      this.maxBytes =
+        options.flowControl!.maxBytes ||
+        defaultOptions.subscription.maxOutstandingBytes;
 
+      // In the event that the user has specified the maxMessages option, we
+      // want to make sure that the maxStreams option isn't higher.
+      // It doesn't really make sense to open 5 streams if the user only wants
+      // 1 message at a time.
       if (!options.streamingOptions) {
         options.streamingOptions = {} as MessageStreamOptions;
       }
@@ -411,7 +418,10 @@ export class Subscriber extends EventEmitter {
       const {
         maxStreams = defaultOptions.subscription.maxStreams,
       } = options.streamingOptions;
-      options.streamingOptions.maxStreams = Math.min(maxStreams, maxMessages);
+      options.streamingOptions.maxStreams = Math.min(
+        maxStreams,
+        this.maxMessages
+      );
     }
   }
   /**

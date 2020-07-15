@@ -191,6 +191,14 @@ describe('Subscriber', () => {
       assert.strictEqual(subscriber.ackDeadline, 10);
     });
 
+    it('should default maxMessages to 1000', () => {
+      assert.strictEqual(subscriber.maxMessages, 1000);
+    });
+
+    it('should default maxBytes to 100MB', () => {
+      assert.strictEqual(subscriber.maxBytes, 100 * 1024 * 1024);
+    });
+
     it('should set isOpen to false', () => {
       const s = new Subscriber(subscription);
       assert.strictEqual(s.isOpen, false);
@@ -271,11 +279,16 @@ describe('Subscriber', () => {
     it('should not update the deadline if user specified', () => {
       const histogram: FakeHistogram = stubs.get('histogram');
       const ackDeadline = 543;
+      const maxMessages = 20;
+      const maxBytes = 20000;
 
       sandbox.stub(histogram, 'add').throws();
       sandbox.stub(histogram, 'percentile').throws();
 
-      subscriber.setOptions({ackDeadline});
+      subscriber.setOptions({
+        ackDeadline,
+        flowControl: {maxMessages: maxMessages, maxBytes: maxBytes},
+      });
       subscriber.ack(message);
 
       assert.strictEqual(subscriber.ackDeadline, ackDeadline);
