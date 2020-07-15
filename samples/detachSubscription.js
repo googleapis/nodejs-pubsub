@@ -18,6 +18,9 @@
  *
  * For more information, see the README.md under /pubsub and the documentation
  * at https://cloud.google.com/pubsub/docs.
+ *
+ * Note: This sample is NOT currently included in the system-test, because
+ * the feature isn't enabled on the production server.
  */
 
 'use strict';
@@ -43,15 +46,15 @@ function main(subscriptionName = 'YOUR_EXISTING_SUBSCRIPTION_NAME') {
   async function detachSubscription() {
     // Gets the status of the existing subscription
     const sub = pubSubClient.subscription(subscriptionName);
-    const detached = await sub.detached()[0];
+    const [detached] = await sub.detached();
     console.log(
       `Subscription ${subscriptionName} 'before' detached status: ${detached}`
     );
 
-    await sub.detach();
+    await pubSubClient.detachSubscription(subscriptionName);
     console.log(`Subscription ${subscriptionName} detach request was sent.`);
 
-    const updatedDetached = await sub.detached()[0];
+    const [updatedDetached] = await sub.detached();
     console.log(
       `Subscription ${subscriptionName} 'after' detached status: ${updatedDetached}`
     );
