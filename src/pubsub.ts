@@ -635,7 +635,7 @@ export class PubSub {
 
     // Parse the URL into a hostname and port, if possible.
     const leadingProtocol = new RegExp('^https?://');
-    const trailingSlashes = new RegExp('/?$');
+    const trailingSlashes = new RegExp('/*$');
     const baseUrlParts = apiEndpoint!
       .replace(leadingProtocol, '')
       .replace(trailingSlashes, '')
