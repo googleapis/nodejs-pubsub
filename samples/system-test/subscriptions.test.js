@@ -291,7 +291,8 @@ describe('subscriptions', () => {
     assert(subscriptions.every(s => s.name !== fullSubscriptionNameOne));
   });
 
-  it('should detach a subscription', async () => {
+  // This can't be enabled yet, because the feature isn't in the prod endpoint.
+  /* it('should detach a subscription', async () => {
     const output = execSync(
       `${commandFor('detachSubscription')} ${subscriptionNameOne}`
     );
@@ -301,7 +302,7 @@ describe('subscriptions', () => {
       .subscription(subscriptionNameOne)
       .detached();
     assert(subscriptionDetached === true);
-  });
+  }); */
 
   it('should create a subscription with dead letter policy.', async () => {
     const output = execSync(
