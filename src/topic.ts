@@ -347,54 +347,6 @@ export class Topic {
     );
   }
 
-  detachSubscription(name: string, callback: EmptyCallback): void;
-  detachSubscription(
-    name: string,
-    gaxOpts?: CallOptions
-  ): Promise<EmptyResponse>;
-  detachSubscription(
-    name: string,
-    gaxOpts: CallOptions,
-    callback: EmptyCallback
-  ): void;
-  /**
-   * Detach the subscription from the topic.
-   *
-   * @see [Admin: Pub/Sub administration API Documentation]{@link https://cloud.google.com/pubsub/docs/admin}
-   *
-   * @param {object} [gaxOpts] Request configuration options, outlined
-   *     here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
-   * @param {function} [callback] The callback function.
-   * @param {?error} callback.err An error returned while making this
-   *     request.
-   * @param {object} callback.apiResponse Raw API response.
-   *
-   * @example
-   * const {PubSub} = require('@google-cloud/pubsub');
-   * const pubsub = new PubSub();
-   *
-   * const sub = pubsub.subscription('my-sub');
-   *
-   * sub.detach((err, apiResponse) => {});
-   *
-   * //-
-   * // If the callback is omitted, we'll return a Promise.
-   * //-
-   * sub.detach().then((data) => {
-   *   const apiResponse = data[0];
-   * });
-   */
-  detachSubscription(
-    name: string,
-    optsOrCallback?: CallOptions | EmptyCallback,
-    callback?: EmptyCallback
-  ): void | Promise<EmptyResponse> {
-    const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
-    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
-
-    this.pubsub.detachSubscription(name, gaxOpts, callback!);
-  }
-
   exists(): Promise<ExistsResponse>;
   exists(callback: ExistsCallback): void;
   /**
