@@ -572,7 +572,7 @@ export class PubSub {
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
-   * pubsub.detachSubscription('my-sub', function(err, topic, apiResponse) {
+   * pubsub.detachSubscription('my-sub', (err, topic, apiResponse) => {
    *   if (!err) {
    *     // The topic was created successfully.
    *   }
@@ -581,7 +581,7 @@ export class PubSub {
    * //-
    * // If the callback is omitted, we'll return a Promise.
    * //-
-   * pubsub.detachSubscription('my-sub').then(function(data) {
+   * pubsub.detachSubscription('my-sub').then(data => {
    *   const apiResponse = data[0];
    * });
    */
