@@ -611,60 +611,30 @@ export class PubSub {
 
   /**
    * Determine the appropriate endpoint to use for API requests, first trying
-   * the local `apiEndpoint` parameter. If the `apiEndpoint` parameter is null,
-   * we try the standard `gcloud alpha pubsub` environment variable
-   * (CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB), and failing that, we try the
-   * Pub/Sub emulator environment variable (PUBSUB_EMULATOR_HOST).
-   * Otherwise the default production API is used.
+   * the local `apiEndpoint` parameter. If the `apiEndpoint` parameter is null
+   * we try Pub/Sub emulator environment variable (PUBSUB_EMULATOR_HOST),
+   * otherwise the default JSON API.
    *
    * @private
    */
   determineBaseUrl_() {
-    // We allow an override from the client object options, or from
-    // one of these variables. The CLOUDSDK variable is provided for
-    // compatibility with the `gcloud alpha` utility.
-    const gcloudVarName = 'CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB';
-    const emulatorVarName = 'PUBSUB_EMULATOR_HOST';
-    const apiEndpoint =
-      this.options.apiEndpoint ||
-      process.env[gcloudVarName] ||
-      process.env[emulatorVarName];
-    if (!apiEndpoint) {
+    const apiEndpoint = this.options.apiEndpoint;
+    if (!apiEndpoint && !process.env.PUBSUB_EMULATOR_HOST) {
       return;
     }
 
-    // Parse the URL into a hostname and port, if possible.
-    const leadingProtocol = new RegExp('^https?://');
+    const grpcInstance = this.options.grpc || gax.grpc;
+    const baseUrl = apiEndpoint || process.env.PUBSUB_EMULATOR_HOST;
+    const leadingProtocol = new RegExp('^https*://');
     const trailingSlashes = new RegExp('/*$');
-    const baseUrlParts = apiEndpoint!
+    const baseUrlParts = baseUrl!
       .replace(leadingProtocol, '')
       .replace(trailingSlashes, '')
       .split(':');
     this.options.servicePath = baseUrlParts[0];
-    if (!baseUrlParts[1]) {
-      // No port was given -- figure it out from the protocol.
-      if (apiEndpoint!.startsWith('https')) {
-        this.options.port = 443;
-      } else if (apiEndpoint!.startsWith('http')) {
-        this.options.port = 80;
-      } else {
-        this.options.port = undefined;
-      }
-    } else {
-      this.options.port = parseInt(baseUrlParts[1], 10);
-    }
-
-    // If this looks like a GCP URL of some kind, don't go into emulator
-    // mode. Otherwise, supply a fake SSL provider so a real cert isn't
-    // required for running the emulator.
-    const officialUrlMatch = this.options.servicePath!.match(
-      /\.googleapis\.com$/
-    );
-    if (!officialUrlMatch || !officialUrlMatch.length) {
-      const grpcInstance = this.options.grpc || gax.grpc;
-      this.options.sslCreds = grpcInstance.credentials.createInsecure();
-      this.isEmulator = true;
-    }
+    this.options.port = baseUrlParts[1];
+    this.options.sslCreds = grpcInstance.credentials.createInsecure();
+    this.isEmulator = true;
 
     if (!this.options.projectId && process.env.PUBSUB_PROJECT_ID) {
       this.options.projectId = process.env.PUBSUB_PROJECT_ID;
