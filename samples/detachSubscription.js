@@ -18,9 +18,6 @@
  *
  * For more information, see the README.md under /pubsub and the documentation
  * at https://cloud.google.com/pubsub/docs.
- *
- * Note: This sample is NOT currently included in the system-test, because
- * the feature isn't enabled on the production server.
  */
 
 'use strict';

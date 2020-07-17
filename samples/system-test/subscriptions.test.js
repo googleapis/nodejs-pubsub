@@ -36,6 +36,7 @@ describe('subscriptions', () => {
   const subscriptionNameFive = `sub5-${runId}`;
   const subscriptionNameSix = `sub6-${runId}`;
   const subscriptionNameSeven = `sub7-${runId}`;
+  const subscriptionNameDetach = `testdetachsubsxyz-${runId}`;
   const fullTopicNameOne = `projects/${projectId}/topics/${topicNameOne}`;
   const fullSubscriptionNameOne = `projects/${projectId}/subscriptions/${subscriptionNameOne}`;
   const fullSubscriptionNameTwo = `projects/${projectId}/subscriptions/${subscriptionNameTwo}`;
@@ -291,18 +292,18 @@ describe('subscriptions', () => {
     assert(subscriptions.every(s => s.name !== fullSubscriptionNameOne));
   });
 
-  // This can't be enabled yet, because the feature isn't in the prod endpoint.
-  /* it('should detach a subscription', async () => {
+  it('should detach a subscription', async () => {
+    await pubsub.createSubscription(topicNameOne, subscriptionNameDetach);
     const output = execSync(
-      `${commandFor('detachSubscription')} ${subscriptionNameOne}`
+      `${commandFor('detachSubscription')} ${subscriptionNameDetach}`
     );
     assert.include(output, "'before' detached status: false");
     assert.include(output, "'after' detached status: true");
     const [subscriptionDetached] = await pubsub
-      .subscription(subscriptionNameOne)
+      .subscription(subscriptionNameDetach)
       .detached();
     assert(subscriptionDetached === true);
-  }); */
+  });
 
   it('should create a subscription with dead letter policy.', async () => {
     const output = execSync(
