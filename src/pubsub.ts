@@ -590,6 +590,10 @@ export class PubSub {
     optsOrCallback?: CallOptions | DetachSubscriptionCallback,
     callback?: DetachSubscriptionCallback
   ): Promise<DetachSubscriptionResponse> | void {
+    if (typeof name !== 'string') {
+      throw new Error('A subscription name is required.');
+    }
+
     const sub = this.subscription(name);
     const reqOpts = {
       subscription: sub.name,
