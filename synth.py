@@ -7,25 +7,12 @@ import os
 
 logging.basicConfig(level=logging.DEBUG)
 
-gapic = gcp.GAPICMicrogenerator()
+gapic = gcp.GAPICBazel()
 common_templates = gcp.CommonTemplates()
 
 # tasks has two product names, and a poorly named artman yaml
 version = 'v1'
-library = gapic.typescript_library(
-    'pubsub',
-    version,
-    generator_args={
-        'grpc-service-config': f'google/pubsub/{version}/pubsub_grpc_service_config.json',
-        'package-name': '@google-cloud/pubsub',
-        'main-service': 'pubsub',
-        'bundle-config': f'google/pubsub/{version}/pubsub_gapic.yaml',
-        'template': 'typescript_gapic',
-        'iam-service': 'true'
-    },
-    proto_path=f'/google/pubsub/{version}',
-    extra_proto_files=['google/cloud/common_resources.proto']
-)
+library = gapic.node_library('pubsub', version, proto_path=f'google/pubsub/{version}')
 
 # skip index, protos, package.json, and README.md
 s.copy(
