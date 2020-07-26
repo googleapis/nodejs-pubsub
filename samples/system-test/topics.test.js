@@ -33,6 +33,7 @@ describe('topics', () => {
   const subscriptionNameTwo = `sub2-${runId}`;
   const subscriptionNameThree = `sub3-${runId}`;
   const subscriptionNameFour = `sub4-${runId}`;
+  const subscriptionNameFive = `sub5-${runId}`;
   const fullTopicNameOne = `projects/${projectId}/topics/${topicNameOne}`;
   const expectedMessage = {data: 'Hello, world!'};
 
@@ -186,6 +187,23 @@ describe('topics', () => {
       waitTime + acceptableLatency,
       'read is within acceptable latency'
     );
+  });
+
+  it('should resume publish', async () => {
+    const topics = require('../resumePublish');
+
+    const [subscription] = await pubsub
+      .topic(topicNameTwo)
+      .subscription(subscriptionNameFive)
+      .get({autoCreate: true});
+
+    const messageId = await topics.resumePublish(
+      topicNameTwo,
+      expectedMessage.data
+    );
+    const message = await _pullOneMessage(subscription);
+    assert.strictEqual(message.id, messageId);
+    assert.strictEqual(message.data.toString(), expectedMessage.data);
   });
 
   it('should publish with retry settings', async () => {
