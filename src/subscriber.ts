@@ -27,6 +27,7 @@ import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
+import {OpenTelemetryTracer} from './opentelemetry-tracing';
 
 export type PullResponse = google.pubsub.v1.IPullResponse;
 
@@ -237,6 +238,7 @@ export class Subscriber extends EventEmitter {
   private _options!: SubscriberOptions;
   private _stream!: MessageStream;
   private _subscription: Subscription;
+  private _tracing: OpenTelemetryTracer;
   constructor(subscription: Subscription, options = {}) {
     super();
 
@@ -248,6 +250,7 @@ export class Subscriber extends EventEmitter {
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
     this._subscription = subscription;
+    this._tracing = new OpenTelemetryTracer();
 
     this.setOptions(options);
   }
@@ -444,13 +447,25 @@ export class Subscriber extends EventEmitter {
   private _onData({receivedMessages}: PullResponse): void {
     for (const data of receivedMessages!) {
       const message = new Message(this, data);
-
+      const parentSpanContext = JSON.parse(
+        message.attributes['googclient_OpenTelemetrySpanContext']
+      );
+      const spanAttributes = {
+        ackId: data.ackId,
+        deliveryAttempt: data.deliveryAttempt,
+      };
+      const span = this._tracing.createSpan(
+        'subscriber',
+        spanAttributes,
+        parentSpanContext
+      );
       if (this.isOpen) {
         message.modAck(this.ackDeadline);
         this._inventory.add(message);
       } else {
         message.nack();
       }
+      span.end();
     }
   }
 

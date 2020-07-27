@@ -1,7 +1,7 @@
 {
   "name": "@google-cloud/pubsub",
   "description": "Cloud Pub/Sub Client Library for Node.js",
-  "version": "2.3.0",
+  "version": "2.2.0",
   "license": "Apache-2.0",
   "author": "Google Inc.",
   "engines": {
@@ -44,15 +44,15 @@
     "predocs-test": "npm run docs",
     "benchwrapper": "node bin/benchwrapper.js",
     "prelint": "cd samples; npm link ../; npm install",
-    "precompile": "gts clean",
-    "api-extractor": "api-extractor run --local",
-    "api-documenter": "api-documenter yaml --input-folder=temp"
+    "precompile": "gts clean"
   },
   "dependencies": {
     "@google-cloud/paginator": "^3.0.0",
     "@google-cloud/precise-date": "^2.0.0",
     "@google-cloud/projectify": "^2.0.0",
     "@google-cloud/promisify": "^2.0.0",
+    "@opentelemetry/api": "^0.9.0",
+    "@opentelemetry/tracing": "^0.9.0",
     "@types/duplexify": "^3.6.0",
     "@types/long": "^4.0.0",
     "arrify": "^2.0.0",
@@ -97,8 +97,6 @@
     "uuid": "^8.0.0",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
-    "yargs": "^15.0.0",
-    "@microsoft/api-documenter": "^7.8.10",
-    "@microsoft/api-extractor": "^7.8.10"
+    "yargs": "^15.0.0"
   }
 }

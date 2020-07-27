@@ -24,6 +24,7 @@ import {Topic} from '../topic';
 import {RequestCallback, EmptyCallback} from '../pubsub';
 import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
+import {OpenTelemetryTracer} from '../opentelemetry-tracing';
 
 export type PubsubMessage = google.pubsub.v1.IPubsubMessage;
 
@@ -60,11 +61,13 @@ export class Publisher {
   settings!: PublishOptions;
   queue: Queue;
   orderedQueues: Map<string, OrderedQueue>;
+  tracing: OpenTelemetryTracer;
   constructor(topic: Topic, options?: PublishOptions) {
     this.setOptions(options);
     this.topic = topic;
     this.queue = new Queue(this);
     this.orderedQueues = new Map();
+    this.tracing = new OpenTelemetryTracer();
   }
 
   flush(): Promise<void>;
@@ -136,7 +139,29 @@ export class Publisher {
    * @param {PublishCallback} [callback] Callback function.
    */
   publishMessage(message: PubsubMessage, callback: PublishCallback): void {
+    // Construct publisher span and set context as message attribute
     const {data, attributes = {}} = message;
+    const spanAttributes = {
+      data: message.data,
+    };
+    const span = this.tracing.createSpan(
+      `${this.topic} publisher`,
+      spanAttributes
+    );
+    if (
+      message.attributes &&
+      message.attributes['googclient_OpenTelemetrySpanContext']
+    ) {
+      console.warn(
+        'googclient_OpenTelemetrySpanContext key set as message\nattribute, but will be overridden.'
+      );
+    }
+    if (!message.attributes) {
+      message.attributes = {};
+    }
+    message.attributes['googclient_OpenTelemetrySpanContext'] = JSON.stringify(
+      span.context()
+    );
 
     if (!(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
@@ -165,6 +190,8 @@ export class Publisher {
 
     const queue = this.orderedQueues.get(key)!;
     queue.add(message, callback);
+
+    span.end();
   }
   /**
    * Indicates to the publisher that it is safe to continue publishing for the
