@@ -190,9 +190,11 @@ interface GetClientCallback {
  *     JSON file, the `projectId` option above is not necessary. NOTE: .pem and
  *     .p12 require you to specify the `email` option as well.
  * @property {string} [apiEndpoint] The `apiEndpoint` from options will set the
- *     host. If not set, the `PUBSUB_EMULATOR_HOST` environment variable from
- *     the gcloud SDK is honored, otherwise the actual API endpoint will be
- *     used.
+ *     host. If not set, the `CLOUD_API_ENDPOINT_OVERRIDES_PUBSUB` and
+ *     `PUBSUB_EMULATOR_HOST` environment variable from the gcloud SDK are honored,
+ *     otherwise the actual API endpoint will be used. Note that if the URL doesn't
+ *     end in '.googleapis.com', we will assume that it's an emulator and disable
+ *     strict SSL checks.
  * @property {string} [email] Account email address. Required when using a .pem
  *     or .p12 keyFilename.
  * @property {object} [credentials] Credentials object.
@@ -620,6 +622,9 @@ export class PubSub {
    * (CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB), and failing that, we try the
    * Pub/Sub emulator environment variable (PUBSUB_EMULATOR_HOST).
    * Otherwise the default production API is used.
+   *
+   * Note that if the URL doesn't end in '.googleapis.com', we will assume that
+   * it's an emulator and disable strict SSL checks.
    *
    * @private
    */
