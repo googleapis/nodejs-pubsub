@@ -630,6 +630,93 @@ describe('PubSub', () => {
     });
   });
 
+  describe('detachSubscription', () => {
+    pubsub = new pubsubTypes.PubSub({});
+    const SUB_NAME = 'subscription';
+    const SUBSCRIPTION = {
+      name: 'projects/' + PROJECT_ID + '/subscriptions/' + SUB_NAME,
+    };
+    const apiResponse = 'responseToCheck';
+
+    it('should throw if no subscription name is provided', () => {
+      assert.throws(() => {
+        pubsub.detachSubscription(undefined!);
+      }, /A subscription name is required./);
+    });
+
+    it('should not require configuration options', done => {
+      sandbox
+        .stub(pubsub, 'request')
+        .callsArgOnWith(1, undefined, undefined, apiResponse);
+
+      pubsub.detachSubscription(SUB_NAME, (err, response) => {
+        assert.strictEqual(response, apiResponse);
+        done();
+      });
+    });
+
+    it('should allow undefined/optional configuration options', done => {
+      sandbox
+        .stub(pubsub, 'request')
+        .callsArgOnWith(1, undefined, undefined, apiResponse);
+
+      pubsub.detachSubscription(SUB_NAME, undefined!, (_err, _response) => {
+        assert.strictEqual(_response, apiResponse);
+        done();
+      });
+    });
+
+    it('should detach a Subscription from a string', async () => {
+      sandbox.stub(pubsub, 'request').returns();
+      sandbox.stub(pubsub, 'subscription').callsFake(subName => {
+        assert.strictEqual(subName, SUB_NAME);
+        return SUBSCRIPTION as subby.Subscription;
+      });
+
+      await pubsub.detachSubscription(SUB_NAME);
+    });
+
+    it('should send correct request', done => {
+      const options = {};
+
+      sandbox.stub(pubsub, 'subscription').callsFake(subName => {
+        assert.strictEqual(subName, SUB_NAME);
+        return SUBSCRIPTION as subby.Subscription;
+      });
+
+      const reqOpts = {subscription: SUBSCRIPTION.name};
+
+      sandbox.stub(pubsub, 'request').callsFake(config => {
+        assert.strictEqual(config.client, 'PublisherClient');
+        assert.strictEqual(config.method, 'detachSubscription');
+        assert.deepStrictEqual(config.reqOpts, reqOpts);
+        assert.deepStrictEqual(config.gaxOpts, options);
+        done();
+      });
+
+      pubsub.detachSubscription(SUB_NAME, options, assert.ifError);
+    });
+
+    it('should pass options to the api request', done => {
+      const options = {
+        pageSize: 5,
+        maxResults: 10,
+      };
+
+      sandbox.stub(pubsub, 'subscription').returns({
+        name: SUB_NAME,
+      } as subby.Subscription);
+
+      sandbox.stub(pubsub, 'request').callsFake(config => {
+        assert.notStrictEqual(config.reqOpts, options);
+        assert.deepStrictEqual(config.gaxOpts, options);
+        done();
+      });
+
+      pubsub.detachSubscription(SUB_NAME, options, assert.ifError);
+    });
+  });
+
   describe('determineBaseUrl_', () => {
     function setHost(host: string) {
       process.env.PUBSUB_EMULATOR_HOST = host;

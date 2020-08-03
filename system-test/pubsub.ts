@@ -68,6 +68,13 @@ describe('pubsub', () => {
     return generateName('subscription');
   }
 
+  // This is a temporary situation - we'll eventually fall back to the
+  // regular generateSubName() call, but this has to be used for the
+  // pre-release allow list.
+  function generateSubForDetach() {
+    return `testdetachsubsxyz-${generateSubName()}`;
+  }
+
   function generateTopicName() {
     return generateName('topic');
   }
@@ -352,10 +359,12 @@ describe('pubsub', () => {
     const topic = pubsub.topic(TOPIC_NAME);
 
     const SUB_NAMES = [generateSubName(), generateSubName()];
+    const SUB_DETACH_NAME = generateSubForDetach();
 
     const SUBSCRIPTIONS = [
       topic.subscription(SUB_NAMES[0], {ackDeadline: 30}),
       topic.subscription(SUB_NAMES[1], {ackDeadline: 60}),
+      topic.subscription(SUB_DETACH_NAME, {ackDeadline: 30}),
     ];
 
     before(async () => {
@@ -653,6 +662,15 @@ describe('pubsub', () => {
           });
         }
       );
+    });
+
+    it('should detach subscriptions', async () => {
+      const subscription = topic.subscription(SUB_DETACH_NAME);
+      const [before] = await subscription.detached();
+      assert.strictEqual(before, false);
+      await pubsub.detachSubscription(SUB_DETACH_NAME);
+      const [after] = await subscription.detached();
+      assert.strictEqual(after, true);
     });
 
     // can be ran manually to test options/memory usage/etc.
