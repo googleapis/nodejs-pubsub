@@ -145,7 +145,7 @@ export class Publisher {
       data: message.data,
     };
     const span = this.tracing.createSpan(
-      `${this.topic} publisher`,
+      `${this.topic.name} publisher`,
       spanAttributes
     );
     if (
@@ -177,6 +177,7 @@ export class Publisher {
 
     if (!message.orderingKey) {
       this.queue.add(message, callback);
+      span.end();
       return;
     }
 
