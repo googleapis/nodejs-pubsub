@@ -447,25 +447,29 @@ export class Subscriber extends EventEmitter {
   private _onData({receivedMessages}: PullResponse): void {
     for (const data of receivedMessages!) {
       const message = new Message(this, data);
-      const parentSpanContext = JSON.parse(
-        message.attributes['googclient_OpenTelemetrySpanContext']
-      );
+      const spanValue =
+        message.attributes['googclient_OpenTelemetrySpanContext'];
+      const parentSpanContext = spanValue ? JSON.parse(spanValue) : null;
       const spanAttributes = {
         ackId: data.ackId,
         deliveryAttempt: data.deliveryAttempt,
       };
-      const span = this._tracing.createSpan(
-        'subscriber',
-        spanAttributes,
-        parentSpanContext
-      );
+      const span = parentSpanContext
+        ? this._tracing.createSpan(
+            'subscriber',
+            spanAttributes,
+            parentSpanContext
+          )
+        : null;
       if (this.isOpen) {
         message.modAck(this.ackDeadline);
         this._inventory.add(message);
       } else {
         message.nack();
       }
-      span.end();
+      if (span) {
+        span.end();
+      }
     }
   }
 
