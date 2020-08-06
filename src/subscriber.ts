@@ -18,6 +18,7 @@ import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
+import { SpanContext } from '@opentelemetry/api';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -447,20 +448,20 @@ export class Subscriber extends EventEmitter {
   private _onData({receivedMessages}: PullResponse): void {
     for (const data of receivedMessages!) {
       const message = new Message(this, data);
-      const spanValue =
-        message.attributes['googclient_OpenTelemetrySpanContext'];
-      const parentSpanContext = spanValue ? JSON.parse(spanValue) : null;
+
+      // Create a new OpenTelemetry span with the publisher span set as the parent
+      const spanValue = (message.attributes) ?
+        message.attributes['googclient_OpenTelemetrySpanContext'] : null;
+      const parentSpanContext: SpanContext | null = spanValue ? JSON.parse(spanValue) : null;
       const spanAttributes = {
         ackId: data.ackId,
         deliveryAttempt: data.deliveryAttempt,
       };
-      const span = parentSpanContext
-        ? this._tracing.createSpan(
-            'subscriber',
-            spanAttributes,
-            parentSpanContext
-          )
-        : null;
+      const span = parentSpanContext ? this._tracing.createSpan(
+        this._name,
+        spanAttributes,
+        parentSpanContext
+      ) : null;
       if (this.isOpen) {
         message.modAck(this.ackDeadline);
         this._inventory.add(message);

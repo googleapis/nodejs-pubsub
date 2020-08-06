@@ -17,6 +17,7 @@
 import {promisify, promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
+import {Span} from '@opentelemetry/api';
 
 import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
@@ -144,7 +145,7 @@ export class Publisher {
     const spanAttributes = {
       data: message.data,
     };
-    const span = this.tracing.createSpan(
+    const span: Span = this.tracing.createSpan(
       `${this.topic.name} publisher`,
       spanAttributes
     );
