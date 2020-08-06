@@ -1151,6 +1151,7 @@ export class PubSub {
    * @throws {Error} If a name is not provided.
    *
    * @param {string} name The name of the topic.
+   * @param {PublishOptions} [options] Publisher configuration object.
    * @returns {Topic} A {@link Topic} instance.
    *
    * @example
