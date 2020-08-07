@@ -919,8 +919,11 @@ describe('Subscription', () => {
       pushEndpoint: 'http://noop.com/push',
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const subClass = subby.Subscription as any;
+
     beforeEach(() => {
-      Subscription.formatMetadata_ = (metadata: subby.SubscriptionMetadata) => {
+      subClass.formatMetadata_ = (metadata: {}) => {
         return Object.assign({}, metadata);
       };
     });
