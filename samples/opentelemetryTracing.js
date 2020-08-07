@@ -30,65 +30,68 @@
 //     a publisher or subscriber.
 //   usage: node opentelemetryTracing.js <topic-name> <subscription-name>
 
-
 const SUBSCRIBER_TIMEOUT = 10;
 
 function main(
-    topicName = 'YOUR_TOPIC_NAME',
-    subscriptionName = 'YOUR_SUBSCRIPTION_NAME',
+  topicName = 'YOUR_TOPIC_NAME',
+  subscriptionName = 'YOUR_SUBSCRIPTION_NAME',
+  data = {foo: 'bar'}
 ) {
-    // [START opentelemetry_tracing]
-    /**
-     * TODO(developer): Uncomment these variables before running the sample.
-     */
-    // const topicName = 'my-topic';
-    // const subscriptionName = 'my-subscription';
-    // const data = 'Hello, world!";
+  // [START opentelemetry_tracing]
+  /**
+   * TODO(developer): Uncomment these variables before running the sample.
+   */
+  // const topicName = 'my-topic';
+  // const subscriptionName = 'my-subscription';
+  // const data = 'Hello, world!";
 
-    // Imports the Google Cloud client library
-    const {PubSub} = require('@google-cloud/pubsub');
+  // Imports the Google Cloud client library
+  const {PubSub} = require('@google-cloud/pubsub');
 
-    // Imports the OpenTelemetry API
-    const {opentelemetry} = require('@opentelemetry/api');
+  // Imports the OpenTelemetry API
+  const {opentelemetry} = require('@opentelemetry/api');
 
-    // Imports the OpenTelemetry span handlers and exporter
-    const {SimpleSpanProcessor, BasicTracerProvider, ConsoleSpanExporter} = require('@opentelemetry/tracing');
+  // Imports the OpenTelemetry span handlers and exporter
+  const {
+    SimpleSpanProcessor,
+    BasicTracerProvider,
+    ConsoleSpanExporter,
+  } = require('@opentelemetry/tracing');
 
-    // Set up span processing and specify the console as the span exporter
-    const provider = new BasicTracerProvider();
-    const exporter = new ConsoleSpanExporter();
-    provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+  // Set up span processing and specify the console as the span exporter
+  const provider = new BasicTracerProvider();
+  const exporter = new ConsoleSpanExporter();
+  provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
 
-    provider.register();
-    opentelemetry.trace.setGlobalTracerProvider(provider);
+  provider.register();
+  opentelemetry.trace.setGlobalTracerProvider(provider);
 
-    // Creates a client; cache this for further use
-    const pubSubClient = new PubSub();
+  // Creates a client; cache this for further use
+  const pubSubClient = new PubSub();
 
-    async function publishMessage() {
+  async function publishMessage() {
+    // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
+    const dataBuffer = Buffer.from(data);
 
-        // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
-        const dataBuffer = Buffer.from(data);
+    const messageId = await pubSubClient.topic(topicName).publish(dataBuffer);
+    console.log(`Message ${messageId} published.`);
+  }
 
-        const messageId = await pubSubClient.topic(topicName).publish(dataBuffer);
-        console.log(`Message ${messageId} published.`);
-    }
+  async function subscriptionListen() {
+    // Message handler for subscriber
+    const messageHandler = message => {
+      console.log(`Message ${message.id} received.`);
+      message.ack();
+    };
 
-    async function subscriptionListen() {
-        // Message handler for subscriber
-        const messageHandler = message => {
-            console.log(`Message ${message.id} received.`);
-            message.ack();
-        };
+    // Listens for new messages from the topic
+    pubSubClient.subscription(subscriptionName).on('message', messageHandler);
+    setTimeout(() => {
+      pubSubClient.subscription(subscriptionName).removeAllListeners();
+    }, SUBSCRIBER_TIMEOUT * 1000);
+  }
 
-        // Listens for new messages from the topic
-        pubSubClient.subscription(subscriptionName).on('message', messageHandler);
-        setTimeout(() => {
-            pubSubClient.subscription(subscriptionName).removeAllListeners()
-        }, SUBSCRIBER_TIMEOUT * 1000);
-    }
-
-    publishMessage().then(subscriptionListen());
+  publishMessage().then(subscriptionListen());
 }
 
 main(...process.argv.slice(2));
