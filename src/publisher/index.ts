@@ -153,9 +153,7 @@ export class Publisher {
       message.attributes &&
       message.attributes['googclient_OpenTelemetrySpanContext']
     ) {
-      console.warn(
-        'googclient_OpenTelemetrySpanContext key set as message\nattribute, but will be overridden.'
-      );
+      console.warn('googclient_OpenTelemetrySpanContext key set as message attribute, but will be overridden.');
     }
     if (!message.attributes) {
       message.attributes = {};

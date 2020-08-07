@@ -266,6 +266,17 @@ describe('Publisher', () => {
           done();
         });
       });
+
+      it('should issue a warning if OpenTelemetry span context key is set', () => {
+        const warnSpy = sinon.spy(console, 'warn');
+        const attributes = {
+          'googclient_OpenTelemetrySpanContext': 'foobar'
+        };
+        const fakeMessageWithOTKey = {data, attributes};
+        publisher.publishMessage(fakeMessageWithOTKey, warnSpy);
+        assert.ok(warnSpy.called);
+        warnSpy.restore();
+      });
     });
   });
 
