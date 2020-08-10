@@ -69,7 +69,7 @@ class FakePassThrough extends PassThrough {
     this.options = options;
   }
   destroy(err?: Error): void {
-    if (super.destroy) {
+    if (typeof super.destroy === 'function') {
       return super.destroy(err);
     }
     destroy(this, err);
@@ -96,7 +96,7 @@ class FakeGrpcStream extends Duplex {
     });
   }
   destroy(err?: Error): void {
-    if (super.destroy) {
+    if (typeof super.destroy === 'function') {
       return super.destroy(err);
     }
     destroy(this, err);

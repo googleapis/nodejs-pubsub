@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.4.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.3.0...v2.4.0) (2020-08-08)
+
+
+### Features
+
+* update to TypeScript 3.8+ to match gax/protobufjs (to allow things to compile again) ([#1079](https://www.github.com/googleapis/nodejs-pubsub/issues/1079)) ([cd39d38](https://www.github.com/googleapis/nodejs-pubsub/commit/cd39d38c525b3ed0383c63eb379c96aed6f53d94))
+
 ## [2.3.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.2.0...v2.3.0) (2020-07-20)
 
 

@@ -307,11 +307,12 @@ describe('PubSub', () => {
       name: 'subscription-name',
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const subClass = Subscription as any;
+
     beforeEach(() => {
-      ((Subscription as {}) as typeof subby.Subscription).formatMetadata_ = (
-        metadata: subby.SubscriptionMetadata
-      ) => {
-        return Object.assign({}, metadata) as subby.SubscriptionMetadata;
+      subClass.formatMetadata_ = (metadata: {}) => {
+        return Object.assign({}, metadata);
       };
     });
 
@@ -469,11 +470,9 @@ describe('PubSub', () => {
         a: 'a',
       };
 
-      ((Subscription as {}) as typeof subby.Subscription).formatMetadata_ = (
-        metadata: subby.SubscriptionMetadata
-      ) => {
+      subClass.formatMetadata_ = (metadata: {}) => {
         assert.deepStrictEqual(metadata, fakeMetadata);
-        return (formatted as {}) as subby.SubscriptionMetadata;
+        return formatted;
       };
 
       pubsub.request = (config: pubsubTypes.RequestConfig) => {
