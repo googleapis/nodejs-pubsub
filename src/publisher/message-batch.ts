@@ -24,11 +24,11 @@ export interface BatchPublishOptions {
 
 /**
  * @typedef BatchPublishOptions
- * @property {number} [maxBytes=1024^2 * 5] The maximum number of bytes to
+ * @property {number} [maxBytes=1 * 1024 * 1024] The maximum number of bytes to
  *     buffer before sending a payload.
- * @property {number} [maxMessages=1000] The maximum number of messages to
+ * @property {number} [maxMessages=100] The maximum number of messages to
  *     buffer before sending a payload.
- * @property {number} [maxMilliseconds=100] The maximum duration to wait before
+ * @property {number} [maxMilliseconds=10] The maximum duration to wait before
  *     sending a payload.
  */
 /**
