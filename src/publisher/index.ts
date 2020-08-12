@@ -42,6 +42,18 @@ export interface PublishOptions {
   enableOpenTelemetryTracing?: boolean;
 }
 
+/**
+ * @typedef PublishOptions
+ * @property {BatchPublishOptions} [batching] The maximum number of bytes to
+ *     buffer before sending a payload.
+ * @property {object} [gaxOpts] Request configuration options, outlined
+ *     {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html|here.}
+ * @property {boolean} [messageOrdering] If true, messages published with the
+ * same order key in Message will be delivered to the subscribers in the order in which they
+ *  are received by the Pub/Sub system. Otherwise, they may be delivered in
+ * any order.
+ */
+
 export const BATCH_LIMITS: BatchPublishOptions = {
   maxBytes: Math.pow(1024, 2) * 9,
   maxMessages: 1000,
