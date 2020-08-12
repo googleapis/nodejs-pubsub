@@ -426,7 +426,9 @@ export class Subscriber extends EventEmitter {
         this.maxMessages
       );
     }
-    this._tracing = (options.enableOpenTelemetryTracing) ? new OpenTelemetryTracer() : undefined;
+    this._tracing = options.enableOpenTelemetryTracing
+      ? new OpenTelemetryTracer()
+      : undefined;
   }
 
   /**

@@ -36,7 +36,11 @@ const fakePromisify = Object.assign({}, pfy, {
     }
     promisified = true;
     assert.ok(options.singular);
-    assert.deepStrictEqual(options.exclude, ['publish', 'setOptions', 'constructSpan']);
+    assert.deepStrictEqual(options.exclude, [
+      'publish',
+      'setOptions',
+      'constructSpan',
+    ]);
   },
 });
 
@@ -147,9 +151,9 @@ describe('Publisher', () => {
   });
 
   describe('OpenTelemetry tracing', () => {
-    let tracingPublisher: any = {};
+    let tracingPublisher: p.Publisher = {} as p.Publisher;
     const enableTracing: p.PublishOptions = {
-      enableOpenTelemetryTracing: true
+      enableOpenTelemetryTracing: true,
     };
     beforeEach(() => {
       // Declare tracingPublisher as type any and pre-define _tracing
@@ -295,7 +299,7 @@ describe('Publisher', () => {
         };
         const fakeMessageWithOTKey = {data, attributes};
         const publisherTracing = new Publisher(topic, {
-          enableOpenTelemetryTracing: true
+          enableOpenTelemetryTracing: true,
         });
         publisherTracing.publishMessage(fakeMessageWithOTKey, warnSpy);
         assert.ok(warnSpy.called);
@@ -334,7 +338,7 @@ describe('Publisher', () => {
         gaxOpts: {
           isBundling: false,
         },
-        enableOpenTelemetryTracing: false
+        enableOpenTelemetryTracing: false,
       });
     });
 
@@ -349,7 +353,7 @@ describe('Publisher', () => {
         gaxOpts: {
           isBundling: true,
         },
-        enableOpenTelemetryTracing: true
+        enableOpenTelemetryTracing: true,
       };
 
       publisher.setOptions(options);

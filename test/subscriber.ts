@@ -632,9 +632,9 @@ describe('Subscriber', () => {
   });
 
   describe('OpenTelemetry tracing', () => {
-    let tracingSubscriber: any = {};
+    let tracingSubscriber: s.Subscriber = {} as s.Subscriber;
     const enableTracing: s.SubscriberOptions = {
-      enableOpenTelemetryTracing: true
+      enableOpenTelemetryTracing: true,
     };
     beforeEach(() => {
       // Declare tracingSubscriber as type any and pre-define _tracing

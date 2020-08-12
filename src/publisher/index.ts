@@ -81,9 +81,10 @@ export class Publisher {
     this.topic = topic;
     this.queue = new Queue(this);
     this.orderedQueues = new Map();
-    this.tracing = this.settings && this.settings.enableOpenTelemetryTracing
-      ? new OpenTelemetryTracer()
-      : undefined;
+    this.tracing =
+      this.settings && this.settings.enableOpenTelemetryTracing
+        ? new OpenTelemetryTracer()
+        : undefined;
   }
 
   flush(): Promise<void>;
