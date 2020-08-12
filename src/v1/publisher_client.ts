@@ -214,7 +214,7 @@ export class PublisherClient {
     // requests; denote this.
 
     this.descriptors.batching = {
-      Publish: new this._gaxModule.BundleDescriptor(
+      publish: new this._gaxModule.BundleDescriptor(
         'messages',
         ['topic'],
         'message_ids',
@@ -295,12 +295,14 @@ export class PublisherClient {
         }
       );
 
+      const descriptor =
+        this.descriptors.page[methodName] ||
+        this.descriptors.batching?.[methodName] ||
+        undefined;
       const apiCall = this._gaxModule.createApiCall(
         callPromise,
         this._defaults[methodName],
-        this.descriptors.page[methodName] ||
-          this.descriptors.stream[methodName] ||
-          this.descriptors.longrunning[methodName]
+        descriptor
       );
 
       this.innerApiCalls[methodName] = apiCall;
