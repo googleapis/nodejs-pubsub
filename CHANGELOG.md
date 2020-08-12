@@ -4,6 +4,14 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.4.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.4.0...v2.4.1) (2020-08-12)
+
+
+### Bug Fixes
+
+* make request batching work again ([#1087](https://www.github.com/googleapis/nodejs-pubsub/issues/1087)) ([80e0ee3](https://www.github.com/googleapis/nodejs-pubsub/commit/80e0ee3a4ef0da325e61ce2b869f4c0f9829b136))
+* properly handle non-emulator alternate endpoints for pub/sub ([#1060](https://www.github.com/googleapis/nodejs-pubsub/issues/1060)) ([195ebf6](https://www.github.com/googleapis/nodejs-pubsub/commit/195ebf648e00ba35f567cef06a06c31f3f9c57d9))
+
 ## [2.4.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.3.0...v2.4.0) (2020-08-08)
 
 
