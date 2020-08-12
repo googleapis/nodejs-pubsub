@@ -36,7 +36,7 @@ const fakePromisify = Object.assign({}, pfy, {
     }
     promisified = true;
     assert.ok(options.singular);
-    assert.deepStrictEqual(options.exclude, ['publish', 'setOptions']);
+    assert.deepStrictEqual(options.exclude, ['publish', 'setOptions', 'constructSpan']);
   },
 });
 
@@ -143,6 +143,27 @@ describe('Publisher', () => {
       const [{attributes}, callback] = stub.lastCall.args;
       assert.strictEqual(attributes, attrs);
       assert.strictEqual(callback, spy);
+    });
+  });
+
+  describe('OpenTelemetry tracing', () => {
+    let tracingPublisher: any = {};
+    const enableTracing: p.PublishOptions = {
+      enableOpenTelemetryTracing: true
+    };
+    beforeEach(() => {
+      // Declare tracingPublisher as type any and pre-define _tracing
+      // to gain access to the private field after publisher init
+      tracingPublisher['tracing'] = undefined;
+    });
+    it('should not instantiate a tracer when tracing is disabled', () => {
+      tracingPublisher = new Publisher(topic);
+      assert.strictEqual(tracingPublisher['tracing'], undefined);
+    });
+
+    it('should instantiate a tracer when tracing is enabled', () => {
+      tracingPublisher = new Publisher(topic, enableTracing);
+      assert.ok(tracingPublisher['tracing']);
     });
   });
 
@@ -273,7 +294,10 @@ describe('Publisher', () => {
           googclient_OpenTelemetrySpanContext: 'foobar',
         };
         const fakeMessageWithOTKey = {data, attributes};
-        publisher.publishMessage(fakeMessageWithOTKey, warnSpy);
+        const publisherTracing = new Publisher(topic, {
+          enableOpenTelemetryTracing: true
+        });
+        publisherTracing.publishMessage(fakeMessageWithOTKey, warnSpy);
         assert.ok(warnSpy.called);
         warnSpy.restore();
       });
@@ -310,6 +334,7 @@ describe('Publisher', () => {
         gaxOpts: {
           isBundling: false,
         },
+        enableOpenTelemetryTracing: false
       });
     });
 
@@ -324,6 +349,7 @@ describe('Publisher', () => {
         gaxOpts: {
           isBundling: true,
         },
+        enableOpenTelemetryTracing: true
       };
 
       publisher.setOptions(options);

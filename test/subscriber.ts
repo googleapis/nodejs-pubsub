@@ -631,6 +631,27 @@ describe('Subscriber', () => {
     });
   });
 
+  describe('OpenTelemetry tracing', () => {
+    let tracingSubscriber: any = {};
+    const enableTracing: s.SubscriberOptions = {
+      enableOpenTelemetryTracing: true
+    };
+    beforeEach(() => {
+      // Declare tracingSubscriber as type any and pre-define _tracing
+      // to gain access to the private field after subscriber init
+      tracingSubscriber['_tracing'] = undefined;
+    });
+    it('should not instantiate a tracer when tracing is disabled', () => {
+      tracingSubscriber = new Subscriber(subscription);
+      assert.strictEqual(tracingSubscriber['_tracing'], undefined);
+    });
+
+    it('should instantiate a tracer when tracing is enabled', () => {
+      tracingSubscriber = new Subscriber(subscription, enableTracing);
+      assert.ok(tracingSubscriber['_tracing']);
+    });
+  });
+
   describe('Message', () => {
     describe('initialization', () => {
       it('should localize ackId', () => {

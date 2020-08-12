@@ -39,6 +39,7 @@ export interface PublishOptions {
   batching?: BatchPublishOptions;
   gaxOpts?: CallOptions;
   messageOrdering?: boolean;
+  enableOpenTelemetryTracing?: boolean;
 }
 
 export const BATCH_LIMITS: BatchPublishOptions = {
@@ -62,13 +63,15 @@ export class Publisher {
   settings!: PublishOptions;
   queue: Queue;
   orderedQueues: Map<string, OrderedQueue>;
-  tracing: OpenTelemetryTracer;
+  tracing: OpenTelemetryTracer | undefined;
   constructor(topic: Topic, options?: PublishOptions) {
     this.setOptions(options);
     this.topic = topic;
     this.queue = new Queue(this);
     this.orderedQueues = new Map();
-    this.tracing = new OpenTelemetryTracer();
+    this.tracing = this.settings && this.settings.enableOpenTelemetryTracing
+      ? new OpenTelemetryTracer()
+      : undefined;
   }
 
   flush(): Promise<void>;
@@ -140,29 +143,7 @@ export class Publisher {
    * @param {PublishCallback} [callback] Callback function.
    */
   publishMessage(message: PubsubMessage, callback: PublishCallback): void {
-    // Construct publisher span and set context as message attribute
     const {data, attributes = {}} = message;
-    const spanAttributes = {
-      data: message.data,
-    };
-    const span: Span = this.tracing.createSpan(
-      `${this.topic.name} publisher`,
-      spanAttributes
-    );
-    if (
-      message.attributes &&
-      message.attributes['googclient_OpenTelemetrySpanContext']
-    ) {
-      console.warn(
-        'googclient_OpenTelemetrySpanContext key set as message attribute, but will be overridden.'
-      );
-    }
-    if (!message.attributes) {
-      message.attributes = {};
-    }
-    message.attributes['googclient_OpenTelemetrySpanContext'] = JSON.stringify(
-      span.context()
-    );
 
     if (!(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
@@ -176,9 +157,13 @@ export class Publisher {
       }
     }
 
+    const span: Span | undefined = this.constructSpan(message);
+
     if (!message.orderingKey) {
       this.queue.add(message, callback);
-      span.end();
+      if (span) {
+        span.end();
+      }
       return;
     }
 
@@ -193,7 +178,9 @@ export class Publisher {
     const queue = this.orderedQueues.get(key)!;
     queue.add(message, callback);
 
-    span.end();
+    if (span) {
+      span.end();
+    }
   }
   /**
    * Indicates to the publisher that it is safe to continue publishing for the
@@ -228,13 +215,15 @@ export class Publisher {
       gaxOpts: {
         isBundling: false,
       },
+      enableOpenTelemetryTracing: false,
     };
 
-    const {batching, gaxOpts, messageOrdering} = extend(
-      true,
-      defaults,
-      options
-    );
+    const {
+      batching,
+      gaxOpts,
+      messageOrdering,
+      enableOpenTelemetryTracing,
+    } = extend(true, defaults, options);
 
     this.settings = {
       batching: {
@@ -244,11 +233,43 @@ export class Publisher {
       },
       gaxOpts,
       messageOrdering,
+      enableOpenTelemetryTracing,
     };
+  }
+
+  /**
+   * Constructs an OpenTelemetry span
+   *
+   * @params
+   */
+  constructSpan(message: PubsubMessage): Span | undefined {
+    const spanAttributes = {
+      data: message.data,
+    };
+    const span: Span | undefined = this.tracing
+      ? this.tracing.createSpan(`${this.topic.name} publisher`, spanAttributes)
+      : undefined;
+    if (span) {
+      if (
+        message.attributes &&
+        message.attributes['googclient_OpenTelemetrySpanContext']
+      ) {
+        console.warn(
+          'googclient_OpenTelemetrySpanContext key set as message attribute, but will be overridden.'
+        );
+      }
+      if (!message.attributes) {
+        message.attributes = {};
+      }
+      message.attributes[
+        'googclient_OpenTelemetrySpanContext'
+      ] = JSON.stringify(span.context());
+    }
+    return span;
   }
 }
 
 promisifyAll(Publisher, {
   singular: true,
-  exclude: ['publish', 'setOptions'],
+  exclude: ['publish', 'setOptions', 'constructSpan'],
 });
