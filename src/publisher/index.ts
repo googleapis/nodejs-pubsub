@@ -253,7 +253,9 @@ export class Publisher {
   /**
    * Constructs an OpenTelemetry span
    *
-   * @params
+   * @private
+   *
+   * @param {PubsubMessage} message The message to create a span for
    */
   constructSpan(message: PubsubMessage): Span | undefined {
     const spanAttributes = {
