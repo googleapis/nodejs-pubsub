@@ -20,7 +20,11 @@ import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
-import {BasicTracerProvider, InMemorySpanExporter, SimpleSpanProcessor} from '@opentelemetry/tracing';
+import {
+  BasicTracerProvider,
+  InMemorySpanExporter,
+  SimpleSpanProcessor,
+} from '@opentelemetry/tracing';
 import * as opentelemetry from '@opentelemetry/api';
 
 import {Topic} from '../../src';
@@ -183,16 +187,16 @@ describe('Publisher', () => {
     it('export created spans', () => {
       tracingPublisher = new Publisher(topic, enableTracing);
 
-       // Setup trace exporting
-       const provider: BasicTracerProvider = new BasicTracerProvider();
-       const exporter: InMemorySpanExporter = new InMemorySpanExporter();
-       provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-       provider.register();
-       opentelemetry.trace.setGlobalTracerProvider(provider);
+      // Setup trace exporting
+      const provider: BasicTracerProvider = new BasicTracerProvider();
+      const exporter: InMemorySpanExporter = new InMemorySpanExporter();
+      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+      provider.register();
+      opentelemetry.trace.setGlobalTracerProvider(provider);
 
-       tracingPublisher.publish(buffer);
-       assert.ok(exporter.getFinishedSpans());
-    })
+      tracingPublisher.publish(buffer);
+      assert.ok(exporter.getFinishedSpans());
+    });
   });
 
   describe('publishMessage', () => {

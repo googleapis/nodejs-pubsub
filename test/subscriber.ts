@@ -22,7 +22,11 @@ import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {PassThrough} from 'stream';
 import * as uuid from 'uuid';
-import {SimpleSpanProcessor, BasicTracerProvider, InMemorySpanExporter} from '@opentelemetry/tracing';
+import {
+  SimpleSpanProcessor,
+  BasicTracerProvider,
+  InMemorySpanExporter,
+} from '@opentelemetry/tracing';
 import * as opentelemetry from '@opentelemetry/api';
 
 import {HistogramOptions} from '../src/histogram';
@@ -658,7 +662,7 @@ describe('Subscriber', () => {
       tracingSubscriber = new Subscriber(subscription);
       tracingSubscriber.setOptions(enableTracing);
       assert.ok(tracingSubscriber['_tracing']);
-    })
+    });
 
     it('export a span once it is created', () => {
       tracingSubscriber = new Subscriber(subscription, enableTracing);
@@ -680,7 +684,9 @@ describe('Subscriber', () => {
         ackId: uuid.v4(),
         message: {
           attributes: {
-            googclient_OpenTelemetrySpanContext: JSON.stringify(parentSpanContext),
+            googclient_OpenTelemetrySpanContext: JSON.stringify(
+              parentSpanContext
+            ),
           },
           data: Buffer.from('Hello, world!'),
           messageId: uuid.v4(),
@@ -688,7 +694,9 @@ describe('Subscriber', () => {
           publishTime: {seconds: 12, nanos: 32},
         },
       };
-      const pullResponse: s.PullResponse = {receivedMessages: [messageWithSpanContext]};
+      const pullResponse: s.PullResponse = {
+        receivedMessages: [messageWithSpanContext],
+      };
 
       // Receive message and assert that it was exported
       const stream: FakeMessageStream = stubs.get('messageStream');
