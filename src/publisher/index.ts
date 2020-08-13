@@ -238,6 +238,10 @@ export class Publisher {
       enableOpenTelemetryTracing,
     } = extend(true, defaults, options);
 
+    if (enableOpenTelemetryTracing) {
+      this.tracing = new OpenTelemetryTracer();
+    }
+
     this.settings = {
       batching: {
         maxBytes: Math.min(batching.maxBytes, BATCH_LIMITS.maxBytes!),

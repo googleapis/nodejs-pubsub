@@ -20,6 +20,8 @@ import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
+import {BasicTracerProvider, InMemorySpanExporter, SimpleSpanProcessor} from '@opentelemetry/tracing';
+import * as opentelemetry from '@opentelemetry/api';
 
 import {Topic} from '../../src';
 import * as p from '../../src/publisher';
@@ -155,6 +157,8 @@ describe('Publisher', () => {
     const enableTracing: p.PublishOptions = {
       enableOpenTelemetryTracing: true,
     };
+    const buffer = Buffer.from('Hello, world!');
+
     beforeEach(() => {
       // Declare tracingPublisher as type any and pre-define _tracing
       // to gain access to the private field after publisher init
@@ -165,10 +169,30 @@ describe('Publisher', () => {
       assert.strictEqual(tracingPublisher['tracing'], undefined);
     });
 
-    it('should instantiate a tracer when tracing is enabled', () => {
+    it('should instantiate a tracer when tracing is enabled through constructor', () => {
       tracingPublisher = new Publisher(topic, enableTracing);
       assert.ok(tracingPublisher['tracing']);
     });
+
+    it('should instantiate a tracer when tracing is enabled through setOptions', () => {
+      tracingPublisher = new Publisher(topic);
+      tracingPublisher.setOptions(enableTracing);
+      assert.ok(tracingPublisher['tracing']);
+    });
+
+    it('export created spans', () => {
+      tracingPublisher = new Publisher(topic, enableTracing);
+
+       // Setup trace exporting
+       const provider: BasicTracerProvider = new BasicTracerProvider();
+       const exporter: InMemorySpanExporter = new InMemorySpanExporter();
+       provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+       provider.register();
+       opentelemetry.trace.setGlobalTracerProvider(provider);
+
+       tracingPublisher.publish(buffer);
+       assert.ok(exporter.getFinishedSpans());
+    })
   });
 
   describe('publishMessage', () => {
