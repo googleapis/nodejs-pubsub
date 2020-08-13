@@ -642,6 +642,9 @@ describe('Subscriber', () => {
     const enableTracing: s.SubscriberOptions = {
       enableOpenTelemetryTracing: true,
     };
+    const disableTracing: s.SubscriberOptions = {
+      enableOpenTelemetryTracing: false,
+    };
 
     beforeEach(() => {
       // Pre-define _tracing to gain access to the private field after subscriber init
@@ -664,7 +667,13 @@ describe('Subscriber', () => {
       assert.ok(tracingSubscriber['_tracing']);
     });
 
-    it('export a span once it is created', () => {
+    it('should disable tracing when tracing is disabled through setOptions', () => {
+      tracingSubscriber = new Subscriber(subscription, enableTracing);
+      tracingSubscriber.setOptions(disableTracing);
+      assert.strictEqual(tracingSubscriber['_tracing'], undefined);
+    });
+
+    it('exports a span once it is created', () => {
       tracingSubscriber = new Subscriber(subscription, enableTracing);
 
       // Setup trace exporting
@@ -702,6 +711,26 @@ describe('Subscriber', () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
       stream.emit('data', pullResponse);
       assert.ok(exporter.getFinishedSpans());
+    });
+
+    it('does not export a span when a span context is not present on message', () => {
+      tracingSubscriber = new Subscriber(subscription, enableTracing);
+
+      // Setup trace exporting
+      const provider: BasicTracerProvider = new BasicTracerProvider();
+      const exporter: InMemorySpanExporter = new InMemorySpanExporter();
+      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+      provider.register();
+      opentelemetry.trace.setGlobalTracerProvider(provider);
+
+      const pullResponse: s.PullResponse = {
+        receivedMessages: [RECEIVED_MESSAGE],
+      };
+
+      // Receive message and assert that it was exported
+      const stream: FakeMessageStream = stubs.get('messageStream');
+      stream.emit('data', pullResponse);
+      assert.strictEqual(exporter.getFinishedSpans().length, 0);
     });
   });
 

@@ -161,6 +161,9 @@ describe('Publisher', () => {
     const enableTracing: p.PublishOptions = {
       enableOpenTelemetryTracing: true,
     };
+    const disableTracing: p.PublishOptions = {
+      enableOpenTelemetryTracing: false,
+    };
     const buffer = Buffer.from('Hello, world!');
 
     beforeEach(() => {
@@ -182,6 +185,12 @@ describe('Publisher', () => {
       tracingPublisher = new Publisher(topic);
       tracingPublisher.setOptions(enableTracing);
       assert.ok(tracingPublisher['tracing']);
+    });
+
+    it('should disable tracing when tracing is disabled through setOptions', () => {
+      tracingPublisher = new Publisher(topic, enableTracing);
+      tracingPublisher.setOptions(disableTracing);
+      assert.strictEqual(tracingPublisher['tracing'], undefined);
     });
 
     it('export created spans', () => {

@@ -455,7 +455,7 @@ export class Subscriber extends EventEmitter {
       deliveryAttempt: message.deliveryAttempt,
     };
     // Subscriber spans should always have a publisher span as a parent.
-    // Return undefined if no parent is provided or parent context is malformed
+    // Return undefined if no parent is provided
     const span = parentSpanContext
       ? this._tracing.createSpan(this._name, spanAttributes, parentSpanContext)
       : undefined;

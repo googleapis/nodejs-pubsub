@@ -238,9 +238,9 @@ export class Publisher {
       enableOpenTelemetryTracing,
     } = extend(true, defaults, options);
 
-    if (enableOpenTelemetryTracing) {
-      this.tracing = new OpenTelemetryTracer();
-    }
+    this.tracing = enableOpenTelemetryTracing
+      ? new OpenTelemetryTracer()
+      : undefined;
 
     this.settings = {
       batching: {
