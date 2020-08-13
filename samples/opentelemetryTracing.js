@@ -66,6 +66,12 @@ function main(
   provider.register();
   opentelemetry.trace.setGlobalTracerProvider(provider);
 
+  // OpenTelemetry tracing is an optional feature and can be enabled by setting
+  // enableOpenTelemetryTraceing as a publisher or subscriber option
+  const enableOpenTelemetryTracing = {
+    enableOpenTelemetryTracing: true,
+  };
+
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
@@ -73,7 +79,9 @@ function main(
     // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
     const dataBuffer = Buffer.from(data);
 
-    const messageId = await pubSubClient.topic(topicName).publish(dataBuffer);
+    const messageId = await pubSubClient
+      .topic(topicName, enableOpenTelemetryTracing)
+      .publish(dataBuffer);
     console.log(`Message ${messageId} published.`);
   }
 
@@ -87,11 +95,14 @@ function main(
     // Listens for new messages from the topic
     pubSubClient.subscription(subscriptionName).on('message', messageHandler);
     setTimeout(() => {
-      pubSubClient.subscription(subscriptionName).removeAllListeners();
+      pubSubClient
+        .subscription(subscriptionName, enableOpenTelemetryTracing)
+        .removeAllListeners();
     }, SUBSCRIBER_TIMEOUT * 1000);
   }
 
   publishMessage().then(subscriptionListen());
+  // [END opentelemetry_tracing]
 }
 
 main(...process.argv.slice(2));
