@@ -22,6 +22,12 @@ import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {PassThrough} from 'stream';
 import * as uuid from 'uuid';
+import {
+  SimpleSpanProcessor,
+  BasicTracerProvider,
+  InMemorySpanExporter,
+} from '@opentelemetry/tracing';
+import * as opentelemetry from '@opentelemetry/api';
 
 import {HistogramOptions} from '../src/histogram';
 import {FlowControlOptions} from '../src/lease-manager';
@@ -628,6 +634,103 @@ describe('Subscriber', () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
 
       assert.strictEqual(stream.options.maxStreams, maxMessages);
+    });
+  });
+
+  describe('OpenTelemetry tracing', () => {
+    let tracingSubscriber: s.Subscriber = {} as s.Subscriber;
+    const enableTracing: s.SubscriberOptions = {
+      enableOpenTelemetryTracing: true,
+    };
+    const disableTracing: s.SubscriberOptions = {
+      enableOpenTelemetryTracing: false,
+    };
+
+    beforeEach(() => {
+      // Pre-define _tracing to gain access to the private field after subscriber init
+      tracingSubscriber['_tracing'] = undefined;
+    });
+
+    it('should not instantiate a tracer when tracing is disabled', () => {
+      tracingSubscriber = new Subscriber(subscription);
+      assert.strictEqual(tracingSubscriber['_tracing'], undefined);
+    });
+
+    it('should instantiate a tracer when tracing is enabled through constructor', () => {
+      tracingSubscriber = new Subscriber(subscription, enableTracing);
+      assert.ok(tracingSubscriber['_tracing']);
+    });
+
+    it('should instantiate a tracer when tracing is enabled through setOptions', () => {
+      tracingSubscriber = new Subscriber(subscription);
+      tracingSubscriber.setOptions(enableTracing);
+      assert.ok(tracingSubscriber['_tracing']);
+    });
+
+    it('should disable tracing when tracing is disabled through setOptions', () => {
+      tracingSubscriber = new Subscriber(subscription, enableTracing);
+      tracingSubscriber.setOptions(disableTracing);
+      assert.strictEqual(tracingSubscriber['_tracing'], undefined);
+    });
+
+    it('exports a span once it is created', () => {
+      tracingSubscriber = new Subscriber(subscription, enableTracing);
+
+      // Setup trace exporting
+      const provider: BasicTracerProvider = new BasicTracerProvider();
+      const exporter: InMemorySpanExporter = new InMemorySpanExporter();
+      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+      provider.register();
+      opentelemetry.trace.setGlobalTracerProvider(provider);
+
+      // Construct mock of received message with span context
+      const parentSpanContext: opentelemetry.SpanContext = {
+        traceId: 'd4cda95b652f4a1592b449d5929fda1b',
+        spanId: '6e0c63257de34c92',
+        traceFlags: opentelemetry.TraceFlags.SAMPLED,
+      };
+      const messageWithSpanContext = {
+        ackId: uuid.v4(),
+        message: {
+          attributes: {
+            googclient_OpenTelemetrySpanContext: JSON.stringify(
+              parentSpanContext
+            ),
+          },
+          data: Buffer.from('Hello, world!'),
+          messageId: uuid.v4(),
+          orderingKey: 'ordering-key',
+          publishTime: {seconds: 12, nanos: 32},
+        },
+      };
+      const pullResponse: s.PullResponse = {
+        receivedMessages: [messageWithSpanContext],
+      };
+
+      // Receive message and assert that it was exported
+      const stream: FakeMessageStream = stubs.get('messageStream');
+      stream.emit('data', pullResponse);
+      assert.ok(exporter.getFinishedSpans());
+    });
+
+    it('does not export a span when a span context is not present on message', () => {
+      tracingSubscriber = new Subscriber(subscription, enableTracing);
+
+      // Setup trace exporting
+      const provider: BasicTracerProvider = new BasicTracerProvider();
+      const exporter: InMemorySpanExporter = new InMemorySpanExporter();
+      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+      provider.register();
+      opentelemetry.trace.setGlobalTracerProvider(provider);
+
+      const pullResponse: s.PullResponse = {
+        receivedMessages: [RECEIVED_MESSAGE],
+      };
+
+      // Receive message and assert that it was exported
+      const stream: FakeMessageStream = stubs.get('messageStream');
+      stream.emit('data', pullResponse);
+      assert.strictEqual(exporter.getFinishedSpans().length, 0);
     });
   });
 
