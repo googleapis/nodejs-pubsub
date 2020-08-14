@@ -20,6 +20,12 @@ import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
+import {
+  BasicTracerProvider,
+  InMemorySpanExporter,
+  SimpleSpanProcessor,
+} from '@opentelemetry/tracing';
+import * as opentelemetry from '@opentelemetry/api';
 
 import {Topic} from '../../src';
 import * as p from '../../src/publisher';
@@ -36,7 +42,11 @@ const fakePromisify = Object.assign({}, pfy, {
     }
     promisified = true;
     assert.ok(options.singular);
-    assert.deepStrictEqual(options.exclude, ['publish', 'setOptions']);
+    assert.deepStrictEqual(options.exclude, [
+      'publish',
+      'setOptions',
+      'constructSpan',
+    ]);
   },
 });
 
@@ -143,6 +153,58 @@ describe('Publisher', () => {
       const [{attributes}, callback] = stub.lastCall.args;
       assert.strictEqual(attributes, attrs);
       assert.strictEqual(callback, spy);
+    });
+  });
+
+  describe('OpenTelemetry tracing', () => {
+    let tracingPublisher: p.Publisher = {} as p.Publisher;
+    const enableTracing: p.PublishOptions = {
+      enableOpenTelemetryTracing: true,
+    };
+    const disableTracing: p.PublishOptions = {
+      enableOpenTelemetryTracing: false,
+    };
+    const buffer = Buffer.from('Hello, world!');
+
+    beforeEach(() => {
+      // Declare tracingPublisher as type any and pre-define _tracing
+      // to gain access to the private field after publisher init
+      tracingPublisher['tracing'] = undefined;
+    });
+    it('should not instantiate a tracer when tracing is disabled', () => {
+      tracingPublisher = new Publisher(topic);
+      assert.strictEqual(tracingPublisher['tracing'], undefined);
+    });
+
+    it('should instantiate a tracer when tracing is enabled through constructor', () => {
+      tracingPublisher = new Publisher(topic, enableTracing);
+      assert.ok(tracingPublisher['tracing']);
+    });
+
+    it('should instantiate a tracer when tracing is enabled through setOptions', () => {
+      tracingPublisher = new Publisher(topic);
+      tracingPublisher.setOptions(enableTracing);
+      assert.ok(tracingPublisher['tracing']);
+    });
+
+    it('should disable tracing when tracing is disabled through setOptions', () => {
+      tracingPublisher = new Publisher(topic, enableTracing);
+      tracingPublisher.setOptions(disableTracing);
+      assert.strictEqual(tracingPublisher['tracing'], undefined);
+    });
+
+    it('export created spans', () => {
+      tracingPublisher = new Publisher(topic, enableTracing);
+
+      // Setup trace exporting
+      const provider: BasicTracerProvider = new BasicTracerProvider();
+      const exporter: InMemorySpanExporter = new InMemorySpanExporter();
+      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+      provider.register();
+      opentelemetry.trace.setGlobalTracerProvider(provider);
+
+      tracingPublisher.publish(buffer);
+      assert.ok(exporter.getFinishedSpans());
     });
   });
 
@@ -266,6 +328,20 @@ describe('Publisher', () => {
           done();
         });
       });
+
+      it('should issue a warning if OpenTelemetry span context key is set', () => {
+        const warnSpy = sinon.spy(console, 'warn');
+        const attributes = {
+          googclient_OpenTelemetrySpanContext: 'foobar',
+        };
+        const fakeMessageWithOTKey = {data, attributes};
+        const publisherTracing = new Publisher(topic, {
+          enableOpenTelemetryTracing: true,
+        });
+        publisherTracing.publishMessage(fakeMessageWithOTKey, warnSpy);
+        assert.ok(warnSpy.called);
+        warnSpy.restore();
+      });
     });
   });
 
@@ -299,6 +375,7 @@ describe('Publisher', () => {
         gaxOpts: {
           isBundling: false,
         },
+        enableOpenTelemetryTracing: false,
       });
     });
 
@@ -313,6 +390,7 @@ describe('Publisher', () => {
         gaxOpts: {
           isBundling: true,
         },
+        enableOpenTelemetryTracing: true,
       };
 
       publisher.setOptions(options);

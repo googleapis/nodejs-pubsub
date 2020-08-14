@@ -17,6 +17,7 @@
 import {promisify, promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
+import {Span} from '@opentelemetry/api';
 
 import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
@@ -24,6 +25,7 @@ import {Topic} from '../topic';
 import {RequestCallback, EmptyCallback} from '../pubsub';
 import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
+import {OpenTelemetryTracer} from '../opentelemetry-tracing';
 
 export type PubsubMessage = google.pubsub.v1.IPubsubMessage;
 
@@ -37,6 +39,7 @@ export interface PublishOptions {
   batching?: BatchPublishOptions;
   gaxOpts?: CallOptions;
   messageOrdering?: boolean;
+  enableOpenTelemetryTracing?: boolean;
 }
 
 /**
@@ -72,11 +75,16 @@ export class Publisher {
   settings!: PublishOptions;
   queue: Queue;
   orderedQueues: Map<string, OrderedQueue>;
+  tracing: OpenTelemetryTracer | undefined;
   constructor(topic: Topic, options?: PublishOptions) {
     this.setOptions(options);
     this.topic = topic;
     this.queue = new Queue(this);
     this.orderedQueues = new Map();
+    this.tracing =
+      this.settings && this.settings.enableOpenTelemetryTracing
+        ? new OpenTelemetryTracer()
+        : undefined;
   }
 
   flush(): Promise<void>;
@@ -162,8 +170,13 @@ export class Publisher {
       }
     }
 
+    const span: Span | undefined = this.constructSpan(message);
+
     if (!message.orderingKey) {
       this.queue.add(message, callback);
+      if (span) {
+        span.end();
+      }
       return;
     }
 
@@ -177,6 +190,10 @@ export class Publisher {
 
     const queue = this.orderedQueues.get(key)!;
     queue.add(message, callback);
+
+    if (span) {
+      span.end();
+    }
   }
   /**
    * Indicates to the publisher that it is safe to continue publishing for the
@@ -211,13 +228,19 @@ export class Publisher {
       gaxOpts: {
         isBundling: false,
       },
+      enableOpenTelemetryTracing: false,
     };
 
-    const {batching, gaxOpts, messageOrdering} = extend(
-      true,
-      defaults,
-      options
-    );
+    const {
+      batching,
+      gaxOpts,
+      messageOrdering,
+      enableOpenTelemetryTracing,
+    } = extend(true, defaults, options);
+
+    this.tracing = enableOpenTelemetryTracing
+      ? new OpenTelemetryTracer()
+      : undefined;
 
     this.settings = {
       batching: {
@@ -227,11 +250,45 @@ export class Publisher {
       },
       gaxOpts,
       messageOrdering,
+      enableOpenTelemetryTracing,
     };
+  }
+
+  /**
+   * Constructs an OpenTelemetry span
+   *
+   * @private
+   *
+   * @param {PubsubMessage} message The message to create a span for
+   */
+  constructSpan(message: PubsubMessage): Span | undefined {
+    const spanAttributes = {
+      data: message.data,
+    };
+    const span: Span | undefined = this.tracing
+      ? this.tracing.createSpan(`${this.topic.name} publisher`, spanAttributes)
+      : undefined;
+    if (span) {
+      if (
+        message.attributes &&
+        message.attributes['googclient_OpenTelemetrySpanContext']
+      ) {
+        console.warn(
+          'googclient_OpenTelemetrySpanContext key set as message attribute, but will be overridden.'
+        );
+      }
+      if (!message.attributes) {
+        message.attributes = {};
+      }
+      message.attributes[
+        'googclient_OpenTelemetrySpanContext'
+      ] = JSON.stringify(span.context());
+    }
+    return span;
   }
 }
 
 promisifyAll(Publisher, {
   singular: true,
-  exclude: ['publish', 'setOptions'],
+  exclude: ['publish', 'setOptions', 'constructSpan'],
 });

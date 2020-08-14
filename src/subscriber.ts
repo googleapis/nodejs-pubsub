@@ -18,6 +18,7 @@ import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
+import {SpanContext, Span} from '@opentelemetry/api';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -27,6 +28,7 @@ import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
+import {OpenTelemetryTracer} from './opentelemetry-tracing';
 
 export type PullResponse = google.pubsub.v1.IPullResponse;
 
@@ -202,6 +204,7 @@ export interface SubscriberOptions {
   batching?: BatchOptions;
   flowControl?: FlowControlOptions;
   streamingOptions?: MessageStreamOptions;
+  enableOpenTelemetryTracing?: boolean;
 }
 
 /**
@@ -237,6 +240,7 @@ export class Subscriber extends EventEmitter {
   private _options!: SubscriberOptions;
   private _stream!: MessageStream;
   private _subscription: Subscription;
+  private _tracing: OpenTelemetryTracer | undefined;
   constructor(subscription: Subscription, options = {}) {
     super();
 
@@ -248,7 +252,6 @@ export class Subscriber extends EventEmitter {
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
     this._subscription = subscription;
-
     this.setOptions(options);
   }
   /**
@@ -423,7 +426,42 @@ export class Subscriber extends EventEmitter {
         this.maxMessages
       );
     }
+    this._tracing = options.enableOpenTelemetryTracing
+      ? new OpenTelemetryTracer()
+      : undefined;
   }
+
+  /**
+   * Constructs an OpenTelemetry span from the incoming message.
+   *
+   * @param {Message} message One of the received messages
+   * @private
+   */
+  private _constructSpan(message: Message): Span | undefined {
+    // Handle cases where OpenTelemetry is disabled or no span context was sent through message
+    if (
+      !this._tracing ||
+      !message.attributes ||
+      !message.attributes['googclient_OpenTelemetrySpanContext']
+    ) {
+      return undefined;
+    }
+    const spanValue = message.attributes['googclient_OpenTelemetrySpanContext'];
+    const parentSpanContext: SpanContext | undefined = spanValue
+      ? JSON.parse(spanValue)
+      : undefined;
+    const spanAttributes = {
+      ackId: message.ackId,
+      deliveryAttempt: message.deliveryAttempt,
+    };
+    // Subscriber spans should always have a publisher span as a parent.
+    // Return undefined if no parent is provided
+    const span = parentSpanContext
+      ? this._tracing.createSpan(this._name, spanAttributes, parentSpanContext)
+      : undefined;
+    return span;
+  }
+
   /**
    * Callback to be invoked when a new message is available.
    *
@@ -445,11 +483,15 @@ export class Subscriber extends EventEmitter {
     for (const data of receivedMessages!) {
       const message = new Message(this, data);
 
+      const span: Span | undefined = this._constructSpan(message);
       if (this.isOpen) {
         message.modAck(this.ackDeadline);
         this._inventory.add(message);
       } else {
         message.nack();
+      }
+      if (span) {
+        span.end();
       }
     }
   }
