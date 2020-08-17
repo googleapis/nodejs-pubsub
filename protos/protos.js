@@ -715,7 +715,7 @@
                     Topic.decode = function decode(reader, length) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Topic(), key, value;
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Topic(), key;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
                             switch (tag >>> 3) {
@@ -723,26 +723,12 @@
                                 message.name = reader.string();
                                 break;
                             case 2:
+                                reader.skip().pos++;
                                 if (message.labels === $util.emptyObject)
                                     message.labels = {};
-                                var end2 = reader.uint32() + reader.pos;
-                                key = "";
-                                value = "";
-                                while (reader.pos < end2) {
-                                    var tag2 = reader.uint32();
-                                    switch (tag2 >>> 3) {
-                                    case 1:
-                                        key = reader.string();
-                                        break;
-                                    case 2:
-                                        value = reader.string();
-                                        break;
-                                    default:
-                                        reader.skipType(tag2 & 7);
-                                        break;
-                                    }
-                                }
-                                message.labels[key] = value;
+                                key = reader.string();
+                                reader.pos++;
+                                message.labels[key] = reader.string();
                                 break;
                             case 3:
                                 message.messageStoragePolicy = $root.google.pubsub.v1.MessageStoragePolicy.decode(reader, reader.uint32());
@@ -1021,7 +1007,7 @@
                     PubsubMessage.decode = function decode(reader, length) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PubsubMessage(), key, value;
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PubsubMessage(), key;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
                             switch (tag >>> 3) {
@@ -1029,26 +1015,12 @@
                                 message.data = reader.bytes();
                                 break;
                             case 2:
+                                reader.skip().pos++;
                                 if (message.attributes === $util.emptyObject)
                                     message.attributes = {};
-                                var end2 = reader.uint32() + reader.pos;
-                                key = "";
-                                value = "";
-                                while (reader.pos < end2) {
-                                    var tag2 = reader.uint32();
-                                    switch (tag2 >>> 3) {
-                                    case 1:
-                                        key = reader.string();
-                                        break;
-                                    case 2:
-                                        value = reader.string();
-                                        break;
-                                    default:
-                                        reader.skipType(tag2 & 7);
-                                        break;
-                                    }
-                                }
-                                message.attributes[key] = value;
+                                key = reader.string();
+                                reader.pos++;
+                                message.attributes[key] = reader.string();
                                 break;
                             case 3:
                                 message.messageId = reader.string();
@@ -4752,7 +4724,7 @@
                     Subscription.decode = function decode(reader, length) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Subscription(), key, value;
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Subscription(), key;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
                             switch (tag >>> 3) {
@@ -4775,26 +4747,12 @@
                                 message.messageRetentionDuration = $root.google.protobuf.Duration.decode(reader, reader.uint32());
                                 break;
                             case 9:
+                                reader.skip().pos++;
                                 if (message.labels === $util.emptyObject)
                                     message.labels = {};
-                                var end2 = reader.uint32() + reader.pos;
-                                key = "";
-                                value = "";
-                                while (reader.pos < end2) {
-                                    var tag2 = reader.uint32();
-                                    switch (tag2 >>> 3) {
-                                    case 1:
-                                        key = reader.string();
-                                        break;
-                                    case 2:
-                                        value = reader.string();
-                                        break;
-                                    default:
-                                        reader.skipType(tag2 & 7);
-                                        break;
-                                    }
-                                }
-                                message.labels[key] = value;
+                                key = reader.string();
+                                reader.pos++;
+                                message.labels[key] = reader.string();
                                 break;
                             case 10:
                                 message.enableMessageOrdering = reader.bool();
@@ -5791,7 +5749,7 @@
                     PushConfig.decode = function decode(reader, length) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PushConfig(), key, value;
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PushConfig(), key;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
                             switch (tag >>> 3) {
@@ -5799,26 +5757,12 @@
                                 message.pushEndpoint = reader.string();
                                 break;
                             case 2:
+                                reader.skip().pos++;
                                 if (message.attributes === $util.emptyObject)
                                     message.attributes = {};
-                                var end2 = reader.uint32() + reader.pos;
-                                key = "";
-                                value = "";
-                                while (reader.pos < end2) {
-                                    var tag2 = reader.uint32();
-                                    switch (tag2 >>> 3) {
-                                    case 1:
-                                        key = reader.string();
-                                        break;
-                                    case 2:
-                                        value = reader.string();
-                                        break;
-                                    default:
-                                        reader.skipType(tag2 & 7);
-                                        break;
-                                    }
-                                }
-                                message.attributes[key] = value;
+                                key = reader.string();
+                                reader.pos++;
+                                message.attributes[key] = reader.string();
                                 break;
                             case 3:
                                 message.oidcToken = $root.google.pubsub.v1.PushConfig.OidcToken.decode(reader, reader.uint32());
@@ -9339,7 +9283,7 @@
                     CreateSnapshotRequest.decode = function decode(reader, length) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CreateSnapshotRequest(), key, value;
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CreateSnapshotRequest(), key;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
                             switch (tag >>> 3) {
@@ -9350,26 +9294,12 @@
                                 message.subscription = reader.string();
                                 break;
                             case 3:
+                                reader.skip().pos++;
                                 if (message.labels === $util.emptyObject)
                                     message.labels = {};
-                                var end2 = reader.uint32() + reader.pos;
-                                key = "";
-                                value = "";
-                                while (reader.pos < end2) {
-                                    var tag2 = reader.uint32();
-                                    switch (tag2 >>> 3) {
-                                    case 1:
-                                        key = reader.string();
-                                        break;
-                                    case 2:
-                                        value = reader.string();
-                                        break;
-                                    default:
-                                        reader.skipType(tag2 & 7);
-                                        break;
-                                    }
-                                }
-                                message.labels[key] = value;
+                                key = reader.string();
+                                reader.pos++;
+                                message.labels[key] = reader.string();
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -9838,7 +9768,7 @@
                     Snapshot.decode = function decode(reader, length) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Snapshot(), key, value;
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Snapshot(), key;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
                             switch (tag >>> 3) {
@@ -9852,26 +9782,12 @@
                                 message.expireTime = $root.google.protobuf.Timestamp.decode(reader, reader.uint32());
                                 break;
                             case 4:
+                                reader.skip().pos++;
                                 if (message.labels === $util.emptyObject)
                                     message.labels = {};
-                                var end2 = reader.uint32() + reader.pos;
-                                key = "";
-                                value = "";
-                                while (reader.pos < end2) {
-                                    var tag2 = reader.uint32();
-                                    switch (tag2 >>> 3) {
-                                    case 1:
-                                        key = reader.string();
-                                        break;
-                                    case 2:
-                                        value = reader.string();
-                                        break;
-                                    default:
-                                        reader.skipType(tag2 & 7);
-                                        break;
-                                    }
-                                }
-                                message.labels[key] = value;
+                                key = reader.string();
+                                reader.pos++;
+                                message.labels[key] = reader.string();
                                 break;
                             default:
                                 reader.skipType(tag & 7);
