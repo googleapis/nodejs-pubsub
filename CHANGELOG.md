@@ -4,6 +4,21 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.5.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.4.0...v2.5.0) (2020-08-17)
+
+
+### Features
+
+* Opentelemetry integration ([#1078](https://www.github.com/googleapis/nodejs-pubsub/issues/1078)) ([76db007](https://www.github.com/googleapis/nodejs-pubsub/commit/76db007f270a646e8570768fa827ea2a97b62cbc)), closes [#1066](https://www.github.com/googleapis/nodejs-pubsub/issues/1066) [#1070](https://www.github.com/googleapis/nodejs-pubsub/issues/1070)
+
+
+### Bug Fixes
+
+* make request batching work again ([#1087](https://www.github.com/googleapis/nodejs-pubsub/issues/1087)) ([80e0ee3](https://www.github.com/googleapis/nodejs-pubsub/commit/80e0ee3a4ef0da325e61ce2b869f4c0f9829b136))
+* properly handle non-emulator alternate endpoints for pub/sub ([#1060](https://www.github.com/googleapis/nodejs-pubsub/issues/1060)) ([195ebf6](https://www.github.com/googleapis/nodejs-pubsub/commit/195ebf648e00ba35f567cef06a06c31f3f9c57d9))
+* **deps:** update opentelemetry monorepo to ^0.10.0 ([#1090](https://www.github.com/googleapis/nodejs-pubsub/issues/1090)) ([78a45ff](https://www.github.com/googleapis/nodejs-pubsub/commit/78a45ff1cb8fb921e5ca05e435554d684a777185))
+* update minimum gax version to 2.7.0 to fix recent protobuf errors ([#1085](https://www.github.com/googleapis/nodejs-pubsub/issues/1085)) ([904348c](https://www.github.com/googleapis/nodejs-pubsub/commit/904348cd6471f267a54635fcd65fe4191896308e))
+
 ## [2.4.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.3.0...v2.4.0) (2020-08-08)
 
 
