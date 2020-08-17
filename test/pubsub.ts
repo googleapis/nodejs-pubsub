@@ -307,11 +307,12 @@ describe('PubSub', () => {
       name: 'subscription-name',
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const subClass = Subscription as any;
+
     beforeEach(() => {
-      ((Subscription as {}) as typeof subby.Subscription).formatMetadata_ = (
-        metadata: subby.SubscriptionMetadata
-      ) => {
-        return Object.assign({}, metadata) as subby.SubscriptionMetadata;
+      subClass.formatMetadata_ = (metadata: {}) => {
+        return Object.assign({}, metadata);
       };
     });
 
@@ -469,11 +470,9 @@ describe('PubSub', () => {
         a: 'a',
       };
 
-      ((Subscription as {}) as typeof subby.Subscription).formatMetadata_ = (
-        metadata: subby.SubscriptionMetadata
-      ) => {
+      subClass.formatMetadata_ = (metadata: {}) => {
         assert.deepStrictEqual(metadata, fakeMetadata);
-        return (formatted as {}) as subby.SubscriptionMetadata;
+        return formatted;
       };
 
       pubsub.request = (config: pubsubTypes.RequestConfig) => {
@@ -722,8 +721,17 @@ describe('PubSub', () => {
       process.env.PUBSUB_EMULATOR_HOST = host;
     }
 
-    beforeEach(() => {
+    function setSdkUrl(url: string) {
+      process.env.CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB = url;
+    }
+
+    function unsetVariables() {
       delete process.env.PUBSUB_EMULATOR_HOST;
+      delete process.env.CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB;
+    }
+
+    beforeEach(() => {
+      unsetVariables();
     });
 
     it('should do nothing if correct options are not set', () => {
@@ -742,7 +750,7 @@ describe('PubSub', () => {
       pubsub.determineBaseUrl_();
 
       assert.strictEqual(pubsub.options.servicePath, 'localhost');
-      assert.strictEqual(pubsub.options.port, '8085');
+      assert.strictEqual(pubsub.options.port, 8085);
       assert.strictEqual(pubsub.options.sslCreds, fakeCreds);
       assert.strictEqual(pubsub.isEmulator, true);
     });
@@ -751,12 +759,12 @@ describe('PubSub', () => {
       setHost('localhost:8080/');
       pubsub.determineBaseUrl_();
       assert.strictEqual(pubsub.options.servicePath, 'localhost');
-      assert.strictEqual(pubsub.options.port, '8080');
+      assert.strictEqual(pubsub.options.port, 8080);
 
       setHost('localhost:8081//');
       pubsub.determineBaseUrl_();
       assert.strictEqual(pubsub.options.servicePath, 'localhost');
-      assert.strictEqual(pubsub.options.port, '8081');
+      assert.strictEqual(pubsub.options.port, 8081);
     });
 
     it('should set the port to undefined if not set', () => {
@@ -764,6 +772,20 @@ describe('PubSub', () => {
       pubsub.determineBaseUrl_();
       assert.strictEqual(pubsub.options.servicePath, 'localhost');
       assert.strictEqual(pubsub.options.port, undefined);
+    });
+
+    it('should set the port to 80 for http with no port specified', () => {
+      setHost('http://localhost/');
+      pubsub.determineBaseUrl_();
+      assert.strictEqual(pubsub.options.servicePath, 'localhost');
+      assert.strictEqual(pubsub.options.port, 80);
+    });
+
+    it('should set the port to 443 for https with no port specified', () => {
+      setHost('https://localhost/');
+      pubsub.determineBaseUrl_();
+      assert.strictEqual(pubsub.options.servicePath, 'localhost');
+      assert.strictEqual(pubsub.options.port, 443);
     });
 
     it('should create credentials from local grpc if present', () => {
@@ -780,6 +802,8 @@ describe('PubSub', () => {
       assert.strictEqual(pubsub.options.sslCreds, fakeCredentials);
     });
 
+    // This tests both the EMULATOR environment variable and detecting
+    // an emulator URL.
     describe('with PUBSUB_EMULATOR_HOST environment variable', () => {
       const PUBSUB_EMULATOR_HOST = 'localhost:9090';
 
@@ -788,14 +812,37 @@ describe('PubSub', () => {
       });
 
       after(() => {
-        delete process.env.PUBSUB_EMULATOR_HOST;
+        unsetVariables();
       });
 
       it('should use the PUBSUB_EMULATOR_HOST env var', () => {
         pubsub.determineBaseUrl_();
         assert.strictEqual(pubsub.options.servicePath, 'localhost');
-        assert.strictEqual(pubsub.options.port, '9090');
+        assert.strictEqual(pubsub.options.port, 9090);
         assert.strictEqual(pubsub.isEmulator, true);
+      });
+    });
+
+    // This tests both the CLOUDSDK environment variable and detecting
+    // a non-emulator URL.
+    describe('with CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB environment variable', () => {
+      const server = 'some.test.server.googleapis.com';
+      const apiUrl = `https://${server}/`;
+
+      beforeEach(() => {
+        setSdkUrl(apiUrl);
+      });
+
+      after(() => {
+        unsetVariables();
+      });
+
+      it('should use the CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB env var', () => {
+        pubsub.determineBaseUrl_();
+        assert.strictEqual(pubsub.options.servicePath, server);
+        assert.strictEqual(pubsub.options.port, 443);
+        assert.strictEqual(pubsub.isEmulator, false);
+        assert.strictEqual(pubsub.options.sslCreds, undefined);
       });
     });
   });

@@ -214,7 +214,7 @@ export class PublisherClient {
     // requests; denote this.
 
     this.descriptors.batching = {
-      Publish: new this._gaxModule.BundleDescriptor(
+      publish: new this._gaxModule.BundleDescriptor(
         'messages',
         ['topic'],
         'message_ids',
@@ -295,12 +295,14 @@ export class PublisherClient {
         }
       );
 
+      const descriptor =
+        this.descriptors.page[methodName] ||
+        this.descriptors.batching?.[methodName] ||
+        undefined;
       const apiCall = this._gaxModule.createApiCall(
         callPromise,
         this._defaults[methodName],
-        this.descriptors.page[methodName] ||
-          this.descriptors.stream[methodName] ||
-          this.descriptors.longrunning[methodName]
+        descriptor
       );
 
       this.innerApiCalls[methodName] = apiCall;
@@ -390,9 +392,8 @@ export class PublisherClient {
     >
   ): void;
   /**
-   * Creates the given topic with the given name. See the
-   * <a href="https://cloud.google.com/pubsub/docs/admin#resource_names">
-   * resource name rules</a>.
+   * Creates the given topic with the given name. See the [resource name rules](
+   * https://cloud.google.com/pubsub/docs/admin#resource_names).
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -404,8 +405,8 @@ export class PublisherClient {
    *   signs (`%`). It must be between 3 and 255 characters in length, and it
    *   must not start with `"goog"`.
    * @param {number[]} request.labels
-   *   See <a href="https://cloud.google.com/pubsub/docs/labels"> Creating and
-   *   managing labels</a>.
+   *   See [Creating and managing labels]
+   *   (https://cloud.google.com/pubsub/docs/labels).
    * @param {google.pubsub.v1.MessageStoragePolicy} request.messageStoragePolicy
    *   Policy constraining the set of Google Cloud Platform regions where messages
    *   published to the topic may be stored. If not present, then no constraints
@@ -1312,11 +1313,10 @@ export class PublisherClient {
   ): void;
   /**
    * Lists the names of the snapshots on this topic. Snapshots are used in
-   * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
-   * operations, which allow
-   * you to manage message acknowledgments in bulk. That is, you can set the
-   * acknowledgment state of messages in an existing subscription to the state
-   * captured by a snapshot.
+   * [Seek](https://cloud.google.com/pubsub/docs/replay-overview) operations,
+   * which allow you to manage message acknowledgments in bulk. That is, you can
+   * set the acknowledgment state of messages in an existing subscription to the
+   * state captured by a snapshot.
    *
    * @param {Object} request
    *   The request object that will be sent.

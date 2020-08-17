@@ -1,7 +1,7 @@
 {
   "name": "@google-cloud/pubsub",
   "description": "Cloud Pub/Sub Client Library for Node.js",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "license": "Apache-2.0",
   "author": "Google Inc.",
   "engines": {
@@ -93,7 +93,7 @@
     "sinon": "^9.0.0",
     "tmp": "^0.2.0",
     "ts-loader": "^8.0.0",
-    "typescript": "3.6.4",
+    "typescript": "^3.8.3",
     "uuid": "^8.0.0",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
