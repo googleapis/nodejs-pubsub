@@ -30,7 +30,7 @@
     "presystem-test": "npm run compile",
     "system-test": "mocha build/system-test --timeout 600000",
     "samples-test": "cd samples/ && npm link ../ && npm install && npm test && cd ../",
-    "test": "c8 mocha build/test",
+    "test": "c8 mocha build/test --recursive",
     "lint": "gts check",
     "predocs": "npm run compile",
     "docs": "jsdoc -c .jsdoc.js",
@@ -44,15 +44,17 @@
     "predocs-test": "npm run docs",
     "benchwrapper": "node bin/benchwrapper.js",
     "prelint": "cd samples; npm link ../; npm install",
-    "precompile": "gts clean",
     "api-extractor": "api-extractor run --local",
-    "api-documenter": "api-documenter yaml --input-folder=temp"
+    "api-documenter": "api-documenter yaml --input-folder=temp",
+    "precompile": "gts clean"
   },
   "dependencies": {
     "@google-cloud/paginator": "^3.0.0",
     "@google-cloud/precise-date": "^2.0.0",
     "@google-cloud/projectify": "^2.0.0",
     "@google-cloud/promisify": "^2.0.0",
+    "@opentelemetry/api": "^0.10.0",
+    "@opentelemetry/tracing": "^0.10.0",
     "@types/duplexify": "^3.6.0",
     "@types/long": "^4.0.0",
     "arrify": "^2.0.0",
