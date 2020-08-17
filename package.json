@@ -60,11 +60,10 @@
     "arrify": "^2.0.0",
     "extend": "^3.0.2",
     "google-auth-library": "^6.0.0",
-    "google-gax": "^2.1.0",
+    "google-gax": "^2.7.0",
     "is-stream-ended": "^0.1.4",
     "lodash.snakecase": "^4.1.1",
-    "p-defer": "^3.0.0",
-    "protobufjs": "^6.8.1"
+    "p-defer": "^3.0.0"
   },
   "devDependencies": {
     "@grpc/proto-loader": "^0.5.4",
@@ -91,6 +90,7 @@
     "mv": "^2.1.1",
     "ncp": "^2.0.0",
     "null-loader": "^4.0.0",
+    "protobufjs": "^6.10.1",
     "proxyquire": "^2.0.0",
     "sinon": "^9.0.0",
     "tmp": "^0.2.0",
