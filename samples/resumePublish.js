@@ -23,10 +23,9 @@
 'use strict';
 
 // sample-metadata:
-//   title: Publish Ordered Message
-//   description: Demonstrates how to publish messages to a topic
-//     with ordering. Please see "Listen for Ordered Messages" for
-//     the other side of this.
+//   title: Resume Publish
+//   description: Demonstrates how to resume publishing on an ordering key if
+//     publishing fails for a message.
 //   usage: node resumePublish.js <topic-name> <data>
 
 async function main(

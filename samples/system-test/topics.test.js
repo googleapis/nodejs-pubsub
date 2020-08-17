@@ -136,31 +136,19 @@ describe('topics', () => {
   });
 
   it('should publish ordered messages', async () => {
-    const topics = require('../publishOrderedMessage');
-
     const [subscription] = await pubsub
       .topic(topicNameTwo)
       .subscription(subscriptionNameTwo)
       .get({autoCreate: true});
 
-    let messageId = await topics.publishOrderedMessage(
-      topicNameTwo,
-      expectedMessage.data
+    execSync(
+      `${commandFor('publishOrderedMessage')} ${topicNameTwo} "${
+        expectedMessage.data
+      }" my-key`
     );
     let message = await _pullOneMessage(subscription);
-    assert.strictEqual(message.id, messageId);
+    assert.strictEqual(message.orderingKey, 'my-key');
     assert.strictEqual(message.data.toString(), expectedMessage.data);
-    assert.strictEqual(message.attributes.counterId, '1');
-
-    messageId = await topics.publishOrderedMessage(
-      topicNameTwo,
-      expectedMessage.data
-    );
-    message = await _pullOneMessage(subscription);
-    assert.strictEqual(message.id, messageId);
-    assert.strictEqual(message.data.toString(), expectedMessage.data);
-    assert.strictEqual(message.attributes.counterId, '2');
-    await topics.publishOrderedMessage(topicNameTwo, expectedMessage.data);
   });
 
   it('should publish with specific batch settings', async () => {
@@ -190,19 +178,18 @@ describe('topics', () => {
   });
 
   it('should resume publish', async () => {
-    const topics = require('../resumePublish');
-
     const [subscription] = await pubsub
       .topic(topicNameTwo)
       .subscription(subscriptionNameFive)
       .get({autoCreate: true});
 
-    const messageId = await topics.resumePublish(
-      topicNameTwo,
-      expectedMessage.data
+    execSync(
+      `${commandFor('resumePublish')} ${topicNameTwo} "${
+        expectedMessage.data
+      }" my-key`
     );
-    const message = await _pullOneMessage(subscription);
-    assert.strictEqual(message.id, messageId);
+    let message = await _pullOneMessage(subscription);
+    assert.strictEqual(message.orderingKey, 'my-key');
     assert.strictEqual(message.data.toString(), expectedMessage.data);
   });
 
