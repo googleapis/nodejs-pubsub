@@ -146,7 +146,7 @@ describe('topics', () => {
         expectedMessage.data
       }" my-key`
     );
-    let message = await _pullOneMessage(subscription);
+    const message = await _pullOneMessage(subscription);
     assert.strictEqual(message.orderingKey, 'my-key');
     assert.strictEqual(message.data.toString(), expectedMessage.data);
   });
@@ -188,7 +188,7 @@ describe('topics', () => {
         expectedMessage.data
       }" my-key`
     );
-    let message = await _pullOneMessage(subscription);
+    const message = await _pullOneMessage(subscription);
     assert.strictEqual(message.orderingKey, 'my-key');
     assert.strictEqual(message.data.toString(), expectedMessage.data);
   });
