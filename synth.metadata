@@ -3,8 +3,8 @@
     {
       "git": {
         "name": ".",
-        "remote": "git@github.com:googleapis/nodejs-pubsub.git",
-        "sha": "869ecc992bbee934ee630e7f38d7e88234c9e80a"
+        "remote": "https://github.com/googleapis/nodejs-pubsub.git",
+        "sha": "2d33358c0329f84741aa3e787c164a7bdef54845"
       }
     },
     {
