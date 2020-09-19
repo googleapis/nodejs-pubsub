@@ -203,8 +203,6 @@ interface GetClientCallback {
  * @property {boolean} [autoRetry=true] Automatically retry requests if the
  *     response is related to rate limits or certain intermittent server errors.
  *     We will exponentially backoff subsequent requests by default.
- * @property {number} [maxRetries=3] Maximum number of automatic retries
- *     attempted before returning the error.
  * @property {Constructor} [promise] Custom promise module to use instead of
  *     native Promises.
  */
