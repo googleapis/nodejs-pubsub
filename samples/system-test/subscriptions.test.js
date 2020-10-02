@@ -182,67 +182,6 @@ describe('subscriptions', () => {
     );
   });
 
-  it('should listen for ordered messages', async () => {
-    const timeout = 5;
-    const subscriptions = require('../listenForOrderedMessages');
-    const spy = {calls: []};
-    const log = console.log;
-    console.log = (...args) => {
-      spy.calls.push(args);
-      log(...args);
-    };
-    const expected = 'Hello, world!';
-    const expectedBuffer = Buffer.from(expected);
-    const publishedMessageIds = [];
-    const topicTwo = pubsub.topic(topicNameTwo);
-
-    await topicTwo.subscription(subscriptionNameThree).get({autoCreate: true});
-
-    let result = await topicTwo.publish(expectedBuffer, {counterId: '3'});
-    publishedMessageIds.push(result);
-    await subscriptions.listenForOrderedMessages(
-      subscriptionNameThree,
-      timeout
-    );
-    assert.strictEqual(spy.calls.length, 0);
-
-    result = await topicTwo.publish(expectedBuffer, {counterId: '1'});
-    publishedMessageIds.push(result);
-    await subscriptions.listenForOrderedMessages(
-      subscriptionNameThree,
-      timeout
-    );
-    assert.strictEqual(spy.calls.length, 1);
-    assert.deepStrictEqual(spy.calls[0], [
-      '* %d %j %j',
-      publishedMessageIds[1],
-      expected,
-      {counterId: '1'},
-    ]);
-
-    result = await topicTwo.publish(expectedBuffer, {counterId: '1'});
-    result = await topicTwo.publish(expectedBuffer, {counterId: '2'});
-    publishedMessageIds.push(result);
-    await subscriptions.listenForOrderedMessages(
-      subscriptionNameThree,
-      timeout
-    );
-    assert.strictEqual(spy.calls.length, 3);
-    assert.deepStrictEqual(spy.calls[1], [
-      '* %d %j %j',
-      publishedMessageIds[2],
-      expected,
-      {counterId: '2'},
-    ]);
-    assert.deepStrictEqual(spy.calls[2], [
-      '* %d %j %j',
-      publishedMessageIds[0],
-      expected,
-      {counterId: '3'},
-    ]);
-    console.log = log; // eslint-disable-line require-atomic-updates
-  });
-
   it('should set the IAM policy for a subscription', async () => {
     execSync(`${commandFor('setSubscriptionPolicy')} ${subscriptionNameOne}`);
     const results = await pubsub
