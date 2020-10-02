@@ -310,7 +310,7 @@ describe('subscriptions', () => {
     );
   });
 
-  it('should remove dead lettter policy.', async () => {
+  it('should remove dead letter policy.', async () => {
     await pubsub
       .topic(topicNameOne)
       .subscription(subscriptionNameSeven, {
