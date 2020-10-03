@@ -31,7 +31,6 @@ describe('subscriptions', () => {
   const topicNameThree = `topic3-${runId}`;
   const subscriptionNameOne = `sub1-${runId}`;
   const subscriptionNameTwo = `sub2-${runId}`;
-  const subscriptionNameThree = `sub3-${runId}`;
   const subscriptionNameFour = `sub4-${runId}`;
   const subscriptionNameFive = `sub5-${runId}`;
   const subscriptionNameSix = `sub6-${runId}`;
