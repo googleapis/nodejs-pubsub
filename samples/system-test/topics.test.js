@@ -130,11 +130,11 @@ describe('topics', () => {
 
   it('should publish a message with custom attributes', async () => {
     const [subscription] = await pubsub
-      .topic(topicNameOne)
+      .topic(topicNameThree)
       .subscription(subscriptionNameOne)
       .get({autoCreate: true});
     execSync(
-      `${commandFor('publishMessageWithCustomAttributes')} ${topicNameOne} "${
+      `${commandFor('publishMessageWithCustomAttributes')} ${topicNameThree} "${
         expectedMessage.data
       }"`
     );

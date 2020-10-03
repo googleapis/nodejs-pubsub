@@ -137,6 +137,19 @@ describe('subscriptions', () => {
     assert.match(output, new RegExp(`Received message ${messageIds}:`));
   });
 
+  it('should listen for messages with custom attributes', async () => {
+    const messageIds = await pubsub
+      .topic(topicNameOne)
+      .publish(Buffer.from('Hello, world!'), {attr: 'value'});
+    const output = execSync(
+      `${commandFor('listenWithCustomAttributes')} ${subscriptionNameOne}`
+    );
+    assert.match(
+      output,
+      new RegExp(`Received message: id ${messageIds}.*attr.*value`)
+    );
+  });
+
   it('should listen for messages synchronously', async () => {
     await pubsub.topic(topicNameOne).publish(Buffer.from('Hello, world!'));
     const output = execSync(
