@@ -19,11 +19,6 @@
 //   description: A quick introduction to using the Pub/Sub client library.
 //   usage: node quickstart.js <project-id> <topic-name> <subscription-name>
 
-function exit(code) {
-  // eslint-disable-next-line no-process-exit
-  process.exit(code);
-}
-
 // [START pubsub_quickstart_create_topic]
 // Imports the Google Cloud client library
 const {PubSub} = require('@google-cloud/pubsub');
@@ -46,13 +41,13 @@ async function quickstart(
   // Receive callbacks for new messages on the subscription
   subscription.on('message', message => {
     console.log('Received message:', message.data.toString());
-    exit(0);
+    process.exit(0);
   });
 
   // Receive callbacks for errors on the subscription
   subscription.on('error', error => {
     console.error('Received error:', error);
-    exit(1);
+    process.exit(1);
   });
 
   // Send a message to the topic
