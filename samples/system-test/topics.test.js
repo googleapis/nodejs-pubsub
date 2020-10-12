@@ -93,8 +93,8 @@ describe('topics', () => {
 
   it('should list topics', async () => {
     const output = execSync(`${commandFor('listAllTopics')}`);
-    assert.match(output, /Topics:/);
-    assert.match(output, new RegExp(fullTopicNameThree));
+    assert.include(output, 'Topics:');
+    assert.include(output, fullTopicNameThree);
   });
 
   it('should publish a simple message', async () => {
