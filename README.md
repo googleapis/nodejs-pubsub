@@ -71,14 +71,33 @@ const {PubSub} = require('@google-cloud/pubsub');
 
 async function quickstart(
   projectId = 'your-project-id', // Your Google Cloud Platform project ID
-  topicName = 'my-topic' // Name for the new topic to create
+  topicName = 'my-topic', // Name for the new topic to create
+  subscriptionName = 'my-sub' // Name for the new subscription to create
 ) {
   // Instantiates a client
   const pubsub = new PubSub({projectId});
 
-  // Creates the new topic
+  // Creates a new topic
   const [topic] = await pubsub.createTopic(topicName);
   console.log(`Topic ${topic.name} created.`);
+
+  // Creates a subscription on that new topic
+  const [subscription] = await topic.createSubscription(subscriptionName);
+
+  // Receive callbacks for new messages on the subscription
+  subscription.on('message', message => {
+    console.log('Received message:', message.data.toString());
+    process.exit(0);
+  });
+
+  // Receive callbacks for errors on the subscription
+  subscription.on('error', error => {
+    console.error('Received error:', error);
+    process.exit(1);
+  });
+
+  // Send a message to the topic
+  topic.publish(Buffer.from('Test message!'));
 }
 
 ```
@@ -122,7 +141,7 @@ has instructions for running the samples.
 | List Subscriptions On a Topic | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listTopicSubscriptions.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listTopicSubscriptions.js,samples/README.md) |
 | Listen For Errors | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listenForErrors.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listenForErrors.js,samples/README.md) |
 | Listen For Messages | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listenForMessages.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listenForMessages.js,samples/README.md) |
-| Listen For Ordered Messages | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listenForOrderedMessages.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listenForOrderedMessages.js,samples/README.md) |
+| Listen For Messages With Custom Attributes | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listenWithCustomAttributes.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listenWithCustomAttributes.js,samples/README.md) |
 | Modify Push Configuration | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/modifyPushConfig.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/modifyPushConfig.js,samples/README.md) |
 | OpenTelemetry Tracing | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/opentelemetryTracing.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/opentelemetryTracing.js,samples/README.md) |
 | Publish Batched Messages | [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/publishBatchedMessages.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/publishBatchedMessages.js,samples/README.md) |
