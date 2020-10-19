@@ -16,7 +16,7 @@
 
 const {PubSub} = require('@google-cloud/pubsub');
 const {assert} = require('chai');
-const {describe, it, before, after, afterEach} = require('mocha');
+const {describe, it, before, after} = require('mocha');
 const cp = require('child_process');
 const uuid = require('uuid');
 
