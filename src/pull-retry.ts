@@ -24,6 +24,7 @@ export const RETRY_CODES: grpc.status[] = [
   grpc.status.ABORTED,
   grpc.status.INTERNAL,
   grpc.status.UNAVAILABLE,
+  grpc.status.CANCELLED,
 ];
 
 /**
