@@ -64,9 +64,6 @@ describe('topics', () => {
     );
   });
 
-  // Remove all subscriptions after each test to avoid weird test interdependencies.
-  afterEach(cleanSubs);
-
   // Helper function to pull one message.
   // Times out after 55 seconds.
   const _pullOneMessage = subscriptionObj => {
