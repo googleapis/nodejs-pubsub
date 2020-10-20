@@ -4,6 +4,21 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.6.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.5.0...v2.6.0) (2020-10-20)
+
+
+### Features
+
+* update synthtool generation for latest changes ([#1128](https://www.github.com/googleapis/nodejs-pubsub/issues/1128)) ([bdbe80f](https://www.github.com/googleapis/nodejs-pubsub/commit/bdbe80f9183fae77dd8ac3e7ffa4bbc5282b030c))
+
+
+### Bug Fixes
+
+* add CANCELLED back to the auto-retry codes for pull subscriptions, for now ([#1132](https://www.github.com/googleapis/nodejs-pubsub/issues/1132)) ([47cd89c](https://www.github.com/googleapis/nodejs-pubsub/commit/47cd89c99cad62e603f4c5345ce2857c6abf6f47))
+* **deps:** update opentelemetry monorepo to ^0.11.0 ([#1102](https://www.github.com/googleapis/nodejs-pubsub/issues/1102)) ([c9d5638](https://www.github.com/googleapis/nodejs-pubsub/commit/c9d5638031d047b80df82bc4afed1aecdd708406))
+* **deps:** upgrade google-auth-library ([#1122](https://www.github.com/googleapis/nodejs-pubsub/issues/1122)) ([54310a7](https://www.github.com/googleapis/nodejs-pubsub/commit/54310a771b4b39c896f62fc18aea040cc42bfcd7))
+* move system and samples test from Node 10 to Node 12 ([#1094](https://www.github.com/googleapis/nodejs-pubsub/issues/1094)) ([693116a](https://www.github.com/googleapis/nodejs-pubsub/commit/693116afb3776a8696c52d890edf9a57423896dc))
+
 ## [2.5.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.4.0...v2.5.0) (2020-08-17)
 
 
