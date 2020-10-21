@@ -14,6 +14,7 @@
 
 ### Bug Fixes
 
+* **deps:** update google-auth-library for security fix ([#1122](https://www.github.com/googleapis/nodejs-pubsub/issues/1122)) ([1eaf850](https://github.com/googleapis/nodejs-pubsub/commit/1eaf850bf4ea44ae3269d4f33d5aa6574af76705))
 * add CANCELLED back to the auto-retry codes for pull subscriptions, for now ([#1132](https://www.github.com/googleapis/nodejs-pubsub/issues/1132)) ([47cd89c](https://www.github.com/googleapis/nodejs-pubsub/commit/47cd89c99cad62e603f4c5345ce2857c6abf6f47))
 * **deps:** update opentelemetry monorepo to ^0.11.0 ([#1102](https://www.github.com/googleapis/nodejs-pubsub/issues/1102)) ([c9d5638](https://www.github.com/googleapis/nodejs-pubsub/commit/c9d5638031d047b80df82bc4afed1aecdd708406))
 * **deps:** upgrade google-auth-library ([#1122](https://www.github.com/googleapis/nodejs-pubsub/issues/1122)) ([54310a7](https://www.github.com/googleapis/nodejs-pubsub/commit/54310a771b4b39c896f62fc18aea040cc42bfcd7))
