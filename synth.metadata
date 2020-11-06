@@ -3,23 +3,15 @@
     {
       "git": {
         "name": ".",
-        "remote": "https://github.com/googleapis/nodejs-pubsub.git",
-        "sha": "1eaf850bf4ea44ae3269d4f33d5aa6574af76705"
-      }
-    },
-    {
-      "git": {
-        "name": "googleapis",
-        "remote": "https://github.com/googleapis/googleapis.git",
-        "sha": "4004f5e26358d3bcce180a2f9c15e890971fa2f3",
-        "internalRef": "337386065"
+        "remote": "git@github.com:googleapis/nodejs-pubsub.git",
+        "sha": "db1f69c4aac5b3abfea12f70d45ceb8b7c957388"
       }
     },
     {
       "git": {
         "name": "synthtool",
         "remote": "https://github.com/googleapis/synthtool.git",
-        "sha": "901ddd44e9ef7887ee681b9183bbdea99437fdcc"
+        "sha": "1f1148d3c7a7a52f0c98077f976bd9b3c948ee2b"
       }
     }
   ],
@@ -87,12 +79,14 @@
     "README.md",
     "api-extractor.json",
     "linkinator.config.json",
+    "package-lock.json.255908478",
     "protos/google/pubsub/v1/pubsub.proto",
     "protos/protos.d.ts",
     "protos/protos.js",
     "protos/protos.json",
     "renovate.json",
     "samples/README.md",
+    "samples/package-lock.json.4146806285",
     "src/v1/index.ts",
     "src/v1/publisher_client.ts",
     "src/v1/publisher_client_config.json",
