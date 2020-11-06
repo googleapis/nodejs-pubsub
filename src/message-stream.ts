@@ -226,8 +226,12 @@ export class MessageStream extends PassThrough {
     const request: StreamingPullRequest = {
       subscription: this._subscriber.name,
       streamAckDeadlineSeconds: this._subscriber.ackDeadline,
-      maxOutstandingMessages: this._subscriber.useLegacyFlowControl ? 0 : this._subscriber.maxMessages,
-      maxOutstandingBytes: this._subscriber.useLegacyFlowControl ? 0 : this._subscriber.maxBytes,
+      maxOutstandingMessages: this._subscriber.useLegacyFlowControl
+        ? 0
+        : this._subscriber.maxMessages,
+      maxOutstandingBytes: this._subscriber.useLegacyFlowControl
+        ? 0
+        : this._subscriber.maxBytes,
     };
 
     delete this._fillHandle;
