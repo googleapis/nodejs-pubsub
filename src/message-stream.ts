@@ -127,7 +127,6 @@ export interface MessageStreamOptions {
  * @param {MessageStreamOptions} [options] The message stream options.
  */
 export class MessageStream extends PassThrough {
-  destroyed: boolean;
   private _keepAliveHandle: NodeJS.Timer;
   private _fillHandle?: NodeJS.Timer;
   private _options: MessageStreamOptions;
@@ -139,7 +138,6 @@ export class MessageStream extends PassThrough {
 
     super({objectMode: true, highWaterMark: options.highWaterMark});
 
-    this.destroyed = false;
     this._options = options;
     this._retrier = new PullRetry();
     this._streams = new Map();
@@ -156,14 +154,27 @@ export class MessageStream extends PassThrough {
   /**
    * Destroys the stream and any underlying streams.
    *
-   * @param {error?} err An error to emit, if any.
+   * @param {error?} _error An error to emit, if any.
    * @private
    */
-  destroy(err?: Error): void {
+  destroy(_error?: Error | null): void {
+    // We can't assume Node has taken care of this in <14.
     if (this.destroyed) {
       return;
     }
-
+    super.destroy(_error ? _error : undefined);
+  }
+  /**
+   * Destroys the stream and any underlying streams.
+   *
+   * @param {error?} _error An error to emit, if any.
+   * @param {Function} _callback Callback for completion of any destruction.
+   * @private
+   */
+  _destroy(
+    _error: Error | null,
+    _callback: (error: Error | null) => void
+  ): void {
     this.destroyed = true;
     clearInterval(this._keepAliveHandle);
 
@@ -172,16 +183,7 @@ export class MessageStream extends PassThrough {
       stream.cancel();
     }
 
-    if (typeof super.destroy === 'function') {
-      return super.destroy(err);
-    }
-
-    process.nextTick(() => {
-      if (err) {
-        this.emit('error', err);
-      }
-      this.emit('close');
-    });
+    _callback(_error);
   }
   /**
    * Adds a StreamingPull stream to the combined stream.
