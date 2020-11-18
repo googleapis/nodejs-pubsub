@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.6.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.6.0...v2.6.1) (2020-11-18)
+
+
+### Bug Fixes
+
+* node 14+ changes how multiple destroy() calls work ([#1153](https://www.github.com/googleapis/nodejs-pubsub/issues/1153)) ([e421749](https://www.github.com/googleapis/nodejs-pubsub/commit/e42174987ec4669b31882943606c871c9b6c08d7))
+
 ## [2.6.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.5.0...v2.6.0) (2020-10-20)
 
 
