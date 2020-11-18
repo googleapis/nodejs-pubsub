@@ -203,6 +203,7 @@ export interface SubscriberOptions {
   ackDeadline?: number;
   batching?: BatchOptions;
   flowControl?: FlowControlOptions;
+  useLegacyFlowControl?: boolean;
   streamingOptions?: MessageStreamOptions;
   enableOpenTelemetryTracing?: boolean;
 }
@@ -214,6 +215,9 @@ export interface SubscriberOptions {
  *     99th percentile time it takes to acknowledge a message.
  * @property {BatchOptions} [batching] Request batching options.
  * @property {FlowControlOptions} [flowControl] Flow control options.
+ * @property {boolean} [useLegacyFlowControl] Disables enforcing flow control
+ *     settings at the Cloud PubSub server and uses the less accurate method
+ *     of only enforcing flow control at the client side.
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
  */
 /**
@@ -229,6 +233,7 @@ export class Subscriber extends EventEmitter {
   ackDeadline: number;
   maxMessages: number;
   maxBytes: number;
+  useLegacyFlowControl: boolean;
   isOpen: boolean;
   private _acks!: AckQueue;
   private _histogram: Histogram;
@@ -247,6 +252,7 @@ export class Subscriber extends EventEmitter {
     this.ackDeadline = 10;
     this.maxMessages = defaultOptions.subscription.maxOutstandingMessages;
     this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
+    this.useLegacyFlowControl = false;
     this.isOpen = false;
     this._isUserSetDeadline = false;
     this._histogram = new Histogram({min: 10, max: 600});
@@ -402,6 +408,7 @@ export class Subscriber extends EventEmitter {
       this._isUserSetDeadline = true;
     }
 
+    this.useLegacyFlowControl = options.useLegacyFlowControl || false;
     if (options.flowControl) {
       this.maxMessages =
         options.flowControl!.maxMessages ||
