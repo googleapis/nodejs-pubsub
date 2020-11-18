@@ -15,7 +15,7 @@
  */
 
 import * as assert from 'assert';
-import {describe, it, before, beforeEach, afterEach, after} from 'mocha';
+import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {grpc} from 'google-gax';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
