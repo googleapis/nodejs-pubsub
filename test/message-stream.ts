@@ -15,7 +15,7 @@
  */
 
 import * as assert from 'assert';
-import {describe, it, before, beforeEach, afterEach, after} from 'mocha';
+import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {grpc} from 'google-gax';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
@@ -302,13 +302,7 @@ describe('MessageStream', () => {
 
   describe('destroy', () => {
     it('should noop if already destroyed', done => {
-      sandbox
-        .stub(FakePassThrough.prototype, 'destroy')
-        .callsFake(function (this: Duplex) {
-          if (this === messageStream) {
-            done();
-          }
-        });
+      messageStream.on('close', done);
 
       messageStream.destroy();
       messageStream.destroy();
@@ -348,36 +342,6 @@ describe('MessageStream', () => {
 
       stubs.forEach(stub => {
         assert.strictEqual(stub.callCount, 1);
-      });
-    });
-
-    describe('without native destroy', () => {
-      let destroy: (err?: Error) => void;
-
-      before(() => {
-        destroy = FakePassThrough.prototype.destroy;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        FakePassThrough.prototype.destroy = false as any;
-      });
-
-      after(() => {
-        FakePassThrough.prototype.destroy = destroy;
-      });
-
-      it('should emit close', done => {
-        messageStream.on('close', done);
-        messageStream.destroy();
-      });
-
-      it('should emit an error if present', done => {
-        const fakeError = new Error('err');
-
-        messageStream.on('error', err => {
-          assert.strictEqual(err, fakeError);
-          done();
-        });
-
-        messageStream.destroy(fakeError);
       });
     });
   });

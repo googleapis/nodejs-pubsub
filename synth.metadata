@@ -3,8 +3,16 @@
     {
       "git": {
         "name": ".",
-        "remote": "git@github.com:googleapis/nodejs-pubsub.git",
+        "remote": "https://github.com/googleapis/nodejs-pubsub.git",
         "sha": "db1f69c4aac5b3abfea12f70d45ceb8b7c957388"
+      }
+    },
+    {
+      "git": {
+        "name": "googleapis",
+        "remote": "https://github.com/googleapis/googleapis.git",
+        "sha": "4004f5e26358d3bcce180a2f9c15e890971fa2f3",
+        "internalRef": "337386065"
       }
     },
     {
