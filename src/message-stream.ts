@@ -154,27 +154,24 @@ export class MessageStream extends PassThrough {
   /**
    * Destroys the stream and any underlying streams.
    *
-   * @param {error?} _error An error to emit, if any.
+   * @param {error?} error An error to emit, if any.
    * @private
    */
-  destroy(_error?: Error | null): void {
+  destroy(error?: Error | null): void {
     // We can't assume Node has taken care of this in <14.
     if (this.destroyed) {
       return;
     }
-    super.destroy(_error ? _error : undefined);
+    super.destroy(error ? error : undefined);
   }
   /**
    * Destroys the stream and any underlying streams.
    *
-   * @param {error?} _error An error to emit, if any.
-   * @param {Function} _callback Callback for completion of any destruction.
+   * @param {error?} error An error to emit, if any.
+   * @param {Function} callback Callback for completion of any destruction.
    * @private
    */
-  _destroy(
-    _error: Error | null,
-    _callback: (error: Error | null) => void
-  ): void {
+  _destroy(error: Error | null, callback: (error: Error | null) => void): void {
     this.destroyed = true;
     clearInterval(this._keepAliveHandle);
 
@@ -183,7 +180,7 @@ export class MessageStream extends PassThrough {
       stream.cancel();
     }
 
-    _callback(_error);
+    callback(error);
   }
   /**
    * Adds a StreamingPull stream to the combined stream.
