@@ -29,7 +29,18 @@
                         "(google.api.http).put": "/v1/{name=projects/*/topics/*}",
                         "(google.api.http).body": "*",
                         "(google.api.method_signature)": "name"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "put": "/v1/{name=projects/*/topics/*}",
+                            "body": "*"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "name"
+                        }
+                      ]
                     },
                     "UpdateTopic": {
                       "requestType": "UpdateTopicRequest",
@@ -37,7 +48,15 @@
                       "options": {
                         "(google.api.http).patch": "/v1/{topic.name=projects/*/topics/*}",
                         "(google.api.http).body": "*"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "patch": "/v1/{topic.name=projects/*/topics/*}",
+                            "body": "*"
+                          }
+                        }
+                      ]
                     },
                     "Publish": {
                       "requestType": "PublishRequest",
@@ -46,7 +65,18 @@
                         "(google.api.http).post": "/v1/{topic=projects/*/topics/*}:publish",
                         "(google.api.http).body": "*",
                         "(google.api.method_signature)": "topic,messages"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{topic=projects/*/topics/*}:publish",
+                            "body": "*"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "topic,messages"
+                        }
+                      ]
                     },
                     "GetTopic": {
                       "requestType": "GetTopicRequest",
@@ -54,7 +84,17 @@
                       "options": {
                         "(google.api.http).get": "/v1/{topic=projects/*/topics/*}",
                         "(google.api.method_signature)": "topic"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "get": "/v1/{topic=projects/*/topics/*}"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "topic"
+                        }
+                      ]
                     },
                     "ListTopics": {
                       "requestType": "ListTopicsRequest",
@@ -62,7 +102,17 @@
                       "options": {
                         "(google.api.http).get": "/v1/{project=projects/*}/topics",
                         "(google.api.method_signature)": "project"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "get": "/v1/{project=projects/*}/topics"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "project"
+                        }
+                      ]
                     },
                     "ListTopicSubscriptions": {
                       "requestType": "ListTopicSubscriptionsRequest",
@@ -70,7 +120,17 @@
                       "options": {
                         "(google.api.http).get": "/v1/{topic=projects/*/topics/*}/subscriptions",
                         "(google.api.method_signature)": "topic"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "get": "/v1/{topic=projects/*/topics/*}/subscriptions"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "topic"
+                        }
+                      ]
                     },
                     "ListTopicSnapshots": {
                       "requestType": "ListTopicSnapshotsRequest",
@@ -78,7 +138,17 @@
                       "options": {
                         "(google.api.http).get": "/v1/{topic=projects/*/topics/*}/snapshots",
                         "(google.api.method_signature)": "topic"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "get": "/v1/{topic=projects/*/topics/*}/snapshots"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "topic"
+                        }
+                      ]
                     },
                     "DeleteTopic": {
                       "requestType": "DeleteTopicRequest",
@@ -86,14 +156,31 @@
                       "options": {
                         "(google.api.http).delete": "/v1/{topic=projects/*/topics/*}",
                         "(google.api.method_signature)": "topic"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "delete": "/v1/{topic=projects/*/topics/*}"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "topic"
+                        }
+                      ]
                     },
                     "DetachSubscription": {
                       "requestType": "DetachSubscriptionRequest",
                       "responseType": "DetachSubscriptionResponse",
                       "options": {
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:detach"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{subscription=projects/*/subscriptions/*}:detach"
+                          }
+                        }
+                      ]
                     }
                   }
                 },
@@ -360,7 +447,18 @@
                         "(google.api.http).put": "/v1/{name=projects/*/subscriptions/*}",
                         "(google.api.http).body": "*",
                         "(google.api.method_signature)": "name,topic,push_config,ack_deadline_seconds"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "put": "/v1/{name=projects/*/subscriptions/*}",
+                            "body": "*"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "name,topic,push_config,ack_deadline_seconds"
+                        }
+                      ]
                     },
                     "GetSubscription": {
                       "requestType": "GetSubscriptionRequest",
@@ -368,7 +466,17 @@
                       "options": {
                         "(google.api.http).get": "/v1/{subscription=projects/*/subscriptions/*}",
                         "(google.api.method_signature)": "subscription"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "get": "/v1/{subscription=projects/*/subscriptions/*}"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "subscription"
+                        }
+                      ]
                     },
                     "UpdateSubscription": {
                       "requestType": "UpdateSubscriptionRequest",
@@ -376,7 +484,15 @@
                       "options": {
                         "(google.api.http).patch": "/v1/{subscription.name=projects/*/subscriptions/*}",
                         "(google.api.http).body": "*"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "patch": "/v1/{subscription.name=projects/*/subscriptions/*}",
+                            "body": "*"
+                          }
+                        }
+                      ]
                     },
                     "ListSubscriptions": {
                       "requestType": "ListSubscriptionsRequest",
@@ -384,7 +500,17 @@
                       "options": {
                         "(google.api.http).get": "/v1/{project=projects/*}/subscriptions",
                         "(google.api.method_signature)": "project"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "get": "/v1/{project=projects/*}/subscriptions"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "project"
+                        }
+                      ]
                     },
                     "DeleteSubscription": {
                       "requestType": "DeleteSubscriptionRequest",
@@ -392,7 +518,17 @@
                       "options": {
                         "(google.api.http).delete": "/v1/{subscription=projects/*/subscriptions/*}",
                         "(google.api.method_signature)": "subscription"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "delete": "/v1/{subscription=projects/*/subscriptions/*}"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "subscription"
+                        }
+                      ]
                     },
                     "ModifyAckDeadline": {
                       "requestType": "ModifyAckDeadlineRequest",
@@ -401,7 +537,18 @@
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:modifyAckDeadline",
                         "(google.api.http).body": "*",
                         "(google.api.method_signature)": "subscription,ack_ids,ack_deadline_seconds"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{subscription=projects/*/subscriptions/*}:modifyAckDeadline",
+                            "body": "*"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "subscription,ack_ids,ack_deadline_seconds"
+                        }
+                      ]
                     },
                     "Acknowledge": {
                       "requestType": "AcknowledgeRequest",
@@ -410,7 +557,18 @@
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:acknowledge",
                         "(google.api.http).body": "*",
                         "(google.api.method_signature)": "subscription,ack_ids"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{subscription=projects/*/subscriptions/*}:acknowledge",
+                            "body": "*"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "subscription,ack_ids"
+                        }
+                      ]
                     },
                     "Pull": {
                       "requestType": "PullRequest",
@@ -419,7 +577,18 @@
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:pull",
                         "(google.api.http).body": "*",
                         "(google.api.method_signature)": "subscription,return_immediately,max_messages"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{subscription=projects/*/subscriptions/*}:pull",
+                            "body": "*"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "subscription,return_immediately,max_messages"
+                        }
+                      ]
                     },
                     "StreamingPull": {
                       "requestType": "StreamingPullRequest",
@@ -434,7 +603,18 @@
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:modifyPushConfig",
                         "(google.api.http).body": "*",
                         "(google.api.method_signature)": "subscription,push_config"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{subscription=projects/*/subscriptions/*}:modifyPushConfig",
+                            "body": "*"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "subscription,push_config"
+                        }
+                      ]
                     },
                     "GetSnapshot": {
                       "requestType": "GetSnapshotRequest",
@@ -442,7 +622,17 @@
                       "options": {
                         "(google.api.http).get": "/v1/{snapshot=projects/*/snapshots/*}",
                         "(google.api.method_signature)": "snapshot"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "get": "/v1/{snapshot=projects/*/snapshots/*}"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "snapshot"
+                        }
+                      ]
                     },
                     "ListSnapshots": {
                       "requestType": "ListSnapshotsRequest",
@@ -450,7 +640,17 @@
                       "options": {
                         "(google.api.http).get": "/v1/{project=projects/*}/snapshots",
                         "(google.api.method_signature)": "project"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "get": "/v1/{project=projects/*}/snapshots"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "project"
+                        }
+                      ]
                     },
                     "CreateSnapshot": {
                       "requestType": "CreateSnapshotRequest",
@@ -459,7 +659,18 @@
                         "(google.api.http).put": "/v1/{name=projects/*/snapshots/*}",
                         "(google.api.http).body": "*",
                         "(google.api.method_signature)": "name,subscription"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "put": "/v1/{name=projects/*/snapshots/*}",
+                            "body": "*"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "name,subscription"
+                        }
+                      ]
                     },
                     "UpdateSnapshot": {
                       "requestType": "UpdateSnapshotRequest",
@@ -467,7 +678,15 @@
                       "options": {
                         "(google.api.http).patch": "/v1/{snapshot.name=projects/*/snapshots/*}",
                         "(google.api.http).body": "*"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "patch": "/v1/{snapshot.name=projects/*/snapshots/*}",
+                            "body": "*"
+                          }
+                        }
+                      ]
                     },
                     "DeleteSnapshot": {
                       "requestType": "DeleteSnapshotRequest",
@@ -475,7 +694,17 @@
                       "options": {
                         "(google.api.http).delete": "/v1/{snapshot=projects/*/snapshots/*}",
                         "(google.api.method_signature)": "snapshot"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "delete": "/v1/{snapshot=projects/*/snapshots/*}"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "snapshot"
+                        }
+                      ]
                     },
                     "Seek": {
                       "requestType": "SeekRequest",
@@ -483,7 +712,15 @@
                       "options": {
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:seek",
                         "(google.api.http).body": "*"
-                      }
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{subscription=projects/*/subscriptions/*}:seek",
+                            "body": "*"
+                          }
+                        }
+                      ]
                     }
                   }
                 },
