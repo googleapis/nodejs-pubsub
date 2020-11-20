@@ -4,7 +4,7 @@
       "git": {
         "name": ".",
         "remote": "https://github.com/googleapis/nodejs-pubsub.git",
-        "sha": "db1f69c4aac5b3abfea12f70d45ceb8b7c957388"
+        "sha": "4745c10eb062b1816516ce79cec496b388e48b2b"
       }
     },
     {
@@ -87,14 +87,12 @@
     "README.md",
     "api-extractor.json",
     "linkinator.config.json",
-    "package-lock.json.255908478",
     "protos/google/pubsub/v1/pubsub.proto",
     "protos/protos.d.ts",
     "protos/protos.js",
     "protos/protos.json",
     "renovate.json",
     "samples/README.md",
-    "samples/package-lock.json.4146806285",
     "src/v1/index.ts",
     "src/v1/publisher_client.ts",
     "src/v1/publisher_client_config.json",
