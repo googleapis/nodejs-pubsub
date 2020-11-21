@@ -87,7 +87,9 @@ describe('MessageQueues', () => {
     AckQueue = queues.AckQueue;
     ModAckQueue = queues.ModAckQueue;
 
-    MessageQueue = class MessageQueue extends queues.MessageQueue {
+    MessageQueue = class MessageQueue extends (
+      queues.MessageQueue
+    ) {
       batches = [] as QueuedMessages[];
       protected async _sendBatch(batch: QueuedMessages): Promise<void> {
         this.batches.push(batch);
