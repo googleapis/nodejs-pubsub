@@ -247,9 +247,9 @@ export class PubSub {
   getSnapshotsStream = paginator.streamify(
     'getSnapshots'
   ) as () => ObjectStream<Snapshot>;
-  getTopicsStream = paginator.streamify('getTopics') as () => ObjectStream<
-    Topic
-  >;
+  getTopicsStream = paginator.streamify(
+    'getTopics'
+  ) as () => ObjectStream<Topic>;
   isOpen = true;
 
   constructor(options?: ClientConfig) {
