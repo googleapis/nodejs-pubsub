@@ -4,6 +4,20 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.7.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.6.0...v2.7.0) (2020-11-30)
+
+
+### Features
+
+* Enable server side flow control by default with the option to turn it off ([#1147](https://www.github.com/googleapis/nodejs-pubsub/issues/1147)) ([a9c7e0b](https://www.github.com/googleapis/nodejs-pubsub/commit/a9c7e0b216a0c228793eeead150cc21b16bd2dcb))
+* update generator to a new version ([#1157](https://www.github.com/googleapis/nodejs-pubsub/issues/1157)) ([3b1e99e](https://www.github.com/googleapis/nodejs-pubsub/commit/3b1e99ebde72653a1fa0317820d1218e1c04eb8f))
+
+
+### Bug Fixes
+
+* do not modify options object, use defaultScopes ([#1148](https://www.github.com/googleapis/nodejs-pubsub/issues/1148)) ([4745c10](https://www.github.com/googleapis/nodejs-pubsub/commit/4745c10eb062b1816516ce79cec496b388e48b2b))
+* node 14+ changes how multiple destroy() calls work ([#1153](https://www.github.com/googleapis/nodejs-pubsub/issues/1153)) ([e421749](https://www.github.com/googleapis/nodejs-pubsub/commit/e42174987ec4669b31882943606c871c9b6c08d7))
+
 ## [2.6.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.5.0...v2.6.0) (2020-10-20)
 
 
