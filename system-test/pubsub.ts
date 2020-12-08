@@ -331,7 +331,11 @@ describe('pubsub', () => {
             if (!messages) {
               deferred.reject(
                 new Error(
-                  `Unknown key "${key}" for test data: ${JSON.stringify(pending, null, 4)}`
+                  `Unknown key "${key}" for test data: ${JSON.stringify(
+                    pending,
+                    null,
+                    4
+                  )}`
                 )
               );
               subscription.close();
