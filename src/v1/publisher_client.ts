@@ -157,7 +157,7 @@ export class PublisherClient {
     this._protos = this._gaxGrpc.loadProto(
       opts.fallback
         ? // eslint-disable-next-line @typescript-eslint/no-var-requires
-          require('../../protos/protos.json')
+          opts.protosJson || require('../../protos/protos.json')
         : nodejsProtoPath
     );
 
