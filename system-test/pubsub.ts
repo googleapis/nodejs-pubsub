@@ -327,6 +327,21 @@ describe('pubsub', () => {
             const key = message.orderingKey || '';
             const data = message.data.toString();
             const messages = pending[key];
+
+            if (!messages) {
+              deferred.reject(
+                new Error(
+                  `Unknown key "${key}" for test data: ${JSON.stringify(
+                    pending,
+                    null,
+                    4
+                  )}`
+                )
+              );
+              subscription.close();
+              return;
+            }
+
             const expected = messages[0];
 
             if (key && data !== expected) {
