@@ -35,20 +35,18 @@ import {RequestType} from 'google-gax/build/src/apitypes';
 import * as protos from '../../protos/protos';
 /**
  * Client JSON configuration object, loaded from
- * `src/v1/publisher_client_config.json`.
+ * `src/v1/schema_service_client_config.json`.
  * This file defines retry strategy and timeouts for all API methods in this library.
  */
-import * as gapicConfig from './publisher_client_config.json';
+import * as gapicConfig from './schema_service_client_config.json';
 
 const version = require('../../../package.json').version;
 
 /**
- *  The service that an application uses to manipulate topics, and to send
- *  messages to a topic.
  * @class
  * @memberof v1
  */
-export class PublisherClient {
+export class SchemaServiceClient {
   private _terminated = false;
   private _opts: ClientOptions;
   private _gaxModule: typeof gax | typeof gax.fallback;
@@ -65,10 +63,10 @@ export class PublisherClient {
   innerApiCalls: {[name: string]: Function};
   iamClient: IamClient;
   pathTemplates: {[name: string]: gax.PathTemplate};
-  publisherStub?: Promise<{[name: string]: Function}>;
+  schemaServiceStub?: Promise<{[name: string]: Function}>;
 
   /**
-   * Construct an instance of PublisherClient.
+   * Construct an instance of SchemaServiceClient.
    *
    * @param {object} [options] - The configuration object.
    * The options accepted by the constructor are described in detail
@@ -103,7 +101,7 @@ export class PublisherClient {
    */
   constructor(opts?: ClientOptions) {
     // Ensure that options include all the required fields.
-    const staticMembers = this.constructor as typeof PublisherClient;
+    const staticMembers = this.constructor as typeof SchemaServiceClient;
     const servicePath =
       opts?.servicePath || opts?.apiEndpoint || staticMembers.servicePath;
     const port = opts?.port || staticMembers.port;
@@ -192,51 +190,16 @@ export class PublisherClient {
     // (e.g. 50 results at a time, with tokens to get subsequent
     // pages). Denote the keys used for pagination and results.
     this.descriptors.page = {
-      listTopics: new this._gaxModule.PageDescriptor(
+      listSchemas: new this._gaxModule.PageDescriptor(
         'pageToken',
         'nextPageToken',
-        'topics'
-      ),
-      listTopicSubscriptions: new this._gaxModule.PageDescriptor(
-        'pageToken',
-        'nextPageToken',
-        'subscriptions'
-      ),
-      listTopicSnapshots: new this._gaxModule.PageDescriptor(
-        'pageToken',
-        'nextPageToken',
-        'snapshots'
-      ),
-    };
-
-    // This API contains "long-running operations", which return a
-    // an Operation object that allows for tracking of the operation,
-    // rather than holding a request open.
-    const protoFilesRoot = opts.fallback
-      ? this._gaxModule.protobuf.Root.fromJSON(
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          require('../../protos/protos.json')
-        )
-      : this._gaxModule.protobuf.loadSync(nodejsProtoPath);
-
-    // Some methods on this API support automatically batching
-    // requests; denote this.
-
-    this.descriptors.batching = {
-      publish: new this._gaxModule.BundleDescriptor(
-        'messages',
-        ['topic'],
-        'message_ids',
-        gax.createByteLengthFunction(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          protoFilesRoot.lookupType('google.pubsub.v1.PubsubMessage') as any
-        )
+        'schemas'
       ),
     };
 
     // Put together the default options sent with requests.
     this._defaults = this._gaxGrpc.constructSettings(
-      'google.pubsub.v1.Publisher',
+      'google.pubsub.v1.SchemaService',
       gapicConfig as gax.ClientConfig,
       opts.clientConfig || {},
       {'x-goog-api-client': clientHeader.join(' ')}
@@ -261,37 +224,34 @@ export class PublisherClient {
    */
   initialize() {
     // If the client stub promise is already initialized, return immediately.
-    if (this.publisherStub) {
-      return this.publisherStub;
+    if (this.schemaServiceStub) {
+      return this.schemaServiceStub;
     }
 
     // Put together the "service stub" for
-    // google.pubsub.v1.Publisher.
-    this.publisherStub = this._gaxGrpc.createStub(
+    // google.pubsub.v1.SchemaService.
+    this.schemaServiceStub = this._gaxGrpc.createStub(
       this._opts.fallback
         ? (this._protos as protobuf.Root).lookupService(
-            'google.pubsub.v1.Publisher'
+            'google.pubsub.v1.SchemaService'
           )
         : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this._protos as any).google.pubsub.v1.Publisher,
+          (this._protos as any).google.pubsub.v1.SchemaService,
       this._opts
     ) as Promise<{[method: string]: Function}>;
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
-    const publisherStubMethods = [
-      'createTopic',
-      'updateTopic',
-      'publish',
-      'getTopic',
-      'listTopics',
-      'listTopicSubscriptions',
-      'listTopicSnapshots',
-      'deleteTopic',
-      'detachSubscription',
+    const schemaServiceStubMethods = [
+      'createSchema',
+      'getSchema',
+      'listSchemas',
+      'deleteSchema',
+      'validateSchema',
+      'validateMessage',
     ];
-    for (const methodName of publisherStubMethods) {
-      const callPromise = this.publisherStub.then(
+    for (const methodName of schemaServiceStubMethods) {
+      const callPromise = this.schemaServiceStub.then(
         stub => (...args: Array<{}>) => {
           if (this._terminated) {
             return Promise.reject('The client has already been closed.');
@@ -304,10 +264,7 @@ export class PublisherClient {
         }
       );
 
-      const descriptor =
-        this.descriptors.page[methodName] ||
-        this.descriptors.batching?.[methodName] ||
-        undefined;
+      const descriptor = this.descriptors.page[methodName] || undefined;
       const apiCall = this._gaxModule.createApiCall(
         callPromise,
         this._defaults[methodName],
@@ -317,7 +274,7 @@ export class PublisherClient {
       this.innerApiCalls[methodName] = apiCall;
     }
 
-    return this.publisherStub;
+    return this.schemaServiceStub;
   }
 
   /**
@@ -376,93 +333,170 @@ export class PublisherClient {
   // -------------------
   // -- Service calls --
   // -------------------
-  createTopic(
-    request: protos.google.pubsub.v1.ITopic,
+  createSchema(
+    request: protos.google.pubsub.v1.ICreateSchemaRequest,
     options?: CallOptions
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.ITopic | undefined,
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICreateSchemaRequest | undefined,
       {} | undefined
     ]
   >;
-  createTopic(
-    request: protos.google.pubsub.v1.ITopic,
+  createSchema(
+    request: protos.google.pubsub.v1.ICreateSchemaRequest,
     options: CallOptions,
     callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.ITopic | null | undefined,
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICreateSchemaRequest | null | undefined,
       {} | null | undefined
     >
   ): void;
-  createTopic(
-    request: protos.google.pubsub.v1.ITopic,
+  createSchema(
+    request: protos.google.pubsub.v1.ICreateSchemaRequest,
     callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.ITopic | null | undefined,
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICreateSchemaRequest | null | undefined,
       {} | null | undefined
     >
   ): void;
   /**
-   * Creates the given topic with the given name. See the [resource name rules]
-   * (https://cloud.google.com/pubsub/docs/admin#resource_names).
+   * Creates a schema.
    *
    * @param {Object} request
    *   The request object that will be sent.
-   * @param {string} request.name
-   *   Required. The name of the topic. It must have the format
-   *   `"projects/{project}/topics/{topic}"`. `{topic}` must start with a letter,
-   *   and contain only letters (`[A-Za-z]`), numbers (`[0-9]`), dashes (`-`),
-   *   underscores (`_`), periods (`.`), tildes (`~`), plus (`+`) or percent
-   *   signs (`%`). It must be between 3 and 255 characters in length, and it
-   *   must not start with `"goog"`.
-   * @param {number[]} request.labels
-   *   See [Creating and managing labels]
-   *   (https://cloud.google.com/pubsub/docs/labels).
-   * @param {google.pubsub.v1.MessageStoragePolicy} request.messageStoragePolicy
-   *   Policy constraining the set of Google Cloud Platform regions where messages
-   *   published to the topic may be stored. If not present, then no constraints
-   *   are in effect.
-   * @param {string} request.kmsKeyName
-   *   The resource name of the Cloud KMS CryptoKey to be used to protect access
-   *   to messages published on this topic.
+   * @param {string} request.parent
+   *   Required. The name of the project in which to create the schema.
+   *   Format is `projects/{project-id}`.
+   * @param {google.pubsub.v1.Schema} request.schema
+   *   Required. The schema object to create.
    *
-   *   The expected format is `projects/* /locations/* /keyRings/* /cryptoKeys/*`.
-   * @param {google.pubsub.v1.SchemaSettings} request.schemaSettings
-   *   Settings for validating messages published against a schema.
+   *   This schema's `name` parameter is ignored. The schema object returned
+   *   by CreateSchema will have a `name` made using the given `parent` and
+   *   `schema_id`.
+   * @param {string} request.schemaId
+   *   The ID to use for the schema, which will become the final component of
+   *   the schema's resource name.
    *
-   *   EXPERIMENTAL: Schema support is in development and may not work yet.
-   * @param {boolean} request.satisfiesPzs
-   *   Reserved for future use. This field is set only in responses from the
-   *   server; it is ignored if it is set in any requests.
+   *   See https://cloud.google.com/pubsub/docs/admin#resource_names for resource
+   *   name constraints.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Topic]{@link google.pubsub.v1.Topic}.
+   *   The first element of the array is an object representing [Schema]{@link google.pubsub.v1.Schema}.
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
-   * const [response] = await client.createTopic(request);
+   * const [response] = await client.createSchema(request);
    */
-  createTopic(
-    request: protos.google.pubsub.v1.ITopic,
+  createSchema(
+    request: protos.google.pubsub.v1.ICreateSchemaRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
-          protos.google.pubsub.v1.ITopic,
-          protos.google.pubsub.v1.ITopic | null | undefined,
+          protos.google.pubsub.v1.ISchema,
+          protos.google.pubsub.v1.ICreateSchemaRequest | null | undefined,
           {} | null | undefined
         >,
     callback?: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.ITopic | null | undefined,
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICreateSchemaRequest | null | undefined,
       {} | null | undefined
     >
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.ITopic | undefined,
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICreateSchemaRequest | undefined,
+      {} | undefined
+    ]
+  > | void {
+    request = request || {};
+    let options: CallOptions;
+    if (typeof optionsOrCallback === 'function' && callback === undefined) {
+      callback = optionsOrCallback;
+      options = {};
+    } else {
+      options = optionsOrCallback as CallOptions;
+    }
+    options = options || {};
+    options.otherArgs = options.otherArgs || {};
+    options.otherArgs.headers = options.otherArgs.headers || {};
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      parent: request.parent || '',
+    });
+    this.initialize();
+    return this.innerApiCalls.createSchema(request, options, callback);
+  }
+  getSchema(
+    request: protos.google.pubsub.v1.IGetSchemaRequest,
+    options?: CallOptions
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IGetSchemaRequest | undefined,
+      {} | undefined
+    ]
+  >;
+  getSchema(
+    request: protos.google.pubsub.v1.IGetSchemaRequest,
+    options: CallOptions,
+    callback: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IGetSchemaRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
+  getSchema(
+    request: protos.google.pubsub.v1.IGetSchemaRequest,
+    callback: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IGetSchemaRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
+  /**
+   * Gets a schema.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.name
+   *   Required. The name of the schema to get.
+   *   Format is `projects/{project}/schemas/{schema}`.
+   * @param {google.pubsub.v1.SchemaView} request.view
+   *   The set of fields to return in the response. If not set, returns a Schema
+   *   with `name` and `type`, but not `definition`. Set to `FULL` to retrieve all
+   *   fields.
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is an object representing [Schema]{@link google.pubsub.v1.Schema}.
+   *   Please see the
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   for more details and examples.
+   * @example
+   * const [response] = await client.getSchema(request);
+   */
+  getSchema(
+    request: protos.google.pubsub.v1.IGetSchemaRequest,
+    optionsOrCallback?:
+      | CallOptions
+      | Callback<
+          protos.google.pubsub.v1.ISchema,
+          protos.google.pubsub.v1.IGetSchemaRequest | null | undefined,
+          {} | null | undefined
+        >,
+    callback?: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IGetSchemaRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IGetSchemaRequest | undefined,
       {} | undefined
     ]
   > | void {
@@ -483,311 +517,43 @@ export class PublisherClient {
       name: request.name || '',
     });
     this.initialize();
-    return this.innerApiCalls.createTopic(request, options, callback);
+    return this.innerApiCalls.getSchema(request, options, callback);
   }
-  updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
-    options?: CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IUpdateTopicRequest | undefined,
-      {} | undefined
-    ]
-  >;
-  updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
-    options: CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Updates an existing topic. Note that certain properties of a
-   * topic are not modifiable.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {google.pubsub.v1.Topic} request.topic
-   *   Required. The updated topic object.
-   * @param {google.protobuf.FieldMask} request.updateMask
-   *   Required. Indicates which fields in the provided topic to update. Must be
-   *   specified and non-empty. Note that if `update_mask` contains
-   *   "message_storage_policy" but the `message_storage_policy` is not set in
-   *   the `topic` provided above, then the updated value is determined by the
-   *   policy configured at the project or organization level.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Topic]{@link google.pubsub.v1.Topic}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
-   *   for more details and examples.
-   * @example
-   * const [response] = await client.updateTopic(request);
-   */
-  updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
-    optionsOrCallback?:
-      | CallOptions
-      | Callback<
-          protos.google.pubsub.v1.ITopic,
-          protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IUpdateTopicRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
-    request = request || {};
-    let options: CallOptions;
-    if (typeof optionsOrCallback === 'function' && callback === undefined) {
-      callback = optionsOrCallback;
-      options = {};
-    } else {
-      options = optionsOrCallback as CallOptions;
-    }
-    options = options || {};
-    options.otherArgs = options.otherArgs || {};
-    options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      'topic.name': request.topic!.name || '',
-    });
-    this.initialize();
-    return this.innerApiCalls.updateTopic(request, options, callback);
-  }
-  publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
-    options?: CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.IPublishResponse,
-      protos.google.pubsub.v1.IPublishRequest | undefined,
-      {} | undefined
-    ]
-  >;
-  publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
-    options: CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.IPublishResponse,
-      protos.google.pubsub.v1.IPublishRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.IPublishResponse,
-      protos.google.pubsub.v1.IPublishRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Adds one or more messages to the topic. Returns `NOT_FOUND` if the topic
-   * does not exist.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.topic
-   *   Required. The messages in the request will be published on this topic.
-   *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number[]} request.messages
-   *   Required. The messages to publish.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [PublishResponse]{@link google.pubsub.v1.PublishResponse}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
-   *   for more details and examples.
-   * @example
-   * const [response] = await client.publish(request);
-   */
-  publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
-    optionsOrCallback?:
-      | CallOptions
-      | Callback<
-          protos.google.pubsub.v1.IPublishResponse,
-          protos.google.pubsub.v1.IPublishRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.pubsub.v1.IPublishResponse,
-      protos.google.pubsub.v1.IPublishRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.IPublishResponse,
-      protos.google.pubsub.v1.IPublishRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
-    request = request || {};
-    let options: CallOptions;
-    if (typeof optionsOrCallback === 'function' && callback === undefined) {
-      callback = optionsOrCallback;
-      options = {};
-    } else {
-      options = optionsOrCallback as CallOptions;
-    }
-    options = options || {};
-    options.otherArgs = options.otherArgs || {};
-    options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      topic: request.topic || '',
-    });
-    this.initialize();
-    return this.innerApiCalls.publish(request, options, callback);
-  }
-  getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
-    options?: CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IGetTopicRequest | undefined,
-      {} | undefined
-    ]
-  >;
-  getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
-    options: CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  /**
-   * Gets the configuration of a topic.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.topic
-   *   Required. The name of the topic to get.
-   *   Format is `projects/{project}/topics/{topic}`.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Topic]{@link google.pubsub.v1.Topic}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
-   *   for more details and examples.
-   * @example
-   * const [response] = await client.getTopic(request);
-   */
-  getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
-    optionsOrCallback?:
-      | CallOptions
-      | Callback<
-          protos.google.pubsub.v1.ITopic,
-          protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
-          {} | null | undefined
-        >,
-    callback?: Callback<
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ITopic,
-      protos.google.pubsub.v1.IGetTopicRequest | undefined,
-      {} | undefined
-    ]
-  > | void {
-    request = request || {};
-    let options: CallOptions;
-    if (typeof optionsOrCallback === 'function' && callback === undefined) {
-      callback = optionsOrCallback;
-      options = {};
-    } else {
-      options = optionsOrCallback as CallOptions;
-    }
-    options = options || {};
-    options.otherArgs = options.otherArgs || {};
-    options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      topic: request.topic || '',
-    });
-    this.initialize();
-    return this.innerApiCalls.getTopic(request, options, callback);
-  }
-  deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
+  deleteSchema(
+    request: protos.google.pubsub.v1.IDeleteSchemaRequest,
     options?: CallOptions
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteTopicRequest | undefined,
+      protos.google.pubsub.v1.IDeleteSchemaRequest | undefined,
       {} | undefined
     ]
   >;
-  deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
+  deleteSchema(
+    request: protos.google.pubsub.v1.IDeleteSchemaRequest,
     options: CallOptions,
     callback: Callback<
       protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
+      protos.google.pubsub.v1.IDeleteSchemaRequest | null | undefined,
       {} | null | undefined
     >
   ): void;
-  deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
+  deleteSchema(
+    request: protos.google.pubsub.v1.IDeleteSchemaRequest,
     callback: Callback<
       protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
+      protos.google.pubsub.v1.IDeleteSchemaRequest | null | undefined,
       {} | null | undefined
     >
   ): void;
   /**
-   * Deletes the topic with the given name. Returns `NOT_FOUND` if the topic
-   * does not exist. After a topic is deleted, a new topic may be created with
-   * the same name; this is an entirely new topic with none of the old
-   * configuration or subscriptions. Existing subscriptions to this topic are
-   * not deleted, but their `topic` field is set to `_deleted-topic_`.
+   * Deletes a schema.
    *
    * @param {Object} request
    *   The request object that will be sent.
-   * @param {string} request.topic
-   *   Required. Name of the topic to delete.
-   *   Format is `projects/{project}/topics/{topic}`.
+   * @param {string} request.name
+   *   Required. Name of the schema to delete.
+   *   Format is `projects/{project}/schemas/{schema}`.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -796,26 +562,26 @@ export class PublisherClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
-   * const [response] = await client.deleteTopic(request);
+   * const [response] = await client.deleteSchema(request);
    */
-  deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
+  deleteSchema(
+    request: protos.google.pubsub.v1.IDeleteSchemaRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
           protos.google.protobuf.IEmpty,
-          protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
+          protos.google.pubsub.v1.IDeleteSchemaRequest | null | undefined,
           {} | null | undefined
         >,
     callback?: Callback<
       protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
+      protos.google.pubsub.v1.IDeleteSchemaRequest | null | undefined,
       {} | null | undefined
     >
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
-      protos.google.pubsub.v1.IDeleteTopicRequest | undefined,
+      protos.google.pubsub.v1.IDeleteSchemaRequest | undefined,
       {} | undefined
     ]
   > | void {
@@ -833,77 +599,76 @@ export class PublisherClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      topic: request.topic || '',
+      name: request.name || '',
     });
     this.initialize();
-    return this.innerApiCalls.deleteTopic(request, options, callback);
+    return this.innerApiCalls.deleteSchema(request, options, callback);
   }
-  detachSubscription(
-    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+  validateSchema(
+    request: protos.google.pubsub.v1.IValidateSchemaRequest,
     options?: CallOptions
   ): Promise<
     [
-      protos.google.pubsub.v1.IDetachSubscriptionResponse,
-      protos.google.pubsub.v1.IDetachSubscriptionRequest | undefined,
+      protos.google.pubsub.v1.IValidateSchemaResponse,
+      protos.google.pubsub.v1.IValidateSchemaRequest | undefined,
       {} | undefined
     ]
   >;
-  detachSubscription(
-    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+  validateSchema(
+    request: protos.google.pubsub.v1.IValidateSchemaRequest,
     options: CallOptions,
     callback: Callback<
-      protos.google.pubsub.v1.IDetachSubscriptionResponse,
-      protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
+      protos.google.pubsub.v1.IValidateSchemaResponse,
+      protos.google.pubsub.v1.IValidateSchemaRequest | null | undefined,
       {} | null | undefined
     >
   ): void;
-  detachSubscription(
-    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+  validateSchema(
+    request: protos.google.pubsub.v1.IValidateSchemaRequest,
     callback: Callback<
-      protos.google.pubsub.v1.IDetachSubscriptionResponse,
-      protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
+      protos.google.pubsub.v1.IValidateSchemaResponse,
+      protos.google.pubsub.v1.IValidateSchemaRequest | null | undefined,
       {} | null | undefined
     >
   ): void;
   /**
-   * Detaches a subscription from this topic. All messages retained in the
-   * subscription are dropped. Subsequent `Pull` and `StreamingPull` requests
-   * will return FAILED_PRECONDITION. If the subscription is a push
-   * subscription, pushes to the endpoint will stop.
+   * Validates a schema.
    *
    * @param {Object} request
    *   The request object that will be sent.
-   * @param {string} request.subscription
-   *   Required. The subscription to detach.
-   *   Format is `projects/{project}/subscriptions/{subscription}`.
+   * @param {string} request.parent
+   *   Required. The name of the project in which to validate schemas.
+   *   Format is `projects/{project-id}`.
+   * @param {google.pubsub.v1.Schema} request.schema
+   *   Required. The schema object to validate.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [DetachSubscriptionResponse]{@link google.pubsub.v1.DetachSubscriptionResponse}.
+   *   The first element of the array is an object representing [ValidateSchemaResponse]{@link google.pubsub.v1.ValidateSchemaResponse}.
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
-   * const [response] = await client.detachSubscription(request);
+   * const [response] = await client.validateSchema(request);
    */
-  detachSubscription(
-    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+  validateSchema(
+    request: protos.google.pubsub.v1.IValidateSchemaRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
-          protos.google.pubsub.v1.IDetachSubscriptionResponse,
-          protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
+          protos.google.pubsub.v1.IValidateSchemaResponse,
+          protos.google.pubsub.v1.IValidateSchemaRequest | null | undefined,
           {} | null | undefined
         >,
     callback?: Callback<
-      protos.google.pubsub.v1.IDetachSubscriptionResponse,
-      protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
+      protos.google.pubsub.v1.IValidateSchemaResponse,
+      protos.google.pubsub.v1.IValidateSchemaRequest | null | undefined,
       {} | null | undefined
     >
   ): Promise<
     [
-      protos.google.pubsub.v1.IDetachSubscriptionResponse,
-      protos.google.pubsub.v1.IDetachSubscriptionRequest | undefined,
+      protos.google.pubsub.v1.IValidateSchemaResponse,
+      protos.google.pubsub.v1.IValidateSchemaRequest | undefined,
       {} | undefined
     ]
   > | void {
@@ -921,85 +686,85 @@ export class PublisherClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      subscription: request.subscription || '',
+      parent: request.parent || '',
     });
     this.initialize();
-    return this.innerApiCalls.detachSubscription(request, options, callback);
+    return this.innerApiCalls.validateSchema(request, options, callback);
   }
-
-  listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
+  validateMessage(
+    request: protos.google.pubsub.v1.IValidateMessageRequest,
     options?: CallOptions
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic[],
-      protos.google.pubsub.v1.IListTopicsRequest | null,
-      protos.google.pubsub.v1.IListTopicsResponse
+      protos.google.pubsub.v1.IValidateMessageResponse,
+      protos.google.pubsub.v1.IValidateMessageRequest | undefined,
+      {} | undefined
     ]
   >;
-  listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
+  validateMessage(
+    request: protos.google.pubsub.v1.IValidateMessageRequest,
     options: CallOptions,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicsRequest,
-      protos.google.pubsub.v1.IListTopicsResponse | null | undefined,
-      protos.google.pubsub.v1.ITopic
+    callback: Callback<
+      protos.google.pubsub.v1.IValidateMessageResponse,
+      protos.google.pubsub.v1.IValidateMessageRequest | null | undefined,
+      {} | null | undefined
     >
   ): void;
-  listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicsRequest,
-      protos.google.pubsub.v1.IListTopicsResponse | null | undefined,
-      protos.google.pubsub.v1.ITopic
+  validateMessage(
+    request: protos.google.pubsub.v1.IValidateMessageRequest,
+    callback: Callback<
+      protos.google.pubsub.v1.IValidateMessageResponse,
+      protos.google.pubsub.v1.IValidateMessageRequest | null | undefined,
+      {} | null | undefined
     >
   ): void;
   /**
-   * Lists matching topics.
+   * Validates a message against a schema.
    *
    * @param {Object} request
    *   The request object that will be sent.
-   * @param {string} request.project
-   *   Required. The name of the project in which to list topics.
+   * @param {string} request.parent
+   *   Required. The name of the project in which to validate schemas.
    *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of topics to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicsResponse`; indicates that this is
-   *   a continuation of a prior `ListTopics` call, and that the system should
-   *   return the next page of data.
+   * @param {string} request.name
+   *   Name of the schema against which to validate.
+   *
+   *   Format is `projects/{project}/schemas/{schema}`.
+   * @param {google.pubsub.v1.Schema} request.schema
+   *   Ad-hoc schema against which to validate
+   * @param {Buffer} request.message
+   *   Message to validate against the provided `schema_spec`.
+   * @param {google.pubsub.v1.Encoding} request.encoding
+   *   The encoding expected for messages
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is Array of [Topic]{@link google.pubsub.v1.Topic}.
-   *   The client library will perform auto-pagination by default: it will call the API as many
-   *   times as needed and will merge results from all the pages into this array.
-   *   Note that it can affect your quota.
-   *   We recommend using `listTopicsAsync()`
-   *   method described below for async iteration which you can stop as needed.
+   *   The first element of the array is an object representing [ValidateMessageResponse]{@link google.pubsub.v1.ValidateMessageResponse}.
    *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
+   * @example
+   * const [response] = await client.validateMessage(request);
    */
-  listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
+  validateMessage(
+    request: protos.google.pubsub.v1.IValidateMessageRequest,
     optionsOrCallback?:
       | CallOptions
-      | PaginationCallback<
-          protos.google.pubsub.v1.IListTopicsRequest,
-          protos.google.pubsub.v1.IListTopicsResponse | null | undefined,
-          protos.google.pubsub.v1.ITopic
+      | Callback<
+          protos.google.pubsub.v1.IValidateMessageResponse,
+          protos.google.pubsub.v1.IValidateMessageRequest | null | undefined,
+          {} | null | undefined
         >,
-    callback?: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicsRequest,
-      protos.google.pubsub.v1.IListTopicsResponse | null | undefined,
-      protos.google.pubsub.v1.ITopic
+    callback?: Callback<
+      protos.google.pubsub.v1.IValidateMessageResponse,
+      protos.google.pubsub.v1.IValidateMessageRequest | null | undefined,
+      {} | null | undefined
     >
   ): Promise<
     [
-      protos.google.pubsub.v1.ITopic[],
-      protos.google.pubsub.v1.IListTopicsRequest | null,
-      protos.google.pubsub.v1.IListTopicsResponse
+      protos.google.pubsub.v1.IValidateMessageResponse,
+      protos.google.pubsub.v1.IValidateMessageRequest | undefined,
+      {} | undefined
     ]
   > | void {
     request = request || {};
@@ -1016,193 +781,89 @@ export class PublisherClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      project: request.project || '',
+      parent: request.parent || '',
     });
     this.initialize();
-    return this.innerApiCalls.listTopics(request, options, callback);
+    return this.innerApiCalls.validateMessage(request, options, callback);
   }
 
-  /**
-   * Equivalent to `method.name.toCamelCase()`, but returns a NodeJS Stream object.
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.project
-   *   Required. The name of the project in which to list topics.
-   *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of topics to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicsResponse`; indicates that this is
-   *   a continuation of a prior `ListTopics` call, and that the system should
-   *   return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Stream}
-   *   An object stream which emits an object representing [Topic]{@link google.pubsub.v1.Topic} on 'data' event.
-   *   The client library will perform auto-pagination by default: it will call the API as many
-   *   times as needed. Note that it can affect your quota.
-   *   We recommend using `listTopicsAsync()`
-   *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
-   *   for more details and examples.
-   */
-  listTopicsStream(
-    request?: protos.google.pubsub.v1.IListTopicsRequest,
-    options?: CallOptions
-  ): Transform {
-    request = request || {};
-    options = options || {};
-    options.otherArgs = options.otherArgs || {};
-    options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      project: request.project || '',
-    });
-    const callSettings = new gax.CallSettings(options);
-    this.initialize();
-    return this.descriptors.page.listTopics.createStream(
-      this.innerApiCalls.listTopics as gax.GaxCall,
-      request,
-      callSettings
-    );
-  }
-
-  /**
-   * Equivalent to `listTopics`, but returns an iterable object.
-   *
-   * `for`-`await`-`of` syntax is used with the iterable to get response elements on-demand.
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.project
-   *   Required. The name of the project in which to list topics.
-   *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of topics to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicsResponse`; indicates that this is
-   *   a continuation of a prior `ListTopics` call, and that the system should
-   *   return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Object}
-   *   An iterable Object that allows [async iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols).
-   *   When you iterate the returned iterable, each element will be an object representing
-   *   [Topic]{@link google.pubsub.v1.Topic}. The API will be called under the hood as needed, once per the page,
-   *   so you can stop the iteration when you don't need more results.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
-   *   for more details and examples.
-   * @example
-   * const iterable = client.listTopicsAsync(request);
-   * for await (const response of iterable) {
-   *   // process response
-   * }
-   */
-  listTopicsAsync(
-    request?: protos.google.pubsub.v1.IListTopicsRequest,
-    options?: CallOptions
-  ): AsyncIterable<protos.google.pubsub.v1.ITopic> {
-    request = request || {};
-    options = options || {};
-    options.otherArgs = options.otherArgs || {};
-    options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      project: request.project || '',
-    });
-    options = options || {};
-    const callSettings = new gax.CallSettings(options);
-    this.initialize();
-    return this.descriptors.page.listTopics.asyncIterate(
-      this.innerApiCalls['listTopics'] as GaxCall,
-      (request as unknown) as RequestType,
-      callSettings
-    ) as AsyncIterable<protos.google.pubsub.v1.ITopic>;
-  }
-  listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+  listSchemas(
+    request: protos.google.pubsub.v1.IListSchemasRequest,
     options?: CallOptions
   ): Promise<
     [
-      string[],
-      protos.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListTopicSubscriptionsResponse
+      protos.google.pubsub.v1.ISchema[],
+      protos.google.pubsub.v1.IListSchemasRequest | null,
+      protos.google.pubsub.v1.IListSchemasResponse
     ]
   >;
-  listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+  listSchemas(
+    request: protos.google.pubsub.v1.IListSchemasRequest,
     options: CallOptions,
     callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-      | protos.google.pubsub.v1.IListTopicSubscriptionsResponse
-      | null
-      | undefined,
-      string
+      protos.google.pubsub.v1.IListSchemasRequest,
+      protos.google.pubsub.v1.IListSchemasResponse | null | undefined,
+      protos.google.pubsub.v1.ISchema
     >
   ): void;
-  listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+  listSchemas(
+    request: protos.google.pubsub.v1.IListSchemasRequest,
     callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-      | protos.google.pubsub.v1.IListTopicSubscriptionsResponse
-      | null
-      | undefined,
-      string
+      protos.google.pubsub.v1.IListSchemasRequest,
+      protos.google.pubsub.v1.IListSchemasResponse | null | undefined,
+      protos.google.pubsub.v1.ISchema
     >
   ): void;
   /**
-   * Lists the names of the attached subscriptions on this topic.
+   * Lists schemas in a project.
    *
    * @param {Object} request
    *   The request object that will be sent.
-   * @param {string} request.topic
-   *   Required. The name of the topic that subscriptions are attached to.
-   *   Format is `projects/{project}/topics/{topic}`.
+   * @param {string} request.parent
+   *   Required. The name of the project in which to list schemas.
+   *   Format is `projects/{project-id}`.
+   * @param {google.pubsub.v1.SchemaView} request.view
+   *   The set of Schema fields to return in the response. If not set, returns
+   *   Schemas with `name` and `type`, but not `definition`. Set to `FULL` to
+   *   retrieve all fields.
    * @param {number} request.pageSize
-   *   Maximum number of subscription names to return.
+   *   Maximum number of schemas to return.
    * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSubscriptionsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSubscriptions` call, and
-   *   that the system should return the next page of data.
+   *   The value returned by the last `ListSchemasResponse`; indicates that
+   *   this is a continuation of a prior `ListSchemas` call, and that the
+   *   system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is Array of string.
+   *   The first element of the array is Array of [Schema]{@link google.pubsub.v1.Schema}.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed and will merge results from all the pages into this array.
    *   Note that it can affect your quota.
-   *   We recommend using `listTopicSubscriptionsAsync()`
+   *   We recommend using `listSchemasAsync()`
    *   method described below for async iteration which you can stop as needed.
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
    */
-  listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+  listSchemas(
+    request: protos.google.pubsub.v1.IListSchemasRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
-          protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-          | protos.google.pubsub.v1.IListTopicSubscriptionsResponse
-          | null
-          | undefined,
-          string
+          protos.google.pubsub.v1.IListSchemasRequest,
+          protos.google.pubsub.v1.IListSchemasResponse | null | undefined,
+          protos.google.pubsub.v1.ISchema
         >,
     callback?: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-      | protos.google.pubsub.v1.IListTopicSubscriptionsResponse
-      | null
-      | undefined,
-      string
+      protos.google.pubsub.v1.IListSchemasRequest,
+      protos.google.pubsub.v1.IListSchemasResponse | null | undefined,
+      protos.google.pubsub.v1.ISchema
     >
   ): Promise<
     [
-      string[],
-      protos.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListTopicSubscriptionsResponse
+      protos.google.pubsub.v1.ISchema[],
+      protos.google.pubsub.v1.IListSchemasRequest | null,
+      protos.google.pubsub.v1.IListSchemasResponse
     ]
   > | void {
     request = request || {};
@@ -1219,43 +880,43 @@ export class PublisherClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      topic: request.topic || '',
+      parent: request.parent || '',
     });
     this.initialize();
-    return this.innerApiCalls.listTopicSubscriptions(
-      request,
-      options,
-      callback
-    );
+    return this.innerApiCalls.listSchemas(request, options, callback);
   }
 
   /**
    * Equivalent to `method.name.toCamelCase()`, but returns a NodeJS Stream object.
    * @param {Object} request
    *   The request object that will be sent.
-   * @param {string} request.topic
-   *   Required. The name of the topic that subscriptions are attached to.
-   *   Format is `projects/{project}/topics/{topic}`.
+   * @param {string} request.parent
+   *   Required. The name of the project in which to list schemas.
+   *   Format is `projects/{project-id}`.
+   * @param {google.pubsub.v1.SchemaView} request.view
+   *   The set of Schema fields to return in the response. If not set, returns
+   *   Schemas with `name` and `type`, but not `definition`. Set to `FULL` to
+   *   retrieve all fields.
    * @param {number} request.pageSize
-   *   Maximum number of subscription names to return.
+   *   Maximum number of schemas to return.
    * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSubscriptionsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSubscriptions` call, and
-   *   that the system should return the next page of data.
+   *   The value returned by the last `ListSchemasResponse`; indicates that
+   *   this is a continuation of a prior `ListSchemas` call, and that the
+   *   system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
-   *   An object stream which emits an object representing string on 'data' event.
+   *   An object stream which emits an object representing [Schema]{@link google.pubsub.v1.Schema} on 'data' event.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed. Note that it can affect your quota.
-   *   We recommend using `listTopicSubscriptionsAsync()`
+   *   We recommend using `listSchemasAsync()`
    *   method described below for async iteration which you can stop as needed.
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
    */
-  listTopicSubscriptionsStream(
-    request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+  listSchemasStream(
+    request?: protos.google.pubsub.v1.IListSchemasRequest,
     options?: CallOptions
   ): Transform {
     request = request || {};
@@ -1265,52 +926,56 @@ export class PublisherClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      topic: request.topic || '',
+      parent: request.parent || '',
     });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
-    return this.descriptors.page.listTopicSubscriptions.createStream(
-      this.innerApiCalls.listTopicSubscriptions as gax.GaxCall,
+    return this.descriptors.page.listSchemas.createStream(
+      this.innerApiCalls.listSchemas as gax.GaxCall,
       request,
       callSettings
     );
   }
 
   /**
-   * Equivalent to `listTopicSubscriptions`, but returns an iterable object.
+   * Equivalent to `listSchemas`, but returns an iterable object.
    *
    * `for`-`await`-`of` syntax is used with the iterable to get response elements on-demand.
    * @param {Object} request
    *   The request object that will be sent.
-   * @param {string} request.topic
-   *   Required. The name of the topic that subscriptions are attached to.
-   *   Format is `projects/{project}/topics/{topic}`.
+   * @param {string} request.parent
+   *   Required. The name of the project in which to list schemas.
+   *   Format is `projects/{project-id}`.
+   * @param {google.pubsub.v1.SchemaView} request.view
+   *   The set of Schema fields to return in the response. If not set, returns
+   *   Schemas with `name` and `type`, but not `definition`. Set to `FULL` to
+   *   retrieve all fields.
    * @param {number} request.pageSize
-   *   Maximum number of subscription names to return.
+   *   Maximum number of schemas to return.
    * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSubscriptionsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSubscriptions` call, and
-   *   that the system should return the next page of data.
+   *   The value returned by the last `ListSchemasResponse`; indicates that
+   *   this is a continuation of a prior `ListSchemas` call, and that the
+   *   system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
    *   An iterable Object that allows [async iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols).
    *   When you iterate the returned iterable, each element will be an object representing
-   *   string. The API will be called under the hood as needed, once per the page,
+   *   [Schema]{@link google.pubsub.v1.Schema}. The API will be called under the hood as needed, once per the page,
    *   so you can stop the iteration when you don't need more results.
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
    * @example
-   * const iterable = client.listTopicSubscriptionsAsync(request);
+   * const iterable = client.listSchemasAsync(request);
    * for await (const response of iterable) {
    *   // process response
    * }
    */
-  listTopicSubscriptionsAsync(
-    request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+  listSchemasAsync(
+    request?: protos.google.pubsub.v1.IListSchemasRequest,
     options?: CallOptions
-  ): AsyncIterable<string> {
+  ): AsyncIterable<protos.google.pubsub.v1.ISchema> {
     request = request || {};
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1318,217 +983,16 @@ export class PublisherClient {
     options.otherArgs.headers[
       'x-goog-request-params'
     ] = gax.routingHeader.fromParams({
-      topic: request.topic || '',
+      parent: request.parent || '',
     });
     options = options || {};
     const callSettings = new gax.CallSettings(options);
     this.initialize();
-    return this.descriptors.page.listTopicSubscriptions.asyncIterate(
-      this.innerApiCalls['listTopicSubscriptions'] as GaxCall,
+    return this.descriptors.page.listSchemas.asyncIterate(
+      this.innerApiCalls['listSchemas'] as GaxCall,
       (request as unknown) as RequestType,
       callSettings
-    ) as AsyncIterable<string>;
-  }
-  listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options?: CallOptions
-  ): Promise<
-    [
-      string[],
-      protos.google.pubsub.v1.IListTopicSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse
-    ]
-  >;
-  listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options: CallOptions,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse | null | undefined,
-      string
-    >
-  ): void;
-  listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse | null | undefined,
-      string
-    >
-  ): void;
-  /**
-   * Lists the names of the snapshots on this topic. Snapshots are used in
-   * [Seek](https://cloud.google.com/pubsub/docs/replay-overview) operations,
-   * which allow you to manage message acknowledgments in bulk. That is, you can
-   * set the acknowledgment state of messages in an existing subscription to the
-   * state captured by a snapshot.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.topic
-   *   Required. The name of the topic that snapshots are attached to.
-   *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshot names to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSnapshotsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSnapshots` call, and
-   *   that the system should return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is Array of string.
-   *   The client library will perform auto-pagination by default: it will call the API as many
-   *   times as needed and will merge results from all the pages into this array.
-   *   Note that it can affect your quota.
-   *   We recommend using `listTopicSnapshotsAsync()`
-   *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
-   *   for more details and examples.
-   */
-  listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    optionsOrCallback?:
-      | CallOptions
-      | PaginationCallback<
-          protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-          | protos.google.pubsub.v1.IListTopicSnapshotsResponse
-          | null
-          | undefined,
-          string
-        >,
-    callback?: PaginationCallback<
-      protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse | null | undefined,
-      string
-    >
-  ): Promise<
-    [
-      string[],
-      protos.google.pubsub.v1.IListTopicSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse
-    ]
-  > | void {
-    request = request || {};
-    let options: CallOptions;
-    if (typeof optionsOrCallback === 'function' && callback === undefined) {
-      callback = optionsOrCallback;
-      options = {};
-    } else {
-      options = optionsOrCallback as CallOptions;
-    }
-    options = options || {};
-    options.otherArgs = options.otherArgs || {};
-    options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      topic: request.topic || '',
-    });
-    this.initialize();
-    return this.innerApiCalls.listTopicSnapshots(request, options, callback);
-  }
-
-  /**
-   * Equivalent to `method.name.toCamelCase()`, but returns a NodeJS Stream object.
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.topic
-   *   Required. The name of the topic that snapshots are attached to.
-   *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshot names to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSnapshotsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSnapshots` call, and
-   *   that the system should return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Stream}
-   *   An object stream which emits an object representing string on 'data' event.
-   *   The client library will perform auto-pagination by default: it will call the API as many
-   *   times as needed. Note that it can affect your quota.
-   *   We recommend using `listTopicSnapshotsAsync()`
-   *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
-   *   for more details and examples.
-   */
-  listTopicSnapshotsStream(
-    request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options?: CallOptions
-  ): Transform {
-    request = request || {};
-    options = options || {};
-    options.otherArgs = options.otherArgs || {};
-    options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      topic: request.topic || '',
-    });
-    const callSettings = new gax.CallSettings(options);
-    this.initialize();
-    return this.descriptors.page.listTopicSnapshots.createStream(
-      this.innerApiCalls.listTopicSnapshots as gax.GaxCall,
-      request,
-      callSettings
-    );
-  }
-
-  /**
-   * Equivalent to `listTopicSnapshots`, but returns an iterable object.
-   *
-   * `for`-`await`-`of` syntax is used with the iterable to get response elements on-demand.
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.topic
-   *   Required. The name of the topic that snapshots are attached to.
-   *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshot names to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSnapshotsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSnapshots` call, and
-   *   that the system should return the next page of data.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Object}
-   *   An iterable Object that allows [async iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols).
-   *   When you iterate the returned iterable, each element will be an object representing
-   *   string. The API will be called under the hood as needed, once per the page,
-   *   so you can stop the iteration when you don't need more results.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
-   *   for more details and examples.
-   * @example
-   * const iterable = client.listTopicSnapshotsAsync(request);
-   * for await (const response of iterable) {
-   *   // process response
-   * }
-   */
-  listTopicSnapshotsAsync(
-    request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options?: CallOptions
-  ): AsyncIterable<string> {
-    request = request || {};
-    options = options || {};
-    options.otherArgs = options.otherArgs || {};
-    options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers[
-      'x-goog-request-params'
-    ] = gax.routingHeader.fromParams({
-      topic: request.topic || '',
-    });
-    options = options || {};
-    const callSettings = new gax.CallSettings(options);
-    this.initialize();
-    return this.descriptors.page.listTopicSnapshots.asyncIterate(
-      this.innerApiCalls['listTopicSnapshots'] as GaxCall,
-      (request as unknown) as RequestType,
-      callSettings
-    ) as AsyncIterable<string>;
+    ) as AsyncIterable<protos.google.pubsub.v1.ISchema>;
   }
   /**
    * Gets the access control policy for a resource. Returns an empty policy
@@ -1854,7 +1318,7 @@ export class PublisherClient {
   close(): Promise<void> {
     this.initialize();
     if (!this._terminated) {
-      return this.publisherStub!.then(stub => {
+      return this.schemaServiceStub!.then(stub => {
         this._terminated = true;
         stub.close();
       });

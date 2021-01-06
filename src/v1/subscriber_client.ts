@@ -178,6 +178,9 @@ export class SubscriberClient {
       projectTopicPathTemplate: new this._gaxModule.PathTemplate(
         'projects/{project}/topics/{topic}'
       ),
+      schemaPathTemplate: new this._gaxModule.PathTemplate(
+        'projects/{project}/schemas/{schema}'
+      ),
       snapshotPathTemplate: new this._gaxModule.PathTemplate(
         'projects/{project}/snapshots/{snapshot}'
       ),
@@ -1617,8 +1620,8 @@ export class SubscriberClient {
   ): void;
   /**
    * Seeks an existing subscription to a point in time or to a given snapshot,
-   * whichever is provided in the request. Snapshots are used in [Seek](
-   * https://cloud.google.com/pubsub/docs/replay-overview) operations, which
+   * whichever is provided in the request. Snapshots are used in [Seek]
+   * (https://cloud.google.com/pubsub/docs/replay-overview) operations, which
    * allow you to manage message acknowledgments in bulk. That is, you can set
    * the acknowledgment state of messages in an existing subscription to the
    * state captured by a snapshot. Note that both the subscription and the
@@ -2322,6 +2325,42 @@ export class SubscriberClient {
   matchTopicFromProjectTopicName(projectTopicName: string) {
     return this.pathTemplates.projectTopicPathTemplate.match(projectTopicName)
       .topic;
+  }
+
+  /**
+   * Return a fully-qualified schema resource name string.
+   *
+   * @param {string} project
+   * @param {string} schema
+   * @returns {string} Resource name string.
+   */
+  schemaPath(project: string, schema: string) {
+    return this.pathTemplates.schemaPathTemplate.render({
+      project: project,
+      schema: schema,
+    });
+  }
+
+  /**
+   * Parse the project from Schema resource.
+   *
+   * @param {string} schemaName
+   *   A fully-qualified path representing Schema resource.
+   * @returns {string} A string representing the project.
+   */
+  matchProjectFromSchemaName(schemaName: string) {
+    return this.pathTemplates.schemaPathTemplate.match(schemaName).project;
+  }
+
+  /**
+   * Parse the schema from Schema resource.
+   *
+   * @param {string} schemaName
+   *   A fully-qualified path representing Schema resource.
+   * @returns {string} A string representing the schema.
+   */
+  matchSchemaFromSchemaName(schemaName: string) {
+    return this.pathTemplates.schemaPathTemplate.match(schemaName).schema;
   }
 
   /**

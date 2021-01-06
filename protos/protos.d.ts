@@ -326,6 +326,102 @@ export namespace google {
                 public toJSON(): { [k: string]: any };
             }
 
+            /** Properties of a SchemaSettings. */
+            interface ISchemaSettings {
+
+                /** SchemaSettings schema */
+                schema?: (string|null);
+
+                /** SchemaSettings encoding */
+                encoding?: (google.pubsub.v1.Encoding|keyof typeof google.pubsub.v1.Encoding|null);
+            }
+
+            /** Represents a SchemaSettings. */
+            class SchemaSettings implements ISchemaSettings {
+
+                /**
+                 * Constructs a new SchemaSettings.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.ISchemaSettings);
+
+                /** SchemaSettings schema. */
+                public schema: string;
+
+                /** SchemaSettings encoding. */
+                public encoding: (google.pubsub.v1.Encoding|keyof typeof google.pubsub.v1.Encoding);
+
+                /**
+                 * Creates a new SchemaSettings instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns SchemaSettings instance
+                 */
+                public static create(properties?: google.pubsub.v1.ISchemaSettings): google.pubsub.v1.SchemaSettings;
+
+                /**
+                 * Encodes the specified SchemaSettings message. Does not implicitly {@link google.pubsub.v1.SchemaSettings.verify|verify} messages.
+                 * @param message SchemaSettings message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.ISchemaSettings, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified SchemaSettings message, length delimited. Does not implicitly {@link google.pubsub.v1.SchemaSettings.verify|verify} messages.
+                 * @param message SchemaSettings message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.ISchemaSettings, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a SchemaSettings message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns SchemaSettings
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.SchemaSettings;
+
+                /**
+                 * Decodes a SchemaSettings message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns SchemaSettings
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.SchemaSettings;
+
+                /**
+                 * Verifies a SchemaSettings message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a SchemaSettings message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns SchemaSettings
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.SchemaSettings;
+
+                /**
+                 * Creates a plain object from a SchemaSettings message. Also converts values to other types if specified.
+                 * @param message SchemaSettings
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.SchemaSettings, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this SchemaSettings to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
             /** Properties of a Topic. */
             interface ITopic {
 
@@ -340,6 +436,12 @@ export namespace google {
 
                 /** Topic kmsKeyName */
                 kmsKeyName?: (string|null);
+
+                /** Topic schemaSettings */
+                schemaSettings?: (google.pubsub.v1.ISchemaSettings|null);
+
+                /** Topic satisfiesPzs */
+                satisfiesPzs?: (boolean|null);
             }
 
             /** Represents a Topic. */
@@ -362,6 +464,12 @@ export namespace google {
 
                 /** Topic kmsKeyName. */
                 public kmsKeyName: string;
+
+                /** Topic schemaSettings. */
+                public schemaSettings?: (google.pubsub.v1.ISchemaSettings|null);
+
+                /** Topic satisfiesPzs. */
+                public satisfiesPzs: boolean;
 
                 /**
                  * Creates a new Topic instance using the specified properties.
@@ -4941,6 +5049,1155 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+            }
+
+            /** Represents a SchemaService */
+            class SchemaService extends $protobuf.rpc.Service {
+
+                /**
+                 * Constructs a new SchemaService service.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 */
+                constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
+
+                /**
+                 * Creates new SchemaService service using the specified rpc implementation.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 * @returns RPC service. Useful where requests and/or responses are streamed.
+                 */
+                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): SchemaService;
+
+                /**
+                 * Calls CreateSchema.
+                 * @param request CreateSchemaRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Schema
+                 */
+                public createSchema(request: google.pubsub.v1.ICreateSchemaRequest, callback: google.pubsub.v1.SchemaService.CreateSchemaCallback): void;
+
+                /**
+                 * Calls CreateSchema.
+                 * @param request CreateSchemaRequest message or plain object
+                 * @returns Promise
+                 */
+                public createSchema(request: google.pubsub.v1.ICreateSchemaRequest): Promise<google.pubsub.v1.Schema>;
+
+                /**
+                 * Calls GetSchema.
+                 * @param request GetSchemaRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Schema
+                 */
+                public getSchema(request: google.pubsub.v1.IGetSchemaRequest, callback: google.pubsub.v1.SchemaService.GetSchemaCallback): void;
+
+                /**
+                 * Calls GetSchema.
+                 * @param request GetSchemaRequest message or plain object
+                 * @returns Promise
+                 */
+                public getSchema(request: google.pubsub.v1.IGetSchemaRequest): Promise<google.pubsub.v1.Schema>;
+
+                /**
+                 * Calls ListSchemas.
+                 * @param request ListSchemasRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and ListSchemasResponse
+                 */
+                public listSchemas(request: google.pubsub.v1.IListSchemasRequest, callback: google.pubsub.v1.SchemaService.ListSchemasCallback): void;
+
+                /**
+                 * Calls ListSchemas.
+                 * @param request ListSchemasRequest message or plain object
+                 * @returns Promise
+                 */
+                public listSchemas(request: google.pubsub.v1.IListSchemasRequest): Promise<google.pubsub.v1.ListSchemasResponse>;
+
+                /**
+                 * Calls DeleteSchema.
+                 * @param request DeleteSchemaRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Empty
+                 */
+                public deleteSchema(request: google.pubsub.v1.IDeleteSchemaRequest, callback: google.pubsub.v1.SchemaService.DeleteSchemaCallback): void;
+
+                /**
+                 * Calls DeleteSchema.
+                 * @param request DeleteSchemaRequest message or plain object
+                 * @returns Promise
+                 */
+                public deleteSchema(request: google.pubsub.v1.IDeleteSchemaRequest): Promise<google.protobuf.Empty>;
+
+                /**
+                 * Calls ValidateSchema.
+                 * @param request ValidateSchemaRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and ValidateSchemaResponse
+                 */
+                public validateSchema(request: google.pubsub.v1.IValidateSchemaRequest, callback: google.pubsub.v1.SchemaService.ValidateSchemaCallback): void;
+
+                /**
+                 * Calls ValidateSchema.
+                 * @param request ValidateSchemaRequest message or plain object
+                 * @returns Promise
+                 */
+                public validateSchema(request: google.pubsub.v1.IValidateSchemaRequest): Promise<google.pubsub.v1.ValidateSchemaResponse>;
+
+                /**
+                 * Calls ValidateMessage.
+                 * @param request ValidateMessageRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and ValidateMessageResponse
+                 */
+                public validateMessage(request: google.pubsub.v1.IValidateMessageRequest, callback: google.pubsub.v1.SchemaService.ValidateMessageCallback): void;
+
+                /**
+                 * Calls ValidateMessage.
+                 * @param request ValidateMessageRequest message or plain object
+                 * @returns Promise
+                 */
+                public validateMessage(request: google.pubsub.v1.IValidateMessageRequest): Promise<google.pubsub.v1.ValidateMessageResponse>;
+            }
+
+            namespace SchemaService {
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#createSchema}.
+                 * @param error Error, if any
+                 * @param [response] Schema
+                 */
+                type CreateSchemaCallback = (error: (Error|null), response?: google.pubsub.v1.Schema) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#getSchema}.
+                 * @param error Error, if any
+                 * @param [response] Schema
+                 */
+                type GetSchemaCallback = (error: (Error|null), response?: google.pubsub.v1.Schema) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#listSchemas}.
+                 * @param error Error, if any
+                 * @param [response] ListSchemasResponse
+                 */
+                type ListSchemasCallback = (error: (Error|null), response?: google.pubsub.v1.ListSchemasResponse) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#deleteSchema}.
+                 * @param error Error, if any
+                 * @param [response] Empty
+                 */
+                type DeleteSchemaCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#validateSchema}.
+                 * @param error Error, if any
+                 * @param [response] ValidateSchemaResponse
+                 */
+                type ValidateSchemaCallback = (error: (Error|null), response?: google.pubsub.v1.ValidateSchemaResponse) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#validateMessage}.
+                 * @param error Error, if any
+                 * @param [response] ValidateMessageResponse
+                 */
+                type ValidateMessageCallback = (error: (Error|null), response?: google.pubsub.v1.ValidateMessageResponse) => void;
+            }
+
+            /** Properties of a Schema. */
+            interface ISchema {
+
+                /** Schema name */
+                name?: (string|null);
+
+                /** Schema type */
+                type?: (google.pubsub.v1.Schema.Type|keyof typeof google.pubsub.v1.Schema.Type|null);
+
+                /** Schema definition */
+                definition?: (string|null);
+            }
+
+            /** Represents a Schema. */
+            class Schema implements ISchema {
+
+                /**
+                 * Constructs a new Schema.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.ISchema);
+
+                /** Schema name. */
+                public name: string;
+
+                /** Schema type. */
+                public type: (google.pubsub.v1.Schema.Type|keyof typeof google.pubsub.v1.Schema.Type);
+
+                /** Schema definition. */
+                public definition: string;
+
+                /**
+                 * Creates a new Schema instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Schema instance
+                 */
+                public static create(properties?: google.pubsub.v1.ISchema): google.pubsub.v1.Schema;
+
+                /**
+                 * Encodes the specified Schema message. Does not implicitly {@link google.pubsub.v1.Schema.verify|verify} messages.
+                 * @param message Schema message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.ISchema, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified Schema message, length delimited. Does not implicitly {@link google.pubsub.v1.Schema.verify|verify} messages.
+                 * @param message Schema message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.ISchema, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Schema message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Schema
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.Schema;
+
+                /**
+                 * Decodes a Schema message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns Schema
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.Schema;
+
+                /**
+                 * Verifies a Schema message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a Schema message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Schema
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.Schema;
+
+                /**
+                 * Creates a plain object from a Schema message. Also converts values to other types if specified.
+                 * @param message Schema
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.Schema, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Schema to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            namespace Schema {
+
+                /** Type enum. */
+                enum Type {
+                    TYPE_UNSPECIFIED = 0,
+                    PROTOCOL_BUFFER = 1,
+                    AVRO = 2
+                }
+            }
+
+            /** Properties of a CreateSchemaRequest. */
+            interface ICreateSchemaRequest {
+
+                /** CreateSchemaRequest parent */
+                parent?: (string|null);
+
+                /** CreateSchemaRequest schema */
+                schema?: (google.pubsub.v1.ISchema|null);
+
+                /** CreateSchemaRequest schemaId */
+                schemaId?: (string|null);
+            }
+
+            /** Represents a CreateSchemaRequest. */
+            class CreateSchemaRequest implements ICreateSchemaRequest {
+
+                /**
+                 * Constructs a new CreateSchemaRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.ICreateSchemaRequest);
+
+                /** CreateSchemaRequest parent. */
+                public parent: string;
+
+                /** CreateSchemaRequest schema. */
+                public schema?: (google.pubsub.v1.ISchema|null);
+
+                /** CreateSchemaRequest schemaId. */
+                public schemaId: string;
+
+                /**
+                 * Creates a new CreateSchemaRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns CreateSchemaRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.ICreateSchemaRequest): google.pubsub.v1.CreateSchemaRequest;
+
+                /**
+                 * Encodes the specified CreateSchemaRequest message. Does not implicitly {@link google.pubsub.v1.CreateSchemaRequest.verify|verify} messages.
+                 * @param message CreateSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.ICreateSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified CreateSchemaRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.CreateSchemaRequest.verify|verify} messages.
+                 * @param message CreateSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.ICreateSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a CreateSchemaRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns CreateSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.CreateSchemaRequest;
+
+                /**
+                 * Decodes a CreateSchemaRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns CreateSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.CreateSchemaRequest;
+
+                /**
+                 * Verifies a CreateSchemaRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a CreateSchemaRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns CreateSchemaRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.CreateSchemaRequest;
+
+                /**
+                 * Creates a plain object from a CreateSchemaRequest message. Also converts values to other types if specified.
+                 * @param message CreateSchemaRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.CreateSchemaRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this CreateSchemaRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** SchemaView enum. */
+            enum SchemaView {
+                SCHEMA_VIEW_UNSPECIFIED = 0,
+                BASIC = 1,
+                FULL = 2
+            }
+
+            /** Properties of a GetSchemaRequest. */
+            interface IGetSchemaRequest {
+
+                /** GetSchemaRequest name */
+                name?: (string|null);
+
+                /** GetSchemaRequest view */
+                view?: (google.pubsub.v1.SchemaView|keyof typeof google.pubsub.v1.SchemaView|null);
+            }
+
+            /** Represents a GetSchemaRequest. */
+            class GetSchemaRequest implements IGetSchemaRequest {
+
+                /**
+                 * Constructs a new GetSchemaRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IGetSchemaRequest);
+
+                /** GetSchemaRequest name. */
+                public name: string;
+
+                /** GetSchemaRequest view. */
+                public view: (google.pubsub.v1.SchemaView|keyof typeof google.pubsub.v1.SchemaView);
+
+                /**
+                 * Creates a new GetSchemaRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns GetSchemaRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IGetSchemaRequest): google.pubsub.v1.GetSchemaRequest;
+
+                /**
+                 * Encodes the specified GetSchemaRequest message. Does not implicitly {@link google.pubsub.v1.GetSchemaRequest.verify|verify} messages.
+                 * @param message GetSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IGetSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified GetSchemaRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.GetSchemaRequest.verify|verify} messages.
+                 * @param message GetSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IGetSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a GetSchemaRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns GetSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.GetSchemaRequest;
+
+                /**
+                 * Decodes a GetSchemaRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns GetSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.GetSchemaRequest;
+
+                /**
+                 * Verifies a GetSchemaRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a GetSchemaRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns GetSchemaRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.GetSchemaRequest;
+
+                /**
+                 * Creates a plain object from a GetSchemaRequest message. Also converts values to other types if specified.
+                 * @param message GetSchemaRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.GetSchemaRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this GetSchemaRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ListSchemasRequest. */
+            interface IListSchemasRequest {
+
+                /** ListSchemasRequest parent */
+                parent?: (string|null);
+
+                /** ListSchemasRequest view */
+                view?: (google.pubsub.v1.SchemaView|keyof typeof google.pubsub.v1.SchemaView|null);
+
+                /** ListSchemasRequest pageSize */
+                pageSize?: (number|null);
+
+                /** ListSchemasRequest pageToken */
+                pageToken?: (string|null);
+            }
+
+            /** Represents a ListSchemasRequest. */
+            class ListSchemasRequest implements IListSchemasRequest {
+
+                /**
+                 * Constructs a new ListSchemasRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListSchemasRequest);
+
+                /** ListSchemasRequest parent. */
+                public parent: string;
+
+                /** ListSchemasRequest view. */
+                public view: (google.pubsub.v1.SchemaView|keyof typeof google.pubsub.v1.SchemaView);
+
+                /** ListSchemasRequest pageSize. */
+                public pageSize: number;
+
+                /** ListSchemasRequest pageToken. */
+                public pageToken: string;
+
+                /**
+                 * Creates a new ListSchemasRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListSchemasRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListSchemasRequest): google.pubsub.v1.ListSchemasRequest;
+
+                /**
+                 * Encodes the specified ListSchemasRequest message. Does not implicitly {@link google.pubsub.v1.ListSchemasRequest.verify|verify} messages.
+                 * @param message ListSchemasRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListSchemasRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListSchemasRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSchemasRequest.verify|verify} messages.
+                 * @param message ListSchemasRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListSchemasRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListSchemasRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListSchemasRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSchemasRequest;
+
+                /**
+                 * Decodes a ListSchemasRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListSchemasRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSchemasRequest;
+
+                /**
+                 * Verifies a ListSchemasRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListSchemasRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListSchemasRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSchemasRequest;
+
+                /**
+                 * Creates a plain object from a ListSchemasRequest message. Also converts values to other types if specified.
+                 * @param message ListSchemasRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListSchemasRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListSchemasRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ListSchemasResponse. */
+            interface IListSchemasResponse {
+
+                /** ListSchemasResponse schemas */
+                schemas?: (google.pubsub.v1.ISchema[]|null);
+
+                /** ListSchemasResponse nextPageToken */
+                nextPageToken?: (string|null);
+            }
+
+            /** Represents a ListSchemasResponse. */
+            class ListSchemasResponse implements IListSchemasResponse {
+
+                /**
+                 * Constructs a new ListSchemasResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListSchemasResponse);
+
+                /** ListSchemasResponse schemas. */
+                public schemas: google.pubsub.v1.ISchema[];
+
+                /** ListSchemasResponse nextPageToken. */
+                public nextPageToken: string;
+
+                /**
+                 * Creates a new ListSchemasResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListSchemasResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListSchemasResponse): google.pubsub.v1.ListSchemasResponse;
+
+                /**
+                 * Encodes the specified ListSchemasResponse message. Does not implicitly {@link google.pubsub.v1.ListSchemasResponse.verify|verify} messages.
+                 * @param message ListSchemasResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListSchemasResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListSchemasResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSchemasResponse.verify|verify} messages.
+                 * @param message ListSchemasResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListSchemasResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListSchemasResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListSchemasResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSchemasResponse;
+
+                /**
+                 * Decodes a ListSchemasResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListSchemasResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSchemasResponse;
+
+                /**
+                 * Verifies a ListSchemasResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListSchemasResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListSchemasResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSchemasResponse;
+
+                /**
+                 * Creates a plain object from a ListSchemasResponse message. Also converts values to other types if specified.
+                 * @param message ListSchemasResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListSchemasResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListSchemasResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a DeleteSchemaRequest. */
+            interface IDeleteSchemaRequest {
+
+                /** DeleteSchemaRequest name */
+                name?: (string|null);
+            }
+
+            /** Represents a DeleteSchemaRequest. */
+            class DeleteSchemaRequest implements IDeleteSchemaRequest {
+
+                /**
+                 * Constructs a new DeleteSchemaRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IDeleteSchemaRequest);
+
+                /** DeleteSchemaRequest name. */
+                public name: string;
+
+                /**
+                 * Creates a new DeleteSchemaRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns DeleteSchemaRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IDeleteSchemaRequest): google.pubsub.v1.DeleteSchemaRequest;
+
+                /**
+                 * Encodes the specified DeleteSchemaRequest message. Does not implicitly {@link google.pubsub.v1.DeleteSchemaRequest.verify|verify} messages.
+                 * @param message DeleteSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IDeleteSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified DeleteSchemaRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteSchemaRequest.verify|verify} messages.
+                 * @param message DeleteSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IDeleteSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a DeleteSchemaRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns DeleteSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DeleteSchemaRequest;
+
+                /**
+                 * Decodes a DeleteSchemaRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns DeleteSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DeleteSchemaRequest;
+
+                /**
+                 * Verifies a DeleteSchemaRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a DeleteSchemaRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns DeleteSchemaRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DeleteSchemaRequest;
+
+                /**
+                 * Creates a plain object from a DeleteSchemaRequest message. Also converts values to other types if specified.
+                 * @param message DeleteSchemaRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.DeleteSchemaRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this DeleteSchemaRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ValidateSchemaRequest. */
+            interface IValidateSchemaRequest {
+
+                /** ValidateSchemaRequest parent */
+                parent?: (string|null);
+
+                /** ValidateSchemaRequest schema */
+                schema?: (google.pubsub.v1.ISchema|null);
+            }
+
+            /** Represents a ValidateSchemaRequest. */
+            class ValidateSchemaRequest implements IValidateSchemaRequest {
+
+                /**
+                 * Constructs a new ValidateSchemaRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IValidateSchemaRequest);
+
+                /** ValidateSchemaRequest parent. */
+                public parent: string;
+
+                /** ValidateSchemaRequest schema. */
+                public schema?: (google.pubsub.v1.ISchema|null);
+
+                /**
+                 * Creates a new ValidateSchemaRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ValidateSchemaRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IValidateSchemaRequest): google.pubsub.v1.ValidateSchemaRequest;
+
+                /**
+                 * Encodes the specified ValidateSchemaRequest message. Does not implicitly {@link google.pubsub.v1.ValidateSchemaRequest.verify|verify} messages.
+                 * @param message ValidateSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IValidateSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ValidateSchemaRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ValidateSchemaRequest.verify|verify} messages.
+                 * @param message ValidateSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IValidateSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ValidateSchemaRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ValidateSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ValidateSchemaRequest;
+
+                /**
+                 * Decodes a ValidateSchemaRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ValidateSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ValidateSchemaRequest;
+
+                /**
+                 * Verifies a ValidateSchemaRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ValidateSchemaRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ValidateSchemaRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ValidateSchemaRequest;
+
+                /**
+                 * Creates a plain object from a ValidateSchemaRequest message. Also converts values to other types if specified.
+                 * @param message ValidateSchemaRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ValidateSchemaRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ValidateSchemaRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ValidateSchemaResponse. */
+            interface IValidateSchemaResponse {
+            }
+
+            /** Represents a ValidateSchemaResponse. */
+            class ValidateSchemaResponse implements IValidateSchemaResponse {
+
+                /**
+                 * Constructs a new ValidateSchemaResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IValidateSchemaResponse);
+
+                /**
+                 * Creates a new ValidateSchemaResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ValidateSchemaResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.IValidateSchemaResponse): google.pubsub.v1.ValidateSchemaResponse;
+
+                /**
+                 * Encodes the specified ValidateSchemaResponse message. Does not implicitly {@link google.pubsub.v1.ValidateSchemaResponse.verify|verify} messages.
+                 * @param message ValidateSchemaResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IValidateSchemaResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ValidateSchemaResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ValidateSchemaResponse.verify|verify} messages.
+                 * @param message ValidateSchemaResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IValidateSchemaResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ValidateSchemaResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ValidateSchemaResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ValidateSchemaResponse;
+
+                /**
+                 * Decodes a ValidateSchemaResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ValidateSchemaResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ValidateSchemaResponse;
+
+                /**
+                 * Verifies a ValidateSchemaResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ValidateSchemaResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ValidateSchemaResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ValidateSchemaResponse;
+
+                /**
+                 * Creates a plain object from a ValidateSchemaResponse message. Also converts values to other types if specified.
+                 * @param message ValidateSchemaResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ValidateSchemaResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ValidateSchemaResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ValidateMessageRequest. */
+            interface IValidateMessageRequest {
+
+                /** ValidateMessageRequest parent */
+                parent?: (string|null);
+
+                /** ValidateMessageRequest name */
+                name?: (string|null);
+
+                /** ValidateMessageRequest schema */
+                schema?: (google.pubsub.v1.ISchema|null);
+
+                /** ValidateMessageRequest message */
+                message?: (Uint8Array|string|null);
+
+                /** ValidateMessageRequest encoding */
+                encoding?: (google.pubsub.v1.Encoding|keyof typeof google.pubsub.v1.Encoding|null);
+            }
+
+            /** Represents a ValidateMessageRequest. */
+            class ValidateMessageRequest implements IValidateMessageRequest {
+
+                /**
+                 * Constructs a new ValidateMessageRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IValidateMessageRequest);
+
+                /** ValidateMessageRequest parent. */
+                public parent: string;
+
+                /** ValidateMessageRequest name. */
+                public name: string;
+
+                /** ValidateMessageRequest schema. */
+                public schema?: (google.pubsub.v1.ISchema|null);
+
+                /** ValidateMessageRequest message. */
+                public message: (Uint8Array|string);
+
+                /** ValidateMessageRequest encoding. */
+                public encoding: (google.pubsub.v1.Encoding|keyof typeof google.pubsub.v1.Encoding);
+
+                /** ValidateMessageRequest schemaSpec. */
+                public schemaSpec?: ("name"|"schema");
+
+                /**
+                 * Creates a new ValidateMessageRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ValidateMessageRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IValidateMessageRequest): google.pubsub.v1.ValidateMessageRequest;
+
+                /**
+                 * Encodes the specified ValidateMessageRequest message. Does not implicitly {@link google.pubsub.v1.ValidateMessageRequest.verify|verify} messages.
+                 * @param message ValidateMessageRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IValidateMessageRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ValidateMessageRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ValidateMessageRequest.verify|verify} messages.
+                 * @param message ValidateMessageRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IValidateMessageRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ValidateMessageRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ValidateMessageRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ValidateMessageRequest;
+
+                /**
+                 * Decodes a ValidateMessageRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ValidateMessageRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ValidateMessageRequest;
+
+                /**
+                 * Verifies a ValidateMessageRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ValidateMessageRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ValidateMessageRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ValidateMessageRequest;
+
+                /**
+                 * Creates a plain object from a ValidateMessageRequest message. Also converts values to other types if specified.
+                 * @param message ValidateMessageRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ValidateMessageRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ValidateMessageRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a ValidateMessageResponse. */
+            interface IValidateMessageResponse {
+            }
+
+            /** Represents a ValidateMessageResponse. */
+            class ValidateMessageResponse implements IValidateMessageResponse {
+
+                /**
+                 * Constructs a new ValidateMessageResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IValidateMessageResponse);
+
+                /**
+                 * Creates a new ValidateMessageResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ValidateMessageResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.IValidateMessageResponse): google.pubsub.v1.ValidateMessageResponse;
+
+                /**
+                 * Encodes the specified ValidateMessageResponse message. Does not implicitly {@link google.pubsub.v1.ValidateMessageResponse.verify|verify} messages.
+                 * @param message ValidateMessageResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IValidateMessageResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ValidateMessageResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ValidateMessageResponse.verify|verify} messages.
+                 * @param message ValidateMessageResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IValidateMessageResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ValidateMessageResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ValidateMessageResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ValidateMessageResponse;
+
+                /**
+                 * Decodes a ValidateMessageResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ValidateMessageResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ValidateMessageResponse;
+
+                /**
+                 * Verifies a ValidateMessageResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ValidateMessageResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ValidateMessageResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ValidateMessageResponse;
+
+                /**
+                 * Creates a plain object from a ValidateMessageResponse message. Also converts values to other types if specified.
+                 * @param message ValidateMessageResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ValidateMessageResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ValidateMessageResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Encoding enum. */
+            enum Encoding {
+                ENCODING_UNSPECIFIED = 0,
+                JSON = 1,
+                BINARY = 2
             }
         }
     }

@@ -592,6 +592,234 @@
                     return MessageStoragePolicy;
                 })();
     
+                v1.SchemaSettings = (function() {
+    
+                    /**
+                     * Properties of a SchemaSettings.
+                     * @memberof google.pubsub.v1
+                     * @interface ISchemaSettings
+                     * @property {string|null} [schema] SchemaSettings schema
+                     * @property {google.pubsub.v1.Encoding|null} [encoding] SchemaSettings encoding
+                     */
+    
+                    /**
+                     * Constructs a new SchemaSettings.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a SchemaSettings.
+                     * @implements ISchemaSettings
+                     * @constructor
+                     * @param {google.pubsub.v1.ISchemaSettings=} [properties] Properties to set
+                     */
+                    function SchemaSettings(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * SchemaSettings schema.
+                     * @member {string} schema
+                     * @memberof google.pubsub.v1.SchemaSettings
+                     * @instance
+                     */
+                    SchemaSettings.prototype.schema = "";
+    
+                    /**
+                     * SchemaSettings encoding.
+                     * @member {google.pubsub.v1.Encoding} encoding
+                     * @memberof google.pubsub.v1.SchemaSettings
+                     * @instance
+                     */
+                    SchemaSettings.prototype.encoding = 0;
+    
+                    /**
+                     * Creates a new SchemaSettings instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.SchemaSettings
+                     * @static
+                     * @param {google.pubsub.v1.ISchemaSettings=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.SchemaSettings} SchemaSettings instance
+                     */
+                    SchemaSettings.create = function create(properties) {
+                        return new SchemaSettings(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified SchemaSettings message. Does not implicitly {@link google.pubsub.v1.SchemaSettings.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.SchemaSettings
+                     * @static
+                     * @param {google.pubsub.v1.ISchemaSettings} message SchemaSettings message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    SchemaSettings.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.schema != null && Object.hasOwnProperty.call(message, "schema"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.schema);
+                        if (message.encoding != null && Object.hasOwnProperty.call(message, "encoding"))
+                            writer.uint32(/* id 2, wireType 0 =*/16).int32(message.encoding);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified SchemaSettings message, length delimited. Does not implicitly {@link google.pubsub.v1.SchemaSettings.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.SchemaSettings
+                     * @static
+                     * @param {google.pubsub.v1.ISchemaSettings} message SchemaSettings message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    SchemaSettings.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a SchemaSettings message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.SchemaSettings
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.SchemaSettings} SchemaSettings
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    SchemaSettings.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.SchemaSettings();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.schema = reader.string();
+                                break;
+                            case 2:
+                                message.encoding = reader.int32();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a SchemaSettings message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.SchemaSettings
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.SchemaSettings} SchemaSettings
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    SchemaSettings.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a SchemaSettings message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.SchemaSettings
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    SchemaSettings.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.schema != null && message.hasOwnProperty("schema"))
+                            if (!$util.isString(message.schema))
+                                return "schema: string expected";
+                        if (message.encoding != null && message.hasOwnProperty("encoding"))
+                            switch (message.encoding) {
+                            default:
+                                return "encoding: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                                break;
+                            }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a SchemaSettings message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.SchemaSettings
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.SchemaSettings} SchemaSettings
+                     */
+                    SchemaSettings.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.SchemaSettings)
+                            return object;
+                        var message = new $root.google.pubsub.v1.SchemaSettings();
+                        if (object.schema != null)
+                            message.schema = String(object.schema);
+                        switch (object.encoding) {
+                        case "ENCODING_UNSPECIFIED":
+                        case 0:
+                            message.encoding = 0;
+                            break;
+                        case "JSON":
+                        case 1:
+                            message.encoding = 1;
+                            break;
+                        case "BINARY":
+                        case 2:
+                            message.encoding = 2;
+                            break;
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a SchemaSettings message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.SchemaSettings
+                     * @static
+                     * @param {google.pubsub.v1.SchemaSettings} message SchemaSettings
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    SchemaSettings.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.schema = "";
+                            object.encoding = options.enums === String ? "ENCODING_UNSPECIFIED" : 0;
+                        }
+                        if (message.schema != null && message.hasOwnProperty("schema"))
+                            object.schema = message.schema;
+                        if (message.encoding != null && message.hasOwnProperty("encoding"))
+                            object.encoding = options.enums === String ? $root.google.pubsub.v1.Encoding[message.encoding] : message.encoding;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this SchemaSettings to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.SchemaSettings
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    SchemaSettings.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return SchemaSettings;
+                })();
+    
                 v1.Topic = (function() {
     
                     /**
@@ -602,6 +830,8 @@
                      * @property {Object.<string,string>|null} [labels] Topic labels
                      * @property {google.pubsub.v1.IMessageStoragePolicy|null} [messageStoragePolicy] Topic messageStoragePolicy
                      * @property {string|null} [kmsKeyName] Topic kmsKeyName
+                     * @property {google.pubsub.v1.ISchemaSettings|null} [schemaSettings] Topic schemaSettings
+                     * @property {boolean|null} [satisfiesPzs] Topic satisfiesPzs
                      */
     
                     /**
@@ -653,6 +883,22 @@
                     Topic.prototype.kmsKeyName = "";
     
                     /**
+                     * Topic schemaSettings.
+                     * @member {google.pubsub.v1.ISchemaSettings|null|undefined} schemaSettings
+                     * @memberof google.pubsub.v1.Topic
+                     * @instance
+                     */
+                    Topic.prototype.schemaSettings = null;
+    
+                    /**
+                     * Topic satisfiesPzs.
+                     * @member {boolean} satisfiesPzs
+                     * @memberof google.pubsub.v1.Topic
+                     * @instance
+                     */
+                    Topic.prototype.satisfiesPzs = false;
+    
+                    /**
                      * Creates a new Topic instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Topic
@@ -685,6 +931,10 @@
                             $root.google.pubsub.v1.MessageStoragePolicy.encode(message.messageStoragePolicy, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                         if (message.kmsKeyName != null && Object.hasOwnProperty.call(message, "kmsKeyName"))
                             writer.uint32(/* id 5, wireType 2 =*/42).string(message.kmsKeyName);
+                        if (message.schemaSettings != null && Object.hasOwnProperty.call(message, "schemaSettings"))
+                            $root.google.pubsub.v1.SchemaSettings.encode(message.schemaSettings, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                        if (message.satisfiesPzs != null && Object.hasOwnProperty.call(message, "satisfiesPzs"))
+                            writer.uint32(/* id 7, wireType 0 =*/56).bool(message.satisfiesPzs);
                         return writer;
                     };
     
@@ -750,6 +1000,12 @@
                             case 5:
                                 message.kmsKeyName = reader.string();
                                 break;
+                            case 6:
+                                message.schemaSettings = $root.google.pubsub.v1.SchemaSettings.decode(reader, reader.uint32());
+                                break;
+                            case 7:
+                                message.satisfiesPzs = reader.bool();
+                                break;
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -804,6 +1060,14 @@
                         if (message.kmsKeyName != null && message.hasOwnProperty("kmsKeyName"))
                             if (!$util.isString(message.kmsKeyName))
                                 return "kmsKeyName: string expected";
+                        if (message.schemaSettings != null && message.hasOwnProperty("schemaSettings")) {
+                            var error = $root.google.pubsub.v1.SchemaSettings.verify(message.schemaSettings);
+                            if (error)
+                                return "schemaSettings." + error;
+                        }
+                        if (message.satisfiesPzs != null && message.hasOwnProperty("satisfiesPzs"))
+                            if (typeof message.satisfiesPzs !== "boolean")
+                                return "satisfiesPzs: boolean expected";
                         return null;
                     };
     
@@ -835,6 +1099,13 @@
                         }
                         if (object.kmsKeyName != null)
                             message.kmsKeyName = String(object.kmsKeyName);
+                        if (object.schemaSettings != null) {
+                            if (typeof object.schemaSettings !== "object")
+                                throw TypeError(".google.pubsub.v1.Topic.schemaSettings: object expected");
+                            message.schemaSettings = $root.google.pubsub.v1.SchemaSettings.fromObject(object.schemaSettings);
+                        }
+                        if (object.satisfiesPzs != null)
+                            message.satisfiesPzs = Boolean(object.satisfiesPzs);
                         return message;
                     };
     
@@ -857,6 +1128,8 @@
                             object.name = "";
                             object.messageStoragePolicy = null;
                             object.kmsKeyName = "";
+                            object.schemaSettings = null;
+                            object.satisfiesPzs = false;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
                             object.name = message.name;
@@ -870,6 +1143,10 @@
                             object.messageStoragePolicy = $root.google.pubsub.v1.MessageStoragePolicy.toObject(message.messageStoragePolicy, options);
                         if (message.kmsKeyName != null && message.hasOwnProperty("kmsKeyName"))
                             object.kmsKeyName = message.kmsKeyName;
+                        if (message.schemaSettings != null && message.hasOwnProperty("schemaSettings"))
+                            object.schemaSettings = $root.google.pubsub.v1.SchemaSettings.toObject(message.schemaSettings, options);
+                        if (message.satisfiesPzs != null && message.hasOwnProperty("satisfiesPzs"))
+                            object.satisfiesPzs = message.satisfiesPzs;
                         return object;
                     };
     
@@ -11267,6 +11544,2561 @@
                     };
     
                     return SeekResponse;
+                })();
+    
+                v1.SchemaService = (function() {
+    
+                    /**
+                     * Constructs a new SchemaService service.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a SchemaService
+                     * @extends $protobuf.rpc.Service
+                     * @constructor
+                     * @param {$protobuf.RPCImpl} rpcImpl RPC implementation
+                     * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
+                     * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
+                     */
+                    function SchemaService(rpcImpl, requestDelimited, responseDelimited) {
+                        $protobuf.rpc.Service.call(this, rpcImpl, requestDelimited, responseDelimited);
+                    }
+    
+                    (SchemaService.prototype = Object.create($protobuf.rpc.Service.prototype)).constructor = SchemaService;
+    
+                    /**
+                     * Creates new SchemaService service using the specified rpc implementation.
+                     * @function create
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @static
+                     * @param {$protobuf.RPCImpl} rpcImpl RPC implementation
+                     * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
+                     * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
+                     * @returns {SchemaService} RPC service. Useful where requests and/or responses are streamed.
+                     */
+                    SchemaService.create = function create(rpcImpl, requestDelimited, responseDelimited) {
+                        return new this(rpcImpl, requestDelimited, responseDelimited);
+                    };
+    
+                    /**
+                     * Callback as used by {@link google.pubsub.v1.SchemaService#createSchema}.
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @typedef CreateSchemaCallback
+                     * @type {function}
+                     * @param {Error|null} error Error, if any
+                     * @param {google.pubsub.v1.Schema} [response] Schema
+                     */
+    
+                    /**
+                     * Calls CreateSchema.
+                     * @function createSchema
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.ICreateSchemaRequest} request CreateSchemaRequest message or plain object
+                     * @param {google.pubsub.v1.SchemaService.CreateSchemaCallback} callback Node-style callback called with the error, if any, and Schema
+                     * @returns {undefined}
+                     * @variation 1
+                     */
+                    Object.defineProperty(SchemaService.prototype.createSchema = function createSchema(request, callback) {
+                        return this.rpcCall(createSchema, $root.google.pubsub.v1.CreateSchemaRequest, $root.google.pubsub.v1.Schema, request, callback);
+                    }, "name", { value: "CreateSchema" });
+    
+                    /**
+                     * Calls CreateSchema.
+                     * @function createSchema
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.ICreateSchemaRequest} request CreateSchemaRequest message or plain object
+                     * @returns {Promise<google.pubsub.v1.Schema>} Promise
+                     * @variation 2
+                     */
+    
+                    /**
+                     * Callback as used by {@link google.pubsub.v1.SchemaService#getSchema}.
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @typedef GetSchemaCallback
+                     * @type {function}
+                     * @param {Error|null} error Error, if any
+                     * @param {google.pubsub.v1.Schema} [response] Schema
+                     */
+    
+                    /**
+                     * Calls GetSchema.
+                     * @function getSchema
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.IGetSchemaRequest} request GetSchemaRequest message or plain object
+                     * @param {google.pubsub.v1.SchemaService.GetSchemaCallback} callback Node-style callback called with the error, if any, and Schema
+                     * @returns {undefined}
+                     * @variation 1
+                     */
+                    Object.defineProperty(SchemaService.prototype.getSchema = function getSchema(request, callback) {
+                        return this.rpcCall(getSchema, $root.google.pubsub.v1.GetSchemaRequest, $root.google.pubsub.v1.Schema, request, callback);
+                    }, "name", { value: "GetSchema" });
+    
+                    /**
+                     * Calls GetSchema.
+                     * @function getSchema
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.IGetSchemaRequest} request GetSchemaRequest message or plain object
+                     * @returns {Promise<google.pubsub.v1.Schema>} Promise
+                     * @variation 2
+                     */
+    
+                    /**
+                     * Callback as used by {@link google.pubsub.v1.SchemaService#listSchemas}.
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @typedef ListSchemasCallback
+                     * @type {function}
+                     * @param {Error|null} error Error, if any
+                     * @param {google.pubsub.v1.ListSchemasResponse} [response] ListSchemasResponse
+                     */
+    
+                    /**
+                     * Calls ListSchemas.
+                     * @function listSchemas
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.IListSchemasRequest} request ListSchemasRequest message or plain object
+                     * @param {google.pubsub.v1.SchemaService.ListSchemasCallback} callback Node-style callback called with the error, if any, and ListSchemasResponse
+                     * @returns {undefined}
+                     * @variation 1
+                     */
+                    Object.defineProperty(SchemaService.prototype.listSchemas = function listSchemas(request, callback) {
+                        return this.rpcCall(listSchemas, $root.google.pubsub.v1.ListSchemasRequest, $root.google.pubsub.v1.ListSchemasResponse, request, callback);
+                    }, "name", { value: "ListSchemas" });
+    
+                    /**
+                     * Calls ListSchemas.
+                     * @function listSchemas
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.IListSchemasRequest} request ListSchemasRequest message or plain object
+                     * @returns {Promise<google.pubsub.v1.ListSchemasResponse>} Promise
+                     * @variation 2
+                     */
+    
+                    /**
+                     * Callback as used by {@link google.pubsub.v1.SchemaService#deleteSchema}.
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @typedef DeleteSchemaCallback
+                     * @type {function}
+                     * @param {Error|null} error Error, if any
+                     * @param {google.protobuf.Empty} [response] Empty
+                     */
+    
+                    /**
+                     * Calls DeleteSchema.
+                     * @function deleteSchema
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.IDeleteSchemaRequest} request DeleteSchemaRequest message or plain object
+                     * @param {google.pubsub.v1.SchemaService.DeleteSchemaCallback} callback Node-style callback called with the error, if any, and Empty
+                     * @returns {undefined}
+                     * @variation 1
+                     */
+                    Object.defineProperty(SchemaService.prototype.deleteSchema = function deleteSchema(request, callback) {
+                        return this.rpcCall(deleteSchema, $root.google.pubsub.v1.DeleteSchemaRequest, $root.google.protobuf.Empty, request, callback);
+                    }, "name", { value: "DeleteSchema" });
+    
+                    /**
+                     * Calls DeleteSchema.
+                     * @function deleteSchema
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.IDeleteSchemaRequest} request DeleteSchemaRequest message or plain object
+                     * @returns {Promise<google.protobuf.Empty>} Promise
+                     * @variation 2
+                     */
+    
+                    /**
+                     * Callback as used by {@link google.pubsub.v1.SchemaService#validateSchema}.
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @typedef ValidateSchemaCallback
+                     * @type {function}
+                     * @param {Error|null} error Error, if any
+                     * @param {google.pubsub.v1.ValidateSchemaResponse} [response] ValidateSchemaResponse
+                     */
+    
+                    /**
+                     * Calls ValidateSchema.
+                     * @function validateSchema
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.IValidateSchemaRequest} request ValidateSchemaRequest message or plain object
+                     * @param {google.pubsub.v1.SchemaService.ValidateSchemaCallback} callback Node-style callback called with the error, if any, and ValidateSchemaResponse
+                     * @returns {undefined}
+                     * @variation 1
+                     */
+                    Object.defineProperty(SchemaService.prototype.validateSchema = function validateSchema(request, callback) {
+                        return this.rpcCall(validateSchema, $root.google.pubsub.v1.ValidateSchemaRequest, $root.google.pubsub.v1.ValidateSchemaResponse, request, callback);
+                    }, "name", { value: "ValidateSchema" });
+    
+                    /**
+                     * Calls ValidateSchema.
+                     * @function validateSchema
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.IValidateSchemaRequest} request ValidateSchemaRequest message or plain object
+                     * @returns {Promise<google.pubsub.v1.ValidateSchemaResponse>} Promise
+                     * @variation 2
+                     */
+    
+                    /**
+                     * Callback as used by {@link google.pubsub.v1.SchemaService#validateMessage}.
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @typedef ValidateMessageCallback
+                     * @type {function}
+                     * @param {Error|null} error Error, if any
+                     * @param {google.pubsub.v1.ValidateMessageResponse} [response] ValidateMessageResponse
+                     */
+    
+                    /**
+                     * Calls ValidateMessage.
+                     * @function validateMessage
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.IValidateMessageRequest} request ValidateMessageRequest message or plain object
+                     * @param {google.pubsub.v1.SchemaService.ValidateMessageCallback} callback Node-style callback called with the error, if any, and ValidateMessageResponse
+                     * @returns {undefined}
+                     * @variation 1
+                     */
+                    Object.defineProperty(SchemaService.prototype.validateMessage = function validateMessage(request, callback) {
+                        return this.rpcCall(validateMessage, $root.google.pubsub.v1.ValidateMessageRequest, $root.google.pubsub.v1.ValidateMessageResponse, request, callback);
+                    }, "name", { value: "ValidateMessage" });
+    
+                    /**
+                     * Calls ValidateMessage.
+                     * @function validateMessage
+                     * @memberof google.pubsub.v1.SchemaService
+                     * @instance
+                     * @param {google.pubsub.v1.IValidateMessageRequest} request ValidateMessageRequest message or plain object
+                     * @returns {Promise<google.pubsub.v1.ValidateMessageResponse>} Promise
+                     * @variation 2
+                     */
+    
+                    return SchemaService;
+                })();
+    
+                v1.Schema = (function() {
+    
+                    /**
+                     * Properties of a Schema.
+                     * @memberof google.pubsub.v1
+                     * @interface ISchema
+                     * @property {string|null} [name] Schema name
+                     * @property {google.pubsub.v1.Schema.Type|null} [type] Schema type
+                     * @property {string|null} [definition] Schema definition
+                     */
+    
+                    /**
+                     * Constructs a new Schema.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a Schema.
+                     * @implements ISchema
+                     * @constructor
+                     * @param {google.pubsub.v1.ISchema=} [properties] Properties to set
+                     */
+                    function Schema(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * Schema name.
+                     * @member {string} name
+                     * @memberof google.pubsub.v1.Schema
+                     * @instance
+                     */
+                    Schema.prototype.name = "";
+    
+                    /**
+                     * Schema type.
+                     * @member {google.pubsub.v1.Schema.Type} type
+                     * @memberof google.pubsub.v1.Schema
+                     * @instance
+                     */
+                    Schema.prototype.type = 0;
+    
+                    /**
+                     * Schema definition.
+                     * @member {string} definition
+                     * @memberof google.pubsub.v1.Schema
+                     * @instance
+                     */
+                    Schema.prototype.definition = "";
+    
+                    /**
+                     * Creates a new Schema instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.Schema
+                     * @static
+                     * @param {google.pubsub.v1.ISchema=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.Schema} Schema instance
+                     */
+                    Schema.create = function create(properties) {
+                        return new Schema(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified Schema message. Does not implicitly {@link google.pubsub.v1.Schema.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.Schema
+                     * @static
+                     * @param {google.pubsub.v1.ISchema} message Schema message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Schema.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.name);
+                        if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                            writer.uint32(/* id 2, wireType 0 =*/16).int32(message.type);
+                        if (message.definition != null && Object.hasOwnProperty.call(message, "definition"))
+                            writer.uint32(/* id 3, wireType 2 =*/26).string(message.definition);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified Schema message, length delimited. Does not implicitly {@link google.pubsub.v1.Schema.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.Schema
+                     * @static
+                     * @param {google.pubsub.v1.ISchema} message Schema message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Schema.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a Schema message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.Schema
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.Schema} Schema
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Schema.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Schema();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.name = reader.string();
+                                break;
+                            case 2:
+                                message.type = reader.int32();
+                                break;
+                            case 3:
+                                message.definition = reader.string();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a Schema message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.Schema
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.Schema} Schema
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Schema.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a Schema message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.Schema
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Schema.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            if (!$util.isString(message.name))
+                                return "name: string expected";
+                        if (message.type != null && message.hasOwnProperty("type"))
+                            switch (message.type) {
+                            default:
+                                return "type: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                                break;
+                            }
+                        if (message.definition != null && message.hasOwnProperty("definition"))
+                            if (!$util.isString(message.definition))
+                                return "definition: string expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a Schema message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.Schema
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.Schema} Schema
+                     */
+                    Schema.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.Schema)
+                            return object;
+                        var message = new $root.google.pubsub.v1.Schema();
+                        if (object.name != null)
+                            message.name = String(object.name);
+                        switch (object.type) {
+                        case "TYPE_UNSPECIFIED":
+                        case 0:
+                            message.type = 0;
+                            break;
+                        case "PROTOCOL_BUFFER":
+                        case 1:
+                            message.type = 1;
+                            break;
+                        case "AVRO":
+                        case 2:
+                            message.type = 2;
+                            break;
+                        }
+                        if (object.definition != null)
+                            message.definition = String(object.definition);
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a Schema message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.Schema
+                     * @static
+                     * @param {google.pubsub.v1.Schema} message Schema
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Schema.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.name = "";
+                            object.type = options.enums === String ? "TYPE_UNSPECIFIED" : 0;
+                            object.definition = "";
+                        }
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            object.name = message.name;
+                        if (message.type != null && message.hasOwnProperty("type"))
+                            object.type = options.enums === String ? $root.google.pubsub.v1.Schema.Type[message.type] : message.type;
+                        if (message.definition != null && message.hasOwnProperty("definition"))
+                            object.definition = message.definition;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this Schema to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.Schema
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Schema.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * Type enum.
+                     * @name google.pubsub.v1.Schema.Type
+                     * @enum {number}
+                     * @property {number} TYPE_UNSPECIFIED=0 TYPE_UNSPECIFIED value
+                     * @property {number} PROTOCOL_BUFFER=1 PROTOCOL_BUFFER value
+                     * @property {number} AVRO=2 AVRO value
+                     */
+                    Schema.Type = (function() {
+                        var valuesById = {}, values = Object.create(valuesById);
+                        values[valuesById[0] = "TYPE_UNSPECIFIED"] = 0;
+                        values[valuesById[1] = "PROTOCOL_BUFFER"] = 1;
+                        values[valuesById[2] = "AVRO"] = 2;
+                        return values;
+                    })();
+    
+                    return Schema;
+                })();
+    
+                v1.CreateSchemaRequest = (function() {
+    
+                    /**
+                     * Properties of a CreateSchemaRequest.
+                     * @memberof google.pubsub.v1
+                     * @interface ICreateSchemaRequest
+                     * @property {string|null} [parent] CreateSchemaRequest parent
+                     * @property {google.pubsub.v1.ISchema|null} [schema] CreateSchemaRequest schema
+                     * @property {string|null} [schemaId] CreateSchemaRequest schemaId
+                     */
+    
+                    /**
+                     * Constructs a new CreateSchemaRequest.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a CreateSchemaRequest.
+                     * @implements ICreateSchemaRequest
+                     * @constructor
+                     * @param {google.pubsub.v1.ICreateSchemaRequest=} [properties] Properties to set
+                     */
+                    function CreateSchemaRequest(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * CreateSchemaRequest parent.
+                     * @member {string} parent
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @instance
+                     */
+                    CreateSchemaRequest.prototype.parent = "";
+    
+                    /**
+                     * CreateSchemaRequest schema.
+                     * @member {google.pubsub.v1.ISchema|null|undefined} schema
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @instance
+                     */
+                    CreateSchemaRequest.prototype.schema = null;
+    
+                    /**
+                     * CreateSchemaRequest schemaId.
+                     * @member {string} schemaId
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @instance
+                     */
+                    CreateSchemaRequest.prototype.schemaId = "";
+    
+                    /**
+                     * Creates a new CreateSchemaRequest instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.ICreateSchemaRequest=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.CreateSchemaRequest} CreateSchemaRequest instance
+                     */
+                    CreateSchemaRequest.create = function create(properties) {
+                        return new CreateSchemaRequest(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified CreateSchemaRequest message. Does not implicitly {@link google.pubsub.v1.CreateSchemaRequest.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.ICreateSchemaRequest} message CreateSchemaRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    CreateSchemaRequest.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.parent != null && Object.hasOwnProperty.call(message, "parent"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.parent);
+                        if (message.schema != null && Object.hasOwnProperty.call(message, "schema"))
+                            $root.google.pubsub.v1.Schema.encode(message.schema, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        if (message.schemaId != null && Object.hasOwnProperty.call(message, "schemaId"))
+                            writer.uint32(/* id 3, wireType 2 =*/26).string(message.schemaId);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified CreateSchemaRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.CreateSchemaRequest.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.ICreateSchemaRequest} message CreateSchemaRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    CreateSchemaRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a CreateSchemaRequest message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.CreateSchemaRequest} CreateSchemaRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    CreateSchemaRequest.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CreateSchemaRequest();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.parent = reader.string();
+                                break;
+                            case 2:
+                                message.schema = $root.google.pubsub.v1.Schema.decode(reader, reader.uint32());
+                                break;
+                            case 3:
+                                message.schemaId = reader.string();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a CreateSchemaRequest message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.CreateSchemaRequest} CreateSchemaRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    CreateSchemaRequest.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a CreateSchemaRequest message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    CreateSchemaRequest.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.parent != null && message.hasOwnProperty("parent"))
+                            if (!$util.isString(message.parent))
+                                return "parent: string expected";
+                        if (message.schema != null && message.hasOwnProperty("schema")) {
+                            var error = $root.google.pubsub.v1.Schema.verify(message.schema);
+                            if (error)
+                                return "schema." + error;
+                        }
+                        if (message.schemaId != null && message.hasOwnProperty("schemaId"))
+                            if (!$util.isString(message.schemaId))
+                                return "schemaId: string expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a CreateSchemaRequest message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.CreateSchemaRequest} CreateSchemaRequest
+                     */
+                    CreateSchemaRequest.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.CreateSchemaRequest)
+                            return object;
+                        var message = new $root.google.pubsub.v1.CreateSchemaRequest();
+                        if (object.parent != null)
+                            message.parent = String(object.parent);
+                        if (object.schema != null) {
+                            if (typeof object.schema !== "object")
+                                throw TypeError(".google.pubsub.v1.CreateSchemaRequest.schema: object expected");
+                            message.schema = $root.google.pubsub.v1.Schema.fromObject(object.schema);
+                        }
+                        if (object.schemaId != null)
+                            message.schemaId = String(object.schemaId);
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a CreateSchemaRequest message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.CreateSchemaRequest} message CreateSchemaRequest
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    CreateSchemaRequest.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.parent = "";
+                            object.schema = null;
+                            object.schemaId = "";
+                        }
+                        if (message.parent != null && message.hasOwnProperty("parent"))
+                            object.parent = message.parent;
+                        if (message.schema != null && message.hasOwnProperty("schema"))
+                            object.schema = $root.google.pubsub.v1.Schema.toObject(message.schema, options);
+                        if (message.schemaId != null && message.hasOwnProperty("schemaId"))
+                            object.schemaId = message.schemaId;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this CreateSchemaRequest to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.CreateSchemaRequest
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    CreateSchemaRequest.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return CreateSchemaRequest;
+                })();
+    
+                /**
+                 * SchemaView enum.
+                 * @name google.pubsub.v1.SchemaView
+                 * @enum {number}
+                 * @property {number} SCHEMA_VIEW_UNSPECIFIED=0 SCHEMA_VIEW_UNSPECIFIED value
+                 * @property {number} BASIC=1 BASIC value
+                 * @property {number} FULL=2 FULL value
+                 */
+                v1.SchemaView = (function() {
+                    var valuesById = {}, values = Object.create(valuesById);
+                    values[valuesById[0] = "SCHEMA_VIEW_UNSPECIFIED"] = 0;
+                    values[valuesById[1] = "BASIC"] = 1;
+                    values[valuesById[2] = "FULL"] = 2;
+                    return values;
+                })();
+    
+                v1.GetSchemaRequest = (function() {
+    
+                    /**
+                     * Properties of a GetSchemaRequest.
+                     * @memberof google.pubsub.v1
+                     * @interface IGetSchemaRequest
+                     * @property {string|null} [name] GetSchemaRequest name
+                     * @property {google.pubsub.v1.SchemaView|null} [view] GetSchemaRequest view
+                     */
+    
+                    /**
+                     * Constructs a new GetSchemaRequest.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a GetSchemaRequest.
+                     * @implements IGetSchemaRequest
+                     * @constructor
+                     * @param {google.pubsub.v1.IGetSchemaRequest=} [properties] Properties to set
+                     */
+                    function GetSchemaRequest(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * GetSchemaRequest name.
+                     * @member {string} name
+                     * @memberof google.pubsub.v1.GetSchemaRequest
+                     * @instance
+                     */
+                    GetSchemaRequest.prototype.name = "";
+    
+                    /**
+                     * GetSchemaRequest view.
+                     * @member {google.pubsub.v1.SchemaView} view
+                     * @memberof google.pubsub.v1.GetSchemaRequest
+                     * @instance
+                     */
+                    GetSchemaRequest.prototype.view = 0;
+    
+                    /**
+                     * Creates a new GetSchemaRequest instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.GetSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.IGetSchemaRequest=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.GetSchemaRequest} GetSchemaRequest instance
+                     */
+                    GetSchemaRequest.create = function create(properties) {
+                        return new GetSchemaRequest(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified GetSchemaRequest message. Does not implicitly {@link google.pubsub.v1.GetSchemaRequest.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.GetSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.IGetSchemaRequest} message GetSchemaRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    GetSchemaRequest.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.name);
+                        if (message.view != null && Object.hasOwnProperty.call(message, "view"))
+                            writer.uint32(/* id 2, wireType 0 =*/16).int32(message.view);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified GetSchemaRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.GetSchemaRequest.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.GetSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.IGetSchemaRequest} message GetSchemaRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    GetSchemaRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a GetSchemaRequest message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.GetSchemaRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.GetSchemaRequest} GetSchemaRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    GetSchemaRequest.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.GetSchemaRequest();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.name = reader.string();
+                                break;
+                            case 2:
+                                message.view = reader.int32();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a GetSchemaRequest message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.GetSchemaRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.GetSchemaRequest} GetSchemaRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    GetSchemaRequest.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a GetSchemaRequest message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.GetSchemaRequest
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    GetSchemaRequest.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            if (!$util.isString(message.name))
+                                return "name: string expected";
+                        if (message.view != null && message.hasOwnProperty("view"))
+                            switch (message.view) {
+                            default:
+                                return "view: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                                break;
+                            }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a GetSchemaRequest message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.GetSchemaRequest
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.GetSchemaRequest} GetSchemaRequest
+                     */
+                    GetSchemaRequest.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.GetSchemaRequest)
+                            return object;
+                        var message = new $root.google.pubsub.v1.GetSchemaRequest();
+                        if (object.name != null)
+                            message.name = String(object.name);
+                        switch (object.view) {
+                        case "SCHEMA_VIEW_UNSPECIFIED":
+                        case 0:
+                            message.view = 0;
+                            break;
+                        case "BASIC":
+                        case 1:
+                            message.view = 1;
+                            break;
+                        case "FULL":
+                        case 2:
+                            message.view = 2;
+                            break;
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a GetSchemaRequest message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.GetSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.GetSchemaRequest} message GetSchemaRequest
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    GetSchemaRequest.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.name = "";
+                            object.view = options.enums === String ? "SCHEMA_VIEW_UNSPECIFIED" : 0;
+                        }
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            object.name = message.name;
+                        if (message.view != null && message.hasOwnProperty("view"))
+                            object.view = options.enums === String ? $root.google.pubsub.v1.SchemaView[message.view] : message.view;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this GetSchemaRequest to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.GetSchemaRequest
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    GetSchemaRequest.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return GetSchemaRequest;
+                })();
+    
+                v1.ListSchemasRequest = (function() {
+    
+                    /**
+                     * Properties of a ListSchemasRequest.
+                     * @memberof google.pubsub.v1
+                     * @interface IListSchemasRequest
+                     * @property {string|null} [parent] ListSchemasRequest parent
+                     * @property {google.pubsub.v1.SchemaView|null} [view] ListSchemasRequest view
+                     * @property {number|null} [pageSize] ListSchemasRequest pageSize
+                     * @property {string|null} [pageToken] ListSchemasRequest pageToken
+                     */
+    
+                    /**
+                     * Constructs a new ListSchemasRequest.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a ListSchemasRequest.
+                     * @implements IListSchemasRequest
+                     * @constructor
+                     * @param {google.pubsub.v1.IListSchemasRequest=} [properties] Properties to set
+                     */
+                    function ListSchemasRequest(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * ListSchemasRequest parent.
+                     * @member {string} parent
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @instance
+                     */
+                    ListSchemasRequest.prototype.parent = "";
+    
+                    /**
+                     * ListSchemasRequest view.
+                     * @member {google.pubsub.v1.SchemaView} view
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @instance
+                     */
+                    ListSchemasRequest.prototype.view = 0;
+    
+                    /**
+                     * ListSchemasRequest pageSize.
+                     * @member {number} pageSize
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @instance
+                     */
+                    ListSchemasRequest.prototype.pageSize = 0;
+    
+                    /**
+                     * ListSchemasRequest pageToken.
+                     * @member {string} pageToken
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @instance
+                     */
+                    ListSchemasRequest.prototype.pageToken = "";
+    
+                    /**
+                     * Creates a new ListSchemasRequest instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @static
+                     * @param {google.pubsub.v1.IListSchemasRequest=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.ListSchemasRequest} ListSchemasRequest instance
+                     */
+                    ListSchemasRequest.create = function create(properties) {
+                        return new ListSchemasRequest(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified ListSchemasRequest message. Does not implicitly {@link google.pubsub.v1.ListSchemasRequest.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @static
+                     * @param {google.pubsub.v1.IListSchemasRequest} message ListSchemasRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ListSchemasRequest.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.parent != null && Object.hasOwnProperty.call(message, "parent"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.parent);
+                        if (message.view != null && Object.hasOwnProperty.call(message, "view"))
+                            writer.uint32(/* id 2, wireType 0 =*/16).int32(message.view);
+                        if (message.pageSize != null && Object.hasOwnProperty.call(message, "pageSize"))
+                            writer.uint32(/* id 3, wireType 0 =*/24).int32(message.pageSize);
+                        if (message.pageToken != null && Object.hasOwnProperty.call(message, "pageToken"))
+                            writer.uint32(/* id 4, wireType 2 =*/34).string(message.pageToken);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified ListSchemasRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSchemasRequest.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @static
+                     * @param {google.pubsub.v1.IListSchemasRequest} message ListSchemasRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ListSchemasRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a ListSchemasRequest message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.ListSchemasRequest} ListSchemasRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ListSchemasRequest.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSchemasRequest();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.parent = reader.string();
+                                break;
+                            case 2:
+                                message.view = reader.int32();
+                                break;
+                            case 3:
+                                message.pageSize = reader.int32();
+                                break;
+                            case 4:
+                                message.pageToken = reader.string();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a ListSchemasRequest message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.ListSchemasRequest} ListSchemasRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ListSchemasRequest.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a ListSchemasRequest message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    ListSchemasRequest.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.parent != null && message.hasOwnProperty("parent"))
+                            if (!$util.isString(message.parent))
+                                return "parent: string expected";
+                        if (message.view != null && message.hasOwnProperty("view"))
+                            switch (message.view) {
+                            default:
+                                return "view: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                                break;
+                            }
+                        if (message.pageSize != null && message.hasOwnProperty("pageSize"))
+                            if (!$util.isInteger(message.pageSize))
+                                return "pageSize: integer expected";
+                        if (message.pageToken != null && message.hasOwnProperty("pageToken"))
+                            if (!$util.isString(message.pageToken))
+                                return "pageToken: string expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a ListSchemasRequest message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.ListSchemasRequest} ListSchemasRequest
+                     */
+                    ListSchemasRequest.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.ListSchemasRequest)
+                            return object;
+                        var message = new $root.google.pubsub.v1.ListSchemasRequest();
+                        if (object.parent != null)
+                            message.parent = String(object.parent);
+                        switch (object.view) {
+                        case "SCHEMA_VIEW_UNSPECIFIED":
+                        case 0:
+                            message.view = 0;
+                            break;
+                        case "BASIC":
+                        case 1:
+                            message.view = 1;
+                            break;
+                        case "FULL":
+                        case 2:
+                            message.view = 2;
+                            break;
+                        }
+                        if (object.pageSize != null)
+                            message.pageSize = object.pageSize | 0;
+                        if (object.pageToken != null)
+                            message.pageToken = String(object.pageToken);
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a ListSchemasRequest message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @static
+                     * @param {google.pubsub.v1.ListSchemasRequest} message ListSchemasRequest
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    ListSchemasRequest.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.parent = "";
+                            object.view = options.enums === String ? "SCHEMA_VIEW_UNSPECIFIED" : 0;
+                            object.pageSize = 0;
+                            object.pageToken = "";
+                        }
+                        if (message.parent != null && message.hasOwnProperty("parent"))
+                            object.parent = message.parent;
+                        if (message.view != null && message.hasOwnProperty("view"))
+                            object.view = options.enums === String ? $root.google.pubsub.v1.SchemaView[message.view] : message.view;
+                        if (message.pageSize != null && message.hasOwnProperty("pageSize"))
+                            object.pageSize = message.pageSize;
+                        if (message.pageToken != null && message.hasOwnProperty("pageToken"))
+                            object.pageToken = message.pageToken;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this ListSchemasRequest to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.ListSchemasRequest
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    ListSchemasRequest.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return ListSchemasRequest;
+                })();
+    
+                v1.ListSchemasResponse = (function() {
+    
+                    /**
+                     * Properties of a ListSchemasResponse.
+                     * @memberof google.pubsub.v1
+                     * @interface IListSchemasResponse
+                     * @property {Array.<google.pubsub.v1.ISchema>|null} [schemas] ListSchemasResponse schemas
+                     * @property {string|null} [nextPageToken] ListSchemasResponse nextPageToken
+                     */
+    
+                    /**
+                     * Constructs a new ListSchemasResponse.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a ListSchemasResponse.
+                     * @implements IListSchemasResponse
+                     * @constructor
+                     * @param {google.pubsub.v1.IListSchemasResponse=} [properties] Properties to set
+                     */
+                    function ListSchemasResponse(properties) {
+                        this.schemas = [];
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * ListSchemasResponse schemas.
+                     * @member {Array.<google.pubsub.v1.ISchema>} schemas
+                     * @memberof google.pubsub.v1.ListSchemasResponse
+                     * @instance
+                     */
+                    ListSchemasResponse.prototype.schemas = $util.emptyArray;
+    
+                    /**
+                     * ListSchemasResponse nextPageToken.
+                     * @member {string} nextPageToken
+                     * @memberof google.pubsub.v1.ListSchemasResponse
+                     * @instance
+                     */
+                    ListSchemasResponse.prototype.nextPageToken = "";
+    
+                    /**
+                     * Creates a new ListSchemasResponse instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.ListSchemasResponse
+                     * @static
+                     * @param {google.pubsub.v1.IListSchemasResponse=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.ListSchemasResponse} ListSchemasResponse instance
+                     */
+                    ListSchemasResponse.create = function create(properties) {
+                        return new ListSchemasResponse(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified ListSchemasResponse message. Does not implicitly {@link google.pubsub.v1.ListSchemasResponse.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.ListSchemasResponse
+                     * @static
+                     * @param {google.pubsub.v1.IListSchemasResponse} message ListSchemasResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ListSchemasResponse.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.schemas != null && message.schemas.length)
+                            for (var i = 0; i < message.schemas.length; ++i)
+                                $root.google.pubsub.v1.Schema.encode(message.schemas[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        if (message.nextPageToken != null && Object.hasOwnProperty.call(message, "nextPageToken"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.nextPageToken);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified ListSchemasResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSchemasResponse.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.ListSchemasResponse
+                     * @static
+                     * @param {google.pubsub.v1.IListSchemasResponse} message ListSchemasResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ListSchemasResponse.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a ListSchemasResponse message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.ListSchemasResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.ListSchemasResponse} ListSchemasResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ListSchemasResponse.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSchemasResponse();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                if (!(message.schemas && message.schemas.length))
+                                    message.schemas = [];
+                                message.schemas.push($root.google.pubsub.v1.Schema.decode(reader, reader.uint32()));
+                                break;
+                            case 2:
+                                message.nextPageToken = reader.string();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a ListSchemasResponse message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.ListSchemasResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.ListSchemasResponse} ListSchemasResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ListSchemasResponse.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a ListSchemasResponse message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.ListSchemasResponse
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    ListSchemasResponse.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.schemas != null && message.hasOwnProperty("schemas")) {
+                            if (!Array.isArray(message.schemas))
+                                return "schemas: array expected";
+                            for (var i = 0; i < message.schemas.length; ++i) {
+                                var error = $root.google.pubsub.v1.Schema.verify(message.schemas[i]);
+                                if (error)
+                                    return "schemas." + error;
+                            }
+                        }
+                        if (message.nextPageToken != null && message.hasOwnProperty("nextPageToken"))
+                            if (!$util.isString(message.nextPageToken))
+                                return "nextPageToken: string expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a ListSchemasResponse message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.ListSchemasResponse
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.ListSchemasResponse} ListSchemasResponse
+                     */
+                    ListSchemasResponse.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.ListSchemasResponse)
+                            return object;
+                        var message = new $root.google.pubsub.v1.ListSchemasResponse();
+                        if (object.schemas) {
+                            if (!Array.isArray(object.schemas))
+                                throw TypeError(".google.pubsub.v1.ListSchemasResponse.schemas: array expected");
+                            message.schemas = [];
+                            for (var i = 0; i < object.schemas.length; ++i) {
+                                if (typeof object.schemas[i] !== "object")
+                                    throw TypeError(".google.pubsub.v1.ListSchemasResponse.schemas: object expected");
+                                message.schemas[i] = $root.google.pubsub.v1.Schema.fromObject(object.schemas[i]);
+                            }
+                        }
+                        if (object.nextPageToken != null)
+                            message.nextPageToken = String(object.nextPageToken);
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a ListSchemasResponse message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.ListSchemasResponse
+                     * @static
+                     * @param {google.pubsub.v1.ListSchemasResponse} message ListSchemasResponse
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    ListSchemasResponse.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.arrays || options.defaults)
+                            object.schemas = [];
+                        if (options.defaults)
+                            object.nextPageToken = "";
+                        if (message.schemas && message.schemas.length) {
+                            object.schemas = [];
+                            for (var j = 0; j < message.schemas.length; ++j)
+                                object.schemas[j] = $root.google.pubsub.v1.Schema.toObject(message.schemas[j], options);
+                        }
+                        if (message.nextPageToken != null && message.hasOwnProperty("nextPageToken"))
+                            object.nextPageToken = message.nextPageToken;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this ListSchemasResponse to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.ListSchemasResponse
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    ListSchemasResponse.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return ListSchemasResponse;
+                })();
+    
+                v1.DeleteSchemaRequest = (function() {
+    
+                    /**
+                     * Properties of a DeleteSchemaRequest.
+                     * @memberof google.pubsub.v1
+                     * @interface IDeleteSchemaRequest
+                     * @property {string|null} [name] DeleteSchemaRequest name
+                     */
+    
+                    /**
+                     * Constructs a new DeleteSchemaRequest.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a DeleteSchemaRequest.
+                     * @implements IDeleteSchemaRequest
+                     * @constructor
+                     * @param {google.pubsub.v1.IDeleteSchemaRequest=} [properties] Properties to set
+                     */
+                    function DeleteSchemaRequest(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * DeleteSchemaRequest name.
+                     * @member {string} name
+                     * @memberof google.pubsub.v1.DeleteSchemaRequest
+                     * @instance
+                     */
+                    DeleteSchemaRequest.prototype.name = "";
+    
+                    /**
+                     * Creates a new DeleteSchemaRequest instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.DeleteSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.IDeleteSchemaRequest=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.DeleteSchemaRequest} DeleteSchemaRequest instance
+                     */
+                    DeleteSchemaRequest.create = function create(properties) {
+                        return new DeleteSchemaRequest(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified DeleteSchemaRequest message. Does not implicitly {@link google.pubsub.v1.DeleteSchemaRequest.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.DeleteSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.IDeleteSchemaRequest} message DeleteSchemaRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    DeleteSchemaRequest.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.name);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified DeleteSchemaRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteSchemaRequest.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.DeleteSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.IDeleteSchemaRequest} message DeleteSchemaRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    DeleteSchemaRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a DeleteSchemaRequest message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.DeleteSchemaRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.DeleteSchemaRequest} DeleteSchemaRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    DeleteSchemaRequest.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DeleteSchemaRequest();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.name = reader.string();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a DeleteSchemaRequest message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.DeleteSchemaRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.DeleteSchemaRequest} DeleteSchemaRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    DeleteSchemaRequest.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a DeleteSchemaRequest message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.DeleteSchemaRequest
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    DeleteSchemaRequest.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            if (!$util.isString(message.name))
+                                return "name: string expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a DeleteSchemaRequest message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.DeleteSchemaRequest
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.DeleteSchemaRequest} DeleteSchemaRequest
+                     */
+                    DeleteSchemaRequest.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.DeleteSchemaRequest)
+                            return object;
+                        var message = new $root.google.pubsub.v1.DeleteSchemaRequest();
+                        if (object.name != null)
+                            message.name = String(object.name);
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a DeleteSchemaRequest message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.DeleteSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.DeleteSchemaRequest} message DeleteSchemaRequest
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    DeleteSchemaRequest.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults)
+                            object.name = "";
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            object.name = message.name;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this DeleteSchemaRequest to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.DeleteSchemaRequest
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    DeleteSchemaRequest.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return DeleteSchemaRequest;
+                })();
+    
+                v1.ValidateSchemaRequest = (function() {
+    
+                    /**
+                     * Properties of a ValidateSchemaRequest.
+                     * @memberof google.pubsub.v1
+                     * @interface IValidateSchemaRequest
+                     * @property {string|null} [parent] ValidateSchemaRequest parent
+                     * @property {google.pubsub.v1.ISchema|null} [schema] ValidateSchemaRequest schema
+                     */
+    
+                    /**
+                     * Constructs a new ValidateSchemaRequest.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a ValidateSchemaRequest.
+                     * @implements IValidateSchemaRequest
+                     * @constructor
+                     * @param {google.pubsub.v1.IValidateSchemaRequest=} [properties] Properties to set
+                     */
+                    function ValidateSchemaRequest(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * ValidateSchemaRequest parent.
+                     * @member {string} parent
+                     * @memberof google.pubsub.v1.ValidateSchemaRequest
+                     * @instance
+                     */
+                    ValidateSchemaRequest.prototype.parent = "";
+    
+                    /**
+                     * ValidateSchemaRequest schema.
+                     * @member {google.pubsub.v1.ISchema|null|undefined} schema
+                     * @memberof google.pubsub.v1.ValidateSchemaRequest
+                     * @instance
+                     */
+                    ValidateSchemaRequest.prototype.schema = null;
+    
+                    /**
+                     * Creates a new ValidateSchemaRequest instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.ValidateSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.IValidateSchemaRequest=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.ValidateSchemaRequest} ValidateSchemaRequest instance
+                     */
+                    ValidateSchemaRequest.create = function create(properties) {
+                        return new ValidateSchemaRequest(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified ValidateSchemaRequest message. Does not implicitly {@link google.pubsub.v1.ValidateSchemaRequest.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.ValidateSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.IValidateSchemaRequest} message ValidateSchemaRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ValidateSchemaRequest.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.parent != null && Object.hasOwnProperty.call(message, "parent"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.parent);
+                        if (message.schema != null && Object.hasOwnProperty.call(message, "schema"))
+                            $root.google.pubsub.v1.Schema.encode(message.schema, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified ValidateSchemaRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ValidateSchemaRequest.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.ValidateSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.IValidateSchemaRequest} message ValidateSchemaRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ValidateSchemaRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a ValidateSchemaRequest message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.ValidateSchemaRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.ValidateSchemaRequest} ValidateSchemaRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ValidateSchemaRequest.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ValidateSchemaRequest();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.parent = reader.string();
+                                break;
+                            case 2:
+                                message.schema = $root.google.pubsub.v1.Schema.decode(reader, reader.uint32());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a ValidateSchemaRequest message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.ValidateSchemaRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.ValidateSchemaRequest} ValidateSchemaRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ValidateSchemaRequest.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a ValidateSchemaRequest message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.ValidateSchemaRequest
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    ValidateSchemaRequest.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.parent != null && message.hasOwnProperty("parent"))
+                            if (!$util.isString(message.parent))
+                                return "parent: string expected";
+                        if (message.schema != null && message.hasOwnProperty("schema")) {
+                            var error = $root.google.pubsub.v1.Schema.verify(message.schema);
+                            if (error)
+                                return "schema." + error;
+                        }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a ValidateSchemaRequest message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.ValidateSchemaRequest
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.ValidateSchemaRequest} ValidateSchemaRequest
+                     */
+                    ValidateSchemaRequest.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.ValidateSchemaRequest)
+                            return object;
+                        var message = new $root.google.pubsub.v1.ValidateSchemaRequest();
+                        if (object.parent != null)
+                            message.parent = String(object.parent);
+                        if (object.schema != null) {
+                            if (typeof object.schema !== "object")
+                                throw TypeError(".google.pubsub.v1.ValidateSchemaRequest.schema: object expected");
+                            message.schema = $root.google.pubsub.v1.Schema.fromObject(object.schema);
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a ValidateSchemaRequest message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.ValidateSchemaRequest
+                     * @static
+                     * @param {google.pubsub.v1.ValidateSchemaRequest} message ValidateSchemaRequest
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    ValidateSchemaRequest.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.parent = "";
+                            object.schema = null;
+                        }
+                        if (message.parent != null && message.hasOwnProperty("parent"))
+                            object.parent = message.parent;
+                        if (message.schema != null && message.hasOwnProperty("schema"))
+                            object.schema = $root.google.pubsub.v1.Schema.toObject(message.schema, options);
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this ValidateSchemaRequest to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.ValidateSchemaRequest
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    ValidateSchemaRequest.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return ValidateSchemaRequest;
+                })();
+    
+                v1.ValidateSchemaResponse = (function() {
+    
+                    /**
+                     * Properties of a ValidateSchemaResponse.
+                     * @memberof google.pubsub.v1
+                     * @interface IValidateSchemaResponse
+                     */
+    
+                    /**
+                     * Constructs a new ValidateSchemaResponse.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a ValidateSchemaResponse.
+                     * @implements IValidateSchemaResponse
+                     * @constructor
+                     * @param {google.pubsub.v1.IValidateSchemaResponse=} [properties] Properties to set
+                     */
+                    function ValidateSchemaResponse(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * Creates a new ValidateSchemaResponse instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.ValidateSchemaResponse
+                     * @static
+                     * @param {google.pubsub.v1.IValidateSchemaResponse=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.ValidateSchemaResponse} ValidateSchemaResponse instance
+                     */
+                    ValidateSchemaResponse.create = function create(properties) {
+                        return new ValidateSchemaResponse(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified ValidateSchemaResponse message. Does not implicitly {@link google.pubsub.v1.ValidateSchemaResponse.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.ValidateSchemaResponse
+                     * @static
+                     * @param {google.pubsub.v1.IValidateSchemaResponse} message ValidateSchemaResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ValidateSchemaResponse.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified ValidateSchemaResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ValidateSchemaResponse.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.ValidateSchemaResponse
+                     * @static
+                     * @param {google.pubsub.v1.IValidateSchemaResponse} message ValidateSchemaResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ValidateSchemaResponse.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a ValidateSchemaResponse message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.ValidateSchemaResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.ValidateSchemaResponse} ValidateSchemaResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ValidateSchemaResponse.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ValidateSchemaResponse();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a ValidateSchemaResponse message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.ValidateSchemaResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.ValidateSchemaResponse} ValidateSchemaResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ValidateSchemaResponse.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a ValidateSchemaResponse message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.ValidateSchemaResponse
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    ValidateSchemaResponse.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a ValidateSchemaResponse message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.ValidateSchemaResponse
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.ValidateSchemaResponse} ValidateSchemaResponse
+                     */
+                    ValidateSchemaResponse.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.ValidateSchemaResponse)
+                            return object;
+                        return new $root.google.pubsub.v1.ValidateSchemaResponse();
+                    };
+    
+                    /**
+                     * Creates a plain object from a ValidateSchemaResponse message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.ValidateSchemaResponse
+                     * @static
+                     * @param {google.pubsub.v1.ValidateSchemaResponse} message ValidateSchemaResponse
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    ValidateSchemaResponse.toObject = function toObject() {
+                        return {};
+                    };
+    
+                    /**
+                     * Converts this ValidateSchemaResponse to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.ValidateSchemaResponse
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    ValidateSchemaResponse.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return ValidateSchemaResponse;
+                })();
+    
+                v1.ValidateMessageRequest = (function() {
+    
+                    /**
+                     * Properties of a ValidateMessageRequest.
+                     * @memberof google.pubsub.v1
+                     * @interface IValidateMessageRequest
+                     * @property {string|null} [parent] ValidateMessageRequest parent
+                     * @property {string|null} [name] ValidateMessageRequest name
+                     * @property {google.pubsub.v1.ISchema|null} [schema] ValidateMessageRequest schema
+                     * @property {Uint8Array|null} [message] ValidateMessageRequest message
+                     * @property {google.pubsub.v1.Encoding|null} [encoding] ValidateMessageRequest encoding
+                     */
+    
+                    /**
+                     * Constructs a new ValidateMessageRequest.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a ValidateMessageRequest.
+                     * @implements IValidateMessageRequest
+                     * @constructor
+                     * @param {google.pubsub.v1.IValidateMessageRequest=} [properties] Properties to set
+                     */
+                    function ValidateMessageRequest(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * ValidateMessageRequest parent.
+                     * @member {string} parent
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @instance
+                     */
+                    ValidateMessageRequest.prototype.parent = "";
+    
+                    /**
+                     * ValidateMessageRequest name.
+                     * @member {string} name
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @instance
+                     */
+                    ValidateMessageRequest.prototype.name = "";
+    
+                    /**
+                     * ValidateMessageRequest schema.
+                     * @member {google.pubsub.v1.ISchema|null|undefined} schema
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @instance
+                     */
+                    ValidateMessageRequest.prototype.schema = null;
+    
+                    /**
+                     * ValidateMessageRequest message.
+                     * @member {Uint8Array} message
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @instance
+                     */
+                    ValidateMessageRequest.prototype.message = $util.newBuffer([]);
+    
+                    /**
+                     * ValidateMessageRequest encoding.
+                     * @member {google.pubsub.v1.Encoding} encoding
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @instance
+                     */
+                    ValidateMessageRequest.prototype.encoding = 0;
+    
+                    // OneOf field names bound to virtual getters and setters
+                    var $oneOfFields;
+    
+                    /**
+                     * ValidateMessageRequest schemaSpec.
+                     * @member {"name"|"schema"|undefined} schemaSpec
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @instance
+                     */
+                    Object.defineProperty(ValidateMessageRequest.prototype, "schemaSpec", {
+                        get: $util.oneOfGetter($oneOfFields = ["name", "schema"]),
+                        set: $util.oneOfSetter($oneOfFields)
+                    });
+    
+                    /**
+                     * Creates a new ValidateMessageRequest instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @static
+                     * @param {google.pubsub.v1.IValidateMessageRequest=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.ValidateMessageRequest} ValidateMessageRequest instance
+                     */
+                    ValidateMessageRequest.create = function create(properties) {
+                        return new ValidateMessageRequest(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified ValidateMessageRequest message. Does not implicitly {@link google.pubsub.v1.ValidateMessageRequest.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @static
+                     * @param {google.pubsub.v1.IValidateMessageRequest} message ValidateMessageRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ValidateMessageRequest.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.parent != null && Object.hasOwnProperty.call(message, "parent"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.parent);
+                        if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.name);
+                        if (message.schema != null && Object.hasOwnProperty.call(message, "schema"))
+                            $root.google.pubsub.v1.Schema.encode(message.schema, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                        if (message.message != null && Object.hasOwnProperty.call(message, "message"))
+                            writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.message);
+                        if (message.encoding != null && Object.hasOwnProperty.call(message, "encoding"))
+                            writer.uint32(/* id 5, wireType 0 =*/40).int32(message.encoding);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified ValidateMessageRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ValidateMessageRequest.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @static
+                     * @param {google.pubsub.v1.IValidateMessageRequest} message ValidateMessageRequest message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ValidateMessageRequest.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a ValidateMessageRequest message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.ValidateMessageRequest} ValidateMessageRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ValidateMessageRequest.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ValidateMessageRequest();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.parent = reader.string();
+                                break;
+                            case 2:
+                                message.name = reader.string();
+                                break;
+                            case 3:
+                                message.schema = $root.google.pubsub.v1.Schema.decode(reader, reader.uint32());
+                                break;
+                            case 4:
+                                message.message = reader.bytes();
+                                break;
+                            case 5:
+                                message.encoding = reader.int32();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a ValidateMessageRequest message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.ValidateMessageRequest} ValidateMessageRequest
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ValidateMessageRequest.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a ValidateMessageRequest message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    ValidateMessageRequest.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        var properties = {};
+                        if (message.parent != null && message.hasOwnProperty("parent"))
+                            if (!$util.isString(message.parent))
+                                return "parent: string expected";
+                        if (message.name != null && message.hasOwnProperty("name")) {
+                            properties.schemaSpec = 1;
+                            if (!$util.isString(message.name))
+                                return "name: string expected";
+                        }
+                        if (message.schema != null && message.hasOwnProperty("schema")) {
+                            if (properties.schemaSpec === 1)
+                                return "schemaSpec: multiple values";
+                            properties.schemaSpec = 1;
+                            {
+                                var error = $root.google.pubsub.v1.Schema.verify(message.schema);
+                                if (error)
+                                    return "schema." + error;
+                            }
+                        }
+                        if (message.message != null && message.hasOwnProperty("message"))
+                            if (!(message.message && typeof message.message.length === "number" || $util.isString(message.message)))
+                                return "message: buffer expected";
+                        if (message.encoding != null && message.hasOwnProperty("encoding"))
+                            switch (message.encoding) {
+                            default:
+                                return "encoding: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                                break;
+                            }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a ValidateMessageRequest message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.ValidateMessageRequest} ValidateMessageRequest
+                     */
+                    ValidateMessageRequest.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.ValidateMessageRequest)
+                            return object;
+                        var message = new $root.google.pubsub.v1.ValidateMessageRequest();
+                        if (object.parent != null)
+                            message.parent = String(object.parent);
+                        if (object.name != null)
+                            message.name = String(object.name);
+                        if (object.schema != null) {
+                            if (typeof object.schema !== "object")
+                                throw TypeError(".google.pubsub.v1.ValidateMessageRequest.schema: object expected");
+                            message.schema = $root.google.pubsub.v1.Schema.fromObject(object.schema);
+                        }
+                        if (object.message != null)
+                            if (typeof object.message === "string")
+                                $util.base64.decode(object.message, message.message = $util.newBuffer($util.base64.length(object.message)), 0);
+                            else if (object.message.length)
+                                message.message = object.message;
+                        switch (object.encoding) {
+                        case "ENCODING_UNSPECIFIED":
+                        case 0:
+                            message.encoding = 0;
+                            break;
+                        case "JSON":
+                        case 1:
+                            message.encoding = 1;
+                            break;
+                        case "BINARY":
+                        case 2:
+                            message.encoding = 2;
+                            break;
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a ValidateMessageRequest message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @static
+                     * @param {google.pubsub.v1.ValidateMessageRequest} message ValidateMessageRequest
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    ValidateMessageRequest.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.parent = "";
+                            if (options.bytes === String)
+                                object.message = "";
+                            else {
+                                object.message = [];
+                                if (options.bytes !== Array)
+                                    object.message = $util.newBuffer(object.message);
+                            }
+                            object.encoding = options.enums === String ? "ENCODING_UNSPECIFIED" : 0;
+                        }
+                        if (message.parent != null && message.hasOwnProperty("parent"))
+                            object.parent = message.parent;
+                        if (message.name != null && message.hasOwnProperty("name")) {
+                            object.name = message.name;
+                            if (options.oneofs)
+                                object.schemaSpec = "name";
+                        }
+                        if (message.schema != null && message.hasOwnProperty("schema")) {
+                            object.schema = $root.google.pubsub.v1.Schema.toObject(message.schema, options);
+                            if (options.oneofs)
+                                object.schemaSpec = "schema";
+                        }
+                        if (message.message != null && message.hasOwnProperty("message"))
+                            object.message = options.bytes === String ? $util.base64.encode(message.message, 0, message.message.length) : options.bytes === Array ? Array.prototype.slice.call(message.message) : message.message;
+                        if (message.encoding != null && message.hasOwnProperty("encoding"))
+                            object.encoding = options.enums === String ? $root.google.pubsub.v1.Encoding[message.encoding] : message.encoding;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this ValidateMessageRequest to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.ValidateMessageRequest
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    ValidateMessageRequest.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return ValidateMessageRequest;
+                })();
+    
+                v1.ValidateMessageResponse = (function() {
+    
+                    /**
+                     * Properties of a ValidateMessageResponse.
+                     * @memberof google.pubsub.v1
+                     * @interface IValidateMessageResponse
+                     */
+    
+                    /**
+                     * Constructs a new ValidateMessageResponse.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a ValidateMessageResponse.
+                     * @implements IValidateMessageResponse
+                     * @constructor
+                     * @param {google.pubsub.v1.IValidateMessageResponse=} [properties] Properties to set
+                     */
+                    function ValidateMessageResponse(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * Creates a new ValidateMessageResponse instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.ValidateMessageResponse
+                     * @static
+                     * @param {google.pubsub.v1.IValidateMessageResponse=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.ValidateMessageResponse} ValidateMessageResponse instance
+                     */
+                    ValidateMessageResponse.create = function create(properties) {
+                        return new ValidateMessageResponse(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified ValidateMessageResponse message. Does not implicitly {@link google.pubsub.v1.ValidateMessageResponse.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.ValidateMessageResponse
+                     * @static
+                     * @param {google.pubsub.v1.IValidateMessageResponse} message ValidateMessageResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ValidateMessageResponse.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified ValidateMessageResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ValidateMessageResponse.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.ValidateMessageResponse
+                     * @static
+                     * @param {google.pubsub.v1.IValidateMessageResponse} message ValidateMessageResponse message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    ValidateMessageResponse.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a ValidateMessageResponse message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.ValidateMessageResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.ValidateMessageResponse} ValidateMessageResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ValidateMessageResponse.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ValidateMessageResponse();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a ValidateMessageResponse message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.ValidateMessageResponse
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.ValidateMessageResponse} ValidateMessageResponse
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    ValidateMessageResponse.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a ValidateMessageResponse message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.ValidateMessageResponse
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    ValidateMessageResponse.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a ValidateMessageResponse message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.ValidateMessageResponse
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.ValidateMessageResponse} ValidateMessageResponse
+                     */
+                    ValidateMessageResponse.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.ValidateMessageResponse)
+                            return object;
+                        return new $root.google.pubsub.v1.ValidateMessageResponse();
+                    };
+    
+                    /**
+                     * Creates a plain object from a ValidateMessageResponse message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.ValidateMessageResponse
+                     * @static
+                     * @param {google.pubsub.v1.ValidateMessageResponse} message ValidateMessageResponse
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    ValidateMessageResponse.toObject = function toObject() {
+                        return {};
+                    };
+    
+                    /**
+                     * Converts this ValidateMessageResponse to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.ValidateMessageResponse
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    ValidateMessageResponse.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    return ValidateMessageResponse;
+                })();
+    
+                /**
+                 * Encoding enum.
+                 * @name google.pubsub.v1.Encoding
+                 * @enum {number}
+                 * @property {number} ENCODING_UNSPECIFIED=0 ENCODING_UNSPECIFIED value
+                 * @property {number} JSON=1 JSON value
+                 * @property {number} BINARY=2 BINARY value
+                 */
+                v1.Encoding = (function() {
+                    var valuesById = {}, values = Object.create(valuesById);
+                    values[valuesById[0] = "ENCODING_UNSPECIFIED"] = 0;
+                    values[valuesById[1] = "JSON"] = 1;
+                    values[valuesById[2] = "BINARY"] = 2;
+                    return values;
                 })();
     
                 return v1;
