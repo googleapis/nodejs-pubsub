@@ -32,6 +32,11 @@ import * as path from 'path';
 import {Transform} from 'stream';
 import {RequestType} from 'google-gax/build/src/apitypes';
 import * as protos from '../../protos/protos';
+/**
+ * Client JSON configuration object, loaded from
+ * `src/v1/publisher_client_config.json`.
+ * This file defines retry strategy and timeouts for all API methods in this library.
+ */
 import * as gapicConfig from './publisher_client_config.json';
 
 const version = require('../../../package.json').version;
@@ -87,9 +92,9 @@ export class PublisherClient {
    *     your project ID will be detected automatically.
    * @param {string} [options.apiEndpoint] - The domain name of the
    *     API remote host.
-   * @param {gax.ClientConfig} [options.clientConfig] - client configuration override.
-   *     Follows the structure of `publisher_client_config.json`.
-   * @param {boolean} fallback - Use HTTP fallback mode.
+   * @param {gax.ClientConfig} [options.clientConfig] - Client configuration override.
+   *     Follows the structure of {@link gapicConfig}.
+   * @param {boolean} [options.fallback] - Use HTTP fallback mode.
    *     In fallback mode, a special browser-compatible transport implementation is used
    *     instead of gRPC transport. In browser context (if the `window` object is defined)
    *     the fallback mode is enabled automatically; set `options.fallback` to `false`
@@ -102,6 +107,7 @@ export class PublisherClient {
       opts?.servicePath || opts?.apiEndpoint || staticMembers.servicePath;
     const port = opts?.port || staticMembers.port;
     const clientConfig = opts?.clientConfig ?? {};
+    // eslint-disable-next-line no-undef
     const fallback =
       opts?.fallback ??
       (typeof window !== 'undefined' && typeof window.fetch !== 'undefined');
@@ -369,7 +375,7 @@ export class PublisherClient {
   // -------------------
   createTopic(
     request: protos.google.pubsub.v1.ITopic,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic,
@@ -379,7 +385,7 @@ export class PublisherClient {
   >;
   createTopic(
     request: protos.google.pubsub.v1.ITopic,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.ITopic | null | undefined,
@@ -432,7 +438,7 @@ export class PublisherClient {
   createTopic(
     request: protos.google.pubsub.v1.ITopic,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.ITopic,
           protos.google.pubsub.v1.ITopic | null | undefined,
@@ -451,12 +457,12 @@ export class PublisherClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -471,7 +477,7 @@ export class PublisherClient {
   }
   updateTopic(
     request: protos.google.pubsub.v1.IUpdateTopicRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic,
@@ -481,7 +487,7 @@ export class PublisherClient {
   >;
   updateTopic(
     request: protos.google.pubsub.v1.IUpdateTopicRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
@@ -523,7 +529,7 @@ export class PublisherClient {
   updateTopic(
     request: protos.google.pubsub.v1.IUpdateTopicRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.ITopic,
           protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
@@ -542,12 +548,12 @@ export class PublisherClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -562,7 +568,7 @@ export class PublisherClient {
   }
   publish(
     request: protos.google.pubsub.v1.IPublishRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.IPublishResponse,
@@ -572,7 +578,7 @@ export class PublisherClient {
   >;
   publish(
     request: protos.google.pubsub.v1.IPublishRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.IPublishResponse,
       protos.google.pubsub.v1.IPublishRequest | null | undefined,
@@ -611,7 +617,7 @@ export class PublisherClient {
   publish(
     request: protos.google.pubsub.v1.IPublishRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.IPublishResponse,
           protos.google.pubsub.v1.IPublishRequest | null | undefined,
@@ -630,12 +636,12 @@ export class PublisherClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -650,7 +656,7 @@ export class PublisherClient {
   }
   getTopic(
     request: protos.google.pubsub.v1.IGetTopicRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic,
@@ -660,7 +666,7 @@ export class PublisherClient {
   >;
   getTopic(
     request: protos.google.pubsub.v1.IGetTopicRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
@@ -696,7 +702,7 @@ export class PublisherClient {
   getTopic(
     request: protos.google.pubsub.v1.IGetTopicRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.ITopic,
           protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
@@ -715,12 +721,12 @@ export class PublisherClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -735,7 +741,7 @@ export class PublisherClient {
   }
   deleteTopic(
     request: protos.google.pubsub.v1.IDeleteTopicRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -745,7 +751,7 @@ export class PublisherClient {
   >;
   deleteTopic(
     request: protos.google.pubsub.v1.IDeleteTopicRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
@@ -785,7 +791,7 @@ export class PublisherClient {
   deleteTopic(
     request: protos.google.pubsub.v1.IDeleteTopicRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.protobuf.IEmpty,
           protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
@@ -804,12 +810,12 @@ export class PublisherClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -824,7 +830,7 @@ export class PublisherClient {
   }
   detachSubscription(
     request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.IDetachSubscriptionResponse,
@@ -834,7 +840,7 @@ export class PublisherClient {
   >;
   detachSubscription(
     request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.IDetachSubscriptionResponse,
       protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
@@ -873,7 +879,7 @@ export class PublisherClient {
   detachSubscription(
     request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.IDetachSubscriptionResponse,
           protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
@@ -892,12 +898,12 @@ export class PublisherClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -913,7 +919,7 @@ export class PublisherClient {
 
   listTopics(
     request: protos.google.pubsub.v1.IListTopicsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic[],
@@ -923,7 +929,7 @@ export class PublisherClient {
   >;
   listTopics(
     request: protos.google.pubsub.v1.IListTopicsRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: PaginationCallback<
       protos.google.pubsub.v1.IListTopicsRequest,
       protos.google.pubsub.v1.IListTopicsResponse | null | undefined,
@@ -968,7 +974,7 @@ export class PublisherClient {
   listTopics(
     request: protos.google.pubsub.v1.IListTopicsRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | PaginationCallback<
           protos.google.pubsub.v1.IListTopicsRequest,
           protos.google.pubsub.v1.IListTopicsResponse | null | undefined,
@@ -987,12 +993,12 @@ export class PublisherClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1033,7 +1039,7 @@ export class PublisherClient {
    */
   listTopicsStream(
     request?: protos.google.pubsub.v1.IListTopicsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Transform {
     request = request || {};
     options = options || {};
@@ -1086,7 +1092,7 @@ export class PublisherClient {
    */
   listTopicsAsync(
     request?: protos.google.pubsub.v1.IListTopicsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): AsyncIterable<protos.google.pubsub.v1.ITopic> {
     request = request || {};
     options = options || {};
@@ -1108,7 +1114,7 @@ export class PublisherClient {
   }
   listTopicSubscriptions(
     request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       string[],
@@ -1118,7 +1124,7 @@ export class PublisherClient {
   >;
   listTopicSubscriptions(
     request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: PaginationCallback<
       protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
       | protos.google.pubsub.v1.IListTopicSubscriptionsResponse
@@ -1167,7 +1173,7 @@ export class PublisherClient {
   listTopicSubscriptions(
     request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | PaginationCallback<
           protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
           | protos.google.pubsub.v1.IListTopicSubscriptionsResponse
@@ -1190,12 +1196,12 @@ export class PublisherClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1240,7 +1246,7 @@ export class PublisherClient {
    */
   listTopicSubscriptionsStream(
     request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Transform {
     request = request || {};
     options = options || {};
@@ -1293,7 +1299,7 @@ export class PublisherClient {
    */
   listTopicSubscriptionsAsync(
     request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): AsyncIterable<string> {
     request = request || {};
     options = options || {};
@@ -1315,7 +1321,7 @@ export class PublisherClient {
   }
   listTopicSnapshots(
     request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       string[],
@@ -1325,7 +1331,7 @@ export class PublisherClient {
   >;
   listTopicSnapshots(
     request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: PaginationCallback<
       protos.google.pubsub.v1.IListTopicSnapshotsRequest,
       protos.google.pubsub.v1.IListTopicSnapshotsResponse | null | undefined,
@@ -1374,7 +1380,7 @@ export class PublisherClient {
   listTopicSnapshots(
     request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | PaginationCallback<
           protos.google.pubsub.v1.IListTopicSnapshotsRequest,
           | protos.google.pubsub.v1.IListTopicSnapshotsResponse
@@ -1395,12 +1401,12 @@ export class PublisherClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1441,7 +1447,7 @@ export class PublisherClient {
    */
   listTopicSnapshotsStream(
     request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Transform {
     request = request || {};
     options = options || {};
@@ -1494,7 +1500,7 @@ export class PublisherClient {
    */
   listTopicSnapshotsAsync(
     request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): AsyncIterable<string> {
     request = request || {};
     options = options || {};

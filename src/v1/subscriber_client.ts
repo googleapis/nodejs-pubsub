@@ -32,6 +32,11 @@ import * as path from 'path';
 import {Transform} from 'stream';
 import {RequestType} from 'google-gax/build/src/apitypes';
 import * as protos from '../../protos/protos';
+/**
+ * Client JSON configuration object, loaded from
+ * `src/v1/subscriber_client_config.json`.
+ * This file defines retry strategy and timeouts for all API methods in this library.
+ */
 import * as gapicConfig from './subscriber_client_config.json';
 
 const version = require('../../../package.json').version;
@@ -88,9 +93,9 @@ export class SubscriberClient {
    *     your project ID will be detected automatically.
    * @param {string} [options.apiEndpoint] - The domain name of the
    *     API remote host.
-   * @param {gax.ClientConfig} [options.clientConfig] - client configuration override.
-   *     Follows the structure of `subscriber_client_config.json`.
-   * @param {boolean} fallback - Use HTTP fallback mode.
+   * @param {gax.ClientConfig} [options.clientConfig] - Client configuration override.
+   *     Follows the structure of {@link gapicConfig}.
+   * @param {boolean} [options.fallback] - Use HTTP fallback mode.
    *     In fallback mode, a special browser-compatible transport implementation is used
    *     instead of gRPC transport. In browser context (if the `window` object is defined)
    *     the fallback mode is enabled automatically; set `options.fallback` to `false`
@@ -103,6 +108,7 @@ export class SubscriberClient {
       opts?.servicePath || opts?.apiEndpoint || staticMembers.servicePath;
     const port = opts?.port || staticMembers.port;
     const clientConfig = opts?.clientConfig ?? {};
+    // eslint-disable-next-line no-undef
     const fallback =
       opts?.fallback ??
       (typeof window !== 'undefined' && typeof window.fetch !== 'undefined');
@@ -355,7 +361,7 @@ export class SubscriberClient {
   // -------------------
   createSubscription(
     request: protos.google.pubsub.v1.ISubscription,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -365,7 +371,7 @@ export class SubscriberClient {
   >;
   createSubscription(
     request: protos.google.pubsub.v1.ISubscription,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.ISubscription | null | undefined,
@@ -501,7 +507,7 @@ export class SubscriberClient {
   createSubscription(
     request: protos.google.pubsub.v1.ISubscription,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.ISubscription,
           protos.google.pubsub.v1.ISubscription | null | undefined,
@@ -520,12 +526,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -540,7 +546,7 @@ export class SubscriberClient {
   }
   getSubscription(
     request: protos.google.pubsub.v1.IGetSubscriptionRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -550,7 +556,7 @@ export class SubscriberClient {
   >;
   getSubscription(
     request: protos.google.pubsub.v1.IGetSubscriptionRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
@@ -586,7 +592,7 @@ export class SubscriberClient {
   getSubscription(
     request: protos.google.pubsub.v1.IGetSubscriptionRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.ISubscription,
           protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
@@ -605,12 +611,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -625,7 +631,7 @@ export class SubscriberClient {
   }
   updateSubscription(
     request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -635,7 +641,7 @@ export class SubscriberClient {
   >;
   updateSubscription(
     request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
@@ -674,7 +680,7 @@ export class SubscriberClient {
   updateSubscription(
     request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.ISubscription,
           protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
@@ -693,12 +699,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -713,7 +719,7 @@ export class SubscriberClient {
   }
   deleteSubscription(
     request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -723,7 +729,7 @@ export class SubscriberClient {
   >;
   deleteSubscription(
     request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
@@ -763,7 +769,7 @@ export class SubscriberClient {
   deleteSubscription(
     request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.protobuf.IEmpty,
           protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
@@ -782,12 +788,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -802,7 +808,7 @@ export class SubscriberClient {
   }
   modifyAckDeadline(
     request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -812,7 +818,7 @@ export class SubscriberClient {
   >;
   modifyAckDeadline(
     request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
@@ -863,7 +869,7 @@ export class SubscriberClient {
   modifyAckDeadline(
     request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.protobuf.IEmpty,
           protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
@@ -882,12 +888,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -902,7 +908,7 @@ export class SubscriberClient {
   }
   acknowledge(
     request: protos.google.pubsub.v1.IAcknowledgeRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -912,7 +918,7 @@ export class SubscriberClient {
   >;
   acknowledge(
     request: protos.google.pubsub.v1.IAcknowledgeRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
@@ -958,7 +964,7 @@ export class SubscriberClient {
   acknowledge(
     request: protos.google.pubsub.v1.IAcknowledgeRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.protobuf.IEmpty,
           protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
@@ -977,12 +983,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -997,7 +1003,7 @@ export class SubscriberClient {
   }
   pull(
     request: protos.google.pubsub.v1.IPullRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.IPullResponse,
@@ -1007,7 +1013,7 @@ export class SubscriberClient {
   >;
   pull(
     request: protos.google.pubsub.v1.IPullRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.IPullResponse,
       protos.google.pubsub.v1.IPullRequest | null | undefined,
@@ -1057,7 +1063,7 @@ export class SubscriberClient {
   pull(
     request: protos.google.pubsub.v1.IPullRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.IPullResponse,
           protos.google.pubsub.v1.IPullRequest | null | undefined,
@@ -1076,12 +1082,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1096,7 +1102,7 @@ export class SubscriberClient {
   }
   modifyPushConfig(
     request: protos.google.pubsub.v1.IModifyPushConfigRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1106,7 +1112,7 @@ export class SubscriberClient {
   >;
   modifyPushConfig(
     request: protos.google.pubsub.v1.IModifyPushConfigRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
@@ -1154,7 +1160,7 @@ export class SubscriberClient {
   modifyPushConfig(
     request: protos.google.pubsub.v1.IModifyPushConfigRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.protobuf.IEmpty,
           protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
@@ -1173,12 +1179,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1193,7 +1199,7 @@ export class SubscriberClient {
   }
   getSnapshot(
     request: protos.google.pubsub.v1.IGetSnapshotRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1203,7 +1209,7 @@ export class SubscriberClient {
   >;
   getSnapshot(
     request: protos.google.pubsub.v1.IGetSnapshotRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
@@ -1243,7 +1249,7 @@ export class SubscriberClient {
   getSnapshot(
     request: protos.google.pubsub.v1.IGetSnapshotRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.ISnapshot,
           protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
@@ -1262,12 +1268,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1282,7 +1288,7 @@ export class SubscriberClient {
   }
   createSnapshot(
     request: protos.google.pubsub.v1.ICreateSnapshotRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1292,7 +1298,7 @@ export class SubscriberClient {
   >;
   createSnapshot(
     request: protos.google.pubsub.v1.ICreateSnapshotRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
@@ -1360,7 +1366,7 @@ export class SubscriberClient {
   createSnapshot(
     request: protos.google.pubsub.v1.ICreateSnapshotRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.ISnapshot,
           protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
@@ -1379,12 +1385,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1399,7 +1405,7 @@ export class SubscriberClient {
   }
   updateSnapshot(
     request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1409,7 +1415,7 @@ export class SubscriberClient {
   >;
   updateSnapshot(
     request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
@@ -1452,7 +1458,7 @@ export class SubscriberClient {
   updateSnapshot(
     request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.ISnapshot,
           protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
@@ -1471,12 +1477,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1491,7 +1497,7 @@ export class SubscriberClient {
   }
   deleteSnapshot(
     request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1501,7 +1507,7 @@ export class SubscriberClient {
   >;
   deleteSnapshot(
     request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
@@ -1545,7 +1551,7 @@ export class SubscriberClient {
   deleteSnapshot(
     request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.protobuf.IEmpty,
           protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
@@ -1564,12 +1570,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1584,7 +1590,7 @@ export class SubscriberClient {
   }
   seek(
     request: protos.google.pubsub.v1.ISeekRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ISeekResponse,
@@ -1594,7 +1600,7 @@ export class SubscriberClient {
   >;
   seek(
     request: protos.google.pubsub.v1.ISeekRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: Callback<
       protos.google.pubsub.v1.ISeekResponse,
       protos.google.pubsub.v1.ISeekRequest | null | undefined,
@@ -1651,7 +1657,7 @@ export class SubscriberClient {
   seek(
     request: protos.google.pubsub.v1.ISeekRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | Callback<
           protos.google.pubsub.v1.ISeekResponse,
           protos.google.pubsub.v1.ISeekRequest | null | undefined,
@@ -1670,12 +1676,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1714,14 +1720,14 @@ export class SubscriberClient {
    * stream.write(request);
    * stream.end();
    */
-  streamingPull(options?: gax.CallOptions): gax.CancellableStream {
+  streamingPull(options?: CallOptions): gax.CancellableStream {
     this.initialize();
     return this.innerApiCalls.streamingPull(options);
   }
 
   listSubscriptions(
     request: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription[],
@@ -1731,7 +1737,7 @@ export class SubscriberClient {
   >;
   listSubscriptions(
     request: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: PaginationCallback<
       protos.google.pubsub.v1.IListSubscriptionsRequest,
       protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
@@ -1776,7 +1782,7 @@ export class SubscriberClient {
   listSubscriptions(
     request: protos.google.pubsub.v1.IListSubscriptionsRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | PaginationCallback<
           protos.google.pubsub.v1.IListSubscriptionsRequest,
           protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
@@ -1795,12 +1801,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -1841,7 +1847,7 @@ export class SubscriberClient {
    */
   listSubscriptionsStream(
     request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Transform {
     request = request || {};
     options = options || {};
@@ -1894,7 +1900,7 @@ export class SubscriberClient {
    */
   listSubscriptionsAsync(
     request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): AsyncIterable<protos.google.pubsub.v1.ISubscription> {
     request = request || {};
     options = options || {};
@@ -1916,7 +1922,7 @@ export class SubscriberClient {
   }
   listSnapshots(
     request: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot[],
@@ -1926,7 +1932,7 @@ export class SubscriberClient {
   >;
   listSnapshots(
     request: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options: gax.CallOptions,
+    options: CallOptions,
     callback: PaginationCallback<
       protos.google.pubsub.v1.IListSnapshotsRequest,
       protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
@@ -1975,7 +1981,7 @@ export class SubscriberClient {
   listSnapshots(
     request: protos.google.pubsub.v1.IListSnapshotsRequest,
     optionsOrCallback?:
-      | gax.CallOptions
+      | CallOptions
       | PaginationCallback<
           protos.google.pubsub.v1.IListSnapshotsRequest,
           protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
@@ -1994,12 +2000,12 @@ export class SubscriberClient {
     ]
   > | void {
     request = request || {};
-    let options: gax.CallOptions;
+    let options: CallOptions;
     if (typeof optionsOrCallback === 'function' && callback === undefined) {
       callback = optionsOrCallback;
       options = {};
     } else {
-      options = optionsOrCallback as gax.CallOptions;
+      options = optionsOrCallback as CallOptions;
     }
     options = options || {};
     options.otherArgs = options.otherArgs || {};
@@ -2040,7 +2046,7 @@ export class SubscriberClient {
    */
   listSnapshotsStream(
     request?: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): Transform {
     request = request || {};
     options = options || {};
@@ -2093,7 +2099,7 @@ export class SubscriberClient {
    */
   listSnapshotsAsync(
     request?: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: gax.CallOptions
+    options?: CallOptions
   ): AsyncIterable<protos.google.pubsub.v1.ISnapshot> {
     request = request || {};
     options = options || {};
