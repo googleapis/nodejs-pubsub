@@ -2734,6 +2734,55 @@ describe('v1.SubscriberClient', () => {
       });
     });
 
+    describe('schema', () => {
+      const fakePath = '/rendered/path/schema';
+      const expectedParameters = {
+        project: 'projectValue',
+        schema: 'schemaValue',
+      };
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      client.pathTemplates.schemaPathTemplate.render = sinon
+        .stub()
+        .returns(fakePath);
+      client.pathTemplates.schemaPathTemplate.match = sinon
+        .stub()
+        .returns(expectedParameters);
+
+      it('schemaPath', () => {
+        const result = client.schemaPath('projectValue', 'schemaValue');
+        assert.strictEqual(result, fakePath);
+        assert(
+          (client.pathTemplates.schemaPathTemplate.render as SinonStub)
+            .getCall(-1)
+            .calledWith(expectedParameters)
+        );
+      });
+
+      it('matchProjectFromSchemaName', () => {
+        const result = client.matchProjectFromSchemaName(fakePath);
+        assert.strictEqual(result, 'projectValue');
+        assert(
+          (client.pathTemplates.schemaPathTemplate.match as SinonStub)
+            .getCall(-1)
+            .calledWith(fakePath)
+        );
+      });
+
+      it('matchSchemaFromSchemaName', () => {
+        const result = client.matchSchemaFromSchemaName(fakePath);
+        assert.strictEqual(result, 'schemaValue');
+        assert(
+          (client.pathTemplates.schemaPathTemplate.match as SinonStub)
+            .getCall(-1)
+            .calledWith(fakePath)
+        );
+      });
+    });
+
     describe('snapshot', () => {
       const fakePath = '/rendered/path/snapshot';
       const expectedParameters = {

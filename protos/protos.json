@@ -10,7 +10,7 @@
                 "csharp_namespace": "Google.Cloud.PubSub.V1",
                 "go_package": "google.golang.org/genproto/googleapis/pubsub/v1;pubsub",
                 "java_multiple_files": true,
-                "java_outer_classname": "PubsubProto",
+                "java_outer_classname": "SchemaProto",
                 "java_package": "com.google.pubsub.v1",
                 "php_namespace": "Google\\Cloud\\PubSub\\V1",
                 "ruby_package": "Google::Cloud::PubSub::V1"
@@ -193,6 +193,22 @@
                     }
                   }
                 },
+                "SchemaSettings": {
+                  "fields": {
+                    "schema": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Schema"
+                      }
+                    },
+                    "encoding": {
+                      "type": "Encoding",
+                      "id": 2
+                    }
+                  }
+                },
                 "Topic": {
                   "options": {
                     "(google.api.resource).type": "pubsub.googleapis.com/Topic",
@@ -218,6 +234,14 @@
                     "kmsKeyName": {
                       "type": "string",
                       "id": 5
+                    },
+                    "schemaSettings": {
+                      "type": "SchemaSettings",
+                      "id": 6
+                    },
+                    "satisfiesPzs": {
+                      "type": "bool",
+                      "id": 7
                     }
                   }
                 },
@@ -1271,6 +1295,322 @@
                 },
                 "SeekResponse": {
                   "fields": {}
+                },
+                "SchemaService": {
+                  "options": {
+                    "(google.api.default_host)": "pubsub.googleapis.com",
+                    "(google.api.oauth_scopes)": "https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/pubsub"
+                  },
+                  "methods": {
+                    "CreateSchema": {
+                      "requestType": "CreateSchemaRequest",
+                      "responseType": "Schema",
+                      "options": {
+                        "(google.api.http).post": "/v1/{parent=projects/*}/schemas",
+                        "(google.api.http).body": "schema",
+                        "(google.api.method_signature)": "parent,schema,schema_id"
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{parent=projects/*}/schemas",
+                            "body": "schema"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "parent,schema,schema_id"
+                        }
+                      ]
+                    },
+                    "GetSchema": {
+                      "requestType": "GetSchemaRequest",
+                      "responseType": "Schema",
+                      "options": {
+                        "(google.api.http).get": "/v1/{name=projects/*/schemas/*}",
+                        "(google.api.method_signature)": "name"
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "get": "/v1/{name=projects/*/schemas/*}"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "name"
+                        }
+                      ]
+                    },
+                    "ListSchemas": {
+                      "requestType": "ListSchemasRequest",
+                      "responseType": "ListSchemasResponse",
+                      "options": {
+                        "(google.api.http).get": "/v1/{parent=projects/*}/schemas",
+                        "(google.api.method_signature)": "parent"
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "get": "/v1/{parent=projects/*}/schemas"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "parent"
+                        }
+                      ]
+                    },
+                    "DeleteSchema": {
+                      "requestType": "DeleteSchemaRequest",
+                      "responseType": "google.protobuf.Empty",
+                      "options": {
+                        "(google.api.http).delete": "/v1/{name=projects/*/schemas/*}",
+                        "(google.api.method_signature)": "name"
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "delete": "/v1/{name=projects/*/schemas/*}"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "name"
+                        }
+                      ]
+                    },
+                    "ValidateSchema": {
+                      "requestType": "ValidateSchemaRequest",
+                      "responseType": "ValidateSchemaResponse",
+                      "options": {
+                        "(google.api.http).post": "/v1/{parent=projects/*}/schemas:validate",
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "parent,schema"
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{parent=projects/*}/schemas:validate",
+                            "body": "*"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "parent,schema"
+                        }
+                      ]
+                    },
+                    "ValidateMessage": {
+                      "requestType": "ValidateMessageRequest",
+                      "responseType": "ValidateMessageResponse",
+                      "options": {
+                        "(google.api.http).post": "/v1/{parent=projects/*}/schemas:validateMessage",
+                        "(google.api.http).body": "*"
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{parent=projects/*}/schemas:validateMessage",
+                            "body": "*"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "Schema": {
+                  "options": {
+                    "(google.api.resource).type": "pubsub.googleapis.com/Schema",
+                    "(google.api.resource).pattern": "projects/{project}/schemas/{schema}"
+                  },
+                  "fields": {
+                    "name": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "type": {
+                      "type": "Type",
+                      "id": 2
+                    },
+                    "definition": {
+                      "type": "string",
+                      "id": 3
+                    }
+                  },
+                  "nested": {
+                    "Type": {
+                      "values": {
+                        "TYPE_UNSPECIFIED": 0,
+                        "PROTOCOL_BUFFER": 1,
+                        "AVRO": 2
+                      }
+                    }
+                  }
+                },
+                "CreateSchemaRequest": {
+                  "fields": {
+                    "parent": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).child_type": "pubsub.googleapis.com/Schema"
+                      }
+                    },
+                    "schema": {
+                      "type": "Schema",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "schemaId": {
+                      "type": "string",
+                      "id": 3
+                    }
+                  }
+                },
+                "SchemaView": {
+                  "values": {
+                    "SCHEMA_VIEW_UNSPECIFIED": 0,
+                    "BASIC": 1,
+                    "FULL": 2
+                  }
+                },
+                "GetSchemaRequest": {
+                  "fields": {
+                    "name": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Schema"
+                      }
+                    },
+                    "view": {
+                      "type": "SchemaView",
+                      "id": 2
+                    }
+                  }
+                },
+                "ListSchemasRequest": {
+                  "fields": {
+                    "parent": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
+                      }
+                    },
+                    "view": {
+                      "type": "SchemaView",
+                      "id": 2
+                    },
+                    "pageSize": {
+                      "type": "int32",
+                      "id": 3
+                    },
+                    "pageToken": {
+                      "type": "string",
+                      "id": 4
+                    }
+                  }
+                },
+                "ListSchemasResponse": {
+                  "fields": {
+                    "schemas": {
+                      "rule": "repeated",
+                      "type": "Schema",
+                      "id": 1
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "id": 2
+                    }
+                  }
+                },
+                "DeleteSchemaRequest": {
+                  "fields": {
+                    "name": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Schema"
+                      }
+                    }
+                  }
+                },
+                "ValidateSchemaRequest": {
+                  "fields": {
+                    "parent": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
+                      }
+                    },
+                    "schema": {
+                      "type": "Schema",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "ValidateSchemaResponse": {
+                  "fields": {}
+                },
+                "ValidateMessageRequest": {
+                  "oneofs": {
+                    "schemaSpec": {
+                      "oneof": [
+                        "name",
+                        "schema"
+                      ]
+                    }
+                  },
+                  "fields": {
+                    "parent": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
+                      }
+                    },
+                    "name": {
+                      "type": "string",
+                      "id": 2,
+                      "options": {
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Schema"
+                      }
+                    },
+                    "schema": {
+                      "type": "Schema",
+                      "id": 3
+                    },
+                    "message": {
+                      "type": "bytes",
+                      "id": 4
+                    },
+                    "encoding": {
+                      "type": "Encoding",
+                      "id": 5
+                    }
+                  }
+                },
+                "ValidateMessageResponse": {
+                  "fields": {}
+                },
+                "Encoding": {
+                  "values": {
+                    "ENCODING_UNSPECIFIED": 0,
+                    "JSON": 1,
+                    "BINARY": 2
+                  }
                 }
               }
             }

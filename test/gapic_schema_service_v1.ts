@@ -21,7 +21,7 @@ import * as assert from 'assert';
 import * as sinon from 'sinon';
 import {SinonStub} from 'sinon';
 import {describe, it} from 'mocha';
-import * as publisherModule from '../src';
+import * as schemaserviceModule from '../src';
 
 import {PassThrough} from 'stream';
 
@@ -113,47 +113,47 @@ function stubAsyncIterationCall<ResponseType>(
   return sinon.stub().returns(asyncIterable);
 }
 
-describe('v1.PublisherClient', () => {
+describe('v1.SchemaServiceClient', () => {
   it('has servicePath', () => {
-    const servicePath = publisherModule.v1.PublisherClient.servicePath;
+    const servicePath = schemaserviceModule.v1.SchemaServiceClient.servicePath;
     assert(servicePath);
   });
 
   it('has apiEndpoint', () => {
-    const apiEndpoint = publisherModule.v1.PublisherClient.apiEndpoint;
+    const apiEndpoint = schemaserviceModule.v1.SchemaServiceClient.apiEndpoint;
     assert(apiEndpoint);
   });
 
   it('has port', () => {
-    const port = publisherModule.v1.PublisherClient.port;
+    const port = schemaserviceModule.v1.SchemaServiceClient.port;
     assert(port);
     assert(typeof port === 'number');
   });
 
   it('should create a client with no option', () => {
-    const client = new publisherModule.v1.PublisherClient();
+    const client = new schemaserviceModule.v1.SchemaServiceClient();
     assert(client);
   });
 
   it('should create a client with gRPC fallback', () => {
-    const client = new publisherModule.v1.PublisherClient({
+    const client = new schemaserviceModule.v1.SchemaServiceClient({
       fallback: true,
     });
     assert(client);
   });
 
   it('has initialize method and supports deferred initialization', async () => {
-    const client = new publisherModule.v1.PublisherClient({
+    const client = new schemaserviceModule.v1.SchemaServiceClient({
       credentials: {client_email: 'bogus', private_key: 'bogus'},
       projectId: 'bogus',
     });
-    assert.strictEqual(client.publisherStub, undefined);
+    assert.strictEqual(client.schemaServiceStub, undefined);
     await client.initialize();
-    assert(client.publisherStub);
+    assert(client.schemaServiceStub);
   });
 
   it('has close method', () => {
-    const client = new publisherModule.v1.PublisherClient({
+    const client = new schemaserviceModule.v1.SchemaServiceClient({
       credentials: {client_email: 'bogus', private_key: 'bogus'},
       projectId: 'bogus',
     });
@@ -162,7 +162,7 @@ describe('v1.PublisherClient', () => {
 
   it('has getProjectId method', async () => {
     const fakeProjectId = 'fake-project-id';
-    const client = new publisherModule.v1.PublisherClient({
+    const client = new schemaserviceModule.v1.SchemaServiceClient({
       credentials: {client_email: 'bogus', private_key: 'bogus'},
       projectId: 'bogus',
     });
@@ -174,7 +174,7 @@ describe('v1.PublisherClient', () => {
 
   it('has getProjectId method with callback', async () => {
     const fakeProjectId = 'fake-project-id';
-    const client = new publisherModule.v1.PublisherClient({
+    const client = new schemaserviceModule.v1.SchemaServiceClient({
       credentials: {client_email: 'bogus', private_key: 'bogus'},
       projectId: 'bogus',
     });
@@ -194,18 +194,18 @@ describe('v1.PublisherClient', () => {
     assert.strictEqual(result, fakeProjectId);
   });
 
-  describe('createTopic', () => {
-    it('invokes createTopic without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+  describe('createSchema', () => {
+    it('invokes createSchema without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.CreateSchemaRequest()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -214,29 +214,29 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Schema()
       );
-      client.innerApiCalls.createTopic = stubSimpleCall(expectedResponse);
-      const [response] = await client.createTopic(request);
+      client.innerApiCalls.createSchema = stubSimpleCall(expectedResponse);
+      const [response] = await client.createSchema(request);
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.createTopic as SinonStub)
+        (client.innerApiCalls.createSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
     });
 
-    it('invokes createTopic without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes createSchema without error using callback', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.CreateSchemaRequest()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -245,17 +245,17 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Schema()
       );
-      client.innerApiCalls.createTopic = stubSimpleCallWithCallback(
+      client.innerApiCalls.createSchema = stubSimpleCallWithCallback(
         expectedResponse
       );
       const promise = new Promise((resolve, reject) => {
-        client.createTopic(
+        client.createSchema(
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ITopic | null
+            result?: protos.google.pubsub.v1.ISchema | null
           ) => {
             if (err) {
               reject(err);
@@ -268,23 +268,23 @@ describe('v1.PublisherClient', () => {
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.createTopic as SinonStub)
+        (client.innerApiCalls.createSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions /*, callback defined above */)
       );
     });
 
-    it('invokes createTopic with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes createSchema with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.CreateSchemaRequest()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -293,32 +293,31 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedError = new Error('expected');
-      client.innerApiCalls.createTopic = stubSimpleCall(
+      client.innerApiCalls.createSchema = stubSimpleCall(
         undefined,
         expectedError
       );
-      await assert.rejects(client.createTopic(request), expectedError);
+      await assert.rejects(client.createSchema(request), expectedError);
       assert(
-        (client.innerApiCalls.createTopic as SinonStub)
+        (client.innerApiCalls.createSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
     });
   });
 
-  describe('updateTopic', () => {
-    it('invokes updateTopic without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+  describe('getSchema', () => {
+    it('invokes getSchema without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.UpdateTopicRequest()
+        new protos.google.pubsub.v1.GetSchemaRequest()
       );
-      request.topic = {};
-      request.topic.name = '';
-      const expectedHeaderRequestParams = 'topic.name=';
+      request.name = '';
+      const expectedHeaderRequestParams = 'name=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -327,30 +326,29 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Schema()
       );
-      client.innerApiCalls.updateTopic = stubSimpleCall(expectedResponse);
-      const [response] = await client.updateTopic(request);
+      client.innerApiCalls.getSchema = stubSimpleCall(expectedResponse);
+      const [response] = await client.getSchema(request);
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.updateTopic as SinonStub)
+        (client.innerApiCalls.getSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
     });
 
-    it('invokes updateTopic without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes getSchema without error using callback', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.UpdateTopicRequest()
+        new protos.google.pubsub.v1.GetSchemaRequest()
       );
-      request.topic = {};
-      request.topic.name = '';
-      const expectedHeaderRequestParams = 'topic.name=';
+      request.name = '';
+      const expectedHeaderRequestParams = 'name=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -359,17 +357,17 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Schema()
       );
-      client.innerApiCalls.updateTopic = stubSimpleCallWithCallback(
+      client.innerApiCalls.getSchema = stubSimpleCallWithCallback(
         expectedResponse
       );
       const promise = new Promise((resolve, reject) => {
-        client.updateTopic(
+        client.getSchema(
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ITopic | null
+            result?: protos.google.pubsub.v1.ISchema | null
           ) => {
             if (err) {
               reject(err);
@@ -382,24 +380,23 @@ describe('v1.PublisherClient', () => {
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.updateTopic as SinonStub)
+        (client.innerApiCalls.getSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions /*, callback defined above */)
       );
     });
 
-    it('invokes updateTopic with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes getSchema with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.UpdateTopicRequest()
+        new protos.google.pubsub.v1.GetSchemaRequest()
       );
-      request.topic = {};
-      request.topic.name = '';
-      const expectedHeaderRequestParams = 'topic.name=';
+      request.name = '';
+      const expectedHeaderRequestParams = 'name=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -408,249 +405,28 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedError = new Error('expected');
-      client.innerApiCalls.updateTopic = stubSimpleCall(
-        undefined,
-        expectedError
-      );
-      await assert.rejects(client.updateTopic(request), expectedError);
+      client.innerApiCalls.getSchema = stubSimpleCall(undefined, expectedError);
+      await assert.rejects(client.getSchema(request), expectedError);
       assert(
-        (client.innerApiCalls.updateTopic as SinonStub)
+        (client.innerApiCalls.getSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
     });
   });
 
-  describe('publish', () => {
-    it('invokes publish without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+  describe('deleteSchema', () => {
+    it('invokes deleteSchema without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.PublishRequest()
+        new protos.google.pubsub.v1.DeleteSchemaRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
-      const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.PublishResponse()
-      );
-      client.innerApiCalls.publish = stubSimpleCall(expectedResponse);
-      const [response] = await client.publish(request);
-      assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.publish as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
-    });
-
-    it('invokes publish without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.PublishRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
-      const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.PublishResponse()
-      );
-      client.innerApiCalls.publish = stubSimpleCallWithCallback(
-        expectedResponse
-      );
-      const promise = new Promise((resolve, reject) => {
-        client.publish(
-          request,
-          (
-            err?: Error | null,
-            result?: protos.google.pubsub.v1.IPublishResponse | null
-          ) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(result);
-            }
-          }
-        );
-      });
-      const response = await promise;
-      assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.publish as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
-    });
-
-    it('invokes publish with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.PublishRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
-      const expectedError = new Error('expected');
-      client.innerApiCalls.publish = stubSimpleCall(undefined, expectedError);
-      await assert.rejects(client.publish(request), expectedError);
-      assert(
-        (client.innerApiCalls.publish as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
-    });
-  });
-
-  describe('getTopic', () => {
-    it('invokes getTopic without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.GetTopicRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
-      const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
-      );
-      client.innerApiCalls.getTopic = stubSimpleCall(expectedResponse);
-      const [response] = await client.getTopic(request);
-      assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.getTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
-    });
-
-    it('invokes getTopic without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.GetTopicRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
-      const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
-      );
-      client.innerApiCalls.getTopic = stubSimpleCallWithCallback(
-        expectedResponse
-      );
-      const promise = new Promise((resolve, reject) => {
-        client.getTopic(
-          request,
-          (
-            err?: Error | null,
-            result?: protos.google.pubsub.v1.ITopic | null
-          ) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(result);
-            }
-          }
-        );
-      });
-      const response = await promise;
-      assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.getTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
-    });
-
-    it('invokes getTopic with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.GetTopicRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
-      const expectedError = new Error('expected');
-      client.innerApiCalls.getTopic = stubSimpleCall(undefined, expectedError);
-      await assert.rejects(client.getTopic(request), expectedError);
-      assert(
-        (client.innerApiCalls.getTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
-    });
-  });
-
-  describe('deleteTopic', () => {
-    it('invokes deleteTopic without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteTopicRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      request.name = '';
+      const expectedHeaderRequestParams = 'name=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -661,27 +437,27 @@ describe('v1.PublisherClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
-      client.innerApiCalls.deleteTopic = stubSimpleCall(expectedResponse);
-      const [response] = await client.deleteTopic(request);
+      client.innerApiCalls.deleteSchema = stubSimpleCall(expectedResponse);
+      const [response] = await client.deleteSchema(request);
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.deleteTopic as SinonStub)
+        (client.innerApiCalls.deleteSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
     });
 
-    it('invokes deleteTopic without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes deleteSchema without error using callback', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteTopicRequest()
+        new protos.google.pubsub.v1.DeleteSchemaRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      request.name = '';
+      const expectedHeaderRequestParams = 'name=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -692,11 +468,11 @@ describe('v1.PublisherClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
-      client.innerApiCalls.deleteTopic = stubSimpleCallWithCallback(
+      client.innerApiCalls.deleteSchema = stubSimpleCallWithCallback(
         expectedResponse
       );
       const promise = new Promise((resolve, reject) => {
-        client.deleteTopic(
+        client.deleteSchema(
           request,
           (
             err?: Error | null,
@@ -713,23 +489,23 @@ describe('v1.PublisherClient', () => {
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.deleteTopic as SinonStub)
+        (client.innerApiCalls.deleteSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions /*, callback defined above */)
       );
     });
 
-    it('invokes deleteTopic with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes deleteSchema with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteTopicRequest()
+        new protos.google.pubsub.v1.DeleteSchemaRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      request.name = '';
+      const expectedHeaderRequestParams = 'name=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -738,31 +514,31 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedError = new Error('expected');
-      client.innerApiCalls.deleteTopic = stubSimpleCall(
+      client.innerApiCalls.deleteSchema = stubSimpleCall(
         undefined,
         expectedError
       );
-      await assert.rejects(client.deleteTopic(request), expectedError);
+      await assert.rejects(client.deleteSchema(request), expectedError);
       assert(
-        (client.innerApiCalls.deleteTopic as SinonStub)
+        (client.innerApiCalls.deleteSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
     });
   });
 
-  describe('detachSubscription', () => {
-    it('invokes detachSubscription without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+  describe('validateSchema', () => {
+    it('invokes validateSchema without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+        new protos.google.pubsub.v1.ValidateSchemaRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -771,31 +547,29 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.DetachSubscriptionResponse()
+        new protos.google.pubsub.v1.ValidateSchemaResponse()
       );
-      client.innerApiCalls.detachSubscription = stubSimpleCall(
-        expectedResponse
-      );
-      const [response] = await client.detachSubscription(request);
+      client.innerApiCalls.validateSchema = stubSimpleCall(expectedResponse);
+      const [response] = await client.validateSchema(request);
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.detachSubscription as SinonStub)
+        (client.innerApiCalls.validateSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
     });
 
-    it('invokes detachSubscription without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes validateSchema without error using callback', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+        new protos.google.pubsub.v1.ValidateSchemaRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -804,17 +578,17 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.DetachSubscriptionResponse()
+        new protos.google.pubsub.v1.ValidateSchemaResponse()
       );
-      client.innerApiCalls.detachSubscription = stubSimpleCallWithCallback(
+      client.innerApiCalls.validateSchema = stubSimpleCallWithCallback(
         expectedResponse
       );
       const promise = new Promise((resolve, reject) => {
-        client.detachSubscription(
+        client.validateSchema(
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.IDetachSubscriptionResponse | null
+            result?: protos.google.pubsub.v1.IValidateSchemaResponse | null
           ) => {
             if (err) {
               reject(err);
@@ -827,23 +601,23 @@ describe('v1.PublisherClient', () => {
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.detachSubscription as SinonStub)
+        (client.innerApiCalls.validateSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions /*, callback defined above */)
       );
     });
 
-    it('invokes detachSubscription with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes validateSchema with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+        new protos.google.pubsub.v1.ValidateSchemaRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -852,31 +626,31 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedError = new Error('expected');
-      client.innerApiCalls.detachSubscription = stubSimpleCall(
+      client.innerApiCalls.validateSchema = stubSimpleCall(
         undefined,
         expectedError
       );
-      await assert.rejects(client.detachSubscription(request), expectedError);
+      await assert.rejects(client.validateSchema(request), expectedError);
       assert(
-        (client.innerApiCalls.detachSubscription as SinonStub)
+        (client.innerApiCalls.validateSchema as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
     });
   });
 
-  describe('listTopics', () => {
-    it('invokes listTopics without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+  describe('validateMessage', () => {
+    it('invokes validateMessage without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
+        new protos.google.pubsub.v1.ValidateMessageRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -884,32 +658,30 @@ describe('v1.PublisherClient', () => {
           },
         },
       };
-      const expectedResponse = [
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-      ];
-      client.innerApiCalls.listTopics = stubSimpleCall(expectedResponse);
-      const [response] = await client.listTopics(request);
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.ValidateMessageResponse()
+      );
+      client.innerApiCalls.validateMessage = stubSimpleCall(expectedResponse);
+      const [response] = await client.validateMessage(request);
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.listTopics as SinonStub)
+        (client.innerApiCalls.validateMessage as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
     });
 
-    it('invokes listTopics without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes validateMessage without error using callback', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
+        new protos.google.pubsub.v1.ValidateMessageRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -917,20 +689,18 @@ describe('v1.PublisherClient', () => {
           },
         },
       };
-      const expectedResponse = [
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-      ];
-      client.innerApiCalls.listTopics = stubSimpleCallWithCallback(
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.ValidateMessageResponse()
+      );
+      client.innerApiCalls.validateMessage = stubSimpleCallWithCallback(
         expectedResponse
       );
       const promise = new Promise((resolve, reject) => {
-        client.listTopics(
+        client.validateMessage(
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ITopic[] | null
+            result?: protos.google.pubsub.v1.IValidateMessageResponse | null
           ) => {
             if (err) {
               reject(err);
@@ -943,23 +713,23 @@ describe('v1.PublisherClient', () => {
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.listTopics as SinonStub)
+        (client.innerApiCalls.validateMessage as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions /*, callback defined above */)
       );
     });
 
-    it('invokes listTopics with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes validateMessage with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
+        new protos.google.pubsub.v1.ValidateMessageRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -968,197 +738,31 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedError = new Error('expected');
-      client.innerApiCalls.listTopics = stubSimpleCall(
+      client.innerApiCalls.validateMessage = stubSimpleCall(
         undefined,
         expectedError
       );
-      await assert.rejects(client.listTopics(request), expectedError);
+      await assert.rejects(client.validateMessage(request), expectedError);
       assert(
-        (client.innerApiCalls.listTopics as SinonStub)
+        (client.innerApiCalls.validateMessage as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
-      );
-    });
-
-    it('invokes listTopicsStream without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
-      );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedResponse = [
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-      ];
-      client.descriptors.page.listTopics.createStream = stubPageStreamingCall(
-        expectedResponse
-      );
-      const stream = client.listTopicsStream(request);
-      const promise = new Promise((resolve, reject) => {
-        const responses: protos.google.pubsub.v1.Topic[] = [];
-        stream.on('data', (response: protos.google.pubsub.v1.Topic) => {
-          responses.push(response);
-        });
-        stream.on('end', () => {
-          resolve(responses);
-        });
-        stream.on('error', (err: Error) => {
-          reject(err);
-        });
-      });
-      const responses = await promise;
-      assert.deepStrictEqual(responses, expectedResponse);
-      assert(
-        (client.descriptors.page.listTopics.createStream as SinonStub)
-          .getCall(0)
-          .calledWith(client.innerApiCalls.listTopics, request)
-      );
-      assert.strictEqual(
-        (client.descriptors.page.listTopics.createStream as SinonStub).getCall(
-          0
-        ).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
-      );
-    });
-
-    it('invokes listTopicsStream with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
-      );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedError = new Error('expected');
-      client.descriptors.page.listTopics.createStream = stubPageStreamingCall(
-        undefined,
-        expectedError
-      );
-      const stream = client.listTopicsStream(request);
-      const promise = new Promise((resolve, reject) => {
-        const responses: protos.google.pubsub.v1.Topic[] = [];
-        stream.on('data', (response: protos.google.pubsub.v1.Topic) => {
-          responses.push(response);
-        });
-        stream.on('end', () => {
-          resolve(responses);
-        });
-        stream.on('error', (err: Error) => {
-          reject(err);
-        });
-      });
-      await assert.rejects(promise, expectedError);
-      assert(
-        (client.descriptors.page.listTopics.createStream as SinonStub)
-          .getCall(0)
-          .calledWith(client.innerApiCalls.listTopics, request)
-      );
-      assert.strictEqual(
-        (client.descriptors.page.listTopics.createStream as SinonStub).getCall(
-          0
-        ).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
-      );
-    });
-
-    it('uses async iteration with listTopics without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
-      );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedResponse = [
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-        generateSampleMessage(new protos.google.pubsub.v1.Topic()),
-      ];
-      client.descriptors.page.listTopics.asyncIterate = stubAsyncIterationCall(
-        expectedResponse
-      );
-      const responses: protos.google.pubsub.v1.ITopic[] = [];
-      const iterable = client.listTopicsAsync(request);
-      for await (const resource of iterable) {
-        responses.push(resource!);
-      }
-      assert.deepStrictEqual(responses, expectedResponse);
-      assert.deepStrictEqual(
-        (client.descriptors.page.listTopics.asyncIterate as SinonStub).getCall(
-          0
-        ).args[1],
-        request
-      );
-      assert.strictEqual(
-        (client.descriptors.page.listTopics.asyncIterate as SinonStub).getCall(
-          0
-        ).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
-      );
-    });
-
-    it('uses async iteration with listTopics with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
-      );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedError = new Error('expected');
-      client.descriptors.page.listTopics.asyncIterate = stubAsyncIterationCall(
-        undefined,
-        expectedError
-      );
-      const iterable = client.listTopicsAsync(request);
-      await assert.rejects(async () => {
-        const responses: protos.google.pubsub.v1.ITopic[] = [];
-        for await (const resource of iterable) {
-          responses.push(resource!);
-        }
-      });
-      assert.deepStrictEqual(
-        (client.descriptors.page.listTopics.asyncIterate as SinonStub).getCall(
-          0
-        ).args[1],
-        request
-      );
-      assert.strictEqual(
-        (client.descriptors.page.listTopics.asyncIterate as SinonStub).getCall(
-          0
-        ).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
       );
     });
   });
 
-  describe('listTopicSubscriptions', () => {
-    it('invokes listTopicSubscriptions without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+  describe('listSchemas', () => {
+    it('invokes listSchemas without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -1166,30 +770,32 @@ describe('v1.PublisherClient', () => {
           },
         },
       };
-      const expectedResponse = [new String(), new String(), new String()];
-      client.innerApiCalls.listTopicSubscriptions = stubSimpleCall(
-        expectedResponse
-      );
-      const [response] = await client.listTopicSubscriptions(request);
+      const expectedResponse = [
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+      ];
+      client.innerApiCalls.listSchemas = stubSimpleCall(expectedResponse);
+      const [response] = await client.listSchemas(request);
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.listTopicSubscriptions as SinonStub)
+        (client.innerApiCalls.listSchemas as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
     });
 
-    it('invokes listTopicSubscriptions without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes listSchemas without error using callback', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -1197,14 +803,21 @@ describe('v1.PublisherClient', () => {
           },
         },
       };
-      const expectedResponse = [new String(), new String(), new String()];
-      client.innerApiCalls.listTopicSubscriptions = stubSimpleCallWithCallback(
+      const expectedResponse = [
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+      ];
+      client.innerApiCalls.listSchemas = stubSimpleCallWithCallback(
         expectedResponse
       );
       const promise = new Promise((resolve, reject) => {
-        client.listTopicSubscriptions(
+        client.listSchemas(
           request,
-          (err?: Error | null, result?: string[] | null) => {
+          (
+            err?: Error | null,
+            result?: protos.google.pubsub.v1.ISchema[] | null
+          ) => {
             if (err) {
               reject(err);
             } else {
@@ -1216,23 +829,23 @@ describe('v1.PublisherClient', () => {
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
       assert(
-        (client.innerApiCalls.listTopicSubscriptions as SinonStub)
+        (client.innerApiCalls.listSchemas as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions /*, callback defined above */)
       );
     });
 
-    it('invokes listTopicSubscriptions with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes listSchemas with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedOptions = {
         otherArgs: {
           headers: {
@@ -1241,40 +854,41 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedError = new Error('expected');
-      client.innerApiCalls.listTopicSubscriptions = stubSimpleCall(
+      client.innerApiCalls.listSchemas = stubSimpleCall(
         undefined,
         expectedError
       );
-      await assert.rejects(
-        client.listTopicSubscriptions(request),
-        expectedError
-      );
+      await assert.rejects(client.listSchemas(request), expectedError);
       assert(
-        (client.innerApiCalls.listTopicSubscriptions as SinonStub)
+        (client.innerApiCalls.listSchemas as SinonStub)
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
     });
 
-    it('invokes listTopicSubscriptionsStream without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes listSchemasStream without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedResponse = [new String(), new String(), new String()];
-      client.descriptors.page.listTopicSubscriptions.createStream = stubPageStreamingCall(
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
+      const expectedResponse = [
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+      ];
+      client.descriptors.page.listSchemas.createStream = stubPageStreamingCall(
         expectedResponse
       );
-      const stream = client.listTopicSubscriptionsStream(request);
+      const stream = client.listSchemasStream(request);
       const promise = new Promise((resolve, reject) => {
-        const responses: string[] = [];
-        stream.on('data', (response: string) => {
+        const responses: protos.google.pubsub.v1.Schema[] = [];
+        stream.on('data', (response: protos.google.pubsub.v1.Schema) => {
           responses.push(response);
         });
         stream.on('end', () => {
@@ -1287,40 +901,38 @@ describe('v1.PublisherClient', () => {
       const responses = await promise;
       assert.deepStrictEqual(responses, expectedResponse);
       assert(
-        (client.descriptors.page.listTopicSubscriptions
-          .createStream as SinonStub)
+        (client.descriptors.page.listSchemas.createStream as SinonStub)
           .getCall(0)
-          .calledWith(client.innerApiCalls.listTopicSubscriptions, request)
+          .calledWith(client.innerApiCalls.listSchemas, request)
       );
       assert.strictEqual(
-        (client.descriptors.page.listTopicSubscriptions
-          .createStream as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (client.descriptors.page.listSchemas.createStream as SinonStub).getCall(
+          0
+        ).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
 
-    it('invokes listTopicSubscriptionsStream with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('invokes listSchemasStream with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedError = new Error('expected');
-      client.descriptors.page.listTopicSubscriptions.createStream = stubPageStreamingCall(
+      client.descriptors.page.listSchemas.createStream = stubPageStreamingCall(
         undefined,
         expectedError
       );
-      const stream = client.listTopicSubscriptionsStream(request);
+      const stream = client.listSchemasStream(request);
       const promise = new Promise((resolve, reject) => {
-        const responses: string[] = [];
-        stream.on('data', (response: string) => {
+        const responses: protos.google.pubsub.v1.Schema[] = [];
+        stream.on('data', (response: protos.google.pubsub.v1.Schema) => {
           responses.push(response);
         });
         stream.on('end', () => {
@@ -1332,362 +944,97 @@ describe('v1.PublisherClient', () => {
       });
       await assert.rejects(promise, expectedError);
       assert(
-        (client.descriptors.page.listTopicSubscriptions
-          .createStream as SinonStub)
+        (client.descriptors.page.listSchemas.createStream as SinonStub)
           .getCall(0)
-          .calledWith(client.innerApiCalls.listTopicSubscriptions, request)
+          .calledWith(client.innerApiCalls.listSchemas, request)
       );
       assert.strictEqual(
-        (client.descriptors.page.listTopicSubscriptions
-          .createStream as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (client.descriptors.page.listSchemas.createStream as SinonStub).getCall(
+          0
+        ).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
 
-    it('uses async iteration with listTopicSubscriptions without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('uses async iteration with listSchemas without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedResponse = [new String(), new String(), new String()];
-      client.descriptors.page.listTopicSubscriptions.asyncIterate = stubAsyncIterationCall(
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
+      const expectedResponse = [
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+      ];
+      client.descriptors.page.listSchemas.asyncIterate = stubAsyncIterationCall(
         expectedResponse
       );
-      const responses: string[] = [];
-      const iterable = client.listTopicSubscriptionsAsync(request);
+      const responses: protos.google.pubsub.v1.ISchema[] = [];
+      const iterable = client.listSchemasAsync(request);
       for await (const resource of iterable) {
         responses.push(resource!);
       }
       assert.deepStrictEqual(responses, expectedResponse);
       assert.deepStrictEqual(
-        (client.descriptors.page.listTopicSubscriptions
-          .asyncIterate as SinonStub).getCall(0).args[1],
+        (client.descriptors.page.listSchemas.asyncIterate as SinonStub).getCall(
+          0
+        ).args[1],
         request
       );
       assert.strictEqual(
-        (client.descriptors.page.listTopicSubscriptions
-          .asyncIterate as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (client.descriptors.page.listSchemas.asyncIterate as SinonStub).getCall(
+          0
+        ).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
 
-    it('uses async iteration with listTopicSubscriptions with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+    it('uses async iteration with listSchemas with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      request.parent = '';
+      const expectedHeaderRequestParams = 'parent=';
       const expectedError = new Error('expected');
-      client.descriptors.page.listTopicSubscriptions.asyncIterate = stubAsyncIterationCall(
+      client.descriptors.page.listSchemas.asyncIterate = stubAsyncIterationCall(
         undefined,
         expectedError
       );
-      const iterable = client.listTopicSubscriptionsAsync(request);
+      const iterable = client.listSchemasAsync(request);
       await assert.rejects(async () => {
-        const responses: string[] = [];
+        const responses: protos.google.pubsub.v1.ISchema[] = [];
         for await (const resource of iterable) {
           responses.push(resource!);
         }
       });
       assert.deepStrictEqual(
-        (client.descriptors.page.listTopicSubscriptions
-          .asyncIterate as SinonStub).getCall(0).args[1],
+        (client.descriptors.page.listSchemas.asyncIterate as SinonStub).getCall(
+          0
+        ).args[1],
         request
       );
       assert.strictEqual(
-        (client.descriptors.page.listTopicSubscriptions
-          .asyncIterate as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
-        expectedHeaderRequestParams
-      );
-    });
-  });
-
-  describe('listTopicSnapshots', () => {
-    it('invokes listTopicSnapshots without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
-      const expectedResponse = [new String(), new String(), new String()];
-      client.innerApiCalls.listTopicSnapshots = stubSimpleCall(
-        expectedResponse
-      );
-      const [response] = await client.listTopicSnapshots(request);
-      assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listTopicSnapshots as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
-    });
-
-    it('invokes listTopicSnapshots without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
-      const expectedResponse = [new String(), new String(), new String()];
-      client.innerApiCalls.listTopicSnapshots = stubSimpleCallWithCallback(
-        expectedResponse
-      );
-      const promise = new Promise((resolve, reject) => {
-        client.listTopicSnapshots(
-          request,
-          (err?: Error | null, result?: string[] | null) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(result);
-            }
-          }
-        );
-      });
-      const response = await promise;
-      assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listTopicSnapshots as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
-    });
-
-    it('invokes listTopicSnapshots with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
-      const expectedError = new Error('expected');
-      client.innerApiCalls.listTopicSnapshots = stubSimpleCall(
-        undefined,
-        expectedError
-      );
-      await assert.rejects(client.listTopicSnapshots(request), expectedError);
-      assert(
-        (client.innerApiCalls.listTopicSnapshots as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
-    });
-
-    it('invokes listTopicSnapshotsStream without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedResponse = [new String(), new String(), new String()];
-      client.descriptors.page.listTopicSnapshots.createStream = stubPageStreamingCall(
-        expectedResponse
-      );
-      const stream = client.listTopicSnapshotsStream(request);
-      const promise = new Promise((resolve, reject) => {
-        const responses: string[] = [];
-        stream.on('data', (response: string) => {
-          responses.push(response);
-        });
-        stream.on('end', () => {
-          resolve(responses);
-        });
-        stream.on('error', (err: Error) => {
-          reject(err);
-        });
-      });
-      const responses = await promise;
-      assert.deepStrictEqual(responses, expectedResponse);
-      assert(
-        (client.descriptors.page.listTopicSnapshots.createStream as SinonStub)
-          .getCall(0)
-          .calledWith(client.innerApiCalls.listTopicSnapshots, request)
-      );
-      assert.strictEqual(
-        (client.descriptors.page.listTopicSnapshots
-          .createStream as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
-        expectedHeaderRequestParams
-      );
-    });
-
-    it('invokes listTopicSnapshotsStream with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedError = new Error('expected');
-      client.descriptors.page.listTopicSnapshots.createStream = stubPageStreamingCall(
-        undefined,
-        expectedError
-      );
-      const stream = client.listTopicSnapshotsStream(request);
-      const promise = new Promise((resolve, reject) => {
-        const responses: string[] = [];
-        stream.on('data', (response: string) => {
-          responses.push(response);
-        });
-        stream.on('end', () => {
-          resolve(responses);
-        });
-        stream.on('error', (err: Error) => {
-          reject(err);
-        });
-      });
-      await assert.rejects(promise, expectedError);
-      assert(
-        (client.descriptors.page.listTopicSnapshots.createStream as SinonStub)
-          .getCall(0)
-          .calledWith(client.innerApiCalls.listTopicSnapshots, request)
-      );
-      assert.strictEqual(
-        (client.descriptors.page.listTopicSnapshots
-          .createStream as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
-        expectedHeaderRequestParams
-      );
-    });
-
-    it('uses async iteration with listTopicSnapshots without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedResponse = [new String(), new String(), new String()];
-      client.descriptors.page.listTopicSnapshots.asyncIterate = stubAsyncIterationCall(
-        expectedResponse
-      );
-      const responses: string[] = [];
-      const iterable = client.listTopicSnapshotsAsync(request);
-      for await (const resource of iterable) {
-        responses.push(resource!);
-      }
-      assert.deepStrictEqual(responses, expectedResponse);
-      assert.deepStrictEqual(
-        (client.descriptors.page.listTopicSnapshots
-          .asyncIterate as SinonStub).getCall(0).args[1],
-        request
-      );
-      assert.strictEqual(
-        (client.descriptors.page.listTopicSnapshots
-          .asyncIterate as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
-        expectedHeaderRequestParams
-      );
-    });
-
-    it('uses async iteration with listTopicSnapshots with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
-        credentials: {client_email: 'bogus', private_key: 'bogus'},
-        projectId: 'bogus',
-      });
-      client.initialize();
-      const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
-      );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedError = new Error('expected');
-      client.descriptors.page.listTopicSnapshots.asyncIterate = stubAsyncIterationCall(
-        undefined,
-        expectedError
-      );
-      const iterable = client.listTopicSnapshotsAsync(request);
-      await assert.rejects(async () => {
-        const responses: string[] = [];
-        for await (const resource of iterable) {
-          responses.push(resource!);
-        }
-      });
-      assert.deepStrictEqual(
-        (client.descriptors.page.listTopicSnapshots
-          .asyncIterate as SinonStub).getCall(0).args[1],
-        request
-      );
-      assert.strictEqual(
-        (client.descriptors.page.listTopicSnapshots
-          .asyncIterate as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (client.descriptors.page.listSchemas.asyncIterate as SinonStub).getCall(
+          0
+        ).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
   });
   describe('getIamPolicy', () => {
     it('invokes getIamPolicy without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -1717,7 +1064,7 @@ describe('v1.PublisherClient', () => {
       );
     });
     it('invokes getIamPolicy without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -1761,7 +1108,7 @@ describe('v1.PublisherClient', () => {
       assert((client.iamClient.getIamPolicy as SinonStub).getCall(0));
     });
     it('invokes getIamPolicy with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -1793,7 +1140,7 @@ describe('v1.PublisherClient', () => {
   });
   describe('setIamPolicy', () => {
     it('invokes setIamPolicy without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -1823,7 +1170,7 @@ describe('v1.PublisherClient', () => {
       );
     });
     it('invokes setIamPolicy without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -1867,7 +1214,7 @@ describe('v1.PublisherClient', () => {
       assert((client.iamClient.setIamPolicy as SinonStub).getCall(0));
     });
     it('invokes setIamPolicy with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -1899,7 +1246,7 @@ describe('v1.PublisherClient', () => {
   });
   describe('testIamPermissions', () => {
     it('invokes testIamPermissions without error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -1932,7 +1279,7 @@ describe('v1.PublisherClient', () => {
       );
     });
     it('invokes testIamPermissions without error using callback', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -1976,7 +1323,7 @@ describe('v1.PublisherClient', () => {
       assert((client.iamClient.testIamPermissions as SinonStub).getCall(0));
     });
     it('invokes testIamPermissions with error', async () => {
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -2016,7 +1363,7 @@ describe('v1.PublisherClient', () => {
       const expectedParameters = {
         project: 'projectValue',
       };
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -2055,7 +1402,7 @@ describe('v1.PublisherClient', () => {
         project: 'projectValue',
         topic: 'topicValue',
       };
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -2104,7 +1451,7 @@ describe('v1.PublisherClient', () => {
         project: 'projectValue',
         schema: 'schemaValue',
       };
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -2153,7 +1500,7 @@ describe('v1.PublisherClient', () => {
         project: 'projectValue',
         snapshot: 'snapshotValue',
       };
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
@@ -2202,7 +1549,7 @@ describe('v1.PublisherClient', () => {
         project: 'projectValue',
         subscription: 'subscriptionValue',
       };
-      const client = new publisherModule.v1.PublisherClient({
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
