@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.7.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.7.0...v2.7.1) (2021-01-08)
+
+
+### Bug Fixes
+
+* **deps:** update opentelemetry monorepo to ^0.12.0 ([#1162](https://www.github.com/googleapis/nodejs-pubsub/issues/1162)) ([f459a91](https://www.github.com/googleapis/nodejs-pubsub/commit/f459a91949fca1fbd573ecc1442bc3e5f54e8ee8))
+
 ## [2.7.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.6.0...v2.7.0) (2020-11-30)
 
 
