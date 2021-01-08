@@ -264,7 +264,7 @@ export class Publisher {
   constructSpan(message: PubsubMessage): Span | undefined {
     const spanAttributes = {
       data: message.data,
-    };
+    } as Attributes;
     const span: Span | undefined = this.tracing
       ? this.tracing.createSpan(`${this.topic.name} publisher`, spanAttributes)
       : undefined;
