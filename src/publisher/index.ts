@@ -102,9 +102,9 @@ export class Publisher {
   flush(callback?: EmptyCallback): Promise<void> | void {
     const definedCallback = callback ? callback : () => {};
 
-    const publishes = [promisify(this.queue.publish)()];
+    const publishes = [promisify(this.queue.publish).bind(this.queue)()];
     Array.from(this.orderedQueues.values()).forEach(q =>
-      publishes.push(promisify(q.publish)())
+      publishes.push(promisify(q.publish).bind(q)())
     );
     const allPublishes = Promise.all(publishes);
 

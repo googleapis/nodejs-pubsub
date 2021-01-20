@@ -58,8 +58,17 @@ class FakeQueue extends EventEmitter {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: p.PubsubMessage, callback: p.PublishCallback): void {}
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  publish(callback: (err: Error | null) => void) {}
+  publish(callback: (err: Error | null) => void) {
+    this._publish([], [], callback);
+  }
+  _publish(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    messages: p.PubsubMessage[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    callbacks: p.PublishCallback[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    callback?: q.PublishDone
+  ) {}
 }
 
 class FakeOrderedQueue extends FakeQueue {
@@ -71,7 +80,17 @@ class FakeOrderedQueue extends FakeQueue {
   }
   resumePublishing(): void {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  publish(callback: (err: Error | null) => void) {}
+  publish(callback: (err: Error | null) => void) {
+    this._publish([], [], callback);
+  }
+  _publish(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    messages: p.PubsubMessage[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    callbacks: p.PublishCallback[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    callback?: q.PublishDone
+  ) {}
 }
 
 describe('Publisher', () => {
@@ -304,19 +323,19 @@ describe('Publisher', () => {
       it('should drain any ordered queues on flush', done => {
         // We have to stub out the regular queue as well, so that the flush() operation finishes.
         sandbox
-          .stub(FakeQueue.prototype, 'publish')
-          .callsFake((callback: (err: Error | null) => void) => {
-            callback(null);
+          .stub(FakeQueue.prototype, '_publish')
+          .callsFake((messages, callbacks, callback) => {
+            if (typeof callback === 'function') callback(null);
           });
 
         sandbox
-          .stub(FakeOrderedQueue.prototype, 'publish')
-          .callsFake((callback: (err: Error | null) => void) => {
+          .stub(FakeOrderedQueue.prototype, '_publish')
+          .callsFake((messages, callbacks, callback) => {
             const queue = (publisher.orderedQueues.get(
               orderingKey
             ) as unknown) as FakeOrderedQueue;
             queue.emit('drain');
-            callback(null);
+            if (typeof callback === 'function') callback(null);
           });
 
         publisher.orderedQueues.clear();
@@ -422,11 +441,12 @@ describe('Publisher', () => {
   describe('flush', () => {
     // The ordered queue drain test is above with the ordered queue tests.
     it('should drain the main publish queue', done => {
-      sandbox.stub(publisher.queue, 'publish').callsFake(cb => {
-        if (cb) {
-          cb(null);
-        }
-      });
+      sandbox
+        .stub(publisher.queue, '_publish')
+        .callsFake((messages, callbacks, callback) => {
+          if (typeof callback === 'function') callback(null);
+        });
+
       publisher.flush(err => {
         assert.strictEqual(err, null);
         assert.strictEqual(
