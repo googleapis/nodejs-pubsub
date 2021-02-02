@@ -9,5 +9,6 @@
   "repo": "googleapis/nodejs-pubsub",
   "distribution_name": "@google-cloud/pubsub",
   "api_id": "pubsub.googleapis.com",
-  "requires_billing": true
+  "requires_billing": true,
+  "codeowner_team": "@googleapis/api-pubsub"
 }
