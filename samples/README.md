@@ -425,7 +425,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/s
 __Usage:__
 
 
-`node opentelemetryTracing.js <topic-name> <subscription-name>`
+`node openTelemetryTracing.js <topic-name> <subscription-name>`
 
 
 -----
