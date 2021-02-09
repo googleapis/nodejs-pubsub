@@ -4,6 +4,16 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.8.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.8.0...v2.8.1) (2021-02-09)
+
+
+### Bug Fixes
+
+* bind promisify calls for flush() so they have a 'this' value ([#1184](https://www.github.com/googleapis/nodejs-pubsub/issues/1184)) ([e494fb7](https://www.github.com/googleapis/nodejs-pubsub/commit/e494fb7303ae58b08f3f75aa87ea1f10c86f648e))
+* **deps:** update dependency google-auth-library to v7 ([#1207](https://www.github.com/googleapis/nodejs-pubsub/issues/1207)) ([fce2af1](https://www.github.com/googleapis/nodejs-pubsub/commit/fce2af18ef932b722dcaa9e1132ee145318bd81e))
+* openTelemetry doc fails to generate for [#1185](https://www.github.com/googleapis/nodejs-pubsub/issues/1185) ([#1200](https://www.github.com/googleapis/nodejs-pubsub/issues/1200)) ([0600bde](https://www.github.com/googleapis/nodejs-pubsub/commit/0600bdef9447440605d129396c1915e7640f80ea))
+* update synchronousPull example to avoid INVALID_ARGUMENT error ([#1194](https://www.github.com/googleapis/nodejs-pubsub/issues/1194)) ([1f85345](https://www.github.com/googleapis/nodejs-pubsub/commit/1f853450e0822ebbaeab5892f5d76f5bc0e29537))
+
 ## [2.8.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.7.0...v2.8.0) (2021-01-08)
 
 
