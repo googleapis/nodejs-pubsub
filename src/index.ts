@@ -91,7 +91,7 @@ export {
   IAM,
 } from './iam';
 export {Attributes, PublishCallback} from './publisher';
-export {PublishError} from './publisher/publish-error'
+export {PublishError} from './publisher/publish-error';
 export {
   PageOptions,
   GetSnapshotsCallback,
