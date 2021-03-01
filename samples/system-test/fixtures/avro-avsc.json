@@ -1,0 +1,1 @@
+{"name":"Pet","type":"record","fields":[{"name":"kind","type":{"name":"Kind","type":"enum","symbols":["CAT","DOG"]}},{"name":"name","type":"string"}]}
