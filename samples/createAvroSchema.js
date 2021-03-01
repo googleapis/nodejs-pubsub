@@ -25,9 +25,10 @@
 // sample-metadata:
 //   title: Create an Avro based Schema
 //   description: Creates a new schema definition on a project, using Avro
-//   usage: node createAvroSchema.js <schema-name>
+//   usage: node createAvroSchema.js <project-id> <schema-name> <avsc-filename>
 
 function main(
+  projectId = 'YOUR_PROJECT_NAME',
   schemaName = 'YOUR_SCHEMA_NAME',
   avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json'
 ) {
@@ -35,20 +36,25 @@ function main(
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
+  // const projectId = 'YOUR_PROJECT_ID';
   // const schemaName = 'YOUR_SCHEMA_NAME';
   // const avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json';
 
   // Imports the Google Cloud client library
-  const {PubSub} = require('@google-cloud/pubsub');
+  const {PubSub, SchemaTypes} = require('@google-cloud/pubsub');
 
   const fs = require('fs');
 
   // Creates a client; cache this for further use
-  const pubSubClient = new PubSub();
+  const pubSubClient = new PubSub({projectId});
 
   async function createAvroSchema() {
     const definition = fs.readFileSync(avscFile).toString();
-    const schema = await pubSubClient.createSchema(schemaName, definition);
+    const schema = await pubSubClient.createSchema(
+      schemaName,
+      SchemaTypes.Avro,
+      definition
+    );
     console.log(`Schema ${schema.name} created.`);
   }
 
