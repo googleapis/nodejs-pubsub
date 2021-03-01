@@ -16,7 +16,7 @@
 
 import {paginator} from '@google-cloud/paginator';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
-import {promisifyAll} from '@google-cloud/promisify';
+import {callbackify, promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
@@ -26,6 +26,7 @@ const PKG = require('../../package.json');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const v1 = require('./v1');
 
+import {Schema, SchemaType, SchemaView, ICreateSchemaRequest} from './schema';
 import {Snapshot} from './snapshot';
 import {
   Subscription,
@@ -48,6 +49,7 @@ import {PublishOptions} from './publisher';
 import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
 import {google} from '../protos/protos';
+import {SchemaServiceClient} from './v1';
 
 /**
  * Project ID placeholder.
@@ -239,6 +241,7 @@ export class PubSub {
   api: {[key: string]: gax.ClientStub};
   auth: GoogleAuth;
   projectId: string;
+  name: string;
   // tslint:disable-next-line variable-name
   Promise?: PromiseConstructor;
   getSubscriptionsStream = paginator.streamify(
@@ -251,6 +254,8 @@ export class PubSub {
     'getTopics'
   ) as () => ObjectStream<Topic>;
   isOpen = true;
+
+  schemaClient: SchemaServiceClient;
 
   constructor(options?: ClientConfig) {
     options = options || {};
@@ -280,6 +285,8 @@ export class PubSub {
     this.api = {};
     this.auth = new GoogleAuth(this.options);
     this.projectId = this.options.projectId || PROJECT_ID_PLACEHOLDER;
+    this.name = PubSub.formatName_(this.projectId);
+    this.schemaClient = new v1.SchemaServiceClient(this.options);
   }
 
   close(): Promise<void>;
@@ -300,6 +307,7 @@ export class PubSub {
     if (this.isOpen) {
       this.isOpen = false;
       this.closeAllClients_()
+        .then(() => this.schemaClient.close())
         .then(() => {
           definedCallback(null);
         })
@@ -307,6 +315,27 @@ export class PubSub {
     } else {
       definedCallback(null);
     }
+  }
+
+  async createSchema(
+    schemaId: string,
+    type: SchemaType,
+    definition: string,
+    gaxOpts?: CallOptions
+  ): Promise<Schema> {
+    const schemaName = Schema.formatName_(this.projectId, schemaId);
+    const request: ICreateSchemaRequest = {
+      parent: this.name,
+      schemaId,
+      schema: {
+        name: schemaName,
+        type,
+        definition,
+      },
+    };
+
+    await this.schemaClient.createSchema(request, gaxOpts);
+    return new Schema(this, schemaName);
   }
 
   createSubscription(
@@ -678,6 +707,21 @@ export class PubSub {
     }
   }
 
+  async getSchemas(
+    view: google.pubsub.v1.SchemaView,
+    options?: PageOptions
+  ): Promise<Schema[]> {
+    const [schemas] = await this.schemaClient.listSchemas(
+      {
+        parent: this.schemaClient.projectPath(this.projectId),
+        view,
+      },
+      options
+    );
+
+    return schemas.map(s => new Schema(this, s.name!));
+  }
+
   getSnapshots(options?: PageOptions): Promise<GetSnapshotsResponse>;
   getSnapshots(callback: GetSnapshotsCallback): void;
   getSnapshots(options: PageOptions, callback: GetSnapshotsCallback): void;
@@ -736,7 +780,7 @@ export class PubSub {
 
     const reqOpts = Object.assign(
       {
-        project: 'projects/' + this.projectId,
+        project: PubSub.formatName_(this.projectId),
       },
       options
     );
@@ -1124,6 +1168,11 @@ export class PubSub {
       client![config.method](reqOpts, config.gaxOpts, callback);
     });
   }
+
+  schema(name: string): Schema {
+    return new Schema(this, name);
+  }
+
   /**
    * Create a Snapshot object. See {@link Subscription#createSnapshot} to
    * create a snapshot.
@@ -1198,6 +1247,27 @@ export class PubSub {
       throw new Error('A name must be specified for a topic.');
     }
     return new Topic(this, name, options);
+  }
+
+  /*!
+   * Format the name of a project. A project's full name is in the
+   * format of projects/{projectId}.
+   *
+   * The GAPIC client should do this for us, but since we maintain
+   * names rather than IDs, this is simpler.
+   *
+   * @private
+   */
+  static formatName_(name: string): string {
+    if (typeof name !== 'string') {
+      throw new Error('A name is required to identify a project.');
+    }
+
+    // Simple check if the name is already formatted.
+    if (name.indexOf('/') > -1) {
+      return name;
+    }
+    return `projects/${name}`;
   }
 }
 
@@ -1308,5 +1378,13 @@ paginator.extend(PubSub, ['getSnapshots', 'getSubscriptions', 'getTopics']);
  * that a callback is omitted.
  */
 promisifyAll(PubSub, {
-  exclude: ['request', 'snapshot', 'subscription', 'topic'],
+  exclude: [
+    'request',
+    'snapshot',
+    'subscription',
+    'topic',
+    'schema',
+    'createSchema',
+  ],
 });
+callbackify(PubSub.prototype.createSchema);
