@@ -43,7 +43,7 @@ import {
   SeekResponse,
   Snapshot,
 } from './snapshot';
-import {Subscriber, SubscriberOptions} from './subscriber';
+import {Message, Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';
 
 export type PushConfig = google.pubsub.v1.IPushConfig;
@@ -88,6 +88,20 @@ export type SetSubscriptionMetadataResponse = MetadataResponse;
 export type DetachSubscriptionCallback = EmptyCallback;
 export type DetachSubscriptionResponse = EmptyResponse;
 
+// JSDoc won't see these, so this is just to let you get typings
+// in your editor of choice. Callback types are open ended so that
+// not-quite-matching parameters won't cause a breaking change. We
+// may still shift these to required later.
+export declare interface Subscription {
+  on(event: 'message', listener: Function | ((message: Message) => void)): this;
+  on(event: 'error', listener: Function | ((error: Error) => void)): this;
+  on(event: 'close', listener: Function): this;
+
+  // Only used internally.
+  on(event: 'newListener', listener: Function): this;
+  on(event: 'removeListener', listener: Function): this;
+}
+
 /**
  * @typedef {object} ExpirationPolicy
  * A policy that specifies the conditions for this subscription's expiration. A
@@ -120,7 +134,16 @@ export type DetachSubscriptionResponse = EmptyResponse;
  * All Subscription objects are instances of an
  * [EventEmitter](http://nodejs.org/api/events.html). The subscription will pull
  * for messages automatically as long as there is at least one listener assigned
- * for the `message` event.
+ * for the `message` event. Available events:
+ *
+ * Upon receipt of a message:
+ * on(event: 'message', listener: (message: {@link Message}) => void): this;
+ *
+ * Upon receipt of an error:
+ * on(event: 'error', listener: (error: Error) => void): this;
+ *
+ * Upon the closing of the subscriber:
+ * on(event: 'close', listener: Function): this;
  *
  * By default Subscription objects allow you to process 100 messages at the same
  * time. You can fine tune this value by adjusting the
@@ -1064,7 +1087,7 @@ export class Subscription extends EventEmitter {
    * @private
    */
   private _listen(): void {
-    this.on('newListener', event => {
+    this.on('newListener', (event: string) => {
       if (!this.isOpen && event === 'message') {
         this._subscriber.open();
       }
