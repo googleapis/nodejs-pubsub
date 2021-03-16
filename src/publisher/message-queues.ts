@@ -74,6 +74,12 @@ export abstract class MessageQueue extends EventEmitter {
       topic: topic.name,
       messages,
     };
+    if (messages.length === 0) {
+      if (typeof callback === 'function') {
+        callback(null);
+      }
+      return;
+    }
 
     topic.request<google.pubsub.v1.IPublishResponse>(
       {

@@ -43,6 +43,7 @@ import * as gapicConfig from './schema_service_client_config.json';
 const version = require('../../../package.json').version;
 
 /**
+ *  Service for doing schema-related operations.
  * @class
  * @memberof v1
  */

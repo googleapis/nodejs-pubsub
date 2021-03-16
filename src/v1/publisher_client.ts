@@ -430,8 +430,6 @@ export class PublisherClient {
    *   The expected format is `projects/* /locations/* /keyRings/* /cryptoKeys/*`.
    * @param {google.pubsub.v1.SchemaSettings} request.schemaSettings
    *   Settings for validating messages published against a schema.
-   *
-   *   EXPERIMENTAL: Schema support is in development and may not work yet.
    * @param {boolean} request.satisfiesPzs
    *   Reserved for future use. This field is set only in responses from the
    *   server; it is ignored if it is set in any requests.
