@@ -24,6 +24,7 @@ import {google} from '../protos/protos';
 
 import {IAM} from './iam';
 import {FlowControlOptions} from './lease-manager';
+import {StatusError} from './message-stream';
 import {
   DetachedCallback,
   DetachedResponse,
@@ -93,13 +94,23 @@ export type DetachSubscriptionResponse = EmptyResponse;
 // not-quite-matching parameters won't cause a breaking change. We
 // may still shift these to required later.
 export declare interface Subscription {
-  on(event: 'message', listener: Function | ((message: Message) => void)): this;
-  on(event: 'error', listener: Function | ((error: Error) => void)): this;
-  on(event: 'close', listener: Function): this;
+  on(
+    event: 'message',
+    listener: (() => void) | ((message: Message) => void)
+  ): this;
+  on(
+    event: 'error',
+    listener: (() => void) | ((error: StatusError) => void)
+  ): this;
+  on(event: 'close', listener: () => void): this;
 
   // Only used internally.
   on(event: 'newListener', listener: Function): this;
   on(event: 'removeListener', listener: Function): this;
+
+  // Catch-all. If you get an error about this line, it means you're
+  // using an unsupported event type or listener type.
+  on(event: string, listener: void): this;
 }
 
 /**
