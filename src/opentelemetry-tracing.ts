@@ -13,8 +13,15 @@
  * limitations under the License.
  */
 
-import {Attributes, SpanContext, Span, trace} from '@opentelemetry/api';
-import {Tracer} from '@opentelemetry/tracing';
+import {
+  Tracer,
+  SpanAttributes,
+  SpanContext,
+  Span,
+  context,
+  trace,
+  setSpanContext,
+} from '@opentelemetry/api';
 
 /**
  * Wrapper for creating OpenTelemetry Spans
@@ -31,13 +38,21 @@ export class OpenTelemetryTracer {
    */
   createSpan(
     spanName: string,
-    attributes?: Attributes,
+    attributes?: SpanAttributes,
     parent?: SpanContext
   ): Span {
     const tracerProvider: Tracer = trace.getTracer('default') as Tracer;
-    return tracerProvider.startSpan(spanName, {
-      parent: parent,
-      attributes: attributes,
-    });
+
+    let spanContext = undefined;
+    if (parent) {
+      spanContext = setSpanContext(context.active(), parent);
+    }
+    return tracerProvider.startSpan(
+      spanName,
+      {
+        attributes: attributes,
+      },
+      spanContext
+    );
   }
 }

@@ -31,7 +31,7 @@ describe('OpenTelemetryTracer', () => {
     spanId: '6e0c63257de34c92',
     traceFlags: api.TraceFlags.SAMPLED,
   };
-  const spanAttributes: api.Attributes = {
+  const spanAttributes: api.SpanAttributes = {
     foo: 'bar',
   };
 

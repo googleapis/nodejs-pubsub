@@ -18,7 +18,7 @@ import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
-import {SpanContext, Span} from '@opentelemetry/api';
+import {SpanContext, Span, setSpanContext} from '@opentelemetry/api';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
