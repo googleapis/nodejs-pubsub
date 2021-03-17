@@ -15,15 +15,14 @@
  */
 
 import * as assert from 'assert';
-import {describe, it, before, beforeEach, afterEach} from 'mocha';
+import {describe, it, before, afterEach} from 'mocha';
 
 import * as api from '@opentelemetry/api';
 import * as trace from '@opentelemetry/tracing';
-import {OpenTelemetryTracer} from '../src/opentelemetry-tracing';
+import {createSpan} from '../src/opentelemetry-tracing';
 import {SimpleSpanProcessor} from '@opentelemetry/tracing';
 
 describe('OpenTelemetryTracer', () => {
-  let tracing: OpenTelemetryTracer;
   let span: trace.Span;
   const spanName = 'test-span';
   const spanContext: api.SpanContext = {
@@ -42,20 +41,12 @@ describe('OpenTelemetryTracer', () => {
     api.trace.setGlobalTracerProvider(provider);
   });
 
-  beforeEach(() => {
-    tracing = new OpenTelemetryTracer();
-  });
-
   afterEach(() => {
     span.end();
   });
 
   it('creates a span', () => {
-    span = tracing.createSpan(
-      spanName,
-      spanAttributes,
-      spanContext
-    ) as trace.Span;
+    span = createSpan(spanName, spanAttributes, spanContext) as trace.Span;
     assert.strictEqual(span.name, spanName);
     assert.deepStrictEqual(span.attributes, spanAttributes);
     assert.strictEqual(span.parentSpanId, spanContext.spanId);

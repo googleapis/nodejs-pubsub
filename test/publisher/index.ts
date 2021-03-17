@@ -180,37 +180,7 @@ describe('Publisher', () => {
     const enableTracing: p.PublishOptions = {
       enableOpenTelemetryTracing: true,
     };
-    const disableTracing: p.PublishOptions = {
-      enableOpenTelemetryTracing: false,
-    };
     const buffer = Buffer.from('Hello, world!');
-
-    beforeEach(() => {
-      // Declare tracingPublisher as type any and pre-define _tracing
-      // to gain access to the private field after publisher init
-      tracingPublisher['tracing'] = undefined;
-    });
-    it('should not instantiate a tracer when tracing is disabled', () => {
-      tracingPublisher = new Publisher(topic);
-      assert.strictEqual(tracingPublisher['tracing'], undefined);
-    });
-
-    it('should instantiate a tracer when tracing is enabled through constructor', () => {
-      tracingPublisher = new Publisher(topic, enableTracing);
-      assert.ok(tracingPublisher['tracing']);
-    });
-
-    it('should instantiate a tracer when tracing is enabled through setOptions', () => {
-      tracingPublisher = new Publisher(topic);
-      tracingPublisher.setOptions(enableTracing);
-      assert.ok(tracingPublisher['tracing']);
-    });
-
-    it('should disable tracing when tracing is disabled through setOptions', () => {
-      tracingPublisher = new Publisher(topic, enableTracing);
-      tracingPublisher.setOptions(disableTracing);
-      assert.strictEqual(tracingPublisher['tracing'], undefined);
-    });
 
     it('export created spans', () => {
       tracingPublisher = new Publisher(topic, enableTracing);

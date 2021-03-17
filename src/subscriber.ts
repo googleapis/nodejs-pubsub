@@ -28,7 +28,7 @@ import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
-import {OpenTelemetryTracer} from './opentelemetry-tracing';
+import {createSpan} from './opentelemetry-tracing';
 
 export type PullResponse = google.pubsub.v1.IPullResponse;
 
@@ -245,7 +245,6 @@ export class Subscriber extends EventEmitter {
   private _options!: SubscriberOptions;
   private _stream!: MessageStream;
   private _subscription: Subscription;
-  private _tracing: OpenTelemetryTracer | undefined;
   constructor(subscription: Subscription, options = {}) {
     super();
 
@@ -433,9 +432,6 @@ export class Subscriber extends EventEmitter {
         this.maxMessages
       );
     }
-    this._tracing = options.enableOpenTelemetryTracing
-      ? new OpenTelemetryTracer()
-      : undefined;
   }
 
   /**
@@ -447,7 +443,7 @@ export class Subscriber extends EventEmitter {
   private _constructSpan(message: Message): Span | undefined {
     // Handle cases where OpenTelemetry is disabled or no span context was sent through message
     if (
-      !this._tracing ||
+      !this._options.enableOpenTelemetryTracing ||
       !message.attributes ||
       !message.attributes['googclient_OpenTelemetrySpanContext']
     ) {
@@ -464,7 +460,7 @@ export class Subscriber extends EventEmitter {
     // Subscriber spans should always have a publisher span as a parent.
     // Return undefined if no parent is provided
     const span = parentSpanContext
-      ? this._tracing.createSpan(this._name, spanAttributes, parentSpanContext)
+      ? createSpan(this._name, spanAttributes, parentSpanContext)
       : undefined;
     return span;
   }

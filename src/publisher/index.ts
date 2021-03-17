@@ -25,7 +25,7 @@ import {Topic} from '../topic';
 import {RequestCallback, EmptyCallback} from '../pubsub';
 import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
-import {OpenTelemetryTracer} from '../opentelemetry-tracing';
+import {createSpan} from '../opentelemetry-tracing';
 
 export type PubsubMessage = google.pubsub.v1.IPubsubMessage;
 
@@ -75,16 +75,11 @@ export class Publisher {
   settings!: PublishOptions;
   queue: Queue;
   orderedQueues: Map<string, OrderedQueue>;
-  tracing: OpenTelemetryTracer | undefined;
   constructor(topic: Topic, options?: PublishOptions) {
     this.setOptions(options);
     this.topic = topic;
     this.queue = new Queue(this);
     this.orderedQueues = new Map();
-    this.tracing =
-      this.settings && this.settings.enableOpenTelemetryTracing
-        ? new OpenTelemetryTracer()
-        : undefined;
   }
 
   flush(): Promise<void>;
@@ -238,10 +233,6 @@ export class Publisher {
       enableOpenTelemetryTracing,
     } = extend(true, defaults, options);
 
-    this.tracing = enableOpenTelemetryTracing
-      ? new OpenTelemetryTracer()
-      : undefined;
-
     this.settings = {
       batching: {
         maxBytes: Math.min(batching.maxBytes, BATCH_LIMITS.maxBytes!),
@@ -265,8 +256,8 @@ export class Publisher {
     const spanAttributes = {
       data: message.data,
     } as Attributes;
-    const span: Span | undefined = this.tracing
-      ? this.tracing.createSpan(`${this.topic.name} publisher`, spanAttributes)
+    const span: Span | undefined = this.settings.enableOpenTelemetryTracing
+      ? createSpan(`${this.topic.name} publisher`, spanAttributes)
       : undefined;
     if (span) {
       if (

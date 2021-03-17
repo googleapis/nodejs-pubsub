@@ -24,35 +24,24 @@ import {
 } from '@opentelemetry/api';
 
 /**
- * Wrapper for creating OpenTelemetry Spans
+ * Creates a new span with the given properties
  *
- * @class
+ * @param {string} spanName the name for the span
+ * @param {Attributes?} attributes an object containing the attributes to be set for the span
+ * @param {SpanContext?} parent the context of the parent span to link to the span
  */
-export class OpenTelemetryTracer {
-  /**
-   * Creates a new span with the given properties
-   *
-   * @param {string} spanName the name for the span
-   * @param {Attributes?} attributes an object containing the attributes to be set for the span
-   * @param {SpanContext?} parent the context of the parent span to link to the span
-   */
-  createSpan(
-    spanName: string,
-    attributes?: SpanAttributes,
-    parent?: SpanContext
-  ): Span {
-    const tracerProvider: Tracer = trace.getTracer('default') as Tracer;
+export function createSpan(
+  spanName: string,
+  attributes?: SpanAttributes,
+  parent?: SpanContext
+): Span {
+  const tracerProvider: Tracer = trace.getTracer('default') as Tracer;
 
-    let spanContext = undefined;
-    if (parent) {
-      spanContext = setSpanContext(context.active(), parent);
-    }
-    return tracerProvider.startSpan(
-      spanName,
-      {
-        attributes: attributes,
-      },
-      spanContext
-    );
-  }
+  return tracerProvider.startSpan(
+    spanName,
+    {
+      attributes: attributes,
+    },
+    parent ? setSpanContext(context.active(), parent) : undefined
+  );
 }
