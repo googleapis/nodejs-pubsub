@@ -648,33 +648,35 @@ describe('Subscriber', () => {
 
     beforeEach(() => {
       // Pre-define _tracing to gain access to the private field after subscriber init
-      tracingSubscriber['_tracing'] = undefined;
+      tracingSubscriber['_useOpentelemetry'] = false;
     });
 
     it('should not instantiate a tracer when tracing is disabled', () => {
       tracingSubscriber = new Subscriber(subscription);
-      assert.strictEqual(tracingSubscriber['_tracing'], undefined);
+      assert.strictEqual(tracingSubscriber['_useOpentelemetry'], false);
     });
 
     it('should instantiate a tracer when tracing is enabled through constructor', () => {
       tracingSubscriber = new Subscriber(subscription, enableTracing);
-      assert.ok(tracingSubscriber['_tracing']);
+      assert.ok(tracingSubscriber['_useOpentelemetry']);
     });
 
     it('should instantiate a tracer when tracing is enabled through setOptions', () => {
       tracingSubscriber = new Subscriber(subscription);
       tracingSubscriber.setOptions(enableTracing);
-      assert.ok(tracingSubscriber['_tracing']);
+      assert.ok(tracingSubscriber['_useOpentelemetry']);
     });
 
     it('should disable tracing when tracing is disabled through setOptions', () => {
       tracingSubscriber = new Subscriber(subscription, enableTracing);
       tracingSubscriber.setOptions(disableTracing);
-      assert.strictEqual(tracingSubscriber['_tracing'], undefined);
+      assert.strictEqual(tracingSubscriber['_useOpentelemetry'], false);
     });
 
     it('exports a span once it is created', () => {
       tracingSubscriber = new Subscriber(subscription, enableTracing);
+      tracingSubscriber.setOptions(enableTracing);
+      assert.strictEqual(tracingSubscriber['_useOpentelemetry'], true);
 
       // Setup trace exporting
       const provider: BasicTracerProvider = new BasicTracerProvider();

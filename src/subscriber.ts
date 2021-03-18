@@ -239,6 +239,7 @@ export class Subscriber extends EventEmitter {
   private _histogram: Histogram;
   private _inventory!: LeaseManager;
   private _isUserSetDeadline: boolean;
+  private _useOpentelemetry: boolean;
   private _latencies: Histogram;
   private _modAcks!: ModAckQueue;
   private _name!: string;
@@ -255,6 +256,7 @@ export class Subscriber extends EventEmitter {
     this.useLegacyFlowControl = false;
     this.isOpen = false;
     this._isUserSetDeadline = false;
+    this._useOpentelemetry = false;
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
     this._subscription = subscription;
@@ -403,6 +405,8 @@ export class Subscriber extends EventEmitter {
   setOptions(options: SubscriberOptions): void {
     this._options = options;
 
+    this._useOpentelemetry = options.enableOpenTelemetryTracing || false;
+
     if (options.ackDeadline) {
       this.ackDeadline = options.ackDeadline;
       this._isUserSetDeadline = true;
@@ -447,7 +451,7 @@ export class Subscriber extends EventEmitter {
   private _constructSpan(message: Message): Span | undefined {
     // Handle cases where OpenTelemetry is disabled or no span context was sent through message
     if (
-      !this._tracing ||
+      !this._useOpentelemetry ||
       !message.attributes ||
       !message.attributes['googclient_OpenTelemetrySpanContext']
     ) {
@@ -491,6 +495,7 @@ export class Subscriber extends EventEmitter {
       const message = new Message(this, data);
 
       const span: Span | undefined = this._constructSpan(message);
+
       if (this.isOpen) {
         message.modAck(this.ackDeadline);
         this._inventory.add(message);
