@@ -1,14 +1,15 @@
 {
-  "name": "pubsub",
-  "name_pretty": "Google Cloud Pub/Sub",
-  "product_documentation": "https://cloud.google.com/pubsub/docs/",
-  "client_documentation": "https://googleapis.dev/nodejs/pubsub/latest",
-  "issue_tracker": "https://issuetracker.google.com/savedsearches/559741",
+  "default_version": "v1",
   "release_level": "ga",
-  "language": "nodejs",
-  "repo": "googleapis/nodejs-pubsub",
-  "distribution_name": "@google-cloud/pubsub",
-  "api_id": "pubsub.googleapis.com",
   "requires_billing": true,
-  "codeowner_team": "@googleapis/api-pubsub"
+  "client_documentation": "https://googleapis.dev/nodejs/pubsub/latest",
+  "codeowner_team": "@googleapis/api-pubsub",
+  "language": "nodejs",
+  "issue_tracker": "https://issuetracker.google.com/savedsearches/559741",
+  "product_documentation": "https://cloud.google.com/pubsub/docs/",
+  "name": "pubsub",
+  "distribution_name": "@google-cloud/pubsub",
+  "name_pretty": "Google Cloud Pub/Sub",
+  "api_id": "pubsub.googleapis.com",
+  "repo": "googleapis/nodejs-pubsub"
 }
