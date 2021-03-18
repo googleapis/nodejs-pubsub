@@ -26,7 +26,6 @@ import {
   SimpleSpanProcessor,
 } from '@opentelemetry/tracing';
 import * as opentelemetry from '@opentelemetry/api';
-
 import {Topic} from '../../src';
 import * as p from '../../src/publisher';
 import * as q from '../../src/publisher/message-queues';
@@ -95,7 +94,7 @@ class FakeOrderedQueue extends FakeQueue {
 
 describe('Publisher', () => {
   const sandbox = sinon.createSandbox();
-  const topic = {} as Topic;
+  const topic = {name: 'topic-name'} as Topic;
 
   // tslint:disable-next-line variable-name
   let Publisher: typeof p.Publisher;
@@ -193,7 +192,15 @@ describe('Publisher', () => {
       opentelemetry.trace.setGlobalTracerProvider(provider);
 
       tracingPublisher.publish(buffer);
-      assert.ok(exporter.getFinishedSpans());
+      const spans = exporter.getFinishedSpans();
+      assert.equal(spans.length, 1, 'has span');
+      const createdSpan = spans.shift()!;
+      assert.strictEqual(
+        createdSpan.status.code,
+        opentelemetry.SpanStatusCode.UNSET
+      );
+      assert.strictEqual(createdSpan.name, 'topic-name publisher');
+      assert.ok(spans);
     });
   });
 

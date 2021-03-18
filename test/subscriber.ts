@@ -681,7 +681,8 @@ describe('Subscriber', () => {
       // Receive message and assert that it was exported
       const stream: FakeMessageStream = stubs.get('messageStream');
       stream.emit('data', pullResponse);
-      assert.ok(exporter.getFinishedSpans());
+      const spans = exporter.getFinishedSpans();
+      assert.ok(spans);
     });
 
     it('does not export a span when a span context is not present on message', () => {
