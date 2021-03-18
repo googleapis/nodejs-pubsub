@@ -6,21 +6,6 @@
         "idempotent": [
           "DEADLINE_EXCEEDED",
           "UNAVAILABLE"
-        ],
-        "unknown_aborted_unavailable": [
-          "UNKNOWN",
-          "ABORTED",
-          "UNAVAILABLE"
-        ],
-        "unavailable": [
-          "UNAVAILABLE"
-        ],
-        "deadline_exceeded_resource_exhausted_aborted_internal_unavailable": [
-          "DEADLINE_EXCEEDED",
-          "RESOURCE_EXHAUSTED",
-          "ABORTED",
-          "INTERNAL",
-          "UNAVAILABLE"
         ]
       },
       "retry_params": {
@@ -36,83 +21,67 @@
       },
       "methods": {
         "CreateSubscription": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unknown_aborted_unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "GetSubscription": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unknown_aborted_unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "UpdateSubscription": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "ListSubscriptions": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unknown_aborted_unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "DeleteSubscription": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "ModifyAckDeadline": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "Acknowledge": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "Pull": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unknown_aborted_unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "StreamingPull": {
-          "timeout_millis": 900000,
-          "retry_codes_name": "deadline_exceeded_resource_exhausted_aborted_internal_unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "ModifyPushConfig": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "GetSnapshot": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unknown_aborted_unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "ListSnapshots": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unknown_aborted_unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "CreateSnapshot": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "UpdateSnapshot": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "DeleteSnapshot": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         },
         "Seek": {
-          "timeout_millis": 60000,
-          "retry_codes_name": "unknown_aborted_unavailable",
+          "retry_codes_name": "non_idempotent",
           "retry_params_name": "default"
         }
       }
