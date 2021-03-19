@@ -24,7 +24,6 @@ import {google} from '../protos/protos';
 
 import {IAM} from './iam';
 import {FlowControlOptions} from './lease-manager';
-import {StatusError} from './message-stream';
 import {
   DetachedCallback,
   DetachedResponse,
@@ -44,7 +43,7 @@ import {
   SeekResponse,
   Snapshot,
 } from './snapshot';
-import {Message, Subscriber, SubscriberOptions} from './subscriber';
+import {Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';
 
 export type PushConfig = google.pubsub.v1.IPushConfig;
@@ -90,17 +89,19 @@ export type DetachSubscriptionCallback = EmptyCallback;
 export type DetachSubscriptionResponse = EmptyResponse;
 
 // JSDoc won't see these, so this is just to let you get typings
-// in your editor of choice. Callback types are open ended so that
-// not-quite-matching parameters won't cause a breaking change. We
-// may still shift these to required later.
-export declare interface Subscription {
+// in your editor of choice.
+//
+// NOTE: These are commented out for now because we don't want to
+// break any existing clients that rely on not-entirely-correct
+// typings. We'll re-enable on the next major.
+/* export declare interface Subscription {
   on(
     event: 'message',
-    listener: (() => void) | ((message: Message) => void)
+    listener: (message: Message) => void
   ): this;
   on(
     event: 'error',
-    listener: (() => void) | ((error: StatusError) => void)
+    listener: (error: StatusError) => void
   ): this;
   on(event: 'close', listener: () => void): this;
 
@@ -111,7 +112,7 @@ export declare interface Subscription {
   // Catch-all. If you get an error about this line, it means you're
   // using an unsupported event type or listener type.
   on(event: string, listener: void): this;
-}
+} */
 
 /**
  * @typedef {object} ExpirationPolicy
@@ -1098,7 +1099,7 @@ export class Subscription extends EventEmitter {
    * @private
    */
   private _listen(): void {
-    this.on('newListener', (event: string) => {
+    this.on('newListener', event => {
       if (!this.isOpen && event === 'message') {
         this._subscriber.open();
       }
