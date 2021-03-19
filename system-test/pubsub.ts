@@ -904,12 +904,12 @@ describe('pubsub', () => {
 
       // This creates a Promise that hooks the 'message' callback of the
       // subscription above, and resolves when that callback calls `resolve`.
-      type WorkCallback<T> = (arg: T, resolve: Function) => void;
+      type WorkCallback = (arg: Message, resolve: Function) => void;
       function makeMessagePromise<T>(
-        workCallback: WorkCallback<T>
+        workCallback: WorkCallback
       ): Promise<void> {
         return new Promise(resolve => {
-          subscription.on('message', (arg: T) => {
+          subscription.on('message', (arg: Message) => {
             workCallback(arg, resolve);
           });
         });
