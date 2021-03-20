@@ -1637,6 +1637,10 @@
                   "rule": "repeated",
                   "type": "HttpRule",
                   "id": 1
+                },
+                "fullyDecodeReservedExpansion": {
+                  "type": "bool",
+                  "id": 2
                 }
               }
             },
@@ -1685,6 +1689,10 @@
                 "body": {
                   "type": "string",
                   "id": 7
+                },
+                "responseBody": {
+                  "type": "string",
+                  "id": 12
                 },
                 "additionalBindings": {
                   "rule": "repeated",
@@ -1819,11 +1827,12 @@
         },
         "protobuf": {
           "options": {
-            "go_package": "github.com/golang/protobuf/protoc-gen-go/descriptor;descriptor",
+            "go_package": "google.golang.org/protobuf/types/descriptorpb",
             "java_package": "com.google.protobuf",
             "java_outer_classname": "DescriptorProtos",
             "csharp_namespace": "Google.Protobuf.Reflection",
             "objc_class_prefix": "GPB",
+            "cc_enable_arenas": true,
             "optimize_for": "SPEED"
           },
           "nested": {
@@ -1962,6 +1971,10 @@
                     "end": {
                       "type": "int32",
                       "id": 2
+                    },
+                    "options": {
+                      "type": "ExtensionRangeOptions",
+                      "id": 3
                     }
                   }
                 },
@@ -1978,6 +1991,21 @@
                   }
                 }
               }
+            },
+            "ExtensionRangeOptions": {
+              "fields": {
+                "uninterpretedOption": {
+                  "rule": "repeated",
+                  "type": "UninterpretedOption",
+                  "id": 999
+                }
+              },
+              "extensions": [
+                [
+                  1000,
+                  536870911
+                ]
+              ]
             },
             "FieldDescriptorProto": {
               "fields": {
@@ -2020,6 +2048,10 @@
                 "options": {
                   "type": "FieldOptions",
                   "id": 8
+                },
+                "proto3Optional": {
+                  "type": "bool",
+                  "id": 17
                 }
               },
               "nested": {
@@ -2080,6 +2112,30 @@
                 "options": {
                   "type": "EnumOptions",
                   "id": 3
+                },
+                "reservedRange": {
+                  "rule": "repeated",
+                  "type": "EnumReservedRange",
+                  "id": 4
+                },
+                "reservedName": {
+                  "rule": "repeated",
+                  "type": "string",
+                  "id": 5
+                }
+              },
+              "nested": {
+                "EnumReservedRange": {
+                  "fields": {
+                    "start": {
+                      "type": "int32",
+                      "id": 1
+                    },
+                    "end": {
+                      "type": "int32",
+                      "id": 2
+                    }
+                  }
                 }
               }
             },
@@ -2213,6 +2269,13 @@
                     "default": false
                   }
                 },
+                "phpGenericServices": {
+                  "type": "bool",
+                  "id": 42,
+                  "options": {
+                    "default": false
+                  }
+                },
                 "deprecated": {
                   "type": "bool",
                   "id": 23,
@@ -2224,7 +2287,7 @@
                   "type": "bool",
                   "id": 31,
                   "options": {
-                    "default": false
+                    "default": true
                   }
                 },
                 "objcClassPrefix": {
@@ -2242,6 +2305,18 @@
                 "phpClassPrefix": {
                   "type": "string",
                   "id": 40
+                },
+                "phpNamespace": {
+                  "type": "string",
+                  "id": 41
+                },
+                "phpMetadataNamespace": {
+                  "type": "string",
+                  "id": 44
+                },
+                "rubyPackage": {
+                  "type": "string",
+                  "id": 45
                 },
                 "uninterpretedOption": {
                   "rule": "repeated",

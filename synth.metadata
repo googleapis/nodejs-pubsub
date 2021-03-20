@@ -4,7 +4,7 @@
       "git": {
         "name": ".",
         "remote": "https://github.com/googleapis/nodejs-pubsub.git",
-        "sha": "b954fd92703c8e7ac99b668ee4991c2e4ec81885"
+        "sha": "cb627d5555c617eb025181c9f9aaf1d2c9621a86"
       }
     },
     {
