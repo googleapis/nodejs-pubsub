@@ -188,12 +188,11 @@ describe('Publisher', () => {
       const provider: BasicTracerProvider = new BasicTracerProvider();
       const exporter: InMemorySpanExporter = new InMemorySpanExporter();
       provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-      provider.register();
       opentelemetry.trace.setGlobalTracerProvider(provider);
 
       tracingPublisher.publish(buffer);
       const spans = exporter.getFinishedSpans();
-      assert.equal(spans.length, 1, 'has span');
+      assert.strictEqual(spans.length, 1, 'has span');
       const createdSpan = spans.shift()!;
       assert.strictEqual(
         createdSpan.status.code,
