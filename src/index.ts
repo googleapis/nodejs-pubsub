@@ -121,7 +121,6 @@ export {
   ISchema,
   SchemaType,
   SchemaTypes,
-  SchemaView,
   ICreateSchemaRequest,
   SchemaEncoding,
 } from './schema';

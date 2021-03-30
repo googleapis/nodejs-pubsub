@@ -26,7 +26,7 @@ const PKG = require('../../package.json');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const v1 = require('./v1');
 
-import {Schema, SchemaType, SchemaView, ICreateSchemaRequest} from './schema';
+import {Schema, SchemaType, ICreateSchemaRequest} from './schema';
 import {Snapshot} from './snapshot';
 import {
   Subscription,
@@ -241,7 +241,7 @@ export class PubSub {
   api: {[key: string]: gax.ClientStub};
   auth: GoogleAuth;
   projectId: string;
-  name: string;
+  name?: string;
   // tslint:disable-next-line variable-name
   Promise?: PromiseConstructor;
   getSubscriptionsStream = paginator.streamify(
@@ -255,7 +255,7 @@ export class PubSub {
   ) as () => ObjectStream<Topic>;
   isOpen = true;
 
-  schemaClient: SchemaServiceClient;
+  private schemaClient?: SchemaServiceClient;
 
   constructor(options?: ClientConfig) {
     options = options || {};
@@ -285,8 +285,9 @@ export class PubSub {
     this.api = {};
     this.auth = new GoogleAuth(this.options);
     this.projectId = this.options.projectId || PROJECT_ID_PLACEHOLDER;
-    this.name = PubSub.formatName_(this.projectId);
-    this.schemaClient = new v1.SchemaServiceClient(this.options);
+    if (this.projectId !== PROJECT_ID_PLACEHOLDER) {
+      this.name = PubSub.formatName_(this.projectId);
+    }
   }
 
   close(): Promise<void>;
@@ -307,7 +308,7 @@ export class PubSub {
     if (this.isOpen) {
       this.isOpen = false;
       this.closeAllClients_()
-        .then(() => this.schemaClient.close())
+        .then(() => this.schemaClient?.close())
         .then(() => {
           definedCallback(null);
         })
@@ -334,7 +335,8 @@ export class PubSub {
       },
     };
 
-    await this.schemaClient.createSchema(request, gaxOpts);
+    const client = await this.getSchemaClient_();
+    await client.createSchema(request, gaxOpts);
     return new Schema(this, schemaName);
   }
 
@@ -707,14 +709,12 @@ export class PubSub {
     }
   }
 
-  async getSchemas(
-    view: google.pubsub.v1.SchemaView,
-    options?: PageOptions
-  ): Promise<Schema[]> {
-    const [schemas] = await this.schemaClient.listSchemas(
+  async getSchemas(options?: PageOptions): Promise<Schema[]> {
+    const client = await this.getSchemaClient_();
+    const [schemas] = await client.listSchemas(
       {
-        parent: this.schemaClient.projectPath(this.projectId),
-        view,
+        parent: client.projectPath(this.projectId),
+        view: google.pubsub.v1.SchemaView.BASIC,
       },
       options
     );
@@ -1052,6 +1052,41 @@ export class PubSub {
       }
     );
   }
+
+  async getClientConfig(): Promise<ClientConfig> {
+    if (!this.projectId || this.projectId === PROJECT_ID_PLACEHOLDER) {
+      let projectId;
+
+      try {
+        projectId = await this.auth.getProjectId();
+      } catch (e) {
+        if (!this.isEmulator) {
+          throw e;
+        }
+        projectId = '';
+      }
+
+      this.projectId = projectId!;
+      this.name = PubSub.formatName_(this.projectId);
+      this.options.projectId = projectId!;
+    }
+
+    return this.options;
+  }
+
+  /**
+   * Gets a schema client, creating one if needed.
+   * @private
+   */
+  async getSchemaClient_(): Promise<SchemaServiceClient> {
+    if (!this.schemaClient) {
+      const options = await this.getClientConfig();
+      this.schemaClient = new v1.SchemaServiceClient(options);
+    }
+
+    return this.schemaClient!;
+  }
+
   /**
    * Callback function to PubSub.getClient_().
    * @private
@@ -1089,27 +1124,14 @@ export class PubSub {
    * @returns {Promise}
    */
   async getClientAsync_(config: GetClientConfig): Promise<gax.ClientStub> {
-    if (!this.projectId || this.projectId === PROJECT_ID_PLACEHOLDER) {
-      let projectId;
-
-      try {
-        projectId = await this.auth.getProjectId();
-      } catch (e) {
-        if (!this.isEmulator) {
-          throw e;
-        }
-        projectId = '';
-      }
-
-      this.projectId = projectId!;
-      this.options.projectId = projectId!;
-    }
+    // Make sure we've got a fully created config with projectId and such.
+    const options = await this.getClientConfig();
 
     let gaxClient = this.api[config.client];
 
     if (!gaxClient) {
       // Lazily instantiate client.
-      gaxClient = new v1[config.client](this.options) as gax.ClientStub;
+      gaxClient = new v1[config.client](options) as gax.ClientStub;
       this.api[config.client] = gaxClient;
     }
 
@@ -1385,6 +1407,8 @@ promisifyAll(PubSub, {
     'topic',
     'schema',
     'createSchema',
+    'getSchemas',
   ],
 });
 callbackify(PubSub.prototype.createSchema);
+callbackify(PubSub.prototype.getSchemas);

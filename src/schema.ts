@@ -42,7 +42,7 @@ export class Schema {
   name: string;
   pubsub: PubSub;
   iam: IAM;
-  parent: string;
+  private parent?: string;
 
   constructor(pubsub: PubSub, name: string) {
     /**
@@ -53,10 +53,11 @@ export class Schema {
     this.pubsub = pubsub;
     /**
      * The project name (full path) of the {@link PubSub} we're attached to.
+     * Getting this for certain requires an async wait, so we don't do it here.
      * @name Schema#parent
      * @type {string}
      */
-    this.parent = this.pubsub.name;
+    this.parent = undefined;
     /**
      * The fully qualified name of this schema.
      * @name Schema#name
@@ -116,7 +117,8 @@ export class Schema {
   }
 
   async get(view: SchemaView, gaxOpts?: CallOptions): Promise<ISchema> {
-    const [schema] = await this.pubsub.schemaClient.getSchema(
+    const client = await this.pubsub.getSchemaClient_();
+    const [schema] = await client.getSchema(
       {
         name: this.name,
         view,
@@ -128,7 +130,8 @@ export class Schema {
   }
 
   async delete(gaxOpts?: CallOptions): Promise<void> {
-    await this.pubsub.schemaClient.deleteSchema(
+    const client = await this.pubsub.getSchemaClient_();
+    await client.deleteSchema(
       {
         name: this.name,
       },
@@ -137,7 +140,8 @@ export class Schema {
   }
 
   async validateSchema(schema: ISchema, gaxOpts?: CallOptions): Promise<void> {
-    await this.pubsub.schemaClient.validateSchema(
+    const client = await this.pubsub.getSchemaClient_();
+    await client.validateSchema(
       {
         parent: this.parent,
         schema,
@@ -152,7 +156,8 @@ export class Schema {
     encoding: SchemaEncoding,
     gaxOpts?: CallOptions
   ): Promise<void> {
-    await this.pubsub.schemaClient.validateMessage(
+    const client = await this.pubsub.getSchemaClient_();
+    await client.validateMessage(
       {
         parent: this.parent,
         name: this.name,

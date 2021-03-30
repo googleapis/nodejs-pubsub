@@ -20,6 +20,7 @@ import {describe, it, before, beforeEach, after, afterEach} from 'mocha';
 import * as gax from 'google-gax';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
+import defer = require('p-defer');
 
 import {google} from '../protos/protos';
 import * as pubsubTypes from '../src/pubsub';
@@ -27,6 +28,7 @@ import {Snapshot} from '../src/snapshot';
 import * as subby from '../src/subscription';
 import {Topic} from '../src/topic';
 import * as util from '../src/util';
+import {Schema, SchemaTypes} from '../src';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PKG = require('../../package.json');
@@ -66,6 +68,9 @@ const fakePromisify = Object.assign({}, promisify, {
       'snapshot',
       'subscription',
       'topic',
+      'schema',
+      'createSchema',
+      'getSchemas',
     ]);
   },
 });
@@ -1574,5 +1579,81 @@ describe('PubSub', () => {
       assert.strictEqual(name, fakeName);
       assert.strictEqual(options, fakeOptions);
     });
+  });
+
+  describe('schema', () => {
+    it('should close the schema client when it has been opened', async () => {
+      // Force it to create a client.
+      const client = await pubsub.getSchemaClient_();
+      const stub = sandbox.stub(client, 'close').resolves();
+      pubsub.close();
+      await stub;
+    });
+    it('getSchemaClient_ creates a schema client', async () => {
+      const client = await pubsub.getSchemaClient_();
+      assert.notStrictEqual(client, undefined);
+      assert.notStrictEqual(client, null);
+      await pubsub.close();
+    });
+    it('calls down to createSchema correctly', async () => {
+      const schemaId = 'id';
+      const type = SchemaTypes.Avro;
+      const definition = 'def';
+      const name = Schema.formatName_(pubsub.projectId, schemaId);
+
+      // Grab the schema client it'll be using so we can stub it.
+      const client = await pubsub.getSchemaClient_();
+      const def = defer();
+      sandbox.stub(client, 'createSchema').callsFake(req => {
+        assert.strictEqual(req.parent, pubsub.name);
+        assert.strictEqual(req.schemaId, schemaId);
+        assert.strictEqual(req.schema!.name, name);
+        assert.strictEqual(req.schema!.type, type);
+        assert.strictEqual(req.schema!.definition, definition);
+        def.resolve();
+      });
+      const result = await Promise.all([
+        pubsub.createSchema(schemaId, type, definition),
+        def,
+      ]);
+      assert.strictEqual(result[0].name, name);
+    });
+    it('calls down to getSchemas correctly', async () => {
+      // Grab the schema client it'll be using so we can stub it.
+      const client = await pubsub.getSchemaClient_();
+
+      const def = defer();
+      sandbox.stub(client, 'listSchemas').callsFake(async req => {
+        assert.strictEqual(req.parent, pubsub.name);
+        assert.strictEqual(req.view, google.pubsub.v1.SchemaView.BASIC);
+        def.resolve();
+        return [
+          [
+            {
+              name: 'foo1',
+            },
+            {
+              name: 'foo2',
+            },
+          ],
+        ];
+      });
+      const result = await Promise.all([pubsub.getSchemas(), def]);
+
+      const names = result[0].map(s => s.name);
+      const expected = [
+        Schema.formatName_(pubsub.projectId, 'foo1'),
+        Schema.formatName_(pubsub.projectId, 'foo2'),
+      ];
+      assert.deepStrictEqual(names, expected);
+    });
+    it('returns a proper Schema object from schema()', () => {
+      const schema = pubsub.schema('foo');
+      assert.strictEqual(
+        schema.name,
+        Schema.formatName_(pubsub.projectId, 'foo')
+      );
+    });
+    // pagination?
   });
 });
