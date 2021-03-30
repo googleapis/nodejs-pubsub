@@ -181,14 +181,22 @@ describe('Publisher', () => {
     };
     const buffer = Buffer.from('Hello, world!');
 
-    it('export created spans', () => {
-      tracingPublisher = new Publisher(topic, enableTracing);
+    beforeEach(() => {
+      opentelemetry.trace.disable();
+    });
 
+    afterEach(() => {
+      opentelemetry.trace.disable();
+    });
+
+    it('export created spans', () => {
       // Setup trace exporting
       const provider: BasicTracerProvider = new BasicTracerProvider();
       const exporter: InMemorySpanExporter = new InMemorySpanExporter();
       provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
       opentelemetry.trace.setGlobalTracerProvider(provider);
+
+      tracingPublisher = new Publisher(topic, enableTracing);
 
       tracingPublisher.publish(buffer);
       const spans = exporter.getFinishedSpans();

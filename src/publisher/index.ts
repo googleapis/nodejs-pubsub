@@ -253,6 +253,7 @@ export class Publisher {
    * @param {PubsubMessage} message The message to create a span for
    */
   constructSpan(message: PubsubMessage): Span | undefined {
+    console.log('Publisher.constructspan()');
     const spanAttributes = {
       data: message.data,
     } as Attributes;
@@ -275,6 +276,8 @@ export class Publisher {
         'googclient_OpenTelemetrySpanContext'
       ] = JSON.stringify(span.context());
     }
+
+    console.log('Publisher.constructspan() span:', span);
     return span;
   }
 }
