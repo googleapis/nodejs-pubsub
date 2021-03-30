@@ -637,7 +637,7 @@ describe('Subscriber', () => {
     });
   });
 
-  describe.only('OpenTelemetry tracing', () => {
+  describe('OpenTelemetry tracing', () => {
     const enableTracing: s.SubscriberOptions = {
       enableOpenTelemetryTracing: true,
     };
