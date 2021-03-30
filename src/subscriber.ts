@@ -453,6 +453,7 @@ export class Subscriber extends EventEmitter {
     ) {
       return undefined;
     }
+
     const spanValue = message.attributes['googclient_OpenTelemetrySpanContext'];
     const parentSpanContext: SpanContext | undefined = spanValue
       ? JSON.parse(spanValue)
@@ -463,8 +464,9 @@ export class Subscriber extends EventEmitter {
     };
     // Subscriber spans should always have a publisher span as a parent.
     // Return undefined if no parent is provided
+    const spanName = this.name ?? 'subscriber';
     const span = parentSpanContext
-      ? createSpan(this._name, spanAttributes, parentSpanContext)
+      ? createSpan(spanName, spanAttributes, parentSpanContext)
       : undefined;
     return span;
   }

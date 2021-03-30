@@ -637,8 +637,7 @@ describe('Subscriber', () => {
     });
   });
 
-  describe('OpenTelemetry tracing', () => {
-    let tracingSubscriber: s.Subscriber = {} as s.Subscriber;
+  describe.only('OpenTelemetry tracing', () => {
     const enableTracing: s.SubscriberOptions = {
       enableOpenTelemetryTracing: true,
     };
@@ -646,37 +645,38 @@ describe('Subscriber', () => {
       enableOpenTelemetryTracing: false,
     };
 
-    beforeEach(() => {
-      // Pre-define _tracing to gain access to the private field after subscriber init
-      tracingSubscriber['_useOpentelemetry'] = false;
+    afterEach(() => {
+      subscriber.close();
     });
 
     it('should not instantiate a tracer when tracing is disabled', () => {
-      tracingSubscriber = new Subscriber(subscription);
-      assert.strictEqual(tracingSubscriber['_useOpentelemetry'], false);
+      subscriber = new Subscriber(subscription, {});
+      assert.strictEqual(subscriber['_useOpentelemetry'], false);
     });
 
     it('should instantiate a tracer when tracing is enabled through constructor', () => {
-      tracingSubscriber = new Subscriber(subscription, enableTracing);
-      assert.ok(tracingSubscriber['_useOpentelemetry']);
+      subscriber = new Subscriber(subscription, enableTracing);
+      assert.ok(subscriber['_useOpentelemetry']);
     });
 
     it('should instantiate a tracer when tracing is enabled through setOptions', () => {
-      tracingSubscriber = new Subscriber(subscription);
-      tracingSubscriber.setOptions(enableTracing);
-      assert.ok(tracingSubscriber['_useOpentelemetry']);
+      subscriber = new Subscriber(subscription, {});
+      subscriber.setOptions(enableTracing);
+      assert.ok(subscriber['_useOpentelemetry']);
     });
 
     it('should disable tracing when tracing is disabled through setOptions', () => {
-      tracingSubscriber = new Subscriber(subscription, enableTracing);
-      tracingSubscriber.setOptions(disableTracing);
-      assert.strictEqual(tracingSubscriber['_useOpentelemetry'], false);
+      subscriber = new Subscriber(subscription, enableTracing);
+      subscriber.setOptions(disableTracing);
+      assert.strictEqual(subscriber['_useOpentelemetry'], false);
     });
 
     it('exports a span once it is created', () => {
-      tracingSubscriber = new Subscriber(subscription, enableTracing);
-      tracingSubscriber.setOptions(enableTracing);
-      assert.strictEqual(tracingSubscriber['_useOpentelemetry'], true);
+      subscription = (new FakeSubscription() as {}) as Subscription;
+      subscriber = new Subscriber(subscription, enableTracing);
+      message = new Message(subscriber, RECEIVED_MESSAGE);
+      assert.strictEqual(subscriber['_useOpentelemetry'], true);
+      subscriber.open();
 
       // Setup trace exporting
       const provider: BasicTracerProvider = new BasicTracerProvider();
@@ -710,14 +710,19 @@ describe('Subscriber', () => {
       };
 
       // Receive message and assert that it was exported
-      const stream: FakeMessageStream = stubs.get('messageStream');
-      stream.emit('data', pullResponse);
+      const msgStream = stubs.get('messageStream');
+      msgStream.emit('data', pullResponse);
       const spans = exporter.getFinishedSpans();
-      assert.ok(spans);
+      assert.strictEqual(exporter.getFinishedSpans().length, 1);
+      const firstSpan = spans.shift();
+      assert.ok(firstSpan);
+      assert.strictEqual(firstSpan.parentSpanId, parentSpanContext.spanId);
+      // because the name of the subscriber is not set we check the fallback is set
+      assert.strictEqual(firstSpan.name, 'subscriber');
     });
 
     it('does not export a span when a span context is not present on message', () => {
-      tracingSubscriber = new Subscriber(subscription, enableTracing);
+      subscriber = new Subscriber(subscription, enableTracing);
 
       // Setup trace exporting
       const provider: BasicTracerProvider = new BasicTracerProvider();

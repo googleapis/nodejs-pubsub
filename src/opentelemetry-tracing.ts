@@ -24,6 +24,12 @@ import {
 } from '@opentelemetry/api';
 
 /**
+ * @internal
+ * Instantiates a Opentelemetry tracer for the library
+ */
+const libraryTracer: Tracer = trace.getTracer('@google-cloud/pubsub');
+
+/**
  * Creates a new span with the given properties
  *
  * @param {string} spanName the name for the span
@@ -35,9 +41,6 @@ export function createSpan(
   attributes?: SpanAttributes,
   parent?: SpanContext
 ): Span {
-  // Should return the existing one, if we have one, or create a new one.
-  const libraryTracer: Tracer = trace.getTracer('@google-cloud/pubsub');
-
   return libraryTracer.startSpan(
     spanName,
     {
