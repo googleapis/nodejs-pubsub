@@ -28,6 +28,11 @@ import {PublishError} from '../../src/publisher/publish-error';
 
 import {defaultOptions} from '../../src/default-options';
 import {exporter} from '../tracing';
+import {SpanKind} from '@opentelemetry/api';
+import {
+  GeneralAttribute,
+  MessagingAttribute,
+} from '@opentelemetry/semantic-conventions';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
@@ -91,7 +96,10 @@ class FakeOrderedQueue extends FakeQueue {
 describe('Publisher', () => {
   let sandbox: sinon.SinonSandbox;
   let spy: sinon.SinonSpyStatic;
-  const topic = {name: 'topic-name'} as Topic;
+  const topic = {
+    name: 'topic-name',
+    pubsub: {projectId: 'PROJECT_ID'},
+  } as Topic;
 
   // tslint:disable-next-line variable-name
   let Publisher: typeof p.Publisher;
@@ -194,7 +202,32 @@ describe('Publisher', () => {
         createdSpan.status.code,
         opentelemetry.SpanStatusCode.UNSET
       );
-      assert.strictEqual(createdSpan.name, 'topic-name publisher');
+      assert.strictEqual(
+        createdSpan.attributes[GeneralAttribute.NET_PEER_NAME],
+        'PROJECT_ID'
+      );
+      assert.strictEqual(
+        createdSpan.attributes[MessagingAttribute.MESSAGING_OPERATION],
+        ''
+      );
+      assert.strictEqual(
+        createdSpan.attributes[MessagingAttribute.MESSAGING_SYSTEM],
+        'pubsub'
+      );
+      assert.strictEqual(
+        createdSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION],
+        topic.name
+      );
+      assert.strictEqual(
+        createdSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION_KIND],
+        'topic'
+      );
+      assert.strictEqual(createdSpan.name, 'topic-name send');
+      assert.strictEqual(
+        createdSpan.kind,
+        SpanKind.PRODUCER,
+        'span kind should be PRODUCER'
+      );
       assert.ok(spans);
     });
   });

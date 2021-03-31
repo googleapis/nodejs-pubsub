@@ -17,7 +17,11 @@
 import {promisify, promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
-import {Span} from '@opentelemetry/api';
+import {
+  GeneralAttribute,
+  MessagingAttribute,
+} from '@opentelemetry/semantic-conventions';
+import {Span, SpanKind} from '@opentelemetry/api';
 
 import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
@@ -255,9 +259,24 @@ export class Publisher {
   constructSpan(message: PubsubMessage): Span | undefined {
     const spanAttributes = {
       data: message.data,
+      // Add Opentelemetry semantic convention attributes to the span
+      [GeneralAttribute.NET_PEER_NAME]: this.topic.pubsub.projectId,
+      [MessagingAttribute.MESSAGING_TEMP_DESTINATION]: false,
+      [MessagingAttribute.MESSAGING_SYSTEM]: 'pubsub',
+      [MessagingAttribute.MESSAGING_OPERATION]: '', // operation expected to be empty
+      [MessagingAttribute.MESSAGING_DESTINATION]: this.topic.name,
+      [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
+      [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.messageId,
+      [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
+      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_COMPRESSED_SIZE_BYTES]: 0,
+      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]:
+        message.data?.length,
+      'messaging.consumer.published_at': message.publishTime,
+      'messaging.consumer.ordering_key': message.orderingKey,
     } as Attributes;
+
     const span: Span | undefined = this.settings.enableOpenTelemetryTracing
-      ? createSpan(`${this.topic.name} publisher`, spanAttributes)
+      ? createSpan(`${this.topic.name} send`, SpanKind.PRODUCER, spanAttributes)
       : undefined;
     if (span) {
       if (

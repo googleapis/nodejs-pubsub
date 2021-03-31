@@ -21,6 +21,7 @@ import * as api from '@opentelemetry/api';
 import * as trace from '@opentelemetry/tracing';
 import {createSpan} from '../src/opentelemetry-tracing';
 import {exporter} from './tracing';
+import {SpanKind} from '@opentelemetry/api';
 
 describe('OpenTelemetryTracer', () => {
   let span: trace.Span;
@@ -39,7 +40,12 @@ describe('OpenTelemetryTracer', () => {
   });
 
   it('creates a span', () => {
-    span = createSpan(spanName, spanAttributes, spanContext) as trace.Span;
+    span = createSpan(
+      spanName,
+      SpanKind.PRODUCER,
+      spanAttributes,
+      spanContext
+    ) as trace.Span;
     span.end();
 
     const spans = exporter.getFinishedSpans();
@@ -49,5 +55,6 @@ describe('OpenTelemetryTracer', () => {
     assert.strictEqual(exportedSpan.name, spanName);
     assert.deepStrictEqual(exportedSpan.attributes, spanAttributes);
     assert.strictEqual(exportedSpan.parentSpanId, spanContext.spanId);
+    assert.strictEqual(exportedSpan.kind, SpanKind.PRODUCER);
   });
 });

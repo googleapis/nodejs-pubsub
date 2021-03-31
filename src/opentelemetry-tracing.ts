@@ -21,6 +21,7 @@ import {
   context,
   trace,
   setSpanContext,
+  SpanKind,
 } from '@opentelemetry/api';
 
 /**
@@ -38,12 +39,16 @@ const libraryTracer: Tracer = trace.getTracer('@google-cloud/pubsub');
  */
 export function createSpan(
   spanName: string,
+  kind: SpanKind,
   attributes?: SpanAttributes,
   parent?: SpanContext
 ): Span {
   return libraryTracer.startSpan(
     spanName,
     {
+      // set the kind of the span
+      kind,
+      // set the attributes of the span
       attributes: attributes,
     },
     parent ? setSpanContext(context.active(), parent) : undefined

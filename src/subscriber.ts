@@ -18,7 +18,11 @@ import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
-import {SpanContext, Span} from '@opentelemetry/api';
+import {SpanContext, Span, SpanKind} from '@opentelemetry/api';
+import {
+  GeneralAttribute,
+  MessagingAttribute,
+} from '@opentelemetry/semantic-conventions';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -461,12 +465,37 @@ export class Subscriber extends EventEmitter {
     const spanAttributes = {
       ackId: message.ackId,
       deliveryAttempt: message.deliveryAttempt,
+      //
+      // based on https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/messaging.md#topic-with-multiple-consumers
+      [GeneralAttribute.NET_PEER_NAME]: this._subscription.projectId,
+      [MessagingAttribute.MESSAGING_SYSTEM]: 'pubsub',
+      [MessagingAttribute.MESSAGING_OPERATION]: 'process',
+      [MessagingAttribute.MESSAGING_DESTINATION]: this.name,
+      [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
+      [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.id,
+      [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
+      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_COMPRESSED_SIZE_BYTES]: 0,
+      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: message.length,
+      // Not in Opentelemetry semantic convention but mimics naming
+      'messaging.consumer.published_at':
+        typeof message.publishTime.getTime !== 'undefined'
+          ? message.publishTime.getTime()
+          : undefined,
+      'messaging.consumer.received_at': message.received,
+      'messaging.consumer.acknowlege_id': message.ackId,
+      'messaging.consumer.delivery_attempt': message.deliveryAttempt,
     };
+
     // Subscriber spans should always have a publisher span as a parent.
     // Return undefined if no parent is provided
-    const spanName = this.name ?? 'subscriber';
+    const spanName = `${this.name} receive`;
     const span = parentSpanContext
-      ? createSpan(spanName, spanAttributes, parentSpanContext)
+      ? createSpan(
+          spanName.trim(),
+          SpanKind.CONSUMER,
+          spanAttributes,
+          parentSpanContext
+        )
       : undefined;
     return span;
   }

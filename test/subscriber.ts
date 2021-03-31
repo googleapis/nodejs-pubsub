@@ -31,6 +31,11 @@ import {BatchOptions} from '../src/message-queues';
 import {MessageStreamOptions} from '../src/message-stream';
 import * as s from '../src/subscriber';
 import {Subscription} from '../src/subscription';
+import {SpanKind} from '@opentelemetry/api';
+import {
+  GeneralAttribute,
+  MessagingAttribute,
+} from '@opentelemetry/semantic-conventions';
 
 const stubs = new Map();
 
@@ -161,7 +166,9 @@ describe('Subscriber', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     fakeProjectify = {
-      replaceProjectIdToken: sandbox.stub(),
+      replaceProjectIdToken: sandbox.stub().callsFake((name, projectId) => {
+        return `projects/${projectId}/name/${name}`;
+      }),
     };
 
     const s = proxyquire('../src/subscriber.js', {
@@ -715,8 +722,44 @@ describe('Subscriber', () => {
       const firstSpan = spans.concat().shift();
       assert.ok(firstSpan);
       assert.strictEqual(firstSpan.parentSpanId, parentSpanContext.spanId);
-      // because the name of the subscriber is not set we check the fallback is set
-      assert.strictEqual(firstSpan.name, 'subscriber');
+      assert.strictEqual(
+        firstSpan.name,
+        `${subscriber.name} receive`,
+        'name of span should match'
+      );
+      assert.strictEqual(
+        firstSpan.kind,
+        SpanKind.CONSUMER,
+        'span kind should be CONSUMER'
+      );
+      assert.strictEqual(
+        firstSpan.attributes[GeneralAttribute.NET_PEER_NAME],
+        subscription.projectId,
+        'span net peer name should match'
+      );
+      assert.strictEqual(
+        firstSpan.attributes[MessagingAttribute.MESSAGING_OPERATION],
+        'process',
+        'span messaging operation should match'
+      );
+      assert.strictEqual(
+        firstSpan.attributes[MessagingAttribute.MESSAGING_SYSTEM],
+        'pubsub'
+      );
+      assert.strictEqual(
+        firstSpan.attributes[MessagingAttribute.MESSAGING_MESSAGE_ID],
+        messageWithSpanContext.message.messageId,
+        'span messaging id should match'
+      );
+      assert.strictEqual(
+        firstSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION],
+        subscriber.name,
+        'span messaging destination should match'
+      );
+      assert.strictEqual(
+        firstSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION_KIND],
+        'topic'
+      );
     });
 
     it('does not export a span when a span context is not present on message', () => {
