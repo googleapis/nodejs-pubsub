@@ -24,11 +24,16 @@ import {
   SpanKind,
 } from '@opentelemetry/api';
 
+import PKG = require('../package.json');
+
 /**
  * @internal
  * Instantiates a Opentelemetry tracer for the library
  */
-const libraryTracer: Tracer = trace.getTracer('@google-cloud/pubsub');
+const libraryTracer: Tracer = trace.getTracer(
+  '@google-cloud/pubsub',
+  PKG.version
+);
 
 /**
  * Creates a new span with the given properties
