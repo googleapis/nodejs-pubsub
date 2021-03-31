@@ -31,6 +31,8 @@
     "system-test": "mocha build/system-test --timeout 600000",
     "samples-test": "cd samples/ && npm link ../ && npm install && npm test && cd ../",
     "test": "c8 mocha build/test --recursive",
+    "test:publisher": "npm run compile && mocha --file build/test/publisher/index.js",
+    "test:subscriber": "npm run compile && mocha --file build/test/subscriber.js",
     "lint": "gts check",
     "predocs": "npm run compile",
     "docs": "jsdoc -c .jsdoc.js",

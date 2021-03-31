@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
+import {exporter} from './tracing';
 import * as assert from 'assert';
-import {describe, it, before, beforeEach, afterEach} from 'mocha';
+import {describe, it, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import {common as protobuf} from 'protobufjs';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {PassThrough} from 'stream';
 import * as uuid from 'uuid';
-import {
-  SimpleSpanProcessor,
-  BasicTracerProvider,
-  InMemorySpanExporter,
-} from '@opentelemetry/tracing';
 import * as opentelemetry from '@opentelemetry/api';
 
 import {HistogramOptions} from '../src/histogram';
@@ -150,10 +146,9 @@ const RECEIVED_MESSAGE = {
 };
 
 describe('Subscriber', () => {
-  const sandbox = sinon.createSandbox();
+  let sandbox: sinon.SinonSandbox;
 
-  const fakeProjectify = {replaceProjectIdToken: sandbox.stub()};
-
+  let fakeProjectify: any;
   let subscription: Subscription;
 
   // tslint:disable-next-line variable-name
@@ -163,7 +158,12 @@ describe('Subscriber', () => {
   let Subscriber: typeof s.Subscriber;
   let subscriber: s.Subscriber;
 
-  before(() => {
+  beforeEach(() => {
+    sandbox = sinon.createSandbox();
+    fakeProjectify = {
+      replaceProjectIdToken: sandbox.stub(),
+    };
+
     const s = proxyquire('../src/subscriber.js', {
       '@google-cloud/precise-date': {PreciseDate: FakePreciseDate},
       '@google-cloud/projectify': fakeProjectify,
@@ -178,9 +178,8 @@ describe('Subscriber', () => {
 
     Message = s.Message;
     Subscriber = s.Subscriber;
-  });
 
-  beforeEach(() => {
+    // Create standard instance
     subscription = (new FakeSubscription() as {}) as Subscription;
     subscriber = new Subscriber(subscription);
     message = new Message(subscriber, RECEIVED_MESSAGE);
@@ -637,7 +636,7 @@ describe('Subscriber', () => {
     });
   });
 
-  describe.skip('OpenTelemetry tracing', () => {
+  describe('OpenTelemetry tracing', () => {
     const enableTracing: s.SubscriberOptions = {
       enableOpenTelemetryTracing: true,
     };
@@ -646,8 +645,8 @@ describe('Subscriber', () => {
     };
 
     afterEach(() => {
+      exporter.reset();
       subscriber.close();
-      opentelemetry.trace.disable();
     });
 
     it('should not instantiate a tracer when tracing is disabled', () => {
@@ -673,14 +672,6 @@ describe('Subscriber', () => {
     });
 
     it('exports a span once it is created', () => {
-      // Setup trace exporting
-      const provider: BasicTracerProvider = new BasicTracerProvider();
-      const exporter: InMemorySpanExporter = new InMemorySpanExporter();
-      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-      provider.register();
-      opentelemetry.trace.setGlobalTracerProvider(provider);
-
-      //
       subscription = (new FakeSubscription() as {}) as Subscription;
       subscriber = new Subscriber(subscription, enableTracing);
       message = new Message(subscriber, RECEIVED_MESSAGE);
@@ -714,9 +705,10 @@ describe('Subscriber', () => {
       // Receive message and assert that it was exported
       const msgStream = stubs.get('messageStream');
       msgStream.emit('data', pullResponse);
+
       const spans = exporter.getFinishedSpans();
-      assert.strictEqual(exporter.getFinishedSpans().length, 1);
-      const firstSpan = spans.shift();
+      assert.strictEqual(spans.length, 1);
+      const firstSpan = spans.concat().shift();
       assert.ok(firstSpan);
       assert.strictEqual(firstSpan.parentSpanId, parentSpanContext.spanId);
       // because the name of the subscriber is not set we check the fallback is set
@@ -725,13 +717,6 @@ describe('Subscriber', () => {
 
     it('does not export a span when a span context is not present on message', () => {
       subscriber = new Subscriber(subscription, enableTracing);
-
-      // Setup trace exporting
-      const provider: BasicTracerProvider = new BasicTracerProvider();
-      const exporter: InMemorySpanExporter = new InMemorySpanExporter();
-      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-      provider.register();
-      opentelemetry.trace.setGlobalTracerProvider(provider);
 
       const pullResponse: s.PullResponse = {
         receivedMessages: [RECEIVED_MESSAGE],

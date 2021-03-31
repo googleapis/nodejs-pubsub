@@ -16,15 +16,10 @@
 
 import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
-import {describe, it, before, beforeEach, afterEach} from 'mocha';
+import {describe, it, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
-import {
-  BasicTracerProvider,
-  InMemorySpanExporter,
-  SimpleSpanProcessor,
-} from '@opentelemetry/tracing';
 import * as opentelemetry from '@opentelemetry/api';
 import {Topic} from '../../src';
 import * as p from '../../src/publisher';
@@ -32,6 +27,7 @@ import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
 
 import {defaultOptions} from '../../src/default-options';
+import {exporter} from '../tracing';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
@@ -93,14 +89,18 @@ class FakeOrderedQueue extends FakeQueue {
 }
 
 describe('Publisher', () => {
-  const sandbox = sinon.createSandbox();
+  let sandbox: sinon.SinonSandbox;
+  let spy: sinon.SinonSpyStatic;
   const topic = {name: 'topic-name'} as Topic;
 
   // tslint:disable-next-line variable-name
   let Publisher: typeof p.Publisher;
   let publisher: p.Publisher;
 
-  before(() => {
+  beforeEach(() => {
+    sandbox = sinon.createSandbox();
+    spy = sandbox.spy();
+
     const mocked = proxyquire('../../src/publisher/index.js', {
       '@google-cloud/promisify': fakePromisify,
       './message-queues': {
@@ -110,9 +110,7 @@ describe('Publisher', () => {
     });
 
     Publisher = mocked.Publisher;
-  });
 
-  beforeEach(() => {
     publisher = new Publisher(topic);
   });
 
@@ -150,7 +148,6 @@ describe('Publisher', () => {
 
   describe('publish', () => {
     const buffer = Buffer.from('Hello, world!');
-    const spy = sandbox.spy();
 
     it('should call through to publishMessage', () => {
       const stub = sandbox.stub(publisher, 'publishMessage');
@@ -181,27 +178,14 @@ describe('Publisher', () => {
     };
     const buffer = Buffer.from('Hello, world!');
 
-    beforeEach(() => {
-      opentelemetry.trace.disable();
-    });
-
-    afterEach(() => {
-      opentelemetry.trace.disable();
-    });
-
     it('export created spans', () => {
       // Setup trace exporting
-      const provider: BasicTracerProvider = new BasicTracerProvider();
-      const exporter: InMemorySpanExporter = new InMemorySpanExporter();
-      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-      opentelemetry.trace.setGlobalTracerProvider(provider);
-
       tracingPublisher = new Publisher(topic, enableTracing);
 
       tracingPublisher.publish(buffer);
       const spans = exporter.getFinishedSpans();
-      assert.strictEqual(spans.length, 1, 'has span');
-      const createdSpan = spans.shift()!;
+      assert.notStrictEqual(spans.length, 0, 'has span');
+      const createdSpan = spans.concat().pop()!;
       assert.strictEqual(
         createdSpan.status.code,
         opentelemetry.SpanStatusCode.UNSET
@@ -213,7 +197,7 @@ describe('Publisher', () => {
 
   describe('publishMessage', () => {
     const data = Buffer.from('hello, world!');
-    const spy = sandbox.spy();
+    // const spy = sandbox.spy();
 
     it('should throw an error if data is not a Buffer', () => {
       const badData = {} as Buffer;

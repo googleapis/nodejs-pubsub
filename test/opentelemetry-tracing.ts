@@ -15,12 +15,12 @@
  */
 
 import * as assert from 'assert';
-import {describe, it, before, afterEach} from 'mocha';
+import {describe, it, afterEach} from 'mocha';
 
 import * as api from '@opentelemetry/api';
 import * as trace from '@opentelemetry/tracing';
 import {createSpan} from '../src/opentelemetry-tracing';
-import {SimpleSpanProcessor} from '@opentelemetry/tracing';
+import {exporter} from './tracing';
 
 describe('OpenTelemetryTracer', () => {
   let span: trace.Span;
@@ -34,21 +34,16 @@ describe('OpenTelemetryTracer', () => {
     foo: 'bar',
   };
 
-  before(() => {
-    const provider = new trace.BasicTracerProvider();
-    const exporter = new trace.InMemorySpanExporter();
-    provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-    api.trace.setGlobalTracerProvider(provider);
-  });
-
-  afterEach(() => {
-    span.end();
-  });
-
   it('creates a span', () => {
     span = createSpan(spanName, spanAttributes, spanContext) as trace.Span;
-    assert.strictEqual(span.name, spanName);
-    assert.deepStrictEqual(span.attributes, spanAttributes);
-    assert.strictEqual(span.parentSpanId, spanContext.spanId);
+    span.end();
+
+    const spans = exporter.getFinishedSpans();
+    assert.notStrictEqual(spans.length, 0);
+    const exportedSpan = spans.concat().pop()!;
+
+    assert.strictEqual(exportedSpan.name, spanName);
+    assert.deepStrictEqual(exportedSpan.attributes, spanAttributes);
+    assert.strictEqual(exportedSpan.parentSpanId, spanContext.spanId);
   });
 });
