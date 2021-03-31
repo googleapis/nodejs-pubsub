@@ -15,7 +15,7 @@
  */
 
 import * as assert from 'assert';
-import {describe, it, afterEach} from 'mocha';
+import {describe, it, beforeEach} from 'mocha';
 
 import * as api from '@opentelemetry/api';
 import * as trace from '@opentelemetry/tracing';
@@ -33,6 +33,10 @@ describe('OpenTelemetryTracer', () => {
   const spanAttributes: api.SpanAttributes = {
     foo: 'bar',
   };
+
+  beforeEach(() => {
+    exporter.reset();
+  });
 
   it('creates a span', () => {
     span = createSpan(spanName, spanAttributes, spanContext) as trace.Span;

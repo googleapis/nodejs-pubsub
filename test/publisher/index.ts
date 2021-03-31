@@ -178,6 +178,10 @@ describe('Publisher', () => {
     };
     const buffer = Buffer.from('Hello, world!');
 
+    beforeEach(() => {
+      exporter.reset();
+    });
+
     it('export created spans', () => {
       // Setup trace exporting
       tracingPublisher = new Publisher(topic, enableTracing);

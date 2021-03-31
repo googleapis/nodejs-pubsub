@@ -644,6 +644,10 @@ describe('Subscriber', () => {
       enableOpenTelemetryTracing: false,
     };
 
+    beforeEach(() => {
+      exporter.reset();
+    });
+
     afterEach(() => {
       exporter.reset();
       subscriber.close();
