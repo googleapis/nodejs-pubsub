@@ -19,10 +19,7 @@ import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
 import {SpanContext, Span, SpanKind} from '@opentelemetry/api';
-import {
-  GeneralAttribute,
-  MessagingAttribute,
-} from '@opentelemetry/semantic-conventions';
+import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -467,7 +464,6 @@ export class Subscriber extends EventEmitter {
       deliveryAttempt: message.deliveryAttempt,
       //
       // based on https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/messaging.md#topic-with-multiple-consumers
-      [GeneralAttribute.NET_PEER_NAME]: this._subscription.projectId,
       [MessagingAttribute.MESSAGING_SYSTEM]: 'pubsub',
       [MessagingAttribute.MESSAGING_OPERATION]: 'process',
       [MessagingAttribute.MESSAGING_DESTINATION]: this.name,

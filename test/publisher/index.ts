@@ -203,10 +203,6 @@ describe('Publisher', () => {
         opentelemetry.SpanStatusCode.UNSET
       );
       assert.strictEqual(
-        createdSpan.attributes[GeneralAttribute.NET_PEER_NAME],
-        'PROJECT_ID'
-      );
-      assert.strictEqual(
         createdSpan.attributes[MessagingAttribute.MESSAGING_OPERATION],
         ''
       );

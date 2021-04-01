@@ -17,10 +17,7 @@
 import {promisify, promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
-import {
-  GeneralAttribute,
-  MessagingAttribute,
-} from '@opentelemetry/semantic-conventions';
+import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
 import {Span, SpanKind} from '@opentelemetry/api';
 
 import {BatchPublishOptions} from './message-batch';
@@ -260,7 +257,6 @@ export class Publisher {
     const spanAttributes = {
       data: message.data,
       // Add Opentelemetry semantic convention attributes to the span
-      [GeneralAttribute.NET_PEER_NAME]: this.topic.pubsub.projectId,
       [MessagingAttribute.MESSAGING_TEMP_DESTINATION]: false,
       [MessagingAttribute.MESSAGING_SYSTEM]: 'pubsub',
       [MessagingAttribute.MESSAGING_OPERATION]: '', // operation expected to be empty

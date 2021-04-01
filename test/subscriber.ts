@@ -733,11 +733,6 @@ describe('Subscriber', () => {
         'span kind should be CONSUMER'
       );
       assert.strictEqual(
-        firstSpan.attributes[GeneralAttribute.NET_PEER_NAME],
-        subscription.projectId,
-        'span net peer name should match'
-      );
-      assert.strictEqual(
         firstSpan.attributes[MessagingAttribute.MESSAGING_OPERATION],
         'process',
         'span messaging operation should match'
