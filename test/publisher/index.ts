@@ -234,7 +234,6 @@ describe('Publisher', () => {
 
   describe('publishMessage', () => {
     const data = Buffer.from('hello, world!');
-    // const spy = sandbox.spy();
 
     it('should throw an error if data is not a Buffer', () => {
       const badData = {} as Buffer;
