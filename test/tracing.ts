@@ -26,8 +26,10 @@ import {
  * the tracing tests to work.
  *
  * Now before each test related or touches Opentelemetry
- * we are resetting the exporter defined below to ensure there are now spans
- * from previous tests still in memory.
+ * we are resetting the exporter defined below to ensure there are no spans
+ * from previous tests still in memory. This is achived by calling `reset`
+ * on the exporter in the unit tests while keeping one instance of
+ * the trace provider and exporter.
  *
  * The tracing provider is being registered as a global trace provider before
  * we are importing our actual code which uses the Opentelemetry API to ensure
