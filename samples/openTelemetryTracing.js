@@ -69,7 +69,6 @@ function main(
   );
 
   provider.register();
-  opentelemetry.trace.setGlobalTracerProvider(provider);
 
   // OpenTelemetry tracing is an optional feature and can be enabled by setting
   // enableOpenTelemetryTraceing as a publisher or subscriber option
@@ -98,7 +97,7 @@ function main(
       // Ensure that all spans got flushed by the exporter
       console.log('Cleaning up Opentelemetry exporter...');
       exporter.shutdown().then(() => {
-        console.log('Cleaned up exporter.');
+        // Cleaned up exporter.
         process.exit(0);
       });
     };
@@ -108,7 +107,7 @@ function main(
 
       console.log('Cleaning up Opentelemetry exporter...');
       exporter.shutdown().then(() => {
-        console.log('Cleaned up exporter.');
+        // Cleaned up exporter.
         process.exit(0);
       });
     };
