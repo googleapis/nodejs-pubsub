@@ -259,7 +259,6 @@ export class Publisher {
     }
 
     const spanAttributes = {
-      data: message.data,
       // Add Opentelemetry semantic convention attributes to the span, based on:
       // https://github.com/open-telemetry/opentelemetry-specification/blob/v1.1.0/specification/trace/semantic_conventions/messaging.md
       [MessagingAttribute.MESSAGING_TEMP_DESTINATION]: false,
