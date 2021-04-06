@@ -256,7 +256,8 @@ export class Publisher {
   constructSpan(message: PubsubMessage): Span | undefined {
     const spanAttributes = {
       data: message.data,
-      // Add Opentelemetry semantic convention attributes to the span
+      // Add Opentelemetry semantic convention attributes to the span, based on:
+      // https://github.com/open-telemetry/opentelemetry-specification/blob/v1.1.0/specification/trace/semantic_conventions/messaging.md
       [MessagingAttribute.MESSAGING_TEMP_DESTINATION]: false,
       [MessagingAttribute.MESSAGING_SYSTEM]: 'pubsub',
       [MessagingAttribute.MESSAGING_OPERATION]: '', // operation expected to be empty
@@ -264,7 +265,6 @@ export class Publisher {
       [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
       [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.messageId,
       [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
-      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_COMPRESSED_SIZE_BYTES]: 0,
       [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]:
         message.data?.length,
       'messaging.consumer.published_at': message.publishTime,

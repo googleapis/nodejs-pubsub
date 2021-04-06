@@ -470,7 +470,6 @@ export class Subscriber extends EventEmitter {
       [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
       [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.id,
       [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
-      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_COMPRESSED_SIZE_BYTES]: 0,
       [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: message.length,
       // Not in Opentelemetry semantic convention but mimics naming
       'messaging.consumer.published_at':
