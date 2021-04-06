@@ -28,8 +28,8 @@ import * as subby from '../src/subscription';
 import {Topic} from '../src/topic';
 import * as util from '../src/util';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const PKG = require('../../package.json');
+import * as PKG from '../package.json';
+
 const sandbox = sinon.createSandbox();
 
 const fakeCreds = {} as gax.grpc.ChannelCredentials;

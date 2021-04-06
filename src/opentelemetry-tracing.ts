@@ -24,8 +24,7 @@ import {
   SpanKind,
 } from '@opentelemetry/api';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const PKG = require('../../package.json');
+import * as PKG from '../package.json';
 
 /**
  * @internal
