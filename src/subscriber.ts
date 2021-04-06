@@ -472,10 +472,7 @@ export class Subscriber extends EventEmitter {
       [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
       [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: message.length,
       // Not in Opentelemetry semantic convention but mimics naming
-      'messaging.consumer.published_at':
-        typeof message.publishTime.getTime !== 'undefined'
-          ? message.publishTime.getTime()
-          : undefined,
+      'messaging.consumer.published_at': message.publishTime?.getTime?.(),
       'messaging.consumer.received_at': message.received,
       'messaging.consumer.acknowlege_id': message.ackId,
       'messaging.consumer.delivery_attempt': message.deliveryAttempt,
