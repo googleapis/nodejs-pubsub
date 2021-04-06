@@ -204,7 +204,7 @@ describe('Publisher', () => {
       );
       assert.strictEqual(
         createdSpan.attributes[MessagingAttribute.MESSAGING_OPERATION],
-        ''
+        'send'
       );
       assert.strictEqual(
         createdSpan.attributes[MessagingAttribute.MESSAGING_SYSTEM],

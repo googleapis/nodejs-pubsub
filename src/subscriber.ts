@@ -460,6 +460,7 @@ export class Subscriber extends EventEmitter {
       ? JSON.parse(spanValue)
       : undefined;
     const spanAttributes = {
+      // Original span attributes
       ackId: message.ackId,
       deliveryAttempt: message.deliveryAttempt,
       //
@@ -470,12 +471,12 @@ export class Subscriber extends EventEmitter {
       [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
       [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.id,
       [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
-      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: message.length,
+      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: (message.data as Buffer)
+        .length,
       // Not in Opentelemetry semantic convention but mimics naming
-      'messaging.consumer.published_at': message.publishTime?.getTime?.(),
-      'messaging.consumer.received_at': message.received,
-      'messaging.consumer.acknowlege_id': message.ackId,
-      'messaging.consumer.delivery_attempt': message.deliveryAttempt,
+      'messaging.pubsub.received_at': message.received,
+      'messaging.pubsub.acknowlege_id': message.ackId,
+      'messaging.pubsub.delivery_attempt': message.deliveryAttempt,
     };
 
     // Subscriber spans should always have a publisher span as a parent.

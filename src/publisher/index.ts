@@ -254,26 +254,31 @@ export class Publisher {
    * @param {PubsubMessage} message The message to create a span for
    */
   constructSpan(message: PubsubMessage): Span | undefined {
+    if (!this.settings.enableOpenTelemetryTracing) {
+      return undefined;
+    }
+
     const spanAttributes = {
       data: message.data,
       // Add Opentelemetry semantic convention attributes to the span, based on:
       // https://github.com/open-telemetry/opentelemetry-specification/blob/v1.1.0/specification/trace/semantic_conventions/messaging.md
       [MessagingAttribute.MESSAGING_TEMP_DESTINATION]: false,
       [MessagingAttribute.MESSAGING_SYSTEM]: 'pubsub',
-      [MessagingAttribute.MESSAGING_OPERATION]: '', // operation expected to be empty
+      [MessagingAttribute.MESSAGING_OPERATION]: 'send', // operation expected to be empty
       [MessagingAttribute.MESSAGING_DESTINATION]: this.topic.name,
       [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
       [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.messageId,
       [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
       [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]:
         message.data?.length,
-      'messaging.consumer.published_at': message.publishTime,
-      'messaging.consumer.ordering_key': message.orderingKey,
+      'messaging.pubsub.ordering_key': message.orderingKey,
     } as Attributes;
 
-    const span: Span | undefined = this.settings.enableOpenTelemetryTracing
-      ? createSpan(`${this.topic.name} send`, SpanKind.PRODUCER, spanAttributes)
-      : undefined;
+    const span: Span | undefined = createSpan(
+      `${this.topic.name} send`,
+      SpanKind.PRODUCER,
+      spanAttributes
+    );
     if (span) {
       if (
         message.attributes &&
