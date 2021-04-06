@@ -18,7 +18,7 @@ import {promisify, promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
-import {Span, SpanKind} from '@opentelemetry/api';
+import {isSpanContextValid, Span, SpanKind} from '@opentelemetry/api';
 
 import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
@@ -278,7 +278,9 @@ export class Publisher {
       SpanKind.PRODUCER,
       spanAttributes
     );
-    if (span) {
+
+    // If the span's context is valid we should pass the span context special attribute
+    if (isSpanContextValid(span.context())) {
       if (
         message.attributes &&
         message.attributes['googclient_OpenTelemetrySpanContext']
@@ -290,6 +292,7 @@ export class Publisher {
       if (!message.attributes) {
         message.attributes = {};
       }
+
       message.attributes[
         'googclient_OpenTelemetrySpanContext'
       ] = JSON.stringify(span.context());
