@@ -480,7 +480,7 @@ export class Subscriber extends EventEmitter {
 
     // Subscriber spans should always have a publisher span as a parent.
     // Return undefined if no parent is provided
-    const spanName = `${this.name} receive`;
+    const spanName = `${this.name} process`;
     const span = parentSpanContext
       ? createSpan(
           spanName.trim(),

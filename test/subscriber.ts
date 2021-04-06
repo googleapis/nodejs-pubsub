@@ -724,7 +724,7 @@ describe('Subscriber', () => {
       assert.strictEqual(firstSpan.parentSpanId, parentSpanContext.spanId);
       assert.strictEqual(
         firstSpan.name,
-        `${subscriber.name} receive`,
+        `${subscriber.name} process`,
         'name of span should match'
       );
       assert.strictEqual(
