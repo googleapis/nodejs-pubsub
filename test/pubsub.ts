@@ -1589,12 +1589,14 @@ describe('PubSub', () => {
       pubsub.close();
       await stub;
     });
+
     it('getSchemaClient_ creates a schema client', async () => {
       const client = await pubsub.getSchemaClient_();
       assert.notStrictEqual(client, undefined);
       assert.notStrictEqual(client, null);
       await pubsub.close();
     });
+
     it('calls down to createSchema correctly', async () => {
       const schemaId = 'id';
       const type = SchemaTypes.Avro;
@@ -1618,35 +1620,43 @@ describe('PubSub', () => {
       ]);
       assert.strictEqual(result[0].name, name);
     });
+
     it('calls down to getSchemas correctly', async () => {
       // Grab the schema client it'll be using so we can stub it.
       const client = await pubsub.getSchemaClient_();
 
-      const def = defer();
-      sandbox.stub(client, 'listSchemas').callsFake(async req => {
-        assert.strictEqual(req.parent, pubsub.name);
-        assert.strictEqual(req.view, google.pubsub.v1.SchemaView.BASIC);
-        def.resolve();
-        return [
-          [
-            {
-              name: 'foo1',
-            },
-            {
-              name: 'foo2',
-            },
-          ],
-        ];
-      });
-      const result = await Promise.all([pubsub.getSchemas(), def]);
+      function* toAsync<T>(arr: T[]) {
+        for (const i of arr) {
+          yield i;
+        }
+      }
 
-      const names = result[0].map(s => s.name);
+      sandbox.stub(client, 'listSchemasAsync').callsFake((req, gaxOpts) => {
+        assert.strictEqual(req!.parent, pubsub.name);
+        assert.strictEqual(req!.view, google.pubsub.v1.SchemaView.BASIC);
+        assert.ok(gaxOpts);
+        return toAsync([
+          {
+            name: 'foo1',
+          },
+          {
+            name: 'foo2',
+          },
+        ]) as any;
+      });
+
+      const names = [] as string[];
+      for await (const s of pubsub.getSchemas({})) {
+        names.push(s.name);
+      }
+
       const expected = [
         Schema.formatName_(pubsub.projectId, 'foo1'),
         Schema.formatName_(pubsub.projectId, 'foo2'),
       ];
       assert.deepStrictEqual(names, expected);
     });
+
     it('returns a proper Schema object from schema()', () => {
       const schema = pubsub.schema('foo');
       assert.strictEqual(
@@ -1654,6 +1664,5 @@ describe('PubSub', () => {
         Schema.formatName_(pubsub.projectId, 'foo')
       );
     });
-    // pagination?
   });
 });

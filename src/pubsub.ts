@@ -709,17 +709,37 @@ export class PubSub {
     }
   }
 
-  async getSchemas(options?: PageOptions): Promise<Schema[]> {
+  /**
+   * Get a list of schemas associated with your project.
+   *
+   * The returned AsyncIterable will resolve to {@link Schema} objects.
+   * These can be used for further interactions with each schema.
+   *
+   * This method returns an async iterable. These objects can be adapted
+   * to work in a Promise/then framework, as well as with callbacks, but
+   * this discussion is considered out of scope for these docs.
+   *
+   * @see [Schemas: list API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/list}
+   * @see [More about async iterators]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of}
+   *
+   * @param {object} [options.gaxOpts] Request configuration options, outlined
+   *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
+   * @returns {AsyncIterable<Schema>}
+   *
+   * @example
+   * for await (const s of pubsub.getSchemas()) {
+   *   const moreInfo = await s.get();
+   * }
+   */
+  async *getSchemas(options?: PageOptions): AsyncIterable<Schema> {
     const client = await this.getSchemaClient_();
-    const [schemas] = await client.listSchemas(
-      {
-        parent: this.name,
-        view: google.pubsub.v1.SchemaView.BASIC,
-      },
-      options
-    );
-
-    return schemas.map(s => new Schema(this, s.name!));
+    const query = {
+      parent: this.name,
+      view: google.pubsub.v1.SchemaView.BASIC,
+    };
+    for await (const s of client.listSchemasAsync(query, options)) {
+      yield new Schema(this, s.name!);
+    }
   }
 
   getSnapshots(options?: PageOptions): Promise<GetSnapshotsResponse>;
