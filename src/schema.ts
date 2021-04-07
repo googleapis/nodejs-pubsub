@@ -14,7 +14,6 @@
 
 import {CallOptions} from 'google-gax';
 import {google} from '../protos/protos';
-import {IAM} from './iam';
 import {PubSub} from './pubsub';
 
 /**
@@ -41,7 +40,6 @@ import {PubSub} from './pubsub';
 export class Schema {
   name: string;
   pubsub: PubSub;
-  iam: IAM;
 
   constructor(pubsub: PubSub, name: string) {
     /**
@@ -56,48 +54,6 @@ export class Schema {
      * @type {string}
      */
     this.name = Schema.formatName_(pubsub.projectId, name);
-    /**
-     * [IAM (Identity and Access
-     * Management)](https://cloud.google.com/pubsub/access_control) allows you
-     * to set permissions on individual resources and offers a wider range of
-     * roles: editor, owner, publisher, subscriber, and viewer. This gives you
-     * greater flexibility and allows you to set more fine-grained access
-     * control.
-     *
-     * *The IAM access control features described in this document are Beta,
-     * including the API methods to get and set IAM policies, and to test IAM
-     * permissions. Cloud Pub/Sub's use of IAM features is not covered by
-     * any SLA or deprecation policy, and may be subject to
-     * backward-incompatible changes.*
-     *
-     * @name Schema#iam
-     * @mixes IAM
-     *
-     * @see [Access Control Overview]{@link https://cloud.google.com/pubsub/access_control}
-     * @see [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
-     *
-     * @example
-     * const {PubSub} = require('@google-cloud/pubsub');
-     * const pubsub = new PubSub();
-     *
-     * const schema = pubsub.schema('my-schema');
-     *
-     * //-
-     * // Get the IAM policy for your schema.
-     * //-
-     * schema.iam.getPolicy((err, policy) => {
-     *   console.log(policy);
-     * });
-     *
-     * //-
-     * // If the callback is omitted, we'll return a Promise.
-     * //-
-     * schema.iam.getPolicy().then((data) => {
-     *   const policy = data[0];
-     *   const apiResponse = data[1];
-     * });
-     */
-    this.iam = new IAM(pubsub, this.name);
   }
 
   async create(
