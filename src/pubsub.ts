@@ -713,7 +713,7 @@ export class PubSub {
     const client = await this.getSchemaClient_();
     const [schemas] = await client.listSchemas(
       {
-        parent: client.projectPath(this.projectId),
+        parent: this.name,
         view: google.pubsub.v1.SchemaView.BASIC,
       },
       options

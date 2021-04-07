@@ -42,7 +42,6 @@ export class Schema {
   name: string;
   pubsub: PubSub;
   iam: IAM;
-  private parent?: string;
 
   constructor(pubsub: PubSub, name: string) {
     /**
@@ -51,13 +50,6 @@ export class Schema {
      * @type {PubSub}
      */
     this.pubsub = pubsub;
-    /**
-     * The project name (full path) of the {@link PubSub} we're attached to.
-     * Getting this for certain requires an async wait, so we don't do it here.
-     * @name Schema#parent
-     * @type {string}
-     */
-    this.parent = undefined;
     /**
      * The fully qualified name of this schema.
      * @name Schema#name
@@ -116,12 +108,12 @@ export class Schema {
     await this.pubsub.createSchema(this.name, type, definition, gaxOpts);
   }
 
-  async get(view: SchemaView, gaxOpts?: CallOptions): Promise<ISchema> {
+  async get(gaxOpts?: CallOptions): Promise<ISchema> {
     const client = await this.pubsub.getSchemaClient_();
     const [schema] = await client.getSchema(
       {
         name: this.name,
-        view,
+        view: google.pubsub.v1.SchemaView.FULL,
       },
       gaxOpts
     );
@@ -143,7 +135,7 @@ export class Schema {
     const client = await this.pubsub.getSchemaClient_();
     await client.validateSchema(
       {
-        parent: this.parent,
+        parent: this.pubsub.name,
         schema,
       },
       gaxOpts
@@ -159,7 +151,7 @@ export class Schema {
     const client = await this.pubsub.getSchemaClient_();
     await client.validateMessage(
       {
-        parent: this.parent,
+        parent: this.pubsub.name,
         name: this.name,
         schema,
         message,
