@@ -318,6 +318,33 @@ export class PubSub {
     }
   }
 
+  /**
+   * Create a schema in the project.
+   *
+   * @see [Schemas: create API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/create}
+   * @see {@link Schema#create}
+   *
+   * @throws {Error} If a schema ID or name is not provided.
+   * @throws {Error} If an invalid SchemaType is provided.
+   * @throws {Error} If an invalid schema definition is provided.
+   *
+   * @param {string} schemaId The name or ID of the subscription.
+   * @param {SchemaType} type The type of the schema (Protobuf, Avro, etc).
+   * @param {string} definition The text describing the schema in terms of the type.
+   * @param {object} [options] Request configuration options, outlined
+   *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
+   * @returns {Promise<Schema>}
+   *
+   * @example <caption>Create a schema.</caption>
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * await pubsub.createSchema(
+   *   'messageType',
+   *   SchemaTypes.Avro,
+   *   '{...avro definition...}'
+   * );
+   */
   async createSchema(
     schemaId: string,
     type: SchemaType,
@@ -1211,6 +1238,21 @@ export class PubSub {
     });
   }
 
+  /**
+   * Create a Schema object, representing a schema within the project.
+   * See {@link PubSub#createSchema} or {@link Schema#create} to create a schema.
+   *
+   * @throws {Error} If a name is not provided.
+   *
+   * @param {string} name The ID or name of the schema.
+   * @returns {Schema} A {@link Schema} instance.
+   *
+   * @example
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * const schema = pubsub.schema('my-schema');
+   */
   schema(name: string): Schema {
     return new Schema(this, name);
   }
