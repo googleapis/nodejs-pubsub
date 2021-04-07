@@ -722,16 +722,16 @@ export class PubSub {
    * @see [Schemas: list API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/list}
    * @see [More about async iterators]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of}
    *
-   * @param {object} [options.gaxOpts] Request configuration options, outlined
+   * @param {object} [options] Request configuration options, outlined
    *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @returns {AsyncIterable<Schema>}
    *
    * @example
-   * for await (const s of pubsub.getSchemas()) {
+   * for await (const s of pubsub.listSchemas()) {
    *   const moreInfo = await s.get();
    * }
    */
-  async *listSchemas(options?: PageOptions): AsyncIterable<Schema> {
+  async *listSchemas(options?: CallOptions): AsyncIterable<Schema> {
     const client = await this.getSchemaClient_();
     const query = {
       parent: this.name,
