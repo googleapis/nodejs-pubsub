@@ -263,7 +263,7 @@ export class Publisher {
       // https://github.com/open-telemetry/opentelemetry-specification/blob/v1.1.0/specification/trace/semantic_conventions/messaging.md
       [MessagingAttribute.MESSAGING_TEMP_DESTINATION]: false,
       [MessagingAttribute.MESSAGING_SYSTEM]: 'pubsub',
-      [MessagingAttribute.MESSAGING_OPERATION]: 'send', // operation expected to be empty
+      [MessagingAttribute.MESSAGING_OPERATION]: 'send',
       [MessagingAttribute.MESSAGING_DESTINATION]: this.topic.name,
       [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
       [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.messageId,
