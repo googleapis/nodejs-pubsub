@@ -29,10 +29,7 @@ import {PublishError} from '../../src/publisher/publish-error';
 import {defaultOptions} from '../../src/default-options';
 import {exporter} from '../tracing';
 import {SpanKind} from '@opentelemetry/api';
-import {
-  GeneralAttribute,
-  MessagingAttribute,
-} from '@opentelemetry/semantic-conventions';
+import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {

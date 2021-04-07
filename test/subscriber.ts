@@ -32,10 +32,7 @@ import {MessageStreamOptions} from '../src/message-stream';
 import * as s from '../src/subscriber';
 import {Subscription} from '../src/subscription';
 import {SpanKind} from '@opentelemetry/api';
-import {
-  GeneralAttribute,
-  MessagingAttribute,
-} from '@opentelemetry/semantic-conventions';
+import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
 
 const stubs = new Map();
 
