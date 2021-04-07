@@ -731,7 +731,7 @@ export class PubSub {
    *   const moreInfo = await s.get();
    * }
    */
-  async *getSchemas(options?: PageOptions): AsyncIterable<Schema> {
+  async *listSchemas(options?: PageOptions): AsyncIterable<Schema> {
     const client = await this.getSchemaClient_();
     const query = {
       parent: this.name,

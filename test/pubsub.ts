@@ -1621,7 +1621,7 @@ describe('PubSub', () => {
       assert.strictEqual(result[0].name, name);
     });
 
-    it('calls down to getSchemas correctly', async () => {
+    it('calls down to listSchemas correctly', async () => {
       // Grab the schema client it'll be using so we can stub it.
       const client = await pubsub.getSchemaClient_();
 
@@ -1646,7 +1646,7 @@ describe('PubSub', () => {
       });
 
       const names = [] as string[];
-      for await (const s of pubsub.getSchemas({})) {
+      for await (const s of pubsub.listSchemas({})) {
         names.push(s.name);
       }
 
