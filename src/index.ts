@@ -123,6 +123,9 @@ export {
   SchemaTypes,
   ICreateSchemaRequest,
   SchemaEncoding,
+  SchemaView,
+  SchemaViews,
+  Encodings,
 } from './schema';
 export {
   PushConfig,
