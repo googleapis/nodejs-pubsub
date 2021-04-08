@@ -273,7 +273,7 @@ export class Publisher {
       'messaging.pubsub.ordering_key': message.orderingKey,
     } as Attributes;
 
-    const span: Span | undefined = createSpan(
+    const span: Span = createSpan(
       `${this.topic.name} send`,
       SpanKind.PRODUCER,
       spanAttributes
