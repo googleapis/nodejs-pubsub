@@ -70,7 +70,7 @@ const fakePromisify = Object.assign({}, promisify, {
       'topic',
       'schema',
       'createSchema',
-      'getSchemas',
+      'listSchemas',
     ]);
   },
 });

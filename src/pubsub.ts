@@ -1469,8 +1469,7 @@ promisifyAll(PubSub, {
     'topic',
     'schema',
     'createSchema',
-    'getSchemas',
+    'listSchemas',
   ],
 });
 callbackify(PubSub.prototype.createSchema);
-callbackify(PubSub.prototype.getSchemas);
