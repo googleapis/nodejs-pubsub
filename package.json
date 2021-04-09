@@ -67,6 +67,8 @@
   },
   "devDependencies": {
     "@grpc/proto-loader": "^0.6.0",
+    "@microsoft/api-documenter": "^7.8.10",
+    "@microsoft/api-extractor": "^7.8.10",
     "@types/execa": "^0.9.0",
     "@types/extend": "^3.0.0",
     "@types/lodash.snakecase": "^4.1.6",
@@ -92,15 +94,13 @@
     "null-loader": "^4.0.0",
     "protobufjs": "^6.10.1",
     "proxyquire": "^2.0.0",
-    "sinon": "^10.0.0",
+    "sinon": "10.0.0",
     "tmp": "^0.2.0",
     "ts-loader": "^8.0.0",
     "typescript": "^3.8.3",
     "uuid": "^8.0.0",
     "webpack": "^5.0.0",
     "webpack-cli": "^4.0.0",
-    "yargs": "^16.0.0",
-    "@microsoft/api-documenter": "^7.8.10",
-    "@microsoft/api-extractor": "^7.8.10"
+    "yargs": "^16.0.0"
   }
 }
