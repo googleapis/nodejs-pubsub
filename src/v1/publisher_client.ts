@@ -33,14 +33,14 @@ import * as path from 'path';
 import {Transform} from 'stream';
 import {RequestType} from 'google-gax/build/src/apitypes';
 import * as protos from '../../protos/protos';
+
 /**
  * Client JSON configuration object, loaded from
  * `src/v1/publisher_client_config.json`.
  * This file defines retry strategy and timeouts for all API methods in this library.
  */
 import * as gapicConfig from './publisher_client_config.json';
-
-const version = require('../../../package.json').version;
+import {VERSION} from '../version';
 
 /**
  *  The service that an application uses to manipulate topics, and to send
@@ -137,7 +137,7 @@ export class PublisherClient {
     this.iamClient = new IamClient(this._gaxGrpc, opts);
 
     // Determine the client header string.
-    const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${version}`];
+    const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${VERSION}`];
     if (typeof process !== 'undefined' && 'versions' in process) {
       clientHeader.push(`gl-node/${process.versions.node}`);
     } else {

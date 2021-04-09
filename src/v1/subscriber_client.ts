@@ -39,8 +39,7 @@ import * as protos from '../../protos/protos';
  * This file defines retry strategy and timeouts for all API methods in this library.
  */
 import * as gapicConfig from './subscriber_client_config.json';
-
-const version = require('../../../package.json').version;
+import {VERSION} from '../version';
 
 /**
  *  The service that an application uses to manipulate subscriptions and to
@@ -138,7 +137,7 @@ export class SubscriberClient {
     this.iamClient = new IamClient(this._gaxGrpc, opts);
 
     // Determine the client header string.
-    const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${version}`];
+    const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${VERSION}`];
     if (typeof process !== 'undefined' && 'versions' in process) {
       clientHeader.push(`gl-node/${process.versions.node}`);
     } else {

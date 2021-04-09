@@ -27,9 +27,9 @@ import {Snapshot} from '../src/snapshot';
 import * as subby from '../src/subscription';
 import {Topic} from '../src/topic';
 import * as util from '../src/util';
+import {VERSION} from '../src/version';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const PKG = require('../../package.json');
 const sandbox = sinon.createSandbox();
 
 const fakeCreds = {} as gax.grpc.ChannelCredentials;
@@ -192,7 +192,7 @@ describe('PubSub', () => {
   describe('instantiation', () => {
     const DEFAULT_OPTIONS = {
       libName: 'gccl',
-      libVersion: PKG.version,
+      libVersion: VERSION,
       scopes: [],
     };
 

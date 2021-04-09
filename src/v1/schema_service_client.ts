@@ -39,8 +39,7 @@ import * as protos from '../../protos/protos';
  * This file defines retry strategy and timeouts for all API methods in this library.
  */
 import * as gapicConfig from './schema_service_client_config.json';
-
-const version = require('../../../package.json').version;
+import {VERSION} from '../version';
 
 /**
  *  Service for doing schema-related operations.
@@ -136,7 +135,7 @@ export class SchemaServiceClient {
     this.iamClient = new IamClient(this._gaxGrpc, opts);
 
     // Determine the client header string.
-    const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${version}`];
+    const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${VERSION}`];
     if (typeof process !== 'undefined' && 'versions' in process) {
       clientHeader.push(`gl-node/${process.versions.node}`);
     } else {

@@ -22,8 +22,6 @@ import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const PKG = require('../../package.json');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const v1 = require('./v1');
 
 import {Snapshot} from './snapshot';
@@ -48,6 +46,7 @@ import {PublishOptions} from './publisher';
 import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
 import {google} from '../protos/protos';
+import {VERSION} from './version';
 
 /**
  * Project ID placeholder.
@@ -266,7 +265,7 @@ export class PubSub {
     this.options = Object.assign(
       {
         libName: 'gccl',
-        libVersion: PKG.version,
+        libVersion: VERSION,
         scopes: Object.keys(allScopes),
       },
       options
