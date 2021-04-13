@@ -12,7 +12,8 @@
   "types": "./build/src/index.d.ts",
   "files": [
     "build/protos",
-    "build/src"
+    "build/src",
+    "build/package.json"
   ],
   "keywords": [
     "google apis client",
