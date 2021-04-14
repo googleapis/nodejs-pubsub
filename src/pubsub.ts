@@ -21,8 +21,8 @@ import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
 
-import * as PKG from '../package.json';
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const PKG = require('../../package.json');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const v1 = require('./v1');
 
