@@ -17,7 +17,8 @@
 import {promisify, promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
-import {Span} from '@opentelemetry/api';
+import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
+import {isSpanContextValid, Span, SpanKind} from '@opentelemetry/api';
 
 import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
@@ -25,7 +26,7 @@ import {Topic} from '../topic';
 import {RequestCallback, EmptyCallback} from '../pubsub';
 import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
-import {OpenTelemetryTracer} from '../opentelemetry-tracing';
+import {createSpan} from '../opentelemetry-tracing';
 
 export type PubsubMessage = google.pubsub.v1.IPubsubMessage;
 
@@ -75,16 +76,11 @@ export class Publisher {
   settings!: PublishOptions;
   queue: Queue;
   orderedQueues: Map<string, OrderedQueue>;
-  tracing: OpenTelemetryTracer | undefined;
   constructor(topic: Topic, options?: PublishOptions) {
     this.setOptions(options);
     this.topic = topic;
     this.queue = new Queue(this);
     this.orderedQueues = new Map();
-    this.tracing =
-      this.settings && this.settings.enableOpenTelemetryTracing
-        ? new OpenTelemetryTracer()
-        : undefined;
   }
 
   flush(): Promise<void>;
@@ -238,10 +234,6 @@ export class Publisher {
       enableOpenTelemetryTracing,
     } = extend(true, defaults, options);
 
-    this.tracing = enableOpenTelemetryTracing
-      ? new OpenTelemetryTracer()
-      : undefined;
-
     this.settings = {
       batching: {
         maxBytes: Math.min(batching.maxBytes, BATCH_LIMITS.maxBytes!),
@@ -262,13 +254,33 @@ export class Publisher {
    * @param {PubsubMessage} message The message to create a span for
    */
   constructSpan(message: PubsubMessage): Span | undefined {
+    if (!this.settings.enableOpenTelemetryTracing) {
+      return undefined;
+    }
+
     const spanAttributes = {
-      data: message.data,
+      // Add Opentelemetry semantic convention attributes to the span, based on:
+      // https://github.com/open-telemetry/opentelemetry-specification/blob/v1.1.0/specification/trace/semantic_conventions/messaging.md
+      [MessagingAttribute.MESSAGING_TEMP_DESTINATION]: false,
+      [MessagingAttribute.MESSAGING_SYSTEM]: 'pubsub',
+      [MessagingAttribute.MESSAGING_OPERATION]: 'send',
+      [MessagingAttribute.MESSAGING_DESTINATION]: this.topic.name,
+      [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
+      [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.messageId,
+      [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
+      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]:
+        message.data?.length,
+      'messaging.pubsub.ordering_key': message.orderingKey,
     } as Attributes;
-    const span: Span | undefined = this.tracing
-      ? this.tracing.createSpan(`${this.topic.name} publisher`, spanAttributes)
-      : undefined;
-    if (span) {
+
+    const span: Span = createSpan(
+      `${this.topic.name} send`,
+      SpanKind.PRODUCER,
+      spanAttributes
+    );
+
+    // If the span's context is valid we should pass the span context special attribute
+    if (isSpanContextValid(span.context())) {
       if (
         message.attributes &&
         message.attributes['googclient_OpenTelemetrySpanContext']
@@ -280,10 +292,12 @@ export class Publisher {
       if (!message.attributes) {
         message.attributes = {};
       }
+
       message.attributes[
         'googclient_OpenTelemetrySpanContext'
       ] = JSON.stringify(span.context());
     }
+
     return span;
   }
 }

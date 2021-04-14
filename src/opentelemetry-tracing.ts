@@ -13,31 +13,50 @@
  * limitations under the License.
  */
 
-import {Attributes, SpanContext, Span, trace} from '@opentelemetry/api';
-import {Tracer} from '@opentelemetry/tracing';
+import {
+  Tracer,
+  SpanAttributes,
+  SpanContext,
+  Span,
+  context,
+  trace,
+  setSpanContext,
+  SpanKind,
+} from '@opentelemetry/api';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const PKG = require('../../package.json');
 
 /**
- * Wrapper for creating OpenTelemetry Spans
- *
- * @class
+ * @internal
+ * Instantiates a Opentelemetry tracer for the library
  */
-export class OpenTelemetryTracer {
-  /**
-   * Creates a new span with the given properties
-   *
-   * @param {string} spanName the name for the span
-   * @param {Attributes?} attributes an object containing the attributes to be set for the span
-   * @param {SpanContext?} parent the context of the parent span to link to the span
-   */
-  createSpan(
-    spanName: string,
-    attributes?: Attributes,
-    parent?: SpanContext
-  ): Span {
-    const tracerProvider: Tracer = trace.getTracer('default') as Tracer;
-    return tracerProvider.startSpan(spanName, {
-      parent: parent,
+const libraryTracer: Tracer = trace.getTracer(
+  '@google-cloud/pubsub',
+  PKG.version
+);
+
+/**
+ * Creates a new span with the given properties
+ *
+ * @param {string} spanName the name for the span
+ * @param {Attributes?} attributes an object containing the attributes to be set for the span
+ * @param {SpanContext?} parent the context of the parent span to link to the span
+ */
+export function createSpan(
+  spanName: string,
+  kind: SpanKind,
+  attributes?: SpanAttributes,
+  parent?: SpanContext
+): Span {
+  return libraryTracer.startSpan(
+    spanName,
+    {
+      // set the kind of the span
+      kind,
+      // set the attributes of the span
       attributes: attributes,
-    });
-  }
+    },
+    parent ? setSpanContext(context.active(), parent) : undefined
+  );
 }

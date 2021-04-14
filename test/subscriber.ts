@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
+import {exporter} from './tracing';
 import * as assert from 'assert';
-import {describe, it, before, beforeEach, afterEach} from 'mocha';
+import {describe, it, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import {common as protobuf} from 'protobufjs';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {PassThrough} from 'stream';
 import * as uuid from 'uuid';
-import {
-  SimpleSpanProcessor,
-  BasicTracerProvider,
-  InMemorySpanExporter,
-} from '@opentelemetry/tracing';
 import * as opentelemetry from '@opentelemetry/api';
 
 import {HistogramOptions} from '../src/histogram';
@@ -35,6 +31,8 @@ import {BatchOptions} from '../src/message-queues';
 import {MessageStreamOptions} from '../src/message-stream';
 import * as s from '../src/subscriber';
 import {Subscription} from '../src/subscription';
+import {SpanKind} from '@opentelemetry/api';
+import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
 
 const stubs = new Map();
 
@@ -150,10 +148,9 @@ const RECEIVED_MESSAGE = {
 };
 
 describe('Subscriber', () => {
-  const sandbox = sinon.createSandbox();
+  let sandbox: sinon.SinonSandbox;
 
-  const fakeProjectify = {replaceProjectIdToken: sandbox.stub()};
-
+  let fakeProjectify: any;
   let subscription: Subscription;
 
   // tslint:disable-next-line variable-name
@@ -163,7 +160,14 @@ describe('Subscriber', () => {
   let Subscriber: typeof s.Subscriber;
   let subscriber: s.Subscriber;
 
-  before(() => {
+  beforeEach(() => {
+    sandbox = sinon.createSandbox();
+    fakeProjectify = {
+      replaceProjectIdToken: sandbox.stub().callsFake((name, projectId) => {
+        return `projects/${projectId}/name/${name}`;
+      }),
+    };
+
     const s = proxyquire('../src/subscriber.js', {
       '@google-cloud/precise-date': {PreciseDate: FakePreciseDate},
       '@google-cloud/projectify': fakeProjectify,
@@ -178,9 +182,8 @@ describe('Subscriber', () => {
 
     Message = s.Message;
     Subscriber = s.Subscriber;
-  });
 
-  beforeEach(() => {
+    // Create standard instance
     subscription = (new FakeSubscription() as {}) as Subscription;
     subscriber = new Subscriber(subscription);
     message = new Message(subscriber, RECEIVED_MESSAGE);
@@ -638,7 +641,6 @@ describe('Subscriber', () => {
   });
 
   describe('OpenTelemetry tracing', () => {
-    let tracingSubscriber: s.Subscriber = {} as s.Subscriber;
     const enableTracing: s.SubscriberOptions = {
       enableOpenTelemetryTracing: true,
     };
@@ -647,41 +649,42 @@ describe('Subscriber', () => {
     };
 
     beforeEach(() => {
-      // Pre-define _tracing to gain access to the private field after subscriber init
-      tracingSubscriber['_tracing'] = undefined;
+      exporter.reset();
+    });
+
+    afterEach(() => {
+      exporter.reset();
+      subscriber.close();
     });
 
     it('should not instantiate a tracer when tracing is disabled', () => {
-      tracingSubscriber = new Subscriber(subscription);
-      assert.strictEqual(tracingSubscriber['_tracing'], undefined);
+      subscriber = new Subscriber(subscription, {});
+      assert.strictEqual(subscriber['_useOpentelemetry'], false);
     });
 
     it('should instantiate a tracer when tracing is enabled through constructor', () => {
-      tracingSubscriber = new Subscriber(subscription, enableTracing);
-      assert.ok(tracingSubscriber['_tracing']);
+      subscriber = new Subscriber(subscription, enableTracing);
+      assert.ok(subscriber['_useOpentelemetry']);
     });
 
     it('should instantiate a tracer when tracing is enabled through setOptions', () => {
-      tracingSubscriber = new Subscriber(subscription);
-      tracingSubscriber.setOptions(enableTracing);
-      assert.ok(tracingSubscriber['_tracing']);
+      subscriber = new Subscriber(subscription, {});
+      subscriber.setOptions(enableTracing);
+      assert.ok(subscriber['_useOpentelemetry']);
     });
 
     it('should disable tracing when tracing is disabled through setOptions', () => {
-      tracingSubscriber = new Subscriber(subscription, enableTracing);
-      tracingSubscriber.setOptions(disableTracing);
-      assert.strictEqual(tracingSubscriber['_tracing'], undefined);
+      subscriber = new Subscriber(subscription, enableTracing);
+      subscriber.setOptions(disableTracing);
+      assert.strictEqual(subscriber['_useOpentelemetry'], false);
     });
 
     it('exports a span once it is created', () => {
-      tracingSubscriber = new Subscriber(subscription, enableTracing);
-
-      // Setup trace exporting
-      const provider: BasicTracerProvider = new BasicTracerProvider();
-      const exporter: InMemorySpanExporter = new InMemorySpanExporter();
-      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-      provider.register();
-      opentelemetry.trace.setGlobalTracerProvider(provider);
+      subscription = (new FakeSubscription() as {}) as Subscription;
+      subscriber = new Subscriber(subscription, enableTracing);
+      message = new Message(subscriber, RECEIVED_MESSAGE);
+      assert.strictEqual(subscriber['_useOpentelemetry'], true);
+      subscriber.open();
 
       // Construct mock of received message with span context
       const parentSpanContext: opentelemetry.SpanContext = {
@@ -708,20 +711,51 @@ describe('Subscriber', () => {
       };
 
       // Receive message and assert that it was exported
-      const stream: FakeMessageStream = stubs.get('messageStream');
-      stream.emit('data', pullResponse);
-      assert.ok(exporter.getFinishedSpans());
+      const msgStream = stubs.get('messageStream');
+      msgStream.emit('data', pullResponse);
+
+      const spans = exporter.getFinishedSpans();
+      assert.strictEqual(spans.length, 1);
+      const firstSpan = spans.concat().shift();
+      assert.ok(firstSpan);
+      assert.strictEqual(firstSpan.parentSpanId, parentSpanContext.spanId);
+      assert.strictEqual(
+        firstSpan.name,
+        `${subscriber.name} process`,
+        'name of span should match'
+      );
+      assert.strictEqual(
+        firstSpan.kind,
+        SpanKind.CONSUMER,
+        'span kind should be CONSUMER'
+      );
+      assert.strictEqual(
+        firstSpan.attributes[MessagingAttribute.MESSAGING_OPERATION],
+        'process',
+        'span messaging operation should match'
+      );
+      assert.strictEqual(
+        firstSpan.attributes[MessagingAttribute.MESSAGING_SYSTEM],
+        'pubsub'
+      );
+      assert.strictEqual(
+        firstSpan.attributes[MessagingAttribute.MESSAGING_MESSAGE_ID],
+        messageWithSpanContext.message.messageId,
+        'span messaging id should match'
+      );
+      assert.strictEqual(
+        firstSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION],
+        subscriber.name,
+        'span messaging destination should match'
+      );
+      assert.strictEqual(
+        firstSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION_KIND],
+        'topic'
+      );
     });
 
     it('does not export a span when a span context is not present on message', () => {
-      tracingSubscriber = new Subscriber(subscription, enableTracing);
-
-      // Setup trace exporting
-      const provider: BasicTracerProvider = new BasicTracerProvider();
-      const exporter: InMemorySpanExporter = new InMemorySpanExporter();
-      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-      provider.register();
-      opentelemetry.trace.setGlobalTracerProvider(provider);
+      subscriber = new Subscriber(subscription, enableTracing);
 
       const pullResponse: s.PullResponse = {
         receivedMessages: [RECEIVED_MESSAGE],
