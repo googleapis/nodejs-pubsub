@@ -9,7 +9,7 @@
 
 ### ⚠ BREAKING CHANGES
 
-* * fix: added support for Opentelemetry 0.18
+* `fix: added support for Opentelemetry 0.18` - makes significant changes to OpenTelemetry support in order to unblock its usage again; the main user-visible change is that you will need to use 0.18+ versions of OpenTelemetry, and different items are passed to the server in spans.
 
 ### Bug Fixes
 
