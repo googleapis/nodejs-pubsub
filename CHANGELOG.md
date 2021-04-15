@@ -4,6 +4,22 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.11.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.10.0...v2.11.0) (2021-04-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* `fix: added support for Opentelemetry 0.18` - makes significant changes to OpenTelemetry support in order to unblock its usage again; the main user-visible change is that you will need to use 0.18+ versions of OpenTelemetry, and different items are passed to the server in spans.
+
+### Bug Fixes
+
+* added support for Opentelemetry 0.18 ([#1234](https://www.github.com/googleapis/nodejs-pubsub/issues/1234)) ([aedc36c](https://www.github.com/googleapis/nodejs-pubsub/commit/aedc36c3f8736eff1cb781b9e05457463481b3d6))
+* follow-on proto updates from the removal of the common protos ([#1229](https://www.github.com/googleapis/nodejs-pubsub/issues/1229)) ([cb627d5](https://www.github.com/googleapis/nodejs-pubsub/commit/cb627d5555c617eb025181c9f9aaf1d2c9621a86))
+* prevent attempt to publish 0 messages ([#1218](https://www.github.com/googleapis/nodejs-pubsub/issues/1218)) ([96e6535](https://www.github.com/googleapis/nodejs-pubsub/commit/96e653514b35d61f74ba2d5d6fa96e19bc45bf8c))
+* remove common protos ([#1232](https://www.github.com/googleapis/nodejs-pubsub/issues/1232)) ([8838288](https://www.github.com/googleapis/nodejs-pubsub/commit/883828800c94f7ea21c8306d272b70b4576c664c))
+* reverting the major from the OpenTelemetry change (it was already broken) ([#1257](https://www.github.com/googleapis/nodejs-pubsub/issues/1257)) ([09c428a](https://www.github.com/googleapis/nodejs-pubsub/commit/09c428a17eb20fcd0fc45301addb48d2bebc56a3))
+* temporarily pin sinon at 10.0.0 ([#1252](https://www.github.com/googleapis/nodejs-pubsub/issues/1252)) ([0922164](https://www.github.com/googleapis/nodejs-pubsub/commit/09221643be0693463ed4e5d56efd0f1ebfbe78b7))
+
 ## [2.10.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.9.0...v2.10.0) (2021-02-22)
 
 
