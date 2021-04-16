@@ -16,7 +16,6 @@
 
 import {paginator} from '@google-cloud/paginator';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
-import {promisify} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
@@ -26,6 +25,7 @@ const PKG = require('../../package.json');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const v1 = require('./v1');
 
+import {promisifySome} from './util';
 import {Schema, SchemaType, ICreateSchemaRequest} from './schema';
 import {Snapshot} from './snapshot';
 import {
@@ -351,6 +351,9 @@ export class PubSub {
     definition: string,
     gaxOpts?: CallOptions
   ): Promise<Schema> {
+    // This populates projectId for us.
+    await this.getClientConfig();
+
     const schemaName = Schema.formatName_(this.projectId, schemaId);
     const request: ICreateSchemaRequest = {
       parent: this.name,
@@ -1462,7 +1465,7 @@ paginator.extend(PubSub, ['getSnapshots', 'getSubscriptions', 'getTopics']);
  * that a callback is omitted. Future methods will not allow for a callback.
  * (Use .then() on the returned Promise instead.)
  */
-[
+promisifySome(PubSub, [
   PubSub.prototype.close,
   PubSub.prototype.createSubscription,
   PubSub.prototype.createTopic,
@@ -1470,4 +1473,4 @@ paginator.extend(PubSub, ['getSnapshots', 'getSubscriptions', 'getTopics']);
   PubSub.prototype.getSnapshots,
   PubSub.prototype.getSubscriptions,
   PubSub.prototype.getTopics,
-].forEach(method => promisify(method));
+]);

@@ -25,10 +25,9 @@
 // sample-metadata:
 //   title: Create an Avro based Schema
 //   description: Creates a new schema definition on a project, using Avro
-//   usage: node createAvroSchema.js <project-id> <schema-name> <avsc-filename>
+//   usage: node createAvroSchema.js <schema-name> <avsc-filename>
 
 function main(
-  projectId = 'YOUR_PROJECT_NAME',
   schemaName = 'YOUR_SCHEMA_NAME',
   avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json'
 ) {
@@ -36,7 +35,6 @@ function main(
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
-  // const projectId = 'YOUR_PROJECT_ID';
   // const schemaName = 'YOUR_SCHEMA_NAME';
   // const avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json';
 
@@ -46,7 +44,7 @@ function main(
   const fs = require('fs');
 
   // Creates a client; cache this for further use
-  const pubSubClient = new PubSub({projectId});
+  const pubSubClient = new PubSub();
 
   async function createAvroSchema() {
     const definition = fs.readFileSync(avscFile).toString();

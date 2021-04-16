@@ -11,16 +11,21 @@
     "node": ">=10"
   },
   "scripts": {
-    "test": "mocha system-test --timeout 600000"
+    "test": "mocha build/system-test --timeout 600000",
+    "pretest": "npm run compile",
+    "compile": "tsc -p . && cp *.js build/ && cp -p system-test/*.js build/system-test/",
+    "precompile": "gts clean"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^2.11.0",
     "@opentelemetry/api": "^0.18.1",
-    "@opentelemetry/tracing": "^0.18.2"
+    "@opentelemetry/tracing": "^0.18.2",
     "avro-js": "^1.10.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.16",
     "chai": "^4.2.0",
+    "gts": "^3.1.0",
     "mocha": "^8.0.0",
     "uuid": "^8.0.0"
   }
