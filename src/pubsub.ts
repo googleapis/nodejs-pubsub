@@ -16,7 +16,7 @@
 
 import {paginator} from '@google-cloud/paginator';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
-import {callbackify, promisifyAll} from '@google-cloud/promisify';
+import {promisify} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
@@ -1458,18 +1458,16 @@ paginator.extend(PubSub, ['getSnapshots', 'getSubscriptions', 'getTopics']);
 
 /*! Developer Documentation
  *
- * All async methods (except for streams) will return a Promise in the event
- * that a callback is omitted.
+ * Existing async methods (except for streams) will return a Promise in the event
+ * that a callback is omitted. Future methods will not allow for a callback.
+ * (Use .then() on the returned Promise instead.)
  */
-promisifyAll(PubSub, {
-  exclude: [
-    'request',
-    'snapshot',
-    'subscription',
-    'topic',
-    'schema',
-    'createSchema',
-    'listSchemas',
-  ],
-});
-callbackify(PubSub.prototype.createSchema);
+[
+  PubSub.prototype.close,
+  PubSub.prototype.createSubscription,
+  PubSub.prototype.createTopic,
+  PubSub.prototype.detachSubscription,
+  PubSub.prototype.getSnapshots,
+  PubSub.prototype.getSubscriptions,
+  PubSub.prototype.getTopics,
+].forEach(method => promisify(method));
