@@ -1103,6 +1103,13 @@ export class PubSub {
     );
   }
 
+  /**
+   * Retrieve a client configuration, suitable for passing into a GAPIC
+   * 'v1' class constructor. This will fill out projectId, emulator URLs,
+   * and so forth.
+   *
+   * @returns {Promise<ClientConfig>} the filled client configuration.
+   */
   async getClientConfig(): Promise<ClientConfig> {
     if (!this.projectId || this.projectId === PROJECT_ID_PLACEHOLDER) {
       let projectId;
