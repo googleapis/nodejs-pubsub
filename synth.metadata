@@ -4,7 +4,7 @@
       "git": {
         "name": ".",
         "remote": "https://github.com/googleapis/nodejs-pubsub.git",
-        "sha": "b954fd92703c8e7ac99b668ee4991c2e4ec81885"
+        "sha": "ee21ee68c964d5e354df673648c521dcc7337bb3"
       }
     },
     {
@@ -19,7 +19,7 @@
       "git": {
         "name": "synthtool",
         "remote": "https://github.com/googleapis/synthtool.git",
-        "sha": "318e351e26ba65b2b3cfa3f61b3b64e3540c3525"
+        "sha": "c6706ee5d693e9ae5967614170732646590d8374"
       }
     }
   ],
