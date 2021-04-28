@@ -57,7 +57,7 @@
     "@opentelemetry/semantic-conventions": "^0.18.2",
     "@types/duplexify": "^3.6.0",
     "@types/long": "^4.0.0",
-    "arrify": "^2.0.0",
+    "arrify": "^3.0.0",
     "extend": "^3.0.2",
     "google-auth-library": "^7.0.0",
     "google-gax": "^2.9.2",
