@@ -206,14 +206,19 @@ export class Publisher {
       queue.resumePublishing();
     }
   }
+
   /**
-   * Sets the Publisher options.
+   * Returns the set of default options used for {@link Publisher}. The
+   * returned value is a copy, and editing it will have no effect elsehwere.
+   *
+   * This is a non-static method to make it easier to access/stub.
    *
    * @private
    *
-   * @param {PublishOptions} options The publisher options.
+   * @returns {PublishOptions}
    */
-  setOptions(options = {} as PublishOptions): void {
+  getOptionDefaults(): PublishOptions {
+    // Return a unique copy to avoid shenanigans.
     const defaults = {
       batching: {
         maxBytes: defaultOptions.publish.maxOutstandingBytes,
@@ -227,6 +232,19 @@ export class Publisher {
       enableOpenTelemetryTracing: false,
     };
 
+    return defaults;
+  }
+
+  /**
+   * Sets the Publisher options.
+   *
+   * @private
+   *
+   * @param {PublishOptions} options The publisher options.
+   */
+  setOptions(options = {} as PublishOptions): void {
+    const defaults = this.getOptionDefaults();
+
     const {
       batching,
       gaxOpts,
@@ -236,14 +254,28 @@ export class Publisher {
 
     this.settings = {
       batching: {
-        maxBytes: Math.min(batching.maxBytes, BATCH_LIMITS.maxBytes!),
-        maxMessages: Math.min(batching.maxMessages, BATCH_LIMITS.maxMessages!),
-        maxMilliseconds: batching.maxMilliseconds,
+        maxBytes: Math.min(batching!.maxBytes!, BATCH_LIMITS.maxBytes!),
+        maxMessages: Math.min(
+          batching!.maxMessages!,
+          BATCH_LIMITS.maxMessages!
+        ),
+        maxMilliseconds: batching!.maxMilliseconds,
       },
       gaxOpts,
       messageOrdering,
       enableOpenTelemetryTracing,
     };
+
+    // We also need to let all of our queues know that they need to update their options.
+    // Note that these might be undefined, because setOptions() is called in the constructor.
+    if (this.queue) {
+      this.queue.updateOptions();
+    }
+    if (this.orderedQueues) {
+      for (const q of this.orderedQueues.values()) {
+        q.updateOptions();
+      }
+    }
   }
 
   /**

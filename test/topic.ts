@@ -67,6 +67,9 @@ class FakePublisher {
   setOptions(options: object) {
     this.options_ = options;
   }
+  getOptionDefaults() {
+    return this.options_;
+  }
 }
 
 let extended = false;
@@ -704,6 +707,12 @@ describe('Topic', () => {
       topic.setPublishOptions(fakeOptions);
 
       assert.strictEqual(stub.callCount, 1);
+    });
+
+    it('should call through to Publisher#getOptionDefaults', () => {
+      topic.publisher.options_ = {};
+      const defaults = topic.getPublishOptionDefaults();
+      assert.strictEqual(defaults, topic.publisher.options_);
     });
   });
 

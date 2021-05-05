@@ -921,6 +921,26 @@ export class Topic {
   }
 
   /**
+   * Get the default publisher options. These may be modified and passed
+   * back into {@link Topic#setPublishOptions}.
+   *
+   * @example
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * const topic = pubsub.topic('my-topic');
+   *
+   * const defaults = topic.getPublishOptionDefaults();
+   * defaults.batching.maxMilliseconds = 10;
+   * topic.setPublishOptions(defaults);
+   */
+  getPublishOptionDefaults(): PublishOptions {
+    // Generally I'd leave this as a static, but it'll be easier for users to
+    // get at when they're using the veneer objects.
+    return this.publisher.getOptionDefaults();
+  }
+
+  /**
    * Create a Subscription object. This command by itself will not run any API
    * requests. You will receive a {module:pubsub/subscription} object,
    * which will allow you to interact with a subscription.
