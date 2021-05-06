@@ -336,5 +336,5 @@ export class Publisher {
 
 promisifyAll(Publisher, {
   singular: true,
-  exclude: ['publish', 'setOptions', 'constructSpan'],
+  exclude: ['publish', 'setOptions', 'constructSpan', 'getOptionDefaults'],
 });

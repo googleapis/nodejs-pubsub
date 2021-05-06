@@ -30,7 +30,6 @@ import {defaultOptions} from '../../src/default-options';
 import {exporter} from '../tracing';
 import {SpanKind} from '@opentelemetry/api';
 import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
-import {google} from '../../protos/protos';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
@@ -38,12 +37,18 @@ const fakePromisify = Object.assign({}, pfy, {
     if (ctor.name !== 'Publisher') {
       return;
     }
+
+    // We _also_ need to call it, because unit tests will catch things
+    // that shouldn't be promisified.
+    pfy.promisifyAll(ctor, options);
+
     promisified = true;
     assert.ok(options.singular);
     assert.deepStrictEqual(options.exclude, [
       'publish',
       'setOptions',
       'constructSpan',
+      'getOptionDefaults',
     ]);
   },
 });

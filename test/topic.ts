@@ -37,11 +37,17 @@ const fakePromisify = Object.assign({}, pfy, {
       return;
     }
     promisified = true;
+
+    // We _also_ need to call it, because unit tests will catch things
+    // that shouldn't be promisified.
+    pfy.promisifyAll(klass, options);
+
     assert.deepStrictEqual(options.exclude, [
       'publish',
       'publishJSON',
       'publishMessage',
       'setPublishOptions',
+      'getPublishOptionDefaults',
       'subscription',
     ]);
   },

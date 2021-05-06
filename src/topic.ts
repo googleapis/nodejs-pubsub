@@ -1042,6 +1042,7 @@ promisifyAll(Topic, {
     'publishJSON',
     'publishMessage',
     'setPublishOptions',
+    'getPublishOptionDefaults',
     'subscription',
   ],
 });
