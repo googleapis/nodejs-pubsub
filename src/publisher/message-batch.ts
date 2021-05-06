@@ -51,6 +51,16 @@ export class MessageBatch {
     this.created = Date.now();
     this.bytes = 0;
   }
+
+  /**
+   * Updates our options from new values.
+   *
+   * @param {BatchPublishOptions} options The new options.
+   */
+  setOptions(options: BatchPublishOptions) {
+    this.options = options;
+  }
+
   /**
    * Adds a message to the current batch.
    *

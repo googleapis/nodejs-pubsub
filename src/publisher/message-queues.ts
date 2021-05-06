@@ -42,6 +42,20 @@ export abstract class MessageQueue extends EventEmitter {
     this.publisher = publisher;
     this.batchOptions = publisher.settings.batching!;
   }
+
+  /**
+   * Forces the queue to update its options from the publisher.
+   * The specific queue will need to do a bit more to pass the new
+   * values down into any MessageBatch.
+   *
+   * This is only for use by {@link Publisher}.
+   *
+   * @private
+   */
+  updateOptions() {
+    this.batchOptions = this.publisher.settings.batching!;
+  }
+
   /**
    * Adds a message to the queue.
    *
@@ -114,6 +128,13 @@ export class Queue extends MessageQueue {
     super(publisher);
     this.batch = new MessageBatch(this.batchOptions);
   }
+
+  // This needs to update our existing message batch.
+  updateOptions() {
+    super.updateOptions();
+    this.batch.setOptions(this.batchOptions);
+  }
+
   /**
    * Adds a message to the queue.
    *
@@ -173,6 +194,13 @@ export class OrderedQueue extends MessageQueue {
     this.inFlight = false;
     this.key = key;
   }
+
+  // This needs to update our existing message batches.
+  updateOptions() {
+    super.updateOptions();
+    this.batches.forEach(b => b.setOptions(this.batchOptions));
+  }
+
   /**
    * Reference to the batch we're currently filling.
    * @returns {MessageBatch}
