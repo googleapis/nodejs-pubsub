@@ -63,6 +63,11 @@ const fakePromisify = Object.assign({}, promisify, {
     }
 
     promisified = true;
+
+    // We _also_ need to call it, because unit tests will catch things
+    // that shouldn't be promisified.
+    promisify.promisifyAll(Class, options);
+
     assert.deepStrictEqual(options.exclude, [
       'request',
       'snapshot',
@@ -321,17 +326,15 @@ describe('PubSub', () => {
       };
     });
 
-    it('should throw if no Topic is provided', () => {
-      assert.throws(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (pubsub as any).createSubscription();
+    it('should throw if no Topic is provided', async () => {
+      await assert.rejects(async () => {
+        await pubsub.createSubscription(undefined!, undefined!);
       }, /A Topic is required for a new subscription\./);
     });
 
-    it('should throw if no subscription name is provided', () => {
-      assert.throws(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (pubsub as any).createSubscription(TOPIC_NAME);
+    it('should throw if no subscription name is provided', async () => {
+      await assert.rejects(async () => {
+        await pubsub.createSubscription(TOPIC_NAME, undefined!);
       }, /A subscription name is required./);
     });
 
@@ -642,9 +645,9 @@ describe('PubSub', () => {
     };
     const apiResponse = 'responseToCheck';
 
-    it('should throw if no subscription name is provided', () => {
-      assert.throws(() => {
-        pubsub.detachSubscription(undefined!);
+    it('should throw if no subscription name is provided', async () => {
+      await assert.rejects(async () => {
+        await pubsub.detachSubscription(undefined!);
       }, /A subscription name is required./);
     });
 
@@ -671,7 +674,7 @@ describe('PubSub', () => {
     });
 
     it('should detach a Subscription from a string', async () => {
-      sandbox.stub(pubsub, 'request').returns();
+      sandbox.stub(pubsub, 'request').callsArg(1);
       sandbox.stub(pubsub, 'subscription').callsFake(subName => {
         assert.strictEqual(subName, SUB_NAME);
         return SUBSCRIPTION as subby.Subscription;

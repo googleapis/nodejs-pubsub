@@ -37,11 +37,17 @@ const fakePromisify = Object.assign({}, pfy, {
       return;
     }
     promisified = true;
+
+    // We _also_ need to call it, because unit tests will catch things
+    // that shouldn't be promisified.
+    pfy.promisifyAll(klass, options);
+
     assert.deepStrictEqual(options.exclude, [
       'publish',
       'publishJSON',
       'publishMessage',
       'setPublishOptions',
+      'getPublishOptionDefaults',
       'subscription',
     ]);
   },
@@ -66,6 +72,9 @@ class FakePublisher {
   }
   setOptions(options: object) {
     this.options_ = options;
+  }
+  getOptionDefaults() {
+    return this.options_;
   }
 }
 
@@ -704,6 +713,12 @@ describe('Topic', () => {
       topic.setPublishOptions(fakeOptions);
 
       assert.strictEqual(stub.callCount, 1);
+    });
+
+    it('should call through to Publisher#getOptionDefaults', () => {
+      topic.publisher.options_ = {};
+      const defaults = topic.getPublishOptionDefaults();
+      assert.strictEqual(defaults, topic.publisher.options_);
     });
   });
 

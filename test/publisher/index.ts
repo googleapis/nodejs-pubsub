@@ -37,12 +37,18 @@ const fakePromisify = Object.assign({}, pfy, {
     if (ctor.name !== 'Publisher') {
       return;
     }
+
+    // We _also_ need to call it, because unit tests will catch things
+    // that shouldn't be promisified.
+    pfy.promisifyAll(ctor, options);
+
     promisified = true;
     assert.ok(options.singular);
     assert.deepStrictEqual(options.exclude, [
       'publish',
       'setOptions',
       'constructSpan',
+      'getOptionDefaults',
     ]);
   },
 });
@@ -53,6 +59,7 @@ class FakeQueue extends EventEmitter {
     super();
     this.publisher = publisher;
   }
+  updateOptions() {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: p.PubsubMessage, callback: p.PublishCallback): void {}
   publish(callback: (err: Error | null) => void) {
@@ -432,6 +439,27 @@ describe('Publisher', () => {
         },
       });
       assert.strictEqual(publisher.settings.batching!.maxMessages, 1000);
+    });
+
+    it('should pass new option values into queues after construction', () => {
+      // Make sure we have some ordering queues.
+      publisher.orderedQueues.set('a', new q.OrderedQueue(publisher, 'a'));
+      publisher.orderedQueues.set('b', new q.OrderedQueue(publisher, 'b'));
+
+      const stubs = [sandbox.stub(publisher.queue, 'updateOptions')];
+      assert.deepStrictEqual(publisher.orderedQueues.size, 2);
+      stubs.push(
+        ...Array.from(publisher.orderedQueues.values()).map(q =>
+          sandbox.stub(q, 'updateOptions')
+        )
+      );
+
+      const newOptions: p.PublishOptions = {
+        batching: {},
+      };
+      publisher.setOptions(newOptions);
+
+      stubs.forEach(s => assert.ok(s.calledOnce));
     });
   });
 

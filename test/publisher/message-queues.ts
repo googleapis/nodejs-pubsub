@@ -67,6 +67,9 @@ class FakeMessageBatch {
   isFull(): boolean {
     return false;
   }
+  setOptions(options: b.BatchPublishOptions) {
+    this.options = options;
+  }
 }
 
 class FakePublishError {
@@ -213,6 +216,15 @@ describe('Message Queues', () => {
         assert.ok(queue.batch instanceof FakeMessageBatch);
         assert.strictEqual(queue.batch.options, queue.batchOptions);
       });
+
+      it('should propagate batch options to the message batch when updated', () => {
+        const newConfig = {
+          batching: {},
+        };
+        publisher.settings = newConfig;
+        queue.updateOptions();
+        assert.strictEqual(queue.batch.options, newConfig.batching);
+      });
     });
 
     describe('add', () => {
@@ -338,6 +350,21 @@ describe('Message Queues', () => {
 
       it('should localize the ordering key', () => {
         assert.strictEqual(queue.key, key);
+      });
+
+      it('should propagate batch options to all message batches when updated', () => {
+        const firstBatch = queue.createBatch();
+        const secondBatch = queue.createBatch();
+        queue.batches.push(firstBatch, secondBatch);
+
+        const newConfig = {
+          batching: {},
+        };
+        publisher.settings = newConfig;
+        queue.updateOptions();
+
+        assert.strictEqual(firstBatch.options, newConfig.batching);
+        assert.strictEqual(secondBatch.options, newConfig.batching);
       });
     });
 
