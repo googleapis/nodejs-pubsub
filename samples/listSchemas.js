@@ -23,41 +23,28 @@
 'use strict';
 
 // sample-metadata:
-//   title: Create an Avro based Schema
-//   description: Creates a new schema definition on a project, using Avro
-//   usage: node createAvroSchema.js <schema-name> <avsc-filename>
+//   title: List schemas on a project
+//   description: Gets a list of schemas which were previously created in the project.
+//   usage: node listSchemas.js
 
-function main(
-  schemaName = 'YOUR_SCHEMA_NAME',
-  avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json'
-) {
-  // [START pubsub_create_avro_schema]
-  /**
-   * TODO(developer): Uncomment these variables before running the sample.
-   */
-  // const schemaName = 'YOUR_SCHEMA_NAME';
-  // const avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json';
+function main() {
+  // [START pubsub_list_schemas]
 
   // Imports the Google Cloud client library
-  const {PubSub, SchemaTypes} = require('@google-cloud/pubsub');
-
-  const fs = require('fs');
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
-  async function createAvroSchema() {
-    const definition = fs.readFileSync(avscFile).toString();
-    const schema = await pubSubClient.createSchema(
-      schemaName,
-      SchemaTypes.Avro,
-      definition
-    );
-    console.log(`Schema ${schema.name} created.`);
+  async function listSchemas() {
+    for await (const s of pubSubClient.listSchemas()) {
+      console.log(s);
+    }
+    console.log('Listed schemas.');
   }
 
-  createAvroSchema();
-  // [END pubsub_create_avro_schema]
+  listSchemas();
+  // [END pubsub_list_schemas]
 }
 
 process.on('unhandledRejection', err => {

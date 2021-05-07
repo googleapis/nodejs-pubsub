@@ -23,20 +23,20 @@
 'use strict';
 
 // sample-metadata:
-//   title: Create an Avro based Schema
-//   description: Creates a new schema definition on a project, using Avro
-//   usage: node createAvroSchema.js <schema-name> <avsc-filename>
+//   title: Create a Proto based Schema
+//   description: Creates a new schema definition on a project, using Protos
+//   usage: node createProtoSchema.js <schema-name> <proto-filename>
 
 function main(
   schemaName = 'YOUR_SCHEMA_NAME',
-  avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json'
+  protoFile = 'path/to/a/proto/schema/file/(.proto)/formatted/in/protcol/buffers'
 ) {
-  // [START pubsub_create_avro_schema]
+  // [START pubsub_create_proto_schema]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
   // const schemaName = 'YOUR_SCHEMA_NAME';
-  // const avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json';
+  // const protoFile = 'path/to/a/proto/schema/file/(.proto)/formatted/in/protcol/buffers';
 
   // Imports the Google Cloud client library
   const {PubSub, SchemaTypes} = require('@google-cloud/pubsub');
@@ -46,18 +46,18 @@ function main(
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
-  async function createAvroSchema() {
-    const definition = fs.readFileSync(avscFile).toString();
+  async function createProtoSchema() {
+    const definition = fs.readFileSync(protoFile).toString();
     const schema = await pubSubClient.createSchema(
       schemaName,
-      SchemaTypes.Avro,
+      SchemaTypes.ProtocolBuffer,
       definition
     );
     console.log(`Schema ${schema.name} created.`);
   }
 
-  createAvroSchema();
-  // [END pubsub_create_avro_schema]
+  createProtoSchema();
+  // [END pubsub_create_proto_schema]
 }
 
 process.on('unhandledRejection', err => {

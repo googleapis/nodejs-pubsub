@@ -23,41 +23,31 @@
 'use strict';
 
 // sample-metadata:
-//   title: Create an Avro based Schema
-//   description: Creates a new schema definition on a project, using Avro
-//   usage: node createAvroSchema.js <schema-name> <avsc-filename>
+//   title: Delete a previously created schema
+//   description: Deletes a schema which was previously created in the project.
+//   usage: node deleteSchema.js <schema-name>
 
-function main(
-  schemaName = 'YOUR_SCHEMA_NAME',
-  avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json'
-) {
-  // [START pubsub_create_avro_schema]
+function main(schemaName = 'YOUR_SCHEMA_NAME') {
+  // [START pubsub_delete_schema]
   /**
-   * TODO(developer): Uncomment these variables before running the sample.
+   * TODO(developer): Uncomment this variable before running the sample.
    */
   // const schemaName = 'YOUR_SCHEMA_NAME';
-  // const avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json';
 
   // Imports the Google Cloud client library
-  const {PubSub, SchemaTypes} = require('@google-cloud/pubsub');
-
-  const fs = require('fs');
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
-  async function createAvroSchema() {
-    const definition = fs.readFileSync(avscFile).toString();
-    const schema = await pubSubClient.createSchema(
-      schemaName,
-      SchemaTypes.Avro,
-      definition
-    );
-    console.log(`Schema ${schema.name} created.`);
+  async function deleteSchema() {
+    const schema = pubSubClient.schema(schemaName);
+    await schema.deleteSchema();
+    console.log(`Schema ${schema.name} deleted.`);
   }
 
-  createAvroSchema();
-  // [END pubsub_create_avro_schema]
+  deleteSchema();
+  // [END pubsub_delete_schema]
 }
 
 process.on('unhandledRejection', err => {

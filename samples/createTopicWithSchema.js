@@ -25,32 +25,44 @@
 // sample-metadata:
 //   title: Create Topic With Schema
 //   description: Creates a new topic, with a schema definition.
-//   usage: node createTopicWithSchema.js <topic-name>
+//   usage: node createTopicWithSchema.js <topic-name> <schema-name>
 
-async function main(topicName = 'YOUR_TOPIC_NAME') {
-  // [START pubsub_create_topic]
+async function main(
+  topicName = 'YOUR_TOPIC_NAME',
+  schemaName = 'YOUR_SCHEMA_NAME'
+) {
+  // [START pubsub_create_topic_with_schema]
   /**
-   * TODO(developer): Uncomment this variable before running the sample.
+   * TODO(developer): Uncomment these variables before running the sample.
    */
   // const topicName = 'YOUR_TOPIC_NAME';
+  // const schemaName = 'YOUR_SCHEMA_NAME';
 
   // Imports the Google Cloud client library
-  const {PubSub} = require('@google-cloud/pubsub');
+  const {PubSub, Encodings} = require('@google-cloud/pubsub');
 
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
-  async function createTopic() {
-    // Creates a new topic
-    await pubSubClient.createTopic(topicName);
-    console.log(`Topic ${topicName} created.`);
+  async function createTopicWithSchema() {
+    // Creates a new topic with a schema. Note that you might also
+    // pass Encodings.Binary here.
+    await pubSubClient.createTopic({
+      name: topicName,
+      schemaSettings: {
+        schema: schemaName,
+        encoding: Encodings.Json,
+      },
+    });
+    console.log(`Topic ${topicName} created with schema ${schemaName}.`);
   }
 
-  createTopic();
-  // [END pubsub_create_topic]
+  createTopicWithSchema();
+  // [END pubsub_create_topic_with_schema]
 }
 
-main(...process.argv.slice(2)).catch(e => {
-  console.error(e);
-  process.exitCode = -1;
+process.on('unhandledRejection', err => {
+  console.error(err.message);
+  process.exitCode = 1;
 });
+main(...process.argv.slice(2));
