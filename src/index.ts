@@ -126,6 +126,7 @@ export {
   SchemaView,
   SchemaViews,
   Encodings,
+  SchemaMessageMetadata,
 } from './schema';
 export {
   PushConfig,

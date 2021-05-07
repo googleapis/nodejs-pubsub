@@ -14,6 +14,7 @@
 
 import {CallOptions} from 'google-gax';
 import {google} from '../protos/protos';
+import {Attributes} from './publisher';
 import {PubSub} from './pubsub';
 
 // Unlike the earlier classes, this one does not do its own gax access.
@@ -162,12 +163,12 @@ export class Schema {
 
   /**
    * Validate a message against a schema definition.
-   * 
+   *
    * @see [Schemas: validateMessage API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/validateMessage}
-   * 
+   *
    * @throws {Error} if the validation fails.
    * @throws {Error} if other parameters are invalid.
-   * 
+   *
    * @param {ISchema} schema The schema definition you wish to validate against.
    * @param {string} message The message to validate.
    * @param {SchemaEncoding} encoding The encoding of the message to validate.
@@ -214,6 +215,44 @@ export class Schema {
     }
     return `projects/${projectId}/schemas/${nameOrId}`;
   }
+
+  /**
+   * Maps googclient_ strings to proto enums. May break without notice.
+   * @private
+   */
+  static encodingTranslation_ = new Map<string, google.pubsub.v1.Encoding>([
+    ['JSON', google.pubsub.v1.Encoding.JSON],
+    ['BINARY', google.pubsub.v1.Encoding.BINARY],
+  ]);
+
+  /**
+   * Translates the schema attributes in messages delivered from Pub/Sub.
+   * All resulting fields may end up being blank.
+   */
+  static metadataFromMessage(attributes: Attributes): SchemaMessageMetadata {
+    return {
+      name: attributes['googclient_schemaname'],
+      encoding: Schema.encodingTranslation_.get(
+        attributes['googclient_schemaencoding']
+      ),
+    };
+  }
+}
+
+/**
+ * Schema metadata that might be gathered from a Pub/Sub message.
+ * This is created for you from {@link Schema#metadataForMessage}.
+ */
+export interface SchemaMessageMetadata {
+  /**
+   * Schema name; may be queried using {@link PubSub#schema}.
+   */
+  name?: string;
+
+  /**
+   * Encoding; this will be Encodings.Json or Encodings.Binary.
+   */
+  encoding: google.pubsub.v1.Encoding | undefined;
 }
 
 // Export all of these so that clients don't have to dig for them.
