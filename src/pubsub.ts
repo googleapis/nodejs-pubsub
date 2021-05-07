@@ -44,6 +44,7 @@ import {
   GetTopicSubscriptionsResponse,
   CreateTopicCallback,
   CreateTopicResponse,
+  TopicMetadata,
 } from './topic';
 import {PublishOptions} from './publisher';
 import {CallOptions} from 'google-gax';
@@ -528,12 +529,15 @@ export class PubSub {
   }
 
   createTopic(
-    name: string,
+    name: string | TopicMetadata,
     gaxOpts?: CallOptions
   ): Promise<CreateTopicResponse>;
-  createTopic(name: string, callback: CreateTopicCallback): void;
   createTopic(
-    name: string,
+    name: string | TopicMetadata,
+    callback: CreateTopicCallback
+  ): void;
+  createTopic(
+    name: string | TopicMetadata,
     gaxOpts: CallOptions,
     callback: CreateTopicCallback
   ): void;
@@ -578,14 +582,22 @@ export class PubSub {
    * });
    */
   createTopic(
-    name: string,
+    name: string | TopicMetadata,
     optsOrCallback?: CallOptions | CreateTopicCallback,
     callback?: CreateTopicCallback
   ): Promise<CreateTopicResponse> | void {
-    const topic = this.topic(name);
-    const reqOpts = {
-      name: topic.name,
-    };
+    const reqOpts: TopicMetadata =
+      typeof name === 'string'
+        ? {
+            name,
+          }
+        : name;
+
+    // We don't allow a blank name, but this will let topic() handle that case.
+    const topic = this.topic(reqOpts.name || '');
+
+    // Topic#constructor might have canonicalized the name.
+    reqOpts.name = topic.name;
 
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
