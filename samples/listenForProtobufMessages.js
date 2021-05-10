@@ -23,36 +23,43 @@
 'use strict';
 
 // sample-metadata:
-//   title: Listen For Avro Records
-//   description: Listens for records in Avro encoding from a subscription.
-//   usage: node listenForAvroRecords.js <subscription-name> [timeout-in-seconds]
+//   title: Listen For Protobuf Messages
+//   description: Listens for messages in protobuf encoding from a subscription.
+//   usage: node listenForProtobufMessages.js <proto-filename> <subscription-name> [timeout-in-seconds]
 
-function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
+function main(
+  protoFilename = 'YOUR_PROTO_FILE',
+  subscriptionName = 'YOUR_SUBSCRIPTION_NAME',
+  timeout = 60
+) {
   timeout = Number(timeout);
 
-  // [START pubsub_subscribe_avro_records]
+  // [START pubsub_subscribe_proto_messages]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
+  // const protoFilename = 'YOUR_PROTO_FILE';
   // const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
   // const timeout = 60;
 
   // Imports the Google Cloud client library
   const {PubSub, Schema, Encoding} = require('@google-cloud/pubsub');
 
-  // And the Apache Avro library
-  const avro = require('avro-js');
+  // And the protobufjs library
+  const protobuf = require('protobufjs');
 
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
-  function listenForAvroRecords() {
+  function listenForProtobufMessages() {
     // References an existing subscription
     const subscription = pubSubClient.subscription(subscriptionName);
 
+    // Make an decoder using the protobufjs library.
+    const Province = protobuf.loadSync(protoFilename);
+
     // Create an event handler to handle messages
     let messageCount = 0;
-    const types = new Map();
     const messageHandler = async message => {
       // "Ack" (acknowledge receipt of) the message
       message.ack();
@@ -60,25 +67,13 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
       // Get the schema metadata from the message.
       const schemaMetadata = Schema.metadataFromMessage(message.attributes);
 
-      let type = types.get(schemaMetadata.name);
-      if (!type) {
-        // Get the schema definition to decode the Avro.
-        //
-        // Note that you might not have permissions to the schema, as a subscriber,
-        // in which case you will need to get this information out of band.
-        const schema = pubSubClient.schema(schemaMetadata.name);
-        const schemaDef = await schema.get();
-        type = avro.parse(schemaDef.definition);
-        types.set(schemaMetadata.name, type);
-      }
-
       let result;
       switch (schemaMetadata.encoding) {
         case Encoding.Binary:
-          result = type.fromBuffer(message.data);
+          result = Province.decode(message.data).toObject();
           break;
         case Encoding.Json:
-          result = type.fromString(message.data.toString());
+          result = Province.fromJSON(message.data.toString());
           break;
       }
 
@@ -97,8 +92,8 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
     }, timeout * 1000);
   }
 
-  listenForAvroRecords();
-  // [END pubsub_subscribe_avro_records]
+  listenForProtobufMessages();
+  // [END pubsub_subscribe_proto_messages]
 }
 
 process.on('unhandledRejection', err => {

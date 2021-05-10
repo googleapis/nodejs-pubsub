@@ -20,7 +20,8 @@
     "@google-cloud/pubsub": "^2.11.0",
     "@opentelemetry/api": "^0.18.1",
     "@opentelemetry/tracing": "^0.18.2",
-    "avro-js": "^1.10.1"
+    "avro-js": "^1.10.1",
+    "protobufjs": "^6.11.2"
   },
   "devDependencies": {
     "@types/chai": "^4.2.16",

@@ -23,63 +23,63 @@
 'use strict';
 
 // sample-metadata:
-//   title: Publish Avro Records to a Topic
-//   description: Publishes a record in Avro to a topic with a schema.
-//   usage: node publishAvroRecords.js <topic-name> <data>
+//   title: Publish Protobuf Messages to a Topic
+//   description: Publishes a message in protobuf form to a topic with a schema.
+//   usage: node publishProtobufMessages.js <proto-filename> <topic-name>
 
-function main(topicName = 'YOUR_TOPIC_NAME') {
-  // [START pubsub_publish_avro_records]
+function main(
+  protoFilename = 'YOUR_PROTO_FILE',
+  topicName = 'YOUR_TOPIC_NAME'
+) {
+  // [START pubsub_publish_proto_messages]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
+  // const protoFilename = 'YOUR_PROTO_FILE';
   // const topicName = 'YOUR_TOPIC_NAME';
-  // const data = JSON.stringify({foo: 'bar'});
 
   // Imports the Google Cloud client library
   const {PubSub, Encoding} = require('@google-cloud/pubsub');
 
-  // And the Apache Avro library
-  const avro = require('avro-js');
+  // And the protobufjs library
+  const protobuf = require('protobufjs');
 
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
-  async function publishAvroRecords() {
+  async function publishProtobufMessages() {
     // Get the topic metadata to learn about its schema.
     const topic = pubSubClient.topic(topicName);
     const [topicMetadata] = await topic.getMetadata();
     const topicSchemaMetadata = topicMetadata.schemaSettings;
     const schemaEncoding = topicSchemaMetadata.encoding;
 
-    // Retrieve the definition so we can make an encoder.
-    const schema = pubSubClient.schema(schemaMetadata.schema);
-    const schemaMetadata = await schema.get();
-    const schemaDefinition = schemaMetadata.definition;
-
-    // Make an encoder using the official avro-js library.
-    const type = avro.parse(schemaDefinition);
-
     // Encode the message.
     const province = {
       name: 'Ontario',
       post_abbr: 'ON',
     };
+
+    // Make an encoder using the protobufjs library.
+    const Province = protobuf.loadSync(protoFilename);
+    const message = Province.create(province);
+
     let dataBuffer;
     switch (schemaEncoding) {
       case Encoding.Binary:
-        dataBuffer = type.toBuffer(province);
+        dataBuffer = message.encode().finish();
         break;
       case Encoding.Json:
-        dataBuffer = Buffer.from(type.toString(province));
+        dataBuffer = Buffer.from(message.toJSON());
         break;
     }
 
     const messageId = await topic.publish(dataBuffer);
-    console.log(`Avro record ${messageId} published.`);
+    console.log(`Protobuf message ${messageId} published.`);
   }
 
-  publishAvroRecords().catch(console.error);
-  // [END pubsub_publish_avro_records]
+  publishProtobufMessages().catch(console.error);
+  // [END pubsub_publish_proto_messages]
 }
 
 process.on('unhandledRejection', err => {
