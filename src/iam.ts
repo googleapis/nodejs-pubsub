@@ -379,13 +379,12 @@ export class IAM {
         }
 
         const availablePermissions = arrify(resp!.permissions!);
-        const permissionHash: IamPermissionsMap = (permissions as string[]).reduce(
-          (acc, permission) => {
-            acc[permission] = availablePermissions.indexOf(permission) > -1;
-            return acc;
-          },
-          {} as {[key: string]: boolean}
-        );
+        const permissionHash: IamPermissionsMap = (
+          permissions as string[]
+        ).reduce((acc, permission) => {
+          acc[permission] = availablePermissions.indexOf(permission) > -1;
+          return acc;
+        }, {} as {[key: string]: boolean});
         callback!(null, permissionHash, resp!);
       }
     );

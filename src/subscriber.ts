@@ -429,9 +429,8 @@ export class Subscriber extends EventEmitter {
         options.streamingOptions = {} as MessageStreamOptions;
       }
 
-      const {
-        maxStreams = defaultOptions.subscription.maxStreams,
-      } = options.streamingOptions;
+      const {maxStreams = defaultOptions.subscription.maxStreams} =
+        options.streamingOptions;
       options.streamingOptions.maxStreams = Math.min(
         maxStreams,
         this.maxMessages
@@ -471,8 +470,9 @@ export class Subscriber extends EventEmitter {
       [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
       [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.id,
       [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
-      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: (message.data as Buffer)
-        .length,
+      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: (
+        message.data as Buffer
+      ).length,
       // Not in Opentelemetry semantic convention but mimics naming
       'messaging.pubsub.received_at': message.received,
       'messaging.pubsub.acknowlege_id': message.ackId,

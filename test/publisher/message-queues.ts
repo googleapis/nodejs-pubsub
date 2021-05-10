@@ -286,7 +286,7 @@ describe('Message Queues', () => {
         const maxMilliseconds = 1234;
 
         queue.batchOptions = {maxMilliseconds};
-        queue.pending = (1234 as unknown) as NodeJS.Timer;
+        queue.pending = 1234 as unknown as NodeJS.Timer;
         queue.add(fakeMessage, spy);
 
         clock.tick(maxMilliseconds);
@@ -308,7 +308,7 @@ describe('Message Queues', () => {
 
       it('should cancel any pending publish calls', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const fakeHandle = (1234 as unknown) as any;
+        const fakeHandle = 1234 as unknown as any;
         const stub = sandbox.stub(global, 'clearTimeout').withArgs(fakeHandle);
 
         queue.pending = fakeHandle;
@@ -488,7 +488,7 @@ describe('Message Queues', () => {
         it('should noop after adding if a publish is already pending', () => {
           const stub = sandbox.stub(queue, 'beginNextPublish');
 
-          queue.pending = (1234 as unknown) as NodeJS.Timer;
+          queue.pending = 1234 as unknown as NodeJS.Timer;
           queue.add(fakeMessage, spy);
 
           assert.strictEqual(stub.callCount, 0);
@@ -585,7 +585,7 @@ describe('Message Queues', () => {
       });
 
       it('should cancel any pending publishes', () => {
-        const fakeHandle = (1234 as unknown) as NodeJS.Timer;
+        const fakeHandle = 1234 as unknown as NodeJS.Timer;
         const stub = sandbox.stub(global, 'clearTimeout');
 
         queue.pending = fakeHandle;

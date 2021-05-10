@@ -664,9 +664,8 @@ export class PubSub {
     // If this looks like a GCP URL of some kind, don't go into emulator
     // mode. Otherwise, supply a fake SSL provider so a real cert isn't
     // required for running the emulator.
-    const officialUrlMatch = this.options.servicePath!.endsWith(
-      '.googleapis.com'
-    );
+    const officialUrlMatch =
+      this.options.servicePath!.endsWith('.googleapis.com');
     if (!officialUrlMatch) {
       const grpcInstance = this.options.grpc || gax.grpc;
       this.options.sslCreds = grpcInstance.credentials.createInsecure();

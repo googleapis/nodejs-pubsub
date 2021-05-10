@@ -299,9 +299,9 @@ describe('PubSub', () => {
   describe('createSubscription', () => {
     const TOPIC_NAME = 'topic';
     pubsub = new pubsubTypes.PubSub({});
-    const TOPIC = (Object.assign(new FakeTopic(), {
+    const TOPIC = Object.assign(new FakeTopic(), {
       name: 'projects/' + PROJECT_ID + '/topics/' + TOPIC_NAME,
-    }) as {}) as Topic;
+    }) as {} as Topic;
 
     const SUB_NAME = 'subscription';
     const SUBSCRIPTION = {
@@ -800,7 +800,7 @@ describe('PubSub', () => {
       };
 
       setHost('localhost');
-      pubsub.options.grpc = (fakeGrpc as unknown) as typeof gax.grpc;
+      pubsub.options.grpc = fakeGrpc as unknown as typeof gax.grpc;
       pubsub.determineBaseUrl_();
       assert.strictEqual(pubsub.options.sslCreds, fakeCredentials);
     });
@@ -869,14 +869,14 @@ describe('PubSub', () => {
     });
 
     it('should build the right request', done => {
-      const options = ({
+      const options = {
         a: 'b',
         c: 'd',
         gaxOpts: {
           e: 'f',
         },
         autoPaginate: false,
-      } as {}) as pubsubTypes.PageOptions;
+      } as {} as pubsubTypes.PageOptions;
 
       const expectedOptions = Object.assign({}, options, {
         project: 'projects/' + pubsub.projectId,
@@ -961,12 +961,12 @@ describe('PubSub', () => {
     });
 
     it('should pass the correct arguments to the API', done => {
-      const options = ({
+      const options = {
         gaxOpts: {
           a: 'b',
         },
         autoPaginate: false,
-      } as {}) as pubsubTypes.GetSubscriptionsOptions;
+      } as {} as pubsubTypes.GetSubscriptionsOptions;
 
       const expectedGaxOpts = Object.assign(
         {
@@ -1046,9 +1046,9 @@ describe('PubSub', () => {
       it('should call topic.getSubscriptions', done => {
         const topic = new FakeTopic();
 
-        const opts = ({
+        const opts = {
           topic,
-        } as {}) as pubsubTypes.GetSubscriptionsOptions;
+        } as {} as pubsubTypes.GetSubscriptionsOptions;
 
         topic.getSubscriptions = (options: pubsubTypes.PageOptions) => {
           assert.strictEqual(options, opts);
@@ -1059,9 +1059,9 @@ describe('PubSub', () => {
       });
 
       it('should create a topic instance from a name', done => {
-        const opts = ({
+        const opts = {
           topic: TOPIC_NAME,
-        } as {}) as pubsubTypes.GetSubscriptionsOptions;
+        } as {} as pubsubTypes.GetSubscriptionsOptions;
 
         const fakeTopic = {
           getSubscriptions(options: pubsubTypes.PageOptions) {
@@ -1099,14 +1099,14 @@ describe('PubSub', () => {
     });
 
     it('should build the right request', done => {
-      const options = ({
+      const options = {
         a: 'b',
         c: 'd',
         gaxOpts: {
           e: 'f',
         },
         autoPaginate: false,
-      } as {}) as pubsubTypes.PageOptions;
+      } as {} as pubsubTypes.PageOptions;
 
       const expectedOptions = Object.assign({}, options, {
         project: 'projects/' + pubsub.projectId,
@@ -1262,9 +1262,9 @@ describe('PubSub', () => {
     const FAKE_CLIENT_INSTANCE = class {
       close() {}
     };
-    const CONFIG = ({
+    const CONFIG = {
       client: 'FakeClient',
-    } as {}) as pubsubTypes.GetClientConfig;
+    } as {} as pubsubTypes.GetClientConfig;
 
     beforeEach(() => {
       sandbox.stub(pubsub, 'auth').value({getProjectId: () => util.noop});
@@ -1375,10 +1375,10 @@ describe('PubSub', () => {
   });
 
   describe('getClient_', () => {
-    const FAKE_CLIENT_INSTANCE = ({} as unknown) as gax.ClientStub;
-    const CONFIG = ({
+    const FAKE_CLIENT_INSTANCE = {} as unknown as gax.ClientStub;
+    const CONFIG = {
       client: 'FakeClient',
-    } as {}) as pubsubTypes.GetClientConfig;
+    } as {} as pubsubTypes.GetClientConfig;
 
     it('should get the client', done => {
       sandbox
@@ -1461,12 +1461,12 @@ describe('PubSub', () => {
     });
 
     it('should call the client method correctly', done => {
-      const CONFIG = ({
+      const CONFIG = {
         client: 'FakeClient',
         method: 'fakeMethod',
         reqOpts: {a: 'a'},
         gaxOpts: {},
-      } as {}) as pubsubTypes.RequestConfig;
+      } as {} as pubsubTypes.RequestConfig;
 
       const replacedReqOpts = {};
 
@@ -1502,7 +1502,7 @@ describe('PubSub', () => {
     it('should return a Snapshot object', () => {
       const SNAPSHOT_NAME = 'new-snapshot';
       const snapshot = pubsub.snapshot(SNAPSHOT_NAME);
-      const args = ((snapshot as {}) as FakeSnapshot).calledWith_;
+      const args = (snapshot as {} as FakeSnapshot).calledWith_;
 
       assert(snapshot instanceof FakeSnapshot);
       assert.strictEqual(args[0], pubsub);
@@ -1571,7 +1571,7 @@ describe('PubSub', () => {
       const fakeOptions = {};
       const topic = pubsub.topic(fakeName, fakeOptions);
 
-      const [ps, name, options] = ((topic as {}) as FakeTopic).calledWith_;
+      const [ps, name, options] = (topic as {} as FakeTopic).calledWith_;
 
       assert.strictEqual(ps, pubsub);
       assert.strictEqual(name, fakeName);

@@ -62,7 +62,7 @@ describe('LeaseManager', () => {
   });
 
   beforeEach(() => {
-    subscriber = (new FakeSubscriber() as {}) as Subscriber;
+    subscriber = new FakeSubscriber() as {} as Subscriber;
     leaseManager = new LeaseManager(subscriber);
   });
 
@@ -89,8 +89,8 @@ describe('LeaseManager', () => {
     it('should return the number of pending messages', () => {
       leaseManager.setOptions({allowExcessMessages: false, maxMessages: 1});
 
-      leaseManager.add((new FakeMessage() as {}) as Message);
-      leaseManager.add((new FakeMessage() as {}) as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
 
       assert.strictEqual(leaseManager.pending, 1);
     });
@@ -98,8 +98,8 @@ describe('LeaseManager', () => {
 
   describe('size', () => {
     it('should return the number of messages', () => {
-      leaseManager.add((new FakeMessage() as {}) as Message);
-      leaseManager.add((new FakeMessage() as {}) as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
 
       assert.strictEqual(leaseManager.size, 2);
     });
@@ -107,7 +107,7 @@ describe('LeaseManager', () => {
 
   describe('add', () => {
     it('should update the bytes/size values', () => {
-      const message = (new FakeMessage() as {}) as Message;
+      const message = new FakeMessage() as {} as Message;
 
       leaseManager.add(message);
 
@@ -116,7 +116,7 @@ describe('LeaseManager', () => {
     });
 
     it('should dispatch the message if allowExcessMessages is true', done => {
-      const fakeMessage = (new FakeMessage() as {}) as Message;
+      const fakeMessage = new FakeMessage() as {} as Message;
 
       leaseManager.isFull = () => true;
       leaseManager.setOptions({allowExcessMessages: true});
@@ -130,7 +130,7 @@ describe('LeaseManager', () => {
     });
 
     it('should dispatch the message if the inventory is not full', done => {
-      const fakeMessage = (new FakeMessage() as {}) as Message;
+      const fakeMessage = new FakeMessage() as {} as Message;
 
       leaseManager.isFull = () => false;
       leaseManager.setOptions({allowExcessMessages: false});
@@ -144,7 +144,7 @@ describe('LeaseManager', () => {
     });
 
     it('should not dispatch the message if the inventory is full', done => {
-      const fakeMessage = (new FakeMessage() as {}) as Message;
+      const fakeMessage = new FakeMessage() as {} as Message;
 
       leaseManager.isFull = () => true;
       leaseManager.setOptions({allowExcessMessages: false});
@@ -158,7 +158,7 @@ describe('LeaseManager', () => {
     });
 
     it('should not dispatch the message if the sub closes', done => {
-      const fakeMessage = (new FakeMessage() as {}) as Message;
+      const fakeMessage = new FakeMessage() as {} as Message;
 
       leaseManager.isFull = () => false;
 
@@ -175,7 +175,7 @@ describe('LeaseManager', () => {
       leaseManager.setOptions({allowExcessMessages: false, maxMessages: 1});
 
       leaseManager.on('full', done);
-      leaseManager.add((new FakeMessage() as {}) as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
     });
 
     describe('extending deadlines', () => {
@@ -196,7 +196,7 @@ describe('LeaseManager', () => {
       });
 
       it('should schedule a lease extension', () => {
-        const message = (new FakeMessage() as {}) as Message;
+        const message = new FakeMessage() as {} as Message;
         const stub = sandbox
           .stub(message, 'modAck')
           .withArgs(subscriber.ackDeadline);
@@ -214,12 +214,12 @@ describe('LeaseManager', () => {
         // since only 1 timeout should be set, even if add messages at different
         // times, they should all get extended at the same time
         messages.forEach(message => {
-          leaseManager.add((message as {}) as Message);
+          leaseManager.add(message as {} as Message);
           clock.tick(halfway);
         });
 
         messages.forEach((fakeMessage, i) => {
-          const [deadline] = (stubs[i].lastCall.args as {}) as [number];
+          const [deadline] = stubs[i].lastCall.args as {} as [number];
           assert.strictEqual(deadline, subscriber.ackDeadline);
         });
       });
@@ -230,7 +230,7 @@ describe('LeaseManager', () => {
 
         leaseManager.setOptions({maxExtension});
         badMessages.forEach(message =>
-          leaseManager.add((message as {}) as Message)
+          leaseManager.add(message as {} as Message)
         );
         clock.tick(halfway);
 
@@ -239,7 +239,7 @@ describe('LeaseManager', () => {
         const removeStub = sandbox.stub(leaseManager, 'remove');
         const modAckStub = sandbox.stub(goodMessage, 'modAck');
 
-        leaseManager.add((goodMessage as {}) as Message);
+        leaseManager.add(goodMessage as {} as Message);
         clock.tick(halfway);
 
         // make sure the expired messages were forgotten
@@ -250,7 +250,7 @@ describe('LeaseManager', () => {
           assert.strictEqual(message, fakeMessage);
         });
 
-        const [deadline] = (modAckStub.lastCall.args as {}) as [number];
+        const [deadline] = modAckStub.lastCall.args as {} as [number];
         assert.strictEqual(deadline, subscriber.ackDeadline);
       });
 
@@ -261,7 +261,7 @@ describe('LeaseManager', () => {
           .stub(message, 'modAck')
           .withArgs(subscriber.ackDeadline);
 
-        leaseManager.add((message as {}) as Message);
+        leaseManager.add(message as {} as Message);
         clock.tick(expectedTimeout);
 
         assert.strictEqual(stub.callCount, 1);
@@ -273,8 +273,8 @@ describe('LeaseManager', () => {
 
   describe('clear', () => {
     it('should completely clear out the inventory', () => {
-      leaseManager.add((new FakeMessage() as {}) as Message);
-      leaseManager.add((new FakeMessage() as {}) as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
       leaseManager.clear();
 
       assert.strictEqual(leaseManager.bytes, 0);
@@ -283,7 +283,7 @@ describe('LeaseManager', () => {
 
     it('should emit the free event if it was full', done => {
       leaseManager.setOptions({maxMessages: 1});
-      leaseManager.add((new FakeMessage() as {}) as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
       leaseManager.on('free', done);
 
       setImmediate(() => leaseManager.clear());
@@ -293,7 +293,7 @@ describe('LeaseManager', () => {
       const clock = sandbox.useFakeTimers();
       const stub = sandbox.stub(subscriber, 'modAck').resolves();
 
-      leaseManager.add((new FakeMessage() as {}) as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
       leaseManager.clear();
 
       // this would otherwise trigger a minimum of 2 modAcks
@@ -308,8 +308,8 @@ describe('LeaseManager', () => {
       const maxMessages = 1;
 
       leaseManager.setOptions({maxMessages});
-      leaseManager.add((new FakeMessage() as {}) as Message);
-      leaseManager.add((new FakeMessage() as {}) as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
 
       assert.strictEqual(leaseManager.isFull(), true);
     });
@@ -319,7 +319,7 @@ describe('LeaseManager', () => {
       const maxBytes = message.length - 1;
 
       leaseManager.setOptions({maxBytes});
-      leaseManager.add((message as {}) as Message);
+      leaseManager.add(message as {} as Message);
 
       assert.strictEqual(leaseManager.isFull(), true);
     });
@@ -330,7 +330,7 @@ describe('LeaseManager', () => {
       const maxBytes = message.length + 1;
 
       leaseManager.setOptions({maxMessages, maxBytes});
-      leaseManager.add((message as {}) as Message);
+      leaseManager.add(message as {} as Message);
 
       assert.strictEqual(leaseManager.isFull(), false);
     });
@@ -340,15 +340,15 @@ describe('LeaseManager', () => {
     it('should noop for unknown messages', () => {
       const message = new FakeMessage();
 
-      leaseManager.add((message as {}) as Message);
-      leaseManager.remove((new FakeMessage() as {}) as Message);
+      leaseManager.add(message as {} as Message);
+      leaseManager.remove(new FakeMessage() as {} as Message);
 
       assert.strictEqual(leaseManager.size, 1);
       assert.strictEqual(leaseManager.bytes, message.length);
     });
 
     it('should update the bytes/size values', () => {
-      const message = (new FakeMessage() as {}) as Message;
+      const message = new FakeMessage() as {} as Message;
 
       leaseManager.add(message);
       leaseManager.remove(message);
@@ -358,7 +358,7 @@ describe('LeaseManager', () => {
     });
 
     it('should emit the free event if there is free space', done => {
-      const message = (new FakeMessage() as {}) as Message;
+      const message = new FakeMessage() as {} as Message;
 
       leaseManager.setOptions({maxMessages: 1});
       leaseManager.add(message);
@@ -371,7 +371,7 @@ describe('LeaseManager', () => {
     });
 
     it('should remove a message from the pending state', done => {
-      const pending = (new FakeMessage() as {}) as Message;
+      const pending = new FakeMessage() as {} as Message;
 
       leaseManager.setOptions({allowExcessMessages: false, maxMessages: 1});
 
@@ -381,7 +381,7 @@ describe('LeaseManager', () => {
         }
       });
 
-      leaseManager.add((new FakeMessage() as {}) as Message);
+      leaseManager.add(new FakeMessage() as {} as Message);
       leaseManager.add(pending);
       leaseManager.remove(pending);
 
@@ -390,8 +390,8 @@ describe('LeaseManager', () => {
     });
 
     it('should dispense a pending messages', done => {
-      const temp = (new FakeMessage() as {}) as Message;
-      const pending = (new FakeMessage() as {}) as Message;
+      const temp = new FakeMessage() as {} as Message;
+      const pending = new FakeMessage() as {} as Message;
 
       leaseManager.setOptions({allowExcessMessages: false, maxMessages: 1});
 
@@ -412,7 +412,7 @@ describe('LeaseManager', () => {
 
     it('should cancel any extensions if no messages are left', () => {
       const clock = sandbox.useFakeTimers();
-      const message = (new FakeMessage() as {}) as Message;
+      const message = new FakeMessage() as {} as Message;
       const stub = sandbox.stub(subscriber, 'modAck').resolves();
 
       leaseManager.add(message);
@@ -428,7 +428,7 @@ describe('LeaseManager', () => {
     it('should allow excess messages by default', () => {});
 
     it('should default maxBytes', () => {
-      const littleMessage = (new FakeMessage() as {}) as Message;
+      const littleMessage = new FakeMessage() as {} as Message;
       const bigMessage = new FakeMessage();
 
       leaseManager.add(littleMessage);
@@ -436,7 +436,7 @@ describe('LeaseManager', () => {
 
       leaseManager.remove(littleMessage);
       bigMessage.length = defaultOptions.subscription.maxOutstandingBytes * 2;
-      leaseManager.add((bigMessage as {}) as Message);
+      leaseManager.add(bigMessage as {} as Message);
       assert.strictEqual(leaseManager.isFull(), true);
     });
 
@@ -447,7 +447,7 @@ describe('LeaseManager', () => {
         i++
       ) {
         assert.strictEqual(leaseManager.isFull(), false);
-        leaseManager.add((new FakeMessage() as {}) as Message);
+        leaseManager.add(new FakeMessage() as {} as Message);
       }
 
       assert.strictEqual(leaseManager.isFull(), true);
