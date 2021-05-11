@@ -53,7 +53,8 @@ function main(
       SchemaTypes.ProtocolBuffer,
       definition
     );
-    console.log(`Schema ${schema.name} created.`);
+    const fullName = await schema.getName();
+    console.log(`Schema ${fullName} created.`);
   }
 
   createProtoSchema();

@@ -27,23 +27,18 @@
 //   description: Listens for messages in protobuf encoding from a subscription.
 //   usage: node listenForProtobufMessages.js <proto-filename> <subscription-name> [timeout-in-seconds]
 
-function main(
-  protoFilename = 'YOUR_PROTO_FILE',
-  subscriptionName = 'YOUR_SUBSCRIPTION_NAME',
-  timeout = 60
-) {
+function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
   timeout = Number(timeout);
 
   // [START pubsub_subscribe_proto_messages]
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
-  // const protoFilename = 'YOUR_PROTO_FILE';
   // const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
   // const timeout = 60;
 
   // Imports the Google Cloud client library
-  const {PubSub, Schema, Encoding} = require('@google-cloud/pubsub');
+  const {PubSub, Schema, Encodings} = require('@google-cloud/pubsub');
 
   // And the protobufjs library
   const protobuf = require('protobufjs');
@@ -56,7 +51,11 @@ function main(
     const subscription = pubSubClient.subscription(subscriptionName);
 
     // Make an decoder using the protobufjs library.
-    const Province = protobuf.loadSync(protoFilename);
+    //
+    // Since we're providing the test message for a specific schema here, we'll
+    // also code in the path to a sample proto definition.
+    const root = protobuf.loadSync('system-test/fixtures/provinces.proto');
+    const Province = root.lookupType('utilities.Province');
 
     // Create an event handler to handle messages
     let messageCount = 0;
@@ -69,17 +68,22 @@ function main(
 
       let result;
       switch (schemaMetadata.encoding) {
-        case Encoding.Binary:
-          result = Province.decode(message.data).toObject();
+        case Encodings.Binary:
+          result = Province.decode(message.data);
           break;
-        case Encoding.Json:
-          result = Province.fromJSON(message.data.toString());
+        case Encodings.Json:
+          result = JSON.parse(message.data.toString());
+          // What's coming in here is not properly protobuf data, but you could
+          // verify it if you like:
+          // assert.strictEqual(null, Province.verify(result));
           break;
       }
 
       console.log(`Received message ${message.id}:`);
       console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
-      console.log(`\tAttributes: ${message.attributes}`);
+      console.log(
+        `\tAttributes: ${JSON.stringify(message.attributes, null, 4)}`
+      );
       messageCount += 1;
     };
 

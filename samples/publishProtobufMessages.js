@@ -25,21 +25,17 @@
 // sample-metadata:
 //   title: Publish Protobuf Messages to a Topic
 //   description: Publishes a message in protobuf form to a topic with a schema.
-//   usage: node publishProtobufMessages.js <proto-filename> <topic-name>
+//   usage: node publishProtobufMessages.js <topic-name>
 
-function main(
-  protoFilename = 'YOUR_PROTO_FILE',
-  topicName = 'YOUR_TOPIC_NAME'
-) {
+function main(topicName = 'YOUR_TOPIC_NAME') {
   // [START pubsub_publish_proto_messages]
   /**
-   * TODO(developer): Uncomment these variables before running the sample.
+   * TODO(developer): Uncomment this variable before running the sample.
    */
-  // const protoFilename = 'YOUR_PROTO_FILE';
   // const topicName = 'YOUR_TOPIC_NAME';
 
   // Imports the Google Cloud client library
-  const {PubSub, Encoding} = require('@google-cloud/pubsub');
+  const {PubSub, Encodings} = require('@google-cloud/pubsub');
 
   // And the protobufjs library
   const protobuf = require('protobufjs');
@@ -57,20 +53,24 @@ function main(
     // Encode the message.
     const province = {
       name: 'Ontario',
-      post_abbr: 'ON',
+      postAbbr: 'ON',
     };
 
     // Make an encoder using the protobufjs library.
-    const Province = protobuf.loadSync(protoFilename);
+    //
+    // Since we're providing the test message for a specific schema here, we'll
+    // also code in the path to a sample proto definition.
+    const root = await protobuf.load('system-test/fixtures/provinces.proto');
+    const Province = root.lookupType('utilities.Province');
     const message = Province.create(province);
 
     let dataBuffer;
     switch (schemaEncoding) {
-      case Encoding.Binary:
-        dataBuffer = message.encode().finish();
+      case Encodings.Binary:
+        dataBuffer = Province.encode(message).finish();
         break;
-      case Encoding.Json:
-        dataBuffer = Buffer.from(message.toJSON());
+      case Encodings.Json:
+        dataBuffer = Buffer.from(JSON.stringify(message.toJSON()));
         break;
     }
 

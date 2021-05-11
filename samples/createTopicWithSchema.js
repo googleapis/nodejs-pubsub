@@ -25,11 +25,12 @@
 // sample-metadata:
 //   title: Create Topic With Schema
 //   description: Creates a new topic, with a schema definition.
-//   usage: node createTopicWithSchema.js <topic-name> <schema-name>
+//   usage: node createTopicWithSchema.js <topic-name> <schema-name> [encoding-type]
 
 async function main(
   topicName = 'YOUR_TOPIC_NAME',
-  schemaName = 'YOUR_SCHEMA_NAME'
+  schemaName = 'YOUR_SCHEMA_NAME',
+  encodingType = 'BINARY'
 ) {
   // [START pubsub_create_topic_with_schema]
   /**
@@ -37,9 +38,10 @@ async function main(
    */
   // const topicName = 'YOUR_TOPIC_NAME';
   // const schemaName = 'YOUR_SCHEMA_NAME';
+  // const encodingType = 'BINARY';
 
   // Imports the Google Cloud client library
-  const {PubSub, Encodings} = require('@google-cloud/pubsub');
+  const {PubSub} = require('@google-cloud/pubsub');
 
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
@@ -50,12 +52,12 @@ async function main(
     const fullName = await schema.getName();
 
     // Creates a new topic with a schema. Note that you might also
-    // pass Encodings.Binary here.
+    // pass Encodings.Json or Encodings.Binary here.
     await pubSubClient.createTopic({
       name: topicName,
       schemaSettings: {
         schema: fullName,
-        encoding: Encodings.Json,
+        encoding: encodingType,
       },
     });
     console.log(`Topic ${topicName} created with schema ${fullName}.`);
