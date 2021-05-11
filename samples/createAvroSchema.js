@@ -53,7 +53,8 @@ function main(
       SchemaTypes.Avro,
       definition
     );
-    console.log(`Schema ${schema.name} created.`);
+    const name = await schema.getName();
+    console.log(`Schema ${name} created.`);
   }
 
   createAvroSchema();

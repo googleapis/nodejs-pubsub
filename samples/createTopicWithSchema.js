@@ -45,16 +45,20 @@ async function main(
   const pubSubClient = new PubSub();
 
   async function createTopicWithSchema() {
+    // Get the fully qualified schema name.
+    const schema = pubSubClient.schema(schemaName);
+    const fullName = await schema.getName();
+
     // Creates a new topic with a schema. Note that you might also
     // pass Encodings.Binary here.
     await pubSubClient.createTopic({
       name: topicName,
       schemaSettings: {
-        schema: schemaName,
+        schema: fullName,
         encoding: Encodings.Json,
       },
     });
-    console.log(`Topic ${topicName} created with schema ${schemaName}.`);
+    console.log(`Topic ${topicName} created with schema ${fullName}.`);
   }
 
   createTopicWithSchema();

@@ -38,7 +38,10 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
   // const timeout = 60;
 
   // Imports the Google Cloud client library
-  const {PubSub, Schema, Encoding} = require('@google-cloud/pubsub');
+  const {PubSub, Schema, Encodings} = require('@google-cloud/pubsub');
+
+  // Node FS library, to load definitions
+  const fs = require('fs');
 
   // And the Apache Avro library
   const avro = require('avro-js');
@@ -50,9 +53,14 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
     // References an existing subscription
     const subscription = pubSubClient.subscription(subscriptionName);
 
+    // Make an encoder using the official avro-js library.
+    const definition = fs
+      .readFileSync('system-test/fixtures/provinces.avsc')
+      .toString();
+    const type = avro.parse(definition);
+
     // Create an event handler to handle messages
     let messageCount = 0;
-    const types = new Map();
     const messageHandler = async message => {
       // "Ack" (acknowledge receipt of) the message
       message.ack();
@@ -60,24 +68,12 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
       // Get the schema metadata from the message.
       const schemaMetadata = Schema.metadataFromMessage(message.attributes);
 
-      let type = types.get(schemaMetadata.name);
-      if (!type) {
-        // Get the schema definition to decode the Avro.
-        //
-        // Note that you might not have permissions to the schema, as a subscriber,
-        // in which case you will need to get this information out of band.
-        const schema = pubSubClient.schema(schemaMetadata.name);
-        const schemaDef = await schema.get();
-        type = avro.parse(schemaDef.definition);
-        types.set(schemaMetadata.name, type);
-      }
-
       let result;
       switch (schemaMetadata.encoding) {
-        case Encoding.Binary:
+        case Encodings.Binary:
           result = type.fromBuffer(message.data);
           break;
-        case Encoding.Json:
+        case Encodings.Json:
           result = type.fromString(message.data.toString());
           break;
       }

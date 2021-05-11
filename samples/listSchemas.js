@@ -38,7 +38,7 @@ function main() {
 
   async function listSchemas() {
     for await (const s of pubSubClient.listSchemas()) {
-      console.log(s);
+      console.log(await s.getName());
     }
     console.log('Listed schemas.');
   }

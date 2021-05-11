@@ -42,8 +42,10 @@ function main(schemaName = 'YOUR_SCHEMA_NAME') {
 
   async function deleteSchema() {
     const schema = pubSubClient.schema(schemaName);
-    await schema.deleteSchema();
-    console.log(`Schema ${schema.name} deleted.`);
+    const name = await schema.getName();
+    console.log(name);
+    await schema.delete();
+    console.log(`Schema ${name} deleted.`);
   }
 
   deleteSchema();

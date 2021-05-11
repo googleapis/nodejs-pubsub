@@ -25,39 +25,37 @@
 // sample-metadata:
 //   title: Publish Avro Records to a Topic
 //   description: Publishes a record in Avro to a topic with a schema.
-//   usage: node publishAvroRecords.js <topic-name> <data>
+//   usage: node publishAvroRecords.js <topic-name>
 
 function main(topicName = 'YOUR_TOPIC_NAME') {
   // [START pubsub_publish_avro_records]
   /**
-   * TODO(developer): Uncomment these variables before running the sample.
+   * TODO(developer): Uncomment this variable before running the sample.
    */
   // const topicName = 'YOUR_TOPIC_NAME';
-  // const data = JSON.stringify({foo: 'bar'});
 
   // Imports the Google Cloud client library
-  const {PubSub, Encoding} = require('@google-cloud/pubsub');
+  const {PubSub, Encodings} = require('@google-cloud/pubsub');
 
   // And the Apache Avro library
   const avro = require('avro-js');
+  const fs = require('fs');
 
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
   async function publishAvroRecords() {
-    // Get the topic metadata to learn about its schema.
+    // Get the topic metadata to learn about its schema encoding.
     const topic = pubSubClient.topic(topicName);
     const [topicMetadata] = await topic.getMetadata();
     const topicSchemaMetadata = topicMetadata.schemaSettings;
     const schemaEncoding = topicSchemaMetadata.encoding;
 
-    // Retrieve the definition so we can make an encoder.
-    const schema = pubSubClient.schema(schemaMetadata.schema);
-    const schemaMetadata = await schema.get();
-    const schemaDefinition = schemaMetadata.definition;
-
     // Make an encoder using the official avro-js library.
-    const type = avro.parse(schemaDefinition);
+    const definition = fs
+      .readFileSync('system-test/fixtures/provinces.avsc')
+      .toString();
+    const type = avro.parse(definition);
 
     // Encode the message.
     const province = {
@@ -66,10 +64,10 @@ function main(topicName = 'YOUR_TOPIC_NAME') {
     };
     let dataBuffer;
     switch (schemaEncoding) {
-      case Encoding.Binary:
+      case Encodings.Binary:
         dataBuffer = type.toBuffer(province);
         break;
-      case Encoding.Json:
+      case Encodings.Json:
         dataBuffer = Buffer.from(type.toString(province));
         break;
     }
