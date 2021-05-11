@@ -246,24 +246,15 @@ export class Schema {
   }
 
   /**
-   * Maps googclient_ strings to proto enums. May break without notice.
-   * @private
-   */
-  static encodingTranslation_ = new Map<string, google.pubsub.v1.Encoding>([
-    ['JSON', google.pubsub.v1.Encoding.JSON],
-    ['BINARY', google.pubsub.v1.Encoding.BINARY],
-  ]);
-
-  /**
    * Translates the schema attributes in messages delivered from Pub/Sub.
    * All resulting fields may end up being blank.
    */
   static metadataFromMessage(attributes: Attributes): SchemaMessageMetadata {
     return {
       name: attributes['googclient_schemaname'],
-      encoding: Schema.encodingTranslation_.get(
-        attributes['googclient_schemaencoding']
-      ),
+      encoding: (attributes[
+        'googclient_schemaencoding'
+      ] as unknown) as keyof typeof google.pubsub.v1.Encoding,
     };
   }
 }
@@ -281,7 +272,7 @@ export interface SchemaMessageMetadata {
   /**
    * Encoding; this will be Encodings.Json or Encodings.Binary.
    */
-  encoding: google.pubsub.v1.Encoding | undefined;
+  encoding: keyof typeof google.pubsub.v1.Encoding | undefined;
 }
 
 // Export all of these so that clients don't have to dig for them.
@@ -306,6 +297,6 @@ export const SchemaViews = {
 // These are not schema-specific, but this seems to be the
 // only place that exports methods that need them.
 export const Encodings = {
-  Json: google.pubsub.v1.Encoding.JSON,
-  Binary: google.pubsub.v1.Encoding.BINARY,
+  Json: 'JSON',
+  Binary: 'BINARY',
 };
