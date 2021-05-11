@@ -4,6 +4,19 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.12.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.11.0...v2.12.0) (2021-05-11)
+
+
+### Features
+
+* update publisher options all the way through the topic object tree ([#1279](https://www.github.com/googleapis/nodejs-pubsub/issues/1279)) ([70402ac](https://www.github.com/googleapis/nodejs-pubsub/commit/70402ac0f6dc905febecae8f4d3dfa8cc93e7c08))
+
+
+### Bug Fixes
+
+* **deps:** require google-gax v2.12.0 ([#1282](https://www.github.com/googleapis/nodejs-pubsub/issues/1282)) ([3dee854](https://www.github.com/googleapis/nodejs-pubsub/commit/3dee8548c2111f512b3afc2ffa3041934fee76ff))
+* use require to load proto JSON ([#1283](https://www.github.com/googleapis/nodejs-pubsub/issues/1283)) ([201a56c](https://www.github.com/googleapis/nodejs-pubsub/commit/201a56c4c7c7115cd3a7c8cff864d83223082d12))
+
 ## [2.11.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.10.0...v2.11.0) (2021-04-14)
 
 

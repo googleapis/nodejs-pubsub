@@ -17,7 +17,7 @@
     "precompile": "gts clean"
   },
   "dependencies": {
-    "@google-cloud/pubsub": "^2.11.0",
+    "@google-cloud/pubsub": "^2.12.0",
     "@opentelemetry/api": "^0.18.1",
     "@opentelemetry/tracing": "^0.18.2",
     "avro-js": "^1.10.1",

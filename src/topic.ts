@@ -573,12 +573,13 @@ export class Topic {
     const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
-    const reqOpts: google.pubsub.v1.IListTopicSubscriptionsRequest = Object.assign(
-      {
-        topic: this.name,
-      },
-      options as SubscriptionOptions
-    );
+    const reqOpts: google.pubsub.v1.IListTopicSubscriptionsRequest =
+      Object.assign(
+        {
+          topic: this.name,
+        },
+        options as SubscriptionOptions
+      );
 
     delete (reqOpts as PageOptions).gaxOpts;
     delete (reqOpts as PageOptions).autoPaginate;

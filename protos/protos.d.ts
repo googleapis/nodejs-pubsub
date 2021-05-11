@@ -4891,7 +4891,7 @@ export namespace google {
                 public time?: (google.protobuf.ITimestamp|null);
 
                 /** SeekRequest snapshot. */
-                public snapshot: string;
+                public snapshot?: (string|null);
 
                 /** SeekRequest target. */
                 public target?: ("time"|"snapshot");
@@ -6024,7 +6024,7 @@ export namespace google {
                 public parent: string;
 
                 /** ValidateMessageRequest name. */
-                public name: string;
+                public name?: (string|null);
 
                 /** ValidateMessageRequest schema. */
                 public schema?: (google.pubsub.v1.ISchema|null);
@@ -6348,19 +6348,19 @@ export namespace google {
             public selector: string;
 
             /** HttpRule get. */
-            public get: string;
+            public get?: (string|null);
 
             /** HttpRule put. */
-            public put: string;
+            public put?: (string|null);
 
             /** HttpRule post. */
-            public post: string;
+            public post?: (string|null);
 
             /** HttpRule delete. */
-            public delete: string;
+            public delete?: (string|null);
 
             /** HttpRule patch. */
-            public patch: string;
+            public patch?: (string|null);
 
             /** HttpRule custom. */
             public custom?: (google.api.ICustomHttpPattern|null);

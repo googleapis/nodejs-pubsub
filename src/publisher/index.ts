@@ -245,12 +245,8 @@ export class Publisher {
   setOptions(options = {} as PublishOptions): void {
     const defaults = this.getOptionDefaults();
 
-    const {
-      batching,
-      gaxOpts,
-      messageOrdering,
-      enableOpenTelemetryTracing,
-    } = extend(true, defaults, options);
+    const {batching, gaxOpts, messageOrdering, enableOpenTelemetryTracing} =
+      extend(true, defaults, options);
 
     this.settings = {
       batching: {
@@ -325,9 +321,8 @@ export class Publisher {
         message.attributes = {};
       }
 
-      message.attributes[
-        'googclient_OpenTelemetrySpanContext'
-      ] = JSON.stringify(span.context());
+      message.attributes['googclient_OpenTelemetrySpanContext'] =
+        JSON.stringify(span.context());
     }
 
     return span;

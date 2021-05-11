@@ -28,10 +28,9 @@ import {PassThrough} from 'stream';
 import {protobuf, IamProtos} from 'google-gax';
 
 function generateSampleMessage<T extends object>(instance: T) {
-  const filledObject = (instance.constructor as typeof protobuf.Message).toObject(
-    instance as protobuf.Message<T>,
-    {defaults: true}
-  );
+  const filledObject = (
+    instance.constructor as typeof protobuf.Message
+  ).toObject(instance as protobuf.Message<T>, {defaults: true});
   return (instance.constructor as typeof protobuf.Message).fromObject(
     filledObject
   ) as T;
@@ -230,9 +229,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
-      client.innerApiCalls.createSubscription = stubSimpleCall(
-        expectedResponse
-      );
+      client.innerApiCalls.createSubscription =
+        stubSimpleCall(expectedResponse);
       const [response] = await client.createSubscription(request);
       assert.deepStrictEqual(response, expectedResponse);
       assert(
@@ -263,9 +261,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
-      client.innerApiCalls.createSubscription = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.createSubscription =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.createSubscription(
           request,
@@ -375,9 +372,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
-      client.innerApiCalls.getSubscription = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.getSubscription =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.getSubscription(
           request,
@@ -457,9 +453,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
-      client.innerApiCalls.updateSubscription = stubSimpleCall(
-        expectedResponse
-      );
+      client.innerApiCalls.updateSubscription =
+        stubSimpleCall(expectedResponse);
       const [response] = await client.updateSubscription(request);
       assert.deepStrictEqual(response, expectedResponse);
       assert(
@@ -491,9 +486,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
-      client.innerApiCalls.updateSubscription = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.updateSubscription =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.updateSubscription(
           request,
@@ -573,9 +567,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
-      client.innerApiCalls.deleteSubscription = stubSimpleCall(
-        expectedResponse
-      );
+      client.innerApiCalls.deleteSubscription =
+        stubSimpleCall(expectedResponse);
       const [response] = await client.deleteSubscription(request);
       assert.deepStrictEqual(response, expectedResponse);
       assert(
@@ -606,9 +599,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
-      client.innerApiCalls.deleteSubscription = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.deleteSubscription =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.deleteSubscription(
           request,
@@ -718,9 +710,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
-      client.innerApiCalls.modifyAckDeadline = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.modifyAckDeadline =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.modifyAckDeadline(
           request,
@@ -830,9 +821,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
-      client.innerApiCalls.acknowledge = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.acknowledge =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.acknowledge(
           request,
@@ -1049,9 +1039,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
-      client.innerApiCalls.modifyPushConfig = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.modifyPushConfig =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.modifyPushConfig(
           request,
@@ -1161,9 +1150,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
-      client.innerApiCalls.getSnapshot = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.getSnapshot =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.getSnapshot(
           request,
@@ -1273,9 +1261,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
-      client.innerApiCalls.createSnapshot = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.createSnapshot =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.createSnapshot(
           request,
@@ -1387,9 +1374,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
-      client.innerApiCalls.updateSnapshot = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.updateSnapshot =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.updateSnapshot(
           request,
@@ -1500,9 +1486,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
-      client.innerApiCalls.deleteSnapshot = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.deleteSnapshot =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.deleteSnapshot(
           request,
@@ -1679,9 +1664,8 @@ describe('v1.SubscriberClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.StreamingPullResponse()
       );
-      client.innerApiCalls.streamingPull = stubBidiStreamingCall(
-        expectedResponse
-      );
+      client.innerApiCalls.streamingPull =
+        stubBidiStreamingCall(expectedResponse);
       const stream = client.streamingPull();
       const promise = new Promise((resolve, reject) => {
         stream.on(
@@ -1704,9 +1688,8 @@ describe('v1.SubscriberClient', () => {
           .calledWithExactly(undefined)
       );
       assert.deepStrictEqual(
-        (((stream as unknown) as PassThrough)._transform as SinonStub).getCall(
-          0
-        ).args[0],
+        ((stream as unknown as PassThrough)._transform as SinonStub).getCall(0)
+          .args[0],
         request
       );
     });
@@ -1746,9 +1729,8 @@ describe('v1.SubscriberClient', () => {
           .calledWithExactly(undefined)
       );
       assert.deepStrictEqual(
-        (((stream as unknown) as PassThrough)._transform as SinonStub).getCall(
-          0
-        ).args[0],
+        ((stream as unknown as PassThrough)._transform as SinonStub).getCall(0)
+          .args[0],
         request
       );
     });
@@ -1811,9 +1793,8 @@ describe('v1.SubscriberClient', () => {
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
       ];
-      client.innerApiCalls.listSubscriptions = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.listSubscriptions =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.listSubscriptions(
           request,
@@ -1885,9 +1866,8 @@ describe('v1.SubscriberClient', () => {
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
       ];
-      client.descriptors.page.listSubscriptions.createStream = stubPageStreamingCall(
-        expectedResponse
-      );
+      client.descriptors.page.listSubscriptions.createStream =
+        stubPageStreamingCall(expectedResponse);
       const stream = client.listSubscriptionsStream(request);
       const promise = new Promise((resolve, reject) => {
         const responses: protos.google.pubsub.v1.Subscription[] = [];
@@ -1909,10 +1889,9 @@ describe('v1.SubscriberClient', () => {
           .calledWith(client.innerApiCalls.listSubscriptions, request)
       );
       assert.strictEqual(
-        (client.descriptors.page.listSubscriptions
-          .createStream as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (
+          client.descriptors.page.listSubscriptions.createStream as SinonStub
+        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
@@ -1929,10 +1908,8 @@ describe('v1.SubscriberClient', () => {
       request.project = '';
       const expectedHeaderRequestParams = 'project=';
       const expectedError = new Error('expected');
-      client.descriptors.page.listSubscriptions.createStream = stubPageStreamingCall(
-        undefined,
-        expectedError
-      );
+      client.descriptors.page.listSubscriptions.createStream =
+        stubPageStreamingCall(undefined, expectedError);
       const stream = client.listSubscriptionsStream(request);
       const promise = new Promise((resolve, reject) => {
         const responses: protos.google.pubsub.v1.Subscription[] = [];
@@ -1953,10 +1930,9 @@ describe('v1.SubscriberClient', () => {
           .calledWith(client.innerApiCalls.listSubscriptions, request)
       );
       assert.strictEqual(
-        (client.descriptors.page.listSubscriptions
-          .createStream as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (
+          client.descriptors.page.listSubscriptions.createStream as SinonStub
+        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
@@ -1977,9 +1953,8 @@ describe('v1.SubscriberClient', () => {
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
       ];
-      client.descriptors.page.listSubscriptions.asyncIterate = stubAsyncIterationCall(
-        expectedResponse
-      );
+      client.descriptors.page.listSubscriptions.asyncIterate =
+        stubAsyncIterationCall(expectedResponse);
       const responses: protos.google.pubsub.v1.ISubscription[] = [];
       const iterable = client.listSubscriptionsAsync(request);
       for await (const resource of iterable) {
@@ -1987,15 +1962,15 @@ describe('v1.SubscriberClient', () => {
       }
       assert.deepStrictEqual(responses, expectedResponse);
       assert.deepStrictEqual(
-        (client.descriptors.page.listSubscriptions
-          .asyncIterate as SinonStub).getCall(0).args[1],
+        (
+          client.descriptors.page.listSubscriptions.asyncIterate as SinonStub
+        ).getCall(0).args[1],
         request
       );
       assert.strictEqual(
-        (client.descriptors.page.listSubscriptions
-          .asyncIterate as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (
+          client.descriptors.page.listSubscriptions.asyncIterate as SinonStub
+        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
@@ -2012,10 +1987,8 @@ describe('v1.SubscriberClient', () => {
       request.project = '';
       const expectedHeaderRequestParams = 'project=';
       const expectedError = new Error('expected');
-      client.descriptors.page.listSubscriptions.asyncIterate = stubAsyncIterationCall(
-        undefined,
-        expectedError
-      );
+      client.descriptors.page.listSubscriptions.asyncIterate =
+        stubAsyncIterationCall(undefined, expectedError);
       const iterable = client.listSubscriptionsAsync(request);
       await assert.rejects(async () => {
         const responses: protos.google.pubsub.v1.ISubscription[] = [];
@@ -2024,15 +1997,15 @@ describe('v1.SubscriberClient', () => {
         }
       });
       assert.deepStrictEqual(
-        (client.descriptors.page.listSubscriptions
-          .asyncIterate as SinonStub).getCall(0).args[1],
+        (
+          client.descriptors.page.listSubscriptions.asyncIterate as SinonStub
+        ).getCall(0).args[1],
         request
       );
       assert.strictEqual(
-        (client.descriptors.page.listSubscriptions
-          .asyncIterate as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (
+          client.descriptors.page.listSubscriptions.asyncIterate as SinonStub
+        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
@@ -2095,9 +2068,8 @@ describe('v1.SubscriberClient', () => {
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
       ];
-      client.innerApiCalls.listSnapshots = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.listSnapshots =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.listSnapshots(
           request,
@@ -2169,9 +2141,8 @@ describe('v1.SubscriberClient', () => {
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
       ];
-      client.descriptors.page.listSnapshots.createStream = stubPageStreamingCall(
-        expectedResponse
-      );
+      client.descriptors.page.listSnapshots.createStream =
+        stubPageStreamingCall(expectedResponse);
       const stream = client.listSnapshotsStream(request);
       const promise = new Promise((resolve, reject) => {
         const responses: protos.google.pubsub.v1.Snapshot[] = [];
@@ -2193,10 +2164,9 @@ describe('v1.SubscriberClient', () => {
           .calledWith(client.innerApiCalls.listSnapshots, request)
       );
       assert.strictEqual(
-        (client.descriptors.page.listSnapshots
-          .createStream as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (
+          client.descriptors.page.listSnapshots.createStream as SinonStub
+        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
@@ -2213,10 +2183,8 @@ describe('v1.SubscriberClient', () => {
       request.project = '';
       const expectedHeaderRequestParams = 'project=';
       const expectedError = new Error('expected');
-      client.descriptors.page.listSnapshots.createStream = stubPageStreamingCall(
-        undefined,
-        expectedError
-      );
+      client.descriptors.page.listSnapshots.createStream =
+        stubPageStreamingCall(undefined, expectedError);
       const stream = client.listSnapshotsStream(request);
       const promise = new Promise((resolve, reject) => {
         const responses: protos.google.pubsub.v1.Snapshot[] = [];
@@ -2237,10 +2205,9 @@ describe('v1.SubscriberClient', () => {
           .calledWith(client.innerApiCalls.listSnapshots, request)
       );
       assert.strictEqual(
-        (client.descriptors.page.listSnapshots
-          .createStream as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (
+          client.descriptors.page.listSnapshots.createStream as SinonStub
+        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
@@ -2261,9 +2228,8 @@ describe('v1.SubscriberClient', () => {
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
       ];
-      client.descriptors.page.listSnapshots.asyncIterate = stubAsyncIterationCall(
-        expectedResponse
-      );
+      client.descriptors.page.listSnapshots.asyncIterate =
+        stubAsyncIterationCall(expectedResponse);
       const responses: protos.google.pubsub.v1.ISnapshot[] = [];
       const iterable = client.listSnapshotsAsync(request);
       for await (const resource of iterable) {
@@ -2271,15 +2237,15 @@ describe('v1.SubscriberClient', () => {
       }
       assert.deepStrictEqual(responses, expectedResponse);
       assert.deepStrictEqual(
-        (client.descriptors.page.listSnapshots
-          .asyncIterate as SinonStub).getCall(0).args[1],
+        (
+          client.descriptors.page.listSnapshots.asyncIterate as SinonStub
+        ).getCall(0).args[1],
         request
       );
       assert.strictEqual(
-        (client.descriptors.page.listSnapshots
-          .asyncIterate as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (
+          client.descriptors.page.listSnapshots.asyncIterate as SinonStub
+        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
@@ -2296,10 +2262,8 @@ describe('v1.SubscriberClient', () => {
       request.project = '';
       const expectedHeaderRequestParams = 'project=';
       const expectedError = new Error('expected');
-      client.descriptors.page.listSnapshots.asyncIterate = stubAsyncIterationCall(
-        undefined,
-        expectedError
-      );
+      client.descriptors.page.listSnapshots.asyncIterate =
+        stubAsyncIterationCall(undefined, expectedError);
       const iterable = client.listSnapshotsAsync(request);
       await assert.rejects(async () => {
         const responses: protos.google.pubsub.v1.ISnapshot[] = [];
@@ -2308,15 +2272,15 @@ describe('v1.SubscriberClient', () => {
         }
       });
       assert.deepStrictEqual(
-        (client.descriptors.page.listSnapshots
-          .asyncIterate as SinonStub).getCall(0).args[1],
+        (
+          client.descriptors.page.listSnapshots.asyncIterate as SinonStub
+        ).getCall(0).args[1],
         request
       );
       assert.strictEqual(
-        (client.descriptors.page.listSnapshots
-          .asyncIterate as SinonStub).getCall(0).args[2].otherArgs.headers[
-          'x-goog-request-params'
-        ],
+        (
+          client.descriptors.page.listSnapshots.asyncIterate as SinonStub
+        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
         expectedHeaderRequestParams
       );
     });
