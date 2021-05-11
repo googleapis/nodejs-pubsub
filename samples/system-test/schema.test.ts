@@ -80,7 +80,8 @@ describe('schema', () => {
 
     let found = false;
     for await (const s of pubsub.listSchemas()) {
-      if (s.name.endsWith(schemaNameOne)) {
+      const fullName = await s.getName();
+      if (fullName.endsWith(schemaNameOne)) {
         found = true;
         break;
       }
