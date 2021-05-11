@@ -52,31 +52,21 @@ function Subscription(
 }
 
 let promisified = false;
-const fakePromisify = Object.assign({}, promisify, {
-  promisifyAll(
-    // tslint:disable-next-line variable-name
-    Class: typeof pubsubTypes.PubSub,
-    options: promisify.PromisifyAllOptions
-  ) {
-    if (Class.name !== 'PubSub') {
-      return;
+const fakeUtil = Object.assign({}, util, {
+  promisifySome(class_: Function, methods: Function[]): void {
+    if (class_.name === 'PubSub') {
+      promisified = true;
+      assert.deepStrictEqual(methods, [
+        class_.prototype.close,
+        class_.prototype.createSubscription,
+        class_.prototype.createTopic,
+        class_.prototype.detachSubscription,
+        class_.prototype.getSnapshots,
+        class_.prototype.getSubscriptions,
+        class_.prototype.getTopics,
+      ]);
     }
-
-    promisified = true;
-
-    // We _also_ need to call it, because unit tests will catch things
-    // that shouldn't be promisified.
-    promisify.promisifyAll(Class, options);
-
-    assert.deepStrictEqual(options.exclude, [
-      'request',
-      'snapshot',
-      'subscription',
-      'topic',
-      'schema',
-      'createSchema',
-      'listSchemas',
-    ]);
+    util.promisifySome(class_, methods);
   },
 });
 
@@ -171,7 +161,6 @@ describe('PubSub', () => {
       '@google-cloud/paginator': {
         paginator: fakePaginator,
       },
-      '@google-cloud/promisify': fakePromisify,
       '@google-cloud/projectify': {
         replaceProjectIdToken: fakePjy,
       },
@@ -183,6 +172,7 @@ describe('PubSub', () => {
       './subscription': {Subscription},
       './topic': {Topic: FakeTopic},
       './v1': v1Override,
+      './util': fakeUtil,
     }).PubSub;
   });
 
