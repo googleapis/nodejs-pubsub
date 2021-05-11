@@ -273,7 +273,7 @@ describe('Publisher', () => {
         queue = new FakeOrderedQueue(publisher, orderingKey);
         publisher.orderedQueues.set(
           orderingKey,
-          (queue as unknown) as q.OrderedQueue
+          queue as unknown as q.OrderedQueue
         );
       });
 
@@ -281,9 +281,9 @@ describe('Publisher', () => {
         publisher.orderedQueues.clear();
         publisher.publishMessage(fakeMessage, spy);
 
-        queue = (publisher.orderedQueues.get(
+        queue = publisher.orderedQueues.get(
           orderingKey
-        ) as unknown) as FakeOrderedQueue;
+        ) as unknown as FakeOrderedQueue;
 
         assert(queue instanceof FakeOrderedQueue);
         assert.strictEqual(queue.publisher, publisher);
@@ -316,9 +316,9 @@ describe('Publisher', () => {
         publisher.orderedQueues.clear();
         publisher.publishMessage(fakeMessage, spy);
 
-        queue = (publisher.orderedQueues.get(
+        queue = publisher.orderedQueues.get(
           orderingKey
-        ) as unknown) as FakeOrderedQueue;
+        ) as unknown as FakeOrderedQueue;
         queue.emit('drain');
 
         assert.strictEqual(publisher.orderedQueues.size, 0);
@@ -335,9 +335,9 @@ describe('Publisher', () => {
         sandbox
           .stub(FakeOrderedQueue.prototype, '_publish')
           .callsFake((messages, callbacks, callback) => {
-            const queue = (publisher.orderedQueues.get(
+            const queue = publisher.orderedQueues.get(
               orderingKey
-            ) as unknown) as FakeOrderedQueue;
+            ) as unknown as FakeOrderedQueue;
             queue.emit('drain');
             if (typeof callback === 'function') callback(null);
           });
@@ -376,7 +376,7 @@ describe('Publisher', () => {
 
       publisher.orderedQueues.set(
         orderingKey,
-        (queue as unknown) as q.OrderedQueue
+        queue as unknown as q.OrderedQueue
       );
       publisher.resumePublishing(orderingKey);
 

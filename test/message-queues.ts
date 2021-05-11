@@ -328,7 +328,7 @@ describe('MessageQueues', () => {
     let ackQueue: messageTypes.AckQueue;
 
     beforeEach(() => {
-      ackQueue = new AckQueue((subscriber as {}) as Subscriber);
+      ackQueue = new AckQueue(subscriber as {} as Subscriber);
     });
 
     it('should send batches via Client#acknowledge', async () => {
@@ -397,7 +397,7 @@ describe('MessageQueues', () => {
     let modAckQueue: messageTypes.ModAckQueue;
 
     beforeEach(() => {
-      modAckQueue = new ModAckQueue((subscriber as {}) as Subscriber);
+      modAckQueue = new ModAckQueue(subscriber as {} as Subscriber);
     });
 
     it('should send batches via Client#modifyAckDeadline', async () => {

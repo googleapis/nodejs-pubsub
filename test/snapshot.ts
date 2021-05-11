@@ -41,17 +41,17 @@ describe('Snapshot', () => {
   const SNAPSHOT_NAME = 'a';
   const PROJECT_ID = 'grape-spaceship-123';
 
-  const PUBSUB = ({
+  const PUBSUB = {
     projectId: PROJECT_ID,
-  } as {}) as PubSub;
+  } as {} as PubSub;
 
-  const SUBSCRIPTION = ({
+  const SUBSCRIPTION = {
     projectId: PROJECT_ID,
     pubsub: PUBSUB,
     api: {},
     createSnapshot() {},
     seek() {},
-  } as {}) as Subscription;
+  } as {} as Subscription;
 
   before(() => {
     Snapshot = proxyquire('../src/snapshot', {

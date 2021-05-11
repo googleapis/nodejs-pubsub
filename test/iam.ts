@@ -35,10 +35,10 @@ describe('IAM', () => {
   let IAM: typeof iamTypes.IAM;
   let iam: iamTypes.IAM;
 
-  const PUBSUB = ({
+  const PUBSUB = {
     options: {},
     request: util.noop,
-  } as {}) as PubSub;
+  } as {} as PubSub;
   const ID = 'id';
 
   before(() => {
@@ -58,14 +58,14 @@ describe('IAM', () => {
 
     it('should localize pubsub#request', () => {
       const fakeRequest = () => {};
-      const fakePubsub = ({
+      const fakePubsub = {
         request: {
           bind(context: PubSub) {
             assert.strictEqual(context, fakePubsub);
             return fakeRequest;
           },
         },
-      } as {}) as PubSub;
+      } as {} as PubSub;
       const iam = new IAM(fakePubsub, ID);
 
       assert.strictEqual(iam.request, fakeRequest);

@@ -184,7 +184,7 @@ describe('Subscriber', () => {
     Subscriber = s.Subscriber;
 
     // Create standard instance
-    subscription = (new FakeSubscription() as {}) as Subscription;
+    subscription = new FakeSubscription() as {} as Subscription;
     subscriber = new Subscriber(subscription);
     message = new Message(subscriber, RECEIVED_MESSAGE);
     subscriber.open();
@@ -438,7 +438,7 @@ describe('Subscriber', () => {
 
   describe('getClient', () => {
     it('should get a subscriber client', async () => {
-      const pubsub = (subscription.pubsub as {}) as FakePubSub;
+      const pubsub = subscription.pubsub as {} as FakePubSub;
       const spy = sandbox.spy(pubsub, 'getClient_');
       const client = await subscriber.getClient();
       const [options] = spy.lastCall.args;
@@ -680,7 +680,7 @@ describe('Subscriber', () => {
     });
 
     it('exports a span once it is created', () => {
-      subscription = (new FakeSubscription() as {}) as Subscription;
+      subscription = new FakeSubscription() as {} as Subscription;
       subscriber = new Subscriber(subscription, enableTracing);
       message = new Message(subscriber, RECEIVED_MESSAGE);
       assert.strictEqual(subscriber['_useOpentelemetry'], true);
@@ -696,9 +696,8 @@ describe('Subscriber', () => {
         ackId: uuid.v4(),
         message: {
           attributes: {
-            googclient_OpenTelemetrySpanContext: JSON.stringify(
-              parentSpanContext
-            ),
+            googclient_OpenTelemetrySpanContext:
+              JSON.stringify(parentSpanContext),
           },
           data: Buffer.from('Hello, world!'),
           messageId: uuid.v4(),
@@ -798,7 +797,7 @@ describe('Subscriber', () => {
 
       it('should localize publishTime', () => {
         const m = new Message(subscriber, RECEIVED_MESSAGE);
-        const timestamp = (m.publishTime as unknown) as FakePreciseDate;
+        const timestamp = m.publishTime as unknown as FakePreciseDate;
 
         assert(timestamp instanceof FakePreciseDate);
         assert.strictEqual(

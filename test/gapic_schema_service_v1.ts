@@ -28,10 +28,9 @@ import {PassThrough} from 'stream';
 import {protobuf, IamProtos} from 'google-gax';
 
 function generateSampleMessage<T extends object>(instance: T) {
-  const filledObject = (instance.constructor as typeof protobuf.Message).toObject(
-    instance as protobuf.Message<T>,
-    {defaults: true}
-  );
+  const filledObject = (
+    instance.constructor as typeof protobuf.Message
+  ).toObject(instance as protobuf.Message<T>, {defaults: true});
   return (instance.constructor as typeof protobuf.Message).fromObject(
     filledObject
   ) as T;
@@ -247,9 +246,8 @@ describe('v1.SchemaServiceClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Schema()
       );
-      client.innerApiCalls.createSchema = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.createSchema =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.createSchema(
           request,
@@ -359,9 +357,8 @@ describe('v1.SchemaServiceClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Schema()
       );
-      client.innerApiCalls.getSchema = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.getSchema =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.getSchema(
           request,
@@ -468,9 +465,8 @@ describe('v1.SchemaServiceClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
-      client.innerApiCalls.deleteSchema = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.deleteSchema =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.deleteSchema(
           request,
@@ -580,9 +576,8 @@ describe('v1.SchemaServiceClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.ValidateSchemaResponse()
       );
-      client.innerApiCalls.validateSchema = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.validateSchema =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.validateSchema(
           request,
@@ -692,9 +687,8 @@ describe('v1.SchemaServiceClient', () => {
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.ValidateMessageResponse()
       );
-      client.innerApiCalls.validateMessage = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.validateMessage =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.validateMessage(
           request,
@@ -808,9 +802,8 @@ describe('v1.SchemaServiceClient', () => {
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
       ];
-      client.innerApiCalls.listSchemas = stubSimpleCallWithCallback(
-        expectedResponse
-      );
+      client.innerApiCalls.listSchemas =
+        stubSimpleCallWithCallback(expectedResponse);
       const promise = new Promise((resolve, reject) => {
         client.listSchemas(
           request,
@@ -882,9 +875,8 @@ describe('v1.SchemaServiceClient', () => {
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
       ];
-      client.descriptors.page.listSchemas.createStream = stubPageStreamingCall(
-        expectedResponse
-      );
+      client.descriptors.page.listSchemas.createStream =
+        stubPageStreamingCall(expectedResponse);
       const stream = client.listSchemasStream(request);
       const promise = new Promise((resolve, reject) => {
         const responses: protos.google.pubsub.v1.Schema[] = [];
@@ -972,9 +964,8 @@ describe('v1.SchemaServiceClient', () => {
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
       ];
-      client.descriptors.page.listSchemas.asyncIterate = stubAsyncIterationCall(
-        expectedResponse
-      );
+      client.descriptors.page.listSchemas.asyncIterate =
+        stubAsyncIterationCall(expectedResponse);
       const responses: protos.google.pubsub.v1.ISchema[] = [];
       const iterable = client.listSchemasAsync(request);
       for await (const resource of iterable) {
