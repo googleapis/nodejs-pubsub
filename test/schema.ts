@@ -42,6 +42,7 @@ describe('Schema', () => {
       projectId: 'testProject',
     });
     sandbox.stub(pubsub, 'getClientConfig').callsFake(async () => {
+      pubsub.projectId = projectId;
       pubsub.name = projectName;
       return {};
     });
@@ -65,8 +66,13 @@ describe('Schema', () => {
     sandbox.reset();
   });
 
-  it('properly sets its name', () => {
-    assert.strictEqual(schema.name, schemaName);
+  it('properly sets its id', () => {
+    assert.strictEqual(schema.id, schemaId);
+  });
+
+  it('properly sets its name', async () => {
+    const name = await schema.getName();
+    assert.strictEqual(name, schemaName);
   });
 
   it('calls PubSub.createSchema() when create() is called', async () => {
@@ -91,7 +97,8 @@ describe('Schema', () => {
     sandbox
       .stub(schemaClient, 'getSchema')
       .callsFake(async (params, gaxOpts) => {
-        assert.strictEqual(params.name, schema.name);
+        const name = await schema.getName();
+        assert.strictEqual(params.name, name);
         assert.strictEqual(params.view, google.pubsub.v1.SchemaView.FULL);
         assert.ok(gaxOpts);
 
@@ -140,8 +147,9 @@ describe('Schema', () => {
     sandbox
       .stub(schemaClient, 'validateMessage')
       .callsFake(async (params, gaxOpts) => {
+        const name = await schema.getName();
         assert.strictEqual(params.parent, pubsub.name);
-        assert.strictEqual(params.name, schema.name);
+        assert.strictEqual(params.name, name);
         assert.deepStrictEqual(params.schema, ischema);
         assert.strictEqual(params.message, 'foo');
         assert.strictEqual(params.encoding, encoding);
@@ -152,10 +160,19 @@ describe('Schema', () => {
     await schema.validateMessage(ischema, 'foo', encoding, {});
     assert.ok(called);
   });
+
+  it('resolves a missing project ID', async () => {
+    pubsub = new PubSub();
+    schema = pubsub.schema(schemaId);
+    assert.strictEqual(pubsub.isIdResolved, false);
+    assert.strictEqual(schema.name_, undefined);
+    sandbox.stub(pubsub, 'getClientConfig').callsFake(async () => {
+      pubsub.projectId = projectId;
+      pubsub.name = projectName;
+      return {};
+    });
+    const name = await schema.getName();
+    assert.strictEqual(pubsub.isIdResolved, true);
+    assert.strictEqual(name, schemaName);
+  });
 });
-
-/*
-
-- pagination?
-
-*/

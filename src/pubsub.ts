@@ -291,6 +291,15 @@ export class PubSub {
     }
   }
 
+  /**
+   * Returns true if we have actually resolved the full project name.
+   *
+   * @returns {boolean} true if the name is resolved.
+   */
+  get isIdResolved(): boolean {
+    return this.projectId.indexOf(PROJECT_ID_PLACEHOLDER) < 0;
+  }
+
   close(): Promise<void>;
   close(callback: EmptyCallback): void;
   /**
@@ -1275,8 +1284,8 @@ export class PubSub {
    *
    * const schema = pubsub.schema('my-schema');
    */
-  schema(name: string): Schema {
-    return new Schema(this, name);
+  schema(idOrName: string): Schema {
+    return new Schema(this, idOrName);
   }
 
   /**

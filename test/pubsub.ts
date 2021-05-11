@@ -1621,7 +1621,7 @@ describe('PubSub', () => {
         pubsub.createSchema(schemaId, type, definition),
         def,
       ]);
-      assert.strictEqual(result[0].name, name);
+      assert.strictEqual(result[0].id, schemaId);
     });
 
     it('calls down to listSchemas correctly', async () => {
@@ -1648,24 +1648,28 @@ describe('PubSub', () => {
         ]) as any;
       });
 
-      const names = [] as string[];
+      const ids = [] as string[],
+        names = [] as string[];
       for await (const s of pubsub.listSchemas({})) {
-        names.push(s.name);
+        ids.push(s.id);
+        names.push(await s.getName());
       }
 
-      const expected = [
+      const expectedIds = ['foo1', 'foo2'];
+      const expectedNames = [
         Schema.formatName_(pubsub.projectId, 'foo1'),
         Schema.formatName_(pubsub.projectId, 'foo2'),
       ];
-      assert.deepStrictEqual(names, expected);
+      assert.deepStrictEqual(ids, expectedIds);
+      assert.deepStrictEqual(names, expectedNames);
     });
 
-    it('returns a proper Schema object from schema()', () => {
+    it('returns a proper Schema object from schema()', async () => {
       const schema = pubsub.schema('foo');
-      assert.strictEqual(
-        schema.name,
-        Schema.formatName_(pubsub.projectId, 'foo')
-      );
+      assert.strictEqual(schema.id, 'foo');
+
+      const name = await schema.getName();
+      assert.strictEqual(name, Schema.formatName_(pubsub.projectId, 'foo'));
     });
   });
 });

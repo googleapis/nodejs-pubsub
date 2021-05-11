@@ -46,23 +46,48 @@ import {PubSub} from './pubsub';
  * schema.get(SchemaViews.Basic).then(console.log);
  */
 export class Schema {
-  name: string;
+  id: string;
+  name_?: string;
   pubsub: PubSub;
 
-  constructor(pubsub: PubSub, name: string) {
+  constructor(pubsub: PubSub, idOrName: string) {
     /**
      * The parent {@link PubSub} instance of this topic instance.
      * @name Schema#pubsub
      * @type {PubSub}
      */
     this.pubsub = pubsub;
+
     /**
      * The fully qualified name of this schema. We will qualify this if
-     * it's only an ID passed (assuming the parent project).
-     * @name Schema#name
+     * it's only an ID passed (assuming the parent project). Unfortunately,
+     * we might not be able to do that if our pubsub's client hasn't been
+     * initialized. In that case, we just set the id and get the name later.
+     * @name Schema#id
      * @type {string}
      */
-    this.name = Schema.formatName_(pubsub.projectId, name);
+    this.id =
+      idOrName.indexOf('/') >= 0
+        ? idOrName.substr(idOrName.lastIndexOf('/') + 1)
+        : idOrName;
+  }
+
+  /**
+   * Return the fully qualified name of this schema.
+   *
+   * Note that we have to verify that we have a projectId before returning this,
+   * so we have to check that first.
+   *
+   * @return {Promise<string>} a Promise that resolves to the full schema name
+   */
+  async getName(): Promise<string> {
+    if (!this.name_) {
+      if (!this.pubsub.isIdResolved) {
+        await this.pubsub.getClientConfig();
+      }
+      this.name_ = Schema.formatName_(this.pubsub.projectId, this.id);
+    }
+    return this.name_;
   }
 
   /**
@@ -94,7 +119,8 @@ export class Schema {
     definition: string,
     gaxOpts?: CallOptions
   ): Promise<void> {
-    await this.pubsub.createSchema(this.name, type, definition, gaxOpts);
+    const name = await this.getName();
+    await this.pubsub.createSchema(name, type, definition, gaxOpts);
   }
 
   /**
@@ -108,9 +134,10 @@ export class Schema {
    */
   async get(gaxOpts?: CallOptions): Promise<ISchema> {
     const client = await this.pubsub.getSchemaClient_();
+    const name = await this.getName();
     const [schema] = await client.getSchema(
       {
-        name: this.name,
+        name,
         view: google.pubsub.v1.SchemaView.FULL,
       },
       gaxOpts
@@ -130,9 +157,10 @@ export class Schema {
    */
   async delete(gaxOpts?: CallOptions): Promise<void> {
     const client = await this.pubsub.getSchemaClient_();
+    const name = await this.getName();
     await client.deleteSchema(
       {
-        name: this.name,
+        name,
       },
       gaxOpts
     );
@@ -183,10 +211,11 @@ export class Schema {
     gaxOpts?: CallOptions
   ): Promise<void> {
     const client = await this.pubsub.getSchemaClient_();
+    const name = await this.getName();
     await client.validateMessage(
       {
         parent: this.pubsub.name,
-        name: this.name,
+        name,
         schema,
         message,
         encoding,
