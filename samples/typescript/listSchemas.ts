@@ -20,40 +20,32 @@
  * at https://cloud.google.com/pubsub/docs.
  */
 
-// This is a generated sample. Please see typescript/README.md for more info.
-
-'use strict';
-
 // sample-metadata:
-//   title: Delete a previously created schema
-//   description: Deletes a schema which was previously created in the project.
-//   usage: node deleteSchema.js <schema-name>
+//   title: List schemas on a project
+//   description: Gets a list of schemas which were previously created in the project.
+//   usage: node listSchemas.js
 
-// [START pubsub_delete_schema]
-/**
- * TODO(developer): Uncomment this variable before running the sample.
- */
-// const schemaName = 'YOUR_SCHEMA_NAME';
+// [START pubsub_list_schemas]
 
 // Imports the Google Cloud client library
-const {PubSub} = require('@google-cloud/pubsub');
+import {PubSub} from '@google-cloud/pubsub';
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function deleteSchema(schemaName) {
-    const schema = pubSubClient.schema(schemaName);
-    const name = await schema.getName();
-    await schema.delete();
-    console.log(`Schema ${name} deleted.`);
+async function listSchemas() {
+  for await (const s of pubSubClient.listSchemas()) {
+    console.log(await s.getName());
+  }
+  console.log('Listed schemas.');
 }
-// [END pubsub_delete_schema]
+// [END pubsub_list_schemas]
 
-function main(schemaName = 'YOUR_SCHEMA_NAME') {
-    deleteSchema(schemaName).catch(err => {
-        console.error(err.message);
-        process.exitCode = 1;
-    });
+function main() {
+  listSchemas().catch(err => {
+    console.error(err.message);
+    process.exitCode = 1;
+  });
 }
 
-main(...process.argv.slice(2));
+main();

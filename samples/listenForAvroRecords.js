@@ -20,6 +20,8 @@
  * at https://cloud.google.com/pubsub/docs.
  */
 
+// This is a generated sample. Please see typescript/README.md for more info.
+
 'use strict';
 
 // sample-metadata:
@@ -27,78 +29,80 @@
 //   description: Listens for records in Avro encoding from a subscription.
 //   usage: node listenForAvroRecords.js <subscription-name> [timeout-in-seconds]
 
-function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
-  timeout = Number(timeout);
+// [START pubsub_subscribe_avro_records]
+/**
+ * TODO(developer): Uncomment these variables before running the sample.
+ */
+// const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
+// const timeout = 60;
 
-  // [START pubsub_subscribe_avro_records]
-  /**
-   * TODO(developer): Uncomment these variables before running the sample.
-   */
-  // const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
-  // const timeout = 60;
+// Imports the Google Cloud client library
+const {PubSub, Schema, Encodings} = require('@google-cloud/pubsub');
 
-  // Imports the Google Cloud client library
-  const {PubSub, Schema, Encodings} = require('@google-cloud/pubsub');
+// Node FS library, to load definitions
+const fs = require('fs');
 
-  // Node FS library, to load definitions
-  const fs = require('fs');
+// And the Apache Avro library
+const avro = require('avro-js');
 
-  // And the Apache Avro library
-  const avro = require('avro-js');
+// Creates a client; cache this for further use
+const pubSubClient = new PubSub();
 
-  // Creates a client; cache this for further use
-  const pubSubClient = new PubSub();
-
-  function listenForAvroRecords() {
+function listenForAvroRecords(subscriptionName, timeout) {
     // References an existing subscription
     const subscription = pubSubClient.subscription(subscriptionName);
 
     // Make an encoder using the official avro-js library.
     const definition = fs
-      .readFileSync('system-test/fixtures/provinces.avsc')
-      .toString();
+        .readFileSync('system-test/fixtures/provinces.avsc')
+        .toString();
     const type = avro.parse(definition);
 
     // Create an event handler to handle messages
     let messageCount = 0;
-    const messageHandler = async message => {
-      // "Ack" (acknowledge receipt of) the message
-      message.ack();
+    const messageHandler = async (message) => {
+        // "Ack" (acknowledge receipt of) the message
+        message.ack();
 
-      // Get the schema metadata from the message.
-      const schemaMetadata = Schema.metadataFromMessage(message.attributes);
+        // Get the schema metadata from the message.
+        const schemaMetadata = Schema.metadataFromMessage(message.attributes);
 
-      let result;
-      switch (schemaMetadata.encoding) {
-        case Encodings.Binary:
-          result = type.fromBuffer(message.data);
-          break;
-        case Encodings.Json:
-          result = type.fromString(message.data.toString());
-          break;
-      }
+        let result;
+        switch (schemaMetadata.encoding) {
+            case Encodings.Binary:
+                result = type.fromBuffer(message.data);
+                break;
+            case Encodings.Json:
+                result = type.fromString(message.data.toString());
+                break;
+        }
 
-      console.log(`Received message ${message.id}:`);
-      console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
-      console.log(`\tAttributes: ${message.attributes}`);
-      messageCount += 1;
+        console.log(`Received message ${message.id}:`);
+        console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
+        console.log(`\tAttributes: ${message.attributes}`);
+        messageCount += 1;
     };
 
     // Listen for new messages until timeout is hit
     subscription.on('message', messageHandler);
 
     setTimeout(() => {
-      subscription.removeListener('message', messageHandler);
-      console.log(`${messageCount} message(s) received.`);
+        subscription.removeListener('message', messageHandler);
+        console.log(`${messageCount} message(s) received.`);
     }, timeout * 1000);
-  }
+}
+// [END pubsub_subscribe_avro_records]
 
-  listenForAvroRecords();
-  // [END pubsub_subscribe_avro_records]
+function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
+    timeout = Number(timeout);
+
+    try {
+        listenForAvroRecords(subscriptionName, timeout);
+    }
+    catch (err) {
+        console.error(err.message);
+        process.exitCode = 1;
+    }
 }
 
-process.on('unhandledRejection', err => {
-  console.error(err.message);
-  process.exitCode = 1;
-});
 main(...process.argv.slice(2));

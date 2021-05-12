@@ -20,10 +20,6 @@
  * at https://cloud.google.com/pubsub/docs.
  */
 
-// This is a generated sample. Please see typescript/README.md for more info.
-
-'use strict';
-
 // sample-metadata:
 //   title: Create Topic With Schema
 //   description: Creates a new topic, with a schema definition.
@@ -38,34 +34,42 @@
 // const encodingType = 'BINARY';
 
 // Imports the Google Cloud client library
-const {PubSub} = require('@google-cloud/pubsub');
+import {PubSub} from '@google-cloud/pubsub';
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function createTopicWithSchema(topicName, schemaName, encodingType) {
-    // Get the fully qualified schema name.
-    const schema = pubSubClient.schema(schemaName);
-    const fullName = await schema.getName();
+async function createTopicWithSchema(
+  topicName: string,
+  schemaName: string,
+  encodingType: 'BINARY' | 'JSON'
+) {
+  // Get the fully qualified schema name.
+  const schema = pubSubClient.schema(schemaName);
+  const fullName = await schema.getName();
 
-    // Creates a new topic with a schema. Note that you might also
-    // pass Encodings.Json or Encodings.Binary here.
-    await pubSubClient.createTopic({
-        name: topicName,
-        schemaSettings: {
-            schema: fullName,
-            encoding: encodingType,
-        },
-    });
-    console.log(`Topic ${topicName} created with schema ${fullName}.`);
+  // Creates a new topic with a schema. Note that you might also
+  // pass Encodings.Json or Encodings.Binary here.
+  await pubSubClient.createTopic({
+    name: topicName,
+    schemaSettings: {
+      schema: fullName,
+      encoding: encodingType,
+    },
+  });
+  console.log(`Topic ${topicName} created with schema ${fullName}.`);
 }
 // [END pubsub_create_topic_with_schema]
 
-function main(topicName = 'YOUR_TOPIC_NAME', schemaName = 'YOUR_SCHEMA_NAME', encodingType = 'BINARY') {
-    createTopicWithSchema(topicName, schemaName, encodingType).catch(err => {
-        console.error(err.message);
-        process.exitCode = 1;
-    });
+function main(
+  topicName = 'YOUR_TOPIC_NAME',
+  schemaName = 'YOUR_SCHEMA_NAME',
+  encodingType: 'BINARY' | 'JSON' = 'BINARY'
+) {
+  createTopicWithSchema(topicName, schemaName, encodingType).catch(err => {
+    console.error(err.message);
+    process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));

@@ -20,6 +20,8 @@
  * at https://cloud.google.com/pubsub/docs.
  */
 
+// This is a generated sample. Please see typescript/README.md for more info.
+
 'use strict';
 
 // sample-metadata:
@@ -27,28 +29,27 @@
 //   description: Gets a list of schemas which were previously created in the project.
 //   usage: node listSchemas.js
 
-function main() {
-  // [START pubsub_list_schemas]
+// [START pubsub_list_schemas]
 
-  // Imports the Google Cloud client library
-  const {PubSub} = require('@google-cloud/pubsub');
+// Imports the Google Cloud client library
+const {PubSub} = require('@google-cloud/pubsub');
 
-  // Creates a client; cache this for further use
-  const pubSubClient = new PubSub();
+// Creates a client; cache this for further use
+const pubSubClient = new PubSub();
 
-  async function listSchemas() {
+async function listSchemas() {
     for await (const s of pubSubClient.listSchemas()) {
-      console.log(await s.getName());
+        console.log(await s.getName());
     }
     console.log('Listed schemas.');
-  }
+}
+// [END pubsub_list_schemas]
 
-  listSchemas();
-  // [END pubsub_list_schemas]
+function main() {
+    listSchemas().catch(err => {
+        console.error(err.message);
+        process.exitCode = 1;
+    });
 }
 
-process.on('unhandledRejection', err => {
-  console.error(err.message);
-  process.exitCode = 1;
-});
-main(...process.argv.slice(2));
+main();

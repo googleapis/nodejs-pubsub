@@ -20,6 +20,8 @@
  * at https://cloud.google.com/pubsub/docs.
  */
 
+// This is a generated sample. Please see typescript/README.md for more info.
+
 'use strict';
 
 // sample-metadata:
@@ -27,61 +29,69 @@
 //   description: Publishes a record in Avro to a topic with a schema.
 //   usage: node publishAvroRecords.js <topic-name>
 
-function main(topicName = 'YOUR_TOPIC_NAME') {
-  // [START pubsub_publish_avro_records]
-  /**
-   * TODO(developer): Uncomment this variable before running the sample.
-   */
-  // const topicName = 'YOUR_TOPIC_NAME';
+// [START pubsub_publish_avro_records]
+/**
+ * TODO(developer): Uncomment this variable before running the sample.
+ */
+// const topicName = 'YOUR_TOPIC_NAME';
 
-  // Imports the Google Cloud client library
-  const {PubSub, Encodings} = require('@google-cloud/pubsub');
+// Imports the Google Cloud client library
+const {PubSub, Encodings} = require('@google-cloud/pubsub');
 
-  // And the Apache Avro library
-  const avro = require('avro-js');
-  const fs = require('fs');
+// And the Apache Avro library
+const avro = require('avro-js');
+const fs = require('fs');
 
-  // Creates a client; cache this for further use
-  const pubSubClient = new PubSub();
+// Creates a client; cache this for further use
+const pubSubClient = new PubSub();
 
-  async function publishAvroRecords() {
+async function publishAvroRecords(topicName) {
     // Get the topic metadata to learn about its schema encoding.
     const topic = pubSubClient.topic(topicName);
     const [topicMetadata] = await topic.getMetadata();
     const topicSchemaMetadata = topicMetadata.schemaSettings;
+
+    if (!topicSchemaMetadata) {
+        console.log(`Topic ${topicName} doesn't seem to have a schema.`);
+        return;
+    }
     const schemaEncoding = topicSchemaMetadata.encoding;
 
     // Make an encoder using the official avro-js library.
     const definition = fs
-      .readFileSync('system-test/fixtures/provinces.avsc')
-      .toString();
+        .readFileSync('system-test/fixtures/provinces.avsc')
+        .toString();
     const type = avro.parse(definition);
 
     // Encode the message.
     const province = {
-      name: 'Ontario',
-      post_abbr: 'ON',
+        name: 'Ontario',
+        post_abbr: 'ON',
     };
     let dataBuffer;
     switch (schemaEncoding) {
-      case Encodings.Binary:
-        dataBuffer = type.toBuffer(province);
-        break;
-      case Encodings.Json:
-        dataBuffer = Buffer.from(type.toString(province));
-        break;
+        case Encodings.Binary:
+            dataBuffer = type.toBuffer(province);
+            break;
+        case Encodings.Json:
+            dataBuffer = Buffer.from(type.toString(province));
+            break;
+    }
+    if (!dataBuffer) {
+        console.log(`Invalid encoding ${schemaEncoding} on the topic.`);
+        return;
     }
 
     const messageId = await topic.publish(dataBuffer);
     console.log(`Avro record ${messageId} published.`);
-  }
+}
+// [END pubsub_publish_avro_records]
 
-  publishAvroRecords().catch(console.error);
-  // [END pubsub_publish_avro_records]
+function main(topicName = 'YOUR_TOPIC_NAME') {
+    publishAvroRecords(topicName).catch(err => {
+        console.error(err.message);
+        process.exitCode = 1;
+    });
 }
 
-process.on('unhandledRejection', err => {
-  console.error(err.message);
-  process.exitCode = 1;
-});
 main(...process.argv.slice(2));

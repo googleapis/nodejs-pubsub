@@ -20,40 +20,36 @@
  * at https://cloud.google.com/pubsub/docs.
  */
 
-// This is a generated sample. Please see typescript/README.md for more info.
-
-'use strict';
-
 // sample-metadata:
-//   title: Delete a previously created schema
-//   description: Deletes a schema which was previously created in the project.
-//   usage: node deleteSchema.js <schema-name>
+//   title: Get a previously created schema
+//   description: Gets information about a schema which was previously created in the project.
+//   usage: node getSchema.js <schema-name>
 
-// [START pubsub_delete_schema]
+// [START pubsub_get_schema]
 /**
  * TODO(developer): Uncomment this variable before running the sample.
  */
 // const schemaName = 'YOUR_SCHEMA_NAME';
 
 // Imports the Google Cloud client library
-const {PubSub} = require('@google-cloud/pubsub');
+import {PubSub} from '@google-cloud/pubsub';
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function deleteSchema(schemaName) {
-    const schema = pubSubClient.schema(schemaName);
-    const name = await schema.getName();
-    await schema.delete();
-    console.log(`Schema ${name} deleted.`);
+async function getSchema(schemaName: string) {
+  const schema = pubSubClient.schema(schemaName);
+  const info = await schema.get();
+  const fullName = await schema.getName();
+  console.log(`Schema ${fullName} info: ${JSON.stringify(info, null, 4)}.`);
 }
-// [END pubsub_delete_schema]
+// [END pubsub_get_schema]
 
 function main(schemaName = 'YOUR_SCHEMA_NAME') {
-    deleteSchema(schemaName).catch(err => {
-        console.error(err.message);
-        process.exitCode = 1;
-    });
+  getSchema(schemaName).catch(err => {
+    console.error(err.message);
+    process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));
