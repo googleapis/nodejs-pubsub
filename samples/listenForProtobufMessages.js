@@ -20,6 +20,8 @@
  * at https://cloud.google.com/pubsub/docs.
  */
 
+// This is a generated sample. Please see typescript/README.md for more info.
+
 'use strict';
 
 // sample-metadata:
@@ -27,26 +29,23 @@
 //   description: Listens for messages in protobuf encoding from a subscription.
 //   usage: node listenForProtobufMessages.js <proto-filename> <subscription-name> [timeout-in-seconds]
 
-function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
-  timeout = Number(timeout);
+// [START pubsub_subscribe_proto_messages]
+/**
+ * TODO(developer): Uncomment these variables before running the sample.
+ */
+// const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
+// const timeout = 60;
 
-  // [START pubsub_subscribe_proto_messages]
-  /**
-   * TODO(developer): Uncomment these variables before running the sample.
-   */
-  // const subscriptionName = 'YOUR_SUBSCRIPTION_NAME';
-  // const timeout = 60;
+// Imports the Google Cloud client library
+const {PubSub, Schema, Encodings} = require('@google-cloud/pubsub');
 
-  // Imports the Google Cloud client library
-  const {PubSub, Schema, Encodings} = require('@google-cloud/pubsub');
+// And the protobufjs library
+const protobuf = require('protobufjs');
 
-  // And the protobufjs library
-  const protobuf = require('protobufjs');
+// Creates a client; cache this for further use
+const pubSubClient = new PubSub();
 
-  // Creates a client; cache this for further use
-  const pubSubClient = new PubSub();
-
-  function listenForProtobufMessages() {
+async function listenForProtobufMessages(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
     // References an existing subscription
     const subscription = pubSubClient.subscription(subscriptionName);
 
@@ -59,49 +58,49 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
 
     // Create an event handler to handle messages
     let messageCount = 0;
-    const messageHandler = async message => {
-      // "Ack" (acknowledge receipt of) the message
-      message.ack();
+    const messageHandler = async (message) => {
+        // "Ack" (acknowledge receipt of) the message
+        message.ack();
 
-      // Get the schema metadata from the message.
-      const schemaMetadata = Schema.metadataFromMessage(message.attributes);
+        // Get the schema metadata from the message.
+        const schemaMetadata = Schema.metadataFromMessage(message.attributes);
 
-      let result;
-      switch (schemaMetadata.encoding) {
-        case Encodings.Binary:
-          result = Province.decode(message.data);
-          break;
-        case Encodings.Json:
-          result = JSON.parse(message.data.toString());
-          // What's coming in here is not properly protobuf data, but you could
-          // verify it if you like:
-          // assert.strictEqual(null, Province.verify(result));
-          break;
-      }
+        let result;
+        switch (schemaMetadata.encoding) {
+            case Encodings.Binary:
+                result = Province.decode(message.data);
+                break;
+            case Encodings.Json:
+                result = JSON.parse(message.data.toString());
+                // What's coming in here is not properly protobuf data, but you could
+                // verify it if you like:
+                // assert.strictEqual(null, Province.verify(result));
+                break;
+        }
 
-      console.log(`Received message ${message.id}:`);
-      console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
-      console.log(
-        `\tAttributes: ${JSON.stringify(message.attributes, null, 4)}`
-      );
-      messageCount += 1;
+        console.log(`Received message ${message.id}:`);
+        console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
+        console.log(`\tAttributes: ${JSON.stringify(message.attributes, null, 4)}`);
+        messageCount += 1;
     };
 
     // Listen for new messages until timeout is hit
     subscription.on('message', messageHandler);
 
     setTimeout(() => {
-      subscription.removeListener('message', messageHandler);
-      console.log(`${messageCount} message(s) received.`);
+        subscription.removeListener('message', messageHandler);
+        console.log(`${messageCount} message(s) received.`);
     }, timeout * 1000);
-  }
+}
+// [END pubsub_subscribe_proto_messages]
 
-  listenForProtobufMessages();
-  // [END pubsub_subscribe_proto_messages]
+function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
+    timeout = Number(timeout);
+
+    listenForProtobufMessages(subscriptionName, timeout).catch(err => {
+        console.error(err.message);
+        process.exitCode = 1;
+    });
 }
 
-process.on('unhandledRejection', err => {
-  console.error(err.message);
-  process.exitCode = 1;
-});
 main(...process.argv.slice(2));

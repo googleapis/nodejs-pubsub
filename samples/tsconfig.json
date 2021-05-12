@@ -7,10 +7,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "module": "es2020",
+    "sourceMap": false,
+    "moduleResolution": "node"
   },
   "include": [
     "./*.ts",
-    "system-test/*.ts"
+    "system-test/*.ts",
+    "typescript/build/*.ts"
   ]
 }
