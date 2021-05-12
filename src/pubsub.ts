@@ -1492,12 +1492,12 @@ paginator.extend(PubSub, ['getSnapshots', 'getSubscriptions', 'getTopics']);
  * that a callback is omitted. Future methods will not allow for a callback.
  * (Use .then() on the returned Promise instead.)
  */
-promisifySome(PubSub, [
-  PubSub.prototype.close,
-  PubSub.prototype.createSubscription,
-  PubSub.prototype.createTopic,
-  PubSub.prototype.detachSubscription,
-  PubSub.prototype.getSnapshots,
-  PubSub.prototype.getSubscriptions,
-  PubSub.prototype.getTopics,
+promisifySome(PubSub.prototype, [
+  'close',
+  'createSubscription',
+  'createTopic',
+  'detachSubscription',
+  'getSnapshots',
+  'getSubscriptions',
+  'getTopics',
 ]);

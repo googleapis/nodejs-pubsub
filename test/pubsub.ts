@@ -52,20 +52,21 @@ function Subscription(
 
 let promisified = false;
 const fakeUtil = Object.assign({}, util, {
-  promisifySome(class_: Function, methods: Function[]): void {
+  promisifySome(class_: Function, methods: string[]): void {
     if (class_.name === 'PubSub') {
       promisified = true;
       assert.deepStrictEqual(methods, [
-        class_.prototype.close,
-        class_.prototype.createSubscription,
-        class_.prototype.createTopic,
-        class_.prototype.detachSubscription,
-        class_.prototype.getSnapshots,
-        class_.prototype.getSubscriptions,
-        class_.prototype.getTopics,
+        'close',
+        'createSubscription',
+        'createTopic',
+        'detachSubscription',
+        'getSnapshots',
+        'getSubscriptions',
+        'getTopics',
       ]);
     }
-    util.promisifySome(class_, methods);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    util.promisifySome(class_, methods as any);
   },
 });
 
