@@ -42,8 +42,8 @@ import * as protobuf from 'protobufjs';
 const pubSubClient = new PubSub();
 
 async function listenForProtobufMessages(
-  subscriptionName = 'YOUR_SUBSCRIPTION_NAME',
-  timeout = 60
+  subscriptionName: string,
+  timeout: number
 ) {
   // References an existing subscription
   const subscription = pubSubClient.subscription(subscriptionName);

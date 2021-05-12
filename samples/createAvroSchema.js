@@ -20,6 +20,8 @@
  * at https://cloud.google.com/pubsub/docs.
  */
 
+// This is a generated sample. Please see typescript/README.md for more info.
+
 'use strict';
 
 // sample-metadata:
@@ -27,42 +29,34 @@
 //   description: Creates a new schema definition on a project, using Avro
 //   usage: node createAvroSchema.js <schema-name> <avsc-filename>
 
-function main(
-  schemaName = 'YOUR_SCHEMA_NAME',
-  avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json'
-) {
-  // [START pubsub_create_avro_schema]
-  /**
-   * TODO(developer): Uncomment these variables before running the sample.
-   */
-  // const schemaName = 'YOUR_SCHEMA_NAME';
-  // const avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json';
+// [START pubsub_create_avro_schema]
+/**
+ * TODO(developer): Uncomment these variables before running the sample.
+ */
+// const schemaName = 'YOUR_SCHEMA_NAME';
+// const avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json';
 
-  // Imports the Google Cloud client library
-  const {PubSub, SchemaTypes} = require('@google-cloud/pubsub');
+// Imports the Google Cloud client library
+const {PubSub, SchemaTypes} = require('@google-cloud/pubsub');
+const fs = require('fs');
 
-  const fs = require('fs');
+// Creates a client; cache this for further use
+const pubSubClient = new PubSub();
 
-  // Creates a client; cache this for further use
-  const pubSubClient = new PubSub();
-
-  async function createAvroSchema() {
+async function createAvroSchema(schemaName, avscFile) {
     const definition = fs.readFileSync(avscFile).toString();
-    const schema = await pubSubClient.createSchema(
-      schemaName,
-      SchemaTypes.Avro,
-      definition
-    );
+    const schema = await pubSubClient.createSchema(schemaName, SchemaTypes.Avro, definition);
+
     const name = await schema.getName();
     console.log(`Schema ${name} created.`);
-  }
+}
+// [END pubsub_create_avro_schema]
 
-  createAvroSchema();
-  // [END pubsub_create_avro_schema]
+function main(schemaName = 'YOUR_SCHEMA_NAME', avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json') {
+    createAvroSchema(schemaName, avscFile).catch(err => {
+        console.error(err.message);
+        process.exitCode = 1;
+    });
 }
 
-process.on('unhandledRejection', err => {
-  console.error(err.message);
-  process.exitCode = 1;
-});
 main(...process.argv.slice(2));

@@ -45,7 +45,7 @@ const protobuf = require('protobufjs');
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function listenForProtobufMessages(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
+async function listenForProtobufMessages(subscriptionName, timeout) {
     // References an existing subscription
     const subscription = pubSubClient.subscription(subscriptionName);
 

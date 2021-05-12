@@ -20,10 +20,6 @@
  * at https://cloud.google.com/pubsub/docs.
  */
 
-// This is a generated sample. Please see typescript/README.md for more info.
-
-'use strict';
-
 // sample-metadata:
 //   title: Create a Proto based Schema
 //   description: Creates a new schema definition on a project, using Protos
@@ -37,26 +33,34 @@
 // const protoFile = 'path/to/a/proto/schema/file/(.proto)/formatted/in/protcol/buffers';
 
 // Imports the Google Cloud client library
-const {PubSub, SchemaTypes} = require('@google-cloud/pubsub');
-const fs = require('fs');
+import {PubSub, SchemaTypes} from '@google-cloud/pubsub';
+
+import * as fs from 'fs';
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function createProtoSchema(schemaName, protoFile) {
-    const definition = fs.readFileSync(protoFile).toString();
-    const schema = await pubSubClient.createSchema(schemaName, SchemaTypes.ProtocolBuffer, definition);
+async function createProtoSchema(schemaName: string, protoFile: string) {
+  const definition: string = fs.readFileSync(protoFile).toString();
+  const schema = await pubSubClient.createSchema(
+    schemaName,
+    SchemaTypes.ProtocolBuffer,
+    definition
+  );
 
-    const fullName = await schema.getName();
-    console.log(`Schema ${fullName} created.`);
+  const fullName: string = await schema.getName();
+  console.log(`Schema ${fullName} created.`);
 }
 // [END pubsub_create_proto_schema]
 
-function main(schemaName = 'YOUR_SCHEMA_NAME', protoFile = 'path/to/a/proto/schema/file/(.proto)/formatted/in/protcol/buffers') {
-    createProtoSchema(schemaName, protoFile).catch(err => {
-        console.error(err.message);
-        process.exitCode = 1;
-    });
+function main(
+  schemaName = 'YOUR_SCHEMA_NAME',
+  protoFile = 'path/to/a/proto/schema/file/(.proto)/formatted/in/protcol/buffers'
+) {
+  createProtoSchema(schemaName, protoFile).catch(err => {
+    console.error(err.message);
+    process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));
