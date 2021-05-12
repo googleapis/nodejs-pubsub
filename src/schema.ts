@@ -126,7 +126,7 @@ export class Schema {
   /**
    * Get full information about the schema from the service.
    *
-   * @see [Schemas: getSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/getSchema}
+   * @see [Schemas: getSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/get}
    *
    * @param {object} [options] Request configuration options, outlined
    *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
@@ -149,7 +149,7 @@ export class Schema {
   /**
    * Delete the schema from the project.
    *
-   * @see [Schemas: deleteSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/deleteSchema}
+   * @see [Schemas: deleteSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/delete}
    *
    * @param {object} [options] Request configuration options, outlined
    *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
@@ -169,7 +169,7 @@ export class Schema {
   /**
    * Validate a schema definition.
    *
-   * @see [Schemas: validateSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/validateSchema}
+   * @see [Schemas: validateSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/validate}
    *
    * @throws {Error} if the validation fails.
    *
