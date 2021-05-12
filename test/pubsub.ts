@@ -1636,6 +1636,7 @@ describe('PubSub', () => {
           {
             name: 'foo2',
           },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ]) as any;
       });
 

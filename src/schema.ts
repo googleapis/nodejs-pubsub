@@ -252,9 +252,9 @@ export class Schema {
   static metadataFromMessage(attributes: Attributes): SchemaMessageMetadata {
     return {
       name: attributes['googclient_schemaname'],
-      encoding: (attributes[
+      encoding: attributes[
         'googclient_schemaencoding'
-      ] as unknown) as keyof typeof google.pubsub.v1.Encoding,
+      ] as unknown as keyof typeof google.pubsub.v1.Encoding,
     };
   }
 }
