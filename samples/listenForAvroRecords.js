@@ -49,60 +49,60 @@ const avro = require('avro-js');
 const pubSubClient = new PubSub();
 
 function listenForAvroRecords(subscriptionName, timeout) {
-    // References an existing subscription
-    const subscription = pubSubClient.subscription(subscriptionName);
+  // References an existing subscription
+  const subscription = pubSubClient.subscription(subscriptionName);
 
-    // Make an encoder using the official avro-js library.
-    const definition = fs
-        .readFileSync('system-test/fixtures/provinces.avsc')
-        .toString();
-    const type = avro.parse(definition);
+  // Make an encoder using the official avro-js library.
+  const definition = fs
+      .readFileSync('system-test/fixtures/provinces.avsc')
+      .toString();
+  const type = avro.parse(definition);
 
-    // Create an event handler to handle messages
-    let messageCount = 0;
-    const messageHandler = async (message) => {
-        // "Ack" (acknowledge receipt of) the message
-        message.ack();
+  // Create an event handler to handle messages
+  let messageCount = 0;
+  const messageHandler = async (message) => {
+      // "Ack" (acknowledge receipt of) the message
+      message.ack();
 
-        // Get the schema metadata from the message.
-        const schemaMetadata = Schema.metadataFromMessage(message.attributes);
+      // Get the schema metadata from the message.
+      const schemaMetadata = Schema.metadataFromMessage(message.attributes);
 
-        let result;
-        switch (schemaMetadata.encoding) {
-            case Encodings.Binary:
-                result = type.fromBuffer(message.data);
-                break;
-            case Encodings.Json:
-                result = type.fromString(message.data.toString());
-                break;
-        }
+      let result;
+      switch (schemaMetadata.encoding) {
+          case Encodings.Binary:
+              result = type.fromBuffer(message.data);
+              break;
+          case Encodings.Json:
+              result = type.fromString(message.data.toString());
+              break;
+      }
 
-        console.log(`Received message ${message.id}:`);
-        console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
-        console.log(`\tAttributes: ${message.attributes}`);
-        messageCount += 1;
-    };
+      console.log(`Received message ${message.id}:`);
+      console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
+      console.log(`\tAttributes: ${message.attributes}`);
+      messageCount += 1;
+  };
 
-    // Listen for new messages until timeout is hit
-    subscription.on('message', messageHandler);
+  // Listen for new messages until timeout is hit
+  subscription.on('message', messageHandler);
 
-    setTimeout(() => {
-        subscription.removeListener('message', messageHandler);
-        console.log(`${messageCount} message(s) received.`);
-    }, timeout * 1000);
+  setTimeout(() => {
+      subscription.removeListener('message', messageHandler);
+      console.log(`${messageCount} message(s) received.`);
+  }, timeout * 1000);
 }
 // [END pubsub_subscribe_avro_records]
 
 function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
-    timeout = Number(timeout);
+  timeout = Number(timeout);
 
-    try {
-        listenForAvroRecords(subscriptionName, timeout);
-    }
-    catch (err) {
-        console.error(err.message);
-        process.exitCode = 1;
-    }
+  try {
+      listenForAvroRecords(subscriptionName, timeout);
+  }
+  catch (err) {
+      console.error(err.message);
+      process.exitCode = 1;
+  }
 }
 
 main(...process.argv.slice(2));

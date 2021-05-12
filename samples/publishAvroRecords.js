@@ -46,52 +46,52 @@ const fs = require('fs');
 const pubSubClient = new PubSub();
 
 async function publishAvroRecords(topicName) {
-    // Get the topic metadata to learn about its schema encoding.
-    const topic = pubSubClient.topic(topicName);
-    const [topicMetadata] = await topic.getMetadata();
-    const topicSchemaMetadata = topicMetadata.schemaSettings;
+  // Get the topic metadata to learn about its schema encoding.
+  const topic = pubSubClient.topic(topicName);
+  const [topicMetadata] = await topic.getMetadata();
+  const topicSchemaMetadata = topicMetadata.schemaSettings;
 
-    if (!topicSchemaMetadata) {
-        console.log(`Topic ${topicName} doesn't seem to have a schema.`);
-        return;
-    }
-    const schemaEncoding = topicSchemaMetadata.encoding;
+  if (!topicSchemaMetadata) {
+      console.log(`Topic ${topicName} doesn't seem to have a schema.`);
+      return;
+  }
+  const schemaEncoding = topicSchemaMetadata.encoding;
 
-    // Make an encoder using the official avro-js library.
-    const definition = fs
-        .readFileSync('system-test/fixtures/provinces.avsc')
-        .toString();
-    const type = avro.parse(definition);
+  // Make an encoder using the official avro-js library.
+  const definition = fs
+      .readFileSync('system-test/fixtures/provinces.avsc')
+      .toString();
+  const type = avro.parse(definition);
 
-    // Encode the message.
-    const province = {
-        name: 'Ontario',
-        post_abbr: 'ON',
-    };
-    let dataBuffer;
-    switch (schemaEncoding) {
-        case Encodings.Binary:
-            dataBuffer = type.toBuffer(province);
-            break;
-        case Encodings.Json:
-            dataBuffer = Buffer.from(type.toString(province));
-            break;
-    }
-    if (!dataBuffer) {
-        console.log(`Invalid encoding ${schemaEncoding} on the topic.`);
-        return;
-    }
+  // Encode the message.
+  const province = {
+      name: 'Ontario',
+      post_abbr: 'ON',
+  };
+  let dataBuffer;
+  switch (schemaEncoding) {
+      case Encodings.Binary:
+          dataBuffer = type.toBuffer(province);
+          break;
+      case Encodings.Json:
+          dataBuffer = Buffer.from(type.toString(province));
+          break;
+  }
+  if (!dataBuffer) {
+      console.log(`Invalid encoding ${schemaEncoding} on the topic.`);
+      return;
+  }
 
-    const messageId = await topic.publish(dataBuffer);
-    console.log(`Avro record ${messageId} published.`);
+  const messageId = await topic.publish(dataBuffer);
+  console.log(`Avro record ${messageId} published.`);
 }
 // [END pubsub_publish_avro_records]
 
 function main(topicName = 'YOUR_TOPIC_NAME') {
-    publishAvroRecords(topicName).catch(err => {
-        console.error(err.message);
-        process.exitCode = 1;
-    });
+  publishAvroRecords(topicName).catch(err => {
+      console.error(err.message);
+      process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));

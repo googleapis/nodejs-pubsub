@@ -42,18 +42,18 @@ const {PubSub} = require('@google-cloud/pubsub');
 const pubSubClient = new PubSub();
 
 async function deleteSchema(schemaName) {
-    const schema = pubSubClient.schema(schemaName);
-    const name = await schema.getName();
-    await schema.delete();
-    console.log(`Schema ${name} deleted.`);
+  const schema = pubSubClient.schema(schemaName);
+  const name = await schema.getName();
+  await schema.delete();
+  console.log(`Schema ${name} deleted.`);
 }
 // [END pubsub_delete_schema]
 
 function main(schemaName = 'YOUR_SCHEMA_NAME') {
-    deleteSchema(schemaName).catch(err => {
-        console.error(err.message);
-        process.exitCode = 1;
-    });
+  deleteSchema(schemaName).catch(err => {
+      console.error(err.message);
+      process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));

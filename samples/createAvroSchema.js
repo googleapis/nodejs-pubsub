@@ -44,19 +44,19 @@ const fs = require('fs');
 const pubSubClient = new PubSub();
 
 async function createAvroSchema(schemaName, avscFile) {
-    const definition = fs.readFileSync(avscFile).toString();
-    const schema = await pubSubClient.createSchema(schemaName, SchemaTypes.Avro, definition);
+  const definition = fs.readFileSync(avscFile).toString();
+  const schema = await pubSubClient.createSchema(schemaName, SchemaTypes.Avro, definition);
 
-    const name = await schema.getName();
-    console.log(`Schema ${name} created.`);
+  const name = await schema.getName();
+  console.log(`Schema ${name} created.`);
 }
 // [END pubsub_create_avro_schema]
 
 function main(schemaName = 'YOUR_SCHEMA_NAME', avscFile = 'path/to/an/avro/schema/file/(.avsc)/formatted/in/json') {
-    createAvroSchema(schemaName, avscFile).catch(err => {
-        console.error(err.message);
-        process.exitCode = 1;
-    });
+  createAvroSchema(schemaName, avscFile).catch(err => {
+      console.error(err.message);
+      process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));

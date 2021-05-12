@@ -45,55 +45,55 @@ const protobuf = require('protobufjs');
 const pubSubClient = new PubSub();
 
 async function publishProtobufMessages(topicName) {
-    // Get the topic metadata to learn about its schema.
-    const topic = pubSubClient.topic(topicName);
-    const [topicMetadata] = await topic.getMetadata();
-    const topicSchemaMetadata = topicMetadata.schemaSettings;
+  // Get the topic metadata to learn about its schema.
+  const topic = pubSubClient.topic(topicName);
+  const [topicMetadata] = await topic.getMetadata();
+  const topicSchemaMetadata = topicMetadata.schemaSettings;
 
-    if (!topicSchemaMetadata) {
-        console.log(`Topic ${topicName} doesn't seem to have a schema.`);
-        return;
-    }
-    const schemaEncoding = topicSchemaMetadata.encoding;
+  if (!topicSchemaMetadata) {
+      console.log(`Topic ${topicName} doesn't seem to have a schema.`);
+      return;
+  }
+  const schemaEncoding = topicSchemaMetadata.encoding;
 
-    // Encode the message.
-    const province = {
-        name: 'Ontario',
-        postAbbr: 'ON',
-    };
+  // Encode the message.
+  const province = {
+      name: 'Ontario',
+      postAbbr: 'ON',
+  };
 
-    // Make an encoder using the protobufjs library.
-    //
-    // Since we're providing the test message for a specific schema here, we'll
-    // also code in the path to a sample proto definition.
-    const root = await protobuf.load('system-test/fixtures/provinces.proto');
-    const Province = root.lookupType('utilities.Province');
-    const message = Province.create(province);
+  // Make an encoder using the protobufjs library.
+  //
+  // Since we're providing the test message for a specific schema here, we'll
+  // also code in the path to a sample proto definition.
+  const root = await protobuf.load('system-test/fixtures/provinces.proto');
+  const Province = root.lookupType('utilities.Province');
+  const message = Province.create(province);
 
-    let dataBuffer;
-    switch (schemaEncoding) {
-        case Encodings.Binary:
-            dataBuffer = Buffer.from(Province.encode(message).finish());
-            break;
-        case Encodings.Json:
-            dataBuffer = Buffer.from(JSON.stringify(message.toJSON()));
-            break;
-    }
-    if (!dataBuffer) {
-        console.log(`Invalid encoding ${schemaEncoding} on the topic.`);
-        return;
-    }
+  let dataBuffer;
+  switch (schemaEncoding) {
+      case Encodings.Binary:
+          dataBuffer = Buffer.from(Province.encode(message).finish());
+          break;
+      case Encodings.Json:
+          dataBuffer = Buffer.from(JSON.stringify(message.toJSON()));
+          break;
+  }
+  if (!dataBuffer) {
+      console.log(`Invalid encoding ${schemaEncoding} on the topic.`);
+      return;
+  }
 
-    const messageId = await topic.publish(dataBuffer);
-    console.log(`Protobuf message ${messageId} published.`);
+  const messageId = await topic.publish(dataBuffer);
+  console.log(`Protobuf message ${messageId} published.`);
 }
 // [END pubsub_publish_proto_messages]
 
 function main(topicName = 'YOUR_TOPIC_NAME') {
-    publishProtobufMessages(topicName).catch(err => {
-        console.error(err.message);
-        process.exitCode = 1;
-    });
+  publishProtobufMessages(topicName).catch(err => {
+      console.error(err.message);
+      process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));

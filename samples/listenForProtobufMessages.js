@@ -46,61 +46,61 @@ const protobuf = require('protobufjs');
 const pubSubClient = new PubSub();
 
 async function listenForProtobufMessages(subscriptionName, timeout) {
-    // References an existing subscription
-    const subscription = pubSubClient.subscription(subscriptionName);
+  // References an existing subscription
+  const subscription = pubSubClient.subscription(subscriptionName);
 
-    // Make an decoder using the protobufjs library.
-    //
-    // Since we're providing the test message for a specific schema here, we'll
-    // also code in the path to a sample proto definition.
-    const root = protobuf.loadSync('system-test/fixtures/provinces.proto');
-    const Province = root.lookupType('utilities.Province');
+  // Make an decoder using the protobufjs library.
+  //
+  // Since we're providing the test message for a specific schema here, we'll
+  // also code in the path to a sample proto definition.
+  const root = protobuf.loadSync('system-test/fixtures/provinces.proto');
+  const Province = root.lookupType('utilities.Province');
 
-    // Create an event handler to handle messages
-    let messageCount = 0;
-    const messageHandler = async (message) => {
-        // "Ack" (acknowledge receipt of) the message
-        message.ack();
+  // Create an event handler to handle messages
+  let messageCount = 0;
+  const messageHandler = async (message) => {
+      // "Ack" (acknowledge receipt of) the message
+      message.ack();
 
-        // Get the schema metadata from the message.
-        const schemaMetadata = Schema.metadataFromMessage(message.attributes);
+      // Get the schema metadata from the message.
+      const schemaMetadata = Schema.metadataFromMessage(message.attributes);
 
-        let result;
-        switch (schemaMetadata.encoding) {
-            case Encodings.Binary:
-                result = Province.decode(message.data);
-                break;
-            case Encodings.Json:
-                result = JSON.parse(message.data.toString());
-                // What's coming in here is not properly protobuf data, but you could
-                // verify it if you like:
-                // assert.strictEqual(null, Province.verify(result));
-                break;
-        }
+      let result;
+      switch (schemaMetadata.encoding) {
+          case Encodings.Binary:
+              result = Province.decode(message.data);
+              break;
+          case Encodings.Json:
+              result = JSON.parse(message.data.toString());
+              // What's coming in here is not properly protobuf data, but you could
+              // verify it if you like:
+              // assert.strictEqual(null, Province.verify(result));
+              break;
+      }
 
-        console.log(`Received message ${message.id}:`);
-        console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
-        console.log(`\tAttributes: ${JSON.stringify(message.attributes, null, 4)}`);
-        messageCount += 1;
-    };
+      console.log(`Received message ${message.id}:`);
+      console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
+      console.log(`\tAttributes: ${JSON.stringify(message.attributes, null, 4)}`);
+      messageCount += 1;
+  };
 
-    // Listen for new messages until timeout is hit
-    subscription.on('message', messageHandler);
+  // Listen for new messages until timeout is hit
+  subscription.on('message', messageHandler);
 
-    setTimeout(() => {
-        subscription.removeListener('message', messageHandler);
-        console.log(`${messageCount} message(s) received.`);
-    }, timeout * 1000);
+  setTimeout(() => {
+      subscription.removeListener('message', messageHandler);
+      console.log(`${messageCount} message(s) received.`);
+  }, timeout * 1000);
 }
 // [END pubsub_subscribe_proto_messages]
 
 function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
-    timeout = Number(timeout);
+  timeout = Number(timeout);
 
-    listenForProtobufMessages(subscriptionName, timeout).catch(err => {
-        console.error(err.message);
-        process.exitCode = 1;
-    });
+  listenForProtobufMessages(subscriptionName, timeout).catch(err => {
+      console.error(err.message);
+      process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));

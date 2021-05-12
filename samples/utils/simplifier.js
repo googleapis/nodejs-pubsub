@@ -69,6 +69,10 @@ async function main(args) {
         "// This is a generated sample. Please see typescript/README.md for more info.\n\n'use strict';\n\n$1"
       );
 
+      // TypeScript shifts things to 4 spaces, move them back to 2.
+      const extraSpaces = /^(\/\/.*){0} {4}/gm;
+      contents = contents.replace(extraSpaces, '  ');
+
       await fs.writeFile(fn, contents);
     }
   }

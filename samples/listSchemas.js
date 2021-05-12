@@ -38,18 +38,18 @@ const {PubSub} = require('@google-cloud/pubsub');
 const pubSubClient = new PubSub();
 
 async function listSchemas() {
-    for await (const s of pubSubClient.listSchemas()) {
-        console.log(await s.getName());
-    }
-    console.log('Listed schemas.');
+  for await (const s of pubSubClient.listSchemas()) {
+      console.log(await s.getName());
+  }
+  console.log('Listed schemas.');
 }
 // [END pubsub_list_schemas]
 
 function main() {
-    listSchemas().catch(err => {
-        console.error(err.message);
-        process.exitCode = 1;
-    });
+  listSchemas().catch(err => {
+      console.error(err.message);
+      process.exitCode = 1;
+  });
 }
 
 main();

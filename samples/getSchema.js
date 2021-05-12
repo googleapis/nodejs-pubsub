@@ -42,18 +42,18 @@ const {PubSub} = require('@google-cloud/pubsub');
 const pubSubClient = new PubSub();
 
 async function getSchema(schemaName) {
-    const schema = pubSubClient.schema(schemaName);
-    const info = await schema.get();
-    const fullName = await schema.getName();
-    console.log(`Schema ${fullName} info: ${JSON.stringify(info, null, 4)}.`);
+  const schema = pubSubClient.schema(schemaName);
+  const info = await schema.get();
+  const fullName = await schema.getName();
+  console.log(`Schema ${fullName} info: ${JSON.stringify(info, null, 4)}.`);
 }
 // [END pubsub_get_schema]
 
 function main(schemaName = 'YOUR_SCHEMA_NAME') {
-    getSchema(schemaName).catch(err => {
-        console.error(err.message);
-        process.exitCode = 1;
-    });
+  getSchema(schemaName).catch(err => {
+      console.error(err.message);
+      process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));
