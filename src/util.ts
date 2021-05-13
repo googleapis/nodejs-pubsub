@@ -33,7 +33,7 @@ export function promisifySome<T>(
 ): void {
   methods.forEach(methodName => {
     // Do the same stream checks as promisifyAll().
-    const m = (classProto[methodName] as unknown) as Function;
+    const m = classProto[methodName] as unknown as Function;
     classProto[methodName] = promisify(m);
   });
 }
