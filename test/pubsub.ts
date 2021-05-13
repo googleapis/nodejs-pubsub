@@ -52,7 +52,12 @@ function Subscription(
 
 let promisified = false;
 const fakeUtil = Object.assign({}, util, {
-  promisifySome(class_: Function, methods: string[]): void {
+  promisifySome(
+    class_: Function,
+    classProtos: object,
+    methods: string[]
+  ): void {
+    console.log('Promisifying some', classProtos, methods);
     if (class_.name === 'PubSub') {
       promisified = true;
       assert.deepStrictEqual(methods, [
@@ -65,8 +70,9 @@ const fakeUtil = Object.assign({}, util, {
         'getTopics',
       ]);
     }
+    // Defeats the method name type check.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    util.promisifySome(class_, methods as any);
+    util.promisifySome(class_, classProtos, methods as any);
   },
 });
 
@@ -206,7 +212,7 @@ describe('PubSub', () => {
       assert.strictEqual(pubsub.getTopicsStream, 'getTopics');
     });
 
-    it('should promisify all the things', () => {
+    it('should promisify some of the things', () => {
       assert(promisified);
     });
 

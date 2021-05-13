@@ -26,11 +26,14 @@ import {promisify} from '@google-cloud/promisify';
  *
  * @private
  */
-export function promisifySome<T>(classProto: T, methods: (keyof T)[]): void {
+export function promisifySome<T>(
+  class_: Function,
+  classProto: T,
+  methods: (keyof T)[]
+): void {
   methods.forEach(methodName => {
     // Do the same stream checks as promisifyAll().
     const m = (classProto[methodName] as unknown) as Function;
-    console.log(methodName, m.toString());
     classProto[methodName] = promisify(m);
   });
 }
