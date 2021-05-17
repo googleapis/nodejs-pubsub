@@ -14,4 +14,28 @@
  * limitations under the License.
  */
 
+import {promisify} from '@google-cloud/promisify';
+
+/**
+ * This replaces usage of promisifyAll(), going forward. Instead of opting
+ * some methods out, you will need to opt methods in. Additionally, this
+ * function validates method names against the class using TypeScript,
+ * to generate compile-time failures for misspellings and changes.
+ *
+ * Future work in the library should all be Promise-first.
+ *
+ * @private
+ */
+export function promisifySome<T>(
+  class_: Function,
+  classProto: T,
+  methods: (keyof T)[]
+): void {
+  methods.forEach(methodName => {
+    // Do the same stream checks as promisifyAll().
+    const m = classProto[methodName] as unknown as Function;
+    classProto[methodName] = promisify(m);
+  });
+}
+
 export function noop() {}

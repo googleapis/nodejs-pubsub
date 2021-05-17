@@ -16,7 +16,6 @@
 
 import {paginator} from '@google-cloud/paginator';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
-import {promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {GoogleAuth} from 'google-auth-library';
 import * as gax from 'google-gax';
@@ -26,6 +25,8 @@ const PKG = require('../../package.json');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const v1 = require('./v1');
 
+import {promisifySome} from './util';
+import {Schema, SchemaType, ICreateSchemaRequest} from './schema';
 import {Snapshot} from './snapshot';
 import {
   Subscription,
@@ -43,11 +44,13 @@ import {
   GetTopicSubscriptionsResponse,
   CreateTopicCallback,
   CreateTopicResponse,
+  TopicMetadata,
 } from './topic';
 import {PublishOptions} from './publisher';
 import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
 import {google} from '../protos/protos';
+import {SchemaServiceClient} from './v1';
 
 /**
  * Project ID placeholder.
@@ -239,6 +242,7 @@ export class PubSub {
   api: {[key: string]: gax.ClientStub};
   auth: GoogleAuth;
   projectId: string;
+  name?: string;
   // tslint:disable-next-line variable-name
   Promise?: PromiseConstructor;
   getSubscriptionsStream = paginator.streamify(
@@ -251,6 +255,8 @@ export class PubSub {
     'getTopics'
   ) as () => ObjectStream<Topic>;
   isOpen = true;
+
+  private schemaClient?: SchemaServiceClient;
 
   constructor(options?: ClientConfig) {
     options = options || {};
@@ -280,6 +286,18 @@ export class PubSub {
     this.api = {};
     this.auth = new GoogleAuth(this.options);
     this.projectId = this.options.projectId || PROJECT_ID_PLACEHOLDER;
+    if (this.projectId !== PROJECT_ID_PLACEHOLDER) {
+      this.name = PubSub.formatName_(this.projectId);
+    }
+  }
+
+  /**
+   * Returns true if we have actually resolved the full project name.
+   *
+   * @returns {boolean} true if the name is resolved.
+   */
+  get isIdResolved(): boolean {
+    return this.projectId.indexOf(PROJECT_ID_PLACEHOLDER) < 0;
   }
 
   close(): Promise<void>;
@@ -300,6 +318,7 @@ export class PubSub {
     if (this.isOpen) {
       this.isOpen = false;
       this.closeAllClients_()
+        .then(() => this.schemaClient?.close())
         .then(() => {
           definedCallback(null);
         })
@@ -307,6 +326,58 @@ export class PubSub {
     } else {
       definedCallback(null);
     }
+  }
+
+  /**
+   * Create a schema in the project.
+   *
+   * @see [Schemas: create API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/create}
+   * @see {@link Schema#create}
+   *
+   * @throws {Error} If a schema ID or name is not provided.
+   * @throws {Error} If an invalid SchemaType is provided.
+   * @throws {Error} If an invalid schema definition is provided.
+   *
+   * @param {string} schemaId The name or ID of the subscription.
+   * @param {SchemaType} type The type of the schema (Protobuf, Avro, etc).
+   * @param {string} definition The text describing the schema in terms of the type.
+   * @param {object} [options] Request configuration options, outlined
+   *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
+   * @returns {Promise<Schema>}
+   *
+   * @example <caption>Create a schema.</caption>
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * await pubsub.createSchema(
+   *   'messageType',
+   *   SchemaTypes.Avro,
+   *   '{...avro definition...}'
+   * );
+   */
+  async createSchema(
+    schemaId: string,
+    type: SchemaType,
+    definition: string,
+    gaxOpts?: CallOptions
+  ): Promise<Schema> {
+    // This populates projectId for us.
+    await this.getClientConfig();
+
+    const schemaName = Schema.formatName_(this.projectId, schemaId);
+    const request: ICreateSchemaRequest = {
+      parent: this.name,
+      schemaId,
+      schema: {
+        name: schemaName,
+        type,
+        definition,
+      },
+    };
+
+    const client = await this.getSchemaClient_();
+    await client.createSchema(request, gaxOpts);
+    return new Schema(this, schemaName);
   }
 
   createSubscription(
@@ -467,12 +538,15 @@ export class PubSub {
   }
 
   createTopic(
-    name: string,
+    name: string | TopicMetadata,
     gaxOpts?: CallOptions
   ): Promise<CreateTopicResponse>;
-  createTopic(name: string, callback: CreateTopicCallback): void;
   createTopic(
-    name: string,
+    name: string | TopicMetadata,
+    callback: CreateTopicCallback
+  ): void;
+  createTopic(
+    name: string | TopicMetadata,
     gaxOpts: CallOptions,
     callback: CreateTopicCallback
   ): void;
@@ -517,14 +591,22 @@ export class PubSub {
    * });
    */
   createTopic(
-    name: string,
+    name: string | TopicMetadata,
     optsOrCallback?: CallOptions | CreateTopicCallback,
     callback?: CreateTopicCallback
   ): Promise<CreateTopicResponse> | void {
-    const topic = this.topic(name);
-    const reqOpts = {
-      name: topic.name,
-    };
+    const reqOpts: TopicMetadata =
+      typeof name === 'string'
+        ? {
+            name,
+          }
+        : name;
+
+    // We don't allow a blank name, but this will let topic() handle that case.
+    const topic = this.topic(reqOpts.name || '');
+
+    // Topic#constructor might have canonicalized the name.
+    reqOpts.name = topic.name;
 
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -677,6 +759,39 @@ export class PubSub {
     }
   }
 
+  /**
+   * Get a list of schemas associated with your project.
+   *
+   * The returned AsyncIterable will resolve to {@link Schema} objects.
+   * These can be used for further interactions with each schema.
+   *
+   * This method returns an async iterable. These objects can be adapted
+   * to work in a Promise/then framework, as well as with callbacks, but
+   * this discussion is considered out of scope for these docs.
+   *
+   * @see [Schemas: list API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/list}
+   * @see [More about async iterators]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of}
+   *
+   * @param {object} [options] Request configuration options, outlined
+   *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
+   * @returns {AsyncIterable<Schema>}
+   *
+   * @example
+   * for await (const s of pubsub.listSchemas()) {
+   *   const moreInfo = await s.get();
+   * }
+   */
+  async *listSchemas(options?: CallOptions): AsyncIterable<Schema> {
+    const client = await this.getSchemaClient_();
+    const query = {
+      parent: this.name,
+      view: google.pubsub.v1.SchemaView.BASIC,
+    };
+    for await (const s of client.listSchemasAsync(query, options)) {
+      yield new Schema(this, s.name!);
+    }
+  }
+
   getSnapshots(options?: PageOptions): Promise<GetSnapshotsResponse>;
   getSnapshots(callback: GetSnapshotsCallback): void;
   getSnapshots(options: PageOptions, callback: GetSnapshotsCallback): void;
@@ -735,7 +850,7 @@ export class PubSub {
 
     const reqOpts = Object.assign(
       {
-        project: 'projects/' + this.projectId,
+        project: PubSub.formatName_(this.projectId),
       },
       options
     );
@@ -1007,6 +1122,48 @@ export class PubSub {
       }
     );
   }
+
+  /**
+   * Retrieve a client configuration, suitable for passing into a GAPIC
+   * 'v1' class constructor. This will fill out projectId, emulator URLs,
+   * and so forth.
+   *
+   * @returns {Promise<ClientConfig>} the filled client configuration.
+   */
+  async getClientConfig(): Promise<ClientConfig> {
+    if (!this.projectId || this.projectId === PROJECT_ID_PLACEHOLDER) {
+      let projectId;
+
+      try {
+        projectId = await this.auth.getProjectId();
+      } catch (e) {
+        if (!this.isEmulator) {
+          throw e;
+        }
+        projectId = '';
+      }
+
+      this.projectId = projectId!;
+      this.name = PubSub.formatName_(this.projectId);
+      this.options.projectId = projectId!;
+    }
+
+    return this.options;
+  }
+
+  /**
+   * Gets a schema client, creating one if needed.
+   * @private
+   */
+  async getSchemaClient_(): Promise<SchemaServiceClient> {
+    if (!this.schemaClient) {
+      const options = await this.getClientConfig();
+      this.schemaClient = new v1.SchemaServiceClient(options);
+    }
+
+    return this.schemaClient!;
+  }
+
   /**
    * Callback function to PubSub.getClient_().
    * @private
@@ -1044,27 +1201,14 @@ export class PubSub {
    * @returns {Promise}
    */
   async getClientAsync_(config: GetClientConfig): Promise<gax.ClientStub> {
-    if (!this.projectId || this.projectId === PROJECT_ID_PLACEHOLDER) {
-      let projectId;
-
-      try {
-        projectId = await this.auth.getProjectId();
-      } catch (e) {
-        if (!this.isEmulator) {
-          throw e;
-        }
-        projectId = '';
-      }
-
-      this.projectId = projectId!;
-      this.options.projectId = projectId!;
-    }
+    // Make sure we've got a fully created config with projectId and such.
+    const options = await this.getClientConfig();
 
     let gaxClient = this.api[config.client];
 
     if (!gaxClient) {
       // Lazily instantiate client.
-      gaxClient = new v1[config.client](this.options) as gax.ClientStub;
+      gaxClient = new v1[config.client](options) as gax.ClientStub;
       this.api[config.client] = gaxClient;
     }
 
@@ -1123,6 +1267,26 @@ export class PubSub {
       client![config.method](reqOpts, config.gaxOpts, callback);
     });
   }
+
+  /**
+   * Create a Schema object, representing a schema within the project.
+   * See {@link PubSub#createSchema} or {@link Schema#create} to create a schema.
+   *
+   * @throws {Error} If a name is not provided.
+   *
+   * @param {string} name The ID or name of the schema.
+   * @returns {Schema} A {@link Schema} instance.
+   *
+   * @example
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * const schema = pubsub.schema('my-schema');
+   */
+  schema(idOrName: string): Schema {
+    return new Schema(this, idOrName);
+  }
+
   /**
    * Create a Snapshot object. See {@link Subscription#createSnapshot} to
    * create a snapshot.
@@ -1197,6 +1361,27 @@ export class PubSub {
       throw new Error('A name must be specified for a topic.');
     }
     return new Topic(this, name, options);
+  }
+
+  /*!
+   * Format the name of a project. A project's full name is in the
+   * format of projects/{projectId}.
+   *
+   * The GAPIC client should do this for us, but since we maintain
+   * names rather than IDs, this is simpler.
+   *
+   * @private
+   */
+  static formatName_(name: string): string {
+    if (typeof name !== 'string') {
+      throw new Error('A name is required to identify a project.');
+    }
+
+    // Simple check if the name is already formatted.
+    if (name.indexOf('/') > -1) {
+      return name;
+    }
+    return `projects/${name}`;
   }
 }
 
@@ -1303,9 +1488,16 @@ paginator.extend(PubSub, ['getSnapshots', 'getSubscriptions', 'getTopics']);
 
 /*! Developer Documentation
  *
- * All async methods (except for streams) will return a Promise in the event
- * that a callback is omitted.
+ * Existing async methods (except for streams) will return a Promise in the event
+ * that a callback is omitted. Future methods will not allow for a callback.
+ * (Use .then() on the returned Promise instead.)
  */
-promisifyAll(PubSub, {
-  exclude: ['request', 'snapshot', 'subscription', 'topic'],
-});
+promisifySome(PubSub, PubSub.prototype, [
+  'close',
+  'createSubscription',
+  'createTopic',
+  'detachSubscription',
+  'getSnapshots',
+  'getSubscriptions',
+  'getTopics',
+]);
