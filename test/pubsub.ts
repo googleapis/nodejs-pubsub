@@ -1584,9 +1584,8 @@ describe('PubSub', () => {
     it('should close the schema client when it has been opened', async () => {
       // Force it to create a client.
       const client = await pubsub.getSchemaClient_();
-      const stub = sandbox.stub(client, 'close').resolves();
-      pubsub.close();
-      await stub;
+      sandbox.stub(client, 'close').resolves();
+      await pubsub.close();
     });
 
     // I feel like this ought to be a test, but something in getSchemaClient_()
