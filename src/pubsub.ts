@@ -26,7 +26,7 @@ const PKG = require('../../package.json');
 const v1 = require('./v1');
 
 import {promisifySome} from './util';
-import {Schema, SchemaType, ICreateSchemaRequest} from './schema';
+import {Schema, SchemaType, ICreateSchemaRequest, SchemaViews} from './schema';
 import {Snapshot} from './snapshot';
 import {
   Subscription,
@@ -762,8 +762,7 @@ export class PubSub {
   /**
    * Get a list of schemas associated with your project.
    *
-   * The returned AsyncIterable will resolve to {@link Schema} objects.
-   * These can be used for further interactions with each schema.
+   * The returned AsyncIterable will resolve to {@link google.pubsub.v1.ISchema} objects.
    *
    * This method returns an async iterable. These objects can be adapted
    * to work in a Promise/then framework, as well as with callbacks, but
@@ -772,23 +771,30 @@ export class PubSub {
    * @see [Schemas: list API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/list}
    * @see [More about async iterators]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of}
    *
+   * @param {google.pubsub.v1.SchemaView} [view] The type of schema objects
+   *   requested, which should be an enum value from {@link SchemaViews}. Defaults
+   *   to Full.
    * @param {object} [options] Request configuration options, outlined
    *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
-   * @returns {AsyncIterable<Schema>}
+   * @returns {AsyncIterable<ISchema>}
    *
    * @example
    * for await (const s of pubsub.listSchemas()) {
    *   const moreInfo = await s.get();
    * }
    */
-  async *listSchemas(options?: CallOptions): AsyncIterable<Schema> {
+  async *listSchemas(
+    view: google.pubsub.v1.SchemaView = SchemaViews.Full,
+    options?: CallOptions
+  ): AsyncIterable<google.pubsub.v1.ISchema> {
     const client = await this.getSchemaClient_();
     const query = {
       parent: this.name,
-      view: google.pubsub.v1.SchemaView.BASIC,
+      view,
     };
+
     for await (const s of client.listSchemasAsync(query, options)) {
-      yield new Schema(this, s.name!);
+      yield s;
     }
   }
 
