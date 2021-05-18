@@ -17,6 +17,7 @@ import {describe, it, before, after, beforeEach} from 'mocha';
 import * as crypto from 'crypto';
 import defer = require('p-defer');
 import * as uuid from 'uuid';
+import {promises as fs} from 'fs';
 
 import {
   Message,
@@ -25,6 +26,9 @@ import {
   Snapshot,
   Subscription,
   Topic,
+  SchemaTypes,
+  SchemaViews,
+  ISchema,
 } from '../src';
 import {Policy, IamPermissionsMap} from '../src/iam';
 import {MessageOptions} from '../src/topic';
@@ -68,11 +72,12 @@ describe('pubsub', () => {
     return generateName('subscription');
   }
 
-  // This is a temporary situation - we'll eventually fall back to the
-  // regular generateSubName() call, but this has to be used for the
-  // pre-release allow list.
+  function generateSchemaName() {
+    return generateName('schema');
+  }
+
   function generateSubForDetach() {
-    return `testdetachsubsxyz-${generateSubName()}`;
+    return generateSubName();
   }
 
   function generateTopicName() {
@@ -1020,6 +1025,110 @@ describe('pubsub', () => {
 
         await Promise.race([errorPromise, messagePromise]);
       });
+    });
+  });
+
+  describe('schema', () => {
+    // This should really be handled by a standard method of Array(), imo, but it's not.
+    async function aiToArray(
+      iterator: AsyncIterable<ISchema>,
+      nameFilter?: string
+    ): Promise<ISchema[]> {
+      const result = [] as ISchema[];
+      for await (const i of iterator) {
+        if (!nameFilter || (nameFilter && i.name?.endsWith(nameFilter))) {
+          result.push(i);
+        }
+      }
+
+      return result;
+    }
+
+    const getSchemaDef = async () => {
+      const schemaDef = (
+        await fs.readFile('system-test/fixtures/provinces.avsc')
+      ).toString();
+
+      return schemaDef;
+    };
+
+    const setupTestSchema = async () => {
+      const schemaDef = await getSchemaDef();
+      const schemaId = generateSchemaName();
+      await pubsub.createSchema(schemaId, SchemaTypes.Avro, schemaDef);
+      return schemaId;
+    };
+
+    it('should create a schema', async () => {
+      const schemaId = await setupTestSchema();
+      const schemaList = await aiToArray(pubsub.listSchemas(), schemaId);
+      assert.strictEqual(schemaList.length, 1);
+    });
+
+    it('should delete a schema', async () => {
+      const schemaId = await setupTestSchema();
+
+      // Validate that we created one, because delete() doesn't throw, and we
+      // might end up causing a false negative.
+      const preSchemaList = await aiToArray(pubsub.listSchemas(), schemaId);
+      assert.strictEqual(preSchemaList.length, 1);
+
+      await pubsub.schema(schemaId).delete();
+
+      const postSchemaList = await aiToArray(pubsub.listSchemas(), schemaId);
+      assert.strictEqual(postSchemaList.length, 0);
+    });
+
+    it('should list schemas', async () => {
+      const schemaId = await setupTestSchema();
+
+      const basicList = await aiToArray(
+        pubsub.listSchemas(SchemaViews.Basic),
+        schemaId
+      );
+      assert.strictEqual(basicList.length, 1);
+      assert.strictEqual(basicList[0].definition, '');
+
+      const fullList = await aiToArray(
+        pubsub.listSchemas(SchemaViews.Full),
+        schemaId
+      );
+      assert.strictEqual(fullList.length, 1);
+      assert.ok(fullList[0].definition);
+    });
+
+    it('should get a schema', async () => {
+      const schemaId = await setupTestSchema();
+      const schema = pubsub.schema(schemaId);
+      const info = await schema.get(SchemaViews.Basic);
+      assert.strictEqual(info.definition, '');
+
+      const fullInfo = await schema.get(SchemaViews.Full);
+      assert.ok(fullInfo.definition);
+    });
+
+    it('should validate a schema', async () => {
+      const schemaDef = await getSchemaDef();
+
+      try {
+        await pubsub.validateSchema({
+          type: SchemaTypes.Avro,
+          definition: schemaDef,
+        });
+      } catch (e) {
+        assert.strictEqual(e, undefined, 'Error thrown by validateSchema');
+      }
+
+      const fakeSchemaDef = 'woohoo i am a schema, no really';
+
+      try {
+        await pubsub.validateSchema({
+          type: SchemaTypes.Avro,
+          definition: fakeSchemaDef,
+        });
+      } catch (e) {
+        assert.ok(e);
+      }
     });
   });
 

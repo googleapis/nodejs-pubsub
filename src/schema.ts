@@ -173,29 +173,6 @@ export class Schema {
   }
 
   /**
-   * Validate a schema definition.
-   *
-   * @see [Schemas: validateSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/validate}
-   *
-   * @throws {Error} if the validation fails.
-   *
-   * @param {ISchema} schema The schema definition you wish to validate.
-   * @param {object} [options] Request configuration options, outlined
-   *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
-   * @returns {Promise<void>}
-   */
-  async validateSchema(schema: ISchema, gaxOpts?: CallOptions): Promise<void> {
-    const client = await this.pubsub.getSchemaClient_();
-    await client.validateSchema(
-      {
-        parent: this.pubsub.name,
-        schema,
-      },
-      gaxOpts
-    );
-  }
-
-  /**
    * Validate a message against a schema definition.
    *
    * @see [Schemas: validateMessage API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/validateMessage}
