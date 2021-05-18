@@ -28,6 +28,7 @@ import * as subby from '../src/subscription';
 import {Topic} from '../src/topic';
 import * as util from '../src/util';
 import {Schema, SchemaTypes} from '../src';
+import {SchemaViews} from '../src/schema';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PKG = require('../../package.json');
@@ -1635,7 +1636,7 @@ describe('PubSub', () => {
       sandbox.stub(client, 'listSchemasAsync').callsFake((req, gaxOpts) => {
         assert.strictEqual(req!.parent, pubsub.name);
         assert.strictEqual(req!.view, google.pubsub.v1.SchemaView.BASIC);
-        assert.ok(gaxOpts);
+        assert.deepStrictEqual(gaxOpts, {});
         return toAsync([
           {
             name: 'foo1',
@@ -1647,20 +1648,13 @@ describe('PubSub', () => {
         ]) as any;
       });
 
-      const ids = [] as string[],
-        names = [] as string[];
-      for await (const s of pubsub.listSchemas({})) {
-        ids.push(s.id);
-        names.push(await s.getName());
+      const ids = [] as string[];
+      for await (const s of pubsub.listSchemas(SchemaViews.Basic, {})) {
+        ids.push(s.name!);
       }
 
       const expectedIds = ['foo1', 'foo2'];
-      const expectedNames = [
-        Schema.formatName_(pubsub.projectId, 'foo1'),
-        Schema.formatName_(pubsub.projectId, 'foo2'),
-      ];
       assert.deepStrictEqual(ids, expectedIds);
-      assert.deepStrictEqual(names, expectedNames);
     });
 
     it('returns a proper Schema object from schema()', async () => {

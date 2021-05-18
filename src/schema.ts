@@ -128,17 +128,23 @@ export class Schema {
    *
    * @see [Schemas: getSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/get}
    *
+   * @param {google.pubsub.v1.SchemaView} [view] The type of schema object
+   *   requested, which should be an enum value from {@link SchemaViews}. Defaults
+   *   to Full.
    * @param {object} [options] Request configuration options, outlined
    *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @returns {Promise<ISchema>}
    */
-  async get(gaxOpts?: CallOptions): Promise<ISchema> {
+  async get(
+    view: google.pubsub.v1.SchemaView = SchemaViews.Full,
+    gaxOpts?: CallOptions
+  ): Promise<ISchema> {
     const client = await this.pubsub.getSchemaClient_();
     const name = await this.getName();
     const [schema] = await client.getSchema(
       {
         name,
-        view: google.pubsub.v1.SchemaView.FULL,
+        view,
       },
       gaxOpts
     );
