@@ -784,7 +784,7 @@ export class PubSub {
    * }
    */
   async *listSchemas(
-    view: google.pubsub.v1.SchemaView = SchemaViews.Full,
+    view: google.pubsub.v1.SchemaView = SchemaViews.Basic,
     options?: CallOptions
   ): AsyncIterable<google.pubsub.v1.ISchema> {
     const client = await this.getSchemaClient_();
