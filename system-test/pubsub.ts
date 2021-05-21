@@ -1146,6 +1146,7 @@ describe('pubsub', () => {
 
     // The server doesn't seem to be returning proper responses for this.
     // Commenting out for now, until it can be discussed.
+    // TODO(feywind): Uncomment this later. May be solved by b/188927641.
     /* it('should validate a message', async () => {
       const schemaId = await setupTestSchema();
       const schema = pubsub.schema(schemaId);
