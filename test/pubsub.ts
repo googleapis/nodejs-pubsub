@@ -28,7 +28,7 @@ import * as subby from '../src/subscription';
 import {Topic} from '../src/topic';
 import * as util from '../src/util';
 import {Schema, SchemaTypes} from '../src';
-import {SchemaViews} from '../src/schema';
+import {ISchema, SchemaViews} from '../src/schema';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PKG = require('../../package.json');
@@ -1582,6 +1582,12 @@ describe('PubSub', () => {
   });
 
   describe('schema', () => {
+    function* toAsync<T>(arr: T[]) {
+      for (const i of arr) {
+        yield i;
+      }
+    }
+
     it('should close the schema client when it has been opened', async () => {
       // Force it to create a client.
       const client = await pubsub.getSchemaClient_();
@@ -1626,12 +1632,6 @@ describe('PubSub', () => {
       // Grab the schema client it'll be using so we can stub it.
       const client = await pubsub.getSchemaClient_();
 
-      function* toAsync<T>(arr: T[]) {
-        for (const i of arr) {
-          yield i;
-        }
-      }
-
       sandbox.stub(client, 'listSchemasAsync').callsFake((req, gaxOpts) => {
         assert.strictEqual(req!.parent, pubsub.name);
         assert.strictEqual(req!.view, google.pubsub.v1.SchemaView.BASIC);
@@ -1656,12 +1656,50 @@ describe('PubSub', () => {
       assert.deepStrictEqual(ids, expectedIds);
     });
 
+    it('defaults to BASIC for listSchemas', async () => {
+      // Grab the schema client it'll be using so we can stub it.
+      const client = await pubsub.getSchemaClient_();
+
+      sandbox.stub(client, 'listSchemasAsync').callsFake(req => {
+        assert.strictEqual(req!.view, google.pubsub.v1.SchemaView.BASIC);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return toAsync([]) as any;
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      for await (const s of pubsub.listSchemas()) {
+        break;
+      }
+    });
+
     it('returns a proper Schema object from schema()', async () => {
       const schema = pubsub.schema('foo');
       assert.strictEqual(schema.id, 'foo');
 
       const name = await schema.getName();
       assert.strictEqual(name, Schema.formatName_(pubsub.projectId, 'foo'));
+    });
+
+    it('calls validateSchema() on the client when validateSchema() is called', async () => {
+      const client = await pubsub.getSchemaClient_();
+      const ischema: ISchema = {
+        name: 'test',
+        type: SchemaTypes.Avro,
+        definition: 'foo',
+      };
+
+      let called = false;
+      sandbox
+        .stub(client, 'validateSchema')
+        .callsFake(async (params, gaxOpts) => {
+          assert.strictEqual(params.parent, pubsub.name);
+          assert.deepStrictEqual(params.schema, ischema);
+          assert.ok(gaxOpts);
+          called = true;
+        });
+
+      await pubsub.validateSchema(ischema, {});
+      assert.ok(called);
     });
   });
 });
