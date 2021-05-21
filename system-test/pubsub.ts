@@ -625,15 +625,18 @@ describe('pubsub', () => {
     it('should ack the message', done => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
-      let errored = false;
+      let finished = false;
       subscription.on('error', () => {
-        errored = true;
-        subscription.close(done);
+        if (!finished) {
+          finished = true;
+          subscription.close(done);
+        }
       });
       subscription.on('message', ack);
 
       function ack(message: Message) {
-        if (!errored) {
+        if (!finished) {
+          finished = true;
           message.ack();
           subscription.close(done);
         }
@@ -643,15 +646,18 @@ describe('pubsub', () => {
     it('should nack the message', done => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
-      let errored = false;
+      let finished = false;
       subscription.on('error', () => {
-        errored = true;
-        subscription.close(done);
+        if (!finished) {
+          finished = true;
+          subscription.close(done);
+        }
       });
       subscription.on('message', nack);
 
       function nack(message: Message) {
-        if (!errored) {
+        if (!finished) {
+          finished = true;
           message.nack();
           subscription.close(done);
         }
