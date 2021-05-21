@@ -28,7 +28,7 @@ import * as subby from '../src/subscription';
 import {Topic} from '../src/topic';
 import * as util from '../src/util';
 import {Schema, SchemaTypes} from '../src';
-import {SchemaViews} from '../src/schema';
+import {ISchema, SchemaViews} from '../src/schema';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PKG = require('../../package.json');
@@ -1667,6 +1667,7 @@ describe('PubSub', () => {
         return toAsync([]) as any;
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for await (const s of pubsub.listSchemas()) {
         break;
       }
@@ -1678,6 +1679,28 @@ describe('PubSub', () => {
 
       const name = await schema.getName();
       assert.strictEqual(name, Schema.formatName_(pubsub.projectId, 'foo'));
+    });
+
+    it('calls validateSchema() on the client when validateSchema() is called', async () => {
+      const client = await pubsub.getSchemaClient_();
+      const ischema: ISchema = {
+        name: 'test',
+        type: SchemaTypes.Avro,
+        definition: 'foo',
+      };
+
+      let called = false;
+      sandbox
+        .stub(client, 'validateSchema')
+        .callsFake(async (params, gaxOpts) => {
+          assert.strictEqual(params.parent, pubsub.name);
+          assert.deepStrictEqual(params.schema, ischema);
+          assert.ok(gaxOpts);
+          called = true;
+        });
+
+      await pubsub.validateSchema(ischema, {});
+      assert.ok(called);
     });
   });
 });

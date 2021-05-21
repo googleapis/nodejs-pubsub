@@ -26,7 +26,13 @@ const PKG = require('../../package.json');
 const v1 = require('./v1');
 
 import {promisifySome} from './util';
-import {Schema, SchemaType, ICreateSchemaRequest, SchemaViews} from './schema';
+import {
+  Schema,
+  SchemaType,
+  ICreateSchemaRequest,
+  SchemaViews,
+  ISchema,
+} from './schema';
 import {Snapshot} from './snapshot';
 import {
   Subscription,
@@ -1367,6 +1373,29 @@ export class PubSub {
       throw new Error('A name must be specified for a topic.');
     }
     return new Topic(this, name, options);
+  }
+
+  /**
+   * Validate a schema definition.
+   *
+   * @see [Schemas: validateSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/validate}
+   *
+   * @throws {Error} if the validation fails.
+   *
+   * @param {ISchema} schema The schema definition you wish to validate.
+   * @param {object} [options] Request configuration options, outlined
+   *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
+   * @returns {Promise<void>}
+   */
+  async validateSchema(schema: ISchema, gaxOpts?: CallOptions): Promise<void> {
+    const client = await this.getSchemaClient_();
+    await client.validateSchema(
+      {
+        parent: this.name,
+        schema,
+      },
+      gaxOpts
+    );
   }
 
   /*!

@@ -138,21 +138,6 @@ describe('Schema', () => {
     assert.ok(called);
   });
 
-  it('calls validateSchema() on the client when validateSchema() is called on the wrapper', async () => {
-    let called = false;
-    sandbox
-      .stub(schemaClient, 'validateSchema')
-      .callsFake(async (params, gaxOpts) => {
-        assert.strictEqual(params.parent, pubsub.name);
-        assert.deepStrictEqual(params.schema, ischema);
-        assert.ok(gaxOpts);
-        called = true;
-      });
-
-    await schema.validateSchema(ischema, {});
-    assert.ok(called);
-  });
-
   it('calls validateMessage() on the client when validateMessage() is called on the wrapper', async () => {
     let called = false;
     sandbox
@@ -161,14 +146,14 @@ describe('Schema', () => {
         const name = await schema.getName();
         assert.strictEqual(params.parent, pubsub.name);
         assert.strictEqual(params.name, name);
-        assert.deepStrictEqual(params.schema, ischema);
+        assert.strictEqual(params.schema, undefined);
         assert.strictEqual(params.message, 'foo');
         assert.strictEqual(params.encoding, encoding);
         assert.ok(gaxOpts);
         called = true;
       });
 
-    await schema.validateMessage(ischema, 'foo', encoding, {});
+    await schema.validateMessage('foo', encoding, {});
     assert.ok(called);
   });
 
