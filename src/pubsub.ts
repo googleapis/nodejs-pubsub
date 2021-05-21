@@ -26,7 +26,7 @@ const PKG = require('../../package.json');
 const v1 = require('./v1');
 
 import {promisifySome} from './util';
-import {Schema, SchemaType, ICreateSchemaRequest, SchemaViews, ISchema} from './schema';
+import {Schema, SchemaType, ICreateSchemaRequest, SchemaViews} from './schema';
 import {Snapshot} from './snapshot';
 import {
   Subscription,
@@ -784,7 +784,7 @@ export class PubSub {
    * }
    */
   async *listSchemas(
-    view: google.pubsub.v1.SchemaView = SchemaViews.Full,
+    view: google.pubsub.v1.SchemaView = SchemaViews.Basic,
     options?: CallOptions
   ): AsyncIterable<google.pubsub.v1.ISchema> {
     const client = await this.getSchemaClient_();
