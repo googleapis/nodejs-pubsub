@@ -146,14 +146,14 @@ describe('Schema', () => {
         const name = await schema.getName();
         assert.strictEqual(params.parent, pubsub.name);
         assert.strictEqual(params.name, name);
-        assert.deepStrictEqual(params.schema, ischema);
+        assert.strictEqual(params.schema, undefined);
         assert.strictEqual(params.message, 'foo');
         assert.strictEqual(params.encoding, encoding);
         assert.ok(gaxOpts);
         called = true;
       });
 
-    await schema.validateMessage(ischema, 'foo', encoding, {});
+    await schema.validateMessage('foo', encoding, {});
     assert.ok(called);
   });
 

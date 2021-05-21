@@ -173,33 +173,37 @@ export class Schema {
   }
 
   /**
-   * Validate a message against a schema definition.
+   * Validate a message against this schema's definition.
+   *
+   * If you would like to validate a message against an arbitrary schema, please
+   * use the {@link SchemaServiceClient} GAPIC class directly, using your
+   * {@link PubSub} instance's configuration, via {@link PubSub#getClientConfig}.
    *
    * @see [Schemas: validateMessage API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/validateMessage}
    *
    * @throws {Error} if the validation fails.
    * @throws {Error} if other parameters are invalid.
    *
-   * @param {ISchema} schema The schema definition you wish to validate against.
    * @param {string} message The message to validate.
-   * @param {SchemaEncoding} encoding The encoding of the message to validate.
+   * @param {Encoding | "JSON" | "BINARY"} encoding The encoding of the message to validate.
    * @param {object} [options] Request configuration options, outlined
    *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @returns {Promise<void>}
    */
   async validateMessage(
-    schema: ISchema,
     message: string,
-    encoding: SchemaEncoding,
+    encoding:
+      | google.pubsub.v1.Encoding
+      | keyof typeof google.pubsub.v1.Encoding,
     gaxOpts?: CallOptions
   ): Promise<void> {
     const client = await this.pubsub.getSchemaClient_();
     const name = await this.getName();
+
     await client.validateMessage(
       {
         parent: this.pubsub.name,
         name,
-        schema,
         message,
         encoding,
       },
@@ -280,6 +284,6 @@ export const SchemaViews = {
 // These are not schema-specific, but this seems to be the
 // only place that exports methods that need them.
 export const Encodings = {
-  Json: 'JSON',
-  Binary: 'BINARY',
+  Json: 'JSON' as 'JSON',
+  Binary: 'BINARY' as 'BINARY',
 };

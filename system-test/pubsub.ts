@@ -17,6 +17,9 @@ import {describe, it, before, after, beforeEach} from 'mocha';
 import * as crypto from 'crypto';
 import defer = require('p-defer');
 import * as uuid from 'uuid';
+
+// This is only in Node 10.17+, but it's used for system tests, should be okay.
+// eslint-disable-next-line node/no-unsupported-features/node-builtins
 import {promises as fs} from 'fs';
 
 import {
@@ -1119,6 +1122,16 @@ describe('pubsub', () => {
         assert.strictEqual(e, undefined, 'Error thrown by validateSchema');
       }
 
+      const badSchemaDef = '{"not_actually":"avro"}';
+      try {
+        await pubsub.validateSchema({
+          type: SchemaTypes.Avro,
+          definition: badSchemaDef,
+        });
+      } catch (e) {
+        assert.ok(e);
+      }
+
       const fakeSchemaDef = 'woohoo i am a schema, no really';
 
       try {
@@ -1130,6 +1143,39 @@ describe('pubsub', () => {
         assert.ok(e);
       }
     });
+
+    // The server doesn't seem to be returning proper responses for this.
+    // Commenting out for now, until it can be discussed.
+    /* it('should validate a message', async () => {
+      const schemaId = await setupTestSchema();
+      const schema = pubsub.schema(schemaId);
+      const testMessage = (
+        await fs.readFile('system-test/fixtures/province.json')
+      ).toString();
+
+      try {
+        await schema.validateMessage(testMessage, Encodings.Json);
+      } catch (e) {
+        console.log(e, e.message, e.toString());
+        assert.strictEqual(e, undefined, 'Error thrown by validateSchema');
+      }
+
+      const badMessage = '{"foo":"bar"}';
+
+      try {
+        await schema.validateMessage(badMessage, Encodings.Json);
+      } catch (e) {
+        assert.ok(e);
+      }
+
+      const fakeMessage = 'woohoo i am a message, no really';
+
+      try {
+        await schema.validateMessage(fakeMessage, Encodings.Json);
+      } catch (e) {
+        assert.ok(e);
+      }
+    }); */
   });
 
   it('should allow closing of publisher clients', async () => {

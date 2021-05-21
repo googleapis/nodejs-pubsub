@@ -26,7 +26,13 @@ const PKG = require('../../package.json');
 const v1 = require('./v1');
 
 import {promisifySome} from './util';
-import {Schema, SchemaType, ICreateSchemaRequest, SchemaViews} from './schema';
+import {
+  Schema,
+  SchemaType,
+  ICreateSchemaRequest,
+  SchemaViews,
+  ISchema,
+} from './schema';
 import {Snapshot} from './snapshot';
 import {
   Subscription,

@@ -28,7 +28,7 @@ import * as subby from '../src/subscription';
 import {Topic} from '../src/topic';
 import * as util from '../src/util';
 import {Schema, SchemaTypes} from '../src';
-import {SchemaViews} from '../src/schema';
+import {ISchema, SchemaViews} from '../src/schema';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PKG = require('../../package.json');
@@ -1667,6 +1667,7 @@ describe('PubSub', () => {
         return toAsync([]) as any;
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for await (const s of pubsub.listSchemas()) {
         break;
       }
