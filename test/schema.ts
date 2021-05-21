@@ -17,7 +17,7 @@ import {describe, it, beforeEach, afterEach} from 'mocha';
 import * as sinon from 'sinon';
 import {google} from '../protos/protos';
 import {PubSub} from '../src/pubsub';
-import {ISchema, Schema, SchemaTypes} from '../src/schema';
+import {ISchema, Schema, SchemaTypes, SchemaViews} from '../src/schema';
 import {SchemaServiceClient} from '../src/v1';
 
 const sandbox = sinon.createSandbox();
@@ -100,17 +100,28 @@ describe('Schema', () => {
         const name = await schema.getName();
         assert.strictEqual(params.name, name);
         assert.strictEqual(params.view, google.pubsub.v1.SchemaView.FULL);
-        assert.ok(gaxOpts);
-
+        assert.deepStrictEqual(gaxOpts, {});
         called = true;
         return [ischema];
       });
 
-    const result = await schema.get({});
+    const result = await schema.get(SchemaViews.Full, {});
     assert.ok(called);
     assert.strictEqual(result.name, schemaName);
     assert.strictEqual(result.type, SchemaTypes.Avro);
     assert.strictEqual(result.definition, 'foo');
+  });
+
+  it('defaults to FULL when get() is called', async () => {
+    let called = false;
+    sandbox.stub(schemaClient, 'getSchema').callsFake(async params => {
+      assert.strictEqual(params.view, google.pubsub.v1.SchemaView.FULL);
+      called = true;
+      return [ischema];
+    });
+
+    await schema.get();
+    assert.ok(called);
   });
 
   it('calls deleteSchema() on the client when delete() is called', async () => {
