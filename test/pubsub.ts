@@ -1582,6 +1582,12 @@ describe('PubSub', () => {
   });
 
   describe('schema', () => {
+    function* toAsync<T>(arr: T[]) {
+      for (const i of arr) {
+        yield i;
+      }
+    }
+
     it('should close the schema client when it has been opened', async () => {
       // Force it to create a client.
       const client = await pubsub.getSchemaClient_();
@@ -1627,12 +1633,6 @@ describe('PubSub', () => {
       // Grab the schema client it'll be using so we can stub it.
       const client = await pubsub.getSchemaClient_();
 
-      function* toAsync<T>(arr: T[]) {
-        for (const i of arr) {
-          yield i;
-        }
-      }
-
       sandbox.stub(client, 'listSchemasAsync').callsFake((req, gaxOpts) => {
         assert.strictEqual(req!.parent, pubsub.name);
         assert.strictEqual(req!.view, google.pubsub.v1.SchemaView.BASIC);
@@ -1655,6 +1655,21 @@ describe('PubSub', () => {
 
       const expectedIds = ['foo1', 'foo2'];
       assert.deepStrictEqual(ids, expectedIds);
+    });
+
+    it('defaults to BASIC for listSchemas', async () => {
+      // Grab the schema client it'll be using so we can stub it.
+      const client = await pubsub.getSchemaClient_();
+
+      sandbox.stub(client, 'listSchemasAsync').callsFake(req => {
+        assert.strictEqual(req!.view, google.pubsub.v1.SchemaView.BASIC);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return toAsync([]) as any;
+      });
+
+      for await (const s of pubsub.listSchemas()) {
+        break;
+      }
     });
 
     it('returns a proper Schema object from schema()', async () => {

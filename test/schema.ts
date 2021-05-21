@@ -112,6 +112,18 @@ describe('Schema', () => {
     assert.strictEqual(result.definition, 'foo');
   });
 
+  it('defaults to FULL when get() is called', async () => {
+    let called = false;
+    sandbox.stub(schemaClient, 'getSchema').callsFake(async params => {
+      assert.strictEqual(params.view, google.pubsub.v1.SchemaView.FULL);
+      called = true;
+      return [ischema];
+    });
+
+    await schema.get();
+    assert.ok(called);
+  });
+
   it('calls deleteSchema() on the client when delete() is called', async () => {
     let called = false;
     sandbox
