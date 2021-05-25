@@ -284,6 +284,6 @@ export const SchemaViews = {
 // These are not schema-specific, but this seems to be the
 // only place that exports methods that need them.
 export const Encodings = {
-  Json: 'JSON' as 'JSON',
-  Binary: 'BINARY' as 'BINARY',
+  Json: 'JSON' as const,
+  Binary: 'BINARY' as const,
 };
