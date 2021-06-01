@@ -45,17 +45,24 @@ const pubSubClient = new PubSub();
 
 async function createProtoSchema(schemaName, protoFile) {
   const definition = fs.readFileSync(protoFile).toString();
-  const schema = await pubSubClient.createSchema(schemaName, SchemaTypes.ProtocolBuffer, definition);
+  const schema = await pubSubClient.createSchema(
+    schemaName,
+    SchemaTypes.ProtocolBuffer,
+    definition
+  );
 
   const fullName = await schema.getName();
   console.log(`Schema ${fullName} created.`);
 }
 // [END pubsub_create_proto_schema]
 
-function main(schemaName = 'YOUR_SCHEMA_NAME', protoFile = 'path/to/a/proto/schema/file/(.proto)/formatted/in/protcol/buffers') {
+function main(
+  schemaName = 'YOUR_SCHEMA_NAME',
+  protoFile = 'path/to/a/proto/schema/file/(.proto)/formatted/in/protcol/buffers'
+) {
   createProtoSchema(schemaName, protoFile).catch(err => {
-      console.error(err.message);
-      process.exitCode = 1;
+    console.error(err.message);
+    process.exitCode = 1;
   });
 }
 

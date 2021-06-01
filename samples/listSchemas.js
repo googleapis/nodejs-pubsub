@@ -39,7 +39,7 @@ const pubSubClient = new PubSub();
 
 async function listSchemas() {
   for await (const s of pubSubClient.listSchemas()) {
-      console.log(await s.getName());
+    console.log(await s.name);
   }
   console.log('Listed schemas.');
 }
@@ -47,8 +47,8 @@ async function listSchemas() {
 
 function main() {
   listSchemas().catch(err => {
-      console.error(err.message);
-      process.exitCode = 1;
+    console.error(err.message);
+    process.exitCode = 1;
   });
 }
 

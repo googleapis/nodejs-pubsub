@@ -58,38 +58,38 @@ async function listenForProtobufMessages(subscriptionName, timeout) {
 
   // Create an event handler to handle messages
   let messageCount = 0;
-  const messageHandler = async (message) => {
-      // "Ack" (acknowledge receipt of) the message
-      message.ack();
+  const messageHandler = async message => {
+    // "Ack" (acknowledge receipt of) the message
+    message.ack();
 
-      // Get the schema metadata from the message.
-      const schemaMetadata = Schema.metadataFromMessage(message.attributes);
+    // Get the schema metadata from the message.
+    const schemaMetadata = Schema.metadataFromMessage(message.attributes);
 
-      let result;
-      switch (schemaMetadata.encoding) {
-          case Encodings.Binary:
-              result = Province.decode(message.data);
-              break;
-          case Encodings.Json:
-              result = JSON.parse(message.data.toString());
-              // What's coming in here is not properly protobuf data, but you could
-              // verify it if you like:
-              // assert.strictEqual(null, Province.verify(result));
-              break;
-      }
+    let result;
+    switch (schemaMetadata.encoding) {
+      case Encodings.Binary:
+        result = Province.decode(message.data);
+        break;
+      case Encodings.Json:
+        result = JSON.parse(message.data.toString());
+        // What's coming in here is not properly protobuf data, but you could
+        // verify it if you like:
+        // assert.strictEqual(null, Province.verify(result));
+        break;
+    }
 
-      console.log(`Received message ${message.id}:`);
-      console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
-      console.log(`\tAttributes: ${JSON.stringify(message.attributes, null, 4)}`);
-      messageCount += 1;
+    console.log(`Received message ${message.id}:`);
+    console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
+    console.log(`\tAttributes: ${JSON.stringify(message.attributes, null, 4)}`);
+    messageCount += 1;
   };
 
   // Listen for new messages until timeout is hit
   subscription.on('message', messageHandler);
 
   setTimeout(() => {
-      subscription.removeListener('message', messageHandler);
-      console.log(`${messageCount} message(s) received.`);
+    subscription.removeListener('message', messageHandler);
+    console.log(`${messageCount} message(s) received.`);
   }, timeout * 1000);
 }
 // [END pubsub_subscribe_proto_messages]
@@ -98,8 +98,8 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
   timeout = Number(timeout);
 
   listenForProtobufMessages(subscriptionName, timeout).catch(err => {
-      console.error(err.message);
-      process.exitCode = 1;
+    console.error(err.message);
+    process.exitCode = 1;
   });
 }
 

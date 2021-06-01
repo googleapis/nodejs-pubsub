@@ -51,20 +51,24 @@ async function createTopicWithSchema(topicName, schemaName, encodingType) {
   // Creates a new topic with a schema. Note that you might also
   // pass Encodings.Json or Encodings.Binary here.
   await pubSubClient.createTopic({
-      name: topicName,
-      schemaSettings: {
-          schema: fullName,
-          encoding: encodingType,
-      },
+    name: topicName,
+    schemaSettings: {
+      schema: fullName,
+      encoding: encodingType,
+    },
   });
   console.log(`Topic ${topicName} created with schema ${fullName}.`);
 }
 // [END pubsub_create_topic_with_schema]
 
-function main(topicName = 'YOUR_TOPIC_NAME', schemaName = 'YOUR_SCHEMA_NAME', encodingType = 'BINARY') {
+function main(
+  topicName = 'YOUR_TOPIC_NAME',
+  schemaName = 'YOUR_SCHEMA_NAME',
+  encodingType = 'BINARY'
+) {
   createTopicWithSchema(topicName, schemaName, encodingType).catch(err => {
-      console.error(err.message);
-      process.exitCode = 1;
+    console.error(err.message);
+    process.exitCode = 1;
   });
 }
 

@@ -51,8 +51,8 @@ async function getSchema(schemaName) {
 
 function main(schemaName = 'YOUR_SCHEMA_NAME') {
   getSchema(schemaName).catch(err => {
-      console.error(err.message);
-      process.exitCode = 1;
+    console.error(err.message);
+    process.exitCode = 1;
   });
 }
 

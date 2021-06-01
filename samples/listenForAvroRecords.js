@@ -54,41 +54,41 @@ function listenForAvroRecords(subscriptionName, timeout) {
 
   // Make an encoder using the official avro-js library.
   const definition = fs
-      .readFileSync('system-test/fixtures/provinces.avsc')
-      .toString();
+    .readFileSync('system-test/fixtures/provinces.avsc')
+    .toString();
   const type = avro.parse(definition);
 
   // Create an event handler to handle messages
   let messageCount = 0;
-  const messageHandler = async (message) => {
-      // "Ack" (acknowledge receipt of) the message
-      message.ack();
+  const messageHandler = async message => {
+    // "Ack" (acknowledge receipt of) the message
+    message.ack();
 
-      // Get the schema metadata from the message.
-      const schemaMetadata = Schema.metadataFromMessage(message.attributes);
+    // Get the schema metadata from the message.
+    const schemaMetadata = Schema.metadataFromMessage(message.attributes);
 
-      let result;
-      switch (schemaMetadata.encoding) {
-          case Encodings.Binary:
-              result = type.fromBuffer(message.data);
-              break;
-          case Encodings.Json:
-              result = type.fromString(message.data.toString());
-              break;
-      }
+    let result;
+    switch (schemaMetadata.encoding) {
+      case Encodings.Binary:
+        result = type.fromBuffer(message.data);
+        break;
+      case Encodings.Json:
+        result = type.fromString(message.data.toString());
+        break;
+    }
 
-      console.log(`Received message ${message.id}:`);
-      console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
-      console.log(`\tAttributes: ${message.attributes}`);
-      messageCount += 1;
+    console.log(`Received message ${message.id}:`);
+    console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
+    console.log(`\tAttributes: ${message.attributes}`);
+    messageCount += 1;
   };
 
   // Listen for new messages until timeout is hit
   subscription.on('message', messageHandler);
 
   setTimeout(() => {
-      subscription.removeListener('message', messageHandler);
-      console.log(`${messageCount} message(s) received.`);
+    subscription.removeListener('message', messageHandler);
+    console.log(`${messageCount} message(s) received.`);
   }, timeout * 1000);
 }
 // [END pubsub_subscribe_avro_records]
@@ -97,11 +97,10 @@ function main(subscriptionName = 'YOUR_SUBSCRIPTION_NAME', timeout = 60) {
   timeout = Number(timeout);
 
   try {
-      listenForAvroRecords(subscriptionName, timeout);
-  }
-  catch (err) {
-      console.error(err.message);
-      process.exitCode = 1;
+    listenForAvroRecords(subscriptionName, timeout);
+  } catch (err) {
+    console.error(err.message);
+    process.exitCode = 1;
   }
 }
 

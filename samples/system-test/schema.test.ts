@@ -44,7 +44,7 @@ describe('schema', () => {
   async function cleanSchemas() {
     const schemas = [];
     for await (const s of pubsub.listSchemas()) {
-      schemas.push(s.delete());
+      schemas.push(pubsub.schema(s.name!).delete());
     }
     await Promise.all(schemas);
   }
@@ -80,14 +80,12 @@ describe('schema', () => {
 
     let found = false;
     for await (const s of pubsub.listSchemas()) {
-      const fullName = await s.getName();
-      if (fullName.endsWith(schemaNameOne)) {
+      if (s.name === schemaNameOne) {
         found = true;
         break;
       }
     }
 
-    await cleanSchemas();
     assert.ok(found, 'created schema was not found');
   });
 });

@@ -40,9 +40,14 @@ async function main(args) {
   const mode = args.shift();
   if (mode === 'commentify') {
     for (const fn of args) {
+      // Read the whole file.
       let contents = (await fs.readFile(fn)).toString();
+
+      // Replace all blank lines with a known comment.
       const blankLines = /^\s*\r?\n/gm;
       contents = contents.replace(blankLines, '//BLANK\n');
+
+      // Write out it out for tsc to find.
       const outputFn = path.join(path.dirname(fn), 'build', path.basename(fn));
       await fs.mkdir(path.dirname(outputFn), {
         recursive: true,
@@ -51,8 +56,10 @@ async function main(args) {
     }
   } else if (mode === 'post') {
     for (const fn of args) {
+      // Read the whole file.
       let contents = (await fs.readFile(fn)).toString();
 
+      // Convert back the comments to blank lines.
       const blankedLines = /^\s*\/\/BLANK\r?\n/gm;
       contents = contents.replace(blankedLines, '\n');
 
@@ -70,8 +77,10 @@ async function main(args) {
       );
 
       // TypeScript shifts things to 4 spaces, move them back to 2.
-      const extraSpaces = /^(\/\/.*){0} {4}/gm;
-      contents = contents.replace(extraSpaces, '  ');
+      const extraSpaces = /^(\/\/[^\w]*){0}(( {4})+)/gm;
+      contents = contents.replace(extraSpaces, match =>
+        ' '.repeat(match.length / 2)
+      );
 
       await fs.writeFile(fn, contents);
     }

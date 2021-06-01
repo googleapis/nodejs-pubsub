@@ -51,8 +51,8 @@ async function deleteSchema(schemaName) {
 
 function main(schemaName = 'YOUR_SCHEMA_NAME') {
   deleteSchema(schemaName).catch(err => {
-      console.error(err.message);
-      process.exitCode = 1;
+    console.error(err.message);
+    process.exitCode = 1;
   });
 }
 

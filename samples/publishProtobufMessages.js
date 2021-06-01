@@ -51,15 +51,15 @@ async function publishProtobufMessages(topicName) {
   const topicSchemaMetadata = topicMetadata.schemaSettings;
 
   if (!topicSchemaMetadata) {
-      console.log(`Topic ${topicName} doesn't seem to have a schema.`);
-      return;
+    console.log(`Topic ${topicName} doesn't seem to have a schema.`);
+    return;
   }
   const schemaEncoding = topicSchemaMetadata.encoding;
 
   // Encode the message.
   const province = {
-      name: 'Ontario',
-      postAbbr: 'ON',
+    name: 'Ontario',
+    postAbbr: 'ON',
   };
 
   // Make an encoder using the protobufjs library.
@@ -72,16 +72,16 @@ async function publishProtobufMessages(topicName) {
 
   let dataBuffer;
   switch (schemaEncoding) {
-      case Encodings.Binary:
-          dataBuffer = Buffer.from(Province.encode(message).finish());
-          break;
-      case Encodings.Json:
-          dataBuffer = Buffer.from(JSON.stringify(message.toJSON()));
-          break;
+    case Encodings.Binary:
+      dataBuffer = Buffer.from(Province.encode(message).finish());
+      break;
+    case Encodings.Json:
+      dataBuffer = Buffer.from(JSON.stringify(message.toJSON()));
+      break;
   }
   if (!dataBuffer) {
-      console.log(`Invalid encoding ${schemaEncoding} on the topic.`);
-      return;
+    console.log(`Invalid encoding ${schemaEncoding} on the topic.`);
+    return;
   }
 
   const messageId = await topic.publish(dataBuffer);
@@ -91,8 +91,8 @@ async function publishProtobufMessages(topicName) {
 
 function main(topicName = 'YOUR_TOPIC_NAME') {
   publishProtobufMessages(topicName).catch(err => {
-      console.error(err.message);
-      process.exitCode = 1;
+    console.error(err.message);
+    process.exitCode = 1;
   });
 }
 

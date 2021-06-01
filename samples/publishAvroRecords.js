@@ -52,34 +52,34 @@ async function publishAvroRecords(topicName) {
   const topicSchemaMetadata = topicMetadata.schemaSettings;
 
   if (!topicSchemaMetadata) {
-      console.log(`Topic ${topicName} doesn't seem to have a schema.`);
-      return;
+    console.log(`Topic ${topicName} doesn't seem to have a schema.`);
+    return;
   }
   const schemaEncoding = topicSchemaMetadata.encoding;
 
   // Make an encoder using the official avro-js library.
   const definition = fs
-      .readFileSync('system-test/fixtures/provinces.avsc')
-      .toString();
+    .readFileSync('system-test/fixtures/provinces.avsc')
+    .toString();
   const type = avro.parse(definition);
 
   // Encode the message.
   const province = {
-      name: 'Ontario',
-      post_abbr: 'ON',
+    name: 'Ontario',
+    post_abbr: 'ON',
   };
   let dataBuffer;
   switch (schemaEncoding) {
-      case Encodings.Binary:
-          dataBuffer = type.toBuffer(province);
-          break;
-      case Encodings.Json:
-          dataBuffer = Buffer.from(type.toString(province));
-          break;
+    case Encodings.Binary:
+      dataBuffer = type.toBuffer(province);
+      break;
+    case Encodings.Json:
+      dataBuffer = Buffer.from(type.toString(province));
+      break;
   }
   if (!dataBuffer) {
-      console.log(`Invalid encoding ${schemaEncoding} on the topic.`);
-      return;
+    console.log(`Invalid encoding ${schemaEncoding} on the topic.`);
+    return;
   }
 
   const messageId = await topic.publish(dataBuffer);
@@ -89,8 +89,8 @@ async function publishAvroRecords(topicName) {
 
 function main(topicName = 'YOUR_TOPIC_NAME') {
   publishAvroRecords(topicName).catch(err => {
-      console.error(err.message);
-      process.exitCode = 1;
+    console.error(err.message);
+    process.exitCode = 1;
   });
 }
 
