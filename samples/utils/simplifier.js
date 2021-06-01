@@ -33,7 +33,9 @@ node simplifier.js post build/typescript/build/*.js
 
 */
 
-const fs = require('fs/promises');
+// We test with Node 12.
+// eslint-disable-next-line node/no-unsupported-features/node-builtins
+const fs = require('fs').promises;
 const path = require('path');
 
 async function main(args) {
