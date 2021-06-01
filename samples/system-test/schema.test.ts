@@ -17,6 +17,7 @@ import {assert} from 'chai';
 import {describe, it, before, after} from 'mocha';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
+import * as path from 'path';
 
 const execSync = (cmd: string) => cp.execSync(cmd, {encoding: 'utf-8'});
 
@@ -34,11 +35,7 @@ describe('schema', () => {
 
   before(async () => {
     const [topic] = await pubsub.createTopic(topicNameOne);
-    console.log('topic', topic);
-    console.log(
-      'sub',
-      await pubsub.createSubscription(topic, subscriptionNameOne)
-    );
+    await pubsub.createSubscription(topic, subscriptionNameOne)
   });
 
   async function cleanSchemas() {
@@ -69,18 +66,22 @@ describe('schema', () => {
     await cleanSchemas();
   });
 
+  function fixturePath(fixture: string): string {
+    return path.join(__dirname, '..', '..', 'system-test', 'fixtures', fixture);
+  }
+
   it('should create an avro schema', async () => {
     const output = execSync(
-      `${commandFor(
-        'createAvroSchema'
-      )} ${schemaNameOne} system-test/fixtures/avro-avsc.json`
+      `${commandFor('createAvroSchema')} ${schemaNameOne} ${fixturePath(
+        'provinces.avsc'
+      )}`
     );
     assert.include(output, schemaNameOne);
     assert.include(output, 'created.');
 
     let found = false;
     for await (const s of pubsub.listSchemas()) {
-      if (s.name === schemaNameOne) {
+      if (s.name?.endsWith(schemaNameOne)) {
         found = true;
         break;
       }
