@@ -28,14 +28,14 @@ describe('schema', () => {
   console.log(`Topics runId: ${runId}`);
   const topicNameOne = `schema-top1-${runId}`;
   const subscriptionNameOne = `schema-sub1-${runId}`;
-  const fullTopicNameOne = `projects/${projectId}/topics/${topicNameOne}`;
+  //const fullTopicNameOne = `projects/${projectId}/topics/${topicNameOne}`;
   const schemaNameOne = `schema1-${runId}`;
 
   const commandFor = (action: string) => `node ${action}.js`;
 
   before(async () => {
     const [topic] = await pubsub.createTopic(topicNameOne);
-    await pubsub.createSubscription(topic, subscriptionNameOne)
+    await pubsub.createSubscription(topic, subscriptionNameOne);
   });
 
   async function cleanSchemas() {
