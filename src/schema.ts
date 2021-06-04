@@ -136,7 +136,7 @@ export class Schema {
    * @returns {Promise<ISchema>}
    */
   async get(
-    view: google.pubsub.v1.SchemaView = SchemaViews.Full,
+    view: SchemaView = SchemaViews.Full,
     gaxOpts?: CallOptions
   ): Promise<ISchema> {
     const client = await this.pubsub.getSchemaClient_();
@@ -241,7 +241,7 @@ export class Schema {
       name: attributes['googclient_schemaname'],
       encoding: attributes[
         'googclient_schemaencoding'
-      ] as unknown as keyof typeof google.pubsub.v1.Encoding,
+      ] as unknown as SchemaEncoding,
     };
   }
 }
@@ -259,26 +259,26 @@ export interface SchemaMessageMetadata {
   /**
    * Encoding; this will be Encodings.Json or Encodings.Binary.
    */
-  encoding: keyof typeof google.pubsub.v1.Encoding | undefined;
+  encoding: SchemaEncoding | undefined;
 }
 
 // Export all of these so that clients don't have to dig for them.
 export type CreateSchemaResponse = google.pubsub.v1.Schema;
 export type ISchema = google.pubsub.v1.ISchema;
-export type SchemaType = google.pubsub.v1.Schema.Type;
-export type SchemaView = google.pubsub.v1.SchemaView;
+export type SchemaType = keyof typeof google.pubsub.v1.Schema.Type;
+export type SchemaView = keyof typeof google.pubsub.v1.SchemaView;
 export type ICreateSchemaRequest = google.pubsub.v1.ICreateSchemaRequest;
-export type SchemaEncoding = google.pubsub.v1.Encoding;
+export type SchemaEncoding = keyof typeof google.pubsub.v1.Encoding;
 
 // Also export these for JavaScript compatible usage.
 export const SchemaTypes = {
-  ProtocolBuffer: google.pubsub.v1.Schema.Type.PROTOCOL_BUFFER,
-  Avro: google.pubsub.v1.Schema.Type.AVRO,
+  ProtocolBuffer: 'PROTOCOL_BUFFER' as const,
+  Avro: 'AVRO' as const,
 };
 
 export const SchemaViews = {
-  Basic: google.pubsub.v1.SchemaView.BASIC,
-  Full: google.pubsub.v1.SchemaView.FULL,
+  Basic: 'BASIC' as const,
+  Full: 'FULL' as const,
 };
 
 // These are not schema-specific, but this seems to be the

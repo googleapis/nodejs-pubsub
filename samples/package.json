@@ -29,6 +29,7 @@
     "@opentelemetry/api": "^0.18.1",
     "@opentelemetry/tracing": "^0.18.2",
     "avro-js": "^1.10.1",
+    "p-defer": "^3.0.0",
     "protobufjs": "^6.11.2"
   },
   "devDependencies": {
