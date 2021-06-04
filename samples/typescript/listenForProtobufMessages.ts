@@ -70,10 +70,14 @@ async function listenForProtobufMessages(
         result = Province.decode(message.data);
         break;
       case Encodings.Json:
+        // This doesn't require decoding with the protobuf library,
+        // since it's plain JSON. But you can still validate it against
+        // your schema.
         result = JSON.parse(message.data.toString());
-        // What's coming in here is not properly protobuf data, but you could
-        // verify it if you like:
-        // assert.strictEqual(null, Province.verify(result));
+        console.log(`Validation of JSON: ${Province.verify(result)}`);
+        break;
+      default:
+        console.log(`Unknown schema encoding: ${schemaMetadata.encoding}`);
         break;
     }
 

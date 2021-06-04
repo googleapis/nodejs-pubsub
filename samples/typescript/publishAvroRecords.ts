@@ -77,6 +77,9 @@ async function publishAvroRecords(topicName: string) {
     case Encodings.Json:
       dataBuffer = Buffer.from(type.toString(province));
       break;
+    default:
+      console.log(`Unknown schema encoding: ${schemaEncoding}`);
+      break;
   }
   if (!dataBuffer) {
     console.log(`Invalid encoding ${schemaEncoding} on the topic.`);

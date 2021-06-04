@@ -71,6 +71,9 @@ function listenForAvroRecords(subscriptionName: string, timeout: number) {
       case Encodings.Json:
         result = type.fromString(message.data.toString());
         break;
+      default:
+        console.log(`Unknown schema encoding: ${schemaMetadata.encoding}`);
+        break;
     }
 
     console.log(`Received message ${message.id}:`);

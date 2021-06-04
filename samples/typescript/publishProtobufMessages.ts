@@ -79,6 +79,9 @@ async function publishProtobufMessages(topicName: string) {
     case Encodings.Json:
       dataBuffer = Buffer.from(JSON.stringify(message.toJSON()));
       break;
+    default:
+      console.log(`Unknown schema encoding: ${schemaEncoding}`);
+      break;
   }
   if (!dataBuffer) {
     console.log(`Invalid encoding ${schemaEncoding} on the topic.`);
