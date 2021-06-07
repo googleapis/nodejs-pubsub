@@ -27,8 +27,11 @@ import {describe, it, afterEach} from 'mocha';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
 import * as path from 'path';
-import * as fs from 'fs/promises';
 import * as defer from 'p-defer';
+
+// Tests run as Node 12.
+// eslint-disable-next-line node/no-unsupported-features/node-builtins
+import {promises as fs} from 'fs';
 
 const execSync = (cmd: string) => cp.execSync(cmd, {encoding: 'utf-8'});
 
