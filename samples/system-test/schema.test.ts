@@ -283,6 +283,8 @@ describe('schema', () => {
 
     const result = (await deferred.promise) as Message;
     assert.include(result.data.toString(), 'Ontario');
+
+    sub.close();
   });
 
   it('should publish protobuf messages', async () => {
@@ -300,5 +302,7 @@ describe('schema', () => {
 
     const result = (await deferred.promise) as Message;
     assert.include(result.data.toString(), 'Ontario');
+
+    sub.close();
   });
 });
