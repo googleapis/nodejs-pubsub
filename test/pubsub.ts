@@ -1634,7 +1634,7 @@ describe('PubSub', () => {
 
       sandbox.stub(client, 'listSchemasAsync').callsFake((req, gaxOpts) => {
         assert.strictEqual(req!.parent, pubsub.name);
-        assert.strictEqual(req!.view, google.pubsub.v1.SchemaView.BASIC);
+        assert.strictEqual(req!.view, 'BASIC');
         assert.deepStrictEqual(gaxOpts, {});
         return toAsync([
           {
@@ -1661,7 +1661,7 @@ describe('PubSub', () => {
       const client = await pubsub.getSchemaClient_();
 
       sandbox.stub(client, 'listSchemasAsync').callsFake(req => {
-        assert.strictEqual(req!.view, google.pubsub.v1.SchemaView.BASIC);
+        assert.strictEqual(req!.view, 'BASIC');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return toAsync([]) as any;
       });
