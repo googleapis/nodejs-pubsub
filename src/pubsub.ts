@@ -32,6 +32,7 @@ import {
   ICreateSchemaRequest,
   SchemaViews,
   ISchema,
+  SchemaView,
 } from './schema';
 import {Snapshot} from './snapshot';
 import {
@@ -790,7 +791,7 @@ export class PubSub {
    * }
    */
   async *listSchemas(
-    view: google.pubsub.v1.SchemaView = SchemaViews.Basic,
+    view: SchemaView = SchemaViews.Basic,
     options?: CallOptions
   ): AsyncIterable<google.pubsub.v1.ISchema> {
     const client = await this.getSchemaClient_();

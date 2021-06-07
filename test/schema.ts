@@ -99,7 +99,7 @@ describe('Schema', () => {
       .callsFake(async (params, gaxOpts) => {
         const name = await schema.getName();
         assert.strictEqual(params.name, name);
-        assert.strictEqual(params.view, google.pubsub.v1.SchemaView.FULL);
+        assert.strictEqual(params.view, 'FULL');
         assert.deepStrictEqual(gaxOpts, {});
         called = true;
         return [ischema];
@@ -115,7 +115,7 @@ describe('Schema', () => {
   it('defaults to FULL when get() is called', async () => {
     let called = false;
     sandbox.stub(schemaClient, 'getSchema').callsFake(async params => {
-      assert.strictEqual(params.view, google.pubsub.v1.SchemaView.FULL);
+      assert.strictEqual(params.view, 'FULL');
       called = true;
       return [ischema];
     });
