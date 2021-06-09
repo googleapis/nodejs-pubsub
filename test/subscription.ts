@@ -87,11 +87,11 @@ describe('Subscription', () => {
   const SUB_NAME = 'test-subscription';
   const SUB_FULL_NAME = 'projects/' + PROJECT_ID + '/subscriptions/' + SUB_NAME;
 
-  const PUBSUB = ({
+  const PUBSUB = {
     projectId: PROJECT_ID,
     request: util.noop,
     createSubscription: util.noop,
-  } as {}) as PubSub;
+  } as {} as PubSub;
 
   before(() => {
     Subscription = proxyquire('../src/subscription.js', {
@@ -152,7 +152,7 @@ describe('Subscription', () => {
 
     it('should create an IAM object', () => {
       assert(subscription.iam instanceof FakeIAM);
-      const args = ((subscription.iam as {}) as FakeIAM).calledWith_;
+      const args = (subscription.iam as {} as FakeIAM).calledWith_;
       assert.strictEqual(args[0], PUBSUB);
       assert.strictEqual(args[1], subscription.name);
     });
@@ -339,7 +339,8 @@ describe('Subscription', () => {
     });
 
     it('should throw an error if theres no topic', () => {
-      const expectedError = /Subscriptions can only be created when accessed through Topics/;
+      const expectedError =
+        /Subscriptions can only be created when accessed through Topics/;
       delete subscription.topic;
       assert.throws(() => subscription.create(), expectedError);
     });

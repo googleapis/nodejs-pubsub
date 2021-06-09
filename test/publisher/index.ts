@@ -16,23 +16,20 @@
 
 import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
-import {describe, it, before, beforeEach, afterEach} from 'mocha';
+import {describe, it, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
-import {
-  BasicTracerProvider,
-  InMemorySpanExporter,
-  SimpleSpanProcessor,
-} from '@opentelemetry/tracing';
 import * as opentelemetry from '@opentelemetry/api';
-
 import {Topic} from '../../src';
 import * as p from '../../src/publisher';
 import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
 
 import {defaultOptions} from '../../src/default-options';
+import {exporter} from '../tracing';
+import {SpanKind} from '@opentelemetry/api';
+import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
@@ -40,12 +37,18 @@ const fakePromisify = Object.assign({}, pfy, {
     if (ctor.name !== 'Publisher') {
       return;
     }
+
+    // We _also_ need to call it, because unit tests will catch things
+    // that shouldn't be promisified.
+    pfy.promisifyAll(ctor, options);
+
     promisified = true;
     assert.ok(options.singular);
     assert.deepStrictEqual(options.exclude, [
       'publish',
       'setOptions',
       'constructSpan',
+      'getOptionDefaults',
     ]);
   },
 });
@@ -56,6 +59,7 @@ class FakeQueue extends EventEmitter {
     super();
     this.publisher = publisher;
   }
+  updateOptions() {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: p.PubsubMessage, callback: p.PublishCallback): void {}
   publish(callback: (err: Error | null) => void) {
@@ -94,14 +98,21 @@ class FakeOrderedQueue extends FakeQueue {
 }
 
 describe('Publisher', () => {
-  const sandbox = sinon.createSandbox();
-  const topic = {} as Topic;
+  let sandbox: sinon.SinonSandbox;
+  let spy: sinon.SinonSpyStatic;
+  const topic = {
+    name: 'topic-name',
+    pubsub: {projectId: 'PROJECT_ID'},
+  } as Topic;
 
   // tslint:disable-next-line variable-name
   let Publisher: typeof p.Publisher;
   let publisher: p.Publisher;
 
-  before(() => {
+  beforeEach(() => {
+    sandbox = sinon.createSandbox();
+    spy = sandbox.spy();
+
     const mocked = proxyquire('../../src/publisher/index.js', {
       '@google-cloud/promisify': fakePromisify,
       './message-queues': {
@@ -111,9 +122,7 @@ describe('Publisher', () => {
     });
 
     Publisher = mocked.Publisher;
-  });
 
-  beforeEach(() => {
     publisher = new Publisher(topic);
   });
 
@@ -151,7 +160,6 @@ describe('Publisher', () => {
 
   describe('publish', () => {
     const buffer = Buffer.from('Hello, world!');
-    const spy = sandbox.spy();
 
     it('should call through to publishMessage', () => {
       const stub = sandbox.stub(publisher, 'publishMessage');
@@ -180,56 +188,52 @@ describe('Publisher', () => {
     const enableTracing: p.PublishOptions = {
       enableOpenTelemetryTracing: true,
     };
-    const disableTracing: p.PublishOptions = {
-      enableOpenTelemetryTracing: false,
-    };
     const buffer = Buffer.from('Hello, world!');
 
     beforeEach(() => {
-      // Declare tracingPublisher as type any and pre-define _tracing
-      // to gain access to the private field after publisher init
-      tracingPublisher['tracing'] = undefined;
-    });
-    it('should not instantiate a tracer when tracing is disabled', () => {
-      tracingPublisher = new Publisher(topic);
-      assert.strictEqual(tracingPublisher['tracing'], undefined);
-    });
-
-    it('should instantiate a tracer when tracing is enabled through constructor', () => {
-      tracingPublisher = new Publisher(topic, enableTracing);
-      assert.ok(tracingPublisher['tracing']);
-    });
-
-    it('should instantiate a tracer when tracing is enabled through setOptions', () => {
-      tracingPublisher = new Publisher(topic);
-      tracingPublisher.setOptions(enableTracing);
-      assert.ok(tracingPublisher['tracing']);
-    });
-
-    it('should disable tracing when tracing is disabled through setOptions', () => {
-      tracingPublisher = new Publisher(topic, enableTracing);
-      tracingPublisher.setOptions(disableTracing);
-      assert.strictEqual(tracingPublisher['tracing'], undefined);
+      exporter.reset();
     });
 
     it('export created spans', () => {
+      // Setup trace exporting
       tracingPublisher = new Publisher(topic, enableTracing);
 
-      // Setup trace exporting
-      const provider: BasicTracerProvider = new BasicTracerProvider();
-      const exporter: InMemorySpanExporter = new InMemorySpanExporter();
-      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-      provider.register();
-      opentelemetry.trace.setGlobalTracerProvider(provider);
-
       tracingPublisher.publish(buffer);
-      assert.ok(exporter.getFinishedSpans());
+      const spans = exporter.getFinishedSpans();
+      assert.notStrictEqual(spans.length, 0, 'has span');
+      const createdSpan = spans.concat().pop()!;
+      assert.strictEqual(
+        createdSpan.status.code,
+        opentelemetry.SpanStatusCode.UNSET
+      );
+      assert.strictEqual(
+        createdSpan.attributes[MessagingAttribute.MESSAGING_OPERATION],
+        'send'
+      );
+      assert.strictEqual(
+        createdSpan.attributes[MessagingAttribute.MESSAGING_SYSTEM],
+        'pubsub'
+      );
+      assert.strictEqual(
+        createdSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION],
+        topic.name
+      );
+      assert.strictEqual(
+        createdSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION_KIND],
+        'topic'
+      );
+      assert.strictEqual(createdSpan.name, 'topic-name send');
+      assert.strictEqual(
+        createdSpan.kind,
+        SpanKind.PRODUCER,
+        'span kind should be PRODUCER'
+      );
+      assert.ok(spans);
     });
   });
 
   describe('publishMessage', () => {
     const data = Buffer.from('hello, world!');
-    const spy = sandbox.spy();
 
     it('should throw an error if data is not a Buffer', () => {
       const badData = {} as Buffer;
@@ -269,7 +273,7 @@ describe('Publisher', () => {
         queue = new FakeOrderedQueue(publisher, orderingKey);
         publisher.orderedQueues.set(
           orderingKey,
-          (queue as unknown) as q.OrderedQueue
+          queue as unknown as q.OrderedQueue
         );
       });
 
@@ -277,9 +281,9 @@ describe('Publisher', () => {
         publisher.orderedQueues.clear();
         publisher.publishMessage(fakeMessage, spy);
 
-        queue = (publisher.orderedQueues.get(
+        queue = publisher.orderedQueues.get(
           orderingKey
-        ) as unknown) as FakeOrderedQueue;
+        ) as unknown as FakeOrderedQueue;
 
         assert(queue instanceof FakeOrderedQueue);
         assert.strictEqual(queue.publisher, publisher);
@@ -312,9 +316,9 @@ describe('Publisher', () => {
         publisher.orderedQueues.clear();
         publisher.publishMessage(fakeMessage, spy);
 
-        queue = (publisher.orderedQueues.get(
+        queue = publisher.orderedQueues.get(
           orderingKey
-        ) as unknown) as FakeOrderedQueue;
+        ) as unknown as FakeOrderedQueue;
         queue.emit('drain');
 
         assert.strictEqual(publisher.orderedQueues.size, 0);
@@ -331,9 +335,9 @@ describe('Publisher', () => {
         sandbox
           .stub(FakeOrderedQueue.prototype, '_publish')
           .callsFake((messages, callbacks, callback) => {
-            const queue = (publisher.orderedQueues.get(
+            const queue = publisher.orderedQueues.get(
               orderingKey
-            ) as unknown) as FakeOrderedQueue;
+            ) as unknown as FakeOrderedQueue;
             queue.emit('drain');
             if (typeof callback === 'function') callback(null);
           });
@@ -372,7 +376,7 @@ describe('Publisher', () => {
 
       publisher.orderedQueues.set(
         orderingKey,
-        (queue as unknown) as q.OrderedQueue
+        queue as unknown as q.OrderedQueue
       );
       publisher.resumePublishing(orderingKey);
 
@@ -435,6 +439,27 @@ describe('Publisher', () => {
         },
       });
       assert.strictEqual(publisher.settings.batching!.maxMessages, 1000);
+    });
+
+    it('should pass new option values into queues after construction', () => {
+      // Make sure we have some ordering queues.
+      publisher.orderedQueues.set('a', new q.OrderedQueue(publisher, 'a'));
+      publisher.orderedQueues.set('b', new q.OrderedQueue(publisher, 'b'));
+
+      const stubs = [sandbox.stub(publisher.queue, 'updateOptions')];
+      assert.deepStrictEqual(publisher.orderedQueues.size, 2);
+      stubs.push(
+        ...Array.from(publisher.orderedQueues.values()).map(q =>
+          sandbox.stub(q, 'updateOptions')
+        )
+      );
+
+      const newOptions: p.PublishOptions = {
+        batching: {},
+      };
+      publisher.setOptions(newOptions);
+
+      stubs.forEach(s => assert.ok(s.calledOnce));
     });
   });
 

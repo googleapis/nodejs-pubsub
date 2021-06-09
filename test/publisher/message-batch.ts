@@ -174,4 +174,12 @@ describe('MessageBatch', () => {
       assert.strictEqual(isFull, false);
     });
   });
+
+  describe('setOptions', () => {
+    it('updates the options', () => {
+      const newOptions = {};
+      batch.setOptions(newOptions);
+      assert.strictEqual(newOptions, batch.options);
+    });
+  });
 });

@@ -180,7 +180,7 @@ describe('MessageStream', () => {
 
     const gaxClient = new FakeGaxClient();
     client = gaxClient.client; // we hit the grpc client directly
-    subscriber = (new FakeSubscriber(gaxClient) as {}) as Subscriber;
+    subscriber = new FakeSubscriber(gaxClient) as {} as Subscriber;
     messageStream = new MessageStream(subscriber);
   });
 
@@ -196,7 +196,7 @@ describe('MessageStream', () => {
         highWaterMark: 0,
       };
       assert.deepStrictEqual(
-        ((messageStream as {}) as FakePassThrough).options,
+        (messageStream as {} as FakePassThrough).options,
         expectedOptions
       );
     });
@@ -211,7 +211,7 @@ describe('MessageStream', () => {
       };
 
       assert.deepStrictEqual(
-        ((ms as {}) as FakePassThrough).options,
+        (ms as {} as FakePassThrough).options,
         expectedOptions
       );
     });

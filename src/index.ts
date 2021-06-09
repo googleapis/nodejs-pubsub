@@ -116,6 +116,19 @@ export {
 } from './snapshot';
 export {Message} from './subscriber';
 export {
+  Schema,
+  CreateSchemaResponse,
+  ISchema,
+  SchemaType,
+  SchemaTypes,
+  ICreateSchemaRequest,
+  SchemaEncoding,
+  SchemaView,
+  SchemaViews,
+  Encodings,
+  SchemaMessageMetadata,
+} from './schema';
+export {
   PushConfig,
   SubscriptionMetadata,
   SubscriptionOptions,

@@ -18,6 +18,10 @@ import * as crypto from 'crypto';
 import defer = require('p-defer');
 import * as uuid from 'uuid';
 
+// This is only in Node 10.17+, but it's used for system tests, should be okay.
+// eslint-disable-next-line node/no-unsupported-features/node-builtins
+import {promises as fs} from 'fs';
+
 import {
   Message,
   PubSub,
@@ -25,6 +29,9 @@ import {
   Snapshot,
   Subscription,
   Topic,
+  SchemaTypes,
+  SchemaViews,
+  ISchema,
 } from '../src';
 import {Policy, IamPermissionsMap} from '../src/iam';
 import {MessageOptions} from '../src/topic';
@@ -68,11 +75,12 @@ describe('pubsub', () => {
     return generateName('subscription');
   }
 
-  // This is a temporary situation - we'll eventually fall back to the
-  // regular generateSubName() call, but this has to be used for the
-  // pre-release allow list.
+  function generateSchemaName() {
+    return generateName('schema');
+  }
+
   function generateSubForDetach() {
-    return `testdetachsubsxyz-${generateSubName()}`;
+    return generateSubName();
   }
 
   function generateTopicName() {
@@ -617,24 +625,42 @@ describe('pubsub', () => {
     it('should ack the message', done => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
-      subscription.on('error', done);
+      let finished = false;
+      subscription.on('error', () => {
+        if (!finished) {
+          finished = true;
+          subscription.close(done);
+        }
+      });
       subscription.on('message', ack);
 
       function ack(message: Message) {
-        message.ack();
-        subscription.close(done);
+        if (!finished) {
+          finished = true;
+          message.ack();
+          subscription.close(done);
+        }
       }
     });
 
     it('should nack the message', done => {
       const subscription = topic.subscription(SUB_NAMES[1]);
 
-      subscription.on('error', done);
+      let finished = false;
+      subscription.on('error', () => {
+        if (!finished) {
+          finished = true;
+          subscription.close(done);
+        }
+      });
       subscription.on('message', nack);
 
       function nack(message: Message) {
-        message.nack();
-        subscription.close(done);
+        if (!finished) {
+          finished = true;
+          message.nack();
+          subscription.close(done);
+        }
       }
     });
 
@@ -904,12 +930,12 @@ describe('pubsub', () => {
 
       // This creates a Promise that hooks the 'message' callback of the
       // subscription above, and resolves when that callback calls `resolve`.
-      type WorkCallback<T> = (arg: T, resolve: Function) => void;
+      type WorkCallback = (arg: Message, resolve: Function) => void;
       function makeMessagePromise<T>(
-        workCallback: WorkCallback<T>
+        workCallback: WorkCallback
       ): Promise<void> {
         return new Promise(resolve => {
-          subscription.on('message', (arg: T) => {
+          subscription.on('message', (arg: Message) => {
             workCallback(arg, resolve);
           });
         });
@@ -1009,6 +1035,154 @@ describe('pubsub', () => {
         await Promise.race([errorPromise, messagePromise]);
       });
     });
+  });
+
+  describe('schema', () => {
+    // This should really be handled by a standard method of Array(), imo, but it's not.
+    async function aiToArray(
+      iterator: AsyncIterable<ISchema>,
+      nameFilter?: string
+    ): Promise<ISchema[]> {
+      const result = [] as ISchema[];
+      for await (const i of iterator) {
+        if (!nameFilter || (nameFilter && i.name?.endsWith(nameFilter))) {
+          result.push(i);
+        }
+      }
+
+      return result;
+    }
+
+    const getSchemaDef = async () => {
+      const schemaDef = (
+        await fs.readFile('system-test/fixtures/provinces.avsc')
+      ).toString();
+
+      return schemaDef;
+    };
+
+    const setupTestSchema = async () => {
+      const schemaDef = await getSchemaDef();
+      const schemaId = generateSchemaName();
+      await pubsub.createSchema(schemaId, SchemaTypes.Avro, schemaDef);
+      return schemaId;
+    };
+
+    it('should create a schema', async () => {
+      const schemaId = await setupTestSchema();
+      const schemaList = await aiToArray(pubsub.listSchemas(), schemaId);
+      assert.strictEqual(schemaList.length, 1);
+    });
+
+    it('should delete a schema', async () => {
+      const schemaId = await setupTestSchema();
+
+      // Validate that we created one, because delete() doesn't throw, and we
+      // might end up causing a false negative.
+      const preSchemaList = await aiToArray(pubsub.listSchemas(), schemaId);
+      assert.strictEqual(preSchemaList.length, 1);
+
+      await pubsub.schema(schemaId).delete();
+
+      const postSchemaList = await aiToArray(pubsub.listSchemas(), schemaId);
+      assert.strictEqual(postSchemaList.length, 0);
+    });
+
+    it('should list schemas', async () => {
+      const schemaId = await setupTestSchema();
+
+      const basicList = await aiToArray(
+        pubsub.listSchemas(SchemaViews.Basic),
+        schemaId
+      );
+      assert.strictEqual(basicList.length, 1);
+      assert.strictEqual(basicList[0].definition, '');
+
+      const fullList = await aiToArray(
+        pubsub.listSchemas(SchemaViews.Full),
+        schemaId
+      );
+      assert.strictEqual(fullList.length, 1);
+      assert.ok(fullList[0].definition);
+    });
+
+    it('should get a schema', async () => {
+      const schemaId = await setupTestSchema();
+      const schema = pubsub.schema(schemaId);
+      const info = await schema.get(SchemaViews.Basic);
+      assert.strictEqual(info.definition, '');
+
+      const fullInfo = await schema.get(SchemaViews.Full);
+      assert.ok(fullInfo.definition);
+    });
+
+    it('should validate a schema', async () => {
+      const schemaDef = await getSchemaDef();
+
+      try {
+        await pubsub.validateSchema({
+          type: SchemaTypes.Avro,
+          definition: schemaDef,
+        });
+      } catch (e) {
+        assert.strictEqual(e, undefined, 'Error thrown by validateSchema');
+      }
+
+      const badSchemaDef = '{"not_actually":"avro"}';
+      try {
+        await pubsub.validateSchema({
+          type: SchemaTypes.Avro,
+          definition: badSchemaDef,
+        });
+      } catch (e) {
+        assert.ok(e);
+      }
+
+      const fakeSchemaDef = 'woohoo i am a schema, no really';
+
+      try {
+        await pubsub.validateSchema({
+          type: SchemaTypes.Avro,
+          definition: fakeSchemaDef,
+        });
+      } catch (e) {
+        assert.ok(e);
+      }
+    });
+
+    // The server doesn't seem to be returning proper responses for this.
+    // Commenting out for now, until it can be discussed.
+    // TODO(feywind): Uncomment this later. May be solved by b/188927641.
+    /* it('should validate a message', async () => {
+      const schemaId = await setupTestSchema();
+      const schema = pubsub.schema(schemaId);
+      const testMessage = (
+        await fs.readFile('system-test/fixtures/province.json')
+      ).toString();
+
+      try {
+        await schema.validateMessage(testMessage, Encodings.Json);
+      } catch (e) {
+        console.log(e, e.message, e.toString());
+        assert.strictEqual(e, undefined, 'Error thrown by validateSchema');
+      }
+
+      const badMessage = '{"foo":"bar"}';
+
+      try {
+        await schema.validateMessage(badMessage, Encodings.Json);
+      } catch (e) {
+        assert.ok(e);
+      }
+
+      const fakeMessage = 'woohoo i am a message, no really';
+
+      try {
+        await schema.validateMessage(fakeMessage, Encodings.Json);
+      } catch (e) {
+        assert.ok(e);
+      }
+    }); */
   });
 
   it('should allow closing of publisher clients', async () => {

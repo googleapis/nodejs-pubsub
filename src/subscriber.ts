@@ -18,7 +18,8 @@ import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
-import {SpanContext, Span} from '@opentelemetry/api';
+import {SpanContext, Span, SpanKind} from '@opentelemetry/api';
+import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -28,7 +29,7 @@ import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
-import {OpenTelemetryTracer} from './opentelemetry-tracing';
+import {createSpan} from './opentelemetry-tracing';
 
 export type PullResponse = google.pubsub.v1.IPullResponse;
 
@@ -246,7 +247,6 @@ export class Subscriber extends EventEmitter {
   private _options!: SubscriberOptions;
   private _stream!: MessageStream;
   private _subscription: Subscription;
-  private _tracing: OpenTelemetryTracer | undefined;
   constructor(subscription: Subscription, options = {}) {
     super();
 
@@ -429,17 +429,13 @@ export class Subscriber extends EventEmitter {
         options.streamingOptions = {} as MessageStreamOptions;
       }
 
-      const {
-        maxStreams = defaultOptions.subscription.maxStreams,
-      } = options.streamingOptions;
+      const {maxStreams = defaultOptions.subscription.maxStreams} =
+        options.streamingOptions;
       options.streamingOptions.maxStreams = Math.min(
         maxStreams,
         this.maxMessages
       );
     }
-    this._tracing = options.enableOpenTelemetryTracing
-      ? new OpenTelemetryTracer()
-      : undefined;
   }
 
   /**
@@ -457,18 +453,42 @@ export class Subscriber extends EventEmitter {
     ) {
       return undefined;
     }
+
     const spanValue = message.attributes['googclient_OpenTelemetrySpanContext'];
     const parentSpanContext: SpanContext | undefined = spanValue
       ? JSON.parse(spanValue)
       : undefined;
     const spanAttributes = {
+      // Original span attributes
       ackId: message.ackId,
       deliveryAttempt: message.deliveryAttempt,
+      //
+      // based on https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/messaging.md#topic-with-multiple-consumers
+      [MessagingAttribute.MESSAGING_SYSTEM]: 'pubsub',
+      [MessagingAttribute.MESSAGING_OPERATION]: 'process',
+      [MessagingAttribute.MESSAGING_DESTINATION]: this.name,
+      [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
+      [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.id,
+      [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
+      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: (
+        message.data as Buffer
+      ).length,
+      // Not in Opentelemetry semantic convention but mimics naming
+      'messaging.pubsub.received_at': message.received,
+      'messaging.pubsub.acknowlege_id': message.ackId,
+      'messaging.pubsub.delivery_attempt': message.deliveryAttempt,
     };
+
     // Subscriber spans should always have a publisher span as a parent.
     // Return undefined if no parent is provided
+    const spanName = `${this.name} process`;
     const span = parentSpanContext
-      ? this._tracing.createSpan(this._name, spanAttributes, parentSpanContext)
+      ? createSpan(
+          spanName.trim(),
+          SpanKind.CONSUMER,
+          spanAttributes,
+          parentSpanContext
+        )
       : undefined;
     return span;
   }

@@ -13,13 +13,13 @@
 // limitations under the License.
 
 import * as pjy from '@google-cloud/projectify';
-import * as promisify from '@google-cloud/promisify';
 import arrify = require('arrify');
 import * as assert from 'assert';
 import {describe, it, before, beforeEach, after, afterEach} from 'mocha';
 import * as gax from 'google-gax';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
+import defer = require('p-defer');
 
 import {google} from '../protos/protos';
 import * as pubsubTypes from '../src/pubsub';
@@ -27,6 +27,8 @@ import {Snapshot} from '../src/snapshot';
 import * as subby from '../src/subscription';
 import {Topic} from '../src/topic';
 import * as util from '../src/util';
+import {Schema, SchemaTypes} from '../src';
+import {ISchema, SchemaViews} from '../src/schema';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PKG = require('../../package.json');
@@ -50,23 +52,28 @@ function Subscription(
 }
 
 let promisified = false;
-const fakePromisify = Object.assign({}, promisify, {
-  promisifyAll(
-    // tslint:disable-next-line variable-name
-    Class: typeof pubsubTypes.PubSub,
-    options: promisify.PromisifyAllOptions
-  ) {
-    if (Class.name !== 'PubSub') {
-      return;
+const fakeUtil = Object.assign({}, util, {
+  promisifySome(
+    class_: Function,
+    classProtos: object,
+    methods: string[]
+  ): void {
+    console.log('Promisifying some', classProtos, methods);
+    if (class_.name === 'PubSub') {
+      promisified = true;
+      assert.deepStrictEqual(methods, [
+        'close',
+        'createSubscription',
+        'createTopic',
+        'detachSubscription',
+        'getSnapshots',
+        'getSubscriptions',
+        'getTopics',
+      ]);
     }
-
-    promisified = true;
-    assert.deepStrictEqual(options.exclude, [
-      'request',
-      'snapshot',
-      'subscription',
-      'topic',
-    ]);
+    // Defeats the method name type check.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    util.promisifySome(class_, classProtos, methods as any);
   },
 });
 
@@ -161,7 +168,6 @@ describe('PubSub', () => {
       '@google-cloud/paginator': {
         paginator: fakePaginator,
       },
-      '@google-cloud/promisify': fakePromisify,
       '@google-cloud/projectify': {
         replaceProjectIdToken: fakePjy,
       },
@@ -173,6 +179,7 @@ describe('PubSub', () => {
       './subscription': {Subscription},
       './topic': {Topic: FakeTopic},
       './v1': v1Override,
+      './util': fakeUtil,
     }).PubSub;
   });
 
@@ -206,7 +213,7 @@ describe('PubSub', () => {
       assert.strictEqual(pubsub.getTopicsStream, 'getTopics');
     });
 
-    it('should promisify all the things', () => {
+    it('should promisify some of the things', () => {
       assert(promisified);
     });
 
@@ -294,9 +301,9 @@ describe('PubSub', () => {
   describe('createSubscription', () => {
     const TOPIC_NAME = 'topic';
     pubsub = new pubsubTypes.PubSub({});
-    const TOPIC = (Object.assign(new FakeTopic(), {
+    const TOPIC = Object.assign(new FakeTopic(), {
       name: 'projects/' + PROJECT_ID + '/topics/' + TOPIC_NAME,
-    }) as {}) as Topic;
+    }) as {} as Topic;
 
     const SUB_NAME = 'subscription';
     const SUBSCRIPTION = {
@@ -316,17 +323,15 @@ describe('PubSub', () => {
       };
     });
 
-    it('should throw if no Topic is provided', () => {
-      assert.throws(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (pubsub as any).createSubscription();
+    it('should throw if no Topic is provided', async () => {
+      await assert.rejects(async () => {
+        await pubsub.createSubscription(undefined!, undefined!);
       }, /A Topic is required for a new subscription\./);
     });
 
-    it('should throw if no subscription name is provided', () => {
-      assert.throws(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (pubsub as any).createSubscription(TOPIC_NAME);
+    it('should throw if no subscription name is provided', async () => {
+      await assert.rejects(async () => {
+        await pubsub.createSubscription(TOPIC_NAME, undefined!);
       }, /A subscription name is required./);
     });
 
@@ -637,9 +642,9 @@ describe('PubSub', () => {
     };
     const apiResponse = 'responseToCheck';
 
-    it('should throw if no subscription name is provided', () => {
-      assert.throws(() => {
-        pubsub.detachSubscription(undefined!);
+    it('should throw if no subscription name is provided', async () => {
+      await assert.rejects(async () => {
+        await pubsub.detachSubscription(undefined!);
       }, /A subscription name is required./);
     });
 
@@ -666,7 +671,7 @@ describe('PubSub', () => {
     });
 
     it('should detach a Subscription from a string', async () => {
-      sandbox.stub(pubsub, 'request').returns();
+      sandbox.stub(pubsub, 'request').callsArg(1);
       sandbox.stub(pubsub, 'subscription').callsFake(subName => {
         assert.strictEqual(subName, SUB_NAME);
         return SUBSCRIPTION as subby.Subscription;
@@ -797,7 +802,7 @@ describe('PubSub', () => {
       };
 
       setHost('localhost');
-      pubsub.options.grpc = (fakeGrpc as unknown) as typeof gax.grpc;
+      pubsub.options.grpc = fakeGrpc as unknown as typeof gax.grpc;
       pubsub.determineBaseUrl_();
       assert.strictEqual(pubsub.options.sslCreds, fakeCredentials);
     });
@@ -866,14 +871,14 @@ describe('PubSub', () => {
     });
 
     it('should build the right request', done => {
-      const options = ({
+      const options = {
         a: 'b',
         c: 'd',
         gaxOpts: {
           e: 'f',
         },
         autoPaginate: false,
-      } as {}) as pubsubTypes.PageOptions;
+      } as {} as pubsubTypes.PageOptions;
 
       const expectedOptions = Object.assign({}, options, {
         project: 'projects/' + pubsub.projectId,
@@ -958,12 +963,12 @@ describe('PubSub', () => {
     });
 
     it('should pass the correct arguments to the API', done => {
-      const options = ({
+      const options = {
         gaxOpts: {
           a: 'b',
         },
         autoPaginate: false,
-      } as {}) as pubsubTypes.GetSubscriptionsOptions;
+      } as {} as pubsubTypes.GetSubscriptionsOptions;
 
       const expectedGaxOpts = Object.assign(
         {
@@ -1043,9 +1048,9 @@ describe('PubSub', () => {
       it('should call topic.getSubscriptions', done => {
         const topic = new FakeTopic();
 
-        const opts = ({
+        const opts = {
           topic,
-        } as {}) as pubsubTypes.GetSubscriptionsOptions;
+        } as {} as pubsubTypes.GetSubscriptionsOptions;
 
         topic.getSubscriptions = (options: pubsubTypes.PageOptions) => {
           assert.strictEqual(options, opts);
@@ -1056,9 +1061,9 @@ describe('PubSub', () => {
       });
 
       it('should create a topic instance from a name', done => {
-        const opts = ({
+        const opts = {
           topic: TOPIC_NAME,
-        } as {}) as pubsubTypes.GetSubscriptionsOptions;
+        } as {} as pubsubTypes.GetSubscriptionsOptions;
 
         const fakeTopic = {
           getSubscriptions(options: pubsubTypes.PageOptions) {
@@ -1096,14 +1101,14 @@ describe('PubSub', () => {
     });
 
     it('should build the right request', done => {
-      const options = ({
+      const options = {
         a: 'b',
         c: 'd',
         gaxOpts: {
           e: 'f',
         },
         autoPaginate: false,
-      } as {}) as pubsubTypes.PageOptions;
+      } as {} as pubsubTypes.PageOptions;
 
       const expectedOptions = Object.assign({}, options, {
         project: 'projects/' + pubsub.projectId,
@@ -1259,9 +1264,9 @@ describe('PubSub', () => {
     const FAKE_CLIENT_INSTANCE = class {
       close() {}
     };
-    const CONFIG = ({
+    const CONFIG = {
       client: 'FakeClient',
-    } as {}) as pubsubTypes.GetClientConfig;
+    } as {} as pubsubTypes.GetClientConfig;
 
     beforeEach(() => {
       sandbox.stub(pubsub, 'auth').value({getProjectId: () => util.noop});
@@ -1372,10 +1377,10 @@ describe('PubSub', () => {
   });
 
   describe('getClient_', () => {
-    const FAKE_CLIENT_INSTANCE = ({} as unknown) as gax.ClientStub;
-    const CONFIG = ({
+    const FAKE_CLIENT_INSTANCE = {} as unknown as gax.ClientStub;
+    const CONFIG = {
       client: 'FakeClient',
-    } as {}) as pubsubTypes.GetClientConfig;
+    } as {} as pubsubTypes.GetClientConfig;
 
     it('should get the client', done => {
       sandbox
@@ -1458,12 +1463,12 @@ describe('PubSub', () => {
     });
 
     it('should call the client method correctly', done => {
-      const CONFIG = ({
+      const CONFIG = {
         client: 'FakeClient',
         method: 'fakeMethod',
         reqOpts: {a: 'a'},
         gaxOpts: {},
-      } as {}) as pubsubTypes.RequestConfig;
+      } as {} as pubsubTypes.RequestConfig;
 
       const replacedReqOpts = {};
 
@@ -1499,7 +1504,7 @@ describe('PubSub', () => {
     it('should return a Snapshot object', () => {
       const SNAPSHOT_NAME = 'new-snapshot';
       const snapshot = pubsub.snapshot(SNAPSHOT_NAME);
-      const args = ((snapshot as {}) as FakeSnapshot).calledWith_;
+      const args = (snapshot as {} as FakeSnapshot).calledWith_;
 
       assert(snapshot instanceof FakeSnapshot);
       assert.strictEqual(args[0], pubsub);
@@ -1568,11 +1573,133 @@ describe('PubSub', () => {
       const fakeOptions = {};
       const topic = pubsub.topic(fakeName, fakeOptions);
 
-      const [ps, name, options] = ((topic as {}) as FakeTopic).calledWith_;
+      const [ps, name, options] = (topic as {} as FakeTopic).calledWith_;
 
       assert.strictEqual(ps, pubsub);
       assert.strictEqual(name, fakeName);
       assert.strictEqual(options, fakeOptions);
+    });
+  });
+
+  describe('schema', () => {
+    function* toAsync<T>(arr: T[]) {
+      for (const i of arr) {
+        yield i;
+      }
+    }
+
+    it('should close the schema client when it has been opened', async () => {
+      // Force it to create a client.
+      const client = await pubsub.getSchemaClient_();
+      sandbox.stub(client, 'close').resolves();
+      await pubsub.close();
+    });
+
+    // I feel like this ought to be a test, but something in getSchemaClient_()
+    // is trying to talk to auth services, so I'm skipping it for now.
+    /* it('getSchemaClient_ creates a schema client', async () => {
+      const client = await pubsub.getSchemaClient_();
+      assert.notStrictEqual(client, undefined);
+      assert.notStrictEqual(client, null);
+      await pubsub.close();
+    }); */
+
+    it('calls down to createSchema correctly', async () => {
+      const schemaId = 'id';
+      const type = SchemaTypes.Avro;
+      const definition = 'def';
+      const name = Schema.formatName_(pubsub.projectId, schemaId);
+
+      // Grab the schema client it'll be using so we can stub it.
+      const client = await pubsub.getSchemaClient_();
+      const def = defer();
+      sandbox.stub(client, 'createSchema').callsFake(req => {
+        assert.strictEqual(req.parent, pubsub.name);
+        assert.strictEqual(req.schemaId, schemaId);
+        assert.strictEqual(req.schema!.name, name);
+        assert.strictEqual(req.schema!.type, type);
+        assert.strictEqual(req.schema!.definition, definition);
+        def.resolve();
+      });
+      const result = await Promise.all([
+        pubsub.createSchema(schemaId, type, definition),
+        def,
+      ]);
+      assert.strictEqual(result[0].id, schemaId);
+    });
+
+    it('calls down to listSchemas correctly', async () => {
+      // Grab the schema client it'll be using so we can stub it.
+      const client = await pubsub.getSchemaClient_();
+
+      sandbox.stub(client, 'listSchemasAsync').callsFake((req, gaxOpts) => {
+        assert.strictEqual(req!.parent, pubsub.name);
+        assert.strictEqual(req!.view, 'BASIC');
+        assert.deepStrictEqual(gaxOpts, {});
+        return toAsync([
+          {
+            name: 'foo1',
+          },
+          {
+            name: 'foo2',
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ]) as any;
+      });
+
+      const ids = [] as string[];
+      for await (const s of pubsub.listSchemas(SchemaViews.Basic, {})) {
+        ids.push(s.name!);
+      }
+
+      const expectedIds = ['foo1', 'foo2'];
+      assert.deepStrictEqual(ids, expectedIds);
+    });
+
+    it('defaults to BASIC for listSchemas', async () => {
+      // Grab the schema client it'll be using so we can stub it.
+      const client = await pubsub.getSchemaClient_();
+
+      sandbox.stub(client, 'listSchemasAsync').callsFake(req => {
+        assert.strictEqual(req!.view, 'BASIC');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return toAsync([]) as any;
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      for await (const s of pubsub.listSchemas()) {
+        break;
+      }
+    });
+
+    it('returns a proper Schema object from schema()', async () => {
+      const schema = pubsub.schema('foo');
+      assert.strictEqual(schema.id, 'foo');
+
+      const name = await schema.getName();
+      assert.strictEqual(name, Schema.formatName_(pubsub.projectId, 'foo'));
+    });
+
+    it('calls validateSchema() on the client when validateSchema() is called', async () => {
+      const client = await pubsub.getSchemaClient_();
+      const ischema: ISchema = {
+        name: 'test',
+        type: SchemaTypes.Avro,
+        definition: 'foo',
+      };
+
+      let called = false;
+      sandbox
+        .stub(client, 'validateSchema')
+        .callsFake(async (params, gaxOpts) => {
+          assert.strictEqual(params.parent, pubsub.name);
+          assert.deepStrictEqual(params.schema, ischema);
+          assert.ok(gaxOpts);
+          called = true;
+        });
+
+      await pubsub.validateSchema(ischema, {});
+      assert.ok(called);
     });
   });
 });

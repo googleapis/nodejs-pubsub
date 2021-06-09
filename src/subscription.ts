@@ -88,6 +88,32 @@ export type SetSubscriptionMetadataResponse = MetadataResponse;
 export type DetachSubscriptionCallback = EmptyCallback;
 export type DetachSubscriptionResponse = EmptyResponse;
 
+// JSDoc won't see these, so this is just to let you get typings
+// in your editor of choice.
+//
+// NOTE: These are commented out for now because we don't want to
+// break any existing clients that rely on not-entirely-correct
+// typings. We'll re-enable on the next major.
+/* export declare interface Subscription {
+  on(
+    event: 'message',
+    listener: (message: Message) => void
+  ): this;
+  on(
+    event: 'error',
+    listener: (error: StatusError) => void
+  ): this;
+  on(event: 'close', listener: () => void): this;
+
+  // Only used internally.
+  on(event: 'newListener', listener: Function): this;
+  on(event: 'removeListener', listener: Function): this;
+
+  // Catch-all. If you get an error about this line, it means you're
+  // using an unsupported event type or listener type.
+  on(event: string, listener: void): this;
+} */
+
 /**
  * @typedef {object} ExpirationPolicy
  * A policy that specifies the conditions for this subscription's expiration. A
@@ -120,7 +146,16 @@ export type DetachSubscriptionResponse = EmptyResponse;
  * All Subscription objects are instances of an
  * [EventEmitter](http://nodejs.org/api/events.html). The subscription will pull
  * for messages automatically as long as there is at least one listener assigned
- * for the `message` event.
+ * for the `message` event. Available events:
+ *
+ * Upon receipt of a message:
+ * on(event: 'message', listener: (message: {@link Message}) => void): this;
+ *
+ * Upon receipt of an error:
+ * on(event: 'error', listener: (error: Error) => void): this;
+ *
+ * Upon the closing of the subscriber:
+ * on(event: 'close', listener: Function): this;
  *
  * By default Subscription objects allow you to process 100 messages at the same
  * time. You can fine tune this value by adjusting the

@@ -15,15 +15,15 @@
  */
 
 import * as assert from 'assert';
-import {describe, it, before, beforeEach, afterEach} from 'mocha';
+import {describe, it, beforeEach} from 'mocha';
 
 import * as api from '@opentelemetry/api';
 import * as trace from '@opentelemetry/tracing';
-import {OpenTelemetryTracer} from '../src/opentelemetry-tracing';
-import {SimpleSpanProcessor} from '@opentelemetry/tracing';
+import {createSpan} from '../src/opentelemetry-tracing';
+import {exporter} from './tracing';
+import {SpanKind} from '@opentelemetry/api';
 
 describe('OpenTelemetryTracer', () => {
-  let tracing: OpenTelemetryTracer;
   let span: trace.Span;
   const spanName = 'test-span';
   const spanContext: api.SpanContext = {
@@ -31,33 +31,30 @@ describe('OpenTelemetryTracer', () => {
     spanId: '6e0c63257de34c92',
     traceFlags: api.TraceFlags.SAMPLED,
   };
-  const spanAttributes: api.Attributes = {
+  const spanAttributes: api.SpanAttributes = {
     foo: 'bar',
   };
 
-  before(() => {
-    const provider = new trace.BasicTracerProvider();
-    const exporter = new trace.InMemorySpanExporter();
-    provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-    api.trace.setGlobalTracerProvider(provider);
-  });
-
   beforeEach(() => {
-    tracing = new OpenTelemetryTracer();
-  });
-
-  afterEach(() => {
-    span.end();
+    exporter.reset();
   });
 
   it('creates a span', () => {
-    span = tracing.createSpan(
+    span = createSpan(
       spanName,
+      SpanKind.PRODUCER,
       spanAttributes,
       spanContext
     ) as trace.Span;
-    assert.strictEqual(span.name, spanName);
-    assert.deepStrictEqual(span.attributes, spanAttributes);
-    assert.strictEqual(span.parentSpanId, spanContext.spanId);
+    span.end();
+
+    const spans = exporter.getFinishedSpans();
+    assert.notStrictEqual(spans.length, 0);
+    const exportedSpan = spans.concat().pop()!;
+
+    assert.strictEqual(exportedSpan.name, spanName);
+    assert.deepStrictEqual(exportedSpan.attributes, spanAttributes);
+    assert.strictEqual(exportedSpan.parentSpanId, spanContext.spanId);
+    assert.strictEqual(exportedSpan.kind, SpanKind.PRODUCER);
   });
 });

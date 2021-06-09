@@ -67,6 +67,9 @@ class FakeMessageBatch {
   isFull(): boolean {
     return false;
   }
+  setOptions(options: b.BatchPublishOptions) {
+    this.options = options;
+  }
 }
 
 class FakePublishError {
@@ -213,6 +216,15 @@ describe('Message Queues', () => {
         assert.ok(queue.batch instanceof FakeMessageBatch);
         assert.strictEqual(queue.batch.options, queue.batchOptions);
       });
+
+      it('should propagate batch options to the message batch when updated', () => {
+        const newConfig = {
+          batching: {},
+        };
+        publisher.settings = newConfig;
+        queue.updateOptions();
+        assert.strictEqual(queue.batch.options, newConfig.batching);
+      });
     });
 
     describe('add', () => {
@@ -274,7 +286,7 @@ describe('Message Queues', () => {
         const maxMilliseconds = 1234;
 
         queue.batchOptions = {maxMilliseconds};
-        queue.pending = (1234 as unknown) as NodeJS.Timer;
+        queue.pending = 1234 as unknown as NodeJS.Timer;
         queue.add(fakeMessage, spy);
 
         clock.tick(maxMilliseconds);
@@ -296,7 +308,7 @@ describe('Message Queues', () => {
 
       it('should cancel any pending publish calls', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const fakeHandle = (1234 as unknown) as any;
+        const fakeHandle = 1234 as unknown as any;
         const stub = sandbox.stub(global, 'clearTimeout').withArgs(fakeHandle);
 
         queue.pending = fakeHandle;
@@ -338,6 +350,21 @@ describe('Message Queues', () => {
 
       it('should localize the ordering key', () => {
         assert.strictEqual(queue.key, key);
+      });
+
+      it('should propagate batch options to all message batches when updated', () => {
+        const firstBatch = queue.createBatch();
+        const secondBatch = queue.createBatch();
+        queue.batches.push(firstBatch, secondBatch);
+
+        const newConfig = {
+          batching: {},
+        };
+        publisher.settings = newConfig;
+        queue.updateOptions();
+
+        assert.strictEqual(firstBatch.options, newConfig.batching);
+        assert.strictEqual(secondBatch.options, newConfig.batching);
       });
     });
 
@@ -461,7 +488,7 @@ describe('Message Queues', () => {
         it('should noop after adding if a publish is already pending', () => {
           const stub = sandbox.stub(queue, 'beginNextPublish');
 
-          queue.pending = (1234 as unknown) as NodeJS.Timer;
+          queue.pending = 1234 as unknown as NodeJS.Timer;
           queue.add(fakeMessage, spy);
 
           assert.strictEqual(stub.callCount, 0);
@@ -558,7 +585,7 @@ describe('Message Queues', () => {
       });
 
       it('should cancel any pending publishes', () => {
-        const fakeHandle = (1234 as unknown) as NodeJS.Timer;
+        const fakeHandle = 1234 as unknown as NodeJS.Timer;
         const stub = sandbox.stub(global, 'clearTimeout');
 
         queue.pending = fakeHandle;
