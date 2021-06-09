@@ -32,7 +32,7 @@ import {MessageStreamOptions} from '../src/message-stream';
 import * as s from '../src/subscriber';
 import {Subscription} from '../src/subscription';
 import {SpanKind} from '@opentelemetry/api';
-import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
+import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 
 const stubs = new Map();
 
@@ -730,26 +730,26 @@ describe('Subscriber', () => {
         'span kind should be CONSUMER'
       );
       assert.strictEqual(
-        firstSpan.attributes[MessagingAttribute.MESSAGING_OPERATION],
+        firstSpan.attributes[SemanticAttributes.MESSAGING_OPERATION],
         'process',
         'span messaging operation should match'
       );
       assert.strictEqual(
-        firstSpan.attributes[MessagingAttribute.MESSAGING_SYSTEM],
+        firstSpan.attributes[SemanticAttributes.MESSAGING_SYSTEM],
         'pubsub'
       );
       assert.strictEqual(
-        firstSpan.attributes[MessagingAttribute.MESSAGING_MESSAGE_ID],
+        firstSpan.attributes[SemanticAttributes.MESSAGING_MESSAGE_ID],
         messageWithSpanContext.message.messageId,
         'span messaging id should match'
       );
       assert.strictEqual(
-        firstSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION],
+        firstSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION],
         subscriber.name,
         'span messaging destination should match'
       );
       assert.strictEqual(
-        firstSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION_KIND],
+        firstSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION_KIND],
         'topic'
       );
     });

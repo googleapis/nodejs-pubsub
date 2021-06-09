@@ -20,7 +20,6 @@ import {
   Span,
   context,
   trace,
-  setSpanContext,
   SpanKind,
 } from '@opentelemetry/api';
 
@@ -57,6 +56,6 @@ export function createSpan(
       // set the attributes of the span
       attributes: attributes,
     },
-    parent ? setSpanContext(context.active(), parent) : undefined
+    parent ? trace.setSpanContext(context.active(), parent) : undefined
   );
 }

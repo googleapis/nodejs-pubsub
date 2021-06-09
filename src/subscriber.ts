@@ -19,7 +19,7 @@ import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
 import {SpanContext, Span, SpanKind} from '@opentelemetry/api';
-import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
+import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -464,13 +464,13 @@ export class Subscriber extends EventEmitter {
       deliveryAttempt: message.deliveryAttempt,
       //
       // based on https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/messaging.md#topic-with-multiple-consumers
-      [MessagingAttribute.MESSAGING_SYSTEM]: 'pubsub',
-      [MessagingAttribute.MESSAGING_OPERATION]: 'process',
-      [MessagingAttribute.MESSAGING_DESTINATION]: this.name,
-      [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
-      [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.id,
-      [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
-      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: (
+      [SemanticAttributes.MESSAGING_SYSTEM]: 'pubsub',
+      [SemanticAttributes.MESSAGING_OPERATION]: 'process',
+      [SemanticAttributes.MESSAGING_DESTINATION]: this.name,
+      [SemanticAttributes.MESSAGING_DESTINATION_KIND]: 'topic',
+      [SemanticAttributes.MESSAGING_MESSAGE_ID]: message.id,
+      [SemanticAttributes.MESSAGING_PROTOCOL]: 'pubsub',
+      [SemanticAttributes.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: (
         message.data as Buffer
       ).length,
       // Not in Opentelemetry semantic convention but mimics naming
