@@ -17,7 +17,7 @@
 import {promisify, promisifyAll} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
-import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
+import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 import {isSpanContextValid, Span, SpanKind} from '@opentelemetry/api';
 
 import {BatchPublishOptions} from './message-batch';
@@ -289,14 +289,14 @@ export class Publisher {
     const spanAttributes = {
       // Add Opentelemetry semantic convention attributes to the span, based on:
       // https://github.com/open-telemetry/opentelemetry-specification/blob/v1.1.0/specification/trace/semantic_conventions/messaging.md
-      [MessagingAttribute.MESSAGING_TEMP_DESTINATION]: false,
-      [MessagingAttribute.MESSAGING_SYSTEM]: 'pubsub',
-      [MessagingAttribute.MESSAGING_OPERATION]: 'send',
-      [MessagingAttribute.MESSAGING_DESTINATION]: this.topic.name,
-      [MessagingAttribute.MESSAGING_DESTINATION_KIND]: 'topic',
-      [MessagingAttribute.MESSAGING_MESSAGE_ID]: message.messageId,
-      [MessagingAttribute.MESSAGING_PROTOCOL]: 'pubsub',
-      [MessagingAttribute.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]:
+      [SemanticAttributes.MESSAGING_TEMP_DESTINATION]: false,
+      [SemanticAttributes.MESSAGING_SYSTEM]: 'pubsub',
+      [SemanticAttributes.MESSAGING_OPERATION]: 'send',
+      [SemanticAttributes.MESSAGING_DESTINATION]: this.topic.name,
+      [SemanticAttributes.MESSAGING_DESTINATION_KIND]: 'topic',
+      [SemanticAttributes.MESSAGING_MESSAGE_ID]: message.messageId,
+      [SemanticAttributes.MESSAGING_PROTOCOL]: 'pubsub',
+      [SemanticAttributes.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]:
         message.data?.length,
       'messaging.pubsub.ordering_key': message.orderingKey,
     } as Attributes;
@@ -308,7 +308,7 @@ export class Publisher {
     );
 
     // If the span's context is valid we should pass the span context special attribute
-    if (isSpanContextValid(span.context())) {
+    if (isSpanContextValid(span.spanContext())) {
       if (
         message.attributes &&
         message.attributes['googclient_OpenTelemetrySpanContext']
@@ -322,7 +322,7 @@ export class Publisher {
       }
 
       message.attributes['googclient_OpenTelemetrySpanContext'] =
-        JSON.stringify(span.context());
+        JSON.stringify(span.spanContext());
     }
 
     return span;
