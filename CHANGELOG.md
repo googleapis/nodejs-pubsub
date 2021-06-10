@@ -4,6 +4,19 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.13.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.12.0...v2.13.0) (2021-06-10)
+
+
+### Features
+
+* expose list/get options for full/basic on schema methods ([#1291](https://www.github.com/googleapis/nodejs-pubsub/issues/1291)) ([11f9612](https://www.github.com/googleapis/nodejs-pubsub/commit/11f961268429bb691be226aaffae6a88eeb9c600))
+* schema library support ([#1289](https://www.github.com/googleapis/nodejs-pubsub/issues/1289)) ([fd275e2](https://www.github.com/googleapis/nodejs-pubsub/commit/fd275e23fec89e6368a47caa1fdc194cbfc5d32b))
+
+
+### Bug Fixes
+
+* GoogleAdsError missing using generator version after 1.3.0 ([#1299](https://www.github.com/googleapis/nodejs-pubsub/issues/1299)) ([43a8fdb](https://www.github.com/googleapis/nodejs-pubsub/commit/43a8fdbbe2db24556101fb4e0bb29b3d95112ba0))
+
 ## [2.12.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.11.0...v2.12.0) (2021-05-11)
 
 
