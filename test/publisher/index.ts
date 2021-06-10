@@ -29,7 +29,7 @@ import {PublishError} from '../../src/publisher/publish-error';
 import {defaultOptions} from '../../src/default-options';
 import {exporter} from '../tracing';
 import {SpanKind} from '@opentelemetry/api';
-import {MessagingAttribute} from '@opentelemetry/semantic-conventions';
+import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 
 let promisified = false;
 const fakePromisify = Object.assign({}, pfy, {
@@ -207,19 +207,19 @@ describe('Publisher', () => {
         opentelemetry.SpanStatusCode.UNSET
       );
       assert.strictEqual(
-        createdSpan.attributes[MessagingAttribute.MESSAGING_OPERATION],
+        createdSpan.attributes[SemanticAttributes.MESSAGING_OPERATION],
         'send'
       );
       assert.strictEqual(
-        createdSpan.attributes[MessagingAttribute.MESSAGING_SYSTEM],
+        createdSpan.attributes[SemanticAttributes.MESSAGING_SYSTEM],
         'pubsub'
       );
       assert.strictEqual(
-        createdSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION],
+        createdSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION],
         topic.name
       );
       assert.strictEqual(
-        createdSpan.attributes[MessagingAttribute.MESSAGING_DESTINATION_KIND],
+        createdSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION_KIND],
         'topic'
       );
       assert.strictEqual(createdSpan.name, 'topic-name send');
