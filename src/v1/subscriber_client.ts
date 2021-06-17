@@ -18,10 +18,10 @@
 
 /* global window */
 import * as gax from 'google-gax';
+import {execFile} from 'child_process';
 import {homedir} from 'os';
 import {join} from 'path';
 import {readFile} from 'fs';
-import {execFile} from 'child_process';
 import {
   Callback,
   CallOptions,
@@ -191,7 +191,6 @@ export class SubscriberClient {
   constructor(opts?: ClientOptions) {
     // Ensure that options include all the required fields.
     const staticMembers = this.constructor as typeof SubscriberClient;
-    // See: https://google.aip.dev/auth/4114
     const servicePath =
       opts?.servicePath || opts?.apiEndpoint || staticMembers.servicePath;
     const port = opts?.port || staticMembers.port;
@@ -395,6 +394,8 @@ export class SubscriberClient {
 
   /**
    * Return service path, taking into account mTLS logic.
+   * See: https://google.aip.dev/auth/4114
+   *
    * @returns {string} The DNS address for this service.
    */
   mtlsServicePath(cert?: string, key?: string) {
