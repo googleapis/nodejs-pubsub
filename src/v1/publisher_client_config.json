@@ -50,13 +50,7 @@
         "Publish": {
           "timeout_millis": 60000,
           "retry_codes_name": "cancelled_unknown_deadline_exceeded_resource_exhausted_aborted_internal_unavailable",
-          "retry_params_name": "default",
-          "bundling": {
-            "element_count_threshold": 100,
-            "request_byte_threshold": 1048576,
-            "delay_threshold_millis": 10,
-            "element_count_limit": 1000
-          }
+          "retry_params_name": "default"
         },
         "GetTopic": {
           "timeout_millis": 60000,

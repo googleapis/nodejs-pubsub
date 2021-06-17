@@ -18,6 +18,10 @@
 
 /* global window */
 import * as gax from 'google-gax';
+import {homedir} from 'os';
+import {join} from 'path';
+import {readFile} from 'fs';
+import {execFile} from 'child_process';
 import {
   Callback,
   CallOptions,
@@ -41,6 +45,88 @@ import jsonProtos = require('../../protos/protos.json');
 import * as gapicConfig from './subscriber_client_config.json';
 
 const version = require('../../../package.json').version;
+
+/**
+ * Detect mTLS client certificate based on logic described in
+ * https://google.aip.dev/auth/4114.
+ *
+ * @param {object} [options] - The configuration object.
+ * @returns {Promise} Resolves array of strings representing cert and key.
+ */
+async function detectClientCertificate(opts?: ClientOptions) {
+  const certRegex =
+    /(?<cert>-----BEGIN CERTIFICATE-----[\s\S]*-----END CERTIFICATE-----)/;
+  const keyRegex =
+    /(?<key>-----BEGIN PRIVATE KEY-----[\s\S]*-----END PRIVATE KEY-----)/;
+  // If GOOGLE_API_USE_CLIENT_CERTIFICATE is true...:
+  if (
+    typeof process !== 'undefined' &&
+    process?.env?.GOOGLE_API_USE_CLIENT_CERTIFICATE === 'true'
+  ) {
+    if (opts?.cert && opts?.key) {
+      return [opts.cert, opts.key];
+    }
+    // If context aware metadata exists, run the cert provider command,
+    // parse the output to extract cert and key, and use this cert/key.
+    const metadataPath = join(
+      homedir(),
+      '.secureConnect',
+      'context_aware_metadata.json'
+    );
+    try {
+      const metadata = JSON.parse(await readFileAsync(metadataPath));
+      if (!metadata.cert_provider_command) {
+        throw Error('no cert_provider_command found');
+      }
+      const stdout = await execFileAsync(
+        metadata.cert_provider_command[0],
+        metadata.cert_provider_command.slice(1)
+      );
+      const matchCert = stdout.toString().match(certRegex);
+      const matchKey = stdout.toString().match(keyRegex);
+      if (!(matchCert?.groups && matchKey?.groups)) {
+        throw Error('unable to parse certificate and key');
+      } else {
+        return [matchCert.groups.cert, matchKey.groups.key];
+      }
+    } catch (err) {
+      console.warn(
+        `failure loading context_aware_metadata.json: ${err.message}`
+      );
+    }
+  }
+  // If GOOGLE_API_USE_CLIENT_CERTIFICATE is not set or false,
+  // use no cert or key:
+  return [undefined, undefined];
+}
+
+/*
+ * Async version of readFile.
+ *
+ * @returns {Promise} Contents of file at path.
+ */
+async function readFileAsync(path: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    readFile(path, 'utf8', (err, content) => {
+      if (err) return reject(err);
+      else resolve(content);
+    });
+  });
+}
+
+/*
+ * Async version of execFile.
+ *
+ * @returns {Promise} stdout from command execution.
+ */
+async function execFileAsync(command: string, args: string[]): Promise<string> {
+  return new Promise((resolve, reject) => {
+    execFile(command, args, (err, stdout) => {
+      if (err) return reject(err);
+      else resolve(stdout);
+    });
+  });
+}
 
 /**
  *  The service that an application uses to manipulate subscriptions and to
@@ -105,6 +191,7 @@ export class SubscriberClient {
   constructor(opts?: ClientOptions) {
     // Ensure that options include all the required fields.
     const staticMembers = this.constructor as typeof SubscriberClient;
+    // See: https://google.aip.dev/auth/4114
     const servicePath =
       opts?.servicePath || opts?.apiEndpoint || staticMembers.servicePath;
     const port = opts?.port || staticMembers.port;
@@ -233,15 +320,7 @@ export class SubscriberClient {
 
     // Put together the "service stub" for
     // google.pubsub.v1.Subscriber.
-    this.subscriberStub = this._gaxGrpc.createStub(
-      this._opts.fallback
-        ? (this._protos as protobuf.Root).lookupService(
-            'google.pubsub.v1.Subscriber'
-          )
-        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this._protos as any).google.pubsub.v1.Subscriber,
-      this._opts
-    ) as Promise<{[method: string]: Function}>;
+    this.subscriberStub = this._createStub();
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
@@ -292,6 +371,52 @@ export class SubscriberClient {
     }
 
     return this.subscriberStub;
+  }
+
+  /*
+   * Deferred initialization of gRPC connection.
+   *
+   * @returns {Promise} A promise that resolves to an authenticated service stub.
+   */
+  async _createStub(): Promise<{[name: string]: Function}> {
+    const [cert, key] = await detectClientCertificate(this._opts);
+    this._opts = Object.assign(this._opts, {cert, key});
+    this._opts.servicePath = this.mtlsServicePath(cert, key);
+    return this._gaxGrpc.createStub(
+      this._opts.fallback
+        ? (this._protos as protobuf.Root).lookupService(
+            'google.pubsub.v1.Subscriber'
+          )
+        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (this._protos as any).google.pubsub.v1.Subscriber,
+      this._opts
+    ) as Promise<{[method: string]: Function}>;
+  }
+
+  /**
+   * Return service path, taking into account mTLS logic.
+   * @returns {string} The DNS address for this service.
+   */
+  mtlsServicePath(cert?: string, key?: string) {
+    const staticMembers = this.constructor as typeof SubscriberClient;
+    const servicePath =
+      this._opts?.servicePath ||
+      this._opts?.apiEndpoint ||
+      staticMembers.servicePath;
+    if (servicePath !== staticMembers.servicePath) return servicePath;
+    if (
+      typeof process !== 'undefined' &&
+      process?.env?.GOOGLE_API_USE_MTLS_ENDPOINT === 'never'
+    ) {
+      return servicePath;
+    } else if (
+      (typeof process !== 'undefined' &&
+        process?.env?.GOOGLE_API_USE_MTLS_ENDPOINT === 'always') ||
+      (cert && key)
+    ) {
+      return servicePath.replace('googleapis.com', 'mtls.googleapis.com');
+    }
+    return servicePath;
   }
 
   /**
@@ -351,7 +476,7 @@ export class SubscriberClient {
   // -- Service calls --
   // -------------------
   createSubscription(
-    request: protos.google.pubsub.v1.ISubscription,
+    request?: protos.google.pubsub.v1.ISubscription,
     options?: CallOptions
   ): Promise<
     [
@@ -496,7 +621,7 @@ export class SubscriberClient {
    * const [response] = await client.createSubscription(request);
    */
   createSubscription(
-    request: protos.google.pubsub.v1.ISubscription,
+    request?: protos.google.pubsub.v1.ISubscription,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -535,7 +660,7 @@ export class SubscriberClient {
     return this.innerApiCalls.createSubscription(request, options, callback);
   }
   getSubscription(
-    request: protos.google.pubsub.v1.IGetSubscriptionRequest,
+    request?: protos.google.pubsub.v1.IGetSubscriptionRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -580,7 +705,7 @@ export class SubscriberClient {
    * const [response] = await client.getSubscription(request);
    */
   getSubscription(
-    request: protos.google.pubsub.v1.IGetSubscriptionRequest,
+    request?: protos.google.pubsub.v1.IGetSubscriptionRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -619,7 +744,7 @@ export class SubscriberClient {
     return this.innerApiCalls.getSubscription(request, options, callback);
   }
   updateSubscription(
-    request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
+    request?: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -667,7 +792,7 @@ export class SubscriberClient {
    * const [response] = await client.updateSubscription(request);
    */
   updateSubscription(
-    request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
+    request?: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -706,7 +831,7 @@ export class SubscriberClient {
     return this.innerApiCalls.updateSubscription(request, options, callback);
   }
   deleteSubscription(
-    request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
+    request?: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -755,7 +880,7 @@ export class SubscriberClient {
    * const [response] = await client.deleteSubscription(request);
    */
   deleteSubscription(
-    request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
+    request?: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -794,7 +919,7 @@ export class SubscriberClient {
     return this.innerApiCalls.deleteSubscription(request, options, callback);
   }
   modifyAckDeadline(
-    request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
+    request?: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -854,7 +979,7 @@ export class SubscriberClient {
    * const [response] = await client.modifyAckDeadline(request);
    */
   modifyAckDeadline(
-    request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
+    request?: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -893,7 +1018,7 @@ export class SubscriberClient {
     return this.innerApiCalls.modifyAckDeadline(request, options, callback);
   }
   acknowledge(
-    request: protos.google.pubsub.v1.IAcknowledgeRequest,
+    request?: protos.google.pubsub.v1.IAcknowledgeRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -948,7 +1073,7 @@ export class SubscriberClient {
    * const [response] = await client.acknowledge(request);
    */
   acknowledge(
-    request: protos.google.pubsub.v1.IAcknowledgeRequest,
+    request?: protos.google.pubsub.v1.IAcknowledgeRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -987,7 +1112,7 @@ export class SubscriberClient {
     return this.innerApiCalls.acknowledge(request, options, callback);
   }
   pull(
-    request: protos.google.pubsub.v1.IPullRequest,
+    request?: protos.google.pubsub.v1.IPullRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1046,7 +1171,7 @@ export class SubscriberClient {
    * const [response] = await client.pull(request);
    */
   pull(
-    request: protos.google.pubsub.v1.IPullRequest,
+    request?: protos.google.pubsub.v1.IPullRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1085,7 +1210,7 @@ export class SubscriberClient {
     return this.innerApiCalls.pull(request, options, callback);
   }
   modifyPushConfig(
-    request: protos.google.pubsub.v1.IModifyPushConfigRequest,
+    request?: protos.google.pubsub.v1.IModifyPushConfigRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1142,7 +1267,7 @@ export class SubscriberClient {
    * const [response] = await client.modifyPushConfig(request);
    */
   modifyPushConfig(
-    request: protos.google.pubsub.v1.IModifyPushConfigRequest,
+    request?: protos.google.pubsub.v1.IModifyPushConfigRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1181,7 +1306,7 @@ export class SubscriberClient {
     return this.innerApiCalls.modifyPushConfig(request, options, callback);
   }
   getSnapshot(
-    request: protos.google.pubsub.v1.IGetSnapshotRequest,
+    request?: protos.google.pubsub.v1.IGetSnapshotRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1230,7 +1355,7 @@ export class SubscriberClient {
    * const [response] = await client.getSnapshot(request);
    */
   getSnapshot(
-    request: protos.google.pubsub.v1.IGetSnapshotRequest,
+    request?: protos.google.pubsub.v1.IGetSnapshotRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1269,7 +1394,7 @@ export class SubscriberClient {
     return this.innerApiCalls.getSnapshot(request, options, callback);
   }
   createSnapshot(
-    request: protos.google.pubsub.v1.ICreateSnapshotRequest,
+    request?: protos.google.pubsub.v1.ICreateSnapshotRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1346,7 +1471,7 @@ export class SubscriberClient {
    * const [response] = await client.createSnapshot(request);
    */
   createSnapshot(
-    request: protos.google.pubsub.v1.ICreateSnapshotRequest,
+    request?: protos.google.pubsub.v1.ICreateSnapshotRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1385,7 +1510,7 @@ export class SubscriberClient {
     return this.innerApiCalls.createSnapshot(request, options, callback);
   }
   updateSnapshot(
-    request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
+    request?: protos.google.pubsub.v1.IUpdateSnapshotRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1437,7 +1562,7 @@ export class SubscriberClient {
    * const [response] = await client.updateSnapshot(request);
    */
   updateSnapshot(
-    request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
+    request?: protos.google.pubsub.v1.IUpdateSnapshotRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1476,7 +1601,7 @@ export class SubscriberClient {
     return this.innerApiCalls.updateSnapshot(request, options, callback);
   }
   deleteSnapshot(
-    request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
+    request?: protos.google.pubsub.v1.IDeleteSnapshotRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1529,7 +1654,7 @@ export class SubscriberClient {
    * const [response] = await client.deleteSnapshot(request);
    */
   deleteSnapshot(
-    request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
+    request?: protos.google.pubsub.v1.IDeleteSnapshotRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1568,7 +1693,7 @@ export class SubscriberClient {
     return this.innerApiCalls.deleteSnapshot(request, options, callback);
   }
   seek(
-    request: protos.google.pubsub.v1.ISeekRequest,
+    request?: protos.google.pubsub.v1.ISeekRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1634,7 +1759,7 @@ export class SubscriberClient {
    * const [response] = await client.seek(request);
    */
   seek(
-    request: protos.google.pubsub.v1.ISeekRequest,
+    request?: protos.google.pubsub.v1.ISeekRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1704,7 +1829,7 @@ export class SubscriberClient {
   }
 
   listSubscriptions(
-    request: protos.google.pubsub.v1.IListSubscriptionsRequest,
+    request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1758,7 +1883,7 @@ export class SubscriberClient {
    *   for more details and examples.
    */
   listSubscriptions(
-    request: protos.google.pubsub.v1.IListSubscriptionsRequest,
+    request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
@@ -1896,7 +2021,7 @@ export class SubscriberClient {
     ) as AsyncIterable<protos.google.pubsub.v1.ISubscription>;
   }
   listSnapshots(
-    request: protos.google.pubsub.v1.IListSnapshotsRequest,
+    request?: protos.google.pubsub.v1.IListSnapshotsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1954,7 +2079,7 @@ export class SubscriberClient {
    *   for more details and examples.
    */
   listSnapshots(
-    request: protos.google.pubsub.v1.IListSnapshotsRequest,
+    request?: protos.google.pubsub.v1.IListSnapshotsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<

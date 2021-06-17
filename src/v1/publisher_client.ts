@@ -18,6 +18,10 @@
 
 /* global window */
 import * as gax from 'google-gax';
+import {homedir} from 'os';
+import {join} from 'path';
+import {readFile} from 'fs';
+import {execFile} from 'child_process';
 import {
   Callback,
   CallOptions,
@@ -41,6 +45,88 @@ import jsonProtos = require('../../protos/protos.json');
 import * as gapicConfig from './publisher_client_config.json';
 
 const version = require('../../../package.json').version;
+
+/**
+ * Detect mTLS client certificate based on logic described in
+ * https://google.aip.dev/auth/4114.
+ *
+ * @param {object} [options] - The configuration object.
+ * @returns {Promise} Resolves array of strings representing cert and key.
+ */
+async function detectClientCertificate(opts?: ClientOptions) {
+  const certRegex =
+    /(?<cert>-----BEGIN CERTIFICATE-----[\s\S]*-----END CERTIFICATE-----)/;
+  const keyRegex =
+    /(?<key>-----BEGIN PRIVATE KEY-----[\s\S]*-----END PRIVATE KEY-----)/;
+  // If GOOGLE_API_USE_CLIENT_CERTIFICATE is true...:
+  if (
+    typeof process !== 'undefined' &&
+    process?.env?.GOOGLE_API_USE_CLIENT_CERTIFICATE === 'true'
+  ) {
+    if (opts?.cert && opts?.key) {
+      return [opts.cert, opts.key];
+    }
+    // If context aware metadata exists, run the cert provider command,
+    // parse the output to extract cert and key, and use this cert/key.
+    const metadataPath = join(
+      homedir(),
+      '.secureConnect',
+      'context_aware_metadata.json'
+    );
+    try {
+      const metadata = JSON.parse(await readFileAsync(metadataPath));
+      if (!metadata.cert_provider_command) {
+        throw Error('no cert_provider_command found');
+      }
+      const stdout = await execFileAsync(
+        metadata.cert_provider_command[0],
+        metadata.cert_provider_command.slice(1)
+      );
+      const matchCert = stdout.toString().match(certRegex);
+      const matchKey = stdout.toString().match(keyRegex);
+      if (!(matchCert?.groups && matchKey?.groups)) {
+        throw Error('unable to parse certificate and key');
+      } else {
+        return [matchCert.groups.cert, matchKey.groups.key];
+      }
+    } catch (err) {
+      console.warn(
+        `failure loading context_aware_metadata.json: ${err.message}`
+      );
+    }
+  }
+  // If GOOGLE_API_USE_CLIENT_CERTIFICATE is not set or false,
+  // use no cert or key:
+  return [undefined, undefined];
+}
+
+/*
+ * Async version of readFile.
+ *
+ * @returns {Promise} Contents of file at path.
+ */
+async function readFileAsync(path: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    readFile(path, 'utf8', (err, content) => {
+      if (err) return reject(err);
+      else resolve(content);
+    });
+  });
+}
+
+/*
+ * Async version of execFile.
+ *
+ * @returns {Promise} stdout from command execution.
+ */
+async function execFileAsync(command: string, args: string[]): Promise<string> {
+  return new Promise((resolve, reject) => {
+    execFile(command, args, (err, stdout) => {
+      if (err) return reject(err);
+      else resolve(stdout);
+    });
+  });
+}
 
 /**
  *  The service that an application uses to manipulate topics, and to send
@@ -104,6 +190,7 @@ export class PublisherClient {
   constructor(opts?: ClientOptions) {
     // Ensure that options include all the required fields.
     const staticMembers = this.constructor as typeof PublisherClient;
+    // See: https://google.aip.dev/auth/4114
     const servicePath =
       opts?.servicePath || opts?.apiEndpoint || staticMembers.servicePath;
     const port = opts?.port || staticMembers.port;
@@ -196,23 +283,6 @@ export class PublisherClient {
       ),
     };
 
-    const protoFilesRoot = this._gaxModule.protobuf.Root.fromJSON(jsonProtos);
-
-    // Some methods on this API support automatically batching
-    // requests; denote this.
-
-    this.descriptors.batching = {
-      publish: new this._gaxModule.BundleDescriptor(
-        'messages',
-        ['topic'],
-        'message_ids',
-        gax.createByteLengthFunction(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          protoFilesRoot.lookupType('google.pubsub.v1.PubsubMessage') as any
-        )
-      ),
-    };
-
     // Put together the default options sent with requests.
     this._defaults = this._gaxGrpc.constructSettings(
       'google.pubsub.v1.Publisher',
@@ -246,15 +316,7 @@ export class PublisherClient {
 
     // Put together the "service stub" for
     // google.pubsub.v1.Publisher.
-    this.publisherStub = this._gaxGrpc.createStub(
-      this._opts.fallback
-        ? (this._protos as protobuf.Root).lookupService(
-            'google.pubsub.v1.Publisher'
-          )
-        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this._protos as any).google.pubsub.v1.Publisher,
-      this._opts
-    ) as Promise<{[method: string]: Function}>;
+    this.publisherStub = this._createStub();
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
@@ -284,10 +346,7 @@ export class PublisherClient {
         }
       );
 
-      const descriptor =
-        this.descriptors.page[methodName] ||
-        this.descriptors.batching?.[methodName] ||
-        undefined;
+      const descriptor = this.descriptors.page[methodName] || undefined;
       const apiCall = this._gaxModule.createApiCall(
         callPromise,
         this._defaults[methodName],
@@ -298,6 +357,52 @@ export class PublisherClient {
     }
 
     return this.publisherStub;
+  }
+
+  /*
+   * Deferred initialization of gRPC connection.
+   *
+   * @returns {Promise} A promise that resolves to an authenticated service stub.
+   */
+  async _createStub(): Promise<{[name: string]: Function}> {
+    const [cert, key] = await detectClientCertificate(this._opts);
+    this._opts = Object.assign(this._opts, {cert, key});
+    this._opts.servicePath = this.mtlsServicePath(cert, key);
+    return this._gaxGrpc.createStub(
+      this._opts.fallback
+        ? (this._protos as protobuf.Root).lookupService(
+            'google.pubsub.v1.Publisher'
+          )
+        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (this._protos as any).google.pubsub.v1.Publisher,
+      this._opts
+    ) as Promise<{[method: string]: Function}>;
+  }
+
+  /**
+   * Return service path, taking into account mTLS logic.
+   * @returns {string} The DNS address for this service.
+   */
+  mtlsServicePath(cert?: string, key?: string) {
+    const staticMembers = this.constructor as typeof PublisherClient;
+    const servicePath =
+      this._opts?.servicePath ||
+      this._opts?.apiEndpoint ||
+      staticMembers.servicePath;
+    if (servicePath !== staticMembers.servicePath) return servicePath;
+    if (
+      typeof process !== 'undefined' &&
+      process?.env?.GOOGLE_API_USE_MTLS_ENDPOINT === 'never'
+    ) {
+      return servicePath;
+    } else if (
+      (typeof process !== 'undefined' &&
+        process?.env?.GOOGLE_API_USE_MTLS_ENDPOINT === 'always') ||
+      (cert && key)
+    ) {
+      return servicePath.replace('googleapis.com', 'mtls.googleapis.com');
+    }
+    return servicePath;
   }
 
   /**
@@ -357,7 +462,7 @@ export class PublisherClient {
   // -- Service calls --
   // -------------------
   createTopic(
-    request: protos.google.pubsub.v1.ITopic,
+    request?: protos.google.pubsub.v1.ITopic,
     options?: CallOptions
   ): Promise<
     [
@@ -424,7 +529,7 @@ export class PublisherClient {
    * const [response] = await client.createTopic(request);
    */
   createTopic(
-    request: protos.google.pubsub.v1.ITopic,
+    request?: protos.google.pubsub.v1.ITopic,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -463,7 +568,7 @@ export class PublisherClient {
     return this.innerApiCalls.createTopic(request, options, callback);
   }
   updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
+    request?: protos.google.pubsub.v1.IUpdateTopicRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -514,7 +619,7 @@ export class PublisherClient {
    * const [response] = await client.updateTopic(request);
    */
   updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
+    request?: protos.google.pubsub.v1.IUpdateTopicRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -553,7 +658,7 @@ export class PublisherClient {
     return this.innerApiCalls.updateTopic(request, options, callback);
   }
   publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
+    request?: protos.google.pubsub.v1.IPublishRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -601,7 +706,7 @@ export class PublisherClient {
    * const [response] = await client.publish(request);
    */
   publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
+    request?: protos.google.pubsub.v1.IPublishRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -640,7 +745,7 @@ export class PublisherClient {
     return this.innerApiCalls.publish(request, options, callback);
   }
   getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
+    request?: protos.google.pubsub.v1.IGetTopicRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -685,7 +790,7 @@ export class PublisherClient {
    * const [response] = await client.getTopic(request);
    */
   getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
+    request?: protos.google.pubsub.v1.IGetTopicRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -724,7 +829,7 @@ export class PublisherClient {
     return this.innerApiCalls.getTopic(request, options, callback);
   }
   deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
+    request?: protos.google.pubsub.v1.IDeleteTopicRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -773,7 +878,7 @@ export class PublisherClient {
    * const [response] = await client.deleteTopic(request);
    */
   deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
+    request?: protos.google.pubsub.v1.IDeleteTopicRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -812,7 +917,7 @@ export class PublisherClient {
     return this.innerApiCalls.deleteTopic(request, options, callback);
   }
   detachSubscription(
-    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+    request?: protos.google.pubsub.v1.IDetachSubscriptionRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -860,7 +965,7 @@ export class PublisherClient {
    * const [response] = await client.detachSubscription(request);
    */
   detachSubscription(
-    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+    request?: protos.google.pubsub.v1.IDetachSubscriptionRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -900,7 +1005,7 @@ export class PublisherClient {
   }
 
   listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
+    request?: protos.google.pubsub.v1.IListTopicsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -954,7 +1059,7 @@ export class PublisherClient {
    *   for more details and examples.
    */
   listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
+    request?: protos.google.pubsub.v1.IListTopicsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
@@ -1092,7 +1197,7 @@ export class PublisherClient {
     ) as AsyncIterable<protos.google.pubsub.v1.ITopic>;
   }
   listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+    request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1150,7 +1255,7 @@ export class PublisherClient {
    *   for more details and examples.
    */
   listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+    request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
@@ -1296,7 +1401,7 @@ export class PublisherClient {
     ) as AsyncIterable<string>;
   }
   listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
+    request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1354,7 +1459,7 @@ export class PublisherClient {
    *   for more details and examples.
    */
   listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
+    request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<

@@ -18,6 +18,10 @@
 
 /* global window */
 import * as gax from 'google-gax';
+import {homedir} from 'os';
+import {join} from 'path';
+import {readFile} from 'fs';
+import {execFile} from 'child_process';
 import {
   Callback,
   CallOptions,
@@ -41,6 +45,88 @@ import jsonProtos = require('../../protos/protos.json');
 import * as gapicConfig from './schema_service_client_config.json';
 
 const version = require('../../../package.json').version;
+
+/**
+ * Detect mTLS client certificate based on logic described in
+ * https://google.aip.dev/auth/4114.
+ *
+ * @param {object} [options] - The configuration object.
+ * @returns {Promise} Resolves array of strings representing cert and key.
+ */
+async function detectClientCertificate(opts?: ClientOptions) {
+  const certRegex =
+    /(?<cert>-----BEGIN CERTIFICATE-----[\s\S]*-----END CERTIFICATE-----)/;
+  const keyRegex =
+    /(?<key>-----BEGIN PRIVATE KEY-----[\s\S]*-----END PRIVATE KEY-----)/;
+  // If GOOGLE_API_USE_CLIENT_CERTIFICATE is true...:
+  if (
+    typeof process !== 'undefined' &&
+    process?.env?.GOOGLE_API_USE_CLIENT_CERTIFICATE === 'true'
+  ) {
+    if (opts?.cert && opts?.key) {
+      return [opts.cert, opts.key];
+    }
+    // If context aware metadata exists, run the cert provider command,
+    // parse the output to extract cert and key, and use this cert/key.
+    const metadataPath = join(
+      homedir(),
+      '.secureConnect',
+      'context_aware_metadata.json'
+    );
+    try {
+      const metadata = JSON.parse(await readFileAsync(metadataPath));
+      if (!metadata.cert_provider_command) {
+        throw Error('no cert_provider_command found');
+      }
+      const stdout = await execFileAsync(
+        metadata.cert_provider_command[0],
+        metadata.cert_provider_command.slice(1)
+      );
+      const matchCert = stdout.toString().match(certRegex);
+      const matchKey = stdout.toString().match(keyRegex);
+      if (!(matchCert?.groups && matchKey?.groups)) {
+        throw Error('unable to parse certificate and key');
+      } else {
+        return [matchCert.groups.cert, matchKey.groups.key];
+      }
+    } catch (err) {
+      console.warn(
+        `failure loading context_aware_metadata.json: ${err.message}`
+      );
+    }
+  }
+  // If GOOGLE_API_USE_CLIENT_CERTIFICATE is not set or false,
+  // use no cert or key:
+  return [undefined, undefined];
+}
+
+/*
+ * Async version of readFile.
+ *
+ * @returns {Promise} Contents of file at path.
+ */
+async function readFileAsync(path: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    readFile(path, 'utf8', (err, content) => {
+      if (err) return reject(err);
+      else resolve(content);
+    });
+  });
+}
+
+/*
+ * Async version of execFile.
+ *
+ * @returns {Promise} stdout from command execution.
+ */
+async function execFileAsync(command: string, args: string[]): Promise<string> {
+  return new Promise((resolve, reject) => {
+    execFile(command, args, (err, stdout) => {
+      if (err) return reject(err);
+      else resolve(stdout);
+    });
+  });
+}
 
 /**
  *  Service for doing schema-related operations.
@@ -103,6 +189,7 @@ export class SchemaServiceClient {
   constructor(opts?: ClientOptions) {
     // Ensure that options include all the required fields.
     const staticMembers = this.constructor as typeof SchemaServiceClient;
+    // See: https://google.aip.dev/auth/4114
     const servicePath =
       opts?.servicePath || opts?.apiEndpoint || staticMembers.servicePath;
     const port = opts?.port || staticMembers.port;
@@ -218,15 +305,7 @@ export class SchemaServiceClient {
 
     // Put together the "service stub" for
     // google.pubsub.v1.SchemaService.
-    this.schemaServiceStub = this._gaxGrpc.createStub(
-      this._opts.fallback
-        ? (this._protos as protobuf.Root).lookupService(
-            'google.pubsub.v1.SchemaService'
-          )
-        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this._protos as any).google.pubsub.v1.SchemaService,
-      this._opts
-    ) as Promise<{[method: string]: Function}>;
+    this.schemaServiceStub = this._createStub();
 
     // Iterate over each of the methods that the service provides
     // and create an API call method for each.
@@ -264,6 +343,52 @@ export class SchemaServiceClient {
     }
 
     return this.schemaServiceStub;
+  }
+
+  /*
+   * Deferred initialization of gRPC connection.
+   *
+   * @returns {Promise} A promise that resolves to an authenticated service stub.
+   */
+  async _createStub(): Promise<{[name: string]: Function}> {
+    const [cert, key] = await detectClientCertificate(this._opts);
+    this._opts = Object.assign(this._opts, {cert, key});
+    this._opts.servicePath = this.mtlsServicePath(cert, key);
+    return this._gaxGrpc.createStub(
+      this._opts.fallback
+        ? (this._protos as protobuf.Root).lookupService(
+            'google.pubsub.v1.SchemaService'
+          )
+        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (this._protos as any).google.pubsub.v1.SchemaService,
+      this._opts
+    ) as Promise<{[method: string]: Function}>;
+  }
+
+  /**
+   * Return service path, taking into account mTLS logic.
+   * @returns {string} The DNS address for this service.
+   */
+  mtlsServicePath(cert?: string, key?: string) {
+    const staticMembers = this.constructor as typeof SchemaServiceClient;
+    const servicePath =
+      this._opts?.servicePath ||
+      this._opts?.apiEndpoint ||
+      staticMembers.servicePath;
+    if (servicePath !== staticMembers.servicePath) return servicePath;
+    if (
+      typeof process !== 'undefined' &&
+      process?.env?.GOOGLE_API_USE_MTLS_ENDPOINT === 'never'
+    ) {
+      return servicePath;
+    } else if (
+      (typeof process !== 'undefined' &&
+        process?.env?.GOOGLE_API_USE_MTLS_ENDPOINT === 'always') ||
+      (cert && key)
+    ) {
+      return servicePath.replace('googleapis.com', 'mtls.googleapis.com');
+    }
+    return servicePath;
   }
 
   /**
@@ -323,7 +448,7 @@ export class SchemaServiceClient {
   // -- Service calls --
   // -------------------
   createSchema(
-    request: protos.google.pubsub.v1.ICreateSchemaRequest,
+    request?: protos.google.pubsub.v1.ICreateSchemaRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -380,7 +505,7 @@ export class SchemaServiceClient {
    * const [response] = await client.createSchema(request);
    */
   createSchema(
-    request: protos.google.pubsub.v1.ICreateSchemaRequest,
+    request?: protos.google.pubsub.v1.ICreateSchemaRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -419,7 +544,7 @@ export class SchemaServiceClient {
     return this.innerApiCalls.createSchema(request, options, callback);
   }
   getSchema(
-    request: protos.google.pubsub.v1.IGetSchemaRequest,
+    request?: protos.google.pubsub.v1.IGetSchemaRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -468,7 +593,7 @@ export class SchemaServiceClient {
    * const [response] = await client.getSchema(request);
    */
   getSchema(
-    request: protos.google.pubsub.v1.IGetSchemaRequest,
+    request?: protos.google.pubsub.v1.IGetSchemaRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -507,7 +632,7 @@ export class SchemaServiceClient {
     return this.innerApiCalls.getSchema(request, options, callback);
   }
   deleteSchema(
-    request: protos.google.pubsub.v1.IDeleteSchemaRequest,
+    request?: protos.google.pubsub.v1.IDeleteSchemaRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -552,7 +677,7 @@ export class SchemaServiceClient {
    * const [response] = await client.deleteSchema(request);
    */
   deleteSchema(
-    request: protos.google.pubsub.v1.IDeleteSchemaRequest,
+    request?: protos.google.pubsub.v1.IDeleteSchemaRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -591,7 +716,7 @@ export class SchemaServiceClient {
     return this.innerApiCalls.deleteSchema(request, options, callback);
   }
   validateSchema(
-    request: protos.google.pubsub.v1.IValidateSchemaRequest,
+    request?: protos.google.pubsub.v1.IValidateSchemaRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -638,7 +763,7 @@ export class SchemaServiceClient {
    * const [response] = await client.validateSchema(request);
    */
   validateSchema(
-    request: protos.google.pubsub.v1.IValidateSchemaRequest,
+    request?: protos.google.pubsub.v1.IValidateSchemaRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -677,7 +802,7 @@ export class SchemaServiceClient {
     return this.innerApiCalls.validateSchema(request, options, callback);
   }
   validateMessage(
-    request: protos.google.pubsub.v1.IValidateMessageRequest,
+    request?: protos.google.pubsub.v1.IValidateMessageRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -732,7 +857,7 @@ export class SchemaServiceClient {
    * const [response] = await client.validateMessage(request);
    */
   validateMessage(
-    request: protos.google.pubsub.v1.IValidateMessageRequest,
+    request?: protos.google.pubsub.v1.IValidateMessageRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -772,7 +897,7 @@ export class SchemaServiceClient {
   }
 
   listSchemas(
-    request: protos.google.pubsub.v1.IListSchemasRequest,
+    request?: protos.google.pubsub.v1.IListSchemasRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -830,7 +955,7 @@ export class SchemaServiceClient {
    *   for more details and examples.
    */
   listSchemas(
-    request: protos.google.pubsub.v1.IListSchemasRequest,
+    request?: protos.google.pubsub.v1.IListSchemasRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
