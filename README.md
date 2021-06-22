@@ -37,14 +37,18 @@ Google APIs Client Libraries, in [Client Libraries Explained][explained].
 **Table of contents:**
 
 
-* [Quickstart](#quickstart)
-  * [Before you begin](#before-you-begin)
-  * [Installing the client library](#installing-the-client-library)
-  * [Using the client library](#using-the-client-library)
-* [Samples](#samples)
-* [Versioning](#versioning)
-* [Contributing](#contributing)
-* [License](#license)
+- [Google Cloud Pub/Sub: Node.js Client](#google-cloud-pubsub-nodejs-client)
+  - [Quickstart](#quickstart)
+    - [Before you begin](#before-you-begin)
+    - [Installing the client library](#installing-the-client-library)
+    - [Using the client library](#using-the-client-library)
+  - [Running gRPC C++ bindings](#running-grpc-c-bindings)
+  - [Samples](#samples)
+  - [Supported Node.js Versions](#supported-nodejs-versions)
+      - [Legacy tags available](#legacy-tags-available)
+  - [Versioning](#versioning)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Quickstart
 
