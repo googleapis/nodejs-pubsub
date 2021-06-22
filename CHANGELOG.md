@@ -4,6 +4,18 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.15.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.14.0...v2.15.0) (2021-06-22)
+
+
+### Features
+
+* upgrade the opentelemetry api to 1.0.0 ([#1329](https://www.github.com/googleapis/nodejs-pubsub/issues/1329)) ([6896ad9](https://www.github.com/googleapis/nodejs-pubsub/commit/6896ad9d73c6d481c02af503b0e9e5a211bdbdf1))
+
+
+### Bug Fixes
+
+* **deps:** update opentelemetry monorepo to ^0.21.0 ([#1324](https://www.github.com/googleapis/nodejs-pubsub/issues/1324)) ([c6d1750](https://www.github.com/googleapis/nodejs-pubsub/commit/c6d1750de45bbad0f599d328c37085f1f4246f9b))
+
 ## [2.14.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.13.0...v2.14.0) (2021-06-11)
 
 
