@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.15.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.15.0...v2.15.1) (2021-06-22)
+
+
+### Bug Fixes
+
+* make request optional in all cases ([#1328](https://www.github.com/googleapis/nodejs-pubsub/issues/1328)) ([fa74fa1](https://www.github.com/googleapis/nodejs-pubsub/commit/fa74fa16c76f6b25ee1648ee51c397ccf01f71a4))
+
 ## [2.15.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.14.0...v2.15.0) (2021-06-22)
 
 
