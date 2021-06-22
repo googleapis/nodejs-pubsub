@@ -357,7 +357,7 @@ export class PublisherClient {
   // -- Service calls --
   // -------------------
   createTopic(
-    request: protos.google.pubsub.v1.ITopic,
+    request?: protos.google.pubsub.v1.ITopic,
     options?: CallOptions
   ): Promise<
     [
@@ -424,7 +424,7 @@ export class PublisherClient {
    * const [response] = await client.createTopic(request);
    */
   createTopic(
-    request: protos.google.pubsub.v1.ITopic,
+    request?: protos.google.pubsub.v1.ITopic,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -463,7 +463,7 @@ export class PublisherClient {
     return this.innerApiCalls.createTopic(request, options, callback);
   }
   updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
+    request?: protos.google.pubsub.v1.IUpdateTopicRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -514,7 +514,7 @@ export class PublisherClient {
    * const [response] = await client.updateTopic(request);
    */
   updateTopic(
-    request: protos.google.pubsub.v1.IUpdateTopicRequest,
+    request?: protos.google.pubsub.v1.IUpdateTopicRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -553,7 +553,7 @@ export class PublisherClient {
     return this.innerApiCalls.updateTopic(request, options, callback);
   }
   publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
+    request?: protos.google.pubsub.v1.IPublishRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -601,7 +601,7 @@ export class PublisherClient {
    * const [response] = await client.publish(request);
    */
   publish(
-    request: protos.google.pubsub.v1.IPublishRequest,
+    request?: protos.google.pubsub.v1.IPublishRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -640,7 +640,7 @@ export class PublisherClient {
     return this.innerApiCalls.publish(request, options, callback);
   }
   getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
+    request?: protos.google.pubsub.v1.IGetTopicRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -685,7 +685,7 @@ export class PublisherClient {
    * const [response] = await client.getTopic(request);
    */
   getTopic(
-    request: protos.google.pubsub.v1.IGetTopicRequest,
+    request?: protos.google.pubsub.v1.IGetTopicRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -724,7 +724,7 @@ export class PublisherClient {
     return this.innerApiCalls.getTopic(request, options, callback);
   }
   deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
+    request?: protos.google.pubsub.v1.IDeleteTopicRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -773,7 +773,7 @@ export class PublisherClient {
    * const [response] = await client.deleteTopic(request);
    */
   deleteTopic(
-    request: protos.google.pubsub.v1.IDeleteTopicRequest,
+    request?: protos.google.pubsub.v1.IDeleteTopicRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -812,7 +812,7 @@ export class PublisherClient {
     return this.innerApiCalls.deleteTopic(request, options, callback);
   }
   detachSubscription(
-    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+    request?: protos.google.pubsub.v1.IDetachSubscriptionRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -860,7 +860,7 @@ export class PublisherClient {
    * const [response] = await client.detachSubscription(request);
    */
   detachSubscription(
-    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+    request?: protos.google.pubsub.v1.IDetachSubscriptionRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -900,7 +900,7 @@ export class PublisherClient {
   }
 
   listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
+    request?: protos.google.pubsub.v1.IListTopicsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -954,7 +954,7 @@ export class PublisherClient {
    *   for more details and examples.
    */
   listTopics(
-    request: protos.google.pubsub.v1.IListTopicsRequest,
+    request?: protos.google.pubsub.v1.IListTopicsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
@@ -1092,7 +1092,7 @@ export class PublisherClient {
     ) as AsyncIterable<protos.google.pubsub.v1.ITopic>;
   }
   listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+    request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1150,7 +1150,7 @@ export class PublisherClient {
    *   for more details and examples.
    */
   listTopicSubscriptions(
-    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+    request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
@@ -1296,7 +1296,7 @@ export class PublisherClient {
     ) as AsyncIterable<string>;
   }
   listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
+    request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1354,7 +1354,7 @@ export class PublisherClient {
    *   for more details and examples.
    */
   listTopicSnapshots(
-    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
+    request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
