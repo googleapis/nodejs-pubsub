@@ -25,7 +25,7 @@
 //   description: Publishes a large message to a topic.
 //   usage: node publishLargeMessages.js <topic-name> <source-file>
 
-// [START pubsub_publish_large_messages]
+// [START pubsub_publish_large_message]
 /**
  * TODO(developer): Uncomment these variables before running the sample.
  */
@@ -41,7 +41,7 @@ import * as fs from 'fs';
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function publishLargeMessages(topicName: string, sourceFile: string) {
+async function publishLargeMessage(topicName: string, sourceFile: string) {
   const topic = pubSubClient.topic(topicName);
   const messageContents = fs.readFileSync(sourceFile);
 
@@ -50,10 +50,10 @@ async function publishLargeMessages(topicName: string, sourceFile: string) {
     `Large message ${messageId} (size: ${messageContents.length}) published.`
   );
 }
-// [END pubsub_publish_large_messages]
+// [END pubsub_publish_large_message]
 
 function main(topicName = 'YOUR_TOPIC_NAME', sourceFile = 'YOUR_FILENAME') {
-  publishLargeMessages(topicName, sourceFile).catch(err => {
+  publishLargeMessage(topicName, sourceFile).catch(err => {
     console.error(err.message);
     process.exitCode = 1;
   });

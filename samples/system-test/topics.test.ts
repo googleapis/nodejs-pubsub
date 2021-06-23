@@ -18,6 +18,10 @@ import {describe, it, before, after} from 'mocha';
 import {execSync, commandFor} from './common';
 import * as uuid from 'uuid';
 
+// We are actually running tests with a version that has this.
+// eslint-disable-next-line node/no-unsupported-features/node-builtins
+import {promises as fs} from 'fs';
+
 describe('topics', () => {
   const projectId = process.env.GCLOUD_PROJECT;
   const pubsub = new PubSub({projectId});
@@ -96,6 +100,19 @@ describe('topics', () => {
         expectedMessage.data
       }"`
     );
+    const receivedMessage = await _pullOneMessage(subscription);
+    assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
+  });
+
+  it('should publish a large message', async () => {
+    const fn = `message_${uuid.v4()}.msg`;
+    await fs.writeFile(fn, expectedMessage.data);
+    const [subscription] = await pubsub
+      .topic(topicNameThree)
+      .subscription(subscriptionNameOne)
+      .get({autoCreate: true});
+    execSync(`${commandFor('publishLargeMessage')} ${topicNameThree} ${fn}`);
+    await fs.rm(fn);
     const receivedMessage = await _pullOneMessage(subscription);
     assert.strictEqual(receivedMessage.data.toString(), expectedMessage.data);
   });

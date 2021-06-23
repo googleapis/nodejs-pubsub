@@ -138,15 +138,16 @@ describe('subscriptions', () => {
     const messageIds = await pubsub
       .topic(topicNameOne)
       .publish(Buffer.from(contents));
+    const stem = `message_${uuid.v4()}`;
     const output = execSync(
       `${commandFor(
         'listenForLargeMessages'
-      )} ${subscriptionNameOne} message_ 10`
+      )} ${subscriptionNameOne} ${stem} 10`
     );
     assert.match(output, new RegExp(`Received message ${messageIds}`));
-    const contentsReceived = await fs.readFile('message_0.msg');
+    const contentsReceived = await fs.readFile(`${stem}_0.msg`);
     assert.strictEqual(contentsReceived.toString(), contents);
-    await fs.rm('message_0.msg');
+    await fs.rm(`${stem}_0.msg`);
   });
 
   it('should listen for messages with custom attributes', async () => {

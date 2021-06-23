@@ -14,7 +14,8 @@
 
 import * as cp from 'child_process';
 
-export const execSync = (cmd: string): string => cp.execSync(cmd, {encoding: 'utf-8'});
+export const execSync = (cmd: string): string =>
+  cp.execSync(cmd, {encoding: 'utf-8'});
 
 export function commandFor(action: string): string {
   return `node ${action}.js`;
