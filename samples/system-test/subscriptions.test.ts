@@ -18,6 +18,10 @@ import {describe, it, before, after} from 'mocha';
 import {execSync, commandFor} from './common';
 import * as uuid from 'uuid';
 
+// We are actually running tests with a version that has this.
+// eslint-disable-next-line node/no-unsupported-features/node-builtins
+import {promises as fs} from 'fs';
+
 describe('subscriptions', () => {
   const projectId = process.env.GCLOUD_PROJECT;
   const pubsub = new PubSub({projectId});
@@ -124,9 +128,25 @@ describe('subscriptions', () => {
       .topic(topicNameOne)
       .publish(Buffer.from('Hello, world!'));
     const output = execSync(
-      `${commandFor('listenForMessages')} ${subscriptionNameOne}`
+      `${commandFor('listenForMessages')} ${subscriptionNameOne} 10`
     );
     assert.match(output, new RegExp(`Received message ${messageIds}:`));
+  });
+
+  it('should listen for large messages', async () => {
+    const contents = 'Hello, world!';
+    const messageIds = await pubsub
+      .topic(topicNameOne)
+      .publish(Buffer.from(contents));
+    const output = execSync(
+      `${commandFor(
+        'listenForLargeMessages'
+      )} ${subscriptionNameOne} message_ 10`
+    );
+    assert.match(output, new RegExp(`Received message ${messageIds}`));
+    const contentsReceived = await fs.readFile('message_0.msg');
+    assert.strictEqual(contentsReceived.toString(), contents);
+    await fs.rm('message_0.msg');
   });
 
   it('should listen for messages with custom attributes', async () => {
@@ -134,7 +154,7 @@ describe('subscriptions', () => {
       .topic(topicNameOne)
       .publish(Buffer.from('Hello, world!'), {attr: 'value'});
     const output = execSync(
-      `${commandFor('listenWithCustomAttributes')} ${subscriptionNameOne}`
+      `${commandFor('listenWithCustomAttributes')} ${subscriptionNameOne} 10`
     );
     assert.match(
       output,
