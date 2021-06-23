@@ -42,6 +42,7 @@ guides.
   * [List Subscriptions On a Topic](#list-subscriptions-on-a-topic)
   * [Listen For Avro Records](#listen-for-avro-records)
   * [Listen For Errors](#listen-for-errors)
+  * [Listen For Large Messages](#listen-for-large-messages)
   * [Listen For Messages](#listen-for-messages)
   * [Listen For Protobuf Messages](#listen-for-protobuf-messages)
   * [Listen For Messages With Custom Attributes](#listen-for-messages-with-custom-attributes)
@@ -49,6 +50,8 @@ guides.
   * [OpenTelemetry Tracing](#opentelemetry-tracing)
   * [Publish Avro Records to a Topic](#publish-avro-records-to-a-topic)
   * [Publish Batched Messages](#publish-batched-messages)
+  * [Publish Large Messages to a Topic](#publish-large-messages-to-a-topic)
+  * [Publish Large Messages to a Topic](#publish-large-messages-to-a-topic)
   * [Publish Message](#publish-message)
   * [Publish Message With Custom Attributes](#publish-message-with-custom-attributes)
   * [Publish Ordered Message](#publish-ordered-message)
@@ -500,6 +503,25 @@ __Usage:__
 
 
 
+### Listen For Large Messages
+
+Listens for messages from a subscription and writes them to files.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/listenForLargeMessages.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listenForLargeMessages.js,samples/README.md)
+
+__Usage:__
+
+
+`node listenForLargeMessages.js <subscription-name> <file-stem> [timeout-in-seconds]`
+
+
+-----
+
+
+
+
 ### Listen For Messages
 
 Listens for messages from a subscription.
@@ -626,6 +648,44 @@ __Usage:__
 
 
 `node publishBatchedMessages.js <topic-name> <data> [max-messages [max-wait-in-seconds]]`
+
+
+-----
+
+
+
+
+### Publish Large Messages to a Topic
+
+Publishes a large message to a topic.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/publishLargeMessage.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/publishLargeMessage.js,samples/README.md)
+
+__Usage:__
+
+
+`node publishLargeMessages.js <topic-name> <source-file>`
+
+
+-----
+
+
+
+
+### Publish Large Messages to a Topic
+
+Publishes a large message to a topic.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/master/samples/publishLargeMessages.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/publishLargeMessages.js,samples/README.md)
+
+__Usage:__
+
+
+`node publishLargeMessages.js <topic-name> <source-file>`
 
 
 -----
