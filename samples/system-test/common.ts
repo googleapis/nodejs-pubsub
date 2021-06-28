@@ -13,8 +13,6 @@
 // limitations under the License.
 
 import * as cp from 'child_process';
-import * as fs from 'fs';
-import {promisify} from 'util';
 
 export const execSync = (cmd: string): string =>
   cp.execSync(cmd, {encoding: 'utf-8'});
@@ -22,18 +20,3 @@ export const execSync = (cmd: string): string =>
 export function commandFor(action: string): string {
   return `node ${action}.js`;
 }
-
-const access = promisify(fs.access);
-export const fspromises = {
-  readFile: promisify(fs.readFile),
-  writeFile: promisify(fs.writeFile),
-  rm: promisify(fs.unlink),
-  exists: async (fn: string): Promise<boolean> => {
-    try {
-      await access(fn, fs.constants.F_OK);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  },
-};
