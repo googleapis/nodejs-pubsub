@@ -242,6 +242,10 @@
                     "satisfiesPzs": {
                       "type": "bool",
                       "id": 7
+                    },
+                    "messageRetentionDuration": {
+                      "type": "google.protobuf.Duration",
+                      "id": 8
                     }
                   }
                 },
@@ -813,6 +817,13 @@
                     "detached": {
                       "type": "bool",
                       "id": 15
+                    },
+                    "topicMessageRetentionDuration": {
+                      "type": "google.protobuf.Duration",
+                      "id": 17,
+                      "options": {
+                        "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
                     }
                   }
                 },

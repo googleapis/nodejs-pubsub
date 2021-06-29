@@ -442,6 +442,9 @@ export namespace google {
 
                 /** Topic satisfiesPzs */
                 satisfiesPzs?: (boolean|null);
+
+                /** Topic messageRetentionDuration */
+                messageRetentionDuration?: (google.protobuf.IDuration|null);
             }
 
             /** Represents a Topic. */
@@ -470,6 +473,9 @@ export namespace google {
 
                 /** Topic satisfiesPzs. */
                 public satisfiesPzs: boolean;
+
+                /** Topic messageRetentionDuration. */
+                public messageRetentionDuration?: (google.protobuf.IDuration|null);
 
                 /**
                  * Creates a new Topic instance using the specified properties.
@@ -2287,6 +2293,9 @@ export namespace google {
 
                 /** Subscription detached */
                 detached?: (boolean|null);
+
+                /** Subscription topicMessageRetentionDuration */
+                topicMessageRetentionDuration?: (google.protobuf.IDuration|null);
             }
 
             /** Represents a Subscription. */
@@ -2336,6 +2345,9 @@ export namespace google {
 
                 /** Subscription detached. */
                 public detached: boolean;
+
+                /** Subscription topicMessageRetentionDuration. */
+                public topicMessageRetentionDuration?: (google.protobuf.IDuration|null);
 
                 /**
                  * Creates a new Subscription instance using the specified properties.

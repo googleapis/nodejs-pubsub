@@ -271,14 +271,13 @@ export class PublisherClient {
     ];
     for (const methodName of publisherStubMethods) {
       const callPromise = this.publisherStub.then(
-        stub =>
-          (...args: Array<{}>) => {
-            if (this._terminated) {
-              return Promise.reject('The client has already been closed.');
-            }
-            const func = stub[methodName];
-            return func.apply(stub, args);
-          },
+        stub => (...args: Array<{}>) => {
+          if (this._terminated) {
+            return Promise.reject('The client has already been closed.');
+          }
+          const func = stub[methodName];
+          return func.apply(stub, args);
+        },
         (err: Error | null | undefined) => () => {
           throw err;
         }
@@ -357,7 +356,7 @@ export class PublisherClient {
   // -- Service calls --
   // -------------------
   createTopic(
-    request?: protos.google.pubsub.v1.ITopic,
+    request: protos.google.pubsub.v1.ITopic,
     options?: CallOptions
   ): Promise<
     [
@@ -413,6 +412,15 @@ export class PublisherClient {
    * @param {boolean} request.satisfiesPzs
    *   Reserved for future use. This field is set only in responses from the
    *   server; it is ignored if it is set in any requests.
+   * @param {google.protobuf.Duration} request.messageRetentionDuration
+   *   Indicates the minimum duration to retain a message after it is published to
+   *   the topic. If this field is set, messages published to the topic in the
+   *   last `message_retention_duration` are always available to subscribers. For
+   *   instance, it allows any attached subscription to [seek to a
+   *   timestamp](https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time)
+   *   that is up to `message_retention_duration` in the past. If this field is
+   *   not set, message retention is controlled by settings on individual
+   *   subscriptions. Cannot be more than 7 days or less than 10 minutes.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -424,7 +432,7 @@ export class PublisherClient {
    * const [response] = await client.createTopic(request);
    */
   createTopic(
-    request?: protos.google.pubsub.v1.ITopic,
+    request: protos.google.pubsub.v1.ITopic,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -455,15 +463,16 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        name: request.name || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      name: request.name || '',
+    });
     this.initialize();
     return this.innerApiCalls.createTopic(request, options, callback);
   }
   updateTopic(
-    request?: protos.google.pubsub.v1.IUpdateTopicRequest,
+    request: protos.google.pubsub.v1.IUpdateTopicRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -514,7 +523,7 @@ export class PublisherClient {
    * const [response] = await client.updateTopic(request);
    */
   updateTopic(
-    request?: protos.google.pubsub.v1.IUpdateTopicRequest,
+    request: protos.google.pubsub.v1.IUpdateTopicRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -545,15 +554,16 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        'topic.name': request.topic!.name || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      'topic.name': request.topic!.name || '',
+    });
     this.initialize();
     return this.innerApiCalls.updateTopic(request, options, callback);
   }
   publish(
-    request?: protos.google.pubsub.v1.IPublishRequest,
+    request: protos.google.pubsub.v1.IPublishRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -601,7 +611,7 @@ export class PublisherClient {
    * const [response] = await client.publish(request);
    */
   publish(
-    request?: protos.google.pubsub.v1.IPublishRequest,
+    request: protos.google.pubsub.v1.IPublishRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -632,15 +642,16 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        topic: request.topic || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      topic: request.topic || '',
+    });
     this.initialize();
     return this.innerApiCalls.publish(request, options, callback);
   }
   getTopic(
-    request?: protos.google.pubsub.v1.IGetTopicRequest,
+    request: protos.google.pubsub.v1.IGetTopicRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -685,7 +696,7 @@ export class PublisherClient {
    * const [response] = await client.getTopic(request);
    */
   getTopic(
-    request?: protos.google.pubsub.v1.IGetTopicRequest,
+    request: protos.google.pubsub.v1.IGetTopicRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -716,15 +727,16 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        topic: request.topic || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      topic: request.topic || '',
+    });
     this.initialize();
     return this.innerApiCalls.getTopic(request, options, callback);
   }
   deleteTopic(
-    request?: protos.google.pubsub.v1.IDeleteTopicRequest,
+    request: protos.google.pubsub.v1.IDeleteTopicRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -773,7 +785,7 @@ export class PublisherClient {
    * const [response] = await client.deleteTopic(request);
    */
   deleteTopic(
-    request?: protos.google.pubsub.v1.IDeleteTopicRequest,
+    request: protos.google.pubsub.v1.IDeleteTopicRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -804,15 +816,16 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        topic: request.topic || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      topic: request.topic || '',
+    });
     this.initialize();
     return this.innerApiCalls.deleteTopic(request, options, callback);
   }
   detachSubscription(
-    request?: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -860,7 +873,7 @@ export class PublisherClient {
    * const [response] = await client.detachSubscription(request);
    */
   detachSubscription(
-    request?: protos.google.pubsub.v1.IDetachSubscriptionRequest,
+    request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -891,16 +904,17 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      subscription: request.subscription || '',
+    });
     this.initialize();
     return this.innerApiCalls.detachSubscription(request, options, callback);
   }
 
   listTopics(
-    request?: protos.google.pubsub.v1.IListTopicsRequest,
+    request: protos.google.pubsub.v1.IListTopicsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -954,7 +968,7 @@ export class PublisherClient {
    *   for more details and examples.
    */
   listTopics(
-    request?: protos.google.pubsub.v1.IListTopicsRequest,
+    request: protos.google.pubsub.v1.IListTopicsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
@@ -985,10 +999,11 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      project: request.project || '',
+    });
     this.initialize();
     return this.innerApiCalls.listTopics(request, options, callback);
   }
@@ -1026,10 +1041,11 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      project: request.project || '',
+    });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listTopics.createStream(
@@ -1078,21 +1094,22 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      project: request.project || '',
+    });
     options = options || {};
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listTopics.asyncIterate(
       this.innerApiCalls['listTopics'] as GaxCall,
-      request as unknown as RequestType,
+      (request as unknown) as RequestType,
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ITopic>;
   }
   listTopicSubscriptions(
-    request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1150,7 +1167,7 @@ export class PublisherClient {
    *   for more details and examples.
    */
   listTopicSubscriptions(
-    request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
+    request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
@@ -1185,10 +1202,11 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        topic: request.topic || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      topic: request.topic || '',
+    });
     this.initialize();
     return this.innerApiCalls.listTopicSubscriptions(
       request,
@@ -1230,10 +1248,11 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        topic: request.topic || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      topic: request.topic || '',
+    });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listTopicSubscriptions.createStream(
@@ -1282,21 +1301,22 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        topic: request.topic || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      topic: request.topic || '',
+    });
     options = options || {};
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listTopicSubscriptions.asyncIterate(
       this.innerApiCalls['listTopicSubscriptions'] as GaxCall,
-      request as unknown as RequestType,
+      (request as unknown) as RequestType,
       callSettings
     ) as AsyncIterable<string>;
   }
   listTopicSnapshots(
-    request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
+    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1354,7 +1374,7 @@ export class PublisherClient {
    *   for more details and examples.
    */
   listTopicSnapshots(
-    request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
+    request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
@@ -1387,10 +1407,11 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        topic: request.topic || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      topic: request.topic || '',
+    });
     this.initialize();
     return this.innerApiCalls.listTopicSnapshots(request, options, callback);
   }
@@ -1428,10 +1449,11 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        topic: request.topic || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      topic: request.topic || '',
+    });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listTopicSnapshots.createStream(
@@ -1480,16 +1502,17 @@ export class PublisherClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        topic: request.topic || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      topic: request.topic || '',
+    });
     options = options || {};
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listTopicSnapshots.asyncIterate(
       this.innerApiCalls['listTopicSnapshots'] as GaxCall,
-      request as unknown as RequestType,
+      (request as unknown) as RequestType,
       callSettings
     ) as AsyncIterable<string>;
   }

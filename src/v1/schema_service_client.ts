@@ -240,14 +240,13 @@ export class SchemaServiceClient {
     ];
     for (const methodName of schemaServiceStubMethods) {
       const callPromise = this.schemaServiceStub.then(
-        stub =>
-          (...args: Array<{}>) => {
-            if (this._terminated) {
-              return Promise.reject('The client has already been closed.');
-            }
-            const func = stub[methodName];
-            return func.apply(stub, args);
-          },
+        stub => (...args: Array<{}>) => {
+          if (this._terminated) {
+            return Promise.reject('The client has already been closed.');
+          }
+          const func = stub[methodName];
+          return func.apply(stub, args);
+        },
         (err: Error | null | undefined) => () => {
           throw err;
         }
@@ -323,7 +322,7 @@ export class SchemaServiceClient {
   // -- Service calls --
   // -------------------
   createSchema(
-    request?: protos.google.pubsub.v1.ICreateSchemaRequest,
+    request: protos.google.pubsub.v1.ICreateSchemaRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -380,7 +379,7 @@ export class SchemaServiceClient {
    * const [response] = await client.createSchema(request);
    */
   createSchema(
-    request?: protos.google.pubsub.v1.ICreateSchemaRequest,
+    request: protos.google.pubsub.v1.ICreateSchemaRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -411,15 +410,16 @@ export class SchemaServiceClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      parent: request.parent || '',
+    });
     this.initialize();
     return this.innerApiCalls.createSchema(request, options, callback);
   }
   getSchema(
-    request?: protos.google.pubsub.v1.IGetSchemaRequest,
+    request: protos.google.pubsub.v1.IGetSchemaRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -468,7 +468,7 @@ export class SchemaServiceClient {
    * const [response] = await client.getSchema(request);
    */
   getSchema(
-    request?: protos.google.pubsub.v1.IGetSchemaRequest,
+    request: protos.google.pubsub.v1.IGetSchemaRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -499,15 +499,16 @@ export class SchemaServiceClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        name: request.name || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      name: request.name || '',
+    });
     this.initialize();
     return this.innerApiCalls.getSchema(request, options, callback);
   }
   deleteSchema(
-    request?: protos.google.pubsub.v1.IDeleteSchemaRequest,
+    request: protos.google.pubsub.v1.IDeleteSchemaRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -552,7 +553,7 @@ export class SchemaServiceClient {
    * const [response] = await client.deleteSchema(request);
    */
   deleteSchema(
-    request?: protos.google.pubsub.v1.IDeleteSchemaRequest,
+    request: protos.google.pubsub.v1.IDeleteSchemaRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -583,15 +584,16 @@ export class SchemaServiceClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        name: request.name || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      name: request.name || '',
+    });
     this.initialize();
     return this.innerApiCalls.deleteSchema(request, options, callback);
   }
   validateSchema(
-    request?: protos.google.pubsub.v1.IValidateSchemaRequest,
+    request: protos.google.pubsub.v1.IValidateSchemaRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -638,7 +640,7 @@ export class SchemaServiceClient {
    * const [response] = await client.validateSchema(request);
    */
   validateSchema(
-    request?: protos.google.pubsub.v1.IValidateSchemaRequest,
+    request: protos.google.pubsub.v1.IValidateSchemaRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -669,15 +671,16 @@ export class SchemaServiceClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      parent: request.parent || '',
+    });
     this.initialize();
     return this.innerApiCalls.validateSchema(request, options, callback);
   }
   validateMessage(
-    request?: protos.google.pubsub.v1.IValidateMessageRequest,
+    request: protos.google.pubsub.v1.IValidateMessageRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -732,7 +735,7 @@ export class SchemaServiceClient {
    * const [response] = await client.validateMessage(request);
    */
   validateMessage(
-    request?: protos.google.pubsub.v1.IValidateMessageRequest,
+    request: protos.google.pubsub.v1.IValidateMessageRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -763,16 +766,17 @@ export class SchemaServiceClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      parent: request.parent || '',
+    });
     this.initialize();
     return this.innerApiCalls.validateMessage(request, options, callback);
   }
 
   listSchemas(
-    request?: protos.google.pubsub.v1.IListSchemasRequest,
+    request: protos.google.pubsub.v1.IListSchemasRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -830,7 +834,7 @@ export class SchemaServiceClient {
    *   for more details and examples.
    */
   listSchemas(
-    request?: protos.google.pubsub.v1.IListSchemasRequest,
+    request: protos.google.pubsub.v1.IListSchemasRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
@@ -861,10 +865,11 @@ export class SchemaServiceClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      parent: request.parent || '',
+    });
     this.initialize();
     return this.innerApiCalls.listSchemas(request, options, callback);
   }
@@ -906,10 +911,11 @@ export class SchemaServiceClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      parent: request.parent || '',
+    });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listSchemas.createStream(
@@ -962,16 +968,17 @@ export class SchemaServiceClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      parent: request.parent || '',
+    });
     options = options || {};
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listSchemas.asyncIterate(
       this.innerApiCalls['listSchemas'] as GaxCall,
-      request as unknown as RequestType,
+      (request as unknown) as RequestType,
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ISchema>;
   }

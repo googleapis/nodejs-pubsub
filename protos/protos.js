@@ -832,6 +832,7 @@
                      * @property {string|null} [kmsKeyName] Topic kmsKeyName
                      * @property {google.pubsub.v1.ISchemaSettings|null} [schemaSettings] Topic schemaSettings
                      * @property {boolean|null} [satisfiesPzs] Topic satisfiesPzs
+                     * @property {google.protobuf.IDuration|null} [messageRetentionDuration] Topic messageRetentionDuration
                      */
     
                     /**
@@ -899,6 +900,14 @@
                     Topic.prototype.satisfiesPzs = false;
     
                     /**
+                     * Topic messageRetentionDuration.
+                     * @member {google.protobuf.IDuration|null|undefined} messageRetentionDuration
+                     * @memberof google.pubsub.v1.Topic
+                     * @instance
+                     */
+                    Topic.prototype.messageRetentionDuration = null;
+    
+                    /**
                      * Creates a new Topic instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Topic
@@ -935,6 +944,8 @@
                             $root.google.pubsub.v1.SchemaSettings.encode(message.schemaSettings, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
                         if (message.satisfiesPzs != null && Object.hasOwnProperty.call(message, "satisfiesPzs"))
                             writer.uint32(/* id 7, wireType 0 =*/56).bool(message.satisfiesPzs);
+                        if (message.messageRetentionDuration != null && Object.hasOwnProperty.call(message, "messageRetentionDuration"))
+                            $root.google.protobuf.Duration.encode(message.messageRetentionDuration, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
                         return writer;
                     };
     
@@ -1006,6 +1017,9 @@
                             case 7:
                                 message.satisfiesPzs = reader.bool();
                                 break;
+                            case 8:
+                                message.messageRetentionDuration = $root.google.protobuf.Duration.decode(reader, reader.uint32());
+                                break;
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -1068,6 +1082,11 @@
                         if (message.satisfiesPzs != null && message.hasOwnProperty("satisfiesPzs"))
                             if (typeof message.satisfiesPzs !== "boolean")
                                 return "satisfiesPzs: boolean expected";
+                        if (message.messageRetentionDuration != null && message.hasOwnProperty("messageRetentionDuration")) {
+                            var error = $root.google.protobuf.Duration.verify(message.messageRetentionDuration);
+                            if (error)
+                                return "messageRetentionDuration." + error;
+                        }
                         return null;
                     };
     
@@ -1106,6 +1125,11 @@
                         }
                         if (object.satisfiesPzs != null)
                             message.satisfiesPzs = Boolean(object.satisfiesPzs);
+                        if (object.messageRetentionDuration != null) {
+                            if (typeof object.messageRetentionDuration !== "object")
+                                throw TypeError(".google.pubsub.v1.Topic.messageRetentionDuration: object expected");
+                            message.messageRetentionDuration = $root.google.protobuf.Duration.fromObject(object.messageRetentionDuration);
+                        }
                         return message;
                     };
     
@@ -1130,6 +1154,7 @@
                             object.kmsKeyName = "";
                             object.schemaSettings = null;
                             object.satisfiesPzs = false;
+                            object.messageRetentionDuration = null;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
                             object.name = message.name;
@@ -1147,6 +1172,8 @@
                             object.schemaSettings = $root.google.pubsub.v1.SchemaSettings.toObject(message.schemaSettings, options);
                         if (message.satisfiesPzs != null && message.hasOwnProperty("satisfiesPzs"))
                             object.satisfiesPzs = message.satisfiesPzs;
+                        if (message.messageRetentionDuration != null && message.hasOwnProperty("messageRetentionDuration"))
+                            object.messageRetentionDuration = $root.google.protobuf.Duration.toObject(message.messageRetentionDuration, options);
                         return object;
                     };
     
@@ -4826,6 +4853,7 @@
                      * @property {google.pubsub.v1.IDeadLetterPolicy|null} [deadLetterPolicy] Subscription deadLetterPolicy
                      * @property {google.pubsub.v1.IRetryPolicy|null} [retryPolicy] Subscription retryPolicy
                      * @property {boolean|null} [detached] Subscription detached
+                     * @property {google.protobuf.IDuration|null} [topicMessageRetentionDuration] Subscription topicMessageRetentionDuration
                      */
     
                     /**
@@ -4949,6 +4977,14 @@
                     Subscription.prototype.detached = false;
     
                     /**
+                     * Subscription topicMessageRetentionDuration.
+                     * @member {google.protobuf.IDuration|null|undefined} topicMessageRetentionDuration
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.topicMessageRetentionDuration = null;
+    
+                    /**
                      * Creates a new Subscription instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Subscription
@@ -4999,6 +5035,8 @@
                             $root.google.pubsub.v1.RetryPolicy.encode(message.retryPolicy, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
                         if (message.detached != null && Object.hasOwnProperty.call(message, "detached"))
                             writer.uint32(/* id 15, wireType 0 =*/120).bool(message.detached);
+                        if (message.topicMessageRetentionDuration != null && Object.hasOwnProperty.call(message, "topicMessageRetentionDuration"))
+                            $root.google.protobuf.Duration.encode(message.topicMessageRetentionDuration, writer.uint32(/* id 17, wireType 2 =*/138).fork()).ldelim();
                         return writer;
                     };
     
@@ -5091,6 +5129,9 @@
                             case 15:
                                 message.detached = reader.bool();
                                 break;
+                            case 17:
+                                message.topicMessageRetentionDuration = $root.google.protobuf.Duration.decode(reader, reader.uint32());
+                                break;
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -5180,6 +5221,11 @@
                         if (message.detached != null && message.hasOwnProperty("detached"))
                             if (typeof message.detached !== "boolean")
                                 return "detached: boolean expected";
+                        if (message.topicMessageRetentionDuration != null && message.hasOwnProperty("topicMessageRetentionDuration")) {
+                            var error = $root.google.protobuf.Duration.verify(message.topicMessageRetentionDuration);
+                            if (error)
+                                return "topicMessageRetentionDuration." + error;
+                        }
                         return null;
                     };
     
@@ -5241,6 +5287,11 @@
                         }
                         if (object.detached != null)
                             message.detached = Boolean(object.detached);
+                        if (object.topicMessageRetentionDuration != null) {
+                            if (typeof object.topicMessageRetentionDuration !== "object")
+                                throw TypeError(".google.pubsub.v1.Subscription.topicMessageRetentionDuration: object expected");
+                            message.topicMessageRetentionDuration = $root.google.protobuf.Duration.fromObject(object.topicMessageRetentionDuration);
+                        }
                         return message;
                     };
     
@@ -5272,6 +5323,7 @@
                             object.deadLetterPolicy = null;
                             object.retryPolicy = null;
                             object.detached = false;
+                            object.topicMessageRetentionDuration = null;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
                             object.name = message.name;
@@ -5303,6 +5355,8 @@
                             object.retryPolicy = $root.google.pubsub.v1.RetryPolicy.toObject(message.retryPolicy, options);
                         if (message.detached != null && message.hasOwnProperty("detached"))
                             object.detached = message.detached;
+                        if (message.topicMessageRetentionDuration != null && message.hasOwnProperty("topicMessageRetentionDuration"))
+                            object.topicMessageRetentionDuration = $root.google.protobuf.Duration.toObject(message.topicMessageRetentionDuration, options);
                         return object;
                     };
     

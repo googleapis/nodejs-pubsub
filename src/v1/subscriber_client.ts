@@ -265,14 +265,13 @@ export class SubscriberClient {
     ];
     for (const methodName of subscriberStubMethods) {
       const callPromise = this.subscriberStub.then(
-        stub =>
-          (...args: Array<{}>) => {
-            if (this._terminated) {
-              return Promise.reject('The client has already been closed.');
-            }
-            const func = stub[methodName];
-            return func.apply(stub, args);
-          },
+        stub => (...args: Array<{}>) => {
+          if (this._terminated) {
+            return Promise.reject('The client has already been closed.');
+          }
+          const func = stub[methodName];
+          return func.apply(stub, args);
+        },
         (err: Error | null | undefined) => () => {
           throw err;
         }
@@ -351,7 +350,7 @@ export class SubscriberClient {
   // -- Service calls --
   // -------------------
   createSubscription(
-    request?: protos.google.pubsub.v1.ISubscription,
+    request: protos.google.pubsub.v1.ISubscription,
     options?: CallOptions
   ): Promise<
     [
@@ -485,6 +484,13 @@ export class SubscriberClient {
    *   backlog. `Pull` and `StreamingPull` requests will return
    *   FAILED_PRECONDITION. If the subscription is a push subscription, pushes to
    *   the endpoint will not be made.
+   * @param {google.protobuf.Duration} request.topicMessageRetentionDuration
+   *   Output only. Indicates the minimum duration for which a message is retained
+   *   after it is published to the subscription's topic. If this field is set,
+   *   messages published to the subscription's topic in the last
+   *   `topic_message_retention_duration` are always available to subscribers. See
+   *   the `message_retention_duration` field in `Topic`. This field is set only
+   *   in responses from the server; it is ignored if it is set in any requests.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -496,7 +502,7 @@ export class SubscriberClient {
    * const [response] = await client.createSubscription(request);
    */
   createSubscription(
-    request?: protos.google.pubsub.v1.ISubscription,
+    request: protos.google.pubsub.v1.ISubscription,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -527,15 +533,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        name: request.name || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      name: request.name || '',
+    });
     this.initialize();
     return this.innerApiCalls.createSubscription(request, options, callback);
   }
   getSubscription(
-    request?: protos.google.pubsub.v1.IGetSubscriptionRequest,
+    request: protos.google.pubsub.v1.IGetSubscriptionRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -580,7 +587,7 @@ export class SubscriberClient {
    * const [response] = await client.getSubscription(request);
    */
   getSubscription(
-    request?: protos.google.pubsub.v1.IGetSubscriptionRequest,
+    request: protos.google.pubsub.v1.IGetSubscriptionRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -611,15 +618,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      subscription: request.subscription || '',
+    });
     this.initialize();
     return this.innerApiCalls.getSubscription(request, options, callback);
   }
   updateSubscription(
-    request?: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
+    request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -667,7 +675,7 @@ export class SubscriberClient {
    * const [response] = await client.updateSubscription(request);
    */
   updateSubscription(
-    request?: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
+    request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -698,15 +706,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        'subscription.name': request.subscription!.name || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      'subscription.name': request.subscription!.name || '',
+    });
     this.initialize();
     return this.innerApiCalls.updateSubscription(request, options, callback);
   }
   deleteSubscription(
-    request?: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
+    request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -755,7 +764,7 @@ export class SubscriberClient {
    * const [response] = await client.deleteSubscription(request);
    */
   deleteSubscription(
-    request?: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
+    request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -786,15 +795,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      subscription: request.subscription || '',
+    });
     this.initialize();
     return this.innerApiCalls.deleteSubscription(request, options, callback);
   }
   modifyAckDeadline(
-    request?: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
+    request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -854,7 +864,7 @@ export class SubscriberClient {
    * const [response] = await client.modifyAckDeadline(request);
    */
   modifyAckDeadline(
-    request?: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
+    request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -885,15 +895,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      subscription: request.subscription || '',
+    });
     this.initialize();
     return this.innerApiCalls.modifyAckDeadline(request, options, callback);
   }
   acknowledge(
-    request?: protos.google.pubsub.v1.IAcknowledgeRequest,
+    request: protos.google.pubsub.v1.IAcknowledgeRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -948,7 +959,7 @@ export class SubscriberClient {
    * const [response] = await client.acknowledge(request);
    */
   acknowledge(
-    request?: protos.google.pubsub.v1.IAcknowledgeRequest,
+    request: protos.google.pubsub.v1.IAcknowledgeRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -979,15 +990,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      subscription: request.subscription || '',
+    });
     this.initialize();
     return this.innerApiCalls.acknowledge(request, options, callback);
   }
   pull(
-    request?: protos.google.pubsub.v1.IPullRequest,
+    request: protos.google.pubsub.v1.IPullRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1046,7 +1058,7 @@ export class SubscriberClient {
    * const [response] = await client.pull(request);
    */
   pull(
-    request?: protos.google.pubsub.v1.IPullRequest,
+    request: protos.google.pubsub.v1.IPullRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1077,15 +1089,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      subscription: request.subscription || '',
+    });
     this.initialize();
     return this.innerApiCalls.pull(request, options, callback);
   }
   modifyPushConfig(
-    request?: protos.google.pubsub.v1.IModifyPushConfigRequest,
+    request: protos.google.pubsub.v1.IModifyPushConfigRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1142,7 +1155,7 @@ export class SubscriberClient {
    * const [response] = await client.modifyPushConfig(request);
    */
   modifyPushConfig(
-    request?: protos.google.pubsub.v1.IModifyPushConfigRequest,
+    request: protos.google.pubsub.v1.IModifyPushConfigRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1173,15 +1186,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      subscription: request.subscription || '',
+    });
     this.initialize();
     return this.innerApiCalls.modifyPushConfig(request, options, callback);
   }
   getSnapshot(
-    request?: protos.google.pubsub.v1.IGetSnapshotRequest,
+    request: protos.google.pubsub.v1.IGetSnapshotRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1230,7 +1244,7 @@ export class SubscriberClient {
    * const [response] = await client.getSnapshot(request);
    */
   getSnapshot(
-    request?: protos.google.pubsub.v1.IGetSnapshotRequest,
+    request: protos.google.pubsub.v1.IGetSnapshotRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1261,15 +1275,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        snapshot: request.snapshot || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      snapshot: request.snapshot || '',
+    });
     this.initialize();
     return this.innerApiCalls.getSnapshot(request, options, callback);
   }
   createSnapshot(
-    request?: protos.google.pubsub.v1.ICreateSnapshotRequest,
+    request: protos.google.pubsub.v1.ICreateSnapshotRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1346,7 +1361,7 @@ export class SubscriberClient {
    * const [response] = await client.createSnapshot(request);
    */
   createSnapshot(
-    request?: protos.google.pubsub.v1.ICreateSnapshotRequest,
+    request: protos.google.pubsub.v1.ICreateSnapshotRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1377,15 +1392,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        name: request.name || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      name: request.name || '',
+    });
     this.initialize();
     return this.innerApiCalls.createSnapshot(request, options, callback);
   }
   updateSnapshot(
-    request?: protos.google.pubsub.v1.IUpdateSnapshotRequest,
+    request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1437,7 +1453,7 @@ export class SubscriberClient {
    * const [response] = await client.updateSnapshot(request);
    */
   updateSnapshot(
-    request?: protos.google.pubsub.v1.IUpdateSnapshotRequest,
+    request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1468,15 +1484,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        'snapshot.name': request.snapshot!.name || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      'snapshot.name': request.snapshot!.name || '',
+    });
     this.initialize();
     return this.innerApiCalls.updateSnapshot(request, options, callback);
   }
   deleteSnapshot(
-    request?: protos.google.pubsub.v1.IDeleteSnapshotRequest,
+    request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1529,7 +1546,7 @@ export class SubscriberClient {
    * const [response] = await client.deleteSnapshot(request);
    */
   deleteSnapshot(
-    request?: protos.google.pubsub.v1.IDeleteSnapshotRequest,
+    request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1560,15 +1577,16 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        snapshot: request.snapshot || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      snapshot: request.snapshot || '',
+    });
     this.initialize();
     return this.innerApiCalls.deleteSnapshot(request, options, callback);
   }
   seek(
-    request?: protos.google.pubsub.v1.ISeekRequest,
+    request: protos.google.pubsub.v1.ISeekRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1634,7 +1652,7 @@ export class SubscriberClient {
    * const [response] = await client.seek(request);
    */
   seek(
-    request?: protos.google.pubsub.v1.ISeekRequest,
+    request: protos.google.pubsub.v1.ISeekRequest,
     optionsOrCallback?:
       | CallOptions
       | Callback<
@@ -1665,10 +1683,11 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      subscription: request.subscription || '',
+    });
     this.initialize();
     return this.innerApiCalls.seek(request, options, callback);
   }
@@ -1704,7 +1723,7 @@ export class SubscriberClient {
   }
 
   listSubscriptions(
-    request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
+    request: protos.google.pubsub.v1.IListSubscriptionsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1758,7 +1777,7 @@ export class SubscriberClient {
    *   for more details and examples.
    */
   listSubscriptions(
-    request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
+    request: protos.google.pubsub.v1.IListSubscriptionsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
@@ -1789,10 +1808,11 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      project: request.project || '',
+    });
     this.initialize();
     return this.innerApiCalls.listSubscriptions(request, options, callback);
   }
@@ -1830,10 +1850,11 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      project: request.project || '',
+    });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listSubscriptions.createStream(
@@ -1882,21 +1903,22 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      project: request.project || '',
+    });
     options = options || {};
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listSubscriptions.asyncIterate(
       this.innerApiCalls['listSubscriptions'] as GaxCall,
-      request as unknown as RequestType,
+      (request as unknown) as RequestType,
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ISubscription>;
   }
   listSnapshots(
-    request?: protos.google.pubsub.v1.IListSnapshotsRequest,
+    request: protos.google.pubsub.v1.IListSnapshotsRequest,
     options?: CallOptions
   ): Promise<
     [
@@ -1954,7 +1976,7 @@ export class SubscriberClient {
    *   for more details and examples.
    */
   listSnapshots(
-    request?: protos.google.pubsub.v1.IListSnapshotsRequest,
+    request: protos.google.pubsub.v1.IListSnapshotsRequest,
     optionsOrCallback?:
       | CallOptions
       | PaginationCallback<
@@ -1985,10 +2007,11 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      project: request.project || '',
+    });
     this.initialize();
     return this.innerApiCalls.listSnapshots(request, options, callback);
   }
@@ -2026,10 +2049,11 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      project: request.project || '',
+    });
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listSnapshots.createStream(
@@ -2078,16 +2102,17 @@ export class SubscriberClient {
     options = options || {};
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
-    options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
-      });
+    options.otherArgs.headers[
+      'x-goog-request-params'
+    ] = gax.routingHeader.fromParams({
+      project: request.project || '',
+    });
     options = options || {};
     const callSettings = new gax.CallSettings(options);
     this.initialize();
     return this.descriptors.page.listSnapshots.asyncIterate(
       this.innerApiCalls['listSnapshots'] as GaxCall,
-      request as unknown as RequestType,
+      (request as unknown) as RequestType,
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ISnapshot>;
   }
