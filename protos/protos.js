@@ -9303,6 +9303,7 @@
                      * @memberof google.pubsub.v1
                      * @interface IStreamingPullResponse
                      * @property {Array.<google.pubsub.v1.IReceivedMessage>|null} [receivedMessages] StreamingPullResponse receivedMessages
+                     * @property {google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties|null} [subscriptionProperties] StreamingPullResponse subscriptionProperties
                      */
     
                     /**
@@ -9328,6 +9329,14 @@
                      * @instance
                      */
                     StreamingPullResponse.prototype.receivedMessages = $util.emptyArray;
+    
+                    /**
+                     * StreamingPullResponse subscriptionProperties.
+                     * @member {google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties|null|undefined} subscriptionProperties
+                     * @memberof google.pubsub.v1.StreamingPullResponse
+                     * @instance
+                     */
+                    StreamingPullResponse.prototype.subscriptionProperties = null;
     
                     /**
                      * Creates a new StreamingPullResponse instance using the specified properties.
@@ -9356,6 +9365,8 @@
                         if (message.receivedMessages != null && message.receivedMessages.length)
                             for (var i = 0; i < message.receivedMessages.length; ++i)
                                 $root.google.pubsub.v1.ReceivedMessage.encode(message.receivedMessages[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        if (message.subscriptionProperties != null && Object.hasOwnProperty.call(message, "subscriptionProperties"))
+                            $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.encode(message.subscriptionProperties, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
                         return writer;
                     };
     
@@ -9394,6 +9405,9 @@
                                 if (!(message.receivedMessages && message.receivedMessages.length))
                                     message.receivedMessages = [];
                                 message.receivedMessages.push($root.google.pubsub.v1.ReceivedMessage.decode(reader, reader.uint32()));
+                                break;
+                            case 4:
+                                message.subscriptionProperties = $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.decode(reader, reader.uint32());
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -9439,6 +9453,11 @@
                                     return "receivedMessages." + error;
                             }
                         }
+                        if (message.subscriptionProperties != null && message.hasOwnProperty("subscriptionProperties")) {
+                            var error = $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.verify(message.subscriptionProperties);
+                            if (error)
+                                return "subscriptionProperties." + error;
+                        }
                         return null;
                     };
     
@@ -9464,6 +9483,11 @@
                                 message.receivedMessages[i] = $root.google.pubsub.v1.ReceivedMessage.fromObject(object.receivedMessages[i]);
                             }
                         }
+                        if (object.subscriptionProperties != null) {
+                            if (typeof object.subscriptionProperties !== "object")
+                                throw TypeError(".google.pubsub.v1.StreamingPullResponse.subscriptionProperties: object expected");
+                            message.subscriptionProperties = $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.fromObject(object.subscriptionProperties);
+                        }
                         return message;
                     };
     
@@ -9482,11 +9506,15 @@
                         var object = {};
                         if (options.arrays || options.defaults)
                             object.receivedMessages = [];
+                        if (options.defaults)
+                            object.subscriptionProperties = null;
                         if (message.receivedMessages && message.receivedMessages.length) {
                             object.receivedMessages = [];
                             for (var j = 0; j < message.receivedMessages.length; ++j)
                                 object.receivedMessages[j] = $root.google.pubsub.v1.ReceivedMessage.toObject(message.receivedMessages[j], options);
                         }
+                        if (message.subscriptionProperties != null && message.hasOwnProperty("subscriptionProperties"))
+                            object.subscriptionProperties = $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.toObject(message.subscriptionProperties, options);
                         return object;
                     };
     
@@ -9500,6 +9528,193 @@
                     StreamingPullResponse.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
+    
+                    StreamingPullResponse.SubscriptionProperties = (function() {
+    
+                        /**
+                         * Properties of a SubscriptionProperties.
+                         * @memberof google.pubsub.v1.StreamingPullResponse
+                         * @interface ISubscriptionProperties
+                         * @property {boolean|null} [messageOrderingEnabled] SubscriptionProperties messageOrderingEnabled
+                         */
+    
+                        /**
+                         * Constructs a new SubscriptionProperties.
+                         * @memberof google.pubsub.v1.StreamingPullResponse
+                         * @classdesc Represents a SubscriptionProperties.
+                         * @implements ISubscriptionProperties
+                         * @constructor
+                         * @param {google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties=} [properties] Properties to set
+                         */
+                        function SubscriptionProperties(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * SubscriptionProperties messageOrderingEnabled.
+                         * @member {boolean} messageOrderingEnabled
+                         * @memberof google.pubsub.v1.StreamingPullResponse.SubscriptionProperties
+                         * @instance
+                         */
+                        SubscriptionProperties.prototype.messageOrderingEnabled = false;
+    
+                        /**
+                         * Creates a new SubscriptionProperties instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.StreamingPullResponse.SubscriptionProperties
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.StreamingPullResponse.SubscriptionProperties} SubscriptionProperties instance
+                         */
+                        SubscriptionProperties.create = function create(properties) {
+                            return new SubscriptionProperties(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified SubscriptionProperties message. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.StreamingPullResponse.SubscriptionProperties
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties} message SubscriptionProperties message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        SubscriptionProperties.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.messageOrderingEnabled != null && Object.hasOwnProperty.call(message, "messageOrderingEnabled"))
+                                writer.uint32(/* id 2, wireType 0 =*/16).bool(message.messageOrderingEnabled);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified SubscriptionProperties message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.StreamingPullResponse.SubscriptionProperties
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties} message SubscriptionProperties message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        SubscriptionProperties.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a SubscriptionProperties message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.StreamingPullResponse.SubscriptionProperties
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.StreamingPullResponse.SubscriptionProperties} SubscriptionProperties
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        SubscriptionProperties.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 2:
+                                    message.messageOrderingEnabled = reader.bool();
+                                    break;
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a SubscriptionProperties message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.StreamingPullResponse.SubscriptionProperties
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.StreamingPullResponse.SubscriptionProperties} SubscriptionProperties
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        SubscriptionProperties.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a SubscriptionProperties message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.StreamingPullResponse.SubscriptionProperties
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        SubscriptionProperties.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.messageOrderingEnabled != null && message.hasOwnProperty("messageOrderingEnabled"))
+                                if (typeof message.messageOrderingEnabled !== "boolean")
+                                    return "messageOrderingEnabled: boolean expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a SubscriptionProperties message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.StreamingPullResponse.SubscriptionProperties
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.StreamingPullResponse.SubscriptionProperties} SubscriptionProperties
+                         */
+                        SubscriptionProperties.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties)
+                                return object;
+                            var message = new $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties();
+                            if (object.messageOrderingEnabled != null)
+                                message.messageOrderingEnabled = Boolean(object.messageOrderingEnabled);
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from a SubscriptionProperties message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.StreamingPullResponse.SubscriptionProperties
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.SubscriptionProperties} message SubscriptionProperties
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        SubscriptionProperties.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults)
+                                object.messageOrderingEnabled = false;
+                            if (message.messageOrderingEnabled != null && message.hasOwnProperty("messageOrderingEnabled"))
+                                object.messageOrderingEnabled = message.messageOrderingEnabled;
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this SubscriptionProperties to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.StreamingPullResponse.SubscriptionProperties
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        SubscriptionProperties.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        return SubscriptionProperties;
+                    })();
     
                     return StreamingPullResponse;
                 })();
