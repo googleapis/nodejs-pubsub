@@ -798,6 +798,21 @@ export class Topic {
   }
 
   /**
+   * Returns a Promise that resolves when the client is clear to resume
+   * publishing messages. This is for publisher-side flow control. If flow
+   * control is set to Ignore or Error, then this Promise will always
+   * resolve immediately. Additionally, queued `publishReady` calls will resolve
+   * in the order they're received, pausing again if the space runs out due to
+   * subsequent resolves.
+   *
+   * @returns A Promise that resolves when clients are clear (on account of
+   *   publisher side flow control) to publish more messages.
+   */
+  publishReady(): Promise<void> {
+    return this.publisher.publishReady();
+  }
+
+  /**
    * In the event that the client fails to publish an ordered message, all
    * subsequent publish calls using the same ordering key will fail. Calling
    * this method will disregard the publish failure, allowing the supplied

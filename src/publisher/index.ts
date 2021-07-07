@@ -28,6 +28,17 @@ import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
 import {createSpan} from '../opentelemetry-tracing';
 
+import {
+  FlowControl,
+  FlowControlOptions,
+  FlowControlAction,
+} from './flow-control';
+export {
+  FlowControlOptions,
+  FlowControlAction,
+  FlowControlActions,
+} from './flow-control';
+
 export type PubsubMessage = google.pubsub.v1.IPubsubMessage;
 
 export interface Attributes {
@@ -38,6 +49,7 @@ export type PublishCallback = RequestCallback<string>;
 
 export interface PublishOptions {
   batching?: BatchPublishOptions;
+  publisherFlowControl?: FlowControlOptions;
   gaxOpts?: CallOptions;
   messageOrdering?: boolean;
   enableOpenTelemetryTracing?: boolean;
@@ -47,6 +59,8 @@ export interface PublishOptions {
  * @typedef PublishOptions
  * @property {BatchPublishOptions} [batching] The maximum number of bytes to
  *     buffer before sending a payload.
+ * @property {FlowControlOptions} [publisherFlowControl] Publisher-side flow
+ *     control settings. If this is undefined, Ignore will be the assumed action.
  * @property {object} [gaxOpts] Request configuration options, outlined
  *     {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html|here.}
  * @property {boolean} [messageOrdering] If true, messages published with the
@@ -58,6 +72,12 @@ export interface PublishOptions {
 export const BATCH_LIMITS: BatchPublishOptions = {
   maxBytes: Math.pow(1024, 2) * 9,
   maxMessages: 1000,
+};
+
+export const FlowControlDefaults: FlowControlOptions = {
+  maxOutstandingBytes: undefined,
+  maxOutstandingMessages: undefined,
+  action: FlowControlAction.Ignore,
 };
 
 /**
@@ -76,7 +96,12 @@ export class Publisher {
   settings!: PublishOptions;
   queue: Queue;
   orderedQueues: Map<string, OrderedQueue>;
+  flowControl: FlowControl;
+
   constructor(topic: Topic, options?: PublishOptions) {
+    this.flowControl = new FlowControl(
+      options?.publisherFlowControl ?? FlowControlDefaults
+    );
     this.setOptions(options);
     this.topic = topic;
     this.queue = new Queue(this);
@@ -147,6 +172,7 @@ export class Publisher {
    *
    * @throws {TypeError} If data is not a Buffer object.
    * @throws {TypeError} If any value in `attributes` object is not a string.
+   * @throws {RangeError} If publisher flow control is set to `Error` and the message won't fit.
    *
    * @param {PubsubMessage} [message] Options for this message.
    * @param {PublishCallback} [callback] Callback function.
@@ -156,6 +182,18 @@ export class Publisher {
 
     if (!(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
+    }
+
+    // Will it pass publisher flow control handling?
+    // We only care about Error action handling here. Pause is handled later.
+    if (
+      this.settings.publisherFlowControl!.action === FlowControlAction.Error
+    ) {
+      if (this.flowControl.wouldExceed(data.length, 1)) {
+        throw new RangeError(
+          `Flow control exceeded for ${data.length} bytes and 1 message`
+        );
+      }
     }
 
     for (const key of Object.keys(attributes!)) {
@@ -169,6 +207,7 @@ export class Publisher {
     const span: Span | undefined = this.constructSpan(message);
 
     if (!message.orderingKey) {
+      this.flowControl.add(data.length, 1);
       this.queue.add(message, callback);
       if (span) {
         span.end();
@@ -185,6 +224,7 @@ export class Publisher {
     }
 
     const queue = this.orderedQueues.get(key)!;
+    this.flowControl.add(data.length, 1);
     queue.add(message, callback);
 
     if (span) {
@@ -230,6 +270,11 @@ export class Publisher {
         isBundling: false,
       },
       enableOpenTelemetryTracing: false,
+      publisherFlowControl: {
+        maxOutstandingMessages: FlowControlDefaults.maxOutstandingMessages,
+        maxOutstandingBytes: FlowControlDefaults.maxOutstandingBytes,
+        action: FlowControlDefaults.action,
+      } as FlowControlOptions,
     };
 
     return defaults;
@@ -272,6 +317,17 @@ export class Publisher {
         q.updateOptions();
       }
     }
+    this.flowControl.setOptions(this.settings.publisherFlowControl!);
+  }
+
+  /**
+   * Returns a Promise that resolves when the client is clear to resume
+   * publishing messages.
+   *
+   * @private This is exported via Topic, and has more documentation there.
+   */
+  publishReady(): Promise<void> {
+    return this.flowControl.wait();
   }
 
   /**

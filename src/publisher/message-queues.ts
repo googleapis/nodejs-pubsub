@@ -37,6 +37,7 @@ export abstract class MessageQueue extends EventEmitter {
   batchOptions: BatchPublishOptions;
   publisher: Publisher;
   pending?: NodeJS.Timer;
+
   constructor(publisher: Publisher) {
     super();
     this.publisher = publisher;
@@ -159,9 +160,10 @@ export class Queue extends MessageQueue {
    * Cancels any pending publishes and calls _publish immediately.
    */
   publish(callback?: PublishDone): void {
-    const {messages, callbacks} = this.batch;
+    const {bytes, messages, callbacks} = this.batch;
 
     this.batch = new MessageBatch(this.batchOptions);
+    this.publisher.flowControl.remove(bytes, messages.length);
 
     if (this.pending) {
       clearTimeout(this.pending);
@@ -302,7 +304,8 @@ export class OrderedQueue extends MessageQueue {
       delete this.pending;
     }
 
-    const {messages, callbacks} = this.batches.pop()!;
+    const {messages, callbacks, bytes} = this.batches.pop()!;
+    this.publisher.flowControl.remove(bytes, messages.length);
 
     this._publish(messages, callbacks, (err: null | ServiceError) => {
       this.inFlight = false;
