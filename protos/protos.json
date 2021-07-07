@@ -600,7 +600,7 @@
                       "options": {
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:pull",
                         "(google.api.http).body": "*",
-                        "(google.api.method_signature)": "subscription,return_immediately,max_messages"
+                        "(google.api.method_signature)": "subscription,max_messages"
                       },
                       "parsedOptions": [
                         {
@@ -611,6 +611,9 @@
                         },
                         {
                           "(google.api.method_signature)": "subscription,return_immediately,max_messages"
+                        },
+                        {
+                          "(google.api.method_signature)": "subscription,max_messages"
                         }
                       ]
                     },
@@ -1131,6 +1134,20 @@
                       "rule": "repeated",
                       "type": "ReceivedMessage",
                       "id": 1
+                    },
+                    "subscriptionProperties": {
+                      "type": "SubscriptionProperties",
+                      "id": 4
+                    }
+                  },
+                  "nested": {
+                    "SubscriptionProperties": {
+                      "fields": {
+                        "messageOrderingEnabled": {
+                          "type": "bool",
+                          "id": 2
+                        }
+                      }
                     }
                   }
                 },
