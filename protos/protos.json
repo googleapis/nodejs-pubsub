@@ -600,7 +600,7 @@
                       "options": {
                         "(google.api.http).post": "/v1/{subscription=projects/*/subscriptions/*}:pull",
                         "(google.api.http).body": "*",
-                        "(google.api.method_signature)": "subscription,return_immediately,max_messages"
+                        "(google.api.method_signature)": "subscription,max_messages"
                       },
                       "parsedOptions": [
                         {
@@ -611,6 +611,9 @@
                         },
                         {
                           "(google.api.method_signature)": "subscription,return_immediately,max_messages"
+                        },
+                        {
+                          "(google.api.method_signature)": "subscription,max_messages"
                         }
                       ]
                     },
