@@ -4,6 +4,19 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.16.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.15.1...v2.16.0) (2021-07-12)
+
+
+### Features
+
+* Add method signature for Subscriber.Pull without the deprecated return_immediately field. ([#1350](https://www.github.com/googleapis/nodejs-pubsub/issues/1350)) ([a7922fb](https://www.github.com/googleapis/nodejs-pubsub/commit/a7922fb345337d750789d1b672521c8440472cea))
+
+
+### Bug Fixes
+
+* **deps:** google-gax v2.17.0 with mTLS ([#1344](https://www.github.com/googleapis/nodejs-pubsub/issues/1344)) ([0cd0a8c](https://www.github.com/googleapis/nodejs-pubsub/commit/0cd0a8c8c79e3ca7dfe1e2d1bf2a2f8894ba4680))
+* **deps:** google-gax v2.17.1 ([#1353](https://www.github.com/googleapis/nodejs-pubsub/issues/1353)) ([d5bf563](https://www.github.com/googleapis/nodejs-pubsub/commit/d5bf56325374c5509c6b65c953b41c15533a2a0a))
+
 ### [2.15.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.15.0...v2.15.1) (2021-06-22)
 
 
