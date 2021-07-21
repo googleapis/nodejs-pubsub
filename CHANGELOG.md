@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.16.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.0...v2.16.1) (2021-07-21)
+
+
+### Bug Fixes
+
+* Updating WORKSPACE files to use the newest version of the Typescript generator. ([#1354](https://www.github.com/googleapis/nodejs-pubsub/issues/1354)) ([7288e2e](https://www.github.com/googleapis/nodejs-pubsub/commit/7288e2e06b15bede3e06002a8a3dec2699312aa2))
+
 ## [2.16.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.15.1...v2.16.0) (2021-07-12)
 
 
