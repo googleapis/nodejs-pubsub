@@ -33,14 +33,20 @@ class FakeTopic {
   request<T>(config: RequestConfig, callback: RequestCallback<T>): void {}
 }
 
+class FakeFlowControl {
+  remove() {}
+}
+
 class FakePublisher {
   topic: FakeTopic;
   settings: p.PublishOptions;
+  flowControl: FakeFlowControl;
   constructor(topic: FakeTopic) {
     this.topic = topic;
     this.settings = {
       batching: {},
     };
+    this.flowControl = new FakeFlowControl();
   }
 }
 
@@ -90,7 +96,7 @@ describe('Message Queues', () => {
   let OrderedQueue: typeof q.OrderedQueue;
 
   let topic: FakeTopic;
-  let publisher: FakePublisher;
+  let publisher: p.Publisher;
 
   before(() => {
     const mocked = proxyquire('../../src/publisher/message-queues.js', {
@@ -105,7 +111,7 @@ describe('Message Queues', () => {
 
   beforeEach(() => {
     topic = new FakeTopic();
-    publisher = new FakePublisher(topic);
+    publisher = new FakePublisher(topic) as unknown as p.Publisher;
   });
 
   afterEach(() => {

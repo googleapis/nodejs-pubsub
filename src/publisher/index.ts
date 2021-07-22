@@ -30,13 +30,8 @@ import {createSpan} from '../opentelemetry-tracing';
 
 import {
   FlowControl,
-  FlowControlOptions,
-  FlowControlAction,
-} from './flow-control';
-export {
-  FlowControlOptions,
-  FlowControlAction,
-  FlowControlActions,
+  PublisherFlowControlOptions,
+  PublisherFlowControlAction,
 } from './flow-control';
 import {promisifySome} from '../util';
 
@@ -50,7 +45,7 @@ export type PublishCallback = RequestCallback<string>;
 
 export interface PublishOptions {
   batching?: BatchPublishOptions;
-  publisherFlowControl?: FlowControlOptions;
+  publisherFlowControl?: PublisherFlowControlOptions;
   gaxOpts?: CallOptions;
   messageOrdering?: boolean;
   enableOpenTelemetryTracing?: boolean;
@@ -75,10 +70,10 @@ export const BATCH_LIMITS: BatchPublishOptions = {
   maxMessages: 1000,
 };
 
-export const FlowControlDefaults: FlowControlOptions = {
+export const publisherFlowControlDefaults: PublisherFlowControlOptions = {
   maxOutstandingBytes: undefined,
   maxOutstandingMessages: undefined,
-  action: FlowControlAction.Ignore,
+  action: PublisherFlowControlAction.Ignore,
 };
 
 /**
@@ -101,7 +96,7 @@ export class Publisher {
 
   constructor(topic: Topic, options?: PublishOptions) {
     this.flowControl = new FlowControl(
-      options?.publisherFlowControl ?? FlowControlDefaults
+      options?.publisherFlowControl ?? publisherFlowControlDefaults
     );
     this.setOptions(options);
     this.topic = topic;
@@ -188,7 +183,8 @@ export class Publisher {
     // Will it pass publisher flow control handling?
     // We only care about Error action handling here. Pause is handled later.
     if (
-      this.settings.publisherFlowControl!.action === FlowControlAction.Error
+      this.settings.publisherFlowControl!.action ===
+      PublisherFlowControlAction.Error
     ) {
       if (this.flowControl.wouldExceed(data.length, 1)) {
         throw new RangeError(
@@ -271,11 +267,10 @@ export class Publisher {
         isBundling: false,
       },
       enableOpenTelemetryTracing: false,
-      publisherFlowControl: {
-        maxOutstandingMessages: FlowControlDefaults.maxOutstandingMessages,
-        maxOutstandingBytes: FlowControlDefaults.maxOutstandingBytes,
-        action: FlowControlDefaults.action,
-      } as FlowControlOptions,
+      publisherFlowControl: Object.assign(
+        {},
+        publisherFlowControlDefaults
+      ) as PublisherFlowControlOptions,
     };
 
     return defaults;
@@ -291,8 +286,13 @@ export class Publisher {
   setOptions(options = {} as PublishOptions): void {
     const defaults = this.getOptionDefaults();
 
-    const {batching, gaxOpts, messageOrdering, enableOpenTelemetryTracing} =
-      extend(true, defaults, options);
+    const {
+      batching,
+      gaxOpts,
+      messageOrdering,
+      enableOpenTelemetryTracing,
+      publisherFlowControl,
+    } = extend(true, defaults, options);
 
     this.settings = {
       batching: {
@@ -306,6 +306,7 @@ export class Publisher {
       gaxOpts,
       messageOrdering,
       enableOpenTelemetryTracing,
+      publisherFlowControl,
     };
 
     // We also need to let all of our queues know that they need to update their options.
@@ -325,7 +326,7 @@ export class Publisher {
    * Returns a Promise that resolves when the client is clear to resume
    * publishing messages.
    *
-   * @private This is exported via Topic, and has more documentation there.
+   * @private This is exported via {@link Topic}, and has more documentation there.
    */
   publishReady(): Promise<void> {
     return this.flowControl.wait();

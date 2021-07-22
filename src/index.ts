@@ -90,8 +90,12 @@ export {
   TestIamPermissionsCallback,
   IAM,
 } from './iam';
-export {Attributes, PublishCallback} from './publisher';
+export {Attributes, PublishCallback, PublishOptions} from './publisher';
 export {PublishError} from './publisher/publish-error';
+export {
+  PublisherFlowControlOptions,
+  PublisherFlowControlAction,
+} from './publisher/flow-control';
 export {
   PageOptions,
   GetSnapshotsCallback,

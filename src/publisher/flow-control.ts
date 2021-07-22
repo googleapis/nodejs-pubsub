@@ -17,16 +17,7 @@
 import * as defer from 'p-defer';
 
 /**
- * TypeScript enum for flow control actions
- */
-export enum FlowControlAction {
-  Ignore = 0,
-  Pause = 1,
-  Error = 2,
-}
-
-/**
- * @typedef FlowControlActions Exported for JavaScript usage.
+ * @typedef PublisherFlowControlAction Options for flow control actions
  *
  * @property {number} Ignore Ignore all flow control; don't take any action
  *     based on outstanding requests.
@@ -36,14 +27,14 @@ export enum FlowControlAction {
  * @property {number} Error When flow control limits would be exceeded, calls
  *     to {@link Topic##publish} will throw an exception.
  */
-export const FlowControlActions = {
-  Ignore: FlowControlAction.Ignore,
-  Pause: FlowControlAction.Pause,
-  Error: FlowControlAction.Error,
-};
+export enum PublisherFlowControlAction {
+  Ignore = 0,
+  Pause = 1,
+  Error = 2,
+}
 
 /**
- * @typedef FlowControlOptions
+ * @typedef PublisherFlowControlOptions
  * @property {number} [maxOutstandingMessage] The maximum number of messages to
  *     buffer before publisher flow control kicks in.
  * @property {number} [maxOutstandingBytes] The maximum number of bytes to buffer
@@ -54,10 +45,10 @@ export const FlowControlActions = {
  *     Error/2 (throw an Error when maximum values are exceeded. These constants
  *     are also available in the FlowControlActions object.
  */
-export interface FlowControlOptions {
+export interface PublisherFlowControlOptions {
   maxOutstandingMessages?: number;
   maxOutstandingBytes?: number;
-  action?: FlowControlAction;
+  action?: PublisherFlowControlAction;
 }
 
 /**
@@ -66,25 +57,25 @@ export interface FlowControlOptions {
  * @private This is for Publisher to use.
  */
 export class FlowControl {
-  options: FlowControlOptions;
-  bytes: number;
-  messages: number;
-  promises: defer.DeferredPromise<void>[];
+  options: PublisherFlowControlOptions;
+  private bytes: number;
+  private messages: number;
+  private promises: defer.DeferredPromise<void>[];
 
-  constructor(options: FlowControlOptions) {
+  constructor(options: PublisherFlowControlOptions) {
     this.options = options;
     this.bytes = this.messages = 0;
     this.promises = [];
   }
 
-  setOptions(options: FlowControlOptions) {
+  setOptions(options: PublisherFlowControlOptions) {
     this.options = options;
   }
 
   /**
    * Adds the specified number of bytes and messages to our queued
    * counts. These should be things actually queued to send.
-   * 
+   *
    * @private For internal use.
    */
   add(bytes: number, messages: number) {
@@ -120,7 +111,7 @@ export class FlowControl {
     const totalBytes = this.bytes + bytes;
     const totalMessages = this.messages + messages;
 
-    if (this.options.action === FlowControlAction.Ignore) {
+    if (this.options.action === PublisherFlowControlAction.Ignore) {
       return false;
     }
 
@@ -156,9 +147,13 @@ export class FlowControl {
   /*!
    * Returns true if any further additions would exceed the limits. Always
    * returns false if we're not in Pause mode.
+   *
+   * Note that this will return true only after the limits have actually been
+   * exceeded by one tick, but that's hard to avoid with the way this is
+   * built to return a separate promise for waiting.
    */
   private needsWait(): boolean {
-    if (this.options.action !== FlowControlAction.Pause) {
+    if (this.options.action !== PublisherFlowControlAction.Pause) {
       return false;
     }
 

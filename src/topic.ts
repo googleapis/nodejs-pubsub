@@ -798,15 +798,48 @@ export class Topic {
   }
 
   /**
-   * Returns a Promise that resolves when the client is clear to resume
-   * publishing messages. This is for publisher-side flow control. If flow
-   * control is set to Ignore or Error, then this Promise will always
-   * resolve immediately. Additionally, queued `publishReady` calls will resolve
-   * in the order they're received, pausing again if the space runs out due to
-   * subsequent resolves.
+   * Publishes the message specified in the data buffer. The actual publish may be
+   * delayed if publisher-side flow control is enabled and set to Pause. Queued
+   * `publishWithFlowControl` calls will resolve in the order they're received, pausing
+   * again if space runs out due to subsequent resolves.
    *
-   * @returns A Promise that resolves when clients are clear (on account of
-   *   publisher side flow control) to publish more messages.
+   * This will also wait for us to get a message ID back from the server, similar
+   * to using `await` on {@link Topic#publish}. If you want to wait for many message IDs
+   * simultaneously, see {@link Topic#publishReady}.
+   *
+   * @param {Buffer} data The message to send
+   * @param {Attributes} [attrs] Attributes to attach to the message
+   * @returns {Promise<string>} A Promise that resolves to the message ID.
+   *
+   * @example
+   * const messageId = await topic.publishWithFlowControl(messageBuffer);
+   */
+  async publishWithFlowControl(
+    data: Buffer,
+    attrs?: Attributes
+  ): Promise<string> {
+    await this.publisher.publishReady();
+    return await this.publish(data, attrs);
+  }
+
+  /**
+   * Returns a Promise that will resolve when there is more room in the queue,
+   * according to publisher flow control settings. If the action is anything
+   * but `Pause`, then this will always return a resolved Promise.
+   *
+   * Queued `publishReady` calls will resolve in the order they're received, pausing
+   * again if space runs out due to subsequent resolves.
+   *
+   * @returns {Promise<void>} A Promise that will resolve when more space is
+   *   available in the queues.
+   *
+   * @example
+   * const idPromises = [];
+   * for (let i = 0; i < 500; i++) {
+   *   await topic.publishReady();
+   *   idPromises.push(topic.publish(messageBuffer));
+   * }
+   * const ids = await Promise.all(idPromises);
    */
   publishReady(): Promise<void> {
     return this.publisher.publishReady();
