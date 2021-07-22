@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
 import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {CallOptions, ServiceError} from 'google-gax';
@@ -31,25 +30,29 @@ import {GetTopicMetadataCallback, Topic} from '../src/topic';
 import * as util from '../src/util';
 
 let promisified = false;
-const fakePromisify = Object.assign({}, pfy, {
-  promisifyAll: (klass: Function, options: pfy.PromisifyAllOptions) => {
-    if (klass.name !== 'Topic') {
-      return;
+const fakeUtil = Object.assign({}, util, {
+  promisifySome(
+    class_: Function,
+    classProtos: object,
+    methods: string[]
+  ): void {
+    if (class_.name === 'Topic') {
+      promisified = true;
+      assert.deepStrictEqual(methods, [
+        'flush',
+        'create',
+        'createSubscription',
+        'delete',
+        'exists',
+        'get',
+        'getMetadata',
+        'getSubscriptions',
+        'setMetadata',
+      ]);
+      // Defeats the method name type check.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      util.promisifySome(class_, classProtos, methods as any);
     }
-    promisified = true;
-
-    // We _also_ need to call it, because unit tests will catch things
-    // that shouldn't be promisified.
-    pfy.promisifyAll(klass, options);
-
-    assert.deepStrictEqual(options.exclude, [
-      'publish',
-      'publishJSON',
-      'publishMessage',
-      'setPublishOptions',
-      'getPublishOptionDefaults',
-      'subscription',
-    ]);
   },
 });
 
@@ -111,7 +114,7 @@ describe('Topic', () => {
 
   before(() => {
     Topic = proxyquire('../src/topic.js', {
-      '@google-cloud/promisify': fakePromisify,
+      './util': fakeUtil,
       '@google-cloud/paginator': {
         paginator: fakePaginator,
       },
@@ -136,7 +139,7 @@ describe('Topic', () => {
       assert.strictEqual(topic.getSubscriptionsStream, 'getSubscriptions');
     });
 
-    it('should promisify all the things', () => {
+    it('should promisify some of the things', () => {
       assert(promisified);
     });
 

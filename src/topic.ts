@@ -15,7 +15,6 @@
  */
 
 import {paginator} from '@google-cloud/paginator';
-import {promisifyAll} from '@google-cloud/promisify';
 import {CallOptions} from 'google-gax';
 
 import {google} from '../protos/protos';
@@ -47,6 +46,7 @@ import {
   Subscription,
   SubscriptionOptions,
 } from './subscription';
+import {promisifySome} from './util';
 
 export type TopicMetadata = google.pubsub.v1.ITopic;
 
@@ -1049,18 +1049,20 @@ paginator.extend(Topic, ['getSubscriptions']);
 
 /*! Developer Documentation
  *
- * All async methods (except for streams) will return a Promise in the event
- * that a callback is omitted.
+ * Existing async methods (except for streams) will return a Promise in the event
+ * that a callback is omitted. Future methods will not allow for a callback.
+ * (Use .then() on the returned Promise instead.)
  */
-promisifyAll(Topic, {
-  exclude: [
-    'publish',
-    'publishJSON',
-    'publishMessage',
-    'setPublishOptions',
-    'getPublishOptionDefaults',
-    'subscription',
-  ],
-});
+promisifySome(Topic, Topic.prototype, [
+  'flush',
+  'create',
+  'createSubscription',
+  'delete',
+  'exists',
+  'get',
+  'getMetadata',
+  'getSubscriptions',
+  'setMetadata',
+]);
 
 export {PublishOptions};

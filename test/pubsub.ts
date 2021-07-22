@@ -58,7 +58,6 @@ const fakeUtil = Object.assign({}, util, {
     classProtos: object,
     methods: string[]
   ): void {
-    console.log('Promisifying some', classProtos, methods);
     if (class_.name === 'PubSub') {
       promisified = true;
       assert.deepStrictEqual(methods, [

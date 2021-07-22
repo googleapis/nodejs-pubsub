@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
 import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
@@ -27,16 +26,31 @@ import * as subby from '../src/subscription';
 import * as util from '../src/util';
 
 let promisified = false;
-const fakePromisify = Object.assign({}, pfy, {
-  promisifyAll: (
-    klass: subby.Subscription,
-    options: pfy.PromisifyAllOptions
-  ) => {
-    if (klass.name !== 'Subscription') {
-      return;
+const fakeUtil = Object.assign({}, util, {
+  promisifySome(
+    class_: Function,
+    classProtos: object,
+    methods: string[]
+  ): void {
+    if (class_.name === 'Subscription') {
+      promisified = true;
+      assert.deepStrictEqual(methods, [
+        'close',
+        'create',
+        'createSnapshot',
+        'delete',
+        'detached',
+        'exists',
+        'get',
+        'getMetadata',
+        'modifyPushConfig',
+        'seek',
+        'setMetadata',
+      ]);
     }
-    promisified = true;
-    assert.deepStrictEqual(options.exclude, ['open', 'snapshot']);
+    // Defeats the method name type check.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    util.promisifySome(class_, classProtos, methods as any);
   },
 });
 
@@ -95,7 +109,7 @@ describe('Subscription', () => {
 
   before(() => {
     Subscription = proxyquire('../src/subscription.js', {
-      '@google-cloud/promisify': fakePromisify,
+      './util': fakeUtil,
       './iam.js': {IAM: FakeIAM},
       './snapshot.js': {Snapshot: FakeSnapshot},
       './subscriber.js': {Subscriber: FakeSubscriber},
@@ -111,7 +125,7 @@ describe('Subscription', () => {
   afterEach(() => sandbox.restore());
 
   describe('initialization', () => {
-    it('should promisify all the things', () => {
+    it('should promisify some of the things', () => {
       assert(promisified);
     });
 
@@ -338,11 +352,11 @@ describe('Subscription', () => {
       subscription.topic = TOPIC_NAME;
     });
 
-    it('should throw an error if theres no topic', () => {
+    it('should throw an error if there is no topic', async () => {
       const expectedError =
         /Subscriptions can only be created when accessed through Topics/;
       delete subscription.topic;
-      assert.throws(() => subscription.create(), expectedError);
+      assert.rejects(subscription.create(), expectedError);
     });
 
     it('should pass the correct params', () => {
@@ -426,9 +440,9 @@ describe('Subscription', () => {
     });
 
     it('should throw an error if a snapshot name is not found', () => {
-      assert.throws(() => {
+      assert.rejects(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (subscription as any).createSnapshot();
+        return (subscription as any).createSnapshot();
       }, /A name is required to create a snapshot\./);
     });
 
@@ -860,9 +874,9 @@ describe('Subscription', () => {
     });
 
     it('should throw if a name or date is not provided', () => {
-      assert.throws(() => {
+      assert.rejects(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (subscription as any).seek();
+        return (subscription as any).seek();
       }, /Either a snapshot name or Date is needed to seek to\./);
     });
 

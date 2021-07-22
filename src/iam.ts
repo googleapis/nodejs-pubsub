@@ -18,13 +18,13 @@
  * @module pubsub/iam
  */
 
-import {promisifyAll} from '@google-cloud/promisify';
 import arrify = require('arrify');
 import {CallOptions, IamProtos} from 'google-gax';
 
 import {google} from '../protos/protos';
 
 import {Omit, PubSub, RequestCallback, ResourceCallback} from './pubsub';
+import {promisifySome} from './util';
 
 export type Policy = {
   etag?: string | Buffer;
@@ -393,7 +393,12 @@ export class IAM {
 
 /*! Developer Documentation
  *
- * All async methods (except for streams) will return a Promise in the event
- * that a callback is omitted.
+ * Existing async methods (except for streams) will return a Promise in the event
+ * that a callback is omitted. Future methods will not allow for a callback.
+ * (Use .then() on the returned Promise instead.)
  */
-promisifyAll(IAM);
+promisifySome(IAM, IAM.prototype, [
+  'getPolicy',
+  'setPolicy',
+  'testPermissions',
+]);

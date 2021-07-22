@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {promisify, promisifyAll} from '@google-cloud/promisify';
+import {promisify} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
@@ -38,6 +38,7 @@ export {
   FlowControlAction,
   FlowControlActions,
 } from './flow-control';
+import {promisifySome} from '../util';
 
 export type PubsubMessage = google.pubsub.v1.IPubsubMessage;
 
@@ -385,7 +386,6 @@ export class Publisher {
   }
 }
 
-promisifyAll(Publisher, {
+promisifySome(Publisher, Publisher.prototype, ['flush', 'publishMessage'], {
   singular: true,
-  exclude: ['publish', 'setOptions', 'constructSpan', 'getOptionDefaults'],
 });

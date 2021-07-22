@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {promisify} from '@google-cloud/promisify';
+import {promisify, PromisifyOptions} from '@google-cloud/promisify';
 
 /**
  * This replaces usage of promisifyAll(), going forward. Instead of opting
@@ -29,12 +29,13 @@ import {promisify} from '@google-cloud/promisify';
 export function promisifySome<T>(
   class_: Function,
   classProto: T,
-  methods: (keyof T)[]
+  methods: (keyof T)[],
+  options?: PromisifyOptions
 ): void {
   methods.forEach(methodName => {
     // Do the same stream checks as promisifyAll().
     const m = classProto[methodName] as unknown as Function;
-    classProto[methodName] = promisify(m);
+    classProto[methodName] = promisify(m, options);
   });
 }
 

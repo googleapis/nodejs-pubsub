@@ -25,6 +25,7 @@ import {Topic} from '../../src';
 import * as p from '../../src/publisher';
 import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
+import * as util from '../../src/util';
 
 import {defaultOptions} from '../../src/default-options';
 import {exporter} from '../tracing';
@@ -32,24 +33,21 @@ import {SpanKind} from '@opentelemetry/api';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 
 let promisified = false;
-const fakePromisify = Object.assign({}, pfy, {
-  promisifyAll: (ctor: Function, options: pfy.PromisifyAllOptions) => {
-    if (ctor.name !== 'Publisher') {
-      return;
+const fakeUtil = Object.assign({}, util, {
+  promisifySome(
+    class_: Function,
+    classProtos: object,
+    methods: string[],
+    options: pfy.PromisifyAllOptions
+  ): void {
+    if (class_.name === 'Publisher') {
+      promisified = true;
+      assert.deepStrictEqual(methods, ['flush', 'publishMessage']);
+      assert.strictEqual(options.singular, true);
     }
-
-    // We _also_ need to call it, because unit tests will catch things
-    // that shouldn't be promisified.
-    pfy.promisifyAll(ctor, options);
-
-    promisified = true;
-    assert.ok(options.singular);
-    assert.deepStrictEqual(options.exclude, [
-      'publish',
-      'setOptions',
-      'constructSpan',
-      'getOptionDefaults',
-    ]);
+    // Defeats the method name type check.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    util.promisifySome(class_, classProtos, methods as any, options);
   },
 });
 
@@ -114,7 +112,7 @@ describe('Publisher', () => {
     spy = sandbox.spy();
 
     const mocked = proxyquire('../../src/publisher/index.js', {
-      '@google-cloud/promisify': fakePromisify,
+      '../util': fakeUtil,
       './message-queues': {
         Queue: FakeQueue,
         OrderedQueue: FakeOrderedQueue,
@@ -131,7 +129,7 @@ describe('Publisher', () => {
   });
 
   describe('initialization', () => {
-    it('should promisify all the things', () => {
+    it('should promisify some of the things', () => {
       assert(promisified);
     });
 
