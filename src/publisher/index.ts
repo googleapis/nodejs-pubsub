@@ -185,7 +185,8 @@ export class Publisher {
   /**
    * Publish the provided message, making use of all enabled flow control.
    *
-   * @private Do not use externally, it may change without warning.
+   * Do not use externally, it may change without warning.
+   * @private
    *
    * @throws {TypeError} Rejects, if data is not a Buffer object.
    * @throws {TypeError} Rejects, if any value in `attributes` object is not a string.
@@ -194,9 +195,9 @@ export class Publisher {
    * @param {PubsubMessage} [message] Options for this message.
    * @param {PublishCallback} [callback] Callback function for when the message is published.
    *
-   * @returns {Promise<[Promise<string>]>} A Promise that resolves when the next publish call is
-   *  clear to go, with a Promise that resolves to the sent message ID, or rejects when one of the
-   *  above errors is thrown.
+   * @returns {Promise<Array<Promise<string>>>} A Promise that resolves when the next publish call is
+   *  clear to go, with a Promise (in an array) that resolves to the sent message ID, or rejects when
+   *  one of the above errors is thrown.
    */
   async publishWithFlowControl(
     message: PubsubMessage
@@ -210,7 +211,8 @@ export class Publisher {
    * out from the potentially async part which waits for queue space and then
    * publishes the message.
    *
-   * @private Do not use externally, it may change without warning.
+   * Do not use externally, it may change without warning.
+   * @private
    *
    * @throws {TypeError} If data is not a Buffer object.
    * @throws {TypeError} If any value in `attributes` object is not a string.
@@ -248,7 +250,8 @@ export class Publisher {
   /**
    * Publish the provided pre-checked message, pausing for flow control if needed.
    *
-   * @private Do not use externally, it may change without warning.
+   * Do not use externally, it may change without warning.
+   * @private
    *
    * @param {PubsubMessage} [message] Options for this message.
    * @param {PublishCallback} [callback] Callback function for when the message is published.

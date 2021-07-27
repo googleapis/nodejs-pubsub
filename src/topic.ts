@@ -803,13 +803,16 @@ export class Topic {
    * `publishWithFlowControl` calls will resolve in the order they're received, pausing
    * again if space runs out due to subsequent resolves.
    *
-   * The Promise's resolve() value will be another Promise<string> that you can
-   * wait on for the message ID, from the message actually being sent.
+   * The Promise's resolve() value will be another Promise<string> (in an array) that
+   * you can wait on for the message ID, from the message actually being sent.
    *
    * @param {Buffer} data The message to send
    * @param {Attributes} [attrs] Attributes to attach to the message
-   * @returns {Promise<[Promise<string>]>} A Promise that resolves to a Promise
-   *   that resolves to the message ID.
+   * @returns {Promise<Array<Promise<string>>>} A Promise that resolves to an array
+   *   with a Promise that resolves to the message ID. In other words, when the first
+   *   Promise resolves, you can crack the array's shell to get a second Promise
+   *   that will resolve when the message was sent, and its ID is ready. This is
+   *   required because JavaScript runtimes will coalesce Promises.
    *
    * @example
    * const messageIdPromises: Promise<string>[] = [];

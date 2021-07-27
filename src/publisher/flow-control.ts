@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Google Inc. All Rights Reserved.
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,8 +65,9 @@ interface QueuedPromise {
 /**
  * Manages flow control handling for max bytes and messages.
  *
- * @private This is for Publisher to use. Do not use this class externally,
- *   it may change without warning.
+ * Do not use this class externally, it may change without warning.
+ * @private
+ *
  */
 export class FlowControl {
   options: PublisherFlowControlOptions = {};
@@ -83,7 +84,8 @@ export class FlowControl {
   /**
    * Update our options after the fact.
    *
-   * @private Do not use externally, it may change without warning.
+   * Do not use externally, it may change without warning.
+   * @private
    */
   setOptions(options: PublisherFlowControlOptions) {
     this.options = options;
@@ -104,7 +106,8 @@ export class FlowControl {
    * there are too many things in the publisher flow control queue
    * already, we will defer and come back to it.
    *
-   * @private Do not use externally, it may change without warning.
+   * Do not use externally, it may change without warning.
+   * @private
    */
   async willSend(bytes: number, messages: number): Promise<void> {
     // Double check our settings.
@@ -137,7 +140,8 @@ export class FlowControl {
    * counts, after a deferred request was released. If there is enough
    * space.
    *
-   * @private Do not use externally, it may change without warning.
+   * Do not use externally, it may change without warning.
+   * @private
    */
   sent(bytes: number, messages: number) {
     this.bytes -= bytes;
@@ -163,7 +167,8 @@ export class FlowControl {
    * Returns true if adding the specified number of bytes or messages
    * would exceed limits imposed by configuration.
    *
-   * @private Do not use externally, it may change without warning.
+   * Do not use externally, it may change without warning.
+   * @private
    */
   wouldExceed(bytes: number, messages: number): boolean {
     if (this.options.action === PublisherFlowControlAction.Ignore) {
