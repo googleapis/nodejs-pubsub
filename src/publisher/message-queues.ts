@@ -160,10 +160,9 @@ export class Queue extends MessageQueue {
    * Cancels any pending publishes and calls _publish immediately.
    */
   publish(callback?: PublishDone): void {
-    const {bytes, messages, callbacks} = this.batch;
+    const {messages, callbacks} = this.batch;
 
     this.batch = new MessageBatch(this.batchOptions);
-    this.publisher.flowControl.remove(bytes, messages.length);
 
     if (this.pending) {
       clearTimeout(this.pending);
@@ -304,8 +303,7 @@ export class OrderedQueue extends MessageQueue {
       delete this.pending;
     }
 
-    const {messages, callbacks, bytes} = this.batches.pop()!;
-    this.publisher.flowControl.remove(bytes, messages.length);
+    const {messages, callbacks} = this.batches.pop()!;
 
     this._publish(messages, callbacks, (err: null | ServiceError) => {
       this.inFlight = false;

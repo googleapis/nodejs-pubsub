@@ -97,7 +97,7 @@ class FakeOrderedQueue extends FakeQueue {
 
 describe('Publisher', () => {
   let sandbox: sinon.SinonSandbox;
-  let spy: sinon.SinonSpyStatic;
+  let spy: sinon.SinonSpy;
   const topic = {
     name: 'topic-name',
     pubsub: {projectId: 'PROJECT_ID'},
@@ -250,15 +250,18 @@ describe('Publisher', () => {
       );
     });
 
-    it('should add non-ordered messages to the message queue', () => {
+    it('should add non-ordered messages to the message queue', done => {
       const stub = sandbox.stub(publisher.queue, 'add');
       const fakeMessage = {data};
 
-      publisher.publishMessage(fakeMessage, spy);
+      publisher.publishMessage(fakeMessage, done);
 
       const [message, callback] = stub.lastCall.args;
       assert.strictEqual(message, fakeMessage);
-      assert.strictEqual(callback, spy);
+
+      // Because of publisher flow control indirection, we have to test
+      // the callback this way.
+      callback(null);
     });
 
     describe('ordered messages', () => {
@@ -288,14 +291,19 @@ describe('Publisher', () => {
         assert.strictEqual(queue.orderingKey, orderingKey);
       });
 
-      it('should add the ordered message to the correct queue', () => {
+      it('should add the ordered message to the correct queue', done => {
         const stub = sandbox.stub(queue, 'add');
 
-        publisher.publishMessage(fakeMessage, spy);
+        publisher.publishMessage(fakeMessage, done);
 
+        // Because of publisher flow control indirection, we can't test
+        // the callback here.
         const [message, callback] = stub.lastCall.args;
         assert.strictEqual(message, fakeMessage);
-        assert.strictEqual(callback, spy);
+
+        // Because of publisher flow control indirection, we have to test
+        // the callback this way.
+        callback(null);
       });
 
       it('should return an error if the queue encountered an error', done => {

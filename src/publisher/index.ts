@@ -16,9 +16,10 @@
 
 import {promisify} from '@google-cloud/promisify';
 import * as extend from 'extend';
-import {CallOptions} from 'google-gax';
+import {CallOptions, ServiceError} from 'google-gax';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 import {isSpanContextValid, Span, SpanKind} from '@opentelemetry/api';
+import * as defer from 'p-defer';
 
 import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
@@ -162,7 +163,7 @@ export class Publisher {
     return this.publishMessage({data, attributes}, callback!);
   }
   /**
-   * Publish the provided message.
+   * Publish the provided message, ignoring `Pause` flow control.
    *
    * @private
    *
@@ -171,26 +172,55 @@ export class Publisher {
    * @throws {RangeError} If publisher flow control is set to `Error` and the message won't fit.
    *
    * @param {PubsubMessage} [message] Options for this message.
-   * @param {PublishCallback} [callback] Callback function.
+   * @param {PublishCallback} [callback] Callback function for when the message is published.
    */
   publishMessage(message: PubsubMessage, callback: PublishCallback): void {
+    this.prePublishMessage(message);
+    this.doPublishMessage(message).then(idPromiseArray => {
+      const [idPromise] = idPromiseArray;
+      idPromise.then(id => callback(null, id)).catch(err => callback(err));
+    });
+  }
+
+  /**
+   * Publish the provided message, making use of all enabled flow control.
+   *
+   * @private Do not use externally, it may change without warning.
+   *
+   * @throws {TypeError} Rejects, if data is not a Buffer object.
+   * @throws {TypeError} Rejects, if any value in `attributes` object is not a string.
+   * @throws {RangeError} Rejects, if publisher flow control is set to `Error` and the message won't fit.
+   *
+   * @param {PubsubMessage} [message] Options for this message.
+   * @param {PublishCallback} [callback] Callback function for when the message is published.
+   *
+   * @returns {Promise<[Promise<string>]>} A Promise that resolves when the next publish call is
+   *  clear to go, with a Promise that resolves to the sent message ID, or rejects when one of the
+   *  above errors is thrown.
+   */
+  async publishWithFlowControl(
+    message: PubsubMessage
+  ): Promise<[Promise<string>]> {
+    this.prePublishMessage(message);
+    return this.doPublishMessage(message);
+  }
+
+  /**
+   * Does common pre-publishing validation for a message. This is separated
+   * out from the potentially async part which waits for queue space and then
+   * publishes the message.
+   *
+   * @private Do not use externally, it may change without warning.
+   *
+   * @throws {TypeError} If data is not a Buffer object.
+   * @throws {TypeError} If any value in `attributes` object is not a string.
+   * @throws {RangeError} If publisher flow control is set to `Error` and the message won't fit.
+   */
+  private prePublishMessage(message: PubsubMessage): void {
     const {data, attributes = {}} = message;
 
     if (!(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
-    }
-
-    // Will it pass publisher flow control handling?
-    // We only care about Error action handling here. Pause is handled later.
-    if (
-      this.settings.publisherFlowControl!.action ===
-      PublisherFlowControlAction.Error
-    ) {
-      if (this.flowControl.wouldExceed(data.length, 1)) {
-        throw new RangeError(
-          `Flow control exceeded for ${data.length} bytes and 1 message`
-        );
-      }
     }
 
     for (const key of Object.keys(attributes!)) {
@@ -201,15 +231,76 @@ export class Publisher {
       }
     }
 
+    // Will it pass publisher flow control handling?
+    if (
+      this.settings.publisherFlowControl!.action ===
+      PublisherFlowControlAction.Error
+    ) {
+      // For error handling, we just want to throw if it would exceed.
+      if (this.flowControl.wouldExceed(data.length, 1)) {
+        throw new RangeError(
+          `Flow control exceeded for ${data.length} bytes and 1 message`
+        );
+      }
+    }
+  }
+
+  /**
+   * Publish the provided pre-checked message, pausing for flow control if needed.
+   *
+   * @private Do not use externally, it may change without warning.
+   *
+   * @param {PubsubMessage} [message] Options for this message.
+   * @param {PublishCallback} [callback] Callback function for when the message is published.
+   *
+   * @returns {Promise<void>} A Promise that resolves when there is more queue space
+   *   for publishing messages. This will always resolve immediately if flow control
+   *   is set to any action besides `Pause`.
+   */
+  private async doPublishMessage(
+    message: PubsubMessage
+  ): Promise<[Promise<string>]> {
+    const data = message.data! as Buffer;
     const span: Span | undefined = this.constructSpan(message);
 
+    const deferred = defer<string>();
+    let finalCallback = (
+      err: ServiceError | null,
+      value: string | null | undefined
+    ) => {
+      if (err) {
+        deferred.reject(err);
+      } else {
+        // In practice, the service will only ever return an array
+        // of message IDs, or a null array + error. The individual IDs
+        // won't be null, so this ! simplifies our types a lot.
+        deferred.resolve(value!);
+      }
+    };
+
+    if (
+      this.settings.publisherFlowControl!.action ===
+      PublisherFlowControlAction.Pause
+    ) {
+      const oldCallback = finalCallback;
+      finalCallback = (
+        err: ServiceError | null,
+        res?: string | null | undefined
+      ) => {
+        this.flowControl.sent(data.length, 1);
+        oldCallback(err, res);
+      };
+
+      // For pausing, we want to wait until space is available.
+      await this.flowControl.willSend(data.length, 1);
+    }
+
     if (!message.orderingKey) {
-      this.flowControl.add(data.length, 1);
-      this.queue.add(message, callback);
+      this.queue.add(message, finalCallback);
       if (span) {
         span.end();
       }
-      return;
+      return [deferred.promise];
     }
 
     const key = message.orderingKey;
@@ -221,12 +312,13 @@ export class Publisher {
     }
 
     const queue = this.orderedQueues.get(key)!;
-    this.flowControl.add(data.length, 1);
-    queue.add(message, callback);
+    queue.add(message, finalCallback);
 
     if (span) {
       span.end();
     }
+
+    return [deferred.promise];
   }
   /**
    * Indicates to the publisher that it is safe to continue publishing for the
@@ -319,17 +411,9 @@ export class Publisher {
         q.updateOptions();
       }
     }
-    this.flowControl.setOptions(this.settings.publisherFlowControl!);
-  }
 
-  /**
-   * Returns a Promise that resolves when the client is clear to resume
-   * publishing messages.
-   *
-   * @private This is exported via {@link Topic}, and has more documentation there.
-   */
-  publishReady(): Promise<void> {
-    return this.flowControl.wait();
+    // This will always be filled in by our defaults if nothing else.
+    this.flowControl.setOptions(this.settings.publisherFlowControl!);
   }
 
   /**

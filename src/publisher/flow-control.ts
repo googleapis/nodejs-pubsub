@@ -51,45 +51,95 @@ export interface PublisherFlowControlOptions {
   action?: PublisherFlowControlAction;
 }
 
+// Represents a publish request. This details how big the request is, and
+// how to let it proceed.
+interface QueuedPromise {
+  promise: Promise<void>;
+  resolve: () => void;
+  reject: () => void;
+
+  bytes: number;
+  messageCount: number;
+}
+
 /**
  * Manages flow control handling for max bytes and messages.
  *
- * @private This is for Publisher to use.
+ * @private This is for Publisher to use. Do not use this class externally,
+ *   it may change without warning.
  */
 export class FlowControl {
-  options: PublisherFlowControlOptions;
+  options: PublisherFlowControlOptions = {};
   private bytes: number;
   private messages: number;
-  private promises: defer.DeferredPromise<void>[];
+  private requests: QueuedPromise[];
 
   constructor(options: PublisherFlowControlOptions) {
-    this.options = options;
+    this.setOptions(options);
     this.bytes = this.messages = 0;
-    this.promises = [];
-  }
-
-  setOptions(options: PublisherFlowControlOptions) {
-    this.options = options;
+    this.requests = [];
   }
 
   /**
-   * Adds the specified number of bytes and messages to our queued
-   * counts. These should be things actually queued to send.
+   * Update our options after the fact.
    *
-   * @private For internal use.
+   * @private Do not use externally, it may change without warning.
    */
-  add(bytes: number, messages: number) {
+  setOptions(options: PublisherFlowControlOptions) {
+    this.options = options;
+
+    if (
+      this.options.maxOutstandingBytes === 0 ||
+      this.options.maxOutstandingMessages === 0
+    ) {
+      // Undefined is okay, but if either is zero, no publishes ever happen.
+      throw new Error(
+        'When using publisher flow control, maxOutstandingBytes and maxOutstandingMessages must not be zero'
+      );
+    }
+  }
+
+  /**
+   * Attempts to queue the specified number of bytes and messages. If
+   * there are too many things in the publisher flow control queue
+   * already, we will defer and come back to it.
+   *
+   * @private Do not use externally, it may change without warning.
+   */
+  async willSend(bytes: number, messages: number): Promise<void> {
+    // Double check our settings.
+    if (this.options.action !== PublisherFlowControlAction.Pause) {
+      return;
+    }
+
+    // Add this to our queue size.
     this.bytes += bytes;
     this.messages += messages;
+
+    // If this request won't fit, we have to put it in the queue.
+    if (this.exceeded()) {
+      const promise = defer<void>();
+      this.requests.push({
+        promise: promise.promise,
+        resolve: promise.resolve,
+        reject: promise.reject,
+        bytes,
+        messageCount: messages,
+      });
+
+      // This will pass through when someone else's this.remove() completes.
+      await promise.promise;
+    }
   }
 
   /**
    * Removes the specified number of bytes and messages from our queued
-   * counts. These should be things that were actually dequeued for sending.
+   * counts, after a deferred request was released. If there is enough
+   * space.
    *
-   * @private For internal use.
+   * @private Do not use externally, it may change without warning.
    */
-  remove(bytes: number, messages: number) {
+  sent(bytes: number, messages: number) {
     this.bytes -= bytes;
     this.messages -= messages;
 
@@ -97,23 +147,31 @@ export class FlowControl {
     if (this.bytes < 0) this.bytes = 0;
     if (this.messages < 0) this.messages = 0;
 
-    // Let things waiting on publishReady have a go.
-    this.processPromises();
+    // Let things waiting on willSend() have a go, if there's space.
+    if (this.requests.length > 0 && !this.exceeded()) {
+      const next = this.requests.shift()!;
+      next.resolve();
+    }
+  }
+
+  // Just uses wouldExceed() to see if we've already exceeded the limits.
+  private exceeded(): boolean {
+    return this.wouldExceed(0, 0);
   }
 
   /**
    * Returns true if adding the specified number of bytes or messages
    * would exceed limits imposed by configuration.
    *
-   * @private For internal use.
+   * @private Do not use externally, it may change without warning.
    */
   wouldExceed(bytes: number, messages: number): boolean {
-    const totalBytes = this.bytes + bytes;
-    const totalMessages = this.messages + messages;
-
     if (this.options.action === PublisherFlowControlAction.Ignore) {
       return false;
     }
+
+    const totalBytes = this.bytes + bytes;
+    const totalMessages = this.messages + messages;
 
     if (
       this.options.maxOutstandingBytes !== undefined &&
@@ -130,51 +188,5 @@ export class FlowControl {
     }
 
     return false;
-  }
-
-  /*!
-   * Process any promises we might have queued up for clients
-   * waiting to publish. We'll re-check the limits after each resolve
-   * to make sure the limits haven't been exceeded by the callback.
-   */
-  private processPromises(): void {
-    while (!this.needsWait() && this.promises.length > 0) {
-      const nextPromise = this.promises.shift();
-      nextPromise?.resolve();
-    }
-  }
-
-  /*!
-   * Returns true if any further additions would exceed the limits. Always
-   * returns false if we're not in Pause mode.
-   *
-   * Note that this will return true only after the limits have actually been
-   * exceeded by one tick, but that's hard to avoid with the way this is
-   * built to return a separate promise for waiting.
-   */
-  private needsWait(): boolean {
-    if (this.options.action !== PublisherFlowControlAction.Pause) {
-      return false;
-    }
-
-    return this.wouldExceed(0, 0);
-  }
-
-  /**
-   * Returns a Promise that will resolve when the client is clear to publish
-   * some more messages. This is only meaningful in Pause mode, so any other
-   * mode will result in an immediately-resolving Promise.
-   *
-   * @private For internal use.
-   */
-  wait(): Promise<void> {
-    const needsWait = this.needsWait();
-    if (needsWait) {
-      const promise = defer<void>();
-      this.promises.push(promise);
-      return promise.promise;
-    } else {
-      return Promise.resolve();
-    }
   }
 }

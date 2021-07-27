@@ -803,46 +803,27 @@ export class Topic {
    * `publishWithFlowControl` calls will resolve in the order they're received, pausing
    * again if space runs out due to subsequent resolves.
    *
-   * This will also wait for us to get a message ID back from the server, similar
-   * to using `await` on {@link Topic#publish}. If you want to wait for many message IDs
-   * simultaneously, see {@link Topic#publishReady}.
+   * The Promise's resolve() value will be another Promise<string> that you can
+   * wait on for the message ID, from the message actually being sent.
    *
    * @param {Buffer} data The message to send
    * @param {Attributes} [attrs] Attributes to attach to the message
-   * @returns {Promise<string>} A Promise that resolves to the message ID.
+   * @returns {Promise<[Promise<string>]>} A Promise that resolves to a Promise
+   *   that resolves to the message ID.
    *
    * @example
-   * const messageId = await topic.publishWithFlowControl(messageBuffer);
-   */
-  async publishWithFlowControl(
-    data: Buffer,
-    attrs?: Attributes
-  ): Promise<string> {
-    await this.publisher.publishReady();
-    return await this.publish(data, attrs);
-  }
-
-  /**
-   * Returns a Promise that will resolve when there is more room in the queue,
-   * according to publisher flow control settings. If the action is anything
-   * but `Pause`, then this will always return a resolved Promise.
-   *
-   * Queued `publishReady` calls will resolve in the order they're received, pausing
-   * again if space runs out due to subsequent resolves.
-   *
-   * @returns {Promise<void>} A Promise that will resolve when more space is
-   *   available in the queues.
-   *
-   * @example
-   * const idPromises = [];
-   * for (let i = 0; i < 500; i++) {
-   *   await topic.publishReady();
-   *   idPromises.push(topic.publish(messageBuffer));
+   * const messageIdPromises: Promise<string>[] = [];
+   * for (let i = 0; i < 1000; i++) {
+   *   const [idPromise] = await topic.publishWithFlowControl(messageBuffer);
+   *   messageIdPromises.push(idPromise);
    * }
-   * const ids = await Promise.all(idPromises);
+   * const ids = await Promise.all(messageIdPromises);
    */
-  publishReady(): Promise<void> {
-    return this.publisher.publishReady();
+  publishWithFlowControl(
+    data: Buffer,
+    attributes?: Attributes
+  ): Promise<[Promise<string>]> {
+    return this.publisher.publishWithFlowControl({data, attributes});
   }
 
   /**
