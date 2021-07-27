@@ -4093,6 +4093,9 @@ export namespace google {
 
                 /** StreamingPullResponse receivedMessages */
                 receivedMessages?: (google.pubsub.v1.IReceivedMessage[]|null);
+
+                /** StreamingPullResponse subscriptionProperties */
+                subscriptionProperties?: (google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties|null);
             }
 
             /** Represents a StreamingPullResponse. */
@@ -4106,6 +4109,9 @@ export namespace google {
 
                 /** StreamingPullResponse receivedMessages. */
                 public receivedMessages: google.pubsub.v1.IReceivedMessage[];
+
+                /** StreamingPullResponse subscriptionProperties. */
+                public subscriptionProperties?: (google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties|null);
 
                 /**
                  * Creates a new StreamingPullResponse instance using the specified properties.
@@ -4176,6 +4182,99 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+            }
+
+            namespace StreamingPullResponse {
+
+                /** Properties of a SubscriptionProperties. */
+                interface ISubscriptionProperties {
+
+                    /** SubscriptionProperties messageOrderingEnabled */
+                    messageOrderingEnabled?: (boolean|null);
+                }
+
+                /** Represents a SubscriptionProperties. */
+                class SubscriptionProperties implements ISubscriptionProperties {
+
+                    /**
+                     * Constructs a new SubscriptionProperties.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties);
+
+                    /** SubscriptionProperties messageOrderingEnabled. */
+                    public messageOrderingEnabled: boolean;
+
+                    /**
+                     * Creates a new SubscriptionProperties instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns SubscriptionProperties instance
+                     */
+                    public static create(properties?: google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties): google.pubsub.v1.StreamingPullResponse.SubscriptionProperties;
+
+                    /**
+                     * Encodes the specified SubscriptionProperties message. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.verify|verify} messages.
+                     * @param message SubscriptionProperties message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified SubscriptionProperties message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.verify|verify} messages.
+                     * @param message SubscriptionProperties message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes a SubscriptionProperties message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns SubscriptionProperties
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.StreamingPullResponse.SubscriptionProperties;
+
+                    /**
+                     * Decodes a SubscriptionProperties message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns SubscriptionProperties
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.StreamingPullResponse.SubscriptionProperties;
+
+                    /**
+                     * Verifies a SubscriptionProperties message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates a SubscriptionProperties message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns SubscriptionProperties
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.StreamingPullResponse.SubscriptionProperties;
+
+                    /**
+                     * Creates a plain object from a SubscriptionProperties message. Also converts values to other types if specified.
+                     * @param message SubscriptionProperties
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.StreamingPullResponse.SubscriptionProperties, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this SubscriptionProperties to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+                }
             }
 
             /** Properties of a CreateSnapshotRequest. */
