@@ -441,8 +441,9 @@ export class SubscriberClient {
    *   Indicates whether to retain acknowledged messages. If true, then
    *   messages are not expunged from the subscription's backlog, even if they are
    *   acknowledged, until they fall out of the `message_retention_duration`
-   *   window. This must be true if you would like to [Seek to a timestamp]
-   *   (https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time).
+   *   window. This must be true if you would like to [`Seek` to a timestamp]
+   *   (https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time) in
+   *   the past to replay previously-acknowledged messages.
    * @param {google.protobuf.Duration} request.messageRetentionDuration
    *   How long to retain unacknowledged messages in the subscription's backlog,
    *   from the moment a message is published.
@@ -494,6 +495,13 @@ export class SubscriberClient {
    *   backlog. `Pull` and `StreamingPull` requests will return
    *   FAILED_PRECONDITION. If the subscription is a push subscription, pushes to
    *   the endpoint will not be made.
+   * @param {google.protobuf.Duration} request.topicMessageRetentionDuration
+   *   Output only. Indicates the minimum duration for which a message is retained
+   *   after it is published to the subscription's topic. If this field is set,
+   *   messages published to the subscription's topic in the last
+   *   `topic_message_retention_duration` are always available to subscribers. See
+   *   the `message_retention_duration` field in `Topic`. This field is set only
+   *   in responses from the server; it is ignored if it is set in any requests.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
