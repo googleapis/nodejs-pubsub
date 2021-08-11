@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.16.3](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.2...v2.16.3) (2021-08-11)
+
+
+### Bug Fixes
+
+* **pubsub:** replace IAMPolicy in API config ([#1373](https://www.github.com/googleapis/nodejs-pubsub/issues/1373)) ([435a181](https://www.github.com/googleapis/nodejs-pubsub/commit/435a18110fdefb6964b331047a9ac536d758d1d3))
+
 ### [2.16.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.1...v2.16.2) (2021-08-11)
 
 
