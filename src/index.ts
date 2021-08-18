@@ -90,7 +90,8 @@ export {
   TestIamPermissionsCallback,
   IAM,
 } from './iam';
-export {Attributes, PublishCallback} from './publisher';
+export {Attributes, PublishCallback, PublishOptions} from './publisher';
+export {BatchPublishOptions} from './publisher/message-batch';
 export {PublishError} from './publisher/publish-error';
 export {
   PageOptions,
@@ -114,7 +115,7 @@ export {
   SeekResponse,
   Snapshot,
 } from './snapshot';
-export {Message} from './subscriber';
+export {Message, SubscriberOptions} from './subscriber';
 export {
   Schema,
   CreateSchemaResponse,
