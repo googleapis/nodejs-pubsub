@@ -4,6 +4,34 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.16.5](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.4...v2.16.5) (2021-08-18)
+
+
+### Bug Fixes
+
+* export publish and subscribe options ([#1371](https://www.github.com/googleapis/nodejs-pubsub/issues/1371)) ([c37e0fd](https://www.github.com/googleapis/nodejs-pubsub/commit/c37e0fd5ee8864597241623e19ec495b5b99d5c3))
+
+### [2.16.4](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.3...v2.16.4) (2021-08-17)
+
+
+### Bug Fixes
+
+* **deps:** google-gax v2.24.1 ([#1377](https://www.github.com/googleapis/nodejs-pubsub/issues/1377)) ([16a1eff](https://www.github.com/googleapis/nodejs-pubsub/commit/16a1eff34897567efa5f2116562e36325edce019))
+
+### [2.16.3](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.2...v2.16.3) (2021-08-11)
+
+
+### Bug Fixes
+
+* **pubsub:** replace IAMPolicy in API config ([#1373](https://www.github.com/googleapis/nodejs-pubsub/issues/1373)) ([435a181](https://www.github.com/googleapis/nodejs-pubsub/commit/435a18110fdefb6964b331047a9ac536d758d1d3))
+
+### [2.16.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.1...v2.16.2) (2021-08-11)
+
+
+### Bug Fixes
+
+* **deps:** update opentelemetry monorepo to ^0.24.0 ([#1349](https://www.github.com/googleapis/nodejs-pubsub/issues/1349)) ([cf0d24a](https://www.github.com/googleapis/nodejs-pubsub/commit/cf0d24a9ff090f6f3f235d8d474d75cd9599c49e))
+
 ### [2.16.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.0...v2.16.1) (2021-07-21)
 
 
