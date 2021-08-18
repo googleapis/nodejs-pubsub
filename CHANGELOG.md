@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.16.5](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.4...v2.16.5) (2021-08-18)
+
+
+### Bug Fixes
+
+* export publish and subscribe options ([#1371](https://www.github.com/googleapis/nodejs-pubsub/issues/1371)) ([c37e0fd](https://www.github.com/googleapis/nodejs-pubsub/commit/c37e0fd5ee8864597241623e19ec495b5b99d5c3))
+
 ### [2.16.4](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.3...v2.16.4) (2021-08-17)
 
 
