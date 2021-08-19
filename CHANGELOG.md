@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.16.6](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.5...v2.16.6) (2021-08-19)
+
+
+### Bug Fixes
+
+* don't require a `data` attribute to be passed when sending a message ([#1370](https://www.github.com/googleapis/nodejs-pubsub/issues/1370)) ([97fd4f0](https://www.github.com/googleapis/nodejs-pubsub/commit/97fd4f041c195e0388b0613b2cf9710b89ab4e15))
+
 ### [2.16.5](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.4...v2.16.5) (2021-08-18)
 
 
