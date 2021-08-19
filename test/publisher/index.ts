@@ -243,6 +243,18 @@ describe('Publisher', () => {
       );
     });
 
+    it('should throw an error if data and attributes are both empty', () => {
+      assert.throws(
+        () => publisher.publishMessage({}, spy),
+        /at least one attribute must be present/
+      );
+    });
+
+    it('should allow sending only attributes', () => {
+      const attributes = {foo: 'bar'} as {};
+      assert.doesNotThrow(() => publisher.publishMessage({attributes}, spy));
+    });
+
     it('should throw an error if attributes are wrong format', () => {
       const attributes = {foo: {bar: 'baz'}} as {};
 
