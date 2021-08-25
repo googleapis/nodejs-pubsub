@@ -4,6 +4,18 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.17.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.6...v2.17.0) (2021-08-25)
+
+
+### Features
+
+* turns on self-signed JWT feature flag ([#1382](https://www.github.com/googleapis/nodejs-pubsub/issues/1382)) ([e8b4922](https://www.github.com/googleapis/nodejs-pubsub/commit/e8b49228cffd8016be12ab607363136c2f27c593))
+
+
+### Bug Fixes
+
+* **build:** move branch references to main ([#1174](https://www.github.com/googleapis/nodejs-pubsub/issues/1174)) ([#1386](https://www.github.com/googleapis/nodejs-pubsub/issues/1386)) ([16b710a](https://www.github.com/googleapis/nodejs-pubsub/commit/16b710aae29575b9108215479080a8d6c3dad654))
+
 ### [2.16.6](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.5...v2.16.6) (2021-08-19)
 
 
