@@ -57,7 +57,7 @@ export type TestIamPermissionsCallback = ResourceCallback<
 /**
  * [IAM (Identity and Access
  * Management)](https://cloud.google.com/pubsub/access_control) allows you to
- * set permissions on invidual resources and offers a wider range of roles:
+ * set permissions on individual resources and offers a wider range of roles:
  * editor, owner, publisher, subscriber, and viewer. This gives you greater
  * flexibility and allows you to set more fine-grained access control.
  *

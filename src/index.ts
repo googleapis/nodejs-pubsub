@@ -91,6 +91,7 @@ export {
   IAM,
 } from './iam';
 export {Attributes, PublishCallback, PublishOptions} from './publisher';
+export {BatchPublishOptions} from './publisher/message-batch';
 export {PublishError} from './publisher/publish-error';
 export {
   PublisherFlowControlOptions,
@@ -118,7 +119,7 @@ export {
   SeekResponse,
   Snapshot,
 } from './snapshot';
-export {Message} from './subscriber';
+export {Message, SubscriberOptions} from './subscriber';
 export {
   Schema,
   CreateSchemaResponse,

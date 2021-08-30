@@ -135,6 +135,12 @@ export class PublisherClient {
     // Save the auth object to the client, for use by other methods.
     this.auth = this._gaxGrpc.auth as gax.GoogleAuth;
 
+    // Set useJWTAccessWithScope on the auth object.
+    this.auth.useJWTAccessWithScope = true;
+
+    // Set defaultServicePath on the auth object.
+    this.auth.defaultServicePath = staticMembers.servicePath;
+
     // Set the default scopes in auth client if needed.
     if (servicePath === staticMembers.servicePath) {
       this.auth.defaultScopes = staticMembers.scopes;
@@ -422,6 +428,15 @@ export class PublisherClient {
    * @param {boolean} request.satisfiesPzs
    *   Reserved for future use. This field is set only in responses from the
    *   server; it is ignored if it is set in any requests.
+   * @param {google.protobuf.Duration} request.messageRetentionDuration
+   *   Indicates the minimum duration to retain a message after it is published to
+   *   the topic. If this field is set, messages published to the topic in the
+   *   last `message_retention_duration` are always available to subscribers. For
+   *   instance, it allows any attached subscription to [seek to a
+   *   timestamp](https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time)
+   *   that is up to `message_retention_duration` in the past. If this field is
+   *   not set, message retention is controlled by settings on individual
+   *   subscriptions. Cannot be more than 7 days or less than 10 minutes.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -1829,6 +1844,7 @@ export class PublisherClient {
       return this.publisherStub!.then(stub => {
         this._terminated = true;
         stub.close();
+        this.iamClient.close();
       });
     }
     return Promise.resolve();

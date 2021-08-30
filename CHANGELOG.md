@@ -4,6 +4,53 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.17.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.6...v2.17.0) (2021-08-25)
+
+
+### Features
+
+* turns on self-signed JWT feature flag ([#1382](https://www.github.com/googleapis/nodejs-pubsub/issues/1382)) ([e8b4922](https://www.github.com/googleapis/nodejs-pubsub/commit/e8b49228cffd8016be12ab607363136c2f27c593))
+
+
+### Bug Fixes
+
+* **build:** move branch references to main ([#1174](https://www.github.com/googleapis/nodejs-pubsub/issues/1174)) ([#1386](https://www.github.com/googleapis/nodejs-pubsub/issues/1386)) ([16b710a](https://www.github.com/googleapis/nodejs-pubsub/commit/16b710aae29575b9108215479080a8d6c3dad654))
+
+### [2.16.6](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.5...v2.16.6) (2021-08-19)
+
+
+### Bug Fixes
+
+* don't require a `data` attribute to be passed when sending a message ([#1370](https://www.github.com/googleapis/nodejs-pubsub/issues/1370)) ([97fd4f0](https://www.github.com/googleapis/nodejs-pubsub/commit/97fd4f041c195e0388b0613b2cf9710b89ab4e15))
+
+### [2.16.5](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.4...v2.16.5) (2021-08-18)
+
+
+### Bug Fixes
+
+* export publish and subscribe options ([#1371](https://www.github.com/googleapis/nodejs-pubsub/issues/1371)) ([c37e0fd](https://www.github.com/googleapis/nodejs-pubsub/commit/c37e0fd5ee8864597241623e19ec495b5b99d5c3))
+
+### [2.16.4](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.3...v2.16.4) (2021-08-17)
+
+
+### Bug Fixes
+
+* **deps:** google-gax v2.24.1 ([#1377](https://www.github.com/googleapis/nodejs-pubsub/issues/1377)) ([16a1eff](https://www.github.com/googleapis/nodejs-pubsub/commit/16a1eff34897567efa5f2116562e36325edce019))
+
+### [2.16.3](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.2...v2.16.3) (2021-08-11)
+
+
+### Bug Fixes
+
+* **pubsub:** replace IAMPolicy in API config ([#1373](https://www.github.com/googleapis/nodejs-pubsub/issues/1373)) ([435a181](https://www.github.com/googleapis/nodejs-pubsub/commit/435a18110fdefb6964b331047a9ac536d758d1d3))
+
+### [2.16.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.1...v2.16.2) (2021-08-11)
+
+
+### Bug Fixes
+
+* **deps:** update opentelemetry monorepo to ^0.24.0 ([#1349](https://www.github.com/googleapis/nodejs-pubsub/issues/1349)) ([cf0d24a](https://www.github.com/googleapis/nodejs-pubsub/commit/cf0d24a9ff090f6f3f235d8d474d75cd9599c49e))
+
 ### [2.16.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.0...v2.16.1) (2021-07-21)
 
 

@@ -221,11 +221,21 @@ export class Publisher {
   private prePublishMessage(message: PubsubMessage): void {
     const {data, attributes = {}} = message;
 
-    if (!(data instanceof Buffer)) {
+    // We must have at least one of:
+    //   - `data` as a Buffer
+    //   - `attributes` that are not empty
+    if (data && !(data instanceof Buffer)) {
       throw new TypeError('Data must be in the form of a Buffer.');
     }
 
-    for (const key of Object.keys(attributes!)) {
+    const keys = Object.keys(attributes!);
+    if (!data && keys.length === 0) {
+      throw new TypeError(
+        'If data is undefined, at least one attribute must be present.'
+      );
+    }
+
+    for (const key of keys) {
       const value = attributes![key];
       if (typeof value !== 'string') {
         throw new TypeError(`All attributes must be in the form of a string.
