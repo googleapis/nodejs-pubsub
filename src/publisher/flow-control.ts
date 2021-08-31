@@ -21,7 +21,7 @@ import * as defer from 'p-defer';
  *
  * @property {number} Ignore Ignore all flow control; don't take any action
  *     based on outstanding requests.
- * @property {number} Pause When flow control limits are exceeded, clients
+ * @property {number} Block When flow control limits are exceeded, clients
  *     should call {@link Topic##readyForPublish} and wait for that Promise
  *     to resolve.
  * @property {number} Error When flow control limits would be exceeded, calls
@@ -29,13 +29,13 @@ import * as defer from 'p-defer';
  */
 export enum PublisherFlowControlAction {
   Ignore = 0,
-  Pause = 1,
+  Block = 1,
   Error = 2,
 }
 
 /**
  * @typedef PublisherFlowControlOptions
- * @property {number} [maxOutstandingMessage] The maximum number of messages to
+ * @property {number} [maxOutstandingMessages] The maximum number of messages to
  *     buffer before publisher flow control kicks in.
  * @property {number} [maxOutstandingBytes] The maximum number of bytes to buffer
  *     before publisher flow control kicks in.
@@ -111,7 +111,7 @@ export class FlowControl {
    */
   async willSend(bytes: number, messages: number): Promise<void> {
     // Double check our settings.
-    if (this.options.action !== PublisherFlowControlAction.Pause) {
+    if (this.options.action !== PublisherFlowControlAction.Block) {
       return;
     }
 

@@ -47,7 +47,7 @@ async function publishWithFlowControl(topicName: string) {
     publisherFlowControl: {
       maxOutstandingMessages: 50,
       maxOutstandingBytes: 10 * 1024 * 1024, // 10 MB
-      action: PublisherFlowControlAction.Pause,
+      action: PublisherFlowControlAction.Block,
     },
   };
 
@@ -57,10 +57,8 @@ async function publishWithFlowControl(topicName: string) {
   // Publish messages, waiting for queue space.
   const messageIdPromises: Promise<string>[] = [];
   for (let i = 0; i < 1000; i++) {
-    const [messageIdPromise] = await topic.publishWithFlowControl(
-      Buffer.from('test!')
-    );
-    messageIdPromises.push(messageIdPromise);
+    const {idPromise} = await topic.publishWhenReady(Buffer.from('test!'));
+    messageIdPromises.push(idPromise);
   }
 
   // Wait on any pending publish requests.

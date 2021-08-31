@@ -26,7 +26,7 @@ describe('Flow Controller', () => {
   const optionsPause: fc.PublisherFlowControlOptions = {
     maxOutstandingMessages: 5,
     maxOutstandingBytes: 100,
-    action: fc.PublisherFlowControlAction.Pause,
+    action: fc.PublisherFlowControlAction.Block,
   };
 
   it('does not do anything for Ignore', async () => {

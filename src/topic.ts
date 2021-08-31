@@ -83,6 +83,18 @@ export type GetTopicSubscriptionsResponse = PagedResponse<
 export type MessageOptions = PubsubMessage & {json?: any};
 
 /**
+ * When calling {@link Topic#publishWhenReady}, the returned Promise
+ * is for waiting for clearance to publish. This structure will be
+ * returned as the resolution of that "waiting for clearance" Promise.
+ *
+ * Currently this is only to wrap the "wait for message ID" Promise,
+ * but it may contain other things later.
+ */
+export interface PublishWhenReadyResult {
+  idPromise: Promise<string>;
+}
+
+/**
  * A Topic object allows you to interact with a Cloud Pub/Sub topic.
  *
  * @class
@@ -799,34 +811,43 @@ export class Topic {
 
   /**
    * Publishes the message specified in the data buffer. The actual publish may be
-   * delayed if publisher-side flow control is enabled and set to Pause. Queued
-   * `publishWithFlowControl` calls will resolve in the order they're received, pausing
+   * delayed if publisher-side flow control is enabled and set to Block. Queued
+   * `publishWhenReady` calls will resolve in the order they're received, pausing
    * again if space runs out due to subsequent resolves.
    *
-   * The Promise's resolve() value will be another Promise<string> (in an array) that
-   * you can wait on for the message ID, from the message actually being sent.
+   * The Promise's resolve() value will be a {@link PublishWhenReadyResult} that
+   * contains a Promise you can wait on for the message ID, from the message actually
+   * being sent.
+   *
+   * Please note that you must attach a {@link Promise#catch} handler to idPromise
+   * immediately upon return. Otherwise, subsequent waits for {@link Topic#publishWhenReady}
+   * may result in unhandled rejection errors.
    *
    * @param {Buffer} data The message to send
    * @param {Attributes} [attrs] Attributes to attach to the message
-   * @returns {Promise<Array<Promise<string>>>} A Promise that resolves to an array
-   *   with a Promise that resolves to the message ID. In other words, when the first
-   *   Promise resolves, you can crack the array's shell to get a second Promise
-   *   that will resolve when the message was sent, and its ID is ready. This is
-   *   required because JavaScript runtimes will coalesce Promises.
+   * @returns {Promise<PublishWhenReadyResult>} A Promise that resolves to an object
+   *   with a Promise that resolves to the message ID (among other things, potentially,
+   *   in the future). In other words, when the first Promise resolves, you can
+   *   open the resolved object get a second Promise that will resolve when the
+   *   message was sent, and its ID is ready. You can also do this using the
+   *   {@link deferredCatch} function.
    *
    * @example
    * const messageIdPromises: Promise<string>[] = [];
    * for (let i = 0; i < 1000; i++) {
-   *   const [idPromise] = await topic.publishWithFlowControl(messageBuffer);
-   *   messageIdPromises.push(idPromise);
+   *   const {idPromise} = await topic.publishWhenReady(messageBuffer);
+   *   messageIdPromises.push(deferredCatch(idPromise));
    * }
    * const ids = await Promise.all(messageIdPromises);
    */
-  publishWithFlowControl(
+  publishWhenReady(
     data: Buffer,
     attributes?: Attributes
-  ): Promise<[Promise<string>]> {
-    return this.publisher.publishWithFlowControl({data, attributes});
+  ): Promise<PublishWhenReadyResult> {
+    return this.publisher.publishWithFlowControl({
+      data,
+      attributes,
+    });
   }
 
   /**

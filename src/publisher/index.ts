@@ -23,7 +23,7 @@ import * as defer from 'p-defer';
 
 import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
-import {Topic} from '../topic';
+import {Topic, PublishWhenReadyResult} from '../topic';
 import {RequestCallback, EmptyCallback} from '../pubsub';
 import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
@@ -176,8 +176,8 @@ export class Publisher {
    */
   publishMessage(message: PubsubMessage, callback: PublishCallback): void {
     this.prePublishMessage(message);
-    this.doPublishMessage(message).then(idPromiseArray => {
-      const [idPromise] = idPromiseArray;
+    this.doPublishMessage(message).then(idPromiseObject => {
+      const {idPromise} = idPromiseObject;
       idPromise.then(id => callback(null, id)).catch(err => callback(err));
     });
   }
@@ -195,13 +195,13 @@ export class Publisher {
    * @param {PubsubMessage} [message] Options for this message.
    * @param {PublishCallback} [callback] Callback function for when the message is published.
    *
-   * @returns {Promise<Array<Promise<string>>>} A Promise that resolves when the next publish call is
-   *  clear to go, with a Promise (in an array) that resolves to the sent message ID, or rejects when
+   * @returns {Promise<PublishWhenReadyResult>} A Promise that resolves when the next publish call is
+   *  clear to go, with a Promise (in an object) that resolves to the sent message ID, or rejects when
    *  one of the above errors is thrown.
    */
   async publishWithFlowControl(
     message: PubsubMessage
-  ): Promise<[Promise<string>]> {
+  ): Promise<PublishWhenReadyResult> {
     this.prePublishMessage(message);
     return this.doPublishMessage(message);
   }
@@ -246,7 +246,8 @@ export class Publisher {
     // Will it pass publisher flow control handling?
     if (
       this.settings.publisherFlowControl!.action ===
-      PublisherFlowControlAction.Error
+        PublisherFlowControlAction.Error &&
+      data
     ) {
       // For error handling, we just want to throw if it would exceed.
       if (this.flowControl.wouldExceed(data.length, 1)) {
@@ -266,14 +267,14 @@ export class Publisher {
    * @param {PubsubMessage} [message] Options for this message.
    * @param {PublishCallback} [callback] Callback function for when the message is published.
    *
-   * @returns {Promise<void>} A Promise that resolves when there is more queue space
-   *   for publishing messages. This will always resolve immediately if flow control
-   *   is set to any action besides `Pause`.
+   * @returns {Promise<PublishWhenReadyResult>} A Promise that resolves when there is more
+   *   queue space for publishing messages. This will always resolve immediately if flow
+   *   control is set to any action besides `Block`.
    */
   private async doPublishMessage(
     message: PubsubMessage
-  ): Promise<[Promise<string>]> {
-    const data = message.data! as Buffer;
+  ): Promise<PublishWhenReadyResult> {
+    const data = message.data as Buffer | undefined;
     const span: Span | undefined = this.constructSpan(message);
 
     const deferred = defer<string>();
@@ -291,21 +292,25 @@ export class Publisher {
       }
     };
 
+    // This is currently disabled due to making consecutive Promises work
+    // reliably. We may add it back later when we're sure of the interfaces.
     if (
       this.settings.publisherFlowControl!.action ===
-      PublisherFlowControlAction.Pause
+      PublisherFlowControlAction.Block
     ) {
       const oldCallback = finalCallback;
       finalCallback = (
         err: ServiceError | null,
         res?: string | null | undefined
       ) => {
-        this.flowControl.sent(data.length, 1);
+        if (data) {
+          this.flowControl.sent(data.length, 1);
+        }
         oldCallback(err, res);
       };
 
       // For pausing, we want to wait until space is available.
-      await this.flowControl.willSend(data.length, 1);
+      await this.flowControl.willSend(data?.length ?? 0, 1);
     }
 
     if (!message.orderingKey) {
@@ -313,7 +318,7 @@ export class Publisher {
       if (span) {
         span.end();
       }
-      return [deferred.promise];
+      return {idPromise: deferred.promise};
     }
 
     const key = message.orderingKey;
@@ -331,7 +336,7 @@ export class Publisher {
       span.end();
     }
 
-    return [deferred.promise];
+    return {idPromise: deferred.promise};
   }
   /**
    * Indicates to the publisher that it is safe to continue publishing for the
