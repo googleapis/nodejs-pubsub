@@ -73,6 +73,9 @@ class FakePublisher {
   publishMessage(...args: Array<{}>) {
     this.published_ = args;
   }
+  publishWhenReady(...args: Array<{}>) {
+    this.published_ = args;
+  }
   setOptions(options: object) {
     this.options_ = options;
   }
@@ -654,6 +657,38 @@ describe('Topic', () => {
 
       const promise = topic.publishMessage({data: Buffer.from('hi')});
       assert.strictEqual(promise, fakePromise);
+    });
+  });
+
+  describe('publishWhenReady', () => {
+    it('should call through to Publisher#publishWhenReady', () => {
+      const stub = sandbox.stub(topic.publisher, 'publishWhenReady');
+
+      const fdata = Buffer.from('Hello, world!');
+      const fattributes = {};
+      const foptions = {};
+
+      topic.publishWhenReady(fdata, fattributes, foptions);
+
+      const [{data, attributes}, options] = stub.lastCall.args;
+      assert.strictEqual(data, fdata);
+      assert.strictEqual(attributes, fattributes);
+      assert.strictEqual(options, foptions);
+    });
+
+    it('should provide a default publishWhenReady options object', () => {
+      const stub = sandbox.stub(topic.publisher, 'publishWhenReady');
+
+      const fdata = Buffer.from('Hello, world!');
+      const fattributes = {};
+      const foptions = {};
+
+      topic.publishWhenReady(fdata, fattributes);
+
+      const [{data, attributes}, options] = stub.lastCall.args;
+      assert.strictEqual(data, fdata);
+      assert.strictEqual(attributes, fattributes);
+      assert.deepStrictEqual(options, foptions);
     });
   });
 

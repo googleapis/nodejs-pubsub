@@ -262,6 +262,51 @@ describe('Publisher', () => {
       );
     });
 
+    it('should get a regular callback on flow control != Block', async () => {
+      publisher.setOptions({
+        publisherFlowControl: {action: PublisherFlowControlAction.Ignore},
+      });
+
+      const addStub = sandbox.stub(publisher.queue, 'add');
+      const flowSentStub = sandbox.stub(publisher.flowControl, 'sent');
+      const fakeMessage = {data};
+      const fid = 'test';
+
+      const promise = await publisher.publishWhenReady(fakeMessage, {});
+
+      const [, callback] = addStub.lastCall.args;
+      callback(null, fid);
+
+      const id = await promise.idPromise;
+      assert.strictEqual(id, fid);
+      assert.strictEqual(flowSentStub.called, false);
+    });
+
+    it('should get a flow-augmented callback on flow control == Block', async () => {
+      publisher.setOptions({
+        publisherFlowControl: {action: PublisherFlowControlAction.Block},
+      });
+
+      const addStub = sandbox.stub(publisher.queue, 'add');
+      const flowWillSendStub = sandbox
+        .stub(publisher.flowControl, 'willSend')
+        .resolves();
+      const flowSentStub = sandbox.stub(publisher.flowControl, 'sent');
+      const fakeMessage = {data};
+      const fid = 'test';
+
+      const promise = await publisher.publishWhenReady(fakeMessage, {});
+
+      assert.strictEqual(flowWillSendStub.called, true);
+
+      const [, callback] = addStub.lastCall.args;
+      callback(null, fid);
+
+      const id = await promise.idPromise;
+      assert.strictEqual(id, fid);
+      assert.strictEqual(flowSentStub.called, true);
+    });
+
     it('should add non-ordered messages to the message queue', done => {
       const stub = sandbox.stub(publisher.queue, 'add');
       const fakeMessage = {data};
