@@ -83,6 +83,16 @@ export type GetTopicSubscriptionsResponse = PagedResponse<
 export type MessageOptions = PubsubMessage & {json?: any};
 
 /**
+ * Optional parameters that may be passed to {@link Topic#publishWhenReady}.
+ *
+ * @property {boolean} [deferRejections] Set to true if you want any returned
+ *    idPromise to defer rejections until `.catch()` is called on them.
+ */
+export interface PublishWhenReadyOptions {
+  deferRejections?: boolean;
+}
+
+/**
  * When calling {@link Topic#publishWhenReady}, the returned Promise
  * is for waiting for clearance to publish. This structure will be
  * returned as the resolution of that "waiting for clearance" Promise.
@@ -821,7 +831,9 @@ export class Topic {
    *
    * Please note that you must attach a {@link Promise#catch} handler to idPromise
    * immediately upon return. Otherwise, subsequent waits for {@link Topic#publishWhenReady}
-   * may result in unhandled rejection errors.
+   * may result in unhandled rejection errors. You can also pass `options` to {@link Topic#publishWhenReady}
+   * and set `deferRejections` to true. This will cause the Promise's rejection to
+   * happen when you call `catch()` on it (e.g. with Promise.all()).
    *
    * @param {Buffer} data The message to send
    * @param {Attributes} [attrs] Attributes to attach to the message
@@ -829,25 +841,29 @@ export class Topic {
    *   with a Promise that resolves to the message ID (among other things, potentially,
    *   in the future). In other words, when the first Promise resolves, you can
    *   open the resolved object get a second Promise that will resolve when the
-   *   message was sent, and its ID is ready. You can also do this using the
-   *   {@link deferredCatch} function.
+   *   message was sent, and its ID is ready.
    *
    * @example
    * const messageIdPromises: Promise<string>[] = [];
    * for (let i = 0; i < 1000; i++) {
-   *   const {idPromise} = await topic.publishWhenReady(messageBuffer);
-   *   messageIdPromises.push(deferredCatch(idPromise));
+   *   const {idPromise} = await topic.publishWhenReady(messageBuffer, {}, {deferRejections: true});
+   *   messageIdPromises.push(idPromise);
    * }
    * const ids = await Promise.all(messageIdPromises);
    */
   publishWhenReady(
     data: Buffer,
-    attributes?: Attributes
+    attributes?: Attributes,
+    options?: PublishWhenReadyOptions
   ): Promise<PublishWhenReadyResult> {
-    return this.publisher.publishWithFlowControl({
-      data,
-      attributes,
-    });
+    const result = this.publisher.publishWhenReady(
+      {
+        data,
+        attributes,
+      },
+      options ?? {}
+    );
+    return result;
   }
 
   /**

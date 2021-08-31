@@ -54,10 +54,20 @@ async function publishWithFlowControl(topicName: string) {
   // Get a publisher.
   const topic = pubSubClient.topic(topicName, options);
 
-  // Publish messages, waiting for queue space.
+  // Publish messages, waiting for queue space as needed.
   const messageIdPromises: Promise<string>[] = [];
+  const whenReadyOptions = {deferRejections: true};
   for (let i = 0; i < 1000; i++) {
-    const {idPromise} = await topic.publishWhenReady(Buffer.from('test!'));
+    // Note that because `publishWhenReady()` may block, it's possible that Promises
+    // received from earlier `publishWhenReady()` calls may have a chance to reject
+    // before `Promise.all()` below. `deferRejections` lets you defer those to
+    // handle them the normal way, or you can call `.catch()` yourself as
+    // you get them back in this loop.
+    const {idPromise} = await topic.publishWhenReady(
+      Buffer.from('test!'),
+      {},
+      whenReadyOptions
+    );
     messageIdPromises.push(idPromise);
   }
 

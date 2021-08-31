@@ -23,7 +23,7 @@ import * as defer from 'p-defer';
 
 import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
-import {Topic, PublishWhenReadyResult} from '../topic';
+import {Topic, PublishWhenReadyOptions, PublishWhenReadyResult} from '../topic';
 import {RequestCallback, EmptyCallback} from '../pubsub';
 import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
@@ -34,7 +34,7 @@ import {
   PublisherFlowControlOptions,
   PublisherFlowControlAction,
 } from './flow-control';
-import {promisifySome} from '../util';
+import {deferredCatch, promisifySome} from '../util';
 
 export type PubsubMessage = google.pubsub.v1.IPubsubMessage;
 
@@ -176,7 +176,7 @@ export class Publisher {
    */
   publishMessage(message: PubsubMessage, callback: PublishCallback): void {
     this.prePublishMessage(message);
-    this.doPublishMessage(message).then(idPromiseObject => {
+    this.doPublishMessage(message, {}).then(idPromiseObject => {
       const {idPromise} = idPromiseObject;
       idPromise.then(id => callback(null, id)).catch(err => callback(err));
     });
@@ -192,18 +192,19 @@ export class Publisher {
    * @throws {TypeError} Rejects, if any value in `attributes` object is not a string.
    * @throws {RangeError} Rejects, if publisher flow control is set to `Error` and the message won't fit.
    *
-   * @param {PubsubMessage} [message] Options for this message.
-   * @param {PublishCallback} [callback] Callback function for when the message is published.
+   * @param {PubsubMessage} message Parameters for this message.
+   * @param {PublishWhenReadyOptions} options Options for publishing.
    *
    * @returns {Promise<PublishWhenReadyResult>} A Promise that resolves when the next publish call is
    *  clear to go, with a Promise (in an object) that resolves to the sent message ID, or rejects when
    *  one of the above errors is thrown.
    */
-  async publishWithFlowControl(
-    message: PubsubMessage
+  async publishWhenReady(
+    message: PubsubMessage,
+    options: PublishWhenReadyOptions
   ): Promise<PublishWhenReadyResult> {
     this.prePublishMessage(message);
-    return this.doPublishMessage(message);
+    return this.doPublishMessage(message, options);
   }
 
   /**
@@ -264,20 +265,25 @@ export class Publisher {
    * Do not use externally, it may change without warning.
    * @private
    *
-   * @param {PubsubMessage} [message] Options for this message.
-   * @param {PublishCallback} [callback] Callback function for when the message is published.
+   * @param {PubsubMessage} message Parameters for this message.
+   * @param {PublishWhenReadyOptions} options Publishing options.
    *
    * @returns {Promise<PublishWhenReadyResult>} A Promise that resolves when there is more
    *   queue space for publishing messages. This will always resolve immediately if flow
    *   control is set to any action besides `Block`.
    */
   private async doPublishMessage(
-    message: PubsubMessage
+    message: PubsubMessage,
+    options: PublishWhenReadyOptions
   ): Promise<PublishWhenReadyResult> {
     const data = message.data as Buffer | undefined;
     const span: Span | undefined = this.constructSpan(message);
 
     const deferred = defer<string>();
+    if (options.deferRejections) {
+      deferred.promise = deferredCatch(deferred.promise);
+    }
+
     let finalCallback = (
       err: ServiceError | null,
       value: string | null | undefined
@@ -292,8 +298,8 @@ export class Publisher {
       }
     };
 
-    // This is currently disabled due to making consecutive Promises work
-    // reliably. We may add it back later when we're sure of the interfaces.
+    // If blocking flow control is enabled, we also need to tag onto
+    // the callback to release the queue space for other callers.
     if (
       this.settings.publisherFlowControl!.action ===
       PublisherFlowControlAction.Block
@@ -315,22 +321,18 @@ export class Publisher {
 
     if (!message.orderingKey) {
       this.queue.add(message, finalCallback);
-      if (span) {
-        span.end();
+    } else {
+      const key = message.orderingKey;
+
+      if (!this.orderedQueues.has(key)) {
+        const queue = new OrderedQueue(this, key);
+        this.orderedQueues.set(key, queue);
+        queue.once('drain', () => this.orderedQueues.delete(key));
       }
-      return {idPromise: deferred.promise};
+
+      const queue = this.orderedQueues.get(key)!;
+      queue.add(message, finalCallback);
     }
-
-    const key = message.orderingKey;
-
-    if (!this.orderedQueues.has(key)) {
-      const queue = new OrderedQueue(this, key);
-      this.orderedQueues.set(key, queue);
-      queue.once('drain', () => this.orderedQueues.delete(key));
-    }
-
-    const queue = this.orderedQueues.get(key)!;
-    queue.add(message, finalCallback);
 
     if (span) {
       span.end();

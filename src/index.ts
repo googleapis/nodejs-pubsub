@@ -165,7 +165,6 @@ export {
   Topic,
   TopicMetadata,
 } from './topic';
-export {deferredCatch} from './util';
 
 if (process.env.DEBUG_GRPC) {
   console.info('gRPC logging set to verbose');
