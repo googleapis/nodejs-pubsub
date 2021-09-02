@@ -31,8 +31,8 @@ import {createSpan} from '../opentelemetry-tracing';
 
 import {
   FlowControl,
-  PublisherFlowControlOptions,
-  PublisherFlowControlAction,
+  FlowControlSettings,
+  LimitExceededBehavior,
 } from './flow-control';
 import {deferredCatch, promisifySome} from '../util';
 
@@ -46,7 +46,7 @@ export type PublishCallback = RequestCallback<string>;
 
 export interface PublishOptions {
   batching?: BatchPublishOptions;
-  publisherFlowControl?: PublisherFlowControlOptions;
+  flowControlSettings?: FlowControlSettings;
   gaxOpts?: CallOptions;
   messageOrdering?: boolean;
   enableOpenTelemetryTracing?: boolean;
@@ -71,10 +71,10 @@ export const BATCH_LIMITS: BatchPublishOptions = {
   maxMessages: 1000,
 };
 
-export const publisherFlowControlDefaults: PublisherFlowControlOptions = {
+export const flowControlDefaults: FlowControlSettings = {
   maxOutstandingBytes: undefined,
   maxOutstandingMessages: undefined,
-  action: PublisherFlowControlAction.Ignore,
+  limitExceededBehavior: LimitExceededBehavior.Ignore,
 };
 
 /**
@@ -97,7 +97,7 @@ export class Publisher {
 
   constructor(topic: Topic, options?: PublishOptions) {
     this.flowControl = new FlowControl(
-      options?.publisherFlowControl ?? publisherFlowControlDefaults
+      options?.flowControlSettings ?? flowControlDefaults
     );
     this.setOptions(options);
     this.topic = topic;
@@ -163,7 +163,7 @@ export class Publisher {
     return this.publishMessage({data, attributes}, callback!);
   }
   /**
-   * Publish the provided message, ignoring `Pause` flow control.
+   * Publish the provided message, ignoring `Block flow control.
    *
    * @private
    *
@@ -246,8 +246,8 @@ export class Publisher {
 
     // Will it pass publisher flow control handling?
     if (
-      this.settings.publisherFlowControl!.action ===
-        PublisherFlowControlAction.Error &&
+      this.settings.flowControlSettings!.limitExceededBehavior ===
+        LimitExceededBehavior.ThrowError &&
       data
     ) {
       // For error handling, we just want to throw if it would exceed.
@@ -301,8 +301,8 @@ export class Publisher {
     // If blocking flow control is enabled, we also need to tag onto
     // the callback to release the queue space for other callers.
     if (
-      this.settings.publisherFlowControl!.action ===
-      PublisherFlowControlAction.Block
+      this.settings.flowControlSettings!.limitExceededBehavior ===
+      LimitExceededBehavior.Block
     ) {
       const oldCallback = finalCallback;
       finalCallback = (
@@ -368,7 +368,7 @@ export class Publisher {
    */
   getOptionDefaults(): PublishOptions {
     // Return a unique copy to avoid shenanigans.
-    const defaults = {
+    const defaults: PublishOptions = {
       batching: {
         maxBytes: defaultOptions.publish.maxOutstandingBytes,
         maxMessages: defaultOptions.publish.maxOutstandingMessages,
@@ -379,10 +379,10 @@ export class Publisher {
         isBundling: false,
       },
       enableOpenTelemetryTracing: false,
-      publisherFlowControl: Object.assign(
+      flowControlSettings: Object.assign(
         {},
-        publisherFlowControlDefaults
-      ) as PublisherFlowControlOptions,
+        flowControlDefaults
+      ) as FlowControlSettings,
     };
 
     return defaults;
@@ -403,7 +403,7 @@ export class Publisher {
       gaxOpts,
       messageOrdering,
       enableOpenTelemetryTracing,
-      publisherFlowControl,
+      flowControlSettings,
     } = extend(true, defaults, options);
 
     this.settings = {
@@ -418,7 +418,7 @@ export class Publisher {
       gaxOpts,
       messageOrdering,
       enableOpenTelemetryTracing,
-      publisherFlowControl,
+      flowControlSettings,
     };
 
     // We also need to let all of our queues know that they need to update their options.
@@ -433,7 +433,7 @@ export class Publisher {
     }
 
     // This will always be filled in by our defaults if nothing else.
-    this.flowControl.setOptions(this.settings.publisherFlowControl!);
+    this.flowControl.setOptions(this.settings.flowControlSettings!);
   }
 
   /**

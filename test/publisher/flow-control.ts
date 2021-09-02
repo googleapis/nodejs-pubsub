@@ -23,15 +23,15 @@ import {describe, it} from 'mocha';
 import * as fc from '../../src/publisher/flow-control';
 
 describe('Flow Controller', () => {
-  const optionsPause: fc.PublisherFlowControlOptions = {
+  const optionsPause: fc.FlowControlSettings = {
     maxOutstandingMessages: 5,
     maxOutstandingBytes: 100,
-    action: fc.PublisherFlowControlAction.Block,
+    limitExceededBehavior: fc.LimitExceededBehavior.Block,
   };
 
   it('does not do anything for Ignore', async () => {
-    const optionsIgnore: fc.PublisherFlowControlOptions = {
-      action: fc.PublisherFlowControlAction.Ignore,
+    const optionsIgnore: fc.FlowControlSettings = {
+      limitExceededBehavior: fc.LimitExceededBehavior.Ignore,
     };
     const flow = new fc.FlowControl(optionsIgnore);
     await flow.willSend(100000, 100);
@@ -40,10 +40,10 @@ describe('Flow Controller', () => {
 
   // This isn't handled at this level, so it should work like Ignore.
   it('does not do anything for Error', async () => {
-    const optionsIgnore: fc.PublisherFlowControlOptions = {
+    const optionsIgnore: fc.FlowControlSettings = {
       maxOutstandingMessages: 5,
       maxOutstandingBytes: 100,
-      action: fc.PublisherFlowControlAction.Error,
+      limitExceededBehavior: fc.LimitExceededBehavior.ThrowError,
     };
     const flow = new fc.FlowControl(optionsIgnore);
     await flow.willSend(100000, 100);
@@ -104,12 +104,12 @@ describe('Flow Controller', () => {
   it('sets options after the fact', () => {
     const flowPause = new fc.FlowControl(optionsPause);
     const newOptions = {
-      action: fc.PublisherFlowControlAction.Error,
+      limitExceededBehavior: fc.LimitExceededBehavior.ThrowError,
     };
     flowPause.setOptions(newOptions);
     assert.strictEqual(
-      flowPause.options.action,
-      fc.PublisherFlowControlAction.Error
+      flowPause.options.limitExceededBehavior,
+      fc.LimitExceededBehavior.ThrowError
     );
   });
 

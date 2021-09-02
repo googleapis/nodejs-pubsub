@@ -17,38 +17,39 @@
 import * as defer from 'p-defer';
 
 /**
- * @typedef PublisherFlowControlAction Options for flow control actions
+ * @typedef LimitExceededBehavior Options for flow control behaviors, or
+ *     actions to be taken when limits are exceeded.
  *
  * @property {number} Ignore Ignore all flow control; don't take any action
  *     based on outstanding requests.
  * @property {number} Block When flow control limits are exceeded, clients
  *     should call {@link Topic##readyForPublish} and wait for that Promise
  *     to resolve.
- * @property {number} Error When flow control limits would be exceeded, calls
- *     to {@link Topic##publish} will throw an exception.
+ * @property {number} Throw When flow control limits would be exceeded, calls
+ *     to {@link Topic##publish} will throw an {@link Error}.
  */
-export enum PublisherFlowControlAction {
+export enum LimitExceededBehavior {
   Ignore = 0,
   Block = 1,
-  Error = 2,
+  ThrowError = 2,
 }
 
 /**
- * @typedef PublisherFlowControlOptions
+ * @typedef FlowControlSettings
  * @property {number} [maxOutstandingMessages] The maximum number of messages to
  *     buffer before publisher flow control kicks in.
  * @property {number} [maxOutstandingBytes] The maximum number of bytes to buffer
  *     before publisher flow control kicks in.
- * @property {number} [action=0] What action should be taken if either
+ * @property {number} [behavior=0] What action should be taken if either
  *     of the maximum values are exceeded. This may be Ignore/0 (do nothing),
- *     Pause/1 (make a Promise available for when publishing can continue), or
- *     Error/2 (throw an Error when maximum values are exceeded. These constants
- *     are also available in the FlowControlActions object.
+ *     Block/1 (make a Promise available for when publishing can continue), or
+ *     ThrowError/2 (throw an Error when maximum values are exceeded). These constants
+ *     are also available in the LimitExceededBehavior object.
  */
-export interface PublisherFlowControlOptions {
+export interface FlowControlSettings {
   maxOutstandingMessages?: number;
   maxOutstandingBytes?: number;
-  action?: PublisherFlowControlAction;
+  limitExceededBehavior?: LimitExceededBehavior;
 }
 
 // Represents a publish request. This details how big the request is, and
@@ -70,12 +71,12 @@ interface QueuedPromise {
  *
  */
 export class FlowControl {
-  options: PublisherFlowControlOptions = {};
+  options: FlowControlSettings = {};
   private bytes: number;
   private messages: number;
   private requests: QueuedPromise[];
 
-  constructor(options: PublisherFlowControlOptions) {
+  constructor(options: FlowControlSettings) {
     this.setOptions(options);
     this.bytes = this.messages = 0;
     this.requests = [];
@@ -87,7 +88,7 @@ export class FlowControl {
    * Do not use externally, it may change without warning.
    * @private
    */
-  setOptions(options: PublisherFlowControlOptions) {
+  setOptions(options: FlowControlSettings) {
     this.options = options;
 
     if (
@@ -110,8 +111,8 @@ export class FlowControl {
    * @private
    */
   async willSend(bytes: number, messages: number): Promise<void> {
-    // Double check our settings.
-    if (this.options.action !== PublisherFlowControlAction.Block) {
+    // Double check our settings. For anything but `Block`, do nothing.
+    if (this.options.limitExceededBehavior !== LimitExceededBehavior.Block) {
       return;
     }
 
@@ -171,7 +172,7 @@ export class FlowControl {
    * @private
    */
   wouldExceed(bytes: number, messages: number): boolean {
-    if (this.options.action === PublisherFlowControlAction.Ignore) {
+    if (this.options.limitExceededBehavior === LimitExceededBehavior.Ignore) {
       return false;
     }
 

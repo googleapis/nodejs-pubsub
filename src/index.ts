@@ -94,8 +94,8 @@ export {Attributes, PublishCallback, PublishOptions} from './publisher';
 export {BatchPublishOptions} from './publisher/message-batch';
 export {PublishError} from './publisher/publish-error';
 export {
-  PublisherFlowControlOptions,
-  PublisherFlowControlAction,
+  FlowControlSettings,
+  LimitExceededBehavior,
 } from './publisher/flow-control';
 export {
   PageOptions,

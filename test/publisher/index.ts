@@ -21,7 +21,7 @@ import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import * as opentelemetry from '@opentelemetry/api';
-import {PublisherFlowControlAction, Topic} from '../../src';
+import {LimitExceededBehavior, Topic} from '../../src';
 import * as p from '../../src/publisher';
 import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
@@ -264,7 +264,9 @@ describe('Publisher', () => {
 
     it('should get a regular callback on flow control != Block', async () => {
       publisher.setOptions({
-        publisherFlowControl: {action: PublisherFlowControlAction.Ignore},
+        flowControlSettings: {
+          limitExceededBehavior: LimitExceededBehavior.Ignore,
+        },
       });
 
       const addStub = sandbox.stub(publisher.queue, 'add');
@@ -284,7 +286,9 @@ describe('Publisher', () => {
 
     it('should get a flow-augmented callback on flow control == Block', async () => {
       publisher.setOptions({
-        publisherFlowControl: {action: PublisherFlowControlAction.Block},
+        flowControlSettings: {
+          limitExceededBehavior: LimitExceededBehavior.Block,
+        },
       });
 
       const addStub = sandbox.stub(publisher.queue, 'add');
@@ -462,8 +466,8 @@ describe('Publisher', () => {
           isBundling: false,
         },
         enableOpenTelemetryTracing: false,
-        publisherFlowControl: {
-          action: PublisherFlowControlAction.Ignore,
+        flowControlSettings: {
+          limitExceededBehavior: LimitExceededBehavior.Ignore,
           maxOutstandingBytes: undefined,
           maxOutstandingMessages: undefined,
         },
@@ -482,8 +486,8 @@ describe('Publisher', () => {
           isBundling: true,
         },
         enableOpenTelemetryTracing: true,
-        publisherFlowControl: {
-          action: PublisherFlowControlAction.Error,
+        flowControlSettings: {
+          limitExceededBehavior: LimitExceededBehavior.ThrowError,
           maxOutstandingBytes: 500,
           maxOutstandingMessages: 50,
         },

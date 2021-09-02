@@ -36,7 +36,7 @@
 // const topicName = 'YOUR_TOPIC_NAME';
 
 // Imports the Google Cloud client library
-const {PubSub, PublisherFlowControlAction} = require('@google-cloud/pubsub');
+const {PubSub, LimitExceededBehavior} = require('@google-cloud/pubsub');
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
@@ -44,10 +44,10 @@ const pubSubClient = new PubSub();
 async function publishWithFlowControl(topicName) {
   // Create publisher flow control settings
   const options = {
-    publisherFlowControl: {
+    flowControlSettings: {
       maxOutstandingMessages: 50,
       maxOutstandingBytes: 10 * 1024 * 1024,
-      action: PublisherFlowControlAction.Block,
+      limitExceededBehavior: LimitExceededBehavior.Block,
     },
   };
 
@@ -60,9 +60,9 @@ async function publishWithFlowControl(topicName) {
   for (let i = 0; i < 1000; i++) {
     // Note that because `publishWhenReady()` may block, it's possible that Promises
     // received from earlier `publishWhenReady()` calls may have a chance to reject
-    // before `Promise.all()` below. `deferRejections` lets you defer those to
-    // handle them the normal way, or you can call `.catch()` yourself as
-    // you get them back in this loop.
+    // before `Promise.all()` can add a `catch` handler below. `deferRejections` lets
+    // you defer those to handle them the normal way, or you can call `.catch()` yourself
+    // as you get them back in this loop.
     const {idPromise} = await topic.publishWhenReady(
       Buffer.from('test!'),
       {},
