@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Google Inc. All Rights Reserved.
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import * as opentelemetry from '@opentelemetry/api';
-import {LimitExceededBehavior, Topic} from '../../src';
+import {Topic} from '../../src';
 import * as p from '../../src/publisher';
 import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
@@ -262,55 +262,6 @@ describe('Publisher', () => {
       );
     });
 
-    it('should get a regular callback on flow control != Block', async () => {
-      publisher.setOptions({
-        flowControlSettings: {
-          limitExceededBehavior: LimitExceededBehavior.Ignore,
-        },
-      });
-
-      const addStub = sandbox.stub(publisher.queue, 'add');
-      const flowSentStub = sandbox.stub(publisher.flowControl, 'sent');
-      const fakeMessage = {data};
-      const fid = 'test';
-
-      const promise = await publisher.publishWhenReady(fakeMessage, {});
-
-      const [, callback] = addStub.lastCall.args;
-      callback(null, fid);
-
-      const id = await promise.idPromise;
-      assert.strictEqual(id, fid);
-      assert.strictEqual(flowSentStub.called, false);
-    });
-
-    it('should get a flow-augmented callback on flow control == Block', async () => {
-      publisher.setOptions({
-        flowControlSettings: {
-          limitExceededBehavior: LimitExceededBehavior.Block,
-        },
-      });
-
-      const addStub = sandbox.stub(publisher.queue, 'add');
-      const flowWillSendStub = sandbox
-        .stub(publisher.flowControl, 'willSend')
-        .resolves();
-      const flowSentStub = sandbox.stub(publisher.flowControl, 'sent');
-      const fakeMessage = {data};
-      const fid = 'test';
-
-      const promise = await publisher.publishWhenReady(fakeMessage, {});
-
-      assert.strictEqual(flowWillSendStub.called, true);
-
-      const [, callback] = addStub.lastCall.args;
-      callback(null, fid);
-
-      const id = await promise.idPromise;
-      assert.strictEqual(id, fid);
-      assert.strictEqual(flowSentStub.called, true);
-    });
-
     it('should add non-ordered messages to the message queue', done => {
       const stub = sandbox.stub(publisher.queue, 'add');
       const fakeMessage = {data};
@@ -466,8 +417,7 @@ describe('Publisher', () => {
           isBundling: false,
         },
         enableOpenTelemetryTracing: false,
-        flowControlSettings: {
-          limitExceededBehavior: LimitExceededBehavior.Ignore,
+        flowControlOptions: {
           maxOutstandingBytes: undefined,
           maxOutstandingMessages: undefined,
         },
@@ -486,8 +436,7 @@ describe('Publisher', () => {
           isBundling: true,
         },
         enableOpenTelemetryTracing: true,
-        flowControlSettings: {
-          limitExceededBehavior: LimitExceededBehavior.ThrowError,
+        flowControlOptions: {
           maxOutstandingBytes: 500,
           maxOutstandingMessages: 50,
         },

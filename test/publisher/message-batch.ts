@@ -20,6 +20,7 @@ import {randomBytes} from 'crypto';
 import * as sinon from 'sinon';
 
 import {MessageBatch} from '../../src/publisher/message-batch';
+import { PubsubMessage } from '../../src/publisher';
 
 describe('MessageBatch', () => {
   let batch: MessageBatch;
@@ -68,9 +69,14 @@ describe('MessageBatch', () => {
 
   describe('add', () => {
     const callback = sandbox.spy();
-    const message = {
-      data: Buffer.from('Hello, world!'),
-    };
+    let message: PubsubMessage;
+    let messageSize: number;
+    beforeEach(() => {
+      message = {
+        data: Buffer.from('Hello, world!'),
+      };
+      messageSize = message.data!.length;
+    });
 
     it('should add the message to the message array', () => {
       batch.add(message, callback);
@@ -84,14 +90,19 @@ describe('MessageBatch', () => {
 
     it('should adjust the byte count', () => {
       batch.add(message, callback);
-      assert.strictEqual(batch.bytes, message.data.length);
+      assert.strictEqual(batch.bytes, messageSize);
     });
   });
 
   describe('canFit', () => {
-    const message = {
-      data: Buffer.from('Hello, world!'),
-    };
+    let message: PubsubMessage;
+    let messageSize: number;
+    beforeEach(() => {
+      message = {
+        data: Buffer.from('Hello, world!'),
+      };
+      messageSize = message.data!.length;
+    });
 
     it('should return false if too many messages', () => {
       batch.options.maxMessages = 0;
@@ -100,7 +111,7 @@ describe('MessageBatch', () => {
     });
 
     it('should return false if too many bytes', () => {
-      batch.options.maxBytes = message.data.length - 1;
+      batch.options.maxBytes = messageSize - 1;
       const canFit = batch.canFit(message);
       assert.strictEqual(canFit, false);
     });
@@ -150,9 +161,14 @@ describe('MessageBatch', () => {
   });
 
   describe('isFull', () => {
-    const message = {
-      data: Buffer.from('Hello, world!'),
-    };
+    let message: PubsubMessage;
+    let messageSize: number;
+    beforeEach(() => {
+      message = {
+        data: Buffer.from('Hello, world!'),
+      };
+      messageSize = message.data!.length;
+    });
 
     it('should return true if at max message limit', () => {
       batch.options.maxMessages = 1;
@@ -162,7 +178,7 @@ describe('MessageBatch', () => {
     });
 
     it('should return true if at max byte limit', () => {
-      batch.options.maxBytes = message.data.length;
+      batch.options.maxBytes = messageSize;
       batch.add(message, sandbox.spy());
       const isFull = batch.isFull();
       assert.strictEqual(isFull, true);

@@ -17,39 +17,15 @@
 import * as defer from 'p-defer';
 
 /**
- * @typedef LimitExceededBehavior Options for flow control behaviors, or
- *     actions to be taken when limits are exceeded.
- *
- * @property {number} Ignore Ignore all flow control; don't take any action
- *     based on outstanding requests.
- * @property {number} Block When flow control limits are exceeded, clients
- *     should call {@link Topic##readyForPublish} and wait for that Promise
- *     to resolve.
- * @property {number} Throw When flow control limits would be exceeded, calls
- *     to {@link Topic##publish} will throw an {@link Error}.
- */
-export enum LimitExceededBehavior {
-  Ignore = 0,
-  Block = 1,
-  ThrowError = 2,
-}
-
-/**
- * @typedef FlowControlSettings
+ * @typedef FlowControlOptions
  * @property {number} [maxOutstandingMessages] The maximum number of messages to
  *     buffer before publisher flow control kicks in.
  * @property {number} [maxOutstandingBytes] The maximum number of bytes to buffer
  *     before publisher flow control kicks in.
- * @property {number} [behavior=0] What action should be taken if either
- *     of the maximum values are exceeded. This may be Ignore/0 (do nothing),
- *     Block/1 (make a Promise available for when publishing can continue), or
- *     ThrowError/2 (throw an Error when maximum values are exceeded). These constants
- *     are also available in the LimitExceededBehavior object.
  */
-export interface FlowControlSettings {
+export interface FlowControlOptions {
   maxOutstandingMessages?: number;
   maxOutstandingBytes?: number;
-  limitExceededBehavior?: LimitExceededBehavior;
 }
 
 // Represents a publish request. This details how big the request is, and
@@ -71,12 +47,12 @@ interface QueuedPromise {
  *
  */
 export class FlowControl {
-  options: FlowControlSettings = {};
+  options: FlowControlOptions = {};
   private bytes: number;
   private messages: number;
   private requests: QueuedPromise[];
 
-  constructor(options: FlowControlSettings) {
+  constructor(options: FlowControlOptions) {
     this.setOptions(options);
     this.bytes = this.messages = 0;
     this.requests = [];
@@ -88,7 +64,7 @@ export class FlowControl {
    * Do not use externally, it may change without warning.
    * @private
    */
-  setOptions(options: FlowControlSettings) {
+  setOptions(options: FlowControlOptions) {
     this.options = options;
 
     if (
@@ -103,6 +79,18 @@ export class FlowControl {
   }
 
   /**
+   * Adds the specified number of bytes or messages to our count. We'll
+   * assume that this is end running around our queueing mechanisms.
+   *
+   * @param {number} bytes The number of bytes to add to the count.
+   * @param {number} messages The number of messages to add to the count.
+   */
+  addToCount(bytes: number, messages: number): void {
+    this.bytes += bytes;
+    this.messages += messages;
+  }
+
+  /**
    * Attempts to queue the specified number of bytes and messages. If
    * there are too many things in the publisher flow control queue
    * already, we will defer and come back to it.
@@ -111,11 +99,6 @@ export class FlowControl {
    * @private
    */
   async willSend(bytes: number, messages: number): Promise<void> {
-    // Double check our settings. For anything but `Block`, do nothing.
-    if (this.options.limitExceededBehavior !== LimitExceededBehavior.Block) {
-      return;
-    }
-
     // Add this to our queue size.
     this.bytes += bytes;
     this.messages += messages;
@@ -172,10 +155,6 @@ export class FlowControl {
    * @private
    */
   wouldExceed(bytes: number, messages: number): boolean {
-    if (this.options.limitExceededBehavior === LimitExceededBehavior.Ignore) {
-      return false;
-    }
-
     const totalBytes = this.bytes + bytes;
     const totalMessages = this.messages + messages;
 

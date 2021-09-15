@@ -16,37 +16,28 @@
 
 import {promisify} from '@google-cloud/promisify';
 import * as extend from 'extend';
-import {CallOptions, ServiceError} from 'google-gax';
+import {CallOptions} from 'google-gax';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 import {isSpanContextValid, Span, SpanKind} from '@opentelemetry/api';
-import * as defer from 'p-defer';
 
 import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
-import {Topic, PublishWhenReadyOptions, PublishWhenReadyResult} from '../topic';
+import {Topic} from '../topic';
 import {RequestCallback, EmptyCallback} from '../pubsub';
-import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
 import {createSpan} from '../opentelemetry-tracing';
 
-import {
-  FlowControl,
-  FlowControlSettings,
-  LimitExceededBehavior,
-} from './flow-control';
-import {deferredCatch, promisifySome} from '../util';
+import {FlowControl, FlowControlOptions} from './flow-control';
+import {promisifySome} from '../util';
 
-export type PubsubMessage = google.pubsub.v1.IPubsubMessage;
-
-export interface Attributes {
-  [key: string]: string;
-}
+import {PubsubMessage, Attributes} from './pubsub-message';
+export {PubsubMessage, Attributes} from './pubsub-message';
 
 export type PublishCallback = RequestCallback<string>;
 
 export interface PublishOptions {
   batching?: BatchPublishOptions;
-  flowControlSettings?: FlowControlSettings;
+  flowControlOptions?: FlowControlOptions;
   gaxOpts?: CallOptions;
   messageOrdering?: boolean;
   enableOpenTelemetryTracing?: boolean;
@@ -71,10 +62,9 @@ export const BATCH_LIMITS: BatchPublishOptions = {
   maxMessages: 1000,
 };
 
-export const flowControlDefaults: FlowControlSettings = {
+export const flowControlDefaults: FlowControlOptions = {
   maxOutstandingBytes: undefined,
   maxOutstandingMessages: undefined,
-  limitExceededBehavior: LimitExceededBehavior.Ignore,
 };
 
 /**
@@ -97,7 +87,7 @@ export class Publisher {
 
   constructor(topic: Topic, options?: PublishOptions) {
     this.flowControl = new FlowControl(
-      options?.flowControlSettings ?? flowControlDefaults
+      options?.flowControlOptions ?? flowControlDefaults
     );
     this.setOptions(options);
     this.topic = topic;
@@ -162,64 +152,24 @@ export class Publisher {
     callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
     return this.publishMessage({data, attributes}, callback!);
   }
+
+  publishMessage(message: PubsubMessage): Promise<string>;
+  publishMessage(message: PubsubMessage, callback: PublishCallback): void;
   /**
-   * Publish the provided message, ignoring `Block flow control.
+   * Publish the provided message.
    *
    * @private
    *
    * @throws {TypeError} If data is not a Buffer object.
    * @throws {TypeError} If any value in `attributes` object is not a string.
-   * @throws {RangeError} If publisher flow control is set to `Error` and the message won't fit.
    *
    * @param {PubsubMessage} [message] Options for this message.
-   * @param {PublishCallback} [callback] Callback function for when the message is published.
+   * @param {PublishCallback} [callback] Callback function.
    */
-  publishMessage(message: PubsubMessage, callback: PublishCallback): void {
-    this.prePublishMessage(message);
-    this.doPublishMessage(message, {}).then(idPromiseObject => {
-      const {idPromise} = idPromiseObject;
-      idPromise.then(id => callback(null, id)).catch(err => callback(err));
-    });
-  }
-
-  /**
-   * Publish the provided message, making use of all enabled flow control.
-   *
-   * Do not use externally, it may change without warning.
-   * @private
-   *
-   * @throws {TypeError} Rejects, if data is not a Buffer object.
-   * @throws {TypeError} Rejects, if any value in `attributes` object is not a string.
-   * @throws {RangeError} Rejects, if publisher flow control is set to `Error` and the message won't fit.
-   *
-   * @param {PubsubMessage} message Parameters for this message.
-   * @param {PublishWhenReadyOptions} options Options for publishing.
-   *
-   * @returns {Promise<PublishWhenReadyResult>} A Promise that resolves when the next publish call is
-   *  clear to go, with a Promise (in an object) that resolves to the sent message ID, or rejects when
-   *  one of the above errors is thrown.
-   */
-  async publishWhenReady(
+  publishMessage(
     message: PubsubMessage,
-    options: PublishWhenReadyOptions
-  ): Promise<PublishWhenReadyResult> {
-    this.prePublishMessage(message);
-    return this.doPublishMessage(message, options);
-  }
-
-  /**
-   * Does common pre-publishing validation for a message. This is separated
-   * out from the potentially async part which waits for queue space and then
-   * publishes the message.
-   *
-   * Do not use externally, it may change without warning.
-   * @private
-   *
-   * @throws {TypeError} If data is not a Buffer object.
-   * @throws {TypeError} If any value in `attributes` object is not a string.
-   * @throws {RangeError} If publisher flow control is set to `Error` and the message won't fit.
-   */
-  private prePublishMessage(message: PubsubMessage): void {
+    callback?: PublishCallback
+  ): Promise<string> | void {
     const {data, attributes = {}} = message;
 
     // We must have at least one of:
@@ -244,102 +194,32 @@ export class Publisher {
       }
     }
 
-    // Will it pass publisher flow control handling?
-    if (
-      this.settings.flowControlSettings!.limitExceededBehavior ===
-        LimitExceededBehavior.ThrowError &&
-      data
-    ) {
-      // For error handling, we just want to throw if it would exceed.
-      if (this.flowControl.wouldExceed(data.length, 1)) {
-        throw new RangeError(
-          `Flow control exceeded for ${data.length} bytes and 1 message`
-        );
-      }
-    }
-  }
-
-  /**
-   * Publish the provided pre-checked message, pausing for flow control if needed.
-   *
-   * Do not use externally, it may change without warning.
-   * @private
-   *
-   * @param {PubsubMessage} message Parameters for this message.
-   * @param {PublishWhenReadyOptions} options Publishing options.
-   *
-   * @returns {Promise<PublishWhenReadyResult>} A Promise that resolves when there is more
-   *   queue space for publishing messages. This will always resolve immediately if flow
-   *   control is set to any action besides `Block`.
-   */
-  private async doPublishMessage(
-    message: PubsubMessage,
-    options: PublishWhenReadyOptions
-  ): Promise<PublishWhenReadyResult> {
-    const data = message.data as Buffer | undefined;
     const span: Span | undefined = this.constructSpan(message);
 
-    const deferred = defer<string>();
-    if (options.deferRejections) {
-      deferred.promise = deferredCatch(deferred.promise);
-    }
-
-    let finalCallback = (
-      err: ServiceError | null,
-      value: string | null | undefined
-    ) => {
-      if (err) {
-        deferred.reject(err);
-      } else {
-        // In practice, the service will only ever return an array
-        // of message IDs, or a null array + error. The individual IDs
-        // won't be null, so this ! simplifies our types a lot.
-        deferred.resolve(value!);
-      }
-    };
-
-    // If blocking flow control is enabled, we also need to tag onto
-    // the callback to release the queue space for other callers.
-    if (
-      this.settings.flowControlSettings!.limitExceededBehavior ===
-      LimitExceededBehavior.Block
-    ) {
-      const oldCallback = finalCallback;
-      finalCallback = (
-        err: ServiceError | null,
-        res?: string | null | undefined
-      ) => {
-        if (data) {
-          this.flowControl.sent(data.length, 1);
-        }
-        oldCallback(err, res);
-      };
-
-      // For pausing, we want to wait until space is available.
-      await this.flowControl.willSend(data?.length ?? 0, 1);
-    }
-
     if (!message.orderingKey) {
-      this.queue.add(message, finalCallback);
-    } else {
-      const key = message.orderingKey;
-
-      if (!this.orderedQueues.has(key)) {
-        const queue = new OrderedQueue(this, key);
-        this.orderedQueues.set(key, queue);
-        queue.once('drain', () => this.orderedQueues.delete(key));
+      this.queue.add(message, callback!);
+      if (span) {
+        span.end();
       }
-
-      const queue = this.orderedQueues.get(key)!;
-      queue.add(message, finalCallback);
+      return;
     }
+
+    const key = message.orderingKey;
+
+    if (!this.orderedQueues.has(key)) {
+      const queue = new OrderedQueue(this, key);
+      this.orderedQueues.set(key, queue);
+      queue.once('drain', () => this.orderedQueues.delete(key));
+    }
+
+    const queue = this.orderedQueues.get(key)!;
+    queue.add(message, callback!);
 
     if (span) {
       span.end();
     }
-
-    return {idPromise: deferred.promise};
   }
+
   /**
    * Indicates to the publisher that it is safe to continue publishing for the
    * supplied ordering key.
@@ -379,10 +259,10 @@ export class Publisher {
         isBundling: false,
       },
       enableOpenTelemetryTracing: false,
-      flowControlSettings: Object.assign(
+      flowControlOptions: Object.assign(
         {},
         flowControlDefaults
-      ) as FlowControlSettings,
+      ) as FlowControlOptions,
     };
 
     return defaults;
@@ -403,7 +283,7 @@ export class Publisher {
       gaxOpts,
       messageOrdering,
       enableOpenTelemetryTracing,
-      flowControlSettings,
+      flowControlOptions,
     } = extend(true, defaults, options);
 
     this.settings = {
@@ -418,7 +298,7 @@ export class Publisher {
       gaxOpts,
       messageOrdering,
       enableOpenTelemetryTracing,
-      flowControlSettings,
+      flowControlOptions,
     };
 
     // We also need to let all of our queues know that they need to update their options.
@@ -433,7 +313,7 @@ export class Publisher {
     }
 
     // This will always be filled in by our defaults if nothing else.
-    this.flowControl.setOptions(this.settings.flowControlSettings!);
+    this.flowControl.setOptions(this.settings.flowControlOptions!);
   }
 
   /**

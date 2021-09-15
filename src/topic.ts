@@ -27,6 +27,7 @@ import {
   PublishOptions,
   PubsubMessage,
 } from './publisher';
+import {FlowControlledPublisher} from './publisher/flow-publisher';
 import {
   EmptyCallback,
   EmptyResponse,
@@ -81,28 +82,6 @@ export type GetTopicSubscriptionsResponse = PagedResponse<
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MessageOptions = PubsubMessage & {json?: any};
-
-/**
- * Optional parameters that may be passed to {@link Topic#publishWhenReady}.
- *
- * @property {boolean} [deferRejections] Set to true if you want any returned
- *    idPromise to defer rejections until `.catch()` is called on them.
- */
-export interface PublishWhenReadyOptions {
-  deferRejections?: boolean;
-}
-
-/**
- * When calling {@link Topic#publishWhenReady}, the returned Promise
- * is for waiting for clearance to publish. This structure will be
- * returned as the resolution of that "waiting for clearance" Promise.
- *
- * Currently this is only to wrap the "wait for message ID" Promise,
- * but it may contain other things later.
- */
-export interface PublishWhenReadyResult {
-  idPromise: Promise<string>;
-}
 
 /**
  * A Topic object allows you to interact with a Cloud Pub/Sub topic.
@@ -809,6 +788,8 @@ export class Topic {
     message: MessageOptions,
     callback?: PublishCallback
   ): Promise<[string]> | void {
+    // Make a copy to ensure that any changes we make to it will not
+    // propagate up to the user's data.
     message = Object.assign({}, message);
 
     if (message.json && typeof message.json === 'object') {
@@ -820,50 +801,20 @@ export class Topic {
   }
 
   /**
-   * Publishes the message specified in the data buffer. The actual publish may be
-   * delayed if publisher-side flow control is enabled and set to Block. Queued
-   * `publishWhenReady` calls will resolve in the order they're received, pausing
-   * again if space runs out due to subsequent resolves.
+   * Creates a FlowControlledPublisher for this Topic.
    *
-   * The Promise's resolve() value will be a {@link PublishWhenReadyResult} that
-   * contains a Promise you can wait on for the message ID, from the message actually
-   * being sent.
+   * FlowControlledPublisher is a helper that lets you control how many messages
+   * are simultaneously queued to send, to avoid ballooning memory usage on
+   * a low bandwidth connection to Pub/Sub.
    *
-   * Please note that you must attach a {@link Promise#catch} handler to idPromise
-   * immediately upon return. Otherwise, subsequent waits for {@link Topic#publishWhenReady}
-   * may result in unhandled rejection errors. You can also pass `options` to {@link Topic#publishWhenReady}
-   * and set `deferRejections` to true. This will cause the Promise's rejection to
-   * happen when you call `catch()` on it (e.g. with Promise.all()).
+   * Note that it's perfectly fine to create more than one on the same Topic.
+   * The actual flow control settings on the Topic will apply across all
+   * FlowControlledPublisher objects on that Topic.
    *
-   * @param {Buffer} data The message to send
-   * @param {Attributes} [attrs] Attributes to attach to the message
-   * @returns {Promise<PublishWhenReadyResult>} A Promise that resolves to an object
-   *   with a Promise that resolves to the message ID (among other things, potentially,
-   *   in the future). In other words, when the first Promise resolves, you can
-   *   open the resolved object get a second Promise that will resolve when the
-   *   message was sent, and its ID is ready.
-   *
-   * @example
-   * const messageIdPromises: Promise<string>[] = [];
-   * for (let i = 0; i < 1000; i++) {
-   *   const {idPromise} = await topic.publishWhenReady(messageBuffer, {}, {deferRejections: true});
-   *   messageIdPromises.push(idPromise);
-   * }
-   * const ids = await Promise.all(messageIdPromises);
+   * @returns {FlowControlledPublisher} The flow control helper.
    */
-  publishWhenReady(
-    data: Buffer,
-    attributes?: Attributes,
-    options?: PublishWhenReadyOptions
-  ): Promise<PublishWhenReadyResult> {
-    const result = this.publisher.publishWhenReady(
-      {
-        data,
-        attributes,
-      },
-      options ?? {}
-    );
-    return result;
+  flowControlled(): FlowControlledPublisher {
+    return new FlowControlledPublisher(this.publisher);
   }
 
   /**

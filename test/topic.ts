@@ -660,38 +660,6 @@ describe('Topic', () => {
     });
   });
 
-  describe('publishWhenReady', () => {
-    it('should call through to Publisher#publishWhenReady', () => {
-      const stub = sandbox.stub(topic.publisher, 'publishWhenReady');
-
-      const fdata = Buffer.from('Hello, world!');
-      const fattributes = {};
-      const foptions = {};
-
-      topic.publishWhenReady(fdata, fattributes, foptions);
-
-      const [{data, attributes}, options] = stub.lastCall.args;
-      assert.strictEqual(data, fdata);
-      assert.strictEqual(attributes, fattributes);
-      assert.strictEqual(options, foptions);
-    });
-
-    it('should provide a default publishWhenReady options object', () => {
-      const stub = sandbox.stub(topic.publisher, 'publishWhenReady');
-
-      const fdata = Buffer.from('Hello, world!');
-      const fattributes = {};
-      const foptions = {};
-
-      topic.publishWhenReady(fdata, fattributes);
-
-      const [{data, attributes}, options] = stub.lastCall.args;
-      assert.strictEqual(data, fdata);
-      assert.strictEqual(attributes, fattributes);
-      assert.deepStrictEqual(options, foptions);
-    });
-  });
-
   describe('setMetadata', () => {
     const METADATA = {
       labels: {yee: 'haw'},

@@ -32,62 +32,52 @@
 // const topicName = 'YOUR_TOPIC_NAME';
 
 // Imports the Google Cloud client library
-import {
-  PubSub,
-  PublishOptions,
-  LimitExceededBehavior,
-} from '@google-cloud/pubsub';
+import {PubSub, PublishOptions} from '@google-cloud/pubsub';
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
 async function publishWithFlowControl(topicName: string) {
-  // Create publisher flow control settings
+  // Create publisher options
   const options: PublishOptions = {
-    flowControlSettings: {
+    flowControlOptions: {
       maxOutstandingMessages: 50,
       maxOutstandingBytes: 10 * 1024 * 1024, // 10 MB
-      limitExceededBehavior: LimitExceededBehavior.Block,
     },
   };
 
   // Get a publisher.
   const topic = pubSubClient.topic(topicName, options);
 
-  // Publish messages, waiting for queue space as needed.
-  const messageIdPromises: Promise<string>[] = [];
-  const whenReadyOptions = {deferRejections: true};
+  // For flow controlled publishing, we'll use a publisher series
+  // instead of `topic.publish()`.
+  const flow = topic.flowControlled();
+
+  // Publish messages in a fast loop.
+  const testMessage = {data: Buffer.from('test!')};
   for (let i = 0; i < 1000; i++) {
-    // Note that because `publishWhenReady()` may block, it's possible that Promises
-    // received from earlier `publishWhenReady()` calls may have a chance to reject
-    // before `Promise.all()` can add a `catch` handler below. `deferRejections` lets
-    // you defer those to handle them the normal way, or you can call `.catch()` yourself
-    // as you get them back in this loop.
-    const {idPromise} = await topic.publishWhenReady(
-      Buffer.from('test!'),
-      {},
-      whenReadyOptions
-    );
-    messageIdPromises.push(idPromise);
+    // You can also just `await` on `publish()` unconditionally, but if
+    // you want to avoid pausing to the event loop on each iteration,
+    // you can manually check the return value before doing so.
+    const wait = flow.publish(testMessage);
+    if (wait) {
+      await wait;
+    }
   }
 
-  // Wait on any pending publish requests.
-  const messageIds = await Promise.all(messageIdPromises);
+  // Wait on any pending publish requests. Note that you can call `all()`
+  // earlier if you like, and it will return a Promise for all messages
+  // that have been sent to `flowController.publish()` so far.
+  const messageIds = await flow.all();
   console.log(`Published ${messageIds.length} with flow control settings.`);
-
-  console.log(topic.publisher.flowControl);
 }
 // [END pubsub_publisher_flow_control]
 
 function main(topicName = 'YOUR_TOPIC_NAME') {
-  publishWithFlowControl(topicName)
-    .then(() => {
-      console.log('hooha');
-    })
-    .catch(err => {
-      console.error(err.message);
-      process.exitCode = 1;
-    });
+  publishWithFlowControl(topicName).catch(err => {
+    console.error(err.message);
+    process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));

@@ -23,42 +23,20 @@ import {describe, it} from 'mocha';
 import * as fc from '../../src/publisher/flow-control';
 
 describe('Flow Controller', () => {
-  const optionsPause: fc.FlowControlSettings = {
+  const optionsDefault: fc.FlowControlOptions = {
     maxOutstandingMessages: 5,
     maxOutstandingBytes: 100,
-    limitExceededBehavior: fc.LimitExceededBehavior.Block,
   };
 
-  it('does not do anything for Ignore', async () => {
-    const optionsIgnore: fc.FlowControlSettings = {
-      limitExceededBehavior: fc.LimitExceededBehavior.Ignore,
-    };
-    const flow = new fc.FlowControl(optionsIgnore);
-    await flow.willSend(100000, 100);
-    assert.ok(true, 'successfully did nothing');
-  });
-
-  // This isn't handled at this level, so it should work like Ignore.
-  it('does not do anything for Error', async () => {
-    const optionsIgnore: fc.FlowControlSettings = {
-      maxOutstandingMessages: 5,
-      maxOutstandingBytes: 100,
-      limitExceededBehavior: fc.LimitExceededBehavior.ThrowError,
-    };
-    const flow = new fc.FlowControl(optionsIgnore);
-    await flow.willSend(100000, 100);
-    assert.ok(true, 'successfully did nothing');
-  });
-
   it('does basic bookkeeping correctly', async () => {
-    const flowPause = new fc.FlowControl(optionsPause);
+    const flowPause = new fc.FlowControl(optionsDefault);
     await flowPause.willSend(10, 1);
     assert.strictEqual((flowPause as any).bytes, 10);
     assert.strictEqual((flowPause as any).messages, 1);
   });
 
   it('queues up a promise when bytes are exceeded', async () => {
-    const flowPause = new fc.FlowControl(optionsPause);
+    const flowPause = new fc.FlowControl(optionsDefault);
     const promise = flowPause.willSend(1000, 1);
     assert.strictEqual((flowPause as any).requests.length, 1);
     (flowPause as any).requests[0].resolve();
@@ -66,7 +44,7 @@ describe('Flow Controller', () => {
   });
 
   it('queues up a promise when messages are exceeded', async () => {
-    const flowPause = new fc.FlowControl(optionsPause);
+    const flowPause = new fc.FlowControl(optionsDefault);
     const promise = flowPause.willSend(10, 100);
     assert.strictEqual((flowPause as any).requests.length, 1);
     (flowPause as any).requests[0].resolve();
@@ -74,7 +52,7 @@ describe('Flow Controller', () => {
   });
 
   it('releases a publisher when space is freed', async () => {
-    const flowPause = new fc.FlowControl(optionsPause);
+    const flowPause = new fc.FlowControl(optionsDefault);
     const promise = flowPause.willSend(1000, 1);
     assert.strictEqual((flowPause as any).requests.length, 1);
     flowPause.sent(990, 1);
@@ -83,7 +61,7 @@ describe('Flow Controller', () => {
   });
 
   it('releases a publisher only when enough space is freed', async () => {
-    const flowPause = new fc.FlowControl(optionsPause);
+    const flowPause = new fc.FlowControl(optionsDefault);
     const promise = flowPause.willSend(1000, 2);
     assert.strictEqual((flowPause as any).requests.length, 1);
     flowPause.sent(800, 1);
@@ -94,7 +72,7 @@ describe('Flow Controller', () => {
   });
 
   it('calculates with wouldExceed correctly', () => {
-    const flowPause = new fc.FlowControl(optionsPause);
+    const flowPause = new fc.FlowControl(optionsDefault);
     assert.strictEqual(flowPause.wouldExceed(10000, 1), true);
     assert.strictEqual(flowPause.wouldExceed(1, 1000), true);
     assert.strictEqual(flowPause.wouldExceed(10000, 1000), true);
@@ -102,19 +80,16 @@ describe('Flow Controller', () => {
   });
 
   it('sets options after the fact', () => {
-    const flowPause = new fc.FlowControl(optionsPause);
+    const flowPause = new fc.FlowControl(optionsDefault);
     const newOptions = {
-      limitExceededBehavior: fc.LimitExceededBehavior.ThrowError,
+      maxOutstandingMessages: 100,
     };
     flowPause.setOptions(newOptions);
-    assert.strictEqual(
-      flowPause.options.limitExceededBehavior,
-      fc.LimitExceededBehavior.ThrowError
-    );
+    assert.strictEqual(flowPause.options.maxOutstandingMessages, 100);
   });
 
   it('does not allow nonsensical option values', () => {
-    const flowPause = new fc.FlowControl(optionsPause);
+    const flowPause = new fc.FlowControl(optionsDefault);
     const newOptions = {
       maxOutstandingBytes: 0,
       maxOutstandingMessages: 0,

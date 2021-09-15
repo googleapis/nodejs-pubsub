@@ -40,14 +40,3 @@ export function promisifySome<T>(
 }
 
 export function noop() {}
-
-/**
- * This removes the async rejected Promise error in Node 8+. There are
- * decent reasons for that behaviour, but it makes it more difficult to
- * collect an array for Promise.all() if you may get interrupted while
- * collecting the Promises.
- */
-export function deferredCatch<T>(p: Promise<T>): Promise<T> {
-  p.catch(() => {});
-  return p;
-}
