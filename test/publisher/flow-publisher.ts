@@ -102,6 +102,17 @@ describe('Flow control publisher', () => {
     assert.strictEqual(sentStub.called, true);
   });
 
+  it('should send messages immediately when publishNow is called', () => {
+    const pubStub = sandbox.stub(publisher, 'publishMessage').resolves('');
+    const addStub = sandbox.stub(publisher.flowControl, 'addToCount');
+
+    const fcp = new fp.FlowControlledPublisher(publisher);
+    fcp.publishNow({data: Buffer.from('foo')});
+
+    assert.strictEqual(pubStub.calledOnce, true);
+    assert.deepStrictEqual(addStub.args[0], [3, 1]);
+  });
+
   it('should calculate the message size if needed, in wait mode', async () => {
     sandbox.stub(publisher, 'publishMessage').resolves();
     const fcp = new fp.FlowControlledPublisher(publisher);

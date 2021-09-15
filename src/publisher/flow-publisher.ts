@@ -27,8 +27,6 @@ import {PubsubMessage, calculateMessageSize} from './pubsub-message';
  * through an instance of this class will obey publisher flow control
  * settings set through {@link PublisherOptions} on {@link Topic}, across
  * all instances returned by {@link Topic#flowControlled} on that {@link Topic}.
- *
- * @private
  */
 export class FlowControlledPublisher {
   private publisher: Publisher;
@@ -122,6 +120,15 @@ export class FlowControlledPublisher {
     this.idPromises.push(idPromise);
   }
 
+  /**
+   * Returns a Promise that will resolve to all of the currently sent
+   * message IDs (or reject if there is an error). This also clears
+   * out any currently sent messages, so the next call to `all()` will
+   * be a clean slate.
+   *
+   * @returns {Promise<string[]>} A Promise that resolves when all current
+   *   messages are sent.
+   */
   all(): Promise<string[]> {
     const allPromise = Promise.all(this.idPromises);
     this.idPromises = [];

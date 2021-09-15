@@ -356,7 +356,7 @@ describe('Subscription', () => {
       const expectedError =
         /Subscriptions can only be created when accessed through Topics/;
       delete subscription.topic;
-      assert.rejects(subscription.create(), expectedError);
+      await assert.rejects(subscription.create(), expectedError);
     });
 
     it('should pass the correct params', () => {
@@ -439,8 +439,8 @@ describe('Subscription', () => {
       };
     });
 
-    it('should throw an error if a snapshot name is not found', () => {
-      assert.rejects(() => {
+    it('should throw an error if a snapshot name is not found', async () => {
+      await assert.rejects(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (subscription as any).createSnapshot();
       }, /A name is required to create a snapshot\./);
@@ -873,8 +873,8 @@ describe('Subscription', () => {
       };
     });
 
-    it('should throw if a name or date is not provided', () => {
-      assert.rejects(() => {
+    it('should throw if a name or date is not provided', async () => {
+      await assert.rejects(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (subscription as any).seek();
       }, /Either a snapshot name or Date is needed to seek to\./);

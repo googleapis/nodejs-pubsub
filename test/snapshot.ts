@@ -193,15 +193,15 @@ describe('Snapshot', () => {
         snapshot = new Snapshot(PUBSUB, SNAPSHOT_NAME);
       });
 
-      it('should throw on create method', () => {
-        assert.rejects(
+      it('should throw on create method', async () => {
+        await assert.rejects(
           () => snapshot.create(),
           /This is only available if you accessed this object through Subscription#snapshot/
         );
       });
 
-      it('should throw on seek method', () => {
-        assert.rejects(
+      it('should throw on seek method', async () => {
+        await assert.rejects(
           () => snapshot.seek(),
           /This is only available if you accessed this object through Subscription#snapshot/
         );

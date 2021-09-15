@@ -49,7 +49,7 @@ async function publishWithFlowControl(topicName: string) {
   // Get a publisher.
   const topic = pubSubClient.topic(topicName, options);
 
-  // For flow controlled publishing, we'll use a publisher series
+  // For flow controlled publishing, we'll use a publisher flow controller
   // instead of `topic.publish()`.
   const flow = topic.flowControlled();
 

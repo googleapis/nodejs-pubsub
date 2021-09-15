@@ -33,9 +33,7 @@ class FakeTopic {
   request<T>(config: RequestConfig, callback: RequestCallback<T>): void {}
 }
 
-class FakeFlowControl {
-  remove() {}
-}
+class FakeFlowControl {}
 
 class FakePublisher {
   topic: FakeTopic;

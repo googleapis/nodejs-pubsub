@@ -114,7 +114,7 @@ export class FlowControl {
         messageCount: messages,
       });
 
-      // This will pass through when someone else's this.remove() completes.
+      // This will pass through when someone else's this.sent() completes.
       await promise.promise;
     }
   }
