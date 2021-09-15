@@ -20,7 +20,7 @@ import {randomBytes} from 'crypto';
 import * as sinon from 'sinon';
 
 import {MessageBatch} from '../../src/publisher/message-batch';
-import { PubsubMessage } from '../../src/publisher';
+import {PubsubMessage} from '../../src/publisher';
 
 describe('MessageBatch', () => {
   let batch: MessageBatch;
