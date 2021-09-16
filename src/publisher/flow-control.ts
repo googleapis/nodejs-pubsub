@@ -79,6 +79,20 @@ export class FlowControl {
   }
 
   /**
+   * @returns {number} The number of bytes that are queued up.
+   */
+  get currentByteCount(): number {
+    return this.bytes;
+  }
+
+  /**
+   * @returns {number} The number of messages that are queued up.
+   */
+  get currentMessageCount(): number {
+    return this.messages;
+  }
+
+  /**
    * Adds the specified number of bytes or messages to our count. We'll
    * assume that this is end running around our queueing mechanisms.
    *

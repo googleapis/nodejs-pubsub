@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// This will let us dig into the innards of the flow controller in peace.
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import * as assert from 'assert';
 import {describe, it} from 'mocha';
 
@@ -29,45 +26,56 @@ describe('Flow Controller', () => {
   };
 
   it('does basic bookkeeping correctly', async () => {
-    const flowPause = new fc.FlowControl(optionsDefault);
-    await flowPause.willSend(10, 1);
-    assert.strictEqual((flowPause as any).bytes, 10);
-    assert.strictEqual((flowPause as any).messages, 1);
+    const flow = new fc.FlowControl(optionsDefault);
+    await flow.willSend(10, 1);
+    assert.strictEqual(flow.currentByteCount, 10);
+    assert.strictEqual(flow.currentMessageCount, 1);
   });
 
+  // This is an internal detail we really don't want to expose even inside
+  // the library, so this function will get it for us in one place.
+  function requestQueue(flow: fc.FlowControl) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (flow as any).requests;
+  }
+
   it('queues up a promise when bytes are exceeded', async () => {
-    const flowPause = new fc.FlowControl(optionsDefault);
-    const promise = flowPause.willSend(1000, 1);
-    assert.strictEqual((flowPause as any).requests.length, 1);
-    (flowPause as any).requests[0].resolve();
+    const flow = new fc.FlowControl(optionsDefault);
+    const promise = flow.willSend(1000, 1);
+    const requests = requestQueue(flow);
+    assert.strictEqual(requests.length, 1);
+    requests[0].resolve();
     await promise;
   });
 
   it('queues up a promise when messages are exceeded', async () => {
-    const flowPause = new fc.FlowControl(optionsDefault);
-    const promise = flowPause.willSend(10, 100);
-    assert.strictEqual((flowPause as any).requests.length, 1);
-    (flowPause as any).requests[0].resolve();
+    const flow = new fc.FlowControl(optionsDefault);
+    const promise = flow.willSend(10, 100);
+    const requests = requestQueue(flow);
+    assert.strictEqual(requests.length, 1);
+    requests[0].resolve();
     await promise;
   });
 
   it('releases a publisher when space is freed', async () => {
-    const flowPause = new fc.FlowControl(optionsDefault);
-    const promise = flowPause.willSend(1000, 1);
-    assert.strictEqual((flowPause as any).requests.length, 1);
-    flowPause.sent(990, 1);
-    assert.strictEqual((flowPause as any).requests.length, 0);
+    const flow = new fc.FlowControl(optionsDefault);
+    const promise = flow.willSend(1000, 1);
+    const requests = requestQueue(flow);
+    assert.strictEqual(requests.length, 1);
+    flow.sent(990, 1);
+    assert.strictEqual(requests.length, 0);
     await promise;
   });
 
   it('releases a publisher only when enough space is freed', async () => {
-    const flowPause = new fc.FlowControl(optionsDefault);
-    const promise = flowPause.willSend(1000, 2);
-    assert.strictEqual((flowPause as any).requests.length, 1);
-    flowPause.sent(800, 1);
-    assert.strictEqual((flowPause as any).requests.length, 1);
-    flowPause.sent(150, 1);
-    assert.strictEqual((flowPause as any).requests.length, 0);
+    const flow = new fc.FlowControl(optionsDefault);
+    const promise = flow.willSend(1000, 2);
+    const requests = requestQueue(flow);
+    assert.strictEqual(requests.length, 1);
+    flow.sent(800, 1);
+    assert.strictEqual(requests.length, 1);
+    flow.sent(150, 1);
+    assert.strictEqual(requests.length, 0);
     await promise;
   });
 

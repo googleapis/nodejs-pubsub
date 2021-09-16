@@ -19,9 +19,7 @@ import {google} from '../../protos/protos';
 /**
  * Strings are the only allowed values for keys and values in message attributes.
  */
-export interface Attributes {
-  [key: string]: string;
-}
+export type Attributes = Record<string, string>;
 
 /**
  * The basic {data, attributes} for a message to be published.
@@ -73,8 +71,8 @@ export function calculateMessageSize(
   if (msg.attributes) {
     const attrs = msg.attributes;
     for (const key of Object.getOwnPropertyNames(attrs)) {
-      const val = key + (attrs[key] ?? '');
-      size += Buffer.byteLength(val);
+      const val = attrs[key] || '';
+      size += Buffer.byteLength(key + val);
     }
   }
 

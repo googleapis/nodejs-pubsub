@@ -38,10 +38,9 @@ class FakePublisher {
 
 describe('Flow control publisher', () => {
   let publisher: Publisher;
-  let sandbox: sinon.SinonSandbox;
+  const sandbox = sinon.createSandbox();
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
     publisher = new FakePublisher() as unknown as Publisher;
     publisher.flowControl = new FlowControl(flowControlDefaults);
   });

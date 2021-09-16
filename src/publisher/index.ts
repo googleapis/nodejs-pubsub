@@ -87,7 +87,7 @@ export class Publisher {
 
   constructor(topic: Topic, options?: PublishOptions) {
     this.flowControl = new FlowControl(
-      options?.flowControlOptions ?? flowControlDefaults
+      options?.flowControlOptions || flowControlDefaults
     );
     this.setOptions(options);
     this.topic = topic;

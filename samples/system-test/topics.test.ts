@@ -110,10 +110,10 @@ describe('topics', () => {
     );
     const receivedMessage = await _pullOneMessage(subscription);
     assert.strictEqual(receivedMessage.data.toString(), 'test!');
-    assert.ok(output.indexOf('Published 1000 with flow control settings') >= 0);
+    assert.include(output, 'Published 1000 with flow control settings');
 
     // Junk any remaining published messages.
-    await subscription.seek(new Date(Date.now()));
+    await subscription.seek(new Date());
   });
 
   it('should publish a JSON message', async () => {
