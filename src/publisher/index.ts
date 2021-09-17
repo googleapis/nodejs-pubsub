@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {promisify, promisifyAll} from '@google-cloud/promisify';
+import {promisify} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
@@ -24,20 +24,20 @@ import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
 import {Topic} from '../topic';
 import {RequestCallback, EmptyCallback} from '../pubsub';
-import {google} from '../../protos/protos';
 import {defaultOptions} from '../default-options';
 import {createSpan} from '../opentelemetry-tracing';
 
-export type PubsubMessage = google.pubsub.v1.IPubsubMessage;
+import {FlowControl, FlowControlOptions} from './flow-control';
+import {promisifySome} from '../util';
 
-export interface Attributes {
-  [key: string]: string;
-}
+import {PubsubMessage, Attributes} from './pubsub-message';
+export {PubsubMessage, Attributes} from './pubsub-message';
 
 export type PublishCallback = RequestCallback<string>;
 
 export interface PublishOptions {
   batching?: BatchPublishOptions;
+  flowControlOptions?: FlowControlOptions;
   gaxOpts?: CallOptions;
   messageOrdering?: boolean;
   enableOpenTelemetryTracing?: boolean;
@@ -47,6 +47,8 @@ export interface PublishOptions {
  * @typedef PublishOptions
  * @property {BatchPublishOptions} [batching] The maximum number of bytes to
  *     buffer before sending a payload.
+ * @property {FlowControlOptions} [publisherFlowControl] Publisher-side flow
+ *     control settings. If this is undefined, Ignore will be the assumed action.
  * @property {object} [gaxOpts] Request configuration options, outlined
  *     {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html|here.}
  * @property {boolean} [messageOrdering] If true, messages published with the
@@ -58,6 +60,11 @@ export interface PublishOptions {
 export const BATCH_LIMITS: BatchPublishOptions = {
   maxBytes: Math.pow(1024, 2) * 9,
   maxMessages: 1000,
+};
+
+export const flowControlDefaults: FlowControlOptions = {
+  maxOutstandingBytes: undefined,
+  maxOutstandingMessages: undefined,
 };
 
 /**
@@ -76,7 +83,12 @@ export class Publisher {
   settings!: PublishOptions;
   queue: Queue;
   orderedQueues: Map<string, OrderedQueue>;
+  flowControl: FlowControl;
+
   constructor(topic: Topic, options?: PublishOptions) {
+    this.flowControl = new FlowControl(
+      options?.flowControlOptions || flowControlDefaults
+    );
     this.setOptions(options);
     this.topic = topic;
     this.queue = new Queue(this);
@@ -140,6 +152,9 @@ export class Publisher {
     callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
     return this.publishMessage({data, attributes}, callback!);
   }
+
+  publishMessage(message: PubsubMessage): Promise<string>;
+  publishMessage(message: PubsubMessage, callback: PublishCallback): void;
   /**
    * Publish the provided message.
    *
@@ -151,7 +166,10 @@ export class Publisher {
    * @param {PubsubMessage} [message] Options for this message.
    * @param {PublishCallback} [callback] Callback function.
    */
-  publishMessage(message: PubsubMessage, callback: PublishCallback): void {
+  publishMessage(
+    message: PubsubMessage,
+    callback?: PublishCallback
+  ): Promise<string> | void {
     const {data, attributes = {}} = message;
 
     // We must have at least one of:
@@ -179,7 +197,7 @@ export class Publisher {
     const span: Span | undefined = this.constructSpan(message);
 
     if (!message.orderingKey) {
-      this.queue.add(message, callback);
+      this.queue.add(message, callback!);
       if (span) {
         span.end();
       }
@@ -195,12 +213,13 @@ export class Publisher {
     }
 
     const queue = this.orderedQueues.get(key)!;
-    queue.add(message, callback);
+    queue.add(message, callback!);
 
     if (span) {
       span.end();
     }
   }
+
   /**
    * Indicates to the publisher that it is safe to continue publishing for the
    * supplied ordering key.
@@ -229,7 +248,7 @@ export class Publisher {
    */
   getOptionDefaults(): PublishOptions {
     // Return a unique copy to avoid shenanigans.
-    const defaults = {
+    const defaults: PublishOptions = {
       batching: {
         maxBytes: defaultOptions.publish.maxOutstandingBytes,
         maxMessages: defaultOptions.publish.maxOutstandingMessages,
@@ -240,6 +259,10 @@ export class Publisher {
         isBundling: false,
       },
       enableOpenTelemetryTracing: false,
+      flowControlOptions: Object.assign(
+        {},
+        flowControlDefaults
+      ) as FlowControlOptions,
     };
 
     return defaults;
@@ -255,8 +278,13 @@ export class Publisher {
   setOptions(options = {} as PublishOptions): void {
     const defaults = this.getOptionDefaults();
 
-    const {batching, gaxOpts, messageOrdering, enableOpenTelemetryTracing} =
-      extend(true, defaults, options);
+    const {
+      batching,
+      gaxOpts,
+      messageOrdering,
+      enableOpenTelemetryTracing,
+      flowControlOptions,
+    } = extend(true, defaults, options);
 
     this.settings = {
       batching: {
@@ -270,6 +298,7 @@ export class Publisher {
       gaxOpts,
       messageOrdering,
       enableOpenTelemetryTracing,
+      flowControlOptions,
     };
 
     // We also need to let all of our queues know that they need to update their options.
@@ -282,6 +311,9 @@ export class Publisher {
         q.updateOptions();
       }
     }
+
+    // This will always be filled in by our defaults if nothing else.
+    this.flowControl.setOptions(this.settings.flowControlOptions!);
   }
 
   /**
@@ -339,7 +371,6 @@ export class Publisher {
   }
 }
 
-promisifyAll(Publisher, {
+promisifySome(Publisher, Publisher.prototype, ['flush', 'publishMessage'], {
   singular: true,
-  exclude: ['publish', 'setOptions', 'constructSpan', 'getOptionDefaults'],
 });

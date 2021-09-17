@@ -15,7 +15,6 @@
  */
 
 import {paginator} from '@google-cloud/paginator';
-import {promisifyAll} from '@google-cloud/promisify';
 import {CallOptions} from 'google-gax';
 
 import {google} from '../protos/protos';
@@ -28,6 +27,7 @@ import {
   PublishOptions,
   PubsubMessage,
 } from './publisher';
+import {FlowControlledPublisher} from './publisher/flow-publisher';
 import {
   EmptyCallback,
   EmptyResponse,
@@ -47,6 +47,7 @@ import {
   Subscription,
   SubscriptionOptions,
 } from './subscription';
+import {promisifySome} from './util';
 
 export type TopicMetadata = google.pubsub.v1.ITopic;
 
@@ -787,6 +788,8 @@ export class Topic {
     message: MessageOptions,
     callback?: PublishCallback
   ): Promise<[string]> | void {
+    // Make a copy to ensure that any changes we make to it will not
+    // propagate up to the user's data.
     message = Object.assign({}, message);
 
     if (message.json && typeof message.json === 'object') {
@@ -795,6 +798,23 @@ export class Topic {
     }
 
     return this.publisher.publishMessage(message, callback!);
+  }
+
+  /**
+   * Creates a FlowControlledPublisher for this Topic.
+   *
+   * FlowControlledPublisher is a helper that lets you control how many messages
+   * are simultaneously queued to send, to avoid ballooning memory usage on
+   * a low bandwidth connection to Pub/Sub.
+   *
+   * Note that it's perfectly fine to create more than one on the same Topic.
+   * The actual flow control settings on the Topic will apply across all
+   * FlowControlledPublisher objects on that Topic.
+   *
+   * @returns {FlowControlledPublisher} The flow control helper.
+   */
+  flowControlled(): FlowControlledPublisher {
+    return new FlowControlledPublisher(this.publisher);
   }
 
   /**
@@ -1034,18 +1054,20 @@ paginator.extend(Topic, ['getSubscriptions']);
 
 /*! Developer Documentation
  *
- * All async methods (except for streams) will return a Promise in the event
- * that a callback is omitted.
+ * Existing async methods (except for streams) will return a Promise in the event
+ * that a callback is omitted. Future methods will not allow for a callback.
+ * (Use .then() on the returned Promise instead.)
  */
-promisifyAll(Topic, {
-  exclude: [
-    'publish',
-    'publishJSON',
-    'publishMessage',
-    'setPublishOptions',
-    'getPublishOptionDefaults',
-    'subscription',
-  ],
-});
+promisifySome(Topic, Topic.prototype, [
+  'flush',
+  'create',
+  'createSubscription',
+  'delete',
+  'exists',
+  'get',
+  'getMetadata',
+  'getSubscriptions',
+  'setMetadata',
+]);
 
 export {PublishOptions};

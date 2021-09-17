@@ -15,6 +15,7 @@
  */
 
 import {BATCH_LIMITS, PubsubMessage, PublishCallback} from './';
+import {calculateMessageSize} from './pubsub-message';
 
 export interface BatchPublishOptions {
   maxBytes?: number;
@@ -70,7 +71,7 @@ export class MessageBatch {
   add(message: PubsubMessage, callback: PublishCallback): void {
     this.messages.push(message);
     this.callbacks.push(callback);
-    this.bytes += message.data!.length;
+    this.bytes += calculateMessageSize(message);
   }
   /**
    * Indicates if a given message can fit in the batch.
@@ -78,11 +79,11 @@ export class MessageBatch {
    * @param {object} message The message in question.
    * @returns {boolean}
    */
-  canFit({data}: PubsubMessage): boolean {
+  canFit(message: PubsubMessage): boolean {
     const {maxMessages, maxBytes} = this.options;
     return (
       this.messages.length < maxMessages! &&
-      this.bytes + data!.length <= maxBytes!
+      this.bytes + calculateMessageSize(message) <= maxBytes!
     );
   }
   /**

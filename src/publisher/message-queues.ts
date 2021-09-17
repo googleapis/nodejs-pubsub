@@ -37,6 +37,7 @@ export abstract class MessageQueue extends EventEmitter {
   batchOptions: BatchPublishOptions;
   publisher: Publisher;
   pending?: NodeJS.Timer;
+
   constructor(publisher: Publisher) {
     super();
     this.publisher = publisher;

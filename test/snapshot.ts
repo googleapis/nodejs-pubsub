@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as pfy from '@google-cloud/promisify';
 import * as assert from 'assert';
 import {describe, it, beforeEach, before, after, afterEach} from 'mocha';
 import * as proxyquire from 'proxyquire';
@@ -21,14 +20,22 @@ import * as sinon from 'sinon';
 import {PubSub, RequestConfig} from '../src/pubsub';
 import * as snapTypes from '../src/snapshot';
 import {Subscription} from '../src/subscription';
+import * as util from '../src/util';
 
 let promisified = false;
-const fakePromisify = Object.assign({}, pfy, {
-  // tslint:disable-next-line variable-name
-  promisifyAll(Class: Function) {
-    if (Class.name === 'Snapshot') {
+const fakeUtil = Object.assign({}, util, {
+  promisifySome(
+    class_: Function,
+    classProtos: object,
+    methods: string[]
+  ): void {
+    if (class_.name === 'Snapshot') {
       promisified = true;
+      assert.deepStrictEqual(methods, ['delete', 'create', 'seek']);
     }
+    // Defeats the method name type check.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    util.promisifySome(class_, classProtos, methods as any);
   },
 });
 
@@ -55,7 +62,7 @@ describe('Snapshot', () => {
 
   before(() => {
     Snapshot = proxyquire('../src/snapshot', {
-      '@google-cloud/promisify': fakePromisify,
+      './util': fakeUtil,
     }).Snapshot;
   });
 
@@ -80,7 +87,7 @@ describe('Snapshot', () => {
       Snapshot.formatName_ = formatName_;
     });
 
-    it('should promisify all the things', () => {
+    it('should promisify some of the things', () => {
       assert(promisified);
     });
 
@@ -186,15 +193,15 @@ describe('Snapshot', () => {
         snapshot = new Snapshot(PUBSUB, SNAPSHOT_NAME);
       });
 
-      it('should throw on create method', () => {
-        assert.throws(
+      it('should throw on create method', async () => {
+        await assert.rejects(
           () => snapshot.create(),
           /This is only available if you accessed this object through Subscription#snapshot/
         );
       });
 
-      it('should throw on seek method', () => {
-        assert.throws(
+      it('should throw on seek method', async () => {
+        await assert.rejects(
           () => snapshot.seek(),
           /This is only available if you accessed this object through Subscription#snapshot/
         );

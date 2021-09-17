@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {promisifyAll} from '@google-cloud/promisify';
 import {CallOptions} from 'google-gax';
 
 import {google} from '../protos/protos';
@@ -26,6 +25,7 @@ import {
   ResourceCallback,
 } from './pubsub';
 import {Subscription} from './subscription';
+import {promisifySome} from './util';
 
 export type CreateSnapshotCallback = ResourceCallback<
   Snapshot,
@@ -263,7 +263,8 @@ export class Snapshot {
 
 /*! Developer Documentation
  *
- * All async methods (except for streams) will return a Promise in the event
- * that a callback is omitted.
+ * Existing async methods (except for streams) will return a Promise in the event
+ * that a callback is omitted. Future methods will not allow for a callback.
+ * (Use .then() on the returned Promise instead.)
  */
-promisifyAll(Snapshot);
+promisifySome(Snapshot, Snapshot.prototype, ['delete', 'create', 'seek']);

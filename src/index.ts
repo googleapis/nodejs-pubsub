@@ -93,6 +93,7 @@ export {
 export {Attributes, PublishCallback, PublishOptions} from './publisher';
 export {BatchPublishOptions} from './publisher/message-batch';
 export {PublishError} from './publisher/publish-error';
+export {FlowControlOptions} from './publisher/flow-control';
 export {
   PageOptions,
   GetSnapshotsCallback,

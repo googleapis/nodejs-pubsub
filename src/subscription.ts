@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {promisifyAll} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
@@ -45,6 +44,7 @@ import {
 } from './snapshot';
 import {Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';
+import {promisifySome} from './util';
 
 export type PushConfig = google.pubsub.v1.IPushConfig;
 export type OidcToken = google.pubsub.v1.PushConfig.IOidcToken;
@@ -1165,6 +1165,16 @@ export class Subscription extends EventEmitter {
  * All async methods (except for streams) will return a Promise in the event
  * that a callback is omitted.
  */
-promisifyAll(Subscription, {
-  exclude: ['open', 'snapshot'],
-});
+promisifySome(Subscription, Subscription.prototype, [
+  'close',
+  'create',
+  'createSnapshot',
+  'delete',
+  'detached',
+  'exists',
+  'get',
+  'getMetadata',
+  'modifyPushConfig',
+  'seek',
+  'setMetadata',
+]);

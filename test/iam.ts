@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as promisify from '@google-cloud/promisify';
 import * as assert from 'assert';
 import {describe, it, before, beforeEach} from 'mocha';
 import * as proxyquire from 'proxyquire';
@@ -22,12 +21,23 @@ import {PubSub, RequestConfig} from '../src/pubsub';
 import * as util from '../src/util';
 
 let promisified = false;
-const fakePromisify = Object.assign({}, promisify, {
-  // tslint:disable-next-line variable-name
-  promisifyAll(Class: typeof iamTypes.IAM) {
-    if (Class.name === 'IAM') {
+const fakeUtil = Object.assign({}, util, {
+  promisifySome(
+    class_: Function,
+    classProtos: object,
+    methods: string[]
+  ): void {
+    if (class_.name === 'IAM') {
       promisified = true;
+      assert.deepStrictEqual(methods, [
+        'getPolicy',
+        'setPolicy',
+        'testPermissions',
+      ]);
     }
+    // Defeats the method name type check.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    util.promisifySome(class_, classProtos, methods as any);
   },
 });
 
@@ -43,7 +53,7 @@ describe('IAM', () => {
 
   before(() => {
     IAM = proxyquire('../src/iam.js', {
-      '@google-cloud/promisify': fakePromisify,
+      './util': fakeUtil,
     }).IAM;
   });
 
@@ -75,7 +85,7 @@ describe('IAM', () => {
       assert.strictEqual(iam.id, ID);
     });
 
-    it('should promisify all the things', () => {
+    it('should promisify some of the things', () => {
       assert(promisified);
     });
   });

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Google Inc. All Rights Reserved.
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import {Topic} from '../../src';
 import * as p from '../../src/publisher';
 import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
+import * as util from '../../src/util';
 
 import {defaultOptions} from '../../src/default-options';
 import {exporter} from '../tracing';
@@ -32,24 +33,21 @@ import {SpanKind} from '@opentelemetry/api';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 
 let promisified = false;
-const fakePromisify = Object.assign({}, pfy, {
-  promisifyAll: (ctor: Function, options: pfy.PromisifyAllOptions) => {
-    if (ctor.name !== 'Publisher') {
-      return;
+const fakeUtil = Object.assign({}, util, {
+  promisifySome(
+    class_: Function,
+    classProtos: object,
+    methods: string[],
+    options: pfy.PromisifyAllOptions
+  ): void {
+    if (class_.name === 'Publisher') {
+      promisified = true;
+      assert.deepStrictEqual(methods, ['flush', 'publishMessage']);
+      assert.strictEqual(options.singular, true);
     }
-
-    // We _also_ need to call it, because unit tests will catch things
-    // that shouldn't be promisified.
-    pfy.promisifyAll(ctor, options);
-
-    promisified = true;
-    assert.ok(options.singular);
-    assert.deepStrictEqual(options.exclude, [
-      'publish',
-      'setOptions',
-      'constructSpan',
-      'getOptionDefaults',
-    ]);
+    // Defeats the method name type check.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    util.promisifySome(class_, classProtos, methods as any, options);
   },
 });
 
@@ -99,7 +97,7 @@ class FakeOrderedQueue extends FakeQueue {
 
 describe('Publisher', () => {
   let sandbox: sinon.SinonSandbox;
-  let spy: sinon.SinonSpyStatic;
+  let spy: sinon.SinonSpy;
   const topic = {
     name: 'topic-name',
     pubsub: {projectId: 'PROJECT_ID'},
@@ -114,7 +112,7 @@ describe('Publisher', () => {
     spy = sandbox.spy();
 
     const mocked = proxyquire('../../src/publisher/index.js', {
-      '@google-cloud/promisify': fakePromisify,
+      '../util': fakeUtil,
       './message-queues': {
         Queue: FakeQueue,
         OrderedQueue: FakeOrderedQueue,
@@ -131,7 +129,7 @@ describe('Publisher', () => {
   });
 
   describe('initialization', () => {
-    it('should promisify all the things', () => {
+    it('should promisify some of the things', () => {
       assert(promisified);
     });
 
@@ -264,15 +262,18 @@ describe('Publisher', () => {
       );
     });
 
-    it('should add non-ordered messages to the message queue', () => {
+    it('should add non-ordered messages to the message queue', done => {
       const stub = sandbox.stub(publisher.queue, 'add');
       const fakeMessage = {data};
 
-      publisher.publishMessage(fakeMessage, spy);
+      publisher.publishMessage(fakeMessage, done);
 
       const [message, callback] = stub.lastCall.args;
       assert.strictEqual(message, fakeMessage);
-      assert.strictEqual(callback, spy);
+
+      // Because of publisher flow control indirection, we have to test
+      // the callback this way.
+      callback(null);
     });
 
     describe('ordered messages', () => {
@@ -302,14 +303,19 @@ describe('Publisher', () => {
         assert.strictEqual(queue.orderingKey, orderingKey);
       });
 
-      it('should add the ordered message to the correct queue', () => {
+      it('should add the ordered message to the correct queue', done => {
         const stub = sandbox.stub(queue, 'add');
 
-        publisher.publishMessage(fakeMessage, spy);
+        publisher.publishMessage(fakeMessage, done);
 
+        // Because of publisher flow control indirection, we can't test
+        // the callback here.
         const [message, callback] = stub.lastCall.args;
         assert.strictEqual(message, fakeMessage);
-        assert.strictEqual(callback, spy);
+
+        // Because of publisher flow control indirection, we have to test
+        // the callback this way.
+        callback(null);
       });
 
       it('should return an error if the queue encountered an error', done => {
@@ -411,6 +417,10 @@ describe('Publisher', () => {
           isBundling: false,
         },
         enableOpenTelemetryTracing: false,
+        flowControlOptions: {
+          maxOutstandingBytes: undefined,
+          maxOutstandingMessages: undefined,
+        },
       });
     });
 
@@ -426,6 +436,10 @@ describe('Publisher', () => {
           isBundling: true,
         },
         enableOpenTelemetryTracing: true,
+        flowControlOptions: {
+          maxOutstandingBytes: 500,
+          maxOutstandingMessages: 50,
+        },
       };
 
       publisher.setOptions(options);
