@@ -4,6 +4,18 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.18.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.17.0...v2.18.0) (2021-09-23)
+
+
+### Features
+
+* add publisher side flow control ([#1359](https://www.github.com/googleapis/nodejs-pubsub/issues/1359)) ([cc0f61b](https://www.github.com/googleapis/nodejs-pubsub/commit/cc0f61b18258bae0be1a5962a93970cc15dcd304))
+
+
+### Bug Fixes
+
+* update default RPC retry timeouts to match other languages ([#1399](https://www.github.com/googleapis/nodejs-pubsub/issues/1399)) ([8c1afee](https://www.github.com/googleapis/nodejs-pubsub/commit/8c1afeee26fbff84448b1a9576e4c4ef5c67f9cc))
+
 ## [2.17.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.16.6...v2.17.0) (2021-08-25)
 
 
