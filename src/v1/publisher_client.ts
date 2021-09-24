@@ -1054,7 +1054,8 @@ export class PublisherClient {
       gax.routingHeader.fromParams({
         project: request.project || '',
       });
-    const callSettings = new gax.CallSettings(options);
+    const defaultCallSettings = this._defaults['listTopics'];
+    const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listTopics.createStream(
       this.innerApiCalls.listTopics as gax.GaxCall,
@@ -1107,7 +1108,8 @@ export class PublisherClient {
         project: request.project || '',
       });
     options = options || {};
-    const callSettings = new gax.CallSettings(options);
+    const defaultCallSettings = this._defaults['listTopics'];
+    const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listTopics.asyncIterate(
       this.innerApiCalls['listTopics'] as GaxCall,
@@ -1258,7 +1260,8 @@ export class PublisherClient {
       gax.routingHeader.fromParams({
         topic: request.topic || '',
       });
-    const callSettings = new gax.CallSettings(options);
+    const defaultCallSettings = this._defaults['listTopicSubscriptions'];
+    const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listTopicSubscriptions.createStream(
       this.innerApiCalls.listTopicSubscriptions as gax.GaxCall,
@@ -1311,7 +1314,8 @@ export class PublisherClient {
         topic: request.topic || '',
       });
     options = options || {};
-    const callSettings = new gax.CallSettings(options);
+    const defaultCallSettings = this._defaults['listTopicSubscriptions'];
+    const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listTopicSubscriptions.asyncIterate(
       this.innerApiCalls['listTopicSubscriptions'] as GaxCall,
@@ -1456,7 +1460,8 @@ export class PublisherClient {
       gax.routingHeader.fromParams({
         topic: request.topic || '',
       });
-    const callSettings = new gax.CallSettings(options);
+    const defaultCallSettings = this._defaults['listTopicSnapshots'];
+    const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listTopicSnapshots.createStream(
       this.innerApiCalls.listTopicSnapshots as gax.GaxCall,
@@ -1509,7 +1514,8 @@ export class PublisherClient {
         topic: request.topic || '',
       });
     options = options || {};
-    const callSettings = new gax.CallSettings(options);
+    const defaultCallSettings = this._defaults['listTopicSnapshots'];
+    const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listTopicSnapshots.asyncIterate(
       this.innerApiCalls['listTopicSnapshots'] as GaxCall,
