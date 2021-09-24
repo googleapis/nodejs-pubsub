@@ -21,8 +21,11 @@ import {defaultOptions} from './default-options';
 export interface FlowControlOptions {
   allowExcessMessages?: boolean;
   maxBytes?: number;
-  maxExtension?: number;
   maxMessages?: number;
+  maxExtensionMinutes?: number;
+
+  /** @deprecated Use maxExtensionMinutes. */
+  maxExtension?: number;
 }
 
 /**
@@ -36,7 +39,7 @@ export interface FlowControlOptions {
  * @property {number} [maxBytes=104857600] The desired amount of memory to
  *     allow message data to consume. (Default: 100MB) It's possible that this
  *     value will be exceeded, since messages are received in batches.
- * @property {number} [maxExtension=60] The maximum duration (in seconds)
+ * @property {number} [maxExtensionMinutes=60] The maximum duration (in minutes)
  *      to extend the message deadline before redelivering.
  * @property {number} [maxMessages=1000] The desired number of messages to allow
  *     in memory before pausing the message stream. Unless allowExcessMessages
@@ -182,10 +185,19 @@ export class LeaseManager extends EventEmitter {
    * @private
    */
   setOptions(options: FlowControlOptions): void {
+    // Convert the old deprecated maxExtension to avoid breaking clients.
+    if (
+      options.maxExtension !== undefined &&
+      options.maxExtensionMinutes === undefined
+    ) {
+      options.maxExtensionMinutes = options.maxExtension / 60;
+      delete options.maxExtension;
+    }
+
     const defaults: FlowControlOptions = {
       allowExcessMessages: true,
       maxBytes: defaultOptions.subscription.maxOutstandingBytes,
-      maxExtension: defaultOptions.subscription.maxExtensionMinutes,
+      maxExtensionMinutes: defaultOptions.subscription.maxExtensionMinutes,
       maxMessages: defaultOptions.subscription.maxOutstandingMessages,
     };
 
@@ -229,9 +241,10 @@ export class LeaseManager extends EventEmitter {
     const deadline = this._subscriber.ackDeadline;
 
     for (const message of this._messages) {
-      const lifespan = (Date.now() - message.received) / 1000;
+      // Lifespan here is in minutes.
+      const lifespan = (Date.now() - message.received) / (60 * 1000);
 
-      if (lifespan < this._options.maxExtension!) {
+      if (lifespan < this._options.maxExtensionMinutes!) {
         message.modAck(deadline);
       } else {
         this.remove(message);
