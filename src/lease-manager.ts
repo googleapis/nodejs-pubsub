@@ -182,10 +182,22 @@ export class LeaseManager extends EventEmitter {
    * Sets options for the LeaseManager.
    *
    * @param {FlowControlOptions} [options] The options.
+   *
+   * @throws {RangeError} If both maxExtension and maxExtensionMinutes are set.
+   *
    * @private
    */
   setOptions(options: FlowControlOptions): void {
-    // Convert the old deprecated maxExtension to avoid breaking clients.
+    // Convert the old deprecated maxExtension to avoid breaking clients,
+    // but allow only one.
+    if (
+      options.maxExtension !== undefined &&
+      options.maxExtensionMinutes !== undefined
+    ) {
+      throw new RangeError(
+        'Only one of "maxExtension" or "maxExtensionMinutes" may be set for subscriber lease management options'
+      );
+    }
     if (
       options.maxExtension !== undefined &&
       options.maxExtensionMinutes === undefined

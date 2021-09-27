@@ -233,6 +233,15 @@ describe('LeaseManager', () => {
         assert.strictEqual(options.maxExtension, undefined);
       });
 
+      it('should not allow both maxExtension and maxExtensionMinutes', () => {
+        assert.throws(() => {
+          leaseManager.setOptions({
+            maxExtension: 10,
+            maxExtensionMinutes: 10,
+          });
+        });
+      });
+
       it('should remove any messages that pass the maxExtensionMinutes value', () => {
         const maxExtensionSeconds = (expectedTimeout - 100) / 1000;
         const badMessages = [new FakeMessage(), new FakeMessage()];
