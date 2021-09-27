@@ -224,11 +224,31 @@ describe('LeaseManager', () => {
         });
       });
 
-      it('should remove any messages that pass the maxExtension value', () => {
-        const maxExtension = (expectedTimeout - 100) / 1000;
+      it('should properly convert any legacy maxExtension values', () => {
+        const maxExtension = 60 * 1000;
+        leaseManager.setOptions({maxExtension});
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const options = (leaseManager as any)._options;
+        assert.strictEqual(options.maxExtensionMinutes, maxExtension / 60);
+        assert.strictEqual(options.maxExtension, undefined);
+      });
+
+      it('should not allow both maxExtension and maxExtensionMinutes', () => {
+        assert.throws(() => {
+          leaseManager.setOptions({
+            maxExtension: 10,
+            maxExtensionMinutes: 10,
+          });
+        });
+      });
+
+      it('should remove any messages that pass the maxExtensionMinutes value', () => {
+        const maxExtensionSeconds = (expectedTimeout - 100) / 1000;
         const badMessages = [new FakeMessage(), new FakeMessage()];
 
-        leaseManager.setOptions({maxExtension});
+        leaseManager.setOptions({
+          maxExtensionMinutes: maxExtensionSeconds / 60,
+        });
         badMessages.forEach(message =>
           leaseManager.add(message as {} as Message)
         );
