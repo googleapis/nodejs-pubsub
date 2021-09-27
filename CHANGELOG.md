@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.18.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.18.0...v2.18.1) (2021-09-27)
+
+
+### Bug Fixes
+
+* deprecate maxExtension in favour of maxExtensionMinutes ([#1402](https://www.github.com/googleapis/nodejs-pubsub/issues/1402)) ([46b83ba](https://www.github.com/googleapis/nodejs-pubsub/commit/46b83ba14e954cc6bec3f03ca7c3e0bcdfb7597c))
+
 ## [2.18.0](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.17.0...v2.18.0) (2021-09-23)
 
 
