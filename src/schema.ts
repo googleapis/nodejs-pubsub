@@ -31,19 +31,22 @@ import {PubSub} from './pubsub';
  * @param {PubSub} pubsub The PubSub object creating this object.
  * @param {id} id name or ID of the schema.
  *
- * @example <caption>Creating an instance of this class.</caption>
+ * @example Creating an instance of this class.
+ * ```
  * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * const schema = pubsub.schema('my-schema');
  *
- * @example <caption>Getting the details of a schema. Note that Schema
- * methods do not provide a callback interface. Use .then() or await.</caption>
+ * ```
+ * @example Getting the details of a schema. Note that Schema methods do not provide a callback interface. Use .then() or await.
+ * ```
  * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * const schema = pubsub.schema('my-schema');
  * schema.get(SchemaViews.Basic).then(console.log);
+ * ```
  */
 export class Schema {
   id: string;
@@ -104,7 +107,8 @@ export class Schema {
    *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @returns {Promise<void>}
    *
-   * @example <caption>Create a schema.</caption>
+   * @example Create a schema.
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -113,6 +117,7 @@ export class Schema {
    *   SchemaTypes.Avro,
    *   '{...avro definition...}'
    * );
+   * ```
    */
   async create(
     type: SchemaType,

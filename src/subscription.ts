@@ -182,7 +182,8 @@ export type DetachSubscriptionResponse = EmptyResponse;
  * @param {string} name The name of the subscription.
  * @param {SubscriberOptions} [options] Options for handling messages.
  *
- * @example <caption>From {@link PubSub#getSubscriptions}</caption>
+ * @example From {@link PubSub#getSubscriptions}
+ * ```
  * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
@@ -190,26 +191,32 @@ export type DetachSubscriptionResponse = EmptyResponse;
  *   // `subscriptions` is an array of Subscription objects.
  * });
  *
- * @example <caption>From {@link Topic#getSubscriptions}</caption>
+ * ```
+ * @example From {@link Topic#getSubscriptions}
+ * ```
  * const topic = pubsub.topic('my-topic');
  * topic.getSubscriptions((err, subscriptions) => {
  *   // `subscriptions` is an array of Subscription objects.
  * });
  *
- * @example <caption>{@link Topic#createSubscription}</caption>
+ * ```
+ * @example {@link Topic#createSubscription}
+ * ```
  * const topic = pubsub.topic('my-topic');
  * topic.createSubscription('new-subscription', (err, subscription) => {
  *   // `subscription` is a Subscription object.
  * });
  *
- * @example <caption>{@link Topic#subscription}</caption>
+ * ```
+ * @example {@link Topic#subscription}
+ * ```
  * const topic = pubsub.topic('my-topic');
  * const subscription = topic.subscription('my-subscription');
  * // `subscription` is a Subscription object.
  *
- * @example <caption>Once you have obtained a subscription object, you may begin
- * to register listeners. This will automatically trigger pulling for messages.
- * </caption>
+ * ```
+ * @example Once you have obtained a subscription object, you may begin to register listeners. This will automatically trigger pulling for messages.
+ * ```
  * // Register an error handler.
  * subscription.on('error', (err) => {});
  *
@@ -238,8 +245,9 @@ export type DetachSubscriptionResponse = EmptyResponse;
  * // Remove the listener from receiving `message` events.
  * subscription.removeListener('message', onMessage);
  *
- * @example <caption>To apply a fine level of flow control, consider the
- * following configuration</caption>
+ * ```
+ * @example To apply a fine level of flow control, consider the following configuration
+ * ```
  * const subscription = topic.subscription('my-sub', {
  *   flowControl: {
  *     maxMessages: 1,
@@ -247,6 +255,7 @@ export type DetachSubscriptionResponse = EmptyResponse;
  *     allowExcessMessages: false
  *   }
  * });
+ * ```
  */
 export class Subscription extends EventEmitter {
   pubsub: PubSub;
@@ -287,6 +296,7 @@ export class Subscription extends EventEmitter {
      * @see [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
      *
      * @example
+     * ```
      * //-
      * // Get the IAM policy for your subscription.
      * //-
@@ -301,6 +311,7 @@ export class Subscription extends EventEmitter {
      *   const policy = data[0];
      *   const apiResponse = data[1];
      * });
+     * ```
      */
     this.iam = new IAM(pubsub, this.name);
 
@@ -341,6 +352,7 @@ export class Subscription extends EventEmitter {
    *     Subscription.
    *
    * @example
+   * ```
    * subscription.close(err => {
    *   if (err) {
    *     // Error handling omitted.
@@ -349,6 +361,7 @@ export class Subscription extends EventEmitter {
    *
    * // If the callback is omitted a Promise will be returned.
    * subscription.close().then(() => {});
+   * ```
    */
   close(callback?: SubscriptionCloseCallback): void | Promise<void> {
     this._subscriber.close().then(() => callback!(), callback);
@@ -377,6 +390,7 @@ export class Subscription extends EventEmitter {
    * @returns {Promise<CreateSubscriptionResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -386,13 +400,18 @@ export class Subscription extends EventEmitter {
    *
    * subscription.create(callback);
    *
-   * @example <caption>With options</caption>
+   * ```
+   * @example With options
+   * ```
    * subscription.create({
    *   ackDeadlineSeconds: 90
    * }, callback);
    *
-   * @example <caption>If the callback is omitted, we'll return a
-   * Promise.</caption> const [sub, apiResponse] = await subscription.create();
+   * ```
+   * @example If the callback is omitted, we'll return a Promise.
+   * ```
+   * const [sub, apiResponse] = await subscription.create();
+   * ```
    */
   create(
     optsOrCallback?: CreateSubscriptionOptions | CreateSubscriptionCallback,
@@ -454,6 +473,7 @@ export class Subscription extends EventEmitter {
    * @returns {Promise<CreateSnapshotResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -475,6 +495,7 @@ export class Subscription extends EventEmitter {
    *   const snapshot = data[0];
    *   const apiResponse = data[1];
    * });
+   * ```
    */
   createSnapshot(
     name: string,
@@ -527,6 +548,7 @@ export class Subscription extends EventEmitter {
    * @param {object} callback.apiResponse Raw API response.
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -541,6 +563,7 @@ export class Subscription extends EventEmitter {
    * subscription.delete().then((data) => {
    *   const apiResponse = data[0];
    * });
+   * ```
    */
   delete(
     optsOrCallback?: CallOptions | EmptyCallback,
@@ -586,6 +609,7 @@ export class Subscription extends EventEmitter {
    * @returns {Promise<SubscriptionDetachedResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -600,6 +624,7 @@ export class Subscription extends EventEmitter {
    * subscription.detached().then((data) => {
    *   const detached = data[0];
    * });
+   * ```
    */
   detached(callback?: DetachedCallback): void | Promise<DetachedResponse> {
     this.getMetadata((err, metadata) => {
@@ -629,6 +654,7 @@ export class Subscription extends EventEmitter {
    * @returns {Promise<SubscriptionExistsResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -643,6 +669,7 @@ export class Subscription extends EventEmitter {
    * subscription.exists().then((data) => {
    *   const exists = data[0];
    * });
+   * ```
    */
   exists(callback?: ExistsCallback): void | Promise<ExistsResponse> {
     this.getMetadata(err => {
@@ -684,6 +711,7 @@ export class Subscription extends EventEmitter {
    * @returns {Promise<GetSubscriptionResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -701,6 +729,7 @@ export class Subscription extends EventEmitter {
    *   const subscription = data[0];
    *   const apiResponse = data[1];
    * });
+   * ```
    */
   get(
     optsOrCallback?: GetSubscriptionOptions | GetSubscriptionCallback,
@@ -751,6 +780,7 @@ export class Subscription extends EventEmitter {
    * @returns {Promise<GetSubscriptionMetadataResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -769,6 +799,7 @@ export class Subscription extends EventEmitter {
    * subscription.getMetadata().then((data) => {
    *   const apiResponse = data[0];
    * });
+   * ```
    */
   getMetadata(
     optsOrCallback?: CallOptions | GetSubscriptionMetadataCallback,
@@ -833,6 +864,7 @@ export class Subscription extends EventEmitter {
    * @returns {Promise<ModifyPushConfigResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -862,6 +894,7 @@ export class Subscription extends EventEmitter {
    * subscription.modifyPushConfig(pushConfig).then((data) => {
    *   const apiResponse = data[0];
    * });
+   * ```
    */
   modifyPushConfig(
     config: PushConfig,
@@ -894,6 +927,7 @@ export class Subscription extends EventEmitter {
    * new `message` event listener which will also re-open the Subscription.
    *
    * @example
+   * ```
    * subscription.on('message', message => message.ack());
    *
    * // Close the subscription.
@@ -907,6 +941,7 @@ export class Subscription extends EventEmitter {
    *
    * // Resume receiving messages.
    * subscription.open();
+   * ```
    */
   open() {
     if (!this._subscriber.isOpen) {
@@ -941,6 +976,7 @@ export class Subscription extends EventEmitter {
    * @returns {Promise<SeekResponse>}
    *
    * @example
+   * ```
    * const callback = (err, resp) => {
    *   if (!err) {
    *     // Seek was successful.
@@ -957,6 +993,7 @@ export class Subscription extends EventEmitter {
    * const date = new Date('October 21 2015');
    *
    * subscription.seek(date, callback);
+   * ```
    */
   seek(
     snapshot: string | Date,
@@ -1025,6 +1062,7 @@ export class Subscription extends EventEmitter {
    * @returns {Promise<SetSubscriptionMetadataResponse>}
    *
    * @example
+   * ```
    * const metadata = {
    *   key: 'value'
    * };
@@ -1041,6 +1079,7 @@ export class Subscription extends EventEmitter {
    * subscription.setMetadata(metadata).then((data) => {
    *   const apiResponse = data[0];
    * });
+   * ```
    */
   setMetadata(
     metadata: SubscriptionMetadata,
@@ -1087,7 +1126,9 @@ export class Subscription extends EventEmitter {
    * @returns {Snapshot}
    *
    * @example
+   * ```
    * const snapshot = subscription.snapshot('my-snapshot');
+   * ```
    */
   snapshot(name: string): Snapshot {
     return this.pubsub.snapshot.call(this, name);

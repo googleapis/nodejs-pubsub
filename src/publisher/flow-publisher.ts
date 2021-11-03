@@ -62,14 +62,18 @@ export class FlowControlledPublisher {
    * @returns null, or a Promise that resolves when sending may resume.
    *
    * @example
+   * ```
    * const wait = flowControlled.publish({data});
    * if (wait) {
    *   await wait;
    * }
    *
+   * ```
    * @example
+   * ```
    * // It's okay to await unconditionally, it's equivalent to nextTick().
    * await flowControlled.publish(data);
+   * ```
    */
   publish(message: PubsubMessage): Promise<void> | null {
     const doPublish = () => {
@@ -97,9 +101,11 @@ export class FlowControlledPublisher {
    * @param {Attributes} [attributes] Optional attributes.
    *
    * @example
+   * ```
    * if (!flowControlled.wouldExceed(data)) {
    *   flowControlled.publishNow(data);
    * }
+   * ```
    */
   publishNow(message: PubsubMessage): void {
     this.flowControl.addToCount(calculateMessageSize(message), 1);

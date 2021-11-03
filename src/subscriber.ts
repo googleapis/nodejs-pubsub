@@ -45,6 +45,7 @@ export type PullResponse = google.pubsub.v1.IPullResponse;
  * acknowledge the message.
  *
  * @example
+ * ```
  * subscription.on('message', message => {
  *   // {
  *   //   ackId: 'RUFeQBJMJAxESVMrQwsqWBFOBCEhPjA',
@@ -57,6 +58,7 @@ export type PullResponse = google.pubsub.v1.IPullResponse;
  *   //   length: 13
  *   // }
  * });
+ * ```
  */
 export class Message {
   ackId: string;
@@ -163,9 +165,11 @@ export class Message {
    * Acknowledges the message.
    *
    * @example
+   * ```
    * subscription.on('message', message => {
    *   message.ack();
    * });
+   * ```
    */
   ack(): void {
     if (!this._handled) {
@@ -188,9 +192,11 @@ export class Message {
    * Removes the message from our inventory and schedules it to be redelivered.
    *
    * @example
+   * ```
    * subscription.on('message', message => {
    *   message.nack();
    * });
+   * ```
    */
   nack(): void {
     if (!this._handled) {
