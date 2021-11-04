@@ -92,13 +92,17 @@ export type MessageOptions = PubsubMessage & {json?: any};
  * @param {PublishOptions} [options] Publisher configuration object.
  *
  * @example
+ * ```
  * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
  * const topic = pubsub.topic('my-topic');
  *
- * @example <caption>To enable message ordering, set `enableMessageOrdering` to true. Please note that this does not persist to an actual topic.</caption>
+ * ```
+ * @example To enable message ordering, set `enableMessageOrdering` to true. Please note that this does not persist to an actual topic.
+ * ```
  * const topic = pubsub.topic('ordered-topic', {enableMessageOrdering: true});
+ * ```
  */
 export class Topic {
   name: string;
@@ -153,6 +157,7 @@ export class Topic {
      * @see [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
      *
      * @example
+     * ```
      * const {PubSub} = require('@google-cloud/pubsub');
      * const pubsub = new PubSub();
      *
@@ -172,6 +177,7 @@ export class Topic {
      *   const policy = data[0];
      *   const apiResponse = data[1];
      * });
+     * ```
      */
     this.iam = new IAM(pubsub, this.name);
   }
@@ -204,6 +210,7 @@ export class Topic {
    * @returns {Promise<CreateTopicResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -222,6 +229,7 @@ export class Topic {
    *   const topic = data[0];
    *   const apiResponse = data[1];
    * });
+   * ```
    */
   create(
     optsOrCallback?: CallOptions | CreateTopicCallback,
@@ -258,6 +266,7 @@ export class Topic {
    * @returns {Promise<CreateSubscriptionResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -279,6 +288,7 @@ export class Topic {
    *   const subscription = data[0];
    *   const apiResponse = data[1];
    * });
+   * ```
    */
   createSubscription(
     name: string,
@@ -312,6 +322,7 @@ export class Topic {
    * @param {object} callback.apiResponse Raw API response.
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -325,6 +336,7 @@ export class Topic {
    * topic.delete().then((data) => {
    *   const apiResponse = data[0];
    * });
+   * ```
    */
   delete(
     optsOrCallback?: CallOptions | EmptyCallback,
@@ -366,6 +378,7 @@ export class Topic {
    * @returns {Promise<TopicExistsResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -379,6 +392,7 @@ export class Topic {
    * topic.exists().then((data) => {
    *   const exists = data[0];
    * });
+   * ```
    */
   exists(callback?: ExistsCallback): void | Promise<ExistsResponse> {
     this.getMetadata(err => {
@@ -419,6 +433,7 @@ export class Topic {
    * @returns {Promise<GetTopicResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -435,6 +450,7 @@ export class Topic {
    *   const topic = data[0];
    *   const apiResponse = data[1];
    * });
+   * ```
    */
   get(
     optsOrCallback?: GetTopicOptions | GetTopicCallback,
@@ -482,6 +498,7 @@ export class Topic {
    * @returns {Promise<GetTopicMetadataResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -495,6 +512,7 @@ export class Topic {
    * topic.getMetadata().then((data) => {
    *   const apiResponse = data[0];
    * });
+   * ```
    */
   getMetadata(
     optsOrCallback?: CallOptions | GetTopicMetadataCallback,
@@ -546,6 +564,7 @@ export class Topic {
    * @returns {Promise<GetSubscriptionsResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -566,6 +585,7 @@ export class Topic {
    * topic.getSubscriptions().then((data) => {
    *   const subscriptions = data[0];
    * });
+   * ```
    */
   getSubscriptions(
     optsOrCallback?: PageOptions | GetTopicSubscriptionsCallback,
@@ -633,6 +653,7 @@ export class Topic {
    * @returns {Promise<PublishResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -647,15 +668,20 @@ export class Topic {
    *
    * topic.publish(data, callback);
    *
-   * @example <caption>Optionally you can provide an object containing attributes for the message. Note that all values in the object must be strings.</caption>
+   * ```
+   * @example Optionally you can provide an object containing attributes for the message. Note that all values in the object must be strings.
+   * ```
    * const attributes = {
    *   key: 'value'
    * };
    *
    * topic.publish(data, attributes, callback);
    *
-   * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
+   * ```
+   * @example If the callback is omitted, we'll return a Promise.
+   * ```
    * topic.publish(data).then((messageId) => {});
+   * ```
    */
   publish(
     data: Buffer,
@@ -691,6 +717,7 @@ export class Topic {
    * @returns {Promise<PublishResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    * const topic = pubsub.topic('my-topic');
@@ -707,15 +734,20 @@ export class Topic {
    *
    * topic.publishJSON(data, callback);
    *
-   * @example <caption>Optionally you can provide an object containing attributes for the message. Note that all values in the object must be strings.</caption>
+   * ```
+   * @example Optionally you can provide an object containing attributes for the message. Note that all values in the object must be strings.
+   * ```
    * const attributes = {
    *   key: 'value'
    * };
    *
    * topic.publishJSON(data, attributes, callback);
    *
-   * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
+   * ```
+   * @example If the callback is omitted, we'll return a Promise.
+   * ```
    * topic.publishJSON(data).then((messageId) => {});
+   * ```
    */
   publishJSON(
     json: object,
@@ -756,6 +788,7 @@ export class Topic {
    * @returns {Promise<PublishResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    * const topic = pubsub.topic('my-topic');
@@ -770,19 +803,26 @@ export class Topic {
    *
    * topic.publishMessage({data}, callback);
    *
-   * @example <caption>Publish JSON message data.</caption>
+   * ```
+   * @example Publish JSON message data.
+   * ```
    * const json = {foo: 'bar'};
    *
    * topic.publishMessage({json}, callback);
    *
-   * @example <caption>To publish messages in order (this is still experimental), make sure message ordering is enabled and provide an ordering key</caption>
+   * ```
+   * @example To publish messages in order (this is still experimental), make sure message ordering is enabled and provide an ordering key
+   * ```
    * const topic = pubsub.topic('ordered-topic', {messageOrdering: true});
    * const orderingKey = 'my-key';
    *
    * topic.publishMessage({data, orderingKey}, callback);
    *
-   * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
+   * ```
+   * @example If the callback is omitted, we'll return a Promise.
+   * ```
    * const [messageId] = await topic.publishMessage({data});
+   * ```
    */
   publishMessage(
     message: MessageOptions,
@@ -826,6 +866,7 @@ export class Topic {
    * @param {string} orderingKey The ordering key in question.
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    * const topic = pubsub.topic('my-topic', {messageOrdering: true});
@@ -838,6 +879,7 @@ export class Topic {
    *     topic.resumePublishing(orderingKey);
    *   }
    * });
+   * ```
    */
   resumePublishing(orderingKey: string): void {
     this.publisher.resumePublishing(orderingKey);
@@ -877,6 +919,7 @@ export class Topic {
    * @returns {Promise<SetTopicMetadataResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -891,11 +934,13 @@ export class Topic {
    *   }
    * });
    *
-   * @example <caption>If the callback is omitted, we'll return a
-   * Promise.</caption>
+   * ```
+   * @example If the callback is omitted, we'll return a Promise.
+   * ```
    * topic.setMetadata(metadata).then((data) => {
    *   const apiResponse = data[0];
    * });
+   * ```
    */
   setMetadata(
     options: TopicMetadata,
@@ -926,6 +971,7 @@ export class Topic {
    * @param {PublishOptions} options The publisher options.
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -936,6 +982,7 @@ export class Topic {
    *     maxMilliseconds: 10
    *   }
    * });
+   * ```
    */
   setPublishOptions(options: PublishOptions): void {
     this.publisher.setOptions(options);
@@ -946,6 +993,7 @@ export class Topic {
    * back into {@link Topic#setPublishOptions}.
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -954,6 +1002,7 @@ export class Topic {
    * const defaults = topic.getPublishOptionDefaults();
    * defaults.batching.maxMilliseconds = 10;
    * topic.setPublishOptions(defaults);
+   * ```
    */
   getPublishOptionDefaults(): PublishOptions {
     // Generally I'd leave this as a static, but it'll be easier for users to
@@ -973,6 +1022,7 @@ export class Topic {
    * @return {Subscription}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -988,6 +1038,7 @@ export class Topic {
    *   // message.attributes = Attributes of the message.
    *   // message.publishTime = Timestamp when Pub/Sub received the message.
    * });
+   * ```
    */
   subscription(name: string, options?: SubscriptionOptions): Subscription {
     options = options || {};
@@ -1022,6 +1073,7 @@ export class Topic {
  * @returns {ReadableStream} A readable stream of {@link Subscription} instances.
  *
  * @example
+ * ```
  * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
@@ -1044,6 +1096,7 @@ export class Topic {
  *   .on('data', function(subscription) {
  *     this.end();
  *   });
+ * ```
  */
 
 /*! Developer Documentation

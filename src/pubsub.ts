@@ -227,18 +227,24 @@ interface GetClientCallback {
  *
  * @param {ClientConfig} [options] Configuration options.
  *
- * @example <caption>Import the client library</caption>
+ * @example Import the client library
+ * ```
  * const {PubSub} = require('@google-cloud/pubsub');
  *
- * @example <caption>Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:</caption>
+ * ```
+ * @example Create a client that uses <a href="https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application">Application Default Credentials (ADC)</a>:
+ * ```
  * const pubsub = new PubSub();
  *
- * @example <caption>Create a client with <a href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit credentials</a>:</caption>
+ * ```
+ * @example Create a client with <a href="https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually">explicit credentials</a>:
+ * ```
  * const pubsub = new PubSub({
  *   projectId: 'your-project-id',
  *   keyFilename: '/path/to/keyfile.json'
  * });
  *
+ * ```
  * @example <caption>include:samples/quickstart.js</caption>
  * region_tag:pubsub_quickstart_create_topic
  * Full quickstart example:
@@ -352,7 +358,8 @@ export class PubSub {
    *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @returns {Promise<Schema>}
    *
-   * @example <caption>Create a schema.</caption>
+   * @example Create a schema.
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -361,6 +368,7 @@ export class PubSub {
    *   SchemaTypes.Avro,
    *   '{...avro definition...}'
    * );
+   * ```
    */
   async createSchema(
     schemaId: string,
@@ -465,7 +473,8 @@ export class PubSub {
    * @param {CreateSubscriptionCallback} [callback] Callback function.
    * @returns {Promise<CreateSubscriptionResponse>}
    *
-   * @example <caption>Subscribe to a topic.</caption>
+   * @example Subscribe to a topic.
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -476,12 +485,15 @@ export class PubSub {
    *
    * pubsub.createSubscription(topic, name, callback);
    *
-   * @example <caption>If the callback is omitted, we'll return a Promise.</caption>
+   * ```
+   * @example If the callback is omitted, we'll return a Promise.
+   * ```
    * pubsub.createSubscription(topic, name)
    *   .then(function(data) {
    *     const subscription = data[0];
    *     const apiResponse = data[1];
    *   });
+   * ```
    */
   createSubscription(
     topic: Topic | string,
@@ -580,6 +592,7 @@ export class PubSub {
    * @returns {Promise<CreateTopicResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -596,6 +609,7 @@ export class PubSub {
    *   const topic = data[0];
    *   const apiResponse = data[1];
    * });
+   * ```
    */
   createTopic(
     name: string | TopicMetadata,
@@ -658,6 +672,7 @@ export class PubSub {
    * @returns {Promise<DetachSubscriptionResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -673,6 +688,7 @@ export class PubSub {
    * pubsub.detachSubscription('my-sub').then(data => {
    *   const apiResponse = data[0];
    * });
+   * ```
    */
   detachSubscription(
     name: string,
@@ -786,9 +802,11 @@ export class PubSub {
    * @returns {AsyncIterable<ISchema>}
    *
    * @example
+   * ```
    * for await (const s of pubsub.listSchemas()) {
    *   const moreInfo = await s.get();
    * }
+   * ```
    */
   async *listSchemas(
     view: SchemaView = SchemaViews.Basic,
@@ -838,6 +856,7 @@ export class PubSub {
    * @returns {Promise<GetSnapshotsResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -853,6 +872,7 @@ export class PubSub {
    * pubsub.getSnapshots().then(function(data) {
    *   const snapshots = data[0];
    * });
+   * ```
    */
   getSnapshots(
     optsOrCallback?: PageOptions | GetSnapshotsCallback,
@@ -955,6 +975,7 @@ export class PubSub {
    * @returns {Promise<GetSubscriptionsResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -970,6 +991,7 @@ export class PubSub {
    * pubsub.getSubscriptions().then(function(data) {
    *   const subscriptions = data[0];
    * });
+   * ```
    */
   getSubscriptions(
     optsOrCallback?: GetSubscriptionsOptions | GetSubscriptionsCallback,
@@ -1066,6 +1088,7 @@ export class PubSub {
    * @returns {Promise<GetTopicsResponse>}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -1088,6 +1111,7 @@ export class PubSub {
    * pubsub.getTopics().then(function(data) {
    *   const topics = data[0];
    * });
+   * ```
    */
   getTopics(
     optsOrCallback?: PageOptions | GetTopicsCallback,
@@ -1291,10 +1315,12 @@ export class PubSub {
    * @returns {Schema} A {@link Schema} instance.
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const schema = pubsub.schema('my-schema');
+   * ```
    */
   schema(idOrName: string): Schema {
     return new Schema(this, idOrName);
@@ -1310,10 +1336,12 @@ export class PubSub {
    * @returns {Snapshot} A {@link Snapshot} instance.
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const snapshot = pubsub.snapshot('my-snapshot');
+   * ```
    */
   snapshot(name: string): Snapshot {
     if (typeof name !== 'string') {
@@ -1333,6 +1361,7 @@ export class PubSub {
    * @returns {Subscription} A {@link Subscription} instance.
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -1347,6 +1376,7 @@ export class PubSub {
    *   // message.attributes = Attributes of the message.
    *   // message.publishTime = Date when Pub/Sub received the message.
    * });
+   * ```
    */
   subscription(name: string, options?: SubscriptionOptions): Subscription {
     if (!name) {
@@ -1364,10 +1394,12 @@ export class PubSub {
    * @returns {Topic} A {@link Topic} instance.
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
    * const topic = pubsub.topic('my-topic');
+   * ```
    */
   topic(name: string, options?: PublishOptions): Topic {
     if (!name) {
@@ -1430,6 +1462,7 @@ export class PubSub {
  * @returns {ReadableStream} A readable stream of {@link Snapshot} instances.
  *
  * @example
+ * ```
  * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
@@ -1450,6 +1483,7 @@ export class PubSub {
  *   .on('data', function(snapshot) {
  *     this.end();
  *   });
+ * ```
  */
 
 /**
@@ -1462,6 +1496,7 @@ export class PubSub {
  * @returns {ReadableStream} A readable stream of {@link Subscription} instances.
  *
  * @example
+ * ```
  * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
@@ -1482,6 +1517,7 @@ export class PubSub {
  *   .on('data', function(subscription) {
  *     this.end();
  *   });
+ * ```
  */
 
 /**
@@ -1494,6 +1530,7 @@ export class PubSub {
  * @returns {ReadableStream} A readable stream of {@link Topic} instances.
  *
  * @example
+ * ```
  * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
@@ -1514,6 +1551,7 @@ export class PubSub {
  *   .on('data', function(topic) {
  *     this.end();
  *   });
+ * ```
  */
 
 /*! Developer Documentation

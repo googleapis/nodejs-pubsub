@@ -516,7 +516,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.createSubscription(request);
+   * ```
    */
   createSubscription(
     request?: protos.google.pubsub.v1.ISubscription,
@@ -600,7 +602,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.getSubscription(request);
+   * ```
    */
   getSubscription(
     request?: protos.google.pubsub.v1.IGetSubscriptionRequest,
@@ -687,7 +691,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.updateSubscription(request);
+   * ```
    */
   updateSubscription(
     request?: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
@@ -775,7 +781,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.deleteSubscription(request);
+   * ```
    */
   deleteSubscription(
     request?: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
@@ -874,7 +882,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.modifyAckDeadline(request);
+   * ```
    */
   modifyAckDeadline(
     request?: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
@@ -968,7 +978,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.acknowledge(request);
+   * ```
    */
   acknowledge(
     request?: protos.google.pubsub.v1.IAcknowledgeRequest,
@@ -1066,7 +1078,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.pull(request);
+   * ```
    */
   pull(
     request?: protos.google.pubsub.v1.IPullRequest,
@@ -1162,7 +1176,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.modifyPushConfig(request);
+   * ```
    */
   modifyPushConfig(
     request?: protos.google.pubsub.v1.IModifyPushConfigRequest,
@@ -1250,7 +1266,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.getSnapshot(request);
+   * ```
    */
   getSnapshot(
     request?: protos.google.pubsub.v1.IGetSnapshotRequest,
@@ -1366,7 +1384,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.createSnapshot(request);
+   * ```
    */
   createSnapshot(
     request?: protos.google.pubsub.v1.ICreateSnapshotRequest,
@@ -1457,7 +1477,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.updateSnapshot(request);
+   * ```
    */
   updateSnapshot(
     request?: protos.google.pubsub.v1.IUpdateSnapshotRequest,
@@ -1549,7 +1571,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.deleteSnapshot(request);
+   * ```
    */
   deleteSnapshot(
     request?: protos.google.pubsub.v1.IDeleteSnapshotRequest,
@@ -1654,7 +1678,9 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.seek(request);
+   * ```
    */
   seek(
     request?: protos.google.pubsub.v1.ISeekRequest,
@@ -1715,11 +1741,13 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#bi-directional-streaming)
    *   for more details and examples.
    * @example
+   * ```
    * const stream = client.streamingPull();
    * stream.on('data', (response) => { ... });
    * stream.on('end', () => { ... });
    * stream.write(request);
    * stream.end();
+   * ```
    */
   streamingPull(options?: CallOptions): gax.CancellableStream {
     this.initialize();
@@ -1892,10 +1920,12 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
    * @example
+   * ```
    * const iterable = client.listSubscriptionsAsync(request);
    * for await (const response of iterable) {
    *   // process response
    * }
+   * ```
    */
   listSubscriptionsAsync(
     request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
@@ -2088,10 +2118,12 @@ export class SubscriberClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
    * @example
+   * ```
    * const iterable = client.listSnapshotsAsync(request);
    * for await (const response of iterable) {
    *   // process response
    * }
+   * ```
    */
   listSnapshotsAsync(
     request?: protos.google.pubsub.v1.IListSnapshotsRequest,

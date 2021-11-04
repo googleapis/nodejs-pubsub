@@ -56,6 +56,7 @@ export type SeekResponse = [google.pubsub.v1.ISeekResponse];
  * @class
  *
  * @example
+ * ```
  * //-
  * // From {@link PubSub#getSnapshots}:
  * //-
@@ -99,6 +100,7 @@ export type SeekResponse = [google.pubsub.v1.ISeekResponse];
  *     // Error handling omitted.
  *   }
  * });
+ * ```
  */
 export class Snapshot {
   parent: Subscription | PubSub;
@@ -121,6 +123,7 @@ export class Snapshot {
    *     service.
    *
    * @example
+   * ```
    * snapshot.delete((err, apiResponse) => {});
    *
    * //-
@@ -129,6 +132,7 @@ export class Snapshot {
    * snapshot.delete().then((data) => {
    *   const apiResponse = data[0];
    * });
+   * ```
    */
   delete(callback?: EmptyCallback): void | Promise<EmptyResponse> {
     const reqOpts = {
@@ -174,6 +178,7 @@ export class Snapshot {
    *     service.
    *
    * @example
+   * ```
    * const subscription = pubsub.subscription('my-subscription');
    * const snapshot = subscription.snapshot('my-snapshot');
    *
@@ -192,6 +197,7 @@ export class Snapshot {
    *   const snapshot = data[0];
    *   const apiResponse = data[1];
    * });
+   * ```
    */
   create(
     optsOrCallback?: CallOptions | CreateSnapshotCallback,
@@ -236,6 +242,7 @@ export class Snapshot {
    *     service.
    *
    * @example
+   * ```
    * const subscription = pubsub.subscription('my-subscription');
    * const snapshot = subscription.snapshot('my-snapshot');
    *
@@ -247,6 +254,7 @@ export class Snapshot {
    * snapshot.seek().then((data) => {
    *   const apiResponse = data[0];
    * });
+   * ```
    */
   seek(
     gaxOpts?: CallOptions | SeekCallback,
