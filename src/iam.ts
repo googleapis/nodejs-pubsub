@@ -83,6 +83,7 @@ export type TestIamPermissionsCallback = ResourceCallback<
  * @see [What is Cloud IAM?]{@link https://cloud.google.com/iam/}
  *
  * @example
+ * ```
  * const {PubSub} = require('@google-cloud/pubsub');
  * const pubsub = new PubSub();
  *
@@ -91,6 +92,7 @@ export type TestIamPermissionsCallback = ResourceCallback<
  *
  * const subscription = pubsub.subscription('my-subscription');
  * // subscription.iam
+ * ```
  */
 export class IAM {
   pubsub: PubSub;
@@ -127,6 +129,7 @@ export class IAM {
    * @see [Subscriptions: getIamPolicy API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/getIamPolicy}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -144,6 +147,7 @@ export class IAM {
    *   const policy = data[0];
    *   const apiResponse = data[1];
    * });
+   * ```
    */
   getPolicy(
     optsOrCallback?: CallOptions | GetPolicyCallback,
@@ -202,6 +206,7 @@ export class IAM {
    * @see [Policy]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/Policy}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -230,6 +235,7 @@ export class IAM {
    *   const policy = data[0];
    *   const apiResponse = data[1];
    * });
+   * ```
    */
   setPolicy(
     policy: Policy,
@@ -306,6 +312,7 @@ export class IAM {
    * @see [Permissions Reference]{@link https://cloud.google.com/pubsub/access_control#permissions}
    *
    * @example
+   * ```
    * const {PubSub} = require('@google-cloud/pubsub');
    * const pubsub = new PubSub();
    *
@@ -347,6 +354,7 @@ export class IAM {
    *   const permissions = data[0];
    *   const apiResponse = data[1];
    * });
+   * ```
    */
   testPermissions(
     permissions: string | string[],

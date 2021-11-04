@@ -445,7 +445,9 @@ export class PublisherClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.createTopic(request);
+   * ```
    */
   createTopic(
     request?: protos.google.pubsub.v1.ITopic,
@@ -535,7 +537,9 @@ export class PublisherClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.updateTopic(request);
+   * ```
    */
   updateTopic(
     request?: protos.google.pubsub.v1.IUpdateTopicRequest,
@@ -622,7 +626,9 @@ export class PublisherClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.publish(request);
+   * ```
    */
   publish(
     request?: protos.google.pubsub.v1.IPublishRequest,
@@ -706,7 +712,9 @@ export class PublisherClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.getTopic(request);
+   * ```
    */
   getTopic(
     request?: protos.google.pubsub.v1.IGetTopicRequest,
@@ -794,7 +802,9 @@ export class PublisherClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.deleteTopic(request);
+   * ```
    */
   deleteTopic(
     request?: protos.google.pubsub.v1.IDeleteTopicRequest,
@@ -881,7 +891,9 @@ export class PublisherClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.detachSubscription(request);
+   * ```
    */
   detachSubscription(
     request?: protos.google.pubsub.v1.IDetachSubscriptionRequest,
@@ -1089,10 +1101,12 @@ export class PublisherClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
    * @example
+   * ```
    * const iterable = client.listTopicsAsync(request);
    * for await (const response of iterable) {
    *   // process response
    * }
+   * ```
    */
   listTopicsAsync(
     request?: protos.google.pubsub.v1.IListTopicsRequest,
@@ -1293,10 +1307,12 @@ export class PublisherClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
    * @example
+   * ```
    * const iterable = client.listTopicSubscriptionsAsync(request);
    * for await (const response of iterable) {
    *   // process response
    * }
+   * ```
    */
   listTopicSubscriptionsAsync(
     request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
@@ -1491,10 +1507,12 @@ export class PublisherClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
    * @example
+   * ```
    * const iterable = client.listTopicSnapshotsAsync(request);
    * for await (const response of iterable) {
    *   // process response
    * }
+   * ```
    */
   listTopicSnapshotsAsync(
     request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,

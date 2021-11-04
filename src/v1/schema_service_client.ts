@@ -392,7 +392,9 @@ export class SchemaServiceClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.createSchema(request);
+   * ```
    */
   createSchema(
     request?: protos.google.pubsub.v1.ICreateSchemaRequest,
@@ -480,7 +482,9 @@ export class SchemaServiceClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.getSchema(request);
+   * ```
    */
   getSchema(
     request?: protos.google.pubsub.v1.IGetSchemaRequest,
@@ -564,7 +568,9 @@ export class SchemaServiceClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.deleteSchema(request);
+   * ```
    */
   deleteSchema(
     request?: protos.google.pubsub.v1.IDeleteSchemaRequest,
@@ -650,7 +656,9 @@ export class SchemaServiceClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.validateSchema(request);
+   * ```
    */
   validateSchema(
     request?: protos.google.pubsub.v1.IValidateSchemaRequest,
@@ -744,7 +752,9 @@ export class SchemaServiceClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
    * @example
+   * ```
    * const [response] = await client.validateMessage(request);
+   * ```
    */
   validateMessage(
     request?: protos.google.pubsub.v1.IValidateMessageRequest,
@@ -964,10 +974,12 @@ export class SchemaServiceClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
    * @example
+   * ```
    * const iterable = client.listSchemasAsync(request);
    * for await (const response of iterable) {
    *   // process response
    * }
+   * ```
    */
   listSchemasAsync(
     request?: protos.google.pubsub.v1.IListSchemasRequest,
