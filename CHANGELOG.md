@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.18.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.18.1...v2.18.2) (2021-11-08)
+
+
+### Bug Fixes
+
+* **cloud-rad:** move comments for TSDoc ([#1423](https://www.github.com/googleapis/nodejs-pubsub/issues/1423)) ([a40a23e](https://www.github.com/googleapis/nodejs-pubsub/commit/a40a23ee43c6697000996e0ff7070f41610397f5))
+
 ### [2.18.1](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.18.0...v2.18.1) (2021-09-27)
 
 
