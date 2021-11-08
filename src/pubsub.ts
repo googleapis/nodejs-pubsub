@@ -313,8 +313,6 @@ export class PubSub {
     return this.projectId.indexOf(PROJECT_ID_PLACEHOLDER) < 0;
   }
 
-  close(): Promise<void>;
-  close(callback: EmptyCallback): void;
   /**
    * Closes out this object, releasing any server connections. Note that once
    * you close a PubSub object, it may not be used again. Any pending operations
@@ -326,6 +324,8 @@ export class PubSub {
    * @callback EmptyCallback
    * @returns {Promise<void>}
    */
+  close(): Promise<void>;
+  close(callback: EmptyCallback): void;
   close(callback?: EmptyCallback): Promise<void> | void {
     const definedCallback = callback || (() => {});
     if (this.isOpen) {
@@ -395,22 +395,6 @@ export class PubSub {
     return new Schema(this, schemaName);
   }
 
-  createSubscription(
-    topic: Topic | string,
-    name: string,
-    options?: CreateSubscriptionOptions
-  ): Promise<CreateSubscriptionResponse>;
-  createSubscription(
-    topic: Topic | string,
-    name: string,
-    callback: CreateSubscriptionCallback
-  ): void;
-  createSubscription(
-    topic: Topic | string,
-    name: string,
-    options: CreateSubscriptionOptions,
-    callback: CreateSubscriptionCallback
-  ): void;
   /**
    * @typedef {array} CreateSubscriptionResponse
    * @property {Subscription} 0 The new {@link Subscription}.
@@ -498,6 +482,22 @@ export class PubSub {
   createSubscription(
     topic: Topic | string,
     name: string,
+    options?: CreateSubscriptionOptions
+  ): Promise<CreateSubscriptionResponse>;
+  createSubscription(
+    topic: Topic | string,
+    name: string,
+    callback: CreateSubscriptionCallback
+  ): void;
+  createSubscription(
+    topic: Topic | string,
+    name: string,
+    options: CreateSubscriptionOptions,
+    callback: CreateSubscriptionCallback
+  ): void;
+  createSubscription(
+    topic: Topic | string,
+    name: string,
     optionsOrCallback?: CreateSubscriptionOptions | CreateSubscriptionCallback,
     callback?: CreateSubscriptionCallback
   ): Promise<CreateSubscriptionResponse> | void {
@@ -556,19 +556,6 @@ export class PubSub {
     );
   }
 
-  createTopic(
-    name: string | TopicMetadata,
-    gaxOpts?: CallOptions
-  ): Promise<CreateTopicResponse>;
-  createTopic(
-    name: string | TopicMetadata,
-    callback: CreateTopicCallback
-  ): void;
-  createTopic(
-    name: string | TopicMetadata,
-    gaxOpts: CallOptions,
-    callback: CreateTopicCallback
-  ): void;
   /**
    * @typedef {array} CreateTopicResponse
    * @property {Topic} 0 The new {@link Topic}.
@@ -613,6 +600,19 @@ export class PubSub {
    */
   createTopic(
     name: string | TopicMetadata,
+    gaxOpts?: CallOptions
+  ): Promise<CreateTopicResponse>;
+  createTopic(
+    name: string | TopicMetadata,
+    callback: CreateTopicCallback
+  ): void;
+  createTopic(
+    name: string | TopicMetadata,
+    gaxOpts: CallOptions,
+    callback: CreateTopicCallback
+  ): void;
+  createTopic(
+    name: string | TopicMetadata,
     optsOrCallback?: CallOptions | CreateTopicCallback,
     callback?: CreateTopicCallback
   ): Promise<CreateTopicResponse> | void {
@@ -650,16 +650,6 @@ export class PubSub {
     );
   }
 
-  detachSubscription(
-    name: string,
-    gaxOpts?: CallOptions
-  ): Promise<DetachSubscriptionResponse>;
-  detachSubscription(name: string, callback: DetachSubscriptionCallback): void;
-  detachSubscription(
-    name: string,
-    gaxOpts: CallOptions,
-    callback: DetachSubscriptionCallback
-  ): void;
   /**
    * Detach a subscription with the given name.
    *
@@ -690,6 +680,16 @@ export class PubSub {
    * });
    * ```
    */
+  detachSubscription(
+    name: string,
+    gaxOpts?: CallOptions
+  ): Promise<DetachSubscriptionResponse>;
+  detachSubscription(name: string, callback: DetachSubscriptionCallback): void;
+  detachSubscription(
+    name: string,
+    gaxOpts: CallOptions,
+    callback: DetachSubscriptionCallback
+  ): void;
   detachSubscription(
     name: string,
     optsOrCallback?: CallOptions | DetachSubscriptionCallback,
@@ -823,9 +823,6 @@ export class PubSub {
     }
   }
 
-  getSnapshots(options?: PageOptions): Promise<GetSnapshotsResponse>;
-  getSnapshots(callback: GetSnapshotsCallback): void;
-  getSnapshots(options: PageOptions, callback: GetSnapshotsCallback): void;
   /**
    * Query object for listing snapshots.
    *
@@ -874,6 +871,9 @@ export class PubSub {
    * });
    * ```
    */
+  getSnapshots(options?: PageOptions): Promise<GetSnapshotsResponse>;
+  getSnapshots(callback: GetSnapshotsCallback): void;
+  getSnapshots(options: PageOptions, callback: GetSnapshotsCallback): void;
   getSnapshots(
     optsOrCallback?: PageOptions | GetSnapshotsCallback,
     callback?: GetSnapshotsCallback
@@ -926,14 +926,6 @@ export class PubSub {
     );
   }
 
-  getSubscriptions(
-    options?: GetSubscriptionsOptions
-  ): Promise<GetSubscriptionsResponse>;
-  getSubscriptions(callback: GetSubscriptionsCallback): void;
-  getSubscriptions(
-    options: GetSubscriptionsOptions,
-    callback: GetSubscriptionsCallback
-  ): void;
   /**
    * Query object for listing subscriptions.
    *
@@ -994,6 +986,14 @@ export class PubSub {
    * ```
    */
   getSubscriptions(
+    options?: GetSubscriptionsOptions
+  ): Promise<GetSubscriptionsResponse>;
+  getSubscriptions(callback: GetSubscriptionsCallback): void;
+  getSubscriptions(
+    options: GetSubscriptionsOptions,
+    callback: GetSubscriptionsCallback
+  ): void;
+  getSubscriptions(
     optsOrCallback?: GetSubscriptionsOptions | GetSubscriptionsCallback,
     callback?: GetSubscriptionsCallback
   ): void | Promise<GetSubscriptionsResponse> {
@@ -1052,9 +1052,6 @@ export class PubSub {
     );
   }
 
-  getTopics(options?: PageOptions): Promise<GetTopicsResponse>;
-  getTopics(callback: GetTopicsCallback): void;
-  getTopics(options: PageOptions, callback: GetTopicsCallback): void;
   /**
    * Query object for listing topics.
    *
@@ -1113,6 +1110,9 @@ export class PubSub {
    * });
    * ```
    */
+  getTopics(options?: PageOptions): Promise<GetTopicsResponse>;
+  getTopics(callback: GetTopicsCallback): void;
+  getTopics(options: PageOptions, callback: GetTopicsCallback): void;
   getTopics(
     optsOrCallback?: PageOptions | GetTopicsCallback,
     callback?: GetTopicsCallback
