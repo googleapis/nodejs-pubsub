@@ -95,6 +95,8 @@ export class Publisher {
     this.orderedQueues = new Map();
   }
 
+  flush(): Promise<void>;
+  flush(callback: EmptyCallback): void;
   /**
    * Immediately sends all remaining queued data. This is mostly useful
    * if you are planning to call close() on the PubSub object that holds
@@ -105,8 +107,6 @@ export class Publisher {
    * @param {EmptyCallback} [callback] Callback function.
    * @returns {Promise<EmptyResponse>}
    */
-  flush(): Promise<void>;
-  flush(callback: EmptyCallback): void;
   flush(callback?: EmptyCallback): Promise<void> | void {
     const definedCallback = callback ? callback : () => {};
 
@@ -122,6 +122,13 @@ export class Publisher {
       })
       .catch(definedCallback);
   }
+  publish(data: Buffer, attributes?: Attributes): Promise<string>;
+  publish(data: Buffer, callback: PublishCallback): void;
+  publish(
+    data: Buffer,
+    attributes: Attributes,
+    callback: PublishCallback
+  ): void;
   /**
    * Publish the provided message.
    *
@@ -136,13 +143,6 @@ export class Publisher {
    * @param {PublishCallback} [callback] Callback function.
    * @returns {Promise<PublishResponse>}
    */
-  publish(data: Buffer, attributes?: Attributes): Promise<string>;
-  publish(data: Buffer, callback: PublishCallback): void;
-  publish(
-    data: Buffer,
-    attributes: Attributes,
-    callback: PublishCallback
-  ): void;
   publish(
     data: Buffer,
     attrsOrCb?: Attributes | PublishCallback,
@@ -153,6 +153,8 @@ export class Publisher {
     return this.publishMessage({data, attributes}, callback!);
   }
 
+  publishMessage(message: PubsubMessage): Promise<string>;
+  publishMessage(message: PubsubMessage, callback: PublishCallback): void;
   /**
    * Publish the provided message.
    *
@@ -164,8 +166,6 @@ export class Publisher {
    * @param {PubsubMessage} [message] Options for this message.
    * @param {PublishCallback} [callback] Callback function.
    */
-  publishMessage(message: PubsubMessage): Promise<string>;
-  publishMessage(message: PubsubMessage, callback: PublishCallback): void;
   publishMessage(
     message: PubsubMessage,
     callback?: PublishCallback

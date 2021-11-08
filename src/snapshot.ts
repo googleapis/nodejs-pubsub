@@ -111,6 +111,8 @@ export class Snapshot {
     this.name = Snapshot.formatName_(parent.projectId, name);
   }
 
+  delete(): Promise<EmptyResponse>;
+  delete(callback: EmptyCallback): void;
   /**
    * Delete the snapshot.
    *
@@ -132,8 +134,6 @@ export class Snapshot {
    * });
    * ```
    */
-  delete(): Promise<EmptyResponse>;
-  delete(callback: EmptyCallback): void;
   delete(callback?: EmptyCallback): void | Promise<EmptyResponse> {
     const reqOpts = {
       snapshot: this.name,
@@ -159,6 +159,9 @@ export class Snapshot {
     return 'projects/' + projectId + '/snapshots/' + name.split('/').pop();
   }
 
+  create(gaxOpts?: CallOptions): Promise<CreateSnapshotResponse>;
+  create(callback: CreateSnapshotCallback): void;
+  create(gaxOpts: CallOptions, callback: CreateSnapshotCallback): void;
   /**
    * Create a snapshot with the given name.
    *
@@ -196,9 +199,6 @@ export class Snapshot {
    * });
    * ```
    */
-  create(gaxOpts?: CallOptions): Promise<CreateSnapshotResponse>;
-  create(callback: CreateSnapshotCallback): void;
-  create(gaxOpts: CallOptions, callback: CreateSnapshotCallback): void;
   create(
     optsOrCallback?: CallOptions | CreateSnapshotCallback,
     callback?: CreateSnapshotCallback
@@ -226,6 +226,9 @@ export class Snapshot {
     );
   }
 
+  seek(gaxOpts?: CallOptions): Promise<SeekResponse>;
+  seek(callback: SeekCallback): void;
+  seek(gaxOpts: CallOptions, callback: SeekCallback): void;
   /**
    * Seeks an existing subscription to the snapshot.
    *
@@ -253,9 +256,6 @@ export class Snapshot {
    * });
    * ```
    */
-  seek(gaxOpts?: CallOptions): Promise<SeekResponse>;
-  seek(callback: SeekCallback): void;
-  seek(gaxOpts: CallOptions, callback: SeekCallback): void;
   seek(
     gaxOpts?: CallOptions | SeekCallback,
     callback?: SeekCallback

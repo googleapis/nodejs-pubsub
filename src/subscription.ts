@@ -340,6 +340,8 @@ export class Subscription extends EventEmitter {
     return (this.pubsub && this.pubsub.projectId) || '{{projectId}}';
   }
 
+  close(): Promise<void>;
+  close(callback: SubscriptionCloseCallback): void;
   /**
    * Closes the Subscription, once this is called you will no longer receive
    * message events unless you call {Subscription#open} or add new message
@@ -361,12 +363,18 @@ export class Subscription extends EventEmitter {
    * subscription.close().then(() => {});
    * ```
    */
-  close(): Promise<void>;
-  close(callback: SubscriptionCloseCallback): void;
   close(callback?: SubscriptionCloseCallback): void | Promise<void> {
     this._subscriber.close().then(() => callback!(), callback);
   }
 
+  create(
+    options?: CreateSubscriptionOptions
+  ): Promise<CreateSubscriptionResponse>;
+  create(callback: CreateSubscriptionCallback): void;
+  create(
+    options: CreateSubscriptionOptions,
+    callback: CreateSubscriptionCallback
+  ): void;
   /**
    * Create a subscription.
    *
@@ -406,14 +414,6 @@ export class Subscription extends EventEmitter {
    * ```
    */
   create(
-    options?: CreateSubscriptionOptions
-  ): Promise<CreateSubscriptionResponse>;
-  create(callback: CreateSubscriptionCallback): void;
-  create(
-    options: CreateSubscriptionOptions,
-    callback: CreateSubscriptionCallback
-  ): void;
-  create(
     optsOrCallback?: CreateSubscriptionOptions | CreateSubscriptionCallback,
     callback?: CreateSubscriptionCallback
   ): void | Promise<CreateSubscriptionResponse> {
@@ -442,6 +442,16 @@ export class Subscription extends EventEmitter {
     );
   }
 
+  createSnapshot(
+    name: string,
+    gaxOpts?: CallOptions
+  ): Promise<CreateSnapshotResponse>;
+  createSnapshot(name: string, callback: CreateSnapshotCallback): void;
+  createSnapshot(
+    name: string,
+    gaxOpts: CallOptions,
+    callback: CreateSnapshotCallback
+  ): void;
   /**
    * @typedef {array} CreateSnapshotResponse
    * @property {Snapshot} 0 The new {@link Snapshot}.
@@ -489,16 +499,6 @@ export class Subscription extends EventEmitter {
    */
   createSnapshot(
     name: string,
-    gaxOpts?: CallOptions
-  ): Promise<CreateSnapshotResponse>;
-  createSnapshot(name: string, callback: CreateSnapshotCallback): void;
-  createSnapshot(
-    name: string,
-    gaxOpts: CallOptions,
-    callback: CreateSnapshotCallback
-  ): void;
-  createSnapshot(
-    name: string,
     optsOrCallback?: CallOptions | CreateSnapshotCallback,
     callback?: CreateSnapshotCallback
   ): void | Promise<CreateSnapshotResponse> {
@@ -531,6 +531,9 @@ export class Subscription extends EventEmitter {
     );
   }
 
+  delete(gaxOpts?: CallOptions): Promise<EmptyResponse>;
+  delete(callback: EmptyCallback): void;
+  delete(gaxOpts: CallOptions, callback: EmptyCallback): void;
   /**
    * Delete the subscription. Pull requests from the current subscription will
    * be errored once unsubscription is complete.
@@ -562,9 +565,6 @@ export class Subscription extends EventEmitter {
    * });
    * ```
    */
-  delete(gaxOpts?: CallOptions): Promise<EmptyResponse>;
-  delete(callback: EmptyCallback): void;
-  delete(gaxOpts: CallOptions, callback: EmptyCallback): void;
   delete(
     optsOrCallback?: CallOptions | EmptyCallback,
     callback?: EmptyCallback
@@ -591,6 +591,8 @@ export class Subscription extends EventEmitter {
     );
   }
 
+  detached(): Promise<DetachedResponse>;
+  detached(callback: DetachedCallback): void;
   /**
    * @typedef {array} SubscriptionDetachedResponse
    * @property {boolean} 0 Whether the subscription is detached.
@@ -624,8 +626,6 @@ export class Subscription extends EventEmitter {
    * });
    * ```
    */
-  detached(): Promise<DetachedResponse>;
-  detached(callback: DetachedCallback): void;
   detached(callback?: DetachedCallback): void | Promise<DetachedResponse> {
     this.getMetadata((err, metadata) => {
       if (err) {
@@ -636,6 +636,8 @@ export class Subscription extends EventEmitter {
     });
   }
 
+  exists(): Promise<ExistsResponse>;
+  exists(callback: ExistsCallback): void;
   /**
    * @typedef {array} SubscriptionExistsResponse
    * @property {boolean} 0 Whether the subscription exists
@@ -669,8 +671,6 @@ export class Subscription extends EventEmitter {
    * });
    * ```
    */
-  exists(): Promise<ExistsResponse>;
-  exists(callback: ExistsCallback): void;
   exists(callback?: ExistsCallback): void | Promise<ExistsResponse> {
     this.getMetadata(err => {
       if (!err) {
@@ -686,6 +686,9 @@ export class Subscription extends EventEmitter {
     });
   }
 
+  get(gaxOpts?: GetSubscriptionOptions): Promise<GetSubscriptionResponse>;
+  get(callback: GetSubscriptionCallback): void;
+  get(gaxOpts: GetSubscriptionOptions, callback: GetSubscriptionCallback): void;
   /**
    * @typedef {array} GetSubscriptionResponse
    * @property {Subscription} 0 The {@link Subscription}.
@@ -728,9 +731,6 @@ export class Subscription extends EventEmitter {
    * });
    * ```
    */
-  get(gaxOpts?: GetSubscriptionOptions): Promise<GetSubscriptionResponse>;
-  get(callback: GetSubscriptionCallback): void;
-  get(gaxOpts: GetSubscriptionOptions, callback: GetSubscriptionCallback): void;
   get(
     optsOrCallback?: GetSubscriptionOptions | GetSubscriptionCallback,
     callback?: GetSubscriptionCallback
@@ -756,6 +756,12 @@ export class Subscription extends EventEmitter {
     });
   }
 
+  getMetadata(gaxOpts?: CallOptions): Promise<GetSubscriptionMetadataResponse>;
+  getMetadata(callback: GetSubscriptionMetadataCallback): void;
+  getMetadata(
+    gaxOpts: CallOptions,
+    callback: GetSubscriptionMetadataCallback
+  ): void;
   /**
    * @typedef {array} GetSubscriptionMetadataResponse
    * @property {object} 0 The full API response.
@@ -795,12 +801,6 @@ export class Subscription extends EventEmitter {
    * });
    * ```
    */
-  getMetadata(gaxOpts?: CallOptions): Promise<GetSubscriptionMetadataResponse>;
-  getMetadata(callback: GetSubscriptionMetadataCallback): void;
-  getMetadata(
-    gaxOpts: CallOptions,
-    callback: GetSubscriptionMetadataCallback
-  ): void;
   getMetadata(
     optsOrCallback?: CallOptions | GetSubscriptionMetadataCallback,
     callback?: GetSubscriptionMetadataCallback
@@ -828,6 +828,16 @@ export class Subscription extends EventEmitter {
     );
   }
 
+  modifyPushConfig(
+    config: PushConfig,
+    gaxOpts?: CallOptions
+  ): Promise<EmptyResponse>;
+  modifyPushConfig(config: PushConfig, callback: EmptyCallback): void;
+  modifyPushConfig(
+    config: PushConfig,
+    gaxOpts: CallOptions,
+    callback: EmptyCallback
+  ): void;
   /**
    * @typedef {array} ModifyPushConfigResponse
    * @property {object} 0 The full API response.
@@ -888,16 +898,6 @@ export class Subscription extends EventEmitter {
    */
   modifyPushConfig(
     config: PushConfig,
-    gaxOpts?: CallOptions
-  ): Promise<EmptyResponse>;
-  modifyPushConfig(config: PushConfig, callback: EmptyCallback): void;
-  modifyPushConfig(
-    config: PushConfig,
-    gaxOpts: CallOptions,
-    callback: EmptyCallback
-  ): void;
-  modifyPushConfig(
-    config: PushConfig,
     optsOrCallback?: CallOptions | EmptyCallback,
     callback?: EmptyCallback
   ): void | Promise<EmptyResponse> {
@@ -949,6 +949,13 @@ export class Subscription extends EventEmitter {
     }
   }
 
+  seek(snapshot: string | Date, gaxOpts?: CallOptions): Promise<SeekResponse>;
+  seek(snapshot: string | Date, callback: SeekCallback): void;
+  seek(
+    snapshot: string | Date,
+    gaxOpts: CallOptions,
+    callback: SeekCallback
+  ): void;
   /**
    * @typedef {array} SeekResponse
    * @property {object} 0 The full API response.
@@ -988,13 +995,6 @@ export class Subscription extends EventEmitter {
    * subscription.seek(date, callback);
    * ```
    */
-  seek(snapshot: string | Date, gaxOpts?: CallOptions): Promise<SeekResponse>;
-  seek(snapshot: string | Date, callback: SeekCallback): void;
-  seek(
-    snapshot: string | Date,
-    gaxOpts: CallOptions,
-    callback: SeekCallback
-  ): void;
   seek(
     snapshot: string | Date,
     optsOrCallback?: CallOptions | SeekCallback,
@@ -1030,6 +1030,19 @@ export class Subscription extends EventEmitter {
     );
   }
 
+  setMetadata(
+    metadata: SubscriptionMetadata,
+    gaxOpts?: CallOptions
+  ): Promise<SetSubscriptionMetadataResponse>;
+  setMetadata(
+    metadata: SubscriptionMetadata,
+    callback: SetSubscriptionMetadataCallback
+  ): void;
+  setMetadata(
+    metadata: SubscriptionMetadata,
+    gaxOpts: CallOptions,
+    callback: SetSubscriptionMetadataCallback
+  ): void;
   /**
    * @typedef {array} SetSubscriptionMetadataResponse
    * @property {object} 0 The full API response.
@@ -1068,19 +1081,6 @@ export class Subscription extends EventEmitter {
    * });
    * ```
    */
-  setMetadata(
-    metadata: SubscriptionMetadata,
-    gaxOpts?: CallOptions
-  ): Promise<SetSubscriptionMetadataResponse>;
-  setMetadata(
-    metadata: SubscriptionMetadata,
-    callback: SetSubscriptionMetadataCallback
-  ): void;
-  setMetadata(
-    metadata: SubscriptionMetadata,
-    gaxOpts: CallOptions,
-    callback: SetSubscriptionMetadataCallback
-  ): void;
   setMetadata(
     metadata: SubscriptionMetadata,
     optsOrCallback?: CallOptions | SetSubscriptionMetadataCallback,
