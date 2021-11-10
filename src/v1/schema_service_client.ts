@@ -318,12 +318,12 @@ export class SchemaServiceClient {
     ];
   }
 
+  getProjectId(): Promise<string>;
+  getProjectId(callback: Callback<string, undefined, undefined>): void;
   /**
    * Return the project ID used by this class.
    * @returns {Promise} A promise that resolves to string containing the project ID.
    */
-  getProjectId(): Promise<string>;
-  getProjectId(callback: Callback<string, undefined, undefined>): void;
   getProjectId(
     callback?: Callback<string, undefined, undefined>
   ): Promise<string> | void {
@@ -364,10 +364,8 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example
-   * ```
-   * const [response] = await client.createSchema(request);
-   * ```
+   * @example <caption>include:samples/generated/v1/schema_service.create_schema.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_CreateSchema_async
    */
   createSchema(
     request?: protos.google.pubsub.v1.ICreateSchemaRequest,
@@ -454,10 +452,8 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example
-   * ```
-   * const [response] = await client.getSchema(request);
-   * ```
+   * @example <caption>include:samples/generated/v1/schema_service.get_schema.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_GetSchema_async
    */
   getSchema(
     request?: protos.google.pubsub.v1.IGetSchemaRequest,
@@ -540,10 +536,8 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example
-   * ```
-   * const [response] = await client.deleteSchema(request);
-   * ```
+   * @example <caption>include:samples/generated/v1/schema_service.delete_schema.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_DeleteSchema_async
    */
   deleteSchema(
     request?: protos.google.pubsub.v1.IDeleteSchemaRequest,
@@ -628,10 +622,8 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example
-   * ```
-   * const [response] = await client.validateSchema(request);
-   * ```
+   * @example <caption>include:samples/generated/v1/schema_service.validate_schema.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_ValidateSchema_async
    */
   validateSchema(
     request?: protos.google.pubsub.v1.IValidateSchemaRequest,
@@ -724,10 +716,8 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example
-   * ```
-   * const [response] = await client.validateMessage(request);
-   * ```
+   * @example <caption>include:samples/generated/v1/schema_service.validate_message.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_ValidateMessage_async
    */
   validateMessage(
     request?: protos.google.pubsub.v1.IValidateMessageRequest,
@@ -935,7 +925,8 @@ export class SchemaServiceClient {
       gax.routingHeader.fromParams({
         parent: request.parent || '',
       });
-    const callSettings = new gax.CallSettings(options);
+    const defaultCallSettings = this._defaults['listSchemas'];
+    const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSchemas.createStream(
       this.innerApiCalls.listSchemas as gax.GaxCall,
@@ -973,13 +964,8 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
-   * @example
-   * ```
-   * const iterable = client.listSchemasAsync(request);
-   * for await (const response of iterable) {
-   *   // process response
-   * }
-   * ```
+   * @example <caption>include:samples/generated/v1/schema_service.list_schemas.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_ListSchemas_async
    */
   listSchemasAsync(
     request?: protos.google.pubsub.v1.IListSchemasRequest,
@@ -993,8 +979,8 @@ export class SchemaServiceClient {
       gax.routingHeader.fromParams({
         parent: request.parent || '',
       });
-    options = options || {};
-    const callSettings = new gax.CallSettings(options);
+    const defaultCallSettings = this._defaults['listSchemas'];
+    const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSchemas.asyncIterate(
       this.innerApiCalls['listSchemas'] as GaxCall,
