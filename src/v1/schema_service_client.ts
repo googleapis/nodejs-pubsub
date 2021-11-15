@@ -337,33 +337,6 @@ export class SchemaServiceClient {
   // -------------------
   // -- Service calls --
   // -------------------
-  createSchema(
-    request?: protos.google.pubsub.v1.ICreateSchemaRequest,
-    options?: CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISchema,
-      protos.google.pubsub.v1.ICreateSchemaRequest | undefined,
-      {} | undefined
-    ]
-  >;
-  createSchema(
-    request: protos.google.pubsub.v1.ICreateSchemaRequest,
-    options: CallOptions,
-    callback: Callback<
-      protos.google.pubsub.v1.ISchema,
-      protos.google.pubsub.v1.ICreateSchemaRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
-  createSchema(
-    request: protos.google.pubsub.v1.ICreateSchemaRequest,
-    callback: Callback<
-      protos.google.pubsub.v1.ISchema,
-      protos.google.pubsub.v1.ICreateSchemaRequest | null | undefined,
-      {} | null | undefined
-    >
-  ): void;
   /**
    * Creates a schema.
    *
@@ -391,11 +364,36 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example
-   * ```
-   * const [response] = await client.createSchema(request);
-   * ```
+   * @example <caption>include:samples/generated/v1/schema_service.create_schema.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_CreateSchema_async
    */
+  createSchema(
+    request?: protos.google.pubsub.v1.ICreateSchemaRequest,
+    options?: CallOptions
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICreateSchemaRequest | undefined,
+      {} | undefined
+    ]
+  >;
+  createSchema(
+    request: protos.google.pubsub.v1.ICreateSchemaRequest,
+    options: CallOptions,
+    callback: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICreateSchemaRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
+  createSchema(
+    request: protos.google.pubsub.v1.ICreateSchemaRequest,
+    callback: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICreateSchemaRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
   createSchema(
     request?: protos.google.pubsub.v1.ICreateSchemaRequest,
     optionsOrCallback?:
@@ -435,6 +433,28 @@ export class SchemaServiceClient {
     this.initialize();
     return this.innerApiCalls.createSchema(request, options, callback);
   }
+  /**
+   * Gets a schema.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.name
+   *   Required. The name of the schema to get.
+   *   Format is `projects/{project}/schemas/{schema}`.
+   * @param {google.pubsub.v1.SchemaView} request.view
+   *   The set of fields to return in the response. If not set, returns a Schema
+   *   with `name` and `type`, but not `definition`. Set to `FULL` to retrieve all
+   *   fields.
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is an object representing [Schema]{@link google.pubsub.v1.Schema}.
+   *   Please see the
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/schema_service.get_schema.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_GetSchema_async
+   */
   getSchema(
     request?: protos.google.pubsub.v1.IGetSchemaRequest,
     options?: CallOptions
@@ -462,30 +482,6 @@ export class SchemaServiceClient {
       {} | null | undefined
     >
   ): void;
-  /**
-   * Gets a schema.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.name
-   *   Required. The name of the schema to get.
-   *   Format is `projects/{project}/schemas/{schema}`.
-   * @param {google.pubsub.v1.SchemaView} request.view
-   *   The set of fields to return in the response. If not set, returns a Schema
-   *   with `name` and `type`, but not `definition`. Set to `FULL` to retrieve all
-   *   fields.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Schema]{@link google.pubsub.v1.Schema}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
-   *   for more details and examples.
-   * @example
-   * ```
-   * const [response] = await client.getSchema(request);
-   * ```
-   */
   getSchema(
     request?: protos.google.pubsub.v1.IGetSchemaRequest,
     optionsOrCallback?:
@@ -525,6 +521,24 @@ export class SchemaServiceClient {
     this.initialize();
     return this.innerApiCalls.getSchema(request, options, callback);
   }
+  /**
+   * Deletes a schema.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.name
+   *   Required. Name of the schema to delete.
+   *   Format is `projects/{project}/schemas/{schema}`.
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
+   *   Please see the
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/schema_service.delete_schema.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_DeleteSchema_async
+   */
   deleteSchema(
     request?: protos.google.pubsub.v1.IDeleteSchemaRequest,
     options?: CallOptions
@@ -552,26 +566,6 @@ export class SchemaServiceClient {
       {} | null | undefined
     >
   ): void;
-  /**
-   * Deletes a schema.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.name
-   *   Required. Name of the schema to delete.
-   *   Format is `projects/{project}/schemas/{schema}`.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
-   *   for more details and examples.
-   * @example
-   * ```
-   * const [response] = await client.deleteSchema(request);
-   * ```
-   */
   deleteSchema(
     request?: protos.google.pubsub.v1.IDeleteSchemaRequest,
     optionsOrCallback?:
@@ -611,6 +605,26 @@ export class SchemaServiceClient {
     this.initialize();
     return this.innerApiCalls.deleteSchema(request, options, callback);
   }
+  /**
+   * Validates a schema.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.parent
+   *   Required. The name of the project in which to validate schemas.
+   *   Format is `projects/{project-id}`.
+   * @param {google.pubsub.v1.Schema} request.schema
+   *   Required. The schema object to validate.
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is an object representing [ValidateSchemaResponse]{@link google.pubsub.v1.ValidateSchemaResponse}.
+   *   Please see the
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/schema_service.validate_schema.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_ValidateSchema_async
+   */
   validateSchema(
     request?: protos.google.pubsub.v1.IValidateSchemaRequest,
     options?: CallOptions
@@ -638,28 +652,6 @@ export class SchemaServiceClient {
       {} | null | undefined
     >
   ): void;
-  /**
-   * Validates a schema.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.parent
-   *   Required. The name of the project in which to validate schemas.
-   *   Format is `projects/{project-id}`.
-   * @param {google.pubsub.v1.Schema} request.schema
-   *   Required. The schema object to validate.
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [ValidateSchemaResponse]{@link google.pubsub.v1.ValidateSchemaResponse}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
-   *   for more details and examples.
-   * @example
-   * ```
-   * const [response] = await client.validateSchema(request);
-   * ```
-   */
   validateSchema(
     request?: protos.google.pubsub.v1.IValidateSchemaRequest,
     optionsOrCallback?:
@@ -699,6 +691,34 @@ export class SchemaServiceClient {
     this.initialize();
     return this.innerApiCalls.validateSchema(request, options, callback);
   }
+  /**
+   * Validates a message against a schema.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.parent
+   *   Required. The name of the project in which to validate schemas.
+   *   Format is `projects/{project-id}`.
+   * @param {string} request.name
+   *   Name of the schema against which to validate.
+   *
+   *   Format is `projects/{project}/schemas/{schema}`.
+   * @param {google.pubsub.v1.Schema} request.schema
+   *   Ad-hoc schema against which to validate
+   * @param {Buffer} request.message
+   *   Message to validate against the provided `schema_spec`.
+   * @param {google.pubsub.v1.Encoding} request.encoding
+   *   The encoding expected for messages
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is an object representing [ValidateMessageResponse]{@link google.pubsub.v1.ValidateMessageResponse}.
+   *   Please see the
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/schema_service.validate_message.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_ValidateMessage_async
+   */
   validateMessage(
     request?: protos.google.pubsub.v1.IValidateMessageRequest,
     options?: CallOptions
@@ -726,36 +746,6 @@ export class SchemaServiceClient {
       {} | null | undefined
     >
   ): void;
-  /**
-   * Validates a message against a schema.
-   *
-   * @param {Object} request
-   *   The request object that will be sent.
-   * @param {string} request.parent
-   *   Required. The name of the project in which to validate schemas.
-   *   Format is `projects/{project-id}`.
-   * @param {string} request.name
-   *   Name of the schema against which to validate.
-   *
-   *   Format is `projects/{project}/schemas/{schema}`.
-   * @param {google.pubsub.v1.Schema} request.schema
-   *   Ad-hoc schema against which to validate
-   * @param {Buffer} request.message
-   *   Message to validate against the provided `schema_spec`.
-   * @param {google.pubsub.v1.Encoding} request.encoding
-   *   The encoding expected for messages
-   * @param {object} [options]
-   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
-   * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [ValidateMessageResponse]{@link google.pubsub.v1.ValidateMessageResponse}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
-   *   for more details and examples.
-   * @example
-   * ```
-   * const [response] = await client.validateMessage(request);
-   * ```
-   */
   validateMessage(
     request?: protos.google.pubsub.v1.IValidateMessageRequest,
     optionsOrCallback?:
@@ -796,33 +786,6 @@ export class SchemaServiceClient {
     return this.innerApiCalls.validateMessage(request, options, callback);
   }
 
-  listSchemas(
-    request?: protos.google.pubsub.v1.IListSchemasRequest,
-    options?: CallOptions
-  ): Promise<
-    [
-      protos.google.pubsub.v1.ISchema[],
-      protos.google.pubsub.v1.IListSchemasRequest | null,
-      protos.google.pubsub.v1.IListSchemasResponse
-    ]
-  >;
-  listSchemas(
-    request: protos.google.pubsub.v1.IListSchemasRequest,
-    options: CallOptions,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListSchemasRequest,
-      protos.google.pubsub.v1.IListSchemasResponse | null | undefined,
-      protos.google.pubsub.v1.ISchema
-    >
-  ): void;
-  listSchemas(
-    request: protos.google.pubsub.v1.IListSchemasRequest,
-    callback: PaginationCallback<
-      protos.google.pubsub.v1.IListSchemasRequest,
-      protos.google.pubsub.v1.IListSchemasResponse | null | undefined,
-      protos.google.pubsub.v1.ISchema
-    >
-  ): void;
   /**
    * Lists schemas in a project.
    *
@@ -854,6 +817,33 @@ export class SchemaServiceClient {
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
    */
+  listSchemas(
+    request?: protos.google.pubsub.v1.IListSchemasRequest,
+    options?: CallOptions
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema[],
+      protos.google.pubsub.v1.IListSchemasRequest | null,
+      protos.google.pubsub.v1.IListSchemasResponse
+    ]
+  >;
+  listSchemas(
+    request: protos.google.pubsub.v1.IListSchemasRequest,
+    options: CallOptions,
+    callback: PaginationCallback<
+      protos.google.pubsub.v1.IListSchemasRequest,
+      protos.google.pubsub.v1.IListSchemasResponse | null | undefined,
+      protos.google.pubsub.v1.ISchema
+    >
+  ): void;
+  listSchemas(
+    request: protos.google.pubsub.v1.IListSchemasRequest,
+    callback: PaginationCallback<
+      protos.google.pubsub.v1.IListSchemasRequest,
+      protos.google.pubsub.v1.IListSchemasResponse | null | undefined,
+      protos.google.pubsub.v1.ISchema
+    >
+  ): void;
   listSchemas(
     request?: protos.google.pubsub.v1.IListSchemasRequest,
     optionsOrCallback?:
@@ -935,7 +925,8 @@ export class SchemaServiceClient {
       gax.routingHeader.fromParams({
         parent: request.parent || '',
       });
-    const callSettings = new gax.CallSettings(options);
+    const defaultCallSettings = this._defaults['listSchemas'];
+    const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSchemas.createStream(
       this.innerApiCalls.listSchemas as gax.GaxCall,
@@ -973,13 +964,8 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
-   * @example
-   * ```
-   * const iterable = client.listSchemasAsync(request);
-   * for await (const response of iterable) {
-   *   // process response
-   * }
-   * ```
+   * @example <caption>include:samples/generated/v1/schema_service.list_schemas.js</caption>
+   * region_tag:pubsub_v1_generated_SchemaService_ListSchemas_async
    */
   listSchemasAsync(
     request?: protos.google.pubsub.v1.IListSchemasRequest,
@@ -993,8 +979,8 @@ export class SchemaServiceClient {
       gax.routingHeader.fromParams({
         parent: request.parent || '',
       });
-    options = options || {};
-    const callSettings = new gax.CallSettings(options);
+    const defaultCallSettings = this._defaults['listSchemas'];
+    const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSchemas.asyncIterate(
       this.innerApiCalls['listSchemas'] as GaxCall,
