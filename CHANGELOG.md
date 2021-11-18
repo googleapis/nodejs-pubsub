@@ -4,6 +4,14 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.18.3](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.18.2...v2.18.3) (2021-11-18)
+
+
+### Bug Fixes
+
+* set only Publish to 5000ms ([#1416](https://www.github.com/googleapis/nodejs-pubsub/issues/1416)) ([1e11001](https://www.github.com/googleapis/nodejs-pubsub/commit/1e110016ea04fc41d2fa80d64a54a11fd4078c60))
+* temporary hold-back on google-gax to avoid timeout issues caused by https://github.com/googleapis/gax-nodejs/pull/1100 ([#1431](https://www.github.com/googleapis/nodejs-pubsub/issues/1431)) ([18c6b18](https://www.github.com/googleapis/nodejs-pubsub/commit/18c6b18f621c410aca968a6bfc850e7a6ea404f4))
+
 ### [2.18.2](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.18.1...v2.18.2) (2021-11-08)
 
 
