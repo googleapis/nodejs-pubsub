@@ -66,7 +66,7 @@ async function main(
 
     // Publishes the message
     const messageId = await pubSubClient
-      .topic(topicName, {enableMessageOrdering: true})
+      .topic(topicName, {messageOrdering: true})
       .publishMessage(message);
 
     console.log(`Message ${messageId} published.`);

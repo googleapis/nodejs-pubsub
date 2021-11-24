@@ -99,9 +99,9 @@ export type MessageOptions = PubsubMessage & {json?: any};
  * const topic = pubsub.topic('my-topic');
  *
  * ```
- * @example To enable message ordering, set `enableMessageOrdering` to true. Please note that this does not persist to an actual topic.
+ * @example To enable message ordering, set `messageOrdering` to true. Please note that this does not persist to an actual topic.
  * ```
- * const topic = pubsub.topic('ordered-topic', {enableMessageOrdering: true});
+ * const topic = pubsub.topic('ordered-topic', {messageOrdering: true});
  * ```
  */
 export class Topic {

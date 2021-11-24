@@ -53,7 +53,7 @@ async function main(
 
     // Publishes the message
     const publisher = pubSubClient.topic(topicName, {
-      enableMessageOrdering: true,
+      messageOrdering: true,
     });
     try {
       const message = {
