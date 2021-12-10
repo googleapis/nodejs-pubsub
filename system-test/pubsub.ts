@@ -775,7 +775,7 @@ describe('pubsub', () => {
 
       function publish(messageCount: number) {
         const data = Buffer.from('Hello, world!');
-        const promises: Array<Promise<[string]>> = [];
+        const promises: Array<Promise<string>> = [];
 
         let id = 0;
 

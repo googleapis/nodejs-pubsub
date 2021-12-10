@@ -822,12 +822,12 @@ export class Topic {
    * const [messageId] = await topic.publishMessage({data});
    * ```
    */
-  publishMessage(message: MessageOptions): Promise<[string]>;
+  publishMessage(message: MessageOptions): Promise<string>;
   publishMessage(message: MessageOptions, callback: PublishCallback): void;
   publishMessage(
     message: MessageOptions,
     callback?: PublishCallback
-  ): Promise<[string]> | void {
+  ): Promise<string> | void {
     // Make a copy to ensure that any changes we make to it will not
     // propagate up to the user's data.
     message = Object.assign({}, message);
