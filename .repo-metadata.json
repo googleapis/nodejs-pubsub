@@ -1,6 +1,6 @@
 {
   "distribution_name": "@google-cloud/pubsub",
-  "release_level": "ga",
+  "release_level": "stable",
   "product_documentation": "https://cloud.google.com/pubsub/docs/",
   "repo": "googleapis/nodejs-pubsub",
   "default_version": "v1",
@@ -11,5 +11,7 @@
   "name": "pubsub",
   "name_pretty": "Google Cloud Pub/Sub",
   "api_id": "pubsub.googleapis.com",
-  "codeowner_team": "@googleapis/api-pubsub"
+  "codeowner_team": "@googleapis/api-pubsub",
+  "api_shortname": "pubsub",
+  "library_type": ""
 }
