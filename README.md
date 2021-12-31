@@ -6,7 +6,6 @@
 
 
 [![npm version](https://img.shields.io/npm/v/@google-cloud/pubsub.svg)](https://www.npmjs.org/package/@google-cloud/pubsub)
-[![codecov](https://img.shields.io/codecov/c/github/googleapis/nodejs-pubsub/main.svg?style=flat)](https://codecov.io/gh/googleapis/nodejs-pubsub)
 
 
 
