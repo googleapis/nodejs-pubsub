@@ -556,13 +556,16 @@ describe('Subscriber', () => {
       stream.emit('error', fakeError);
     });
 
-    it('should close the subscriber if stream closes unexpectedly', () => {
+    it('should close the subscriber if stream closes unexpectedly', done => {
       const stub = sandbox.stub(subscriber, 'close');
       const stream: FakeMessageStream = stubs.get('messageStream');
 
       stream.emit('close');
 
-      assert.strictEqual(stub.callCount, 1);
+      process.nextTick(() => {
+        assert.strictEqual(stub.callCount, 1);
+        done();
+      });
     });
 
     it('should add messages to the inventory', done => {
