@@ -393,7 +393,7 @@ describe('Subscription', () => {
       });
 
       const callback = stub.lastCall.args[3];
-      setImmediate(callback, fakeErr, null, fakeResponse);
+      setImmediate(callback, fakeErr as ServiceError, null, fakeResponse);
     });
 
     it('should update the subscription', done => {
