@@ -38,17 +38,6 @@ const FAKE_CLIENT_CONFIG = {
   },
 };
 
-// just need this for unit tests.. we have a ponyfill for destroy on
-// MessageStream and gax streams use Duplexify
-function destroy(stream: Duplex, err?: Error): void {
-  process.nextTick(() => {
-    if (err) {
-      stream.emit('error', err);
-    }
-    stream.emit('close');
-  });
-}
-
 interface StreamState {
   highWaterMark: number;
 }
@@ -67,12 +56,6 @@ class FakePassThrough extends PassThrough {
   constructor(options: StreamOptions) {
     super(options);
     this.options = options;
-  }
-  destroy(err?: Error): void {
-    if (typeof super.destroy === 'function') {
-      return super.destroy(err);
-    }
-    destroy(this, err);
   }
 }
 
@@ -94,12 +77,6 @@ class FakeGrpcStream extends Duplex {
       this.emit('status', status);
       this.end();
     });
-  }
-  destroy(err?: Error): void {
-    if (typeof super.destroy === 'function') {
-      return super.destroy(err);
-    }
-    destroy(this, err);
   }
   _write(chunk: object, encoding: string, callback: Function): void {
     callback();

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as assert from 'assert';
+import {ServiceError} from 'google-gax';
 import {describe, it, beforeEach, before, after, afterEach} from 'mocha';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
@@ -158,7 +159,7 @@ describe('Snapshot', () => {
           });
 
           const callback = stub.lastCall.args[2];
-          setImmediate(callback, fakeError, null, fakeResponse);
+          setImmediate(callback, fakeError as ServiceError, null, fakeResponse);
         });
 
         it('should return the correct snapshot', done => {
