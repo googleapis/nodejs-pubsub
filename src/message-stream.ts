@@ -155,24 +155,10 @@ export class MessageStream extends PassThrough {
    * Destroys the stream and any underlying streams.
    *
    * @param {error?} error An error to emit, if any.
-   * @private
-   */
-  destroy(error?: Error | null): void {
-    // We can't assume Node has taken care of this in <14.
-    if (this.destroyed) {
-      return;
-    }
-    super.destroy(error ? error : undefined);
-  }
-  /**
-   * Destroys the stream and any underlying streams.
-   *
-   * @param {error?} error An error to emit, if any.
    * @param {Function} callback Callback for completion of any destruction.
    * @private
    */
   _destroy(error: Error | null, callback: (error: Error | null) => void): void {
-    this.destroyed = true;
     clearInterval(this._keepAliveHandle);
 
     for (const stream of this._streams.keys()) {
@@ -214,7 +200,8 @@ export class MessageStream extends PassThrough {
     try {
       client = await this._getClient();
     } catch (e) {
-      this.destroy(e);
+      const err = e as Error;
+      this.destroy(err);
     }
 
     if (this.destroyed) {
@@ -244,7 +231,8 @@ export class MessageStream extends PassThrough {
     try {
       await this._waitForClientReady(client);
     } catch (e) {
-      this.destroy(e);
+      const err = e as Error;
+      this.destroy(err);
     }
   }
   /**
@@ -386,7 +374,8 @@ export class MessageStream extends PassThrough {
     try {
       await promisify(client.waitForReady).call(client, deadline);
     } catch (e) {
-      throw new ChannelError(e);
+      const err = e as Error;
+      throw new ChannelError(err);
     }
   }
 }
