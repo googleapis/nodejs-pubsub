@@ -4,6 +4,16 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.18.5](https://github.com/googleapis/nodejs-pubsub/compare/v2.18.4...v2.18.5) (2022-01-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @opentelemetry/semantic-conventions to v1 ([#1407](https://github.com/googleapis/nodejs-pubsub/issues/1407)) ([740d78c](https://github.com/googleapis/nodejs-pubsub/commit/740d78cb285a136a39d7324c9f0e2e0d7fc1f06d))
+* **deps:** update dependency google-gax to v2.29.0 ([#1452](https://github.com/googleapis/nodejs-pubsub/issues/1452)) ([f419137](https://github.com/googleapis/nodejs-pubsub/commit/f4191372eabc134454db7d24cb38a29597b153dd))
+* **deps:** update dependency google-gax to v2.29.4 ([#1469](https://github.com/googleapis/nodejs-pubsub/issues/1469)) ([8abbfa7](https://github.com/googleapis/nodejs-pubsub/commit/8abbfa77ce9c6e6decbd79c29bcaad8e5e3e1ed6))
+* update to work with latest node types (changed the return type of Stream.destroy()) ([#1464](https://github.com/googleapis/nodejs-pubsub/issues/1464)) ([fddc2e7](https://github.com/googleapis/nodejs-pubsub/commit/fddc2e77ed54c1762afb533965da2e0658b58de6))
+
 ### [2.18.4](https://www.github.com/googleapis/nodejs-pubsub/compare/v2.18.3...v2.18.4) (2021-12-09)
 
 
