@@ -1719,7 +1719,7 @@ export class SubscriberClient {
    */
   streamingPull(options?: CallOptions): gax.CancellableStream {
     this.initialize();
-    return this.innerApiCalls.streamingPull(options);
+    return this.innerApiCalls.streamingPull(null, options);
   }
 
   /**
