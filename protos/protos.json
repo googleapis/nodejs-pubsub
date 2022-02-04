@@ -821,6 +821,10 @@
                       "type": "bool",
                       "id": 15
                     },
+                    "enableExactlyOnceDelivery": {
+                      "type": "bool",
+                      "id": 16
+                    },
                     "topicMessageRetentionDuration": {
                       "type": "google.protobuf.Duration",
                       "id": 17,

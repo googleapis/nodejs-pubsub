@@ -4853,6 +4853,7 @@
                      * @property {google.pubsub.v1.IDeadLetterPolicy|null} [deadLetterPolicy] Subscription deadLetterPolicy
                      * @property {google.pubsub.v1.IRetryPolicy|null} [retryPolicy] Subscription retryPolicy
                      * @property {boolean|null} [detached] Subscription detached
+                     * @property {boolean|null} [enableExactlyOnceDelivery] Subscription enableExactlyOnceDelivery
                      * @property {google.protobuf.IDuration|null} [topicMessageRetentionDuration] Subscription topicMessageRetentionDuration
                      */
     
@@ -4977,6 +4978,14 @@
                     Subscription.prototype.detached = false;
     
                     /**
+                     * Subscription enableExactlyOnceDelivery.
+                     * @member {boolean} enableExactlyOnceDelivery
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.enableExactlyOnceDelivery = false;
+    
+                    /**
                      * Subscription topicMessageRetentionDuration.
                      * @member {google.protobuf.IDuration|null|undefined} topicMessageRetentionDuration
                      * @memberof google.pubsub.v1.Subscription
@@ -5035,6 +5044,8 @@
                             $root.google.pubsub.v1.RetryPolicy.encode(message.retryPolicy, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
                         if (message.detached != null && Object.hasOwnProperty.call(message, "detached"))
                             writer.uint32(/* id 15, wireType 0 =*/120).bool(message.detached);
+                        if (message.enableExactlyOnceDelivery != null && Object.hasOwnProperty.call(message, "enableExactlyOnceDelivery"))
+                            writer.uint32(/* id 16, wireType 0 =*/128).bool(message.enableExactlyOnceDelivery);
                         if (message.topicMessageRetentionDuration != null && Object.hasOwnProperty.call(message, "topicMessageRetentionDuration"))
                             $root.google.protobuf.Duration.encode(message.topicMessageRetentionDuration, writer.uint32(/* id 17, wireType 2 =*/138).fork()).ldelim();
                         return writer;
@@ -5129,6 +5140,9 @@
                             case 15:
                                 message.detached = reader.bool();
                                 break;
+                            case 16:
+                                message.enableExactlyOnceDelivery = reader.bool();
+                                break;
                             case 17:
                                 message.topicMessageRetentionDuration = $root.google.protobuf.Duration.decode(reader, reader.uint32());
                                 break;
@@ -5221,6 +5235,9 @@
                         if (message.detached != null && message.hasOwnProperty("detached"))
                             if (typeof message.detached !== "boolean")
                                 return "detached: boolean expected";
+                        if (message.enableExactlyOnceDelivery != null && message.hasOwnProperty("enableExactlyOnceDelivery"))
+                            if (typeof message.enableExactlyOnceDelivery !== "boolean")
+                                return "enableExactlyOnceDelivery: boolean expected";
                         if (message.topicMessageRetentionDuration != null && message.hasOwnProperty("topicMessageRetentionDuration")) {
                             var error = $root.google.protobuf.Duration.verify(message.topicMessageRetentionDuration);
                             if (error)
@@ -5287,6 +5304,8 @@
                         }
                         if (object.detached != null)
                             message.detached = Boolean(object.detached);
+                        if (object.enableExactlyOnceDelivery != null)
+                            message.enableExactlyOnceDelivery = Boolean(object.enableExactlyOnceDelivery);
                         if (object.topicMessageRetentionDuration != null) {
                             if (typeof object.topicMessageRetentionDuration !== "object")
                                 throw TypeError(".google.pubsub.v1.Subscription.topicMessageRetentionDuration: object expected");
@@ -5323,6 +5342,7 @@
                             object.deadLetterPolicy = null;
                             object.retryPolicy = null;
                             object.detached = false;
+                            object.enableExactlyOnceDelivery = false;
                             object.topicMessageRetentionDuration = null;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
@@ -5355,6 +5375,8 @@
                             object.retryPolicy = $root.google.pubsub.v1.RetryPolicy.toObject(message.retryPolicy, options);
                         if (message.detached != null && message.hasOwnProperty("detached"))
                             object.detached = message.detached;
+                        if (message.enableExactlyOnceDelivery != null && message.hasOwnProperty("enableExactlyOnceDelivery"))
+                            object.enableExactlyOnceDelivery = message.enableExactlyOnceDelivery;
                         if (message.topicMessageRetentionDuration != null && message.hasOwnProperty("topicMessageRetentionDuration"))
                             object.topicMessageRetentionDuration = $root.google.protobuf.Duration.toObject(message.topicMessageRetentionDuration, options);
                         return object;

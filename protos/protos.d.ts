@@ -2294,6 +2294,9 @@ export namespace google {
                 /** Subscription detached */
                 detached?: (boolean|null);
 
+                /** Subscription enableExactlyOnceDelivery */
+                enableExactlyOnceDelivery?: (boolean|null);
+
                 /** Subscription topicMessageRetentionDuration */
                 topicMessageRetentionDuration?: (google.protobuf.IDuration|null);
             }
@@ -2345,6 +2348,9 @@ export namespace google {
 
                 /** Subscription detached. */
                 public detached: boolean;
+
+                /** Subscription enableExactlyOnceDelivery. */
+                public enableExactlyOnceDelivery: boolean;
 
                 /** Subscription topicMessageRetentionDuration. */
                 public topicMessageRetentionDuration?: (google.protobuf.IDuration|null);
