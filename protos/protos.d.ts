@@ -2294,6 +2294,9 @@ export namespace google {
                 /** Subscription detached */
                 detached?: (boolean|null);
 
+                /** Subscription enableExactlyOnceDelivery */
+                enableExactlyOnceDelivery?: (boolean|null);
+
                 /** Subscription topicMessageRetentionDuration */
                 topicMessageRetentionDuration?: (google.protobuf.IDuration|null);
             }
@@ -2345,6 +2348,9 @@ export namespace google {
 
                 /** Subscription detached. */
                 public detached: boolean;
+
+                /** Subscription enableExactlyOnceDelivery. */
+                public enableExactlyOnceDelivery: boolean;
 
                 /** Subscription topicMessageRetentionDuration. */
                 public topicMessageRetentionDuration?: (google.protobuf.IDuration|null);
@@ -4106,6 +4112,12 @@ export namespace google {
                 /** StreamingPullResponse receivedMessages */
                 receivedMessages?: (google.pubsub.v1.IReceivedMessage[]|null);
 
+                /** StreamingPullResponse acknowlegeConfirmation */
+                acknowlegeConfirmation?: (google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null);
+
+                /** StreamingPullResponse modifyAckDeadlineConfirmation */
+                modifyAckDeadlineConfirmation?: (google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation|null);
+
                 /** StreamingPullResponse subscriptionProperties */
                 subscriptionProperties?: (google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties|null);
             }
@@ -4121,6 +4133,12 @@ export namespace google {
 
                 /** StreamingPullResponse receivedMessages. */
                 public receivedMessages: google.pubsub.v1.IReceivedMessage[];
+
+                /** StreamingPullResponse acknowlegeConfirmation. */
+                public acknowlegeConfirmation?: (google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null);
+
+                /** StreamingPullResponse modifyAckDeadlineConfirmation. */
+                public modifyAckDeadlineConfirmation?: (google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation|null);
 
                 /** StreamingPullResponse subscriptionProperties. */
                 public subscriptionProperties?: (google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties|null);
@@ -4198,8 +4216,209 @@ export namespace google {
 
             namespace StreamingPullResponse {
 
+                /** Properties of an AcknowledgeConfirmation. */
+                interface IAcknowledgeConfirmation {
+
+                    /** AcknowledgeConfirmation ackIds */
+                    ackIds?: (string[]|null);
+
+                    /** AcknowledgeConfirmation invalidAckIds */
+                    invalidAckIds?: (string[]|null);
+
+                    /** AcknowledgeConfirmation unorderedAckIds */
+                    unorderedAckIds?: (string[]|null);
+                }
+
+                /** Represents an AcknowledgeConfirmation. */
+                class AcknowledgeConfirmation implements IAcknowledgeConfirmation {
+
+                    /**
+                     * Constructs a new AcknowledgeConfirmation.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation);
+
+                    /** AcknowledgeConfirmation ackIds. */
+                    public ackIds: string[];
+
+                    /** AcknowledgeConfirmation invalidAckIds. */
+                    public invalidAckIds: string[];
+
+                    /** AcknowledgeConfirmation unorderedAckIds. */
+                    public unorderedAckIds: string[];
+
+                    /**
+                     * Creates a new AcknowledgeConfirmation instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns AcknowledgeConfirmation instance
+                     */
+                    public static create(properties?: google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation): google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation;
+
+                    /**
+                     * Encodes the specified AcknowledgeConfirmation message. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.verify|verify} messages.
+                     * @param message AcknowledgeConfirmation message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified AcknowledgeConfirmation message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.verify|verify} messages.
+                     * @param message AcknowledgeConfirmation message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes an AcknowledgeConfirmation message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns AcknowledgeConfirmation
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation;
+
+                    /**
+                     * Decodes an AcknowledgeConfirmation message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns AcknowledgeConfirmation
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation;
+
+                    /**
+                     * Verifies an AcknowledgeConfirmation message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates an AcknowledgeConfirmation message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns AcknowledgeConfirmation
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation;
+
+                    /**
+                     * Creates a plain object from an AcknowledgeConfirmation message. Also converts values to other types if specified.
+                     * @param message AcknowledgeConfirmation
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this AcknowledgeConfirmation to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+                }
+
+                /** Properties of a ModifyAckDeadlineConfirmation. */
+                interface IModifyAckDeadlineConfirmation {
+
+                    /** ModifyAckDeadlineConfirmation ackIds */
+                    ackIds?: (string[]|null);
+
+                    /** ModifyAckDeadlineConfirmation invalidAckIds */
+                    invalidAckIds?: (string[]|null);
+                }
+
+                /** Represents a ModifyAckDeadlineConfirmation. */
+                class ModifyAckDeadlineConfirmation implements IModifyAckDeadlineConfirmation {
+
+                    /**
+                     * Constructs a new ModifyAckDeadlineConfirmation.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation);
+
+                    /** ModifyAckDeadlineConfirmation ackIds. */
+                    public ackIds: string[];
+
+                    /** ModifyAckDeadlineConfirmation invalidAckIds. */
+                    public invalidAckIds: string[];
+
+                    /**
+                     * Creates a new ModifyAckDeadlineConfirmation instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns ModifyAckDeadlineConfirmation instance
+                     */
+                    public static create(properties?: google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation): google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation;
+
+                    /**
+                     * Encodes the specified ModifyAckDeadlineConfirmation message. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.verify|verify} messages.
+                     * @param message ModifyAckDeadlineConfirmation message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified ModifyAckDeadlineConfirmation message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.verify|verify} messages.
+                     * @param message ModifyAckDeadlineConfirmation message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes a ModifyAckDeadlineConfirmation message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns ModifyAckDeadlineConfirmation
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation;
+
+                    /**
+                     * Decodes a ModifyAckDeadlineConfirmation message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns ModifyAckDeadlineConfirmation
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation;
+
+                    /**
+                     * Verifies a ModifyAckDeadlineConfirmation message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates a ModifyAckDeadlineConfirmation message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns ModifyAckDeadlineConfirmation
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation;
+
+                    /**
+                     * Creates a plain object from a ModifyAckDeadlineConfirmation message. Also converts values to other types if specified.
+                     * @param message ModifyAckDeadlineConfirmation
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this ModifyAckDeadlineConfirmation to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+                }
+
                 /** Properties of a SubscriptionProperties. */
                 interface ISubscriptionProperties {
+
+                    /** SubscriptionProperties exactlyOnceDeliveryEnabled */
+                    exactlyOnceDeliveryEnabled?: (boolean|null);
 
                     /** SubscriptionProperties messageOrderingEnabled */
                     messageOrderingEnabled?: (boolean|null);
@@ -4213,6 +4432,9 @@ export namespace google {
                      * @param [properties] Properties to set
                      */
                     constructor(properties?: google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties);
+
+                    /** SubscriptionProperties exactlyOnceDeliveryEnabled. */
+                    public exactlyOnceDeliveryEnabled: boolean;
 
                     /** SubscriptionProperties messageOrderingEnabled. */
                     public messageOrderingEnabled: boolean;
