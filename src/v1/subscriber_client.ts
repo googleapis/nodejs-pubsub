@@ -474,6 +474,18 @@ export class SubscriberClient {
    *   backlog. `Pull` and `StreamingPull` requests will return
    *   FAILED_PRECONDITION. If the subscription is a push subscription, pushes to
    *   the endpoint will not be made.
+   * @param {boolean} request.enableExactlyOnceDelivery
+   *   If true, Pub/Sub provides the following guarantees for the delivery of
+   *   a message with a given value of `message_id` on this subscription:
+   *
+   *   * The message sent to a subscriber is guaranteed not to be resent
+   *   before the message's acknowledgement deadline expires.
+   *   * An acknowledged message will not be resent to a subscriber.
+   *
+   *   Note that subscribers may still receive multiple copies of a message
+   *   when `enable_exactly_once_delivery` is true if the message was published
+   *   multiple times by a publisher client. These copies are  considered distinct
+   *   by Pub/Sub and have distinct `message_id` values.
    * @param {google.protobuf.Duration} request.topicMessageRetentionDuration
    *   Output only. Indicates the minimum duration for which a message is retained
    *   after it is published to the subscription's topic. If this field is set,
