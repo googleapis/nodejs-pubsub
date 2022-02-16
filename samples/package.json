@@ -12,7 +12,7 @@
     "node": ">=10"
   },
   "scripts": {
-    "test": "GRPC_TRACE=all GRPC_VERBOSITY=DEBUG npx mocha build/system-test --timeout 600000",
+    "test": "mocha build/system-test --timeout 600000",
     "pretest": "npm run compile",
     "tsc": "tsc -p .",
     "simplifier": "node ./utils/simplifier.js post build/typescript/build/*.js",

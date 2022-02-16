@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "presystem-test": "npm run compile",
-    "system-test": "GRPC_TRACE=all GRPC_VERBOSITY=DEBUG npx mocha build/system-test --timeout 600000",
+    "system-test": "mocha build/system-test --timeout 600000",
     "samples-test": "cd samples/ && npm link ../ && npm install && npm test && cd ../",
     "test": "c8 mocha build/test --recursive",
     "lint": "gts check",
