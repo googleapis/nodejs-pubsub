@@ -4,6 +4,20 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [2.19.0](https://github.com/googleapis/nodejs-pubsub/compare/v2.18.5...v2.19.0) (2022-02-16)
+
+
+### Features
+
+* add exactly once delivery flag ([#1487](https://github.com/googleapis/nodejs-pubsub/issues/1487)) ([330061c](https://github.com/googleapis/nodejs-pubsub/commit/330061c71e26753b86c637a525742b4f5cb3f02c))
+
+
+### Bug Fixes
+
+* **deps:** update dependency google-gax to v2.29.5 ([#1474](https://github.com/googleapis/nodejs-pubsub/issues/1474)) ([f855db3](https://github.com/googleapis/nodejs-pubsub/commit/f855db312bcc0e9e885fa391f42b2509ceffc13f))
+* **deps:** update dependency google-gax to v2.29.6 ([#1489](https://github.com/googleapis/nodejs-pubsub/issues/1489)) ([62aba28](https://github.com/googleapis/nodejs-pubsub/commit/62aba28ddb191091bc80e9a244b561cedc92f4fe))
+* removing misspelled field, add correctly spelled field 🦉 Updates from OwlBot ([#1490](https://github.com/googleapis/nodejs-pubsub/issues/1490)) ([afb9cfe](https://github.com/googleapis/nodejs-pubsub/commit/afb9cfec83524c84d8e207e2b6298996df282a66))
+
 ### [2.18.5](https://github.com/googleapis/nodejs-pubsub/compare/v2.18.4...v2.18.5) (2022-01-21)
 
 
