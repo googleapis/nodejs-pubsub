@@ -4853,6 +4853,7 @@
                      * @property {google.pubsub.v1.IDeadLetterPolicy|null} [deadLetterPolicy] Subscription deadLetterPolicy
                      * @property {google.pubsub.v1.IRetryPolicy|null} [retryPolicy] Subscription retryPolicy
                      * @property {boolean|null} [detached] Subscription detached
+                     * @property {boolean|null} [enableExactlyOnceDelivery] Subscription enableExactlyOnceDelivery
                      * @property {google.protobuf.IDuration|null} [topicMessageRetentionDuration] Subscription topicMessageRetentionDuration
                      */
     
@@ -4977,6 +4978,14 @@
                     Subscription.prototype.detached = false;
     
                     /**
+                     * Subscription enableExactlyOnceDelivery.
+                     * @member {boolean} enableExactlyOnceDelivery
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.enableExactlyOnceDelivery = false;
+    
+                    /**
                      * Subscription topicMessageRetentionDuration.
                      * @member {google.protobuf.IDuration|null|undefined} topicMessageRetentionDuration
                      * @memberof google.pubsub.v1.Subscription
@@ -5035,6 +5044,8 @@
                             $root.google.pubsub.v1.RetryPolicy.encode(message.retryPolicy, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
                         if (message.detached != null && Object.hasOwnProperty.call(message, "detached"))
                             writer.uint32(/* id 15, wireType 0 =*/120).bool(message.detached);
+                        if (message.enableExactlyOnceDelivery != null && Object.hasOwnProperty.call(message, "enableExactlyOnceDelivery"))
+                            writer.uint32(/* id 16, wireType 0 =*/128).bool(message.enableExactlyOnceDelivery);
                         if (message.topicMessageRetentionDuration != null && Object.hasOwnProperty.call(message, "topicMessageRetentionDuration"))
                             $root.google.protobuf.Duration.encode(message.topicMessageRetentionDuration, writer.uint32(/* id 17, wireType 2 =*/138).fork()).ldelim();
                         return writer;
@@ -5129,6 +5140,9 @@
                             case 15:
                                 message.detached = reader.bool();
                                 break;
+                            case 16:
+                                message.enableExactlyOnceDelivery = reader.bool();
+                                break;
                             case 17:
                                 message.topicMessageRetentionDuration = $root.google.protobuf.Duration.decode(reader, reader.uint32());
                                 break;
@@ -5221,6 +5235,9 @@
                         if (message.detached != null && message.hasOwnProperty("detached"))
                             if (typeof message.detached !== "boolean")
                                 return "detached: boolean expected";
+                        if (message.enableExactlyOnceDelivery != null && message.hasOwnProperty("enableExactlyOnceDelivery"))
+                            if (typeof message.enableExactlyOnceDelivery !== "boolean")
+                                return "enableExactlyOnceDelivery: boolean expected";
                         if (message.topicMessageRetentionDuration != null && message.hasOwnProperty("topicMessageRetentionDuration")) {
                             var error = $root.google.protobuf.Duration.verify(message.topicMessageRetentionDuration);
                             if (error)
@@ -5287,6 +5304,8 @@
                         }
                         if (object.detached != null)
                             message.detached = Boolean(object.detached);
+                        if (object.enableExactlyOnceDelivery != null)
+                            message.enableExactlyOnceDelivery = Boolean(object.enableExactlyOnceDelivery);
                         if (object.topicMessageRetentionDuration != null) {
                             if (typeof object.topicMessageRetentionDuration !== "object")
                                 throw TypeError(".google.pubsub.v1.Subscription.topicMessageRetentionDuration: object expected");
@@ -5323,6 +5342,7 @@
                             object.deadLetterPolicy = null;
                             object.retryPolicy = null;
                             object.detached = false;
+                            object.enableExactlyOnceDelivery = false;
                             object.topicMessageRetentionDuration = null;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
@@ -5355,6 +5375,8 @@
                             object.retryPolicy = $root.google.pubsub.v1.RetryPolicy.toObject(message.retryPolicy, options);
                         if (message.detached != null && message.hasOwnProperty("detached"))
                             object.detached = message.detached;
+                        if (message.enableExactlyOnceDelivery != null && message.hasOwnProperty("enableExactlyOnceDelivery"))
+                            object.enableExactlyOnceDelivery = message.enableExactlyOnceDelivery;
                         if (message.topicMessageRetentionDuration != null && message.hasOwnProperty("topicMessageRetentionDuration"))
                             object.topicMessageRetentionDuration = $root.google.protobuf.Duration.toObject(message.topicMessageRetentionDuration, options);
                         return object;
@@ -9357,6 +9379,8 @@
                      * @memberof google.pubsub.v1
                      * @interface IStreamingPullResponse
                      * @property {Array.<google.pubsub.v1.IReceivedMessage>|null} [receivedMessages] StreamingPullResponse receivedMessages
+                     * @property {google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null} [acknowledgeConfirmation] StreamingPullResponse acknowledgeConfirmation
+                     * @property {google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation|null} [modifyAckDeadlineConfirmation] StreamingPullResponse modifyAckDeadlineConfirmation
                      * @property {google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties|null} [subscriptionProperties] StreamingPullResponse subscriptionProperties
                      */
     
@@ -9383,6 +9407,22 @@
                      * @instance
                      */
                     StreamingPullResponse.prototype.receivedMessages = $util.emptyArray;
+    
+                    /**
+                     * StreamingPullResponse acknowledgeConfirmation.
+                     * @member {google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null|undefined} acknowledgeConfirmation
+                     * @memberof google.pubsub.v1.StreamingPullResponse
+                     * @instance
+                     */
+                    StreamingPullResponse.prototype.acknowledgeConfirmation = null;
+    
+                    /**
+                     * StreamingPullResponse modifyAckDeadlineConfirmation.
+                     * @member {google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation|null|undefined} modifyAckDeadlineConfirmation
+                     * @memberof google.pubsub.v1.StreamingPullResponse
+                     * @instance
+                     */
+                    StreamingPullResponse.prototype.modifyAckDeadlineConfirmation = null;
     
                     /**
                      * StreamingPullResponse subscriptionProperties.
@@ -9419,8 +9459,12 @@
                         if (message.receivedMessages != null && message.receivedMessages.length)
                             for (var i = 0; i < message.receivedMessages.length; ++i)
                                 $root.google.pubsub.v1.ReceivedMessage.encode(message.receivedMessages[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        if (message.modifyAckDeadlineConfirmation != null && Object.hasOwnProperty.call(message, "modifyAckDeadlineConfirmation"))
+                            $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.encode(message.modifyAckDeadlineConfirmation, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                         if (message.subscriptionProperties != null && Object.hasOwnProperty.call(message, "subscriptionProperties"))
                             $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.encode(message.subscriptionProperties, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                        if (message.acknowledgeConfirmation != null && Object.hasOwnProperty.call(message, "acknowledgeConfirmation"))
+                            $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.encode(message.acknowledgeConfirmation, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
                         return writer;
                     };
     
@@ -9459,6 +9503,12 @@
                                 if (!(message.receivedMessages && message.receivedMessages.length))
                                     message.receivedMessages = [];
                                 message.receivedMessages.push($root.google.pubsub.v1.ReceivedMessage.decode(reader, reader.uint32()));
+                                break;
+                            case 5:
+                                message.acknowledgeConfirmation = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.decode(reader, reader.uint32());
+                                break;
+                            case 3:
+                                message.modifyAckDeadlineConfirmation = $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.decode(reader, reader.uint32());
                                 break;
                             case 4:
                                 message.subscriptionProperties = $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.decode(reader, reader.uint32());
@@ -9507,6 +9557,16 @@
                                     return "receivedMessages." + error;
                             }
                         }
+                        if (message.acknowledgeConfirmation != null && message.hasOwnProperty("acknowledgeConfirmation")) {
+                            var error = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.verify(message.acknowledgeConfirmation);
+                            if (error)
+                                return "acknowledgeConfirmation." + error;
+                        }
+                        if (message.modifyAckDeadlineConfirmation != null && message.hasOwnProperty("modifyAckDeadlineConfirmation")) {
+                            var error = $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.verify(message.modifyAckDeadlineConfirmation);
+                            if (error)
+                                return "modifyAckDeadlineConfirmation." + error;
+                        }
                         if (message.subscriptionProperties != null && message.hasOwnProperty("subscriptionProperties")) {
                             var error = $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.verify(message.subscriptionProperties);
                             if (error)
@@ -9537,6 +9597,16 @@
                                 message.receivedMessages[i] = $root.google.pubsub.v1.ReceivedMessage.fromObject(object.receivedMessages[i]);
                             }
                         }
+                        if (object.acknowledgeConfirmation != null) {
+                            if (typeof object.acknowledgeConfirmation !== "object")
+                                throw TypeError(".google.pubsub.v1.StreamingPullResponse.acknowledgeConfirmation: object expected");
+                            message.acknowledgeConfirmation = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.fromObject(object.acknowledgeConfirmation);
+                        }
+                        if (object.modifyAckDeadlineConfirmation != null) {
+                            if (typeof object.modifyAckDeadlineConfirmation !== "object")
+                                throw TypeError(".google.pubsub.v1.StreamingPullResponse.modifyAckDeadlineConfirmation: object expected");
+                            message.modifyAckDeadlineConfirmation = $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.fromObject(object.modifyAckDeadlineConfirmation);
+                        }
                         if (object.subscriptionProperties != null) {
                             if (typeof object.subscriptionProperties !== "object")
                                 throw TypeError(".google.pubsub.v1.StreamingPullResponse.subscriptionProperties: object expected");
@@ -9560,15 +9630,22 @@
                         var object = {};
                         if (options.arrays || options.defaults)
                             object.receivedMessages = [];
-                        if (options.defaults)
+                        if (options.defaults) {
+                            object.modifyAckDeadlineConfirmation = null;
                             object.subscriptionProperties = null;
+                            object.acknowledgeConfirmation = null;
+                        }
                         if (message.receivedMessages && message.receivedMessages.length) {
                             object.receivedMessages = [];
                             for (var j = 0; j < message.receivedMessages.length; ++j)
                                 object.receivedMessages[j] = $root.google.pubsub.v1.ReceivedMessage.toObject(message.receivedMessages[j], options);
                         }
+                        if (message.modifyAckDeadlineConfirmation != null && message.hasOwnProperty("modifyAckDeadlineConfirmation"))
+                            object.modifyAckDeadlineConfirmation = $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.toObject(message.modifyAckDeadlineConfirmation, options);
                         if (message.subscriptionProperties != null && message.hasOwnProperty("subscriptionProperties"))
                             object.subscriptionProperties = $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.toObject(message.subscriptionProperties, options);
+                        if (message.acknowledgeConfirmation != null && message.hasOwnProperty("acknowledgeConfirmation"))
+                            object.acknowledgeConfirmation = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.toObject(message.acknowledgeConfirmation, options);
                         return object;
                     };
     
@@ -9583,12 +9660,535 @@
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
     
+                    StreamingPullResponse.AcknowledgeConfirmation = (function() {
+    
+                        /**
+                         * Properties of an AcknowledgeConfirmation.
+                         * @memberof google.pubsub.v1.StreamingPullResponse
+                         * @interface IAcknowledgeConfirmation
+                         * @property {Array.<string>|null} [ackIds] AcknowledgeConfirmation ackIds
+                         * @property {Array.<string>|null} [invalidAckIds] AcknowledgeConfirmation invalidAckIds
+                         * @property {Array.<string>|null} [unorderedAckIds] AcknowledgeConfirmation unorderedAckIds
+                         */
+    
+                        /**
+                         * Constructs a new AcknowledgeConfirmation.
+                         * @memberof google.pubsub.v1.StreamingPullResponse
+                         * @classdesc Represents an AcknowledgeConfirmation.
+                         * @implements IAcknowledgeConfirmation
+                         * @constructor
+                         * @param {google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation=} [properties] Properties to set
+                         */
+                        function AcknowledgeConfirmation(properties) {
+                            this.ackIds = [];
+                            this.invalidAckIds = [];
+                            this.unorderedAckIds = [];
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AcknowledgeConfirmation ackIds.
+                         * @member {Array.<string>} ackIds
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @instance
+                         */
+                        AcknowledgeConfirmation.prototype.ackIds = $util.emptyArray;
+    
+                        /**
+                         * AcknowledgeConfirmation invalidAckIds.
+                         * @member {Array.<string>} invalidAckIds
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @instance
+                         */
+                        AcknowledgeConfirmation.prototype.invalidAckIds = $util.emptyArray;
+    
+                        /**
+                         * AcknowledgeConfirmation unorderedAckIds.
+                         * @member {Array.<string>} unorderedAckIds
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @instance
+                         */
+                        AcknowledgeConfirmation.prototype.unorderedAckIds = $util.emptyArray;
+    
+                        /**
+                         * Creates a new AcknowledgeConfirmation instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation} AcknowledgeConfirmation instance
+                         */
+                        AcknowledgeConfirmation.create = function create(properties) {
+                            return new AcknowledgeConfirmation(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AcknowledgeConfirmation message. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation} message AcknowledgeConfirmation message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AcknowledgeConfirmation.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.ackIds != null && message.ackIds.length)
+                                for (var i = 0; i < message.ackIds.length; ++i)
+                                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.ackIds[i]);
+                            if (message.invalidAckIds != null && message.invalidAckIds.length)
+                                for (var i = 0; i < message.invalidAckIds.length; ++i)
+                                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.invalidAckIds[i]);
+                            if (message.unorderedAckIds != null && message.unorderedAckIds.length)
+                                for (var i = 0; i < message.unorderedAckIds.length; ++i)
+                                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.unorderedAckIds[i]);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AcknowledgeConfirmation message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation} message AcknowledgeConfirmation message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AcknowledgeConfirmation.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AcknowledgeConfirmation message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation} AcknowledgeConfirmation
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AcknowledgeConfirmation.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1:
+                                    if (!(message.ackIds && message.ackIds.length))
+                                        message.ackIds = [];
+                                    message.ackIds.push(reader.string());
+                                    break;
+                                case 2:
+                                    if (!(message.invalidAckIds && message.invalidAckIds.length))
+                                        message.invalidAckIds = [];
+                                    message.invalidAckIds.push(reader.string());
+                                    break;
+                                case 3:
+                                    if (!(message.unorderedAckIds && message.unorderedAckIds.length))
+                                        message.unorderedAckIds = [];
+                                    message.unorderedAckIds.push(reader.string());
+                                    break;
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AcknowledgeConfirmation message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation} AcknowledgeConfirmation
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AcknowledgeConfirmation.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AcknowledgeConfirmation message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AcknowledgeConfirmation.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.ackIds != null && message.hasOwnProperty("ackIds")) {
+                                if (!Array.isArray(message.ackIds))
+                                    return "ackIds: array expected";
+                                for (var i = 0; i < message.ackIds.length; ++i)
+                                    if (!$util.isString(message.ackIds[i]))
+                                        return "ackIds: string[] expected";
+                            }
+                            if (message.invalidAckIds != null && message.hasOwnProperty("invalidAckIds")) {
+                                if (!Array.isArray(message.invalidAckIds))
+                                    return "invalidAckIds: array expected";
+                                for (var i = 0; i < message.invalidAckIds.length; ++i)
+                                    if (!$util.isString(message.invalidAckIds[i]))
+                                        return "invalidAckIds: string[] expected";
+                            }
+                            if (message.unorderedAckIds != null && message.hasOwnProperty("unorderedAckIds")) {
+                                if (!Array.isArray(message.unorderedAckIds))
+                                    return "unorderedAckIds: array expected";
+                                for (var i = 0; i < message.unorderedAckIds.length; ++i)
+                                    if (!$util.isString(message.unorderedAckIds[i]))
+                                        return "unorderedAckIds: string[] expected";
+                            }
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AcknowledgeConfirmation message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation} AcknowledgeConfirmation
+                         */
+                        AcknowledgeConfirmation.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation)
+                                return object;
+                            var message = new $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation();
+                            if (object.ackIds) {
+                                if (!Array.isArray(object.ackIds))
+                                    throw TypeError(".google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.ackIds: array expected");
+                                message.ackIds = [];
+                                for (var i = 0; i < object.ackIds.length; ++i)
+                                    message.ackIds[i] = String(object.ackIds[i]);
+                            }
+                            if (object.invalidAckIds) {
+                                if (!Array.isArray(object.invalidAckIds))
+                                    throw TypeError(".google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.invalidAckIds: array expected");
+                                message.invalidAckIds = [];
+                                for (var i = 0; i < object.invalidAckIds.length; ++i)
+                                    message.invalidAckIds[i] = String(object.invalidAckIds[i]);
+                            }
+                            if (object.unorderedAckIds) {
+                                if (!Array.isArray(object.unorderedAckIds))
+                                    throw TypeError(".google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.unorderedAckIds: array expected");
+                                message.unorderedAckIds = [];
+                                for (var i = 0; i < object.unorderedAckIds.length; ++i)
+                                    message.unorderedAckIds[i] = String(object.unorderedAckIds[i]);
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AcknowledgeConfirmation message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation} message AcknowledgeConfirmation
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AcknowledgeConfirmation.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.arrays || options.defaults) {
+                                object.ackIds = [];
+                                object.invalidAckIds = [];
+                                object.unorderedAckIds = [];
+                            }
+                            if (message.ackIds && message.ackIds.length) {
+                                object.ackIds = [];
+                                for (var j = 0; j < message.ackIds.length; ++j)
+                                    object.ackIds[j] = message.ackIds[j];
+                            }
+                            if (message.invalidAckIds && message.invalidAckIds.length) {
+                                object.invalidAckIds = [];
+                                for (var j = 0; j < message.invalidAckIds.length; ++j)
+                                    object.invalidAckIds[j] = message.invalidAckIds[j];
+                            }
+                            if (message.unorderedAckIds && message.unorderedAckIds.length) {
+                                object.unorderedAckIds = [];
+                                for (var j = 0; j < message.unorderedAckIds.length; ++j)
+                                    object.unorderedAckIds[j] = message.unorderedAckIds[j];
+                            }
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AcknowledgeConfirmation to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AcknowledgeConfirmation.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        return AcknowledgeConfirmation;
+                    })();
+    
+                    StreamingPullResponse.ModifyAckDeadlineConfirmation = (function() {
+    
+                        /**
+                         * Properties of a ModifyAckDeadlineConfirmation.
+                         * @memberof google.pubsub.v1.StreamingPullResponse
+                         * @interface IModifyAckDeadlineConfirmation
+                         * @property {Array.<string>|null} [ackIds] ModifyAckDeadlineConfirmation ackIds
+                         * @property {Array.<string>|null} [invalidAckIds] ModifyAckDeadlineConfirmation invalidAckIds
+                         */
+    
+                        /**
+                         * Constructs a new ModifyAckDeadlineConfirmation.
+                         * @memberof google.pubsub.v1.StreamingPullResponse
+                         * @classdesc Represents a ModifyAckDeadlineConfirmation.
+                         * @implements IModifyAckDeadlineConfirmation
+                         * @constructor
+                         * @param {google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation=} [properties] Properties to set
+                         */
+                        function ModifyAckDeadlineConfirmation(properties) {
+                            this.ackIds = [];
+                            this.invalidAckIds = [];
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * ModifyAckDeadlineConfirmation ackIds.
+                         * @member {Array.<string>} ackIds
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @instance
+                         */
+                        ModifyAckDeadlineConfirmation.prototype.ackIds = $util.emptyArray;
+    
+                        /**
+                         * ModifyAckDeadlineConfirmation invalidAckIds.
+                         * @member {Array.<string>} invalidAckIds
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @instance
+                         */
+                        ModifyAckDeadlineConfirmation.prototype.invalidAckIds = $util.emptyArray;
+    
+                        /**
+                         * Creates a new ModifyAckDeadlineConfirmation instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation} ModifyAckDeadlineConfirmation instance
+                         */
+                        ModifyAckDeadlineConfirmation.create = function create(properties) {
+                            return new ModifyAckDeadlineConfirmation(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified ModifyAckDeadlineConfirmation message. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation} message ModifyAckDeadlineConfirmation message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ModifyAckDeadlineConfirmation.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.ackIds != null && message.ackIds.length)
+                                for (var i = 0; i < message.ackIds.length; ++i)
+                                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.ackIds[i]);
+                            if (message.invalidAckIds != null && message.invalidAckIds.length)
+                                for (var i = 0; i < message.invalidAckIds.length; ++i)
+                                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.invalidAckIds[i]);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified ModifyAckDeadlineConfirmation message, length delimited. Does not implicitly {@link google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation} message ModifyAckDeadlineConfirmation message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ModifyAckDeadlineConfirmation.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a ModifyAckDeadlineConfirmation message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation} ModifyAckDeadlineConfirmation
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ModifyAckDeadlineConfirmation.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1:
+                                    if (!(message.ackIds && message.ackIds.length))
+                                        message.ackIds = [];
+                                    message.ackIds.push(reader.string());
+                                    break;
+                                case 2:
+                                    if (!(message.invalidAckIds && message.invalidAckIds.length))
+                                        message.invalidAckIds = [];
+                                    message.invalidAckIds.push(reader.string());
+                                    break;
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a ModifyAckDeadlineConfirmation message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation} ModifyAckDeadlineConfirmation
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ModifyAckDeadlineConfirmation.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a ModifyAckDeadlineConfirmation message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        ModifyAckDeadlineConfirmation.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.ackIds != null && message.hasOwnProperty("ackIds")) {
+                                if (!Array.isArray(message.ackIds))
+                                    return "ackIds: array expected";
+                                for (var i = 0; i < message.ackIds.length; ++i)
+                                    if (!$util.isString(message.ackIds[i]))
+                                        return "ackIds: string[] expected";
+                            }
+                            if (message.invalidAckIds != null && message.hasOwnProperty("invalidAckIds")) {
+                                if (!Array.isArray(message.invalidAckIds))
+                                    return "invalidAckIds: array expected";
+                                for (var i = 0; i < message.invalidAckIds.length; ++i)
+                                    if (!$util.isString(message.invalidAckIds[i]))
+                                        return "invalidAckIds: string[] expected";
+                            }
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a ModifyAckDeadlineConfirmation message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation} ModifyAckDeadlineConfirmation
+                         */
+                        ModifyAckDeadlineConfirmation.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation)
+                                return object;
+                            var message = new $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation();
+                            if (object.ackIds) {
+                                if (!Array.isArray(object.ackIds))
+                                    throw TypeError(".google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.ackIds: array expected");
+                                message.ackIds = [];
+                                for (var i = 0; i < object.ackIds.length; ++i)
+                                    message.ackIds[i] = String(object.ackIds[i]);
+                            }
+                            if (object.invalidAckIds) {
+                                if (!Array.isArray(object.invalidAckIds))
+                                    throw TypeError(".google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.invalidAckIds: array expected");
+                                message.invalidAckIds = [];
+                                for (var i = 0; i < object.invalidAckIds.length; ++i)
+                                    message.invalidAckIds[i] = String(object.invalidAckIds[i]);
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from a ModifyAckDeadlineConfirmation message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @static
+                         * @param {google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation} message ModifyAckDeadlineConfirmation
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        ModifyAckDeadlineConfirmation.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.arrays || options.defaults) {
+                                object.ackIds = [];
+                                object.invalidAckIds = [];
+                            }
+                            if (message.ackIds && message.ackIds.length) {
+                                object.ackIds = [];
+                                for (var j = 0; j < message.ackIds.length; ++j)
+                                    object.ackIds[j] = message.ackIds[j];
+                            }
+                            if (message.invalidAckIds && message.invalidAckIds.length) {
+                                object.invalidAckIds = [];
+                                for (var j = 0; j < message.invalidAckIds.length; ++j)
+                                    object.invalidAckIds[j] = message.invalidAckIds[j];
+                            }
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this ModifyAckDeadlineConfirmation to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        ModifyAckDeadlineConfirmation.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        return ModifyAckDeadlineConfirmation;
+                    })();
+    
                     StreamingPullResponse.SubscriptionProperties = (function() {
     
                         /**
                          * Properties of a SubscriptionProperties.
                          * @memberof google.pubsub.v1.StreamingPullResponse
                          * @interface ISubscriptionProperties
+                         * @property {boolean|null} [exactlyOnceDeliveryEnabled] SubscriptionProperties exactlyOnceDeliveryEnabled
                          * @property {boolean|null} [messageOrderingEnabled] SubscriptionProperties messageOrderingEnabled
                          */
     
@@ -9606,6 +10206,14 @@
                                     if (properties[keys[i]] != null)
                                         this[keys[i]] = properties[keys[i]];
                         }
+    
+                        /**
+                         * SubscriptionProperties exactlyOnceDeliveryEnabled.
+                         * @member {boolean} exactlyOnceDeliveryEnabled
+                         * @memberof google.pubsub.v1.StreamingPullResponse.SubscriptionProperties
+                         * @instance
+                         */
+                        SubscriptionProperties.prototype.exactlyOnceDeliveryEnabled = false;
     
                         /**
                          * SubscriptionProperties messageOrderingEnabled.
@@ -9639,6 +10247,8 @@
                         SubscriptionProperties.encode = function encode(message, writer) {
                             if (!writer)
                                 writer = $Writer.create();
+                            if (message.exactlyOnceDeliveryEnabled != null && Object.hasOwnProperty.call(message, "exactlyOnceDeliveryEnabled"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).bool(message.exactlyOnceDeliveryEnabled);
                             if (message.messageOrderingEnabled != null && Object.hasOwnProperty.call(message, "messageOrderingEnabled"))
                                 writer.uint32(/* id 2, wireType 0 =*/16).bool(message.messageOrderingEnabled);
                             return writer;
@@ -9675,6 +10285,9 @@
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
                                 switch (tag >>> 3) {
+                                case 1:
+                                    message.exactlyOnceDeliveryEnabled = reader.bool();
+                                    break;
                                 case 2:
                                     message.messageOrderingEnabled = reader.bool();
                                     break;
@@ -9713,6 +10326,9 @@
                         SubscriptionProperties.verify = function verify(message) {
                             if (typeof message !== "object" || message === null)
                                 return "object expected";
+                            if (message.exactlyOnceDeliveryEnabled != null && message.hasOwnProperty("exactlyOnceDeliveryEnabled"))
+                                if (typeof message.exactlyOnceDeliveryEnabled !== "boolean")
+                                    return "exactlyOnceDeliveryEnabled: boolean expected";
                             if (message.messageOrderingEnabled != null && message.hasOwnProperty("messageOrderingEnabled"))
                                 if (typeof message.messageOrderingEnabled !== "boolean")
                                     return "messageOrderingEnabled: boolean expected";
@@ -9731,6 +10347,8 @@
                             if (object instanceof $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties)
                                 return object;
                             var message = new $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties();
+                            if (object.exactlyOnceDeliveryEnabled != null)
+                                message.exactlyOnceDeliveryEnabled = Boolean(object.exactlyOnceDeliveryEnabled);
                             if (object.messageOrderingEnabled != null)
                                 message.messageOrderingEnabled = Boolean(object.messageOrderingEnabled);
                             return message;
@@ -9749,8 +10367,12 @@
                             if (!options)
                                 options = {};
                             var object = {};
-                            if (options.defaults)
+                            if (options.defaults) {
+                                object.exactlyOnceDeliveryEnabled = false;
                                 object.messageOrderingEnabled = false;
+                            }
+                            if (message.exactlyOnceDeliveryEnabled != null && message.hasOwnProperty("exactlyOnceDeliveryEnabled"))
+                                object.exactlyOnceDeliveryEnabled = message.exactlyOnceDeliveryEnabled;
                             if (message.messageOrderingEnabled != null && message.hasOwnProperty("messageOrderingEnabled"))
                                 object.messageOrderingEnabled = message.messageOrderingEnabled;
                             return object;

@@ -821,6 +821,10 @@
                       "type": "bool",
                       "id": 15
                     },
+                    "enableExactlyOnceDelivery": {
+                      "type": "bool",
+                      "id": 16
+                    },
                     "topicMessageRetentionDuration": {
                       "type": "google.protobuf.Duration",
                       "id": 17,
@@ -1146,14 +1150,80 @@
                       "type": "ReceivedMessage",
                       "id": 1
                     },
+                    "acknowledgeConfirmation": {
+                      "type": "AcknowledgeConfirmation",
+                      "id": 5
+                    },
+                    "modifyAckDeadlineConfirmation": {
+                      "type": "ModifyAckDeadlineConfirmation",
+                      "id": 3
+                    },
                     "subscriptionProperties": {
                       "type": "SubscriptionProperties",
                       "id": 4
                     }
                   },
+                  "reserved": [
+                    [
+                      2,
+                      2
+                    ]
+                  ],
                   "nested": {
+                    "AcknowledgeConfirmation": {
+                      "fields": {
+                        "ackIds": {
+                          "rule": "repeated",
+                          "type": "string",
+                          "id": 1,
+                          "options": {
+                            "ctype": "CORD"
+                          }
+                        },
+                        "invalidAckIds": {
+                          "rule": "repeated",
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "ctype": "CORD"
+                          }
+                        },
+                        "unorderedAckIds": {
+                          "rule": "repeated",
+                          "type": "string",
+                          "id": 3,
+                          "options": {
+                            "ctype": "CORD"
+                          }
+                        }
+                      }
+                    },
+                    "ModifyAckDeadlineConfirmation": {
+                      "fields": {
+                        "ackIds": {
+                          "rule": "repeated",
+                          "type": "string",
+                          "id": 1,
+                          "options": {
+                            "ctype": "CORD"
+                          }
+                        },
+                        "invalidAckIds": {
+                          "rule": "repeated",
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "ctype": "CORD"
+                          }
+                        }
+                      }
+                    },
                     "SubscriptionProperties": {
                       "fields": {
+                        "exactlyOnceDeliveryEnabled": {
+                          "type": "bool",
+                          "id": 1
+                        },
                         "messageOrderingEnabled": {
                           "type": "bool",
                           "id": 2

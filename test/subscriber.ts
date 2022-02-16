@@ -125,8 +125,12 @@ class FakeMessageStream extends PassThrough {
     this.options = options;
     stubs.set('messageStream', this);
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  destroy(error?: Error): void {}
+  _destroy(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _error: Error | null,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _callback: (error: Error | null) => void
+  ): void {}
 }
 
 class FakePreciseDate {
