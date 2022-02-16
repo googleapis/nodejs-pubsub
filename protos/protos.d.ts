@@ -4112,8 +4112,8 @@ export namespace google {
                 /** StreamingPullResponse receivedMessages */
                 receivedMessages?: (google.pubsub.v1.IReceivedMessage[]|null);
 
-                /** StreamingPullResponse acknowlegeConfirmation */
-                acknowlegeConfirmation?: (google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null);
+                /** StreamingPullResponse acknowledgeConfirmation */
+                acknowledgeConfirmation?: (google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null);
 
                 /** StreamingPullResponse modifyAckDeadlineConfirmation */
                 modifyAckDeadlineConfirmation?: (google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation|null);
@@ -4134,8 +4134,8 @@ export namespace google {
                 /** StreamingPullResponse receivedMessages. */
                 public receivedMessages: google.pubsub.v1.IReceivedMessage[];
 
-                /** StreamingPullResponse acknowlegeConfirmation. */
-                public acknowlegeConfirmation?: (google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null);
+                /** StreamingPullResponse acknowledgeConfirmation. */
+                public acknowledgeConfirmation?: (google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null);
 
                 /** StreamingPullResponse modifyAckDeadlineConfirmation. */
                 public modifyAckDeadlineConfirmation?: (google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation|null);

@@ -9379,7 +9379,7 @@
                      * @memberof google.pubsub.v1
                      * @interface IStreamingPullResponse
                      * @property {Array.<google.pubsub.v1.IReceivedMessage>|null} [receivedMessages] StreamingPullResponse receivedMessages
-                     * @property {google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null} [acknowlegeConfirmation] StreamingPullResponse acknowlegeConfirmation
+                     * @property {google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null} [acknowledgeConfirmation] StreamingPullResponse acknowledgeConfirmation
                      * @property {google.pubsub.v1.StreamingPullResponse.IModifyAckDeadlineConfirmation|null} [modifyAckDeadlineConfirmation] StreamingPullResponse modifyAckDeadlineConfirmation
                      * @property {google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties|null} [subscriptionProperties] StreamingPullResponse subscriptionProperties
                      */
@@ -9409,12 +9409,12 @@
                     StreamingPullResponse.prototype.receivedMessages = $util.emptyArray;
     
                     /**
-                     * StreamingPullResponse acknowlegeConfirmation.
-                     * @member {google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null|undefined} acknowlegeConfirmation
+                     * StreamingPullResponse acknowledgeConfirmation.
+                     * @member {google.pubsub.v1.StreamingPullResponse.IAcknowledgeConfirmation|null|undefined} acknowledgeConfirmation
                      * @memberof google.pubsub.v1.StreamingPullResponse
                      * @instance
                      */
-                    StreamingPullResponse.prototype.acknowlegeConfirmation = null;
+                    StreamingPullResponse.prototype.acknowledgeConfirmation = null;
     
                     /**
                      * StreamingPullResponse modifyAckDeadlineConfirmation.
@@ -9459,12 +9459,12 @@
                         if (message.receivedMessages != null && message.receivedMessages.length)
                             for (var i = 0; i < message.receivedMessages.length; ++i)
                                 $root.google.pubsub.v1.ReceivedMessage.encode(message.receivedMessages[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-                        if (message.acknowlegeConfirmation != null && Object.hasOwnProperty.call(message, "acknowlegeConfirmation"))
-                            $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.encode(message.acknowlegeConfirmation, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                         if (message.modifyAckDeadlineConfirmation != null && Object.hasOwnProperty.call(message, "modifyAckDeadlineConfirmation"))
                             $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.encode(message.modifyAckDeadlineConfirmation, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                         if (message.subscriptionProperties != null && Object.hasOwnProperty.call(message, "subscriptionProperties"))
                             $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.encode(message.subscriptionProperties, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                        if (message.acknowledgeConfirmation != null && Object.hasOwnProperty.call(message, "acknowledgeConfirmation"))
+                            $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.encode(message.acknowledgeConfirmation, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
                         return writer;
                     };
     
@@ -9504,8 +9504,8 @@
                                     message.receivedMessages = [];
                                 message.receivedMessages.push($root.google.pubsub.v1.ReceivedMessage.decode(reader, reader.uint32()));
                                 break;
-                            case 2:
-                                message.acknowlegeConfirmation = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.decode(reader, reader.uint32());
+                            case 5:
+                                message.acknowledgeConfirmation = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.decode(reader, reader.uint32());
                                 break;
                             case 3:
                                 message.modifyAckDeadlineConfirmation = $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.decode(reader, reader.uint32());
@@ -9557,10 +9557,10 @@
                                     return "receivedMessages." + error;
                             }
                         }
-                        if (message.acknowlegeConfirmation != null && message.hasOwnProperty("acknowlegeConfirmation")) {
-                            var error = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.verify(message.acknowlegeConfirmation);
+                        if (message.acknowledgeConfirmation != null && message.hasOwnProperty("acknowledgeConfirmation")) {
+                            var error = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.verify(message.acknowledgeConfirmation);
                             if (error)
-                                return "acknowlegeConfirmation." + error;
+                                return "acknowledgeConfirmation." + error;
                         }
                         if (message.modifyAckDeadlineConfirmation != null && message.hasOwnProperty("modifyAckDeadlineConfirmation")) {
                             var error = $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.verify(message.modifyAckDeadlineConfirmation);
@@ -9597,10 +9597,10 @@
                                 message.receivedMessages[i] = $root.google.pubsub.v1.ReceivedMessage.fromObject(object.receivedMessages[i]);
                             }
                         }
-                        if (object.acknowlegeConfirmation != null) {
-                            if (typeof object.acknowlegeConfirmation !== "object")
-                                throw TypeError(".google.pubsub.v1.StreamingPullResponse.acknowlegeConfirmation: object expected");
-                            message.acknowlegeConfirmation = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.fromObject(object.acknowlegeConfirmation);
+                        if (object.acknowledgeConfirmation != null) {
+                            if (typeof object.acknowledgeConfirmation !== "object")
+                                throw TypeError(".google.pubsub.v1.StreamingPullResponse.acknowledgeConfirmation: object expected");
+                            message.acknowledgeConfirmation = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.fromObject(object.acknowledgeConfirmation);
                         }
                         if (object.modifyAckDeadlineConfirmation != null) {
                             if (typeof object.modifyAckDeadlineConfirmation !== "object")
@@ -9631,21 +9631,21 @@
                         if (options.arrays || options.defaults)
                             object.receivedMessages = [];
                         if (options.defaults) {
-                            object.acknowlegeConfirmation = null;
                             object.modifyAckDeadlineConfirmation = null;
                             object.subscriptionProperties = null;
+                            object.acknowledgeConfirmation = null;
                         }
                         if (message.receivedMessages && message.receivedMessages.length) {
                             object.receivedMessages = [];
                             for (var j = 0; j < message.receivedMessages.length; ++j)
                                 object.receivedMessages[j] = $root.google.pubsub.v1.ReceivedMessage.toObject(message.receivedMessages[j], options);
                         }
-                        if (message.acknowlegeConfirmation != null && message.hasOwnProperty("acknowlegeConfirmation"))
-                            object.acknowlegeConfirmation = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.toObject(message.acknowlegeConfirmation, options);
                         if (message.modifyAckDeadlineConfirmation != null && message.hasOwnProperty("modifyAckDeadlineConfirmation"))
                             object.modifyAckDeadlineConfirmation = $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.toObject(message.modifyAckDeadlineConfirmation, options);
                         if (message.subscriptionProperties != null && message.hasOwnProperty("subscriptionProperties"))
                             object.subscriptionProperties = $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties.toObject(message.subscriptionProperties, options);
+                        if (message.acknowledgeConfirmation != null && message.hasOwnProperty("acknowledgeConfirmation"))
+                            object.acknowledgeConfirmation = $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation.toObject(message.acknowledgeConfirmation, options);
                         return object;
                     };
     
