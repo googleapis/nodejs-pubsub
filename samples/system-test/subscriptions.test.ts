@@ -70,6 +70,21 @@ describe('subscriptions', () => {
     assert.strictEqual(subscriptions[0].name, fullSubscriptionNameOne);
   });
 
+  it('should create a subscription with filtering', async () => {
+    const filter = 'attributes.author="unknown"';
+    const output = execSync(
+      `${commandFor(
+        'createSubscriptionWithFiltering'
+      )} ${topicNameOne} ${subscriptionNameOne} '${filter}'`
+    );
+    assert.include(
+      output,
+      `Created subscription ${subscriptionNameOne} with filter ${filter}`
+    );
+    const [subscriptions] = await pubsub.topic(topicNameOne).getSubscriptions();
+    assert.strictEqual(subscriptions[0].name, fullSubscriptionNameOne);
+  });
+
   it('should create a push subscription', async () => {
     const output = execSync(
       `${commandFor(
