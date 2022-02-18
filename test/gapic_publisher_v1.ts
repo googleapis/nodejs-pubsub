@@ -151,12 +151,27 @@ describe('v1.PublisherClient', () => {
     assert(client.publisherStub);
   });
 
-  it('has close method', () => {
+  it('has close method for the initialized client', done => {
     const client = new publisherModule.v1.PublisherClient({
       credentials: {client_email: 'bogus', private_key: 'bogus'},
       projectId: 'bogus',
     });
-    client.close();
+    client.initialize();
+    assert(client.publisherStub);
+    client.close().then(() => {
+      done();
+    });
+  });
+
+  it('has close method for the non-initialized client', done => {
+    const client = new publisherModule.v1.PublisherClient({
+      credentials: {client_email: 'bogus', private_key: 'bogus'},
+      projectId: 'bogus',
+    });
+    assert.strictEqual(client.publisherStub, undefined);
+    client.close().then(() => {
+      done();
+    });
   });
 
   it('has getProjectId method', async () => {
@@ -302,6 +317,22 @@ describe('v1.PublisherClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes createTopic with closed client', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.Topic()
+      );
+      request.name = '';
+      const expectedHeaderRequestParams = 'name=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.createTopic(request), expectedError);
+    });
   });
 
   describe('updateTopic', () => {
@@ -416,6 +447,23 @@ describe('v1.PublisherClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes updateTopic with closed client', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.UpdateTopicRequest()
+      );
+      request.topic = {};
+      request.topic.name = '';
+      const expectedHeaderRequestParams = 'topic.name=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.updateTopic(request), expectedError);
+    });
   });
 
   describe('publish', () => {
@@ -524,6 +572,22 @@ describe('v1.PublisherClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes publish with closed client', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.PublishRequest()
+      );
+      request.topic = '';
+      const expectedHeaderRequestParams = 'topic=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.publish(request), expectedError);
+    });
   });
 
   describe('getTopic', () => {
@@ -631,6 +695,22 @@ describe('v1.PublisherClient', () => {
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
+    });
+
+    it('invokes getTopic with closed client', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.GetTopicRequest()
+      );
+      request.topic = '';
+      const expectedHeaderRequestParams = 'topic=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.getTopic(request), expectedError);
     });
   });
 
@@ -743,6 +823,22 @@ describe('v1.PublisherClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes deleteTopic with closed client', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DeleteTopicRequest()
+      );
+      request.topic = '';
+      const expectedHeaderRequestParams = 'topic=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.deleteTopic(request), expectedError);
+    });
   });
 
   describe('detachSubscription', () => {
@@ -854,6 +950,22 @@ describe('v1.PublisherClient', () => {
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
+    });
+
+    it('invokes detachSubscription with closed client', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.detachSubscription(request), expectedError);
     });
   });
 

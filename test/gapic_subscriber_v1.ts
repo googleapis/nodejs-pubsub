@@ -165,12 +165,27 @@ describe('v1.SubscriberClient', () => {
     assert(client.subscriberStub);
   });
 
-  it('has close method', () => {
+  it('has close method for the initialized client', done => {
     const client = new subscriberModule.v1.SubscriberClient({
       credentials: {client_email: 'bogus', private_key: 'bogus'},
       projectId: 'bogus',
     });
-    client.close();
+    client.initialize();
+    assert(client.subscriberStub);
+    client.close().then(() => {
+      done();
+    });
+  });
+
+  it('has close method for the non-initialized client', done => {
+    const client = new subscriberModule.v1.SubscriberClient({
+      credentials: {client_email: 'bogus', private_key: 'bogus'},
+      projectId: 'bogus',
+    });
+    assert.strictEqual(client.subscriberStub, undefined);
+    client.close().then(() => {
+      done();
+    });
   });
 
   it('has getProjectId method', async () => {
@@ -317,6 +332,22 @@ describe('v1.SubscriberClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes createSubscription with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.Subscription()
+      );
+      request.name = '';
+      const expectedHeaderRequestParams = 'name=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.createSubscription(request), expectedError);
+    });
   });
 
   describe('getSubscription', () => {
@@ -427,6 +458,22 @@ describe('v1.SubscriberClient', () => {
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
+    });
+
+    it('invokes getSubscription with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.GetSubscriptionRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.getSubscription(request), expectedError);
     });
   });
 
@@ -543,6 +590,23 @@ describe('v1.SubscriberClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes updateSubscription with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.UpdateSubscriptionRequest()
+      );
+      request.subscription = {};
+      request.subscription.name = '';
+      const expectedHeaderRequestParams = 'subscription.name=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.updateSubscription(request), expectedError);
+    });
   });
 
   describe('deleteSubscription', () => {
@@ -655,6 +719,22 @@ describe('v1.SubscriberClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes deleteSubscription with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DeleteSubscriptionRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.deleteSubscription(request), expectedError);
+    });
   });
 
   describe('modifyAckDeadline', () => {
@@ -765,6 +845,22 @@ describe('v1.SubscriberClient', () => {
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
+    });
+
+    it('invokes modifyAckDeadline with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.ModifyAckDeadlineRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.modifyAckDeadline(request), expectedError);
     });
   });
 
@@ -877,6 +973,22 @@ describe('v1.SubscriberClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes acknowledge with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.AcknowledgeRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.acknowledge(request), expectedError);
+    });
   });
 
   describe('pull', () => {
@@ -983,6 +1095,22 @@ describe('v1.SubscriberClient', () => {
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
+    });
+
+    it('invokes pull with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.PullRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.pull(request), expectedError);
     });
   });
 
@@ -1095,6 +1223,22 @@ describe('v1.SubscriberClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes modifyPushConfig with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.ModifyPushConfigRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.modifyPushConfig(request), expectedError);
+    });
   });
 
   describe('getSnapshot', () => {
@@ -1206,6 +1350,22 @@ describe('v1.SubscriberClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes getSnapshot with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.GetSnapshotRequest()
+      );
+      request.snapshot = '';
+      const expectedHeaderRequestParams = 'snapshot=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.getSnapshot(request), expectedError);
+    });
   });
 
   describe('createSnapshot', () => {
@@ -1316,6 +1476,22 @@ describe('v1.SubscriberClient', () => {
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
+    });
+
+    it('invokes createSnapshot with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.CreateSnapshotRequest()
+      );
+      request.name = '';
+      const expectedHeaderRequestParams = 'name=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.createSnapshot(request), expectedError);
     });
   });
 
@@ -1431,6 +1607,23 @@ describe('v1.SubscriberClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes updateSnapshot with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.UpdateSnapshotRequest()
+      );
+      request.snapshot = {};
+      request.snapshot.name = '';
+      const expectedHeaderRequestParams = 'snapshot.name=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.updateSnapshot(request), expectedError);
+    });
   });
 
   describe('deleteSnapshot', () => {
@@ -1542,6 +1735,22 @@ describe('v1.SubscriberClient', () => {
           .calledWith(request, expectedOptions, undefined)
       );
     });
+
+    it('invokes deleteSnapshot with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DeleteSnapshotRequest()
+      );
+      request.snapshot = '';
+      const expectedHeaderRequestParams = 'snapshot=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.deleteSnapshot(request), expectedError);
+    });
   });
 
   describe('seek', () => {
@@ -1648,6 +1857,22 @@ describe('v1.SubscriberClient', () => {
           .getCall(0)
           .calledWith(request, expectedOptions, undefined)
       );
+    });
+
+    it('invokes seek with closed client', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.SeekRequest()
+      );
+      request.subscription = '';
+      const expectedHeaderRequestParams = 'subscription=';
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.seek(request), expectedError);
     });
   });
 

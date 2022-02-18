@@ -417,8 +417,6 @@ export class PublisherClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.create_topic.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_CreateTopic_async
    */
   createTopic(
     request?: protos.google.pubsub.v1.ITopic,
@@ -507,8 +505,6 @@ export class PublisherClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.update_topic.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_UpdateTopic_async
    */
   updateTopic(
     request?: protos.google.pubsub.v1.IUpdateTopicRequest,
@@ -594,8 +590,6 @@ export class PublisherClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.publish.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_Publish_async
    */
   publish(
     request?: protos.google.pubsub.v1.IPublishRequest,
@@ -678,8 +672,6 @@ export class PublisherClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.get_topic.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_GetTopic_async
    */
   getTopic(
     request?: protos.google.pubsub.v1.IGetTopicRequest,
@@ -766,8 +758,6 @@ export class PublisherClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.delete_topic.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_DeleteTopic_async
    */
   deleteTopic(
     request?: protos.google.pubsub.v1.IDeleteTopicRequest,
@@ -853,8 +843,6 @@ export class PublisherClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.detach_subscription.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_DetachSubscription_async
    */
   detachSubscription(
     request?: protos.google.pubsub.v1.IDetachSubscriptionRequest,
@@ -1089,8 +1077,6 @@ export class PublisherClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.list_topics.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_ListTopics_async
    */
   listTopicsAsync(
     request?: protos.google.pubsub.v1.IListTopicsRequest,
@@ -1291,8 +1277,6 @@ export class PublisherClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.list_topic_subscriptions.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_ListTopicSubscriptions_async
    */
   listTopicSubscriptionsAsync(
     request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
@@ -1487,8 +1471,6 @@ export class PublisherClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.list_topic_snapshots.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_ListTopicSnapshots_async
    */
   listTopicSnapshotsAsync(
     request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
@@ -1833,9 +1815,8 @@ export class PublisherClient {
    * @returns {Promise} A promise that resolves when the client is closed.
    */
   close(): Promise<void> {
-    this.initialize();
-    if (!this._terminated) {
-      return this.publisherStub!.then(stub => {
+    if (this.publisherStub && !this._terminated) {
+      return this.publisherStub.then(stub => {
         this._terminated = true;
         stub.close();
         this.iamClient.close();
