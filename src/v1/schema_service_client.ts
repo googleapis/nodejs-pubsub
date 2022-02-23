@@ -364,8 +364,6 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.create_schema.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_CreateSchema_async
    */
   createSchema(
     request?: protos.google.pubsub.v1.ICreateSchemaRequest,
@@ -452,8 +450,6 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.get_schema.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_GetSchema_async
    */
   getSchema(
     request?: protos.google.pubsub.v1.IGetSchemaRequest,
@@ -536,8 +532,6 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.delete_schema.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_DeleteSchema_async
    */
   deleteSchema(
     request?: protos.google.pubsub.v1.IDeleteSchemaRequest,
@@ -622,8 +616,6 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.validate_schema.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_ValidateSchema_async
    */
   validateSchema(
     request?: protos.google.pubsub.v1.IValidateSchemaRequest,
@@ -716,8 +708,6 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.validate_message.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_ValidateMessage_async
    */
   validateMessage(
     request?: protos.google.pubsub.v1.IValidateMessageRequest,
@@ -964,8 +954,6 @@ export class SchemaServiceClient {
    *   Please see the
    *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.list_schemas.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_ListSchemas_async
    */
   listSchemasAsync(
     request?: protos.google.pubsub.v1.IListSchemasRequest,
@@ -1310,9 +1298,8 @@ export class SchemaServiceClient {
    * @returns {Promise} A promise that resolves when the client is closed.
    */
   close(): Promise<void> {
-    this.initialize();
-    if (!this._terminated) {
-      return this.schemaServiceStub!.then(stub => {
+    if (this.schemaServiceStub && !this._terminated) {
+      return this.schemaServiceStub.then(stub => {
         this._terminated = true;
         stub.close();
         this.iamClient.close();
