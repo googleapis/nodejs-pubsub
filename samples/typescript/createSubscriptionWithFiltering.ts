@@ -31,7 +31,7 @@
  */
 // const topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID';
 // const subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID';
-// const filterString = 'YOUR_FILTER_STRING';
+// const filterString = 'YOUR_FILTER_STRING';   // e.g. 'attributes.author="unknown"'
 
 // Imports the Google Cloud client library
 import {PubSub} from '@google-cloud/pubsub';

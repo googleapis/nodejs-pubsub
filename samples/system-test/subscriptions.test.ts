@@ -33,6 +33,7 @@ describe('subscriptions', () => {
   const subscriptionNameSeven = `sub7-${runId}`;
   const subscriptionNameEight = `sub8-${runId}`;
   const subscriptionNameDetach = `testdetachsubsxyz-${runId}`;
+  const subscriptionNameFiltered = `testfilteredsub-${runId}`;
   const fullTopicNameOne = `projects/${projectId}/topics/${topicNameOne}`;
   const fullSubscriptionNameOne = `projects/${projectId}/subscriptions/${subscriptionNameOne}`;
   const fullSubscriptionNameTwo = `projects/${projectId}/subscriptions/${subscriptionNameTwo}`;
@@ -75,11 +76,11 @@ describe('subscriptions', () => {
     const output = execSync(
       `${commandFor(
         'createSubscriptionWithFiltering'
-      )} ${topicNameOne} ${subscriptionNameOne} '${filter}'`
+      )} ${topicNameOne} ${subscriptionNameFiltered} '${filter}'`
     );
     assert.include(
       output,
-      `Created subscription ${subscriptionNameOne} with filter ${filter}`
+      `Created subscription ${subscriptionNameFiltered} with filter ${filter}`
     );
     const [subscriptions] = await pubsub.topic(topicNameOne).getSubscriptions();
     assert.strictEqual(subscriptions[0].name, fullSubscriptionNameOne);
