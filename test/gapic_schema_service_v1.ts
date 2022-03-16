@@ -328,7 +328,6 @@ describe('v1.SchemaServiceClient', () => {
         new protos.google.pubsub.v1.CreateSchemaRequest()
       );
       request.parent = '';
-      const expectedHeaderRequestParams = 'parent=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.createSchema(request), expectedError);
@@ -452,7 +451,6 @@ describe('v1.SchemaServiceClient', () => {
         new protos.google.pubsub.v1.GetSchemaRequest()
       );
       request.name = '';
-      const expectedHeaderRequestParams = 'name=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.getSchema(request), expectedError);
@@ -579,7 +577,6 @@ describe('v1.SchemaServiceClient', () => {
         new protos.google.pubsub.v1.DeleteSchemaRequest()
       );
       request.name = '';
-      const expectedHeaderRequestParams = 'name=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.deleteSchema(request), expectedError);
@@ -706,7 +703,6 @@ describe('v1.SchemaServiceClient', () => {
         new protos.google.pubsub.v1.ValidateSchemaRequest()
       );
       request.parent = '';
-      const expectedHeaderRequestParams = 'parent=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.validateSchema(request), expectedError);
@@ -833,7 +829,6 @@ describe('v1.SchemaServiceClient', () => {
         new protos.google.pubsub.v1.ValidateMessageRequest()
       );
       request.parent = '';
-      const expectedHeaderRequestParams = 'parent=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.validateMessage(request), expectedError);

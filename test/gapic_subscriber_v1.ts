@@ -343,7 +343,6 @@ describe('v1.SubscriberClient', () => {
         new protos.google.pubsub.v1.Subscription()
       );
       request.name = '';
-      const expectedHeaderRequestParams = 'name=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.createSubscription(request), expectedError);
@@ -470,7 +469,6 @@ describe('v1.SubscriberClient', () => {
         new protos.google.pubsub.v1.GetSubscriptionRequest()
       );
       request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.getSubscription(request), expectedError);
@@ -602,7 +600,6 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = {};
       request.subscription.name = '';
-      const expectedHeaderRequestParams = 'subscription.name=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.updateSubscription(request), expectedError);
@@ -730,7 +727,6 @@ describe('v1.SubscriberClient', () => {
         new protos.google.pubsub.v1.DeleteSubscriptionRequest()
       );
       request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.deleteSubscription(request), expectedError);
@@ -857,7 +853,6 @@ describe('v1.SubscriberClient', () => {
         new protos.google.pubsub.v1.ModifyAckDeadlineRequest()
       );
       request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.modifyAckDeadline(request), expectedError);
@@ -984,7 +979,6 @@ describe('v1.SubscriberClient', () => {
         new protos.google.pubsub.v1.AcknowledgeRequest()
       );
       request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.acknowledge(request), expectedError);
@@ -1107,7 +1101,6 @@ describe('v1.SubscriberClient', () => {
         new protos.google.pubsub.v1.PullRequest()
       );
       request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.pull(request), expectedError);
@@ -1234,7 +1227,6 @@ describe('v1.SubscriberClient', () => {
         new protos.google.pubsub.v1.ModifyPushConfigRequest()
       );
       request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.modifyPushConfig(request), expectedError);
@@ -1361,7 +1353,6 @@ describe('v1.SubscriberClient', () => {
         new protos.google.pubsub.v1.GetSnapshotRequest()
       );
       request.snapshot = '';
-      const expectedHeaderRequestParams = 'snapshot=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.getSnapshot(request), expectedError);
@@ -1488,7 +1479,6 @@ describe('v1.SubscriberClient', () => {
         new protos.google.pubsub.v1.CreateSnapshotRequest()
       );
       request.name = '';
-      const expectedHeaderRequestParams = 'name=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.createSnapshot(request), expectedError);
@@ -1619,7 +1609,6 @@ describe('v1.SubscriberClient', () => {
       );
       request.snapshot = {};
       request.snapshot.name = '';
-      const expectedHeaderRequestParams = 'snapshot.name=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.updateSnapshot(request), expectedError);
@@ -1746,7 +1735,6 @@ describe('v1.SubscriberClient', () => {
         new protos.google.pubsub.v1.DeleteSnapshotRequest()
       );
       request.snapshot = '';
-      const expectedHeaderRequestParams = 'snapshot=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.deleteSnapshot(request), expectedError);
@@ -1869,7 +1857,6 @@ describe('v1.SubscriberClient', () => {
         new protos.google.pubsub.v1.SeekRequest()
       );
       request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.seek(request), expectedError);
