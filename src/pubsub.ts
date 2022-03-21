@@ -273,6 +273,16 @@ export class PubSub {
 
   constructor(options?: ClientConfig) {
     options = options || {};
+
+    // Needed for potentially large responses that may come from using exactly-once delivery.
+    // This will get passed down to grpc client objects.
+    const maxMetadataSize = 'grpc.max_metadata_size';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const optionsAny = options as any;
+    if (!optionsAny[maxMetadataSize]) {
+      optionsAny[maxMetadataSize] = 4 * 1024 * 1024; // 4 MiB
+    }
+
     // Determine what scopes are needed.
     // It is the union of the scopes on both clients.
     const clientClasses = [v1.SubscriberClient, v1.PublisherClient];
