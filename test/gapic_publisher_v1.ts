@@ -328,7 +328,6 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.Topic()
       );
       request.name = '';
-      const expectedHeaderRequestParams = 'name=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.createTopic(request), expectedError);
@@ -459,7 +458,6 @@ describe('v1.PublisherClient', () => {
       );
       request.topic = {};
       request.topic.name = '';
-      const expectedHeaderRequestParams = 'topic.name=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.updateTopic(request), expectedError);
@@ -583,7 +581,6 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.PublishRequest()
       );
       request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.publish(request), expectedError);
@@ -707,7 +704,6 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.GetTopicRequest()
       );
       request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.getTopic(request), expectedError);
@@ -834,7 +830,6 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.DeleteTopicRequest()
       );
       request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.deleteTopic(request), expectedError);
@@ -962,7 +957,6 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.DetachSubscriptionRequest()
       );
       request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.detachSubscription(request), expectedError);
