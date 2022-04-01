@@ -195,12 +195,12 @@ describe('MessageQueues', () => {
         assert.deepStrictEqual(batch, expectedBatch);
       });
 
-      it('should emit any errors', done => {
+      it('should emit any errors as debug events', done => {
         const fakeError = new Error('err');
 
         sandbox.stub(messageQueue.batches, 'push').throws(fakeError);
 
-        subscriber.on('error', err => {
+        subscriber.on('debug', err => {
           assert.strictEqual(err, fakeError);
           done();
         });
@@ -362,7 +362,7 @@ describe('MessageQueues', () => {
       assert.strictEqual(callOptions, fakeCallOptions);
     });
 
-    it('should throw a BatchError if unable to ack', done => {
+    it('should throw a BatchError on "debug" if unable to ack', done => {
       const messages = [
         new FakeMessage(),
         new FakeMessage(),
@@ -380,7 +380,7 @@ describe('MessageQueues', () => {
 
       sandbox.stub(subscriber.client, 'acknowledge').rejects(fakeError);
 
-      subscriber.on('error', (err: BatchError) => {
+      subscriber.on('debug', (err: BatchError) => {
         assert.strictEqual(err.message, expectedMessage);
         assert.deepStrictEqual(err.ackIds, ackIds);
         assert.strictEqual(err.code, fakeError.code);
@@ -487,7 +487,7 @@ describe('MessageQueues', () => {
       assert.strictEqual(callOptions, fakeCallOptions);
     });
 
-    it('should throw a BatchError if unable to modAck', done => {
+    it('should throw a BatchError on "debug" if unable to modAck', done => {
       const messages = [
         new FakeMessage(),
         new FakeMessage(),
@@ -505,7 +505,7 @@ describe('MessageQueues', () => {
 
       sandbox.stub(subscriber.client, 'modifyAckDeadline').rejects(fakeError);
 
-      subscriber.on('error', (err: BatchError) => {
+      subscriber.on('debug', (err: BatchError) => {
         assert.strictEqual(err.message, expectedMessage);
         assert.deepStrictEqual(err.ackIds, ackIds);
         assert.strictEqual(err.code, fakeError.code);

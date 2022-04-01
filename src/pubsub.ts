@@ -272,7 +272,7 @@ export class PubSub {
   private schemaClient?: SchemaServiceClient;
 
   constructor(options?: ClientConfig) {
-    options = options || {};
+    options = Object.assign({}, options || {});
 
     // Needed for potentially large responses that may come from using exactly-once delivery.
     // This will get passed down to grpc client objects.
