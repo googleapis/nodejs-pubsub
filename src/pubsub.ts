@@ -279,7 +279,7 @@ export class PubSub {
     const maxMetadataSize = 'grpc.max_metadata_size';
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const optionsAny = options as any;
-    if (!optionsAny[maxMetadataSize]) {
+    if (optionsAny[maxMetadataSize] === undefined) {
       optionsAny[maxMetadataSize] = 4 * 1024 * 1024; // 4 MiB
     }
 
