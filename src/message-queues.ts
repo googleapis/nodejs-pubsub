@@ -141,7 +141,10 @@ export abstract class MessageQueue {
     try {
       await this._sendBatch(batch);
     } catch (e) {
-      this._subscriber.emit('error', e);
+      // These queues are used for ack and modAck messages, which should
+      // never surface an error to the user level. However, we'll emit
+      // them onto this debug channel in case debug info is needed.
+      this._subscriber.emit('debug', e);
     }
 
     this.numInFlightRequests -= batchSize;
