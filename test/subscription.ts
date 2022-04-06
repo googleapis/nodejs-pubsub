@@ -509,6 +509,25 @@ describe('Subscription', () => {
     });
   });
 
+  describe('debug', () => {
+    const error = new Error('err') as ServiceError;
+
+    beforeEach(() => {
+      subscription.request = (config, callback) => {
+        callback(error);
+      };
+    });
+
+    it('should return the debug events to the callback', done => {
+      subscription.on('debug', err => {
+        assert.strictEqual(err, error);
+        done();
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (subscription as any)._subscriber.emit('debug', error);
+    });
+  });
+
   describe('delete', () => {
     beforeEach(() => {
       sandbox.stub(subscription, 'removeAllListeners').yields(util.noop);

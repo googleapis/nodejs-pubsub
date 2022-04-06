@@ -196,10 +196,12 @@ describe('PubSub', () => {
   });
 
   describe('instantiation', () => {
+    const maxMetadataSizeKey = 'grpc.max_metadata_size';
     const DEFAULT_OPTIONS = {
       libName: 'gccl',
       libVersion: PKG.version,
       scopes: [],
+      [maxMetadataSizeKey]: 4 * 1024 * 1024,
     };
 
     it('should extend the correct methods', () => {
@@ -218,6 +220,20 @@ describe('PubSub', () => {
 
     it('should return an instance', () => {
       assert(new PubSub() instanceof PubSub);
+    });
+
+    it('should augment the gRPC options for metadata size', () => {
+      let pubsub = new PubSub();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let optionsAny: any = pubsub.options;
+      assert.strictEqual(optionsAny[maxMetadataSizeKey], 4 * 1024 * 1024);
+
+      optionsAny = {
+        [maxMetadataSizeKey]: 1 * 1024 * 1024,
+      };
+      pubsub = new PubSub(optionsAny);
+      optionsAny = pubsub.options;
+      assert.strictEqual(optionsAny[maxMetadataSizeKey], 1 * 1024 * 1024);
     });
 
     it('should combine all required scopes', () => {
