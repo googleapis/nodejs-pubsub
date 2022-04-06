@@ -4,6 +4,15 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.19.1](https://github.com/googleapis/nodejs-pubsub/compare/v2.19.0...v2.19.1) (2022-04-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency google-gax to v2.29.7 ([#1493](https://github.com/googleapis/nodejs-pubsub/issues/1493)) ([c8921a7](https://github.com/googleapis/nodejs-pubsub/commit/c8921a7af9205c15c5485f3a3d1c607483a69de4))
+* **deps:** update dependency google-gax to v2.30.0 ([#1496](https://github.com/googleapis/nodejs-pubsub/issues/1496)) ([073a1b8](https://github.com/googleapis/nodejs-pubsub/commit/073a1b86ab516ad78985ce3d09ff16cbdf56151e))
+* update grpc.max_metadata_size to 4MiB for exactly-once, and shift ack/modack errors to 'debug' stream channel ([#1505](https://github.com/googleapis/nodejs-pubsub/issues/1505)) ([abd10cc](https://github.com/googleapis/nodejs-pubsub/commit/abd10cc0c9956256bd06e5b48a412ec0af6dd086))
+
 ## [2.19.0](https://github.com/googleapis/nodejs-pubsub/compare/v2.18.5...v2.19.0) (2022-02-16)
 
 
