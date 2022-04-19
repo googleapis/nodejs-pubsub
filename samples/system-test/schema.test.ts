@@ -23,7 +23,7 @@ import {
   Topic,
 } from '@google-cloud/pubsub';
 import {assert} from 'chai';
-import {describe, it, afterEach} from 'mocha';
+import {describe, it, afterEach, after} from 'mocha';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
 import * as path from 'path';
@@ -90,7 +90,7 @@ describe('schema', () => {
     );
   }
 
-  afterEach(async () => {
+  after(async () => {
     await cleanAllSubs();
     await cleanAllTopics();
     await cleanAllSchemas();
@@ -148,7 +148,6 @@ describe('schema', () => {
     );
     assert.include(output, schemaId);
     assert.include(output, 'created.');
-    console.log(output);
 
     let found = false;
     for await (const s of pubsub.listSchemas()) {
@@ -170,7 +169,6 @@ describe('schema', () => {
     );
     assert.include(output, schemaId);
     assert.include(output, 'created.');
-    console.log(output);
 
     let found = false;
     for await (const s of pubsub.listSchemas()) {
