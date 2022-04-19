@@ -148,6 +148,7 @@ describe('schema', () => {
     );
     assert.include(output, schemaId);
     assert.include(output, 'created.');
+    console.log(output);
 
     let found = false;
     for await (const s of pubsub.listSchemas()) {
@@ -169,6 +170,7 @@ describe('schema', () => {
     );
     assert.include(output, schemaId);
     assert.include(output, 'created.');
+    console.log(output);
 
     let found = false;
     for await (const s of pubsub.listSchemas()) {
