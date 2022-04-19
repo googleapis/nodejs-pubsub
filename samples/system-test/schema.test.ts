@@ -151,7 +151,7 @@ describe('schema', () => {
 
     let found = false;
     for await (const s of pubsub.listSchemas()) {
-      if (s.name?.endsWith(schemaId)) {
+      if (s.name && s.name.indexOf(schemaId) >= 0) {
         found = true;
         break;
       }
@@ -172,7 +172,7 @@ describe('schema', () => {
 
     let found = false;
     for await (const s of pubsub.listSchemas()) {
-      if (s.name?.endsWith(schemaId)) {
+      if (s.name && s.name.indexOf(schemaId) >= 0) {
         found = true;
         break;
       }
