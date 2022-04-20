@@ -39,7 +39,7 @@ describe('schema', () => {
   const projectId = process.env.GCLOUD_PROJECT;
   const pubsub = new PubSub({projectId});
   const runId = uuid.v4();
-  console.log(`Topics runId: ${runId}`);
+  console.log(`Schema runId: ${runId}`);
   const topicIdStem = `schema-top-${runId}-`;
   const subscriptionIdStem = `schema-sub-${runId}-`;
   const schemaIdStem = `schema-${runId}-`;
@@ -151,7 +151,7 @@ describe('schema', () => {
 
     let found = false;
     for await (const s of pubsub.listSchemas()) {
-      if (s.name?.endsWith(schemaId)) {
+      if (s.name && s.name.indexOf(schemaId) >= 0) {
         found = true;
         break;
       }
@@ -172,7 +172,7 @@ describe('schema', () => {
 
     let found = false;
     for await (const s of pubsub.listSchemas()) {
-      if (s.name?.endsWith(schemaId)) {
+      if (s.name && s.name.indexOf(schemaId) >= 0) {
         found = true;
         break;
       }
