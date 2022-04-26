@@ -501,7 +501,9 @@ describe('subscriptions', () => {
       const topic = await createTopic(testId);
       const subName = reserveSub(testId);
       const output = execSync(
-        `${commandFor('createSubscriptionWithOrdering')} ${topic.name} ${subName}`
+        `${commandFor('createSubscriptionWithOrdering')} ${
+          topic.name
+        } ${subName}`
       );
       assert.include(
         output,
