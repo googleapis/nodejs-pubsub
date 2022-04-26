@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+### [2.19.2](https://github.com/googleapis/nodejs-pubsub/compare/v2.19.1...v2.19.2) (2022-04-21)
+
+
+### Bug Fixes
+
+* fix flaky schema and subscription tests ([#1518](https://github.com/googleapis/nodejs-pubsub/issues/1518)) ([5ff0105](https://github.com/googleapis/nodejs-pubsub/commit/5ff0105cf84751beb6f06343aaf5228157faae4d))
+
 ### [2.19.1](https://github.com/googleapis/nodejs-pubsub/compare/v2.19.0...v2.19.1) (2022-04-06)
 
 
