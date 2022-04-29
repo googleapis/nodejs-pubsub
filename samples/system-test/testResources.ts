@@ -17,7 +17,7 @@ import * as uuid from 'uuid';
 // Returns a shortened UUID that can be used to identify a
 // specific run of a specific test.
 function shortUUID() {
-  return uuid.v4().split('-').shift()!!;
+  return uuid.v4().split('-').shift()!;
 }
 
 export interface TokenMaker {
@@ -75,7 +75,9 @@ export class TestResources {
    */
   getPrefix(testId?: string): string {
     if (testId) {
-      return [this.testSuiteId, this.currentTime, normalizeId(testId)].join('-');
+      return [this.testSuiteId, this.currentTime, normalizeId(testId)].join(
+        '-'
+      );
     } else {
       return [this.testSuiteId, this.currentTime].join('-');
     }
