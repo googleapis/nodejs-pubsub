@@ -819,7 +819,7 @@ export class Topic {
    * ```
    * @example If the callback is omitted, we'll return a Promise.
    * ```
-   * const [messageId] = await topic.publishMessage({data});
+   * const messageId = await topic.publishMessage({data});
    * ```
    */
   publishMessage(message: MessageOptions): Promise<string>;
