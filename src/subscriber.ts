@@ -35,7 +35,6 @@ export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 export type SubscriptionProperties =
   google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties;
 
-
 /**
  * Date object with nanosecond precision. Supports all standard Date arguments
  * in addition to several custom types.
