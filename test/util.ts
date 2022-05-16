@@ -18,7 +18,7 @@ import * as assert from 'assert';
 
 describe('utils', () => {
   describe('Throttler', () => {
-    it('does not allow too many calls through at once', async () => {
+    it('does not allow too many calls through at once', () => {
       const throttler = new Throttler(300);
       let totalCalls = '';
 
@@ -32,8 +32,10 @@ describe('utils', () => {
         totalCalls += 'SECOND';
       });
 
+      // Simulate time passing.
+      throttler.lastTime! -= 1000;
+
       // This one should succeed.
-      await new Promise(r => setTimeout(r, 1000));
       throttler.doMaybe(() => {
         totalCalls += 'THIRD';
       });
