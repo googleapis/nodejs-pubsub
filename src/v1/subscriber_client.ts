@@ -405,8 +405,14 @@ export class SubscriberClient {
    *   field will be `_deleted-topic_` if the topic has been deleted.
    * @param {google.pubsub.v1.PushConfig} request.pushConfig
    *   If push delivery is used with this subscription, this field is
-   *   used to configure it. An empty `pushConfig` signifies that the subscriber
-   *   will pull and ack messages using API methods.
+   *   used to configure it. Either `pushConfig` or `bigQueryConfig` can be set,
+   *   but not both. If both are empty, then the subscriber will pull and ack
+   *   messages using API methods.
+   * @param {google.pubsub.v1.BigQueryConfig} request.bigqueryConfig
+   *   If delivery to BigQuery is used with this subscription, this field is
+   *   used to configure it. Either `pushConfig` or `bigQueryConfig` can be set,
+   *   but not both. If both are empty, then the subscriber will pull and ack
+   *   messages using API methods.
    * @param {number} request.ackDeadlineSeconds
    *   The approximate amount of time (on a best-effort basis) Pub/Sub waits for
    *   the subscriber to acknowledge receipt before resending the message. In the
@@ -505,6 +511,9 @@ export class SubscriberClient {
    *   `topic_message_retention_duration` are always available to subscribers. See
    *   the `message_retention_duration` field in `Topic`. This field is set only
    *   in responses from the server; it is ignored if it is set in any requests.
+   * @param {google.pubsub.v1.Subscription.State} request.state
+   *   Output only. An output-only field indicating whether or not the subscription can receive
+   *   messages.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.

@@ -780,6 +780,10 @@
                       "type": "PushConfig",
                       "id": 4
                     },
+                    "bigqueryConfig": {
+                      "type": "BigQueryConfig",
+                      "id": 18
+                    },
                     "ackDeadlineSeconds": {
                       "type": "int32",
                       "id": 5
@@ -830,6 +834,22 @@
                       "id": 17,
                       "options": {
                         "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
+                    },
+                    "state": {
+                      "type": "State",
+                      "id": 19,
+                      "options": {
+                        "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
+                    }
+                  },
+                  "nested": {
+                    "State": {
+                      "values": {
+                        "STATE_UNSPECIFIED": 0,
+                        "ACTIVE": 1,
+                        "RESOURCE_ERROR": 2
                       }
                     }
                   }
@@ -900,6 +920,44 @@
                           "type": "string",
                           "id": 2
                         }
+                      }
+                    }
+                  }
+                },
+                "BigQueryConfig": {
+                  "fields": {
+                    "table": {
+                      "type": "string",
+                      "id": 1
+                    },
+                    "useTopicSchema": {
+                      "type": "bool",
+                      "id": 2
+                    },
+                    "writeMetadata": {
+                      "type": "bool",
+                      "id": 3
+                    },
+                    "dropUnknownFields": {
+                      "type": "bool",
+                      "id": 4
+                    },
+                    "state": {
+                      "type": "State",
+                      "id": 5,
+                      "options": {
+                        "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
+                    }
+                  },
+                  "nested": {
+                    "State": {
+                      "values": {
+                        "STATE_UNSPECIFIED": 0,
+                        "ACTIVE": 1,
+                        "PERMISSION_DENIED": 2,
+                        "NOT_FOUND": 3,
+                        "SCHEMA_MISMATCH": 4
                       }
                     }
                   }

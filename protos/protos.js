@@ -4843,6 +4843,7 @@
                      * @property {string|null} [name] Subscription name
                      * @property {string|null} [topic] Subscription topic
                      * @property {google.pubsub.v1.IPushConfig|null} [pushConfig] Subscription pushConfig
+                     * @property {google.pubsub.v1.IBigQueryConfig|null} [bigqueryConfig] Subscription bigqueryConfig
                      * @property {number|null} [ackDeadlineSeconds] Subscription ackDeadlineSeconds
                      * @property {boolean|null} [retainAckedMessages] Subscription retainAckedMessages
                      * @property {google.protobuf.IDuration|null} [messageRetentionDuration] Subscription messageRetentionDuration
@@ -4855,6 +4856,7 @@
                      * @property {boolean|null} [detached] Subscription detached
                      * @property {boolean|null} [enableExactlyOnceDelivery] Subscription enableExactlyOnceDelivery
                      * @property {google.protobuf.IDuration|null} [topicMessageRetentionDuration] Subscription topicMessageRetentionDuration
+                     * @property {google.pubsub.v1.Subscription.State|null} [state] Subscription state
                      */
     
                     /**
@@ -4896,6 +4898,14 @@
                      * @instance
                      */
                     Subscription.prototype.pushConfig = null;
+    
+                    /**
+                     * Subscription bigqueryConfig.
+                     * @member {google.pubsub.v1.IBigQueryConfig|null|undefined} bigqueryConfig
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.bigqueryConfig = null;
     
                     /**
                      * Subscription ackDeadlineSeconds.
@@ -4994,6 +5004,14 @@
                     Subscription.prototype.topicMessageRetentionDuration = null;
     
                     /**
+                     * Subscription state.
+                     * @member {google.pubsub.v1.Subscription.State} state
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.state = 0;
+    
+                    /**
                      * Creates a new Subscription instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Subscription
@@ -5048,6 +5066,10 @@
                             writer.uint32(/* id 16, wireType 0 =*/128).bool(message.enableExactlyOnceDelivery);
                         if (message.topicMessageRetentionDuration != null && Object.hasOwnProperty.call(message, "topicMessageRetentionDuration"))
                             $root.google.protobuf.Duration.encode(message.topicMessageRetentionDuration, writer.uint32(/* id 17, wireType 2 =*/138).fork()).ldelim();
+                        if (message.bigqueryConfig != null && Object.hasOwnProperty.call(message, "bigqueryConfig"))
+                            $root.google.pubsub.v1.BigQueryConfig.encode(message.bigqueryConfig, writer.uint32(/* id 18, wireType 2 =*/146).fork()).ldelim();
+                        if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                            writer.uint32(/* id 19, wireType 0 =*/152).int32(message.state);
                         return writer;
                     };
     
@@ -5090,6 +5112,9 @@
                                 break;
                             case 4:
                                 message.pushConfig = $root.google.pubsub.v1.PushConfig.decode(reader, reader.uint32());
+                                break;
+                            case 18:
+                                message.bigqueryConfig = $root.google.pubsub.v1.BigQueryConfig.decode(reader, reader.uint32());
                                 break;
                             case 5:
                                 message.ackDeadlineSeconds = reader.int32();
@@ -5146,6 +5171,9 @@
                             case 17:
                                 message.topicMessageRetentionDuration = $root.google.protobuf.Duration.decode(reader, reader.uint32());
                                 break;
+                            case 19:
+                                message.state = reader.int32();
+                                break;
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -5191,6 +5219,11 @@
                             var error = $root.google.pubsub.v1.PushConfig.verify(message.pushConfig);
                             if (error)
                                 return "pushConfig." + error;
+                        }
+                        if (message.bigqueryConfig != null && message.hasOwnProperty("bigqueryConfig")) {
+                            var error = $root.google.pubsub.v1.BigQueryConfig.verify(message.bigqueryConfig);
+                            if (error)
+                                return "bigqueryConfig." + error;
                         }
                         if (message.ackDeadlineSeconds != null && message.hasOwnProperty("ackDeadlineSeconds"))
                             if (!$util.isInteger(message.ackDeadlineSeconds))
@@ -5243,6 +5276,15 @@
                             if (error)
                                 return "topicMessageRetentionDuration." + error;
                         }
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            switch (message.state) {
+                            default:
+                                return "state: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                                break;
+                            }
                         return null;
                     };
     
@@ -5266,6 +5308,11 @@
                             if (typeof object.pushConfig !== "object")
                                 throw TypeError(".google.pubsub.v1.Subscription.pushConfig: object expected");
                             message.pushConfig = $root.google.pubsub.v1.PushConfig.fromObject(object.pushConfig);
+                        }
+                        if (object.bigqueryConfig != null) {
+                            if (typeof object.bigqueryConfig !== "object")
+                                throw TypeError(".google.pubsub.v1.Subscription.bigqueryConfig: object expected");
+                            message.bigqueryConfig = $root.google.pubsub.v1.BigQueryConfig.fromObject(object.bigqueryConfig);
                         }
                         if (object.ackDeadlineSeconds != null)
                             message.ackDeadlineSeconds = object.ackDeadlineSeconds | 0;
@@ -5311,6 +5358,20 @@
                                 throw TypeError(".google.pubsub.v1.Subscription.topicMessageRetentionDuration: object expected");
                             message.topicMessageRetentionDuration = $root.google.protobuf.Duration.fromObject(object.topicMessageRetentionDuration);
                         }
+                        switch (object.state) {
+                        case "STATE_UNSPECIFIED":
+                        case 0:
+                            message.state = 0;
+                            break;
+                        case "ACTIVE":
+                        case 1:
+                            message.state = 1;
+                            break;
+                        case "RESOURCE_ERROR":
+                        case 2:
+                            message.state = 2;
+                            break;
+                        }
                         return message;
                     };
     
@@ -5344,6 +5405,8 @@
                             object.detached = false;
                             object.enableExactlyOnceDelivery = false;
                             object.topicMessageRetentionDuration = null;
+                            object.bigqueryConfig = null;
+                            object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
                             object.name = message.name;
@@ -5379,6 +5442,10 @@
                             object.enableExactlyOnceDelivery = message.enableExactlyOnceDelivery;
                         if (message.topicMessageRetentionDuration != null && message.hasOwnProperty("topicMessageRetentionDuration"))
                             object.topicMessageRetentionDuration = $root.google.protobuf.Duration.toObject(message.topicMessageRetentionDuration, options);
+                        if (message.bigqueryConfig != null && message.hasOwnProperty("bigqueryConfig"))
+                            object.bigqueryConfig = $root.google.pubsub.v1.BigQueryConfig.toObject(message.bigqueryConfig, options);
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            object.state = options.enums === String ? $root.google.pubsub.v1.Subscription.State[message.state] : message.state;
                         return object;
                     };
     
@@ -5392,6 +5459,22 @@
                     Subscription.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
+    
+                    /**
+                     * State enum.
+                     * @name google.pubsub.v1.Subscription.State
+                     * @enum {number}
+                     * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                     * @property {number} ACTIVE=1 ACTIVE value
+                     * @property {number} RESOURCE_ERROR=2 RESOURCE_ERROR value
+                     */
+                    Subscription.State = (function() {
+                        var valuesById = {}, values = Object.create(valuesById);
+                        values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                        values[valuesById[1] = "ACTIVE"] = 1;
+                        values[valuesById[2] = "RESOURCE_ERROR"] = 2;
+                        return values;
+                    })();
     
                     return Subscription;
                 })();
@@ -6518,6 +6601,330 @@
                     })();
     
                     return PushConfig;
+                })();
+    
+                v1.BigQueryConfig = (function() {
+    
+                    /**
+                     * Properties of a BigQueryConfig.
+                     * @memberof google.pubsub.v1
+                     * @interface IBigQueryConfig
+                     * @property {string|null} [table] BigQueryConfig table
+                     * @property {boolean|null} [useTopicSchema] BigQueryConfig useTopicSchema
+                     * @property {boolean|null} [writeMetadata] BigQueryConfig writeMetadata
+                     * @property {boolean|null} [dropUnknownFields] BigQueryConfig dropUnknownFields
+                     * @property {google.pubsub.v1.BigQueryConfig.State|null} [state] BigQueryConfig state
+                     */
+    
+                    /**
+                     * Constructs a new BigQueryConfig.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a BigQueryConfig.
+                     * @implements IBigQueryConfig
+                     * @constructor
+                     * @param {google.pubsub.v1.IBigQueryConfig=} [properties] Properties to set
+                     */
+                    function BigQueryConfig(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * BigQueryConfig table.
+                     * @member {string} table
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @instance
+                     */
+                    BigQueryConfig.prototype.table = "";
+    
+                    /**
+                     * BigQueryConfig useTopicSchema.
+                     * @member {boolean} useTopicSchema
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @instance
+                     */
+                    BigQueryConfig.prototype.useTopicSchema = false;
+    
+                    /**
+                     * BigQueryConfig writeMetadata.
+                     * @member {boolean} writeMetadata
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @instance
+                     */
+                    BigQueryConfig.prototype.writeMetadata = false;
+    
+                    /**
+                     * BigQueryConfig dropUnknownFields.
+                     * @member {boolean} dropUnknownFields
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @instance
+                     */
+                    BigQueryConfig.prototype.dropUnknownFields = false;
+    
+                    /**
+                     * BigQueryConfig state.
+                     * @member {google.pubsub.v1.BigQueryConfig.State} state
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @instance
+                     */
+                    BigQueryConfig.prototype.state = 0;
+    
+                    /**
+                     * Creates a new BigQueryConfig instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @static
+                     * @param {google.pubsub.v1.IBigQueryConfig=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.BigQueryConfig} BigQueryConfig instance
+                     */
+                    BigQueryConfig.create = function create(properties) {
+                        return new BigQueryConfig(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified BigQueryConfig message. Does not implicitly {@link google.pubsub.v1.BigQueryConfig.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @static
+                     * @param {google.pubsub.v1.IBigQueryConfig} message BigQueryConfig message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    BigQueryConfig.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.table != null && Object.hasOwnProperty.call(message, "table"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.table);
+                        if (message.useTopicSchema != null && Object.hasOwnProperty.call(message, "useTopicSchema"))
+                            writer.uint32(/* id 2, wireType 0 =*/16).bool(message.useTopicSchema);
+                        if (message.writeMetadata != null && Object.hasOwnProperty.call(message, "writeMetadata"))
+                            writer.uint32(/* id 3, wireType 0 =*/24).bool(message.writeMetadata);
+                        if (message.dropUnknownFields != null && Object.hasOwnProperty.call(message, "dropUnknownFields"))
+                            writer.uint32(/* id 4, wireType 0 =*/32).bool(message.dropUnknownFields);
+                        if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                            writer.uint32(/* id 5, wireType 0 =*/40).int32(message.state);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified BigQueryConfig message, length delimited. Does not implicitly {@link google.pubsub.v1.BigQueryConfig.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @static
+                     * @param {google.pubsub.v1.IBigQueryConfig} message BigQueryConfig message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    BigQueryConfig.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a BigQueryConfig message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.BigQueryConfig} BigQueryConfig
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    BigQueryConfig.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.BigQueryConfig();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.table = reader.string();
+                                break;
+                            case 2:
+                                message.useTopicSchema = reader.bool();
+                                break;
+                            case 3:
+                                message.writeMetadata = reader.bool();
+                                break;
+                            case 4:
+                                message.dropUnknownFields = reader.bool();
+                                break;
+                            case 5:
+                                message.state = reader.int32();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a BigQueryConfig message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.BigQueryConfig} BigQueryConfig
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    BigQueryConfig.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a BigQueryConfig message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    BigQueryConfig.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.table != null && message.hasOwnProperty("table"))
+                            if (!$util.isString(message.table))
+                                return "table: string expected";
+                        if (message.useTopicSchema != null && message.hasOwnProperty("useTopicSchema"))
+                            if (typeof message.useTopicSchema !== "boolean")
+                                return "useTopicSchema: boolean expected";
+                        if (message.writeMetadata != null && message.hasOwnProperty("writeMetadata"))
+                            if (typeof message.writeMetadata !== "boolean")
+                                return "writeMetadata: boolean expected";
+                        if (message.dropUnknownFields != null && message.hasOwnProperty("dropUnknownFields"))
+                            if (typeof message.dropUnknownFields !== "boolean")
+                                return "dropUnknownFields: boolean expected";
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            switch (message.state) {
+                            default:
+                                return "state: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                            case 4:
+                                break;
+                            }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a BigQueryConfig message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.BigQueryConfig} BigQueryConfig
+                     */
+                    BigQueryConfig.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.BigQueryConfig)
+                            return object;
+                        var message = new $root.google.pubsub.v1.BigQueryConfig();
+                        if (object.table != null)
+                            message.table = String(object.table);
+                        if (object.useTopicSchema != null)
+                            message.useTopicSchema = Boolean(object.useTopicSchema);
+                        if (object.writeMetadata != null)
+                            message.writeMetadata = Boolean(object.writeMetadata);
+                        if (object.dropUnknownFields != null)
+                            message.dropUnknownFields = Boolean(object.dropUnknownFields);
+                        switch (object.state) {
+                        case "STATE_UNSPECIFIED":
+                        case 0:
+                            message.state = 0;
+                            break;
+                        case "ACTIVE":
+                        case 1:
+                            message.state = 1;
+                            break;
+                        case "PERMISSION_DENIED":
+                        case 2:
+                            message.state = 2;
+                            break;
+                        case "NOT_FOUND":
+                        case 3:
+                            message.state = 3;
+                            break;
+                        case "SCHEMA_MISMATCH":
+                        case 4:
+                            message.state = 4;
+                            break;
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a BigQueryConfig message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @static
+                     * @param {google.pubsub.v1.BigQueryConfig} message BigQueryConfig
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    BigQueryConfig.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.table = "";
+                            object.useTopicSchema = false;
+                            object.writeMetadata = false;
+                            object.dropUnknownFields = false;
+                            object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                        }
+                        if (message.table != null && message.hasOwnProperty("table"))
+                            object.table = message.table;
+                        if (message.useTopicSchema != null && message.hasOwnProperty("useTopicSchema"))
+                            object.useTopicSchema = message.useTopicSchema;
+                        if (message.writeMetadata != null && message.hasOwnProperty("writeMetadata"))
+                            object.writeMetadata = message.writeMetadata;
+                        if (message.dropUnknownFields != null && message.hasOwnProperty("dropUnknownFields"))
+                            object.dropUnknownFields = message.dropUnknownFields;
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            object.state = options.enums === String ? $root.google.pubsub.v1.BigQueryConfig.State[message.state] : message.state;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this BigQueryConfig to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    BigQueryConfig.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * State enum.
+                     * @name google.pubsub.v1.BigQueryConfig.State
+                     * @enum {number}
+                     * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                     * @property {number} ACTIVE=1 ACTIVE value
+                     * @property {number} PERMISSION_DENIED=2 PERMISSION_DENIED value
+                     * @property {number} NOT_FOUND=3 NOT_FOUND value
+                     * @property {number} SCHEMA_MISMATCH=4 SCHEMA_MISMATCH value
+                     */
+                    BigQueryConfig.State = (function() {
+                        var valuesById = {}, values = Object.create(valuesById);
+                        values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                        values[valuesById[1] = "ACTIVE"] = 1;
+                        values[valuesById[2] = "PERMISSION_DENIED"] = 2;
+                        values[valuesById[3] = "NOT_FOUND"] = 3;
+                        values[valuesById[4] = "SCHEMA_MISMATCH"] = 4;
+                        return values;
+                    })();
+    
+                    return BigQueryConfig;
                 })();
     
                 v1.ReceivedMessage = (function() {
