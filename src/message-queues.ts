@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {CallOptions, grpc} from 'google-gax';
+import {CallOptions, grpc, ServiceError} from 'google-gax';
 import defer = require('p-defer');
 
 import {Message, Subscriber} from './subscriber';
@@ -214,7 +214,7 @@ export class AckQueue extends MessageQueue {
     try {
       await client.acknowledge(reqOpts, this._options.callOptions!);
     } catch (e) {
-      throw new BatchError(e, ackIds, 'acknowledge');
+      throw new BatchError(e as ServiceError, ackIds, 'acknowledge');
     }
   }
 }
@@ -258,7 +258,7 @@ export class ModAckQueue extends MessageQueue {
       try {
         await client.modifyAckDeadline(reqOpts, this._options.callOptions!);
       } catch (e) {
-        throw new BatchError(e, ackIds, 'modifyAckDeadline');
+        throw new BatchError(e as ServiceError, ackIds, 'modifyAckDeadline');
       }
     });
 
