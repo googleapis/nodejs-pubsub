@@ -173,63 +173,63 @@ export namespace google {
             namespace Publisher {
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher|createTopic}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher#createTopic}.
                  * @param error Error, if any
                  * @param [response] Topic
                  */
                 type CreateTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher|updateTopic}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher#updateTopic}.
                  * @param error Error, if any
                  * @param [response] Topic
                  */
                 type UpdateTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher|publish}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher#publish}.
                  * @param error Error, if any
                  * @param [response] PublishResponse
                  */
                 type PublishCallback = (error: (Error|null), response?: google.pubsub.v1.PublishResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher|getTopic}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher#getTopic}.
                  * @param error Error, if any
                  * @param [response] Topic
                  */
                 type GetTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher|listTopics}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopics}.
                  * @param error Error, if any
                  * @param [response] ListTopicsResponse
                  */
                 type ListTopicsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicsResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher|listTopicSubscriptions}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSubscriptions}.
                  * @param error Error, if any
                  * @param [response] ListTopicSubscriptionsResponse
                  */
                 type ListTopicSubscriptionsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicSubscriptionsResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher|listTopicSnapshots}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSnapshots}.
                  * @param error Error, if any
                  * @param [response] ListTopicSnapshotsResponse
                  */
                 type ListTopicSnapshotsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicSnapshotsResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher|deleteTopic}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher#deleteTopic}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type DeleteTopicCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher|detachSubscription}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher#detachSubscription}.
                  * @param error Error, if any
                  * @param [response] DetachSubscriptionResponse
                  */
@@ -2140,112 +2140,112 @@ export namespace google {
             namespace Subscriber {
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|createSubscription}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#createSubscription}.
                  * @param error Error, if any
                  * @param [response] Subscription
                  */
                 type CreateSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|getSubscription}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#getSubscription}.
                  * @param error Error, if any
                  * @param [response] Subscription
                  */
                 type GetSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|updateSubscription}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#updateSubscription}.
                  * @param error Error, if any
                  * @param [response] Subscription
                  */
                 type UpdateSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|listSubscriptions}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#listSubscriptions}.
                  * @param error Error, if any
                  * @param [response] ListSubscriptionsResponse
                  */
                 type ListSubscriptionsCallback = (error: (Error|null), response?: google.pubsub.v1.ListSubscriptionsResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|deleteSubscription}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSubscription}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type DeleteSubscriptionCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|modifyAckDeadline}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#modifyAckDeadline}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type ModifyAckDeadlineCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|acknowledge}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#acknowledge}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type AcknowledgeCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|pull}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#pull}.
                  * @param error Error, if any
                  * @param [response] PullResponse
                  */
                 type PullCallback = (error: (Error|null), response?: google.pubsub.v1.PullResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|streamingPull}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#streamingPull}.
                  * @param error Error, if any
                  * @param [response] StreamingPullResponse
                  */
                 type StreamingPullCallback = (error: (Error|null), response?: google.pubsub.v1.StreamingPullResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|modifyPushConfig}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#modifyPushConfig}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type ModifyPushConfigCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|getSnapshot}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#getSnapshot}.
                  * @param error Error, if any
                  * @param [response] Snapshot
                  */
                 type GetSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|listSnapshots}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#listSnapshots}.
                  * @param error Error, if any
                  * @param [response] ListSnapshotsResponse
                  */
                 type ListSnapshotsCallback = (error: (Error|null), response?: google.pubsub.v1.ListSnapshotsResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|createSnapshot}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#createSnapshot}.
                  * @param error Error, if any
                  * @param [response] Snapshot
                  */
                 type CreateSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|updateSnapshot}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#updateSnapshot}.
                  * @param error Error, if any
                  * @param [response] Snapshot
                  */
                 type UpdateSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|deleteSnapshot}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSnapshot}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type DeleteSnapshotCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber|seek}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber#seek}.
                  * @param error Error, if any
                  * @param [response] SeekResponse
                  */
@@ -5492,42 +5492,42 @@ export namespace google {
             namespace SchemaService {
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService|createSchema}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#createSchema}.
                  * @param error Error, if any
                  * @param [response] Schema
                  */
                 type CreateSchemaCallback = (error: (Error|null), response?: google.pubsub.v1.Schema) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService|getSchema}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#getSchema}.
                  * @param error Error, if any
                  * @param [response] Schema
                  */
                 type GetSchemaCallback = (error: (Error|null), response?: google.pubsub.v1.Schema) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService|listSchemas}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#listSchemas}.
                  * @param error Error, if any
                  * @param [response] ListSchemasResponse
                  */
                 type ListSchemasCallback = (error: (Error|null), response?: google.pubsub.v1.ListSchemasResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService|deleteSchema}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#deleteSchema}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type DeleteSchemaCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService|validateSchema}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#validateSchema}.
                  * @param error Error, if any
                  * @param [response] ValidateSchemaResponse
                  */
                 type ValidateSchemaCallback = (error: (Error|null), response?: google.pubsub.v1.ValidateSchemaResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService|validateMessage}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService#validateMessage}.
                  * @param error Error, if any
                  * @param [response] ValidateMessageResponse
                  */
@@ -8982,9 +8982,6 @@ export namespace google {
             /** FieldOptions lazy */
             lazy?: (boolean|null);
 
-            /** FieldOptions unverifiedLazy */
-            unverifiedLazy?: (boolean|null);
-
             /** FieldOptions deprecated */
             deprecated?: (boolean|null);
 
@@ -9021,9 +9018,6 @@ export namespace google {
 
             /** FieldOptions lazy. */
             public lazy: boolean;
-
-            /** FieldOptions unverifiedLazy. */
-            public unverifiedLazy: boolean;
 
             /** FieldOptions deprecated. */
             public deprecated: boolean;
