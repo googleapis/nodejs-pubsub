@@ -90,7 +90,7 @@
                     };
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Publisher#createTopic}.
+                     * Callback as used by {@link google.pubsub.v1.Publisher|createTopic}.
                      * @memberof google.pubsub.v1.Publisher
                      * @typedef CreateTopicCallback
                      * @type {function}
@@ -123,7 +123,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Publisher#updateTopic}.
+                     * Callback as used by {@link google.pubsub.v1.Publisher|updateTopic}.
                      * @memberof google.pubsub.v1.Publisher
                      * @typedef UpdateTopicCallback
                      * @type {function}
@@ -156,7 +156,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Publisher#publish}.
+                     * Callback as used by {@link google.pubsub.v1.Publisher|publish}.
                      * @memberof google.pubsub.v1.Publisher
                      * @typedef PublishCallback
                      * @type {function}
@@ -189,7 +189,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Publisher#getTopic}.
+                     * Callback as used by {@link google.pubsub.v1.Publisher|getTopic}.
                      * @memberof google.pubsub.v1.Publisher
                      * @typedef GetTopicCallback
                      * @type {function}
@@ -222,7 +222,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Publisher#listTopics}.
+                     * Callback as used by {@link google.pubsub.v1.Publisher|listTopics}.
                      * @memberof google.pubsub.v1.Publisher
                      * @typedef ListTopicsCallback
                      * @type {function}
@@ -255,7 +255,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSubscriptions}.
+                     * Callback as used by {@link google.pubsub.v1.Publisher|listTopicSubscriptions}.
                      * @memberof google.pubsub.v1.Publisher
                      * @typedef ListTopicSubscriptionsCallback
                      * @type {function}
@@ -288,7 +288,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSnapshots}.
+                     * Callback as used by {@link google.pubsub.v1.Publisher|listTopicSnapshots}.
                      * @memberof google.pubsub.v1.Publisher
                      * @typedef ListTopicSnapshotsCallback
                      * @type {function}
@@ -321,7 +321,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Publisher#deleteTopic}.
+                     * Callback as used by {@link google.pubsub.v1.Publisher|deleteTopic}.
                      * @memberof google.pubsub.v1.Publisher
                      * @typedef DeleteTopicCallback
                      * @type {function}
@@ -354,7 +354,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Publisher#detachSubscription}.
+                     * Callback as used by {@link google.pubsub.v1.Publisher|detachSubscription}.
                      * @memberof google.pubsub.v1.Publisher
                      * @typedef DetachSubscriptionCallback
                      * @type {function}
@@ -4304,7 +4304,7 @@
                     };
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#createSubscription}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|createSubscription}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef CreateSubscriptionCallback
                      * @type {function}
@@ -4337,7 +4337,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#getSubscription}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|getSubscription}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef GetSubscriptionCallback
                      * @type {function}
@@ -4370,7 +4370,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#updateSubscription}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|updateSubscription}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef UpdateSubscriptionCallback
                      * @type {function}
@@ -4403,7 +4403,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#listSubscriptions}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|listSubscriptions}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef ListSubscriptionsCallback
                      * @type {function}
@@ -4436,7 +4436,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSubscription}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|deleteSubscription}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef DeleteSubscriptionCallback
                      * @type {function}
@@ -4469,7 +4469,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#modifyAckDeadline}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|modifyAckDeadline}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef ModifyAckDeadlineCallback
                      * @type {function}
@@ -4502,7 +4502,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#acknowledge}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|acknowledge}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef AcknowledgeCallback
                      * @type {function}
@@ -4535,7 +4535,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#pull}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|pull}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef PullCallback
                      * @type {function}
@@ -4568,7 +4568,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#streamingPull}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|streamingPull}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef StreamingPullCallback
                      * @type {function}
@@ -4601,7 +4601,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#modifyPushConfig}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|modifyPushConfig}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef ModifyPushConfigCallback
                      * @type {function}
@@ -4634,7 +4634,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#getSnapshot}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|getSnapshot}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef GetSnapshotCallback
                      * @type {function}
@@ -4667,7 +4667,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#listSnapshots}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|listSnapshots}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef ListSnapshotsCallback
                      * @type {function}
@@ -4700,7 +4700,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#createSnapshot}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|createSnapshot}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef CreateSnapshotCallback
                      * @type {function}
@@ -4733,7 +4733,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#updateSnapshot}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|updateSnapshot}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef UpdateSnapshotCallback
                      * @type {function}
@@ -4766,7 +4766,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSnapshot}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|deleteSnapshot}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef DeleteSnapshotCallback
                      * @type {function}
@@ -4799,7 +4799,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.Subscriber#seek}.
+                     * Callback as used by {@link google.pubsub.v1.Subscriber|seek}.
                      * @memberof google.pubsub.v1.Subscriber
                      * @typedef SeekCallback
                      * @type {function}
@@ -12470,7 +12470,7 @@
                     };
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.SchemaService#createSchema}.
+                     * Callback as used by {@link google.pubsub.v1.SchemaService|createSchema}.
                      * @memberof google.pubsub.v1.SchemaService
                      * @typedef CreateSchemaCallback
                      * @type {function}
@@ -12503,7 +12503,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.SchemaService#getSchema}.
+                     * Callback as used by {@link google.pubsub.v1.SchemaService|getSchema}.
                      * @memberof google.pubsub.v1.SchemaService
                      * @typedef GetSchemaCallback
                      * @type {function}
@@ -12536,7 +12536,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.SchemaService#listSchemas}.
+                     * Callback as used by {@link google.pubsub.v1.SchemaService|listSchemas}.
                      * @memberof google.pubsub.v1.SchemaService
                      * @typedef ListSchemasCallback
                      * @type {function}
@@ -12569,7 +12569,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.SchemaService#deleteSchema}.
+                     * Callback as used by {@link google.pubsub.v1.SchemaService|deleteSchema}.
                      * @memberof google.pubsub.v1.SchemaService
                      * @typedef DeleteSchemaCallback
                      * @type {function}
@@ -12602,7 +12602,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.SchemaService#validateSchema}.
+                     * Callback as used by {@link google.pubsub.v1.SchemaService|validateSchema}.
                      * @memberof google.pubsub.v1.SchemaService
                      * @typedef ValidateSchemaCallback
                      * @type {function}
@@ -12635,7 +12635,7 @@
                      */
     
                     /**
-                     * Callback as used by {@link google.pubsub.v1.SchemaService#validateMessage}.
+                     * Callback as used by {@link google.pubsub.v1.SchemaService|validateMessage}.
                      * @memberof google.pubsub.v1.SchemaService
                      * @typedef ValidateMessageCallback
                      * @type {function}
@@ -21801,6 +21801,7 @@
                  * @property {boolean|null} [packed] FieldOptions packed
                  * @property {google.protobuf.FieldOptions.JSType|null} [jstype] FieldOptions jstype
                  * @property {boolean|null} [lazy] FieldOptions lazy
+                 * @property {boolean|null} [unverifiedLazy] FieldOptions unverifiedLazy
                  * @property {boolean|null} [deprecated] FieldOptions deprecated
                  * @property {boolean|null} [weak] FieldOptions weak
                  * @property {Array.<google.protobuf.IUninterpretedOption>|null} [uninterpretedOption] FieldOptions uninterpretedOption
@@ -21856,6 +21857,14 @@
                  * @instance
                  */
                 FieldOptions.prototype.lazy = false;
+    
+                /**
+                 * FieldOptions unverifiedLazy.
+                 * @member {boolean} unverifiedLazy
+                 * @memberof google.protobuf.FieldOptions
+                 * @instance
+                 */
+                FieldOptions.prototype.unverifiedLazy = false;
     
                 /**
                  * FieldOptions deprecated.
@@ -21933,6 +21942,8 @@
                         writer.uint32(/* id 6, wireType 0 =*/48).int32(message.jstype);
                     if (message.weak != null && Object.hasOwnProperty.call(message, "weak"))
                         writer.uint32(/* id 10, wireType 0 =*/80).bool(message.weak);
+                    if (message.unverifiedLazy != null && Object.hasOwnProperty.call(message, "unverifiedLazy"))
+                        writer.uint32(/* id 15, wireType 0 =*/120).bool(message.unverifiedLazy);
                     if (message.uninterpretedOption != null && message.uninterpretedOption.length)
                         for (var i = 0; i < message.uninterpretedOption.length; ++i)
                             $root.google.protobuf.UninterpretedOption.encode(message.uninterpretedOption[i], writer.uint32(/* id 999, wireType 2 =*/7994).fork()).ldelim();
@@ -21989,6 +22000,9 @@
                             break;
                         case 5:
                             message.lazy = reader.bool();
+                            break;
+                        case 15:
+                            message.unverifiedLazy = reader.bool();
                             break;
                         case 3:
                             message.deprecated = reader.bool();
@@ -22073,6 +22087,9 @@
                     if (message.lazy != null && message.hasOwnProperty("lazy"))
                         if (typeof message.lazy !== "boolean")
                             return "lazy: boolean expected";
+                    if (message.unverifiedLazy != null && message.hasOwnProperty("unverifiedLazy"))
+                        if (typeof message.unverifiedLazy !== "boolean")
+                            return "unverifiedLazy: boolean expected";
                     if (message.deprecated != null && message.hasOwnProperty("deprecated"))
                         if (typeof message.deprecated !== "boolean")
                             return "deprecated: boolean expected";
@@ -22158,6 +22175,8 @@
                     }
                     if (object.lazy != null)
                         message.lazy = Boolean(object.lazy);
+                    if (object.unverifiedLazy != null)
+                        message.unverifiedLazy = Boolean(object.unverifiedLazy);
                     if (object.deprecated != null)
                         message.deprecated = Boolean(object.deprecated);
                     if (object.weak != null)
@@ -22245,6 +22264,7 @@
                         object.lazy = false;
                         object.jstype = options.enums === String ? "JS_NORMAL" : 0;
                         object.weak = false;
+                        object.unverifiedLazy = false;
                         object[".google.api.resourceReference"] = null;
                     }
                     if (message.ctype != null && message.hasOwnProperty("ctype"))
@@ -22259,6 +22279,8 @@
                         object.jstype = options.enums === String ? $root.google.protobuf.FieldOptions.JSType[message.jstype] : message.jstype;
                     if (message.weak != null && message.hasOwnProperty("weak"))
                         object.weak = message.weak;
+                    if (message.unverifiedLazy != null && message.hasOwnProperty("unverifiedLazy"))
+                        object.unverifiedLazy = message.unverifiedLazy;
                     if (message.uninterpretedOption && message.uninterpretedOption.length) {
                         object.uninterpretedOption = [];
                         for (var j = 0; j < message.uninterpretedOption.length; ++j)
