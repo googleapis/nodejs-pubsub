@@ -338,11 +338,10 @@ describe('Subscription', () => {
 
       sandbox.stub(subscriber, 'close').rejects(fakeErr);
 
-      subscription!.close!(),
-        (err: Error) => {
-          assert.strictEqual(err, fakeErr);
-          done();
-        };
+      subscription!.close!((err: Error | undefined) => {
+        assert.strictEqual(err, fakeErr);
+        done();
+      });
     });
   });
 
