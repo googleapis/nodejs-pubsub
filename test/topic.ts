@@ -488,7 +488,15 @@ describe('Topic', () => {
 
   describe('getSubscriptions', () => {
     it('should make the correct request', done => {
-      const options = {
+      interface testOptions {
+        a: string;
+        b: string;
+        gaxOpts?: {
+          e: string;
+        };
+        autoPaginate?: boolean;
+      }
+      const options: testOptions = {
         a: 'a',
         b: 'b',
         gaxOpts: {

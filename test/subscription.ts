@@ -95,7 +95,7 @@ class FakeSubscriber extends EventEmitter {
 describe('Subscription', () => {
   // tslint:disable-next-line variable-name
   let Subscription: typeof subby.Subscription;
-  let subscription: subby.Subscription;
+  let subscription: Partial<subby.Subscription>;
 
   const PROJECT_ID = 'test-project';
   const SUB_NAME = 'test-subscription';
@@ -183,7 +183,7 @@ describe('Subscription', () => {
     it('should open the subscriber when a listener is attached', () => {
       const stub = sandbox.stub(subscriber, 'open');
 
-      subscription.on('message', () => {});
+      subscription.on?.('message', () => {});
       assert.strictEqual(stub.callCount, 1);
     });
 
@@ -191,8 +191,8 @@ describe('Subscription', () => {
       const stub = sandbox.stub(subscriber, 'close');
       const cb = () => {};
 
-      subscription.on('message', cb);
-      subscription.removeListener('message', cb);
+      subscription.on?.('message', cb);
+      subscription.removeListener?.('message', cb);
 
       assert.strictEqual(stub.callCount, 1);
     });
@@ -200,7 +200,7 @@ describe('Subscription', () => {
     it('should emit messages', done => {
       const message = {};
 
-      subscription.on('message', (msg: Message) => {
+      subscription.on?.('message', (msg: Message) => {
         assert.strictEqual(msg, message);
         done();
       });
@@ -211,7 +211,7 @@ describe('Subscription', () => {
     it('should emit errors', done => {
       const error = new Error('err');
 
-      subscription.on('error', (err: Error) => {
+      subscription.on?.('error', (err: Error) => {
         assert.strictEqual(err, error);
         done();
       });
@@ -220,7 +220,7 @@ describe('Subscription', () => {
     });
 
     it('should emit close events', done => {
-      subscription.on('close', done);
+      subscription.on?.('close', done);
       subscriber.emit('close');
     });
   });
@@ -330,7 +330,7 @@ describe('Subscription', () => {
   describe('close', () => {
     it('should call the success callback', done => {
       sandbox.stub(subscriber, 'close').resolves();
-      subscription.close(done);
+      subscription.close?.(done);
     });
 
     it('should pass back any errors that occurs', done => {
@@ -338,7 +338,7 @@ describe('Subscription', () => {
 
       sandbox.stub(subscriber, 'close').rejects(fakeErr);
 
-      subscription.close(err => {
+      subscription!.close!((err: Error | undefined) => {
         assert.strictEqual(err, fakeErr);
         done();
       });
@@ -356,14 +356,14 @@ describe('Subscription', () => {
       const expectedError =
         /Subscriptions can only be created when accessed through Topics/;
       delete subscription.topic;
-      await assert.rejects(subscription.create(), expectedError);
+      await assert.rejects(subscription.create!(), expectedError);
     });
 
     it('should pass the correct params', () => {
       const fakeOptions = {};
       const stub = sandbox.stub(PUBSUB, 'createSubscription');
 
-      subscription.create(fakeOptions, assert.ifError);
+      subscription.create?.(fakeOptions, assert.ifError);
 
       const [topic, name, options] = stub.lastCall.args;
       assert.strictEqual(topic, TOPIC_NAME);
@@ -374,7 +374,7 @@ describe('Subscription', () => {
     it('should optionally accept options', () => {
       const stub = sandbox.stub(PUBSUB, 'createSubscription');
 
-      subscription.create(assert.ifError);
+      subscription.create?.(assert.ifError);
 
       const options = stub.lastCall.args[2];
       assert.deepStrictEqual(options, {});
@@ -385,7 +385,7 @@ describe('Subscription', () => {
       const fakeResponse = {};
       const stub = sandbox.stub(PUBSUB, 'createSubscription');
 
-      subscription.create((err, sub, resp) => {
+      subscription.create?.((err, sub, resp) => {
         assert.strictEqual(err, fakeErr);
         assert.strictEqual(sub, null);
         assert.strictEqual(resp, fakeResponse);
@@ -401,7 +401,7 @@ describe('Subscription', () => {
       const fakeSub = new Subscription(PUBSUB, SUB_FULL_NAME);
       const fakeResponse = {};
 
-      subscription.create(err => {
+      subscription.create?.(err => {
         assert.ifError(err);
         assert.strictEqual(subscription.metadata, fakeResponse);
         done();
@@ -416,7 +416,7 @@ describe('Subscription', () => {
       const fakeResponse = {};
       const stub = sandbox.stub(PUBSUB, 'createSubscription');
 
-      subscription.create((err, sub, resp) => {
+      subscription.create?.((err, sub, resp) => {
         assert.ifError(err);
         assert.strictEqual(sub, subscription);
         assert.strictEqual(resp, fakeResponse);
@@ -457,7 +457,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.createSnapshot(SNAPSHOT_NAME, assert.ifError);
+      subscription.createSnapshot?.(SNAPSHOT_NAME, assert.ifError);
     });
 
     it('should optionally accept gax options', done => {
@@ -468,7 +468,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.createSnapshot(SNAPSHOT_NAME, gaxOpts, assert.ifError);
+      subscription.createSnapshot?.(SNAPSHOT_NAME, gaxOpts, assert.ifError);
     });
 
     it('should pass back any errors to the callback', done => {
@@ -479,7 +479,7 @@ describe('Subscription', () => {
         callback(error, apiResponse);
       };
 
-      subscription.createSnapshot(SNAPSHOT_NAME, (err, snapshot, resp) => {
+      subscription.createSnapshot?.(SNAPSHOT_NAME, (err, snapshot, resp) => {
         assert.strictEqual(err, error);
         assert.strictEqual(snapshot, null);
         assert.strictEqual(resp, apiResponse);
@@ -499,7 +499,7 @@ describe('Subscription', () => {
         callback(null, apiResponse);
       };
 
-      subscription.createSnapshot(SNAPSHOT_NAME, (err, snapshot, resp) => {
+      subscription.createSnapshot?.(SNAPSHOT_NAME, (err, snapshot, resp) => {
         assert.ifError(err);
         assert.strictEqual(snapshot, fakeSnapshot);
         assert.strictEqual(snapshot!.metadata, apiResponse);
@@ -519,7 +519,7 @@ describe('Subscription', () => {
     });
 
     it('should return the debug events to the callback', done => {
-      subscription.on('debug', err => {
+      subscription.on?.('debug', err => {
         assert.strictEqual(err, error);
         done();
       });
@@ -544,7 +544,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.delete(assert.ifError);
+      subscription.delete?.(assert.ifError);
     });
 
     it('should optionally accept gax options', done => {
@@ -555,7 +555,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.delete(gaxOpts, assert.ifError);
+      subscription.delete?.(gaxOpts, assert.ifError);
     });
 
     describe('success', () => {
@@ -568,7 +568,7 @@ describe('Subscription', () => {
       });
 
       it('should return the api response', done => {
-        subscription.delete((err, resp) => {
+        subscription.delete?.((err, resp) => {
           assert.ifError(err);
           assert.strictEqual(resp, apiResponse);
           done();
@@ -578,9 +578,9 @@ describe('Subscription', () => {
       it('should close the subscriber if open', done => {
         const stub = sandbox.stub(subscriber, 'close');
 
-        subscription.open();
+        subscription.open?.();
 
-        subscription.delete(err => {
+        subscription.delete?.(err => {
           assert.ifError(err);
           assert.strictEqual(stub.callCount, 1);
           done();
@@ -598,7 +598,7 @@ describe('Subscription', () => {
       });
 
       it('should return the error to the callback', done => {
-        subscription.delete(err => {
+        subscription.delete?.(err => {
           assert.strictEqual(err, error);
           done();
         });
@@ -610,7 +610,7 @@ describe('Subscription', () => {
           done(new Error('Should not be called.'));
         };
 
-        subscription.delete(() => {
+        subscription.delete?.(() => {
           done();
         });
       });
@@ -620,7 +620,7 @@ describe('Subscription', () => {
           done(new Error('Should not be called.'));
         };
 
-        subscription.delete(() => {
+        subscription.delete?.(() => {
           done();
         });
       });
@@ -631,7 +631,7 @@ describe('Subscription', () => {
     it('should return true if it finds metadata', done => {
       sandbox.stub(subscription, 'getMetadata').yields(null, {});
 
-      subscription.exists((err, exists) => {
+      subscription.exists?.((err, exists) => {
         assert.ifError(err);
         assert(exists);
         done();
@@ -642,7 +642,7 @@ describe('Subscription', () => {
       const error = {code: 5} as ServiceError;
       sandbox.stub(subscription, 'getMetadata').yields(error);
 
-      subscription.exists((err, exists) => {
+      subscription.exists?.((err, exists) => {
         assert.ifError(err);
         assert.strictEqual(exists, false);
         done();
@@ -653,7 +653,7 @@ describe('Subscription', () => {
       const error = {code: 4} as ServiceError;
       sandbox.stub(subscription, 'getMetadata').yields(error);
 
-      subscription.exists((err, exists) => {
+      subscription.exists?.((err, exists) => {
         assert.strictEqual(err, error);
         assert.strictEqual(exists, undefined);
         done();
@@ -674,7 +674,7 @@ describe('Subscription', () => {
         done();
       });
 
-      subscription.get(options, assert.ifError);
+      subscription.get?.(options, assert.ifError);
     });
 
     describe('success', () => {
@@ -687,7 +687,7 @@ describe('Subscription', () => {
             callback(null, fakeMetadata);
           });
 
-        subscription.get((err, sub, resp) => {
+        subscription.get?.((err, sub, resp) => {
           assert.ifError(err);
           assert.strictEqual(sub, subscription);
           assert.strictEqual(resp, fakeMetadata);
@@ -704,7 +704,7 @@ describe('Subscription', () => {
             callback(null); // the done fn
           });
 
-        subscription.get(options, done);
+        subscription.get?.(options, done);
       });
     });
 
@@ -716,7 +716,7 @@ describe('Subscription', () => {
           .stub(subscription, 'getMetadata')
           .callsArgWith(1, error, apiResponse);
 
-        subscription.get((err, sub, resp) => {
+        subscription.get?.((err, sub, resp) => {
           assert.strictEqual(err, error);
           assert.strictEqual(sub, null);
           assert.strictEqual(resp, apiResponse);
@@ -731,7 +731,7 @@ describe('Subscription', () => {
           .stub(subscription, 'getMetadata')
           .callsArgWith(1, error, apiResponse);
 
-        subscription.get((err, sub, resp) => {
+        subscription.get?.((err, sub, resp) => {
           assert.strictEqual(err, error);
           assert.strictEqual(sub, null);
           assert.strictEqual(resp, apiResponse);
@@ -748,7 +748,7 @@ describe('Subscription', () => {
 
         delete subscription.create;
 
-        subscription.get((err, sub, resp) => {
+        subscription.get?.((err, sub, resp) => {
           assert.strictEqual(err, error);
           assert.strictEqual(sub, null);
           assert.strictEqual(resp, apiResponse);
@@ -773,7 +773,7 @@ describe('Subscription', () => {
         });
 
         subscription.topic = 'hi-ho-silver';
-        subscription.get(fakeOptions, assert.ifError);
+        subscription.get?.(fakeOptions, assert.ifError);
       });
     });
   });
@@ -789,7 +789,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.getMetadata(assert.ifError);
+      subscription.getMetadata?.(assert.ifError);
     });
 
     it('should optionally accept gax options', done => {
@@ -800,7 +800,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.getMetadata(gaxOpts, assert.ifError);
+      subscription.getMetadata?.(gaxOpts, assert.ifError);
     });
 
     it('should pass back any errors that occur', done => {
@@ -811,7 +811,7 @@ describe('Subscription', () => {
         callback(error, apiResponse);
       };
 
-      subscription.getMetadata((err, metadata) => {
+      subscription.getMetadata?.((err, metadata) => {
         assert.strictEqual(err, error);
         assert.strictEqual(metadata, apiResponse);
         done();
@@ -825,7 +825,7 @@ describe('Subscription', () => {
         callback(null, apiResponse);
       };
 
-      subscription.getMetadata((err, metadata) => {
+      subscription.getMetadata?.((err, metadata) => {
         assert.ifError(err);
         assert.strictEqual(metadata, apiResponse);
         assert.strictEqual(subscription.metadata, apiResponse);
@@ -848,7 +848,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.modifyPushConfig(fakeConfig, assert.ifError);
+      subscription.modifyPushConfig?.(fakeConfig, assert.ifError);
     });
 
     it('should optionally accept gaxOpts', done => {
@@ -859,7 +859,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.modifyPushConfig(fakeConfig, gaxOpts, assert.ifError);
+      subscription.modifyPushConfig?.(fakeConfig, gaxOpts, assert.ifError);
     });
   });
 
@@ -867,7 +867,7 @@ describe('Subscription', () => {
     it('should open the subscriber', () => {
       const stub = sandbox.stub(subscriber, 'open');
 
-      subscription.open();
+      subscription.open?.();
 
       assert.strictEqual(stub.callCount, 1);
     });
@@ -875,8 +875,8 @@ describe('Subscription', () => {
     it('should noop if already open', () => {
       const spy = sandbox.spy(subscriber, 'open');
 
-      subscription.open();
-      subscription.open();
+      subscription.open?.();
+      subscription.open?.();
 
       assert.strictEqual(spy.callCount, 1);
     });
@@ -916,7 +916,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.seek(FAKE_SNAPSHOT_NAME, assert.ifError);
+      subscription.seek?.(FAKE_SNAPSHOT_NAME, assert.ifError);
     });
 
     it('should optionally accept a Date object', done => {
@@ -933,7 +933,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.seek(date, assert.ifError);
+      subscription.seek?.(date, assert.ifError);
     });
 
     it('should optionally accept gax options', done => {
@@ -944,7 +944,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.seek(FAKE_SNAPSHOT_NAME, gaxOpts, assert.ifError);
+      subscription.seek?.(FAKE_SNAPSHOT_NAME, gaxOpts, assert.ifError);
     });
   });
 
@@ -995,7 +995,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.setMetadata(METADATA, done);
+      subscription.setMetadata?.(METADATA, done);
     });
 
     it('should optionally accept gax options', done => {
@@ -1005,7 +1005,7 @@ describe('Subscription', () => {
         assert.strictEqual(config.gaxOpts, gaxOpts);
         done();
       };
-      subscription.setMetadata(METADATA, gaxOpts, done);
+      subscription.setMetadata?.(METADATA, gaxOpts, done);
     });
   });
 
@@ -1013,7 +1013,7 @@ describe('Subscription', () => {
     it('should pass the options to the subscriber', () => {
       const options = {};
       const stub = sandbox.stub(subscriber, 'setOptions').withArgs(options);
-      subscription.setOptions(options);
+      subscription.setOptions?.(options);
       assert.strictEqual(stub.callCount, 1);
     });
   });
@@ -1029,7 +1029,7 @@ describe('Subscription', () => {
         done();
       };
 
-      subscription.snapshot(SNAPSHOT_NAME);
+      subscription.snapshot?.(SNAPSHOT_NAME);
     });
   });
 });
