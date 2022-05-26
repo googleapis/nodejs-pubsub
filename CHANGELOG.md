@@ -4,6 +4,28 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.0.0](https://github.com/googleapis/nodejs-pubsub/compare/v2.19.4...v3.0.0) (2022-05-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* update library to use Node 12 (#1564)
+
+### Features
+
+* add BigQuery configuration for subscriptions ([#1563](https://github.com/googleapis/nodejs-pubsub/issues/1563)) ([29d38a1](https://github.com/googleapis/nodejs-pubsub/commit/29d38a17663adcd02252a5b6c778d053208de12f))
+
+
+### Bug Fixes
+
+* **deps:** update dependency google-gax to v2.30.4 ([#1555](https://github.com/googleapis/nodejs-pubsub/issues/1555)) ([518fce1](https://github.com/googleapis/nodejs-pubsub/commit/518fce1adbdaae492a1d6db38daadb2be9c0a505))
+* fixes for dynamic routing and streaming descriptors ([#1566](https://github.com/googleapis/nodejs-pubsub/issues/1566)) ([158c606](https://github.com/googleapis/nodejs-pubsub/commit/158c606a88077a59ac04d4abcce7c732120c4ebb))
+
+
+### Build System
+
+* update library to use Node 12 ([#1564](https://github.com/googleapis/nodejs-pubsub/issues/1564)) ([adb4319](https://github.com/googleapis/nodejs-pubsub/commit/adb43190247a6282fc2abdcf75d7b07fe3fdc1dc))
+
 ### [2.19.4](https://github.com/googleapis/nodejs-pubsub/compare/v2.19.3...v2.19.4) (2022-05-05)
 
 
