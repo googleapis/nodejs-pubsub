@@ -30,8 +30,11 @@ import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
 import {createSpan} from './opentelemetry-tracing';
+import {Throttler} from './util';
 
-export type PullResponse = google.pubsub.v1.IPullResponse;
+export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
+export type SubscriptionProperties =
+  google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties;
 
 /**
  * Date object with nanosecond precision. Supports all standard Date arguments
@@ -253,6 +256,10 @@ export class Subscriber extends EventEmitter {
   private _options!: SubscriberOptions;
   private _stream!: MessageStream;
   private _subscription: Subscription;
+  private _errorLog: Throttler;
+
+  subscriptionProperties?: SubscriptionProperties;
+
   constructor(subscription: Subscription, options = {}) {
     super();
 
@@ -266,8 +273,32 @@ export class Subscriber extends EventEmitter {
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
     this._subscription = subscription;
+    this._errorLog = new Throttler(60 * 1000);
+
     this.setOptions(options);
   }
+
+  /**
+   * Sets our subscription properties from the first incoming message.
+   *
+   * @param {SubscriptionProperties} subscriptionProperties The new properties.
+   * @private
+   */
+  setSubscriptionProperties(subscriptionProperties: SubscriptionProperties) {
+    this.subscriptionProperties = subscriptionProperties;
+
+    // If this is an exactly-once subscription, warn the user that they may have difficulty.
+    if (this.subscriptionProperties.exactlyOnceDeliveryEnabled) {
+      this._errorLog.doMaybe(() =>
+        console.error(
+          'WARNING: Exactly-once subscriptions are not yet supported ' +
+            'by the Node client library. This feature will be added ' +
+            'in a future release.'
+        )
+      );
+    }
+  }
+
   /**
    * The 99th percentile of request latencies.
    *
@@ -517,7 +548,13 @@ export class Subscriber extends EventEmitter {
    *
    * @private
    */
-  private _onData({receivedMessages}: PullResponse): void {
+  private _onData(response: PullResponse): void {
+    // Grab the subscription properties for exactly once and ordering flags.
+    if (response.subscriptionProperties) {
+      this.setSubscriptionProperties(response.subscriptionProperties);
+    }
+
+    const {receivedMessages} = response;
     for (const data of receivedMessages!) {
       const message = new Message(this, data);
 

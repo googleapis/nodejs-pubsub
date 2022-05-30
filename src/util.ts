@@ -40,3 +40,35 @@ export function promisifySome<T>(
 }
 
 export function noop() {}
+
+/**
+ * Provides a very simple throttling capability for tasks like error logs.
+ * This ensures that no task is actually completed unless N millis have passed
+ * since the last one.
+ *
+ * @private
+ */
+export class Throttler {
+  minMillis: number;
+  lastTime?: number;
+
+  constructor(minMillis: number) {
+    this.minMillis = minMillis;
+  }
+
+  /**
+   * Performs the task requested, if enough time has passed since the
+   * last successful call.
+   */
+  doMaybe(task: Function) {
+    const now = Date.now();
+    const doTask =
+      !this.lastTime ||
+      (this.lastTime && now - this.lastTime >= this.minMillis);
+
+    if (doTask) {
+      task();
+      this.lastTime = now;
+    }
+  }
+}
