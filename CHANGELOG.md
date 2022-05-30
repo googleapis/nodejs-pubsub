@@ -4,6 +4,14 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.0.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.0.0...v3.0.1) (2022-05-30)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @google-cloud/paginator to v4 ([#1565](https://github.com/googleapis/nodejs-pubsub/issues/1565)) ([461b58b](https://github.com/googleapis/nodejs-pubsub/commit/461b58b0f4e436bf771be9655c12dd094cde60cc))
+* detect subscription properties and warn for exactly-once ([#1561](https://github.com/googleapis/nodejs-pubsub/issues/1561)) ([98cf540](https://github.com/googleapis/nodejs-pubsub/commit/98cf5400ca2e67894d7cf3ed37bcdd72869e691e))
+
 ## [3.0.0](https://github.com/googleapis/nodejs-pubsub/compare/v2.19.4...v3.0.0) (2022-05-26)
 
 
