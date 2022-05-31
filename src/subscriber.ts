@@ -37,6 +37,16 @@ export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 export type SubscriptionProperties =
   google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties;
 
+type ValueOf<T> = T[keyof T];
+export const AckResponses = {
+  PermissionDenied: 'PERMISSION_DENIED' as const,
+  Unordered: 'UNORDERED' as const,
+  Success: 'SUCCESS' as const,
+  Invalid: 'INVALID' as const,
+  Other: 'OTHER' as const,
+};
+export type AckResponse = ValueOf<typeof AckResponses>;
+
 /**
  * Date object with nanosecond precision. Supports all standard Date arguments
  * in addition to several custom types.
@@ -185,6 +195,25 @@ export class Message {
   }
 
   /**
+   * Acknowledges the message, expecting a response (for exactly once subscriptions).
+   *
+   * @example
+   * ```
+   * subscription.on('message', async (message) => {
+   *   const response = await message.ackWithResponse();
+   * });
+   * ```
+   */
+  async ackWithResponse(): Promise<AckResponse> {
+    if (!this._handled) {
+      this._handled = true;
+      return await this._subscriber.ackWithResponse(this);
+    } else {
+      return AckResponses.Invalid;
+    }
+  }
+
+  /**
    * Modifies the ack deadline.
    *
    * @param {number} deadline The number of seconds to extend the deadline.
@@ -193,6 +222,20 @@ export class Message {
   modAck(deadline: number): void {
     if (!this._handled) {
       this._subscriber.modAck(this, deadline);
+    }
+  }
+
+  /**
+   * Modifies the ack deadline, expecting a response (for exactly once subscriptions).
+   *
+   * @param {number} deadline The number of seconds to extend the deadline.
+   * @private
+   */
+  async modAckWithResponse(deadline: number): Promise<AckResponse> {
+    if (!this._handled) {
+      return await this._subscriber.modAckWithResponse(this, deadline);
+    } else {
+      return AckResponses.Invalid;
     }
   }
 
@@ -210,6 +253,26 @@ export class Message {
     if (!this._handled) {
       this._handled = true;
       this._subscriber.nack(this);
+    }
+  }
+
+  /**
+   * Removes the message from our inventory and schedules it to be redelivered,
+   * with the modAck response being returned (for exactly once subscriptions).
+   *
+   * @example
+   * ```
+   * subscription.on('message', async (message) => {
+   *   const response = await message.nackWithResponse();
+   * });
+   * ```
+   */
+  async nackWithResponse(): Promise<AckResponse> {
+    if (!this._handled) {
+      this._handled = true;
+      return await this._subscriber.nackWithResponse(this);
+    } else {
+      return AckResponses.Invalid;
     }
   }
 }
@@ -371,15 +434,12 @@ export class Subscriber extends EventEmitter {
 
     this.subscriptionProperties = subscriptionProperties;
 
-    // If this is an exactly-once subscription...
-    if (this.subscriptionProperties.exactlyOnceDeliveryEnabled) {
-      // Warn the user that they may have difficulty.
-      this._errorLog.doMaybe(() =>
-        console.error(
-          'WARNING: Exactly-once subscriptions are not yet supported ' +
-            'by the Node client library. This feature will be added ' +
-            'in a future release.'
-        )
+    // If this is an exactly-once subscription, and the user didn't set their
+    // own minimum ack periods, set it to the default for exactly-once.
+    if (this.exactlyOnce && !this._isUserSetDeadline) {
+      this.ackDeadline = Math.max(
+        this.ackDeadline,
+        minAckSecondsForExactlyOnce
       );
     }
 
@@ -425,16 +485,38 @@ export class Subscriber extends EventEmitter {
    * Acknowledges the supplied message.
    *
    * @param {Message} message The message to acknowledge.
-   * @returns {Promise}
+   * @returns {Promise<void>}
    * @private
    */
   async ack(message: Message): Promise<void> {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    this._acks.add(message);
+    // Ignore this in this version of the method (but hook then/catch
+    // to avoid unhandled exceptions).
+    const resultPromise = this._acks.add(message);
+    resultPromise.then(() => {});
+    resultPromise.catch(() => {});
+
     await this._acks.onFlush();
     this._inventory.remove(message);
+  }
+
+  /**
+   * Acknowledges the supplied message, expecting a response (for exactly
+   * once subscriptions).
+   *
+   * @param {Message} message The message to acknowledge.
+   * @returns {Promise<AckResponse>}
+   * @private
+   */
+  async ackWithResponse(message: Message): Promise<AckResponse> {
+    this.updateAckDeadline(message);
+
+    const response = await this._acks.add(message);
+    this._inventory.remove(message);
+
+    return response;
   }
 
   /**
@@ -478,13 +560,16 @@ export class Subscriber extends EventEmitter {
    *
    * @param {Message} message The message to modify.
    * @param {number} deadline The deadline.
-   * @returns {Promise}
+   * @returns {Promise<void>}
    * @private
    */
   async modAck(message: Message, deadline: number): Promise<void> {
     const startTime = Date.now();
 
-    this._modAcks.add(message, deadline);
+    const responsePromise = this._modAcks.add(message, deadline);
+    responsePromise.then(() => {});
+    responsePromise.catch(() => {});
+
     await this._modAcks.onFlush();
 
     const latency = (Date.now() - startTime) / 1000;
@@ -492,16 +577,52 @@ export class Subscriber extends EventEmitter {
   }
 
   /**
+   * Modifies the acknowledge deadline for the provided message, expecting
+   * a reply (for exactly once subscriptions).
+   *
+   * @param {Message} message The message to modify.
+   * @param {number} deadline The deadline.
+   * @returns {Promise<AckResponse>}
+   * @private
+   */
+  async modAckWithResponse(
+    message: Message,
+    deadline: number
+  ): Promise<AckResponse> {
+    const startTime = Date.now();
+
+    const response = await this._modAcks.add(message, deadline);
+
+    const latency = (Date.now() - startTime) / 1000;
+    this._latencies.add(latency);
+
+    return response;
+  }
+
+  /**
    * Modfies the acknowledge deadline for the provided message and then removes
    * it from our inventory.
    *
    * @param {Message} message The message.
-   * @return {Promise}
+   * @return {Promise<void>}
    * @private
    */
   async nack(message: Message): Promise<void> {
     await this.modAck(message, 0);
     this._inventory.remove(message);
+  }
+
+  /**
+   * Modfies the acknowledge deadline for the provided message and then removes
+   * it from our inventory, expecting a response from modAck (for
+   * exactly once subscriptions).
+   *
+   * @param {Message} message The message.
+   * @return {Promise<AckResponse>}
+   * @private
+   */
+  async nackWithResponse(message: Message): Promise<AckResponse> {
+    return await this.modAckWithResponse(message, 0);
   }
 
   /**
