@@ -507,8 +507,7 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async ackWithResponse(message: Message): Promise<AckResponse> {
-    const ackTimeSeconds = (Date.now() - message.received) / 1000;
-    this.updateAckDeadline(ackTimeSeconds);
+    this.updateAckDeadline(message);
 
     const response = await this._acks.add(message);
     this._inventory.remove(message);
