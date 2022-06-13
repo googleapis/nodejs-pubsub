@@ -327,10 +327,10 @@ export class Subscriber extends EventEmitter {
 
     // We could still have `undefined` for both of the above.
     if (minDeadline) {
-      ackDeadline = Math.min(ackDeadline, minDeadline.totalOf('second'));
+      ackDeadline = Math.max(ackDeadline, minDeadline.totalOf('second'));
     }
     if (maxDeadline) {
-      ackDeadline = Math.max(ackDeadline, maxDeadline.totalOf('second'));
+      ackDeadline = Math.min(ackDeadline, maxDeadline.totalOf('second'));
     }
 
     this.ackDeadline = ackDeadline;

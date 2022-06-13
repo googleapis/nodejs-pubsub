@@ -33,6 +33,7 @@ import * as s from '../src/subscriber';
 import {Subscription} from '../src/subscription';
 import {SpanKind} from '@opentelemetry/api';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
+import {Duration} from '../src';
 
 const stubs = new Map();
 
@@ -288,6 +289,68 @@ describe('Subscriber', () => {
 
       assert.strictEqual(addStub.callCount, 1);
       assert.strictEqual(subscriber.ackDeadline, fakeDeadline);
+    });
+
+    it('should bound ack deadlines if min/max are specified', () => {
+      const histogram: FakeHistogram = stubs.get('histogram');
+      const now = Date.now();
+
+      message.received = 23842328;
+      sandbox.stub(global.Date, 'now').returns(now);
+
+      const expectedSeconds = (now - message.received) / 1000;
+      const addStub = sandbox.stub(histogram, 'add').withArgs(expectedSeconds);
+
+      let fakeDeadline = 312123;
+      sandbox
+        .stub(histogram, 'percentile')
+        .withArgs(99)
+        .callsFake(() => fakeDeadline);
+
+      subscriber.setOptions({
+        maxAckDeadline: Duration.from({seconds: 60}),
+      });
+      subscriber.ack(message);
+
+      assert.strictEqual(addStub.callCount, 1);
+      assert.strictEqual(subscriber.ackDeadline, 60);
+
+      subscriber.setOptions({
+        minAckDeadline: Duration.from({seconds: 10}),
+      });
+      fakeDeadline = 1;
+      subscriber.ack(message);
+
+      assert.strictEqual(subscriber.ackDeadline, 10);
+    });
+
+    it('should default to 60s min for exactly-once subscriptions', () => {
+      subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+
+      const histogram: FakeHistogram = stubs.get('histogram');
+      const now = Date.now();
+
+      message.received = 23842328;
+      sandbox.stub(global.Date, 'now').returns(now);
+
+      const expectedSeconds = (now - message.received) / 1000;
+      const addStub = sandbox.stub(histogram, 'add').withArgs(expectedSeconds);
+
+      const fakeDeadline = 10;
+      sandbox.stub(histogram, 'percentile').withArgs(99).returns(fakeDeadline);
+
+      subscriber.ack(message);
+
+      assert.strictEqual(addStub.callCount, 1);
+      assert.strictEqual(subscriber.ackDeadline, 60);
+
+      // Also check that if we set a different min, it's honoured.
+      subscriber.setOptions({
+        minAckDeadline: Duration.from({seconds: 5}),
+      });
+      subscriber.ack(message);
+
+      assert.strictEqual(subscriber.ackDeadline, 10);
     });
 
     it('should not update the deadline if user specified', () => {
