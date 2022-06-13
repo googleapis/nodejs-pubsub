@@ -39,10 +39,6 @@ export interface FlowControlOptions {
  * @property {number} [maxBytes=104857600] The desired amount of memory to
  *     allow message data to consume. (Default: 100MB) It's possible that this
  *     value will be exceeded, since messages are received in batches.
- * @property {number} [minExtensionMinutes=0] The minimum duration (in minutes)
- *     to extend the message deadline before redelivering. (Fractions allowed
- *     for less than one minute.) Note that, if this is unset, and an exactly
- *     once subscription is detected, the default will become 1 (60 seconds).
  * @property {number} [maxExtensionMinutes=60] The maximum duration (in minutes)
  *     to extend the message deadline before redelivering.
  * @property {number} [maxMessages=1000] The desired number of messages to allow
