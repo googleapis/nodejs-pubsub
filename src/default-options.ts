@@ -26,9 +26,11 @@ export const defaultOptions = {
     // in bytes, with the default lease manager.
     maxOutstandingBytes: 100 * 1024 * 1024,
 
-    // The minimum number of minutes that a message's lease will ever
-    // be extended. (Fractions allowed for less than one minute.)
-    minExtensionMinutes: 0,
+    // The minimum length of time a message's lease will be extended by.
+    minAckDeadline: undefined,
+
+    // The maximum length of time a message's lease will be extended by.
+    maxAckDeadline: undefined,
 
     // The maximum number of minutes that a message's lease will ever
     // be extended.

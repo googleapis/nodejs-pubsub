@@ -22,7 +22,6 @@ export interface FlowControlOptions {
   allowExcessMessages?: boolean;
   maxBytes?: number;
   maxMessages?: number;
-  minExtensionMinutes?: number;
   maxExtensionMinutes?: number;
 
   /** @deprecated Use maxExtensionMinutes. */
@@ -214,7 +213,6 @@ export class LeaseManager extends EventEmitter {
     const defaults: FlowControlOptions = {
       allowExcessMessages: true,
       maxBytes: defaultOptions.subscription.maxOutstandingBytes,
-      minExtensionMinutes: defaultOptions.subscription.minExtensionMinutes,
       maxExtensionMinutes: defaultOptions.subscription.maxExtensionMinutes,
       maxMessages: defaultOptions.subscription.maxOutstandingMessages,
     };

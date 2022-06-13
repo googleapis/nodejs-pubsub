@@ -31,6 +31,7 @@ import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
 import {createSpan} from './opentelemetry-tracing';
 import {Throttler} from './util';
+import {Duration} from './temporal';
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 export type SubscriptionProperties =
@@ -213,25 +214,18 @@ export class Message {
   }
 }
 
-export interface SubscriberOptions {
-  ackDeadline?: number;
-  batching?: BatchOptions;
-  flowControl?: FlowControlOptions;
-  useLegacyFlowControl?: boolean;
-  streamingOptions?: MessageStreamOptions;
-  enableOpenTelemetryTracing?: boolean;
-}
-
-const minAckSecondsForExactlyOnce = 60;
-
 /**
  * @typedef {object} SubscriberOptions
  * @property {number} [ackDeadline=10] Acknowledge deadline in seconds. If left
  *     unset, the initial value will be 10 seconds, but it will evolve into the
  *     99th percentile time it takes to acknowledge a message, subject to the
- *     limitations of flowControl.minExtensionSeconds and
- *     flowControl.maxExtensionMinutes. If ackDeadline is set by the user, then
- *     the min/max values will be set to match it.
+ *     limitations of minAckDeadline and maxAckDeadline. If ackDeadline is set
+ *     by the user, then the min/max values will be set to match it. New code
+ *     should prefer setting minAckDeadline and maxAckDeadline directly.
+ * @property {Duration} [minAckDeadline] The minimum time that ackDeadline should
+ *     ever have, while it's under library control.
+ * @property {Duration} [maxAckDeadline] The maximum time that ackDeadline should
+ *     ever have, while it's under library control.
  * @property {BatchOptions} [batching] Request batching options.
  * @property {FlowControlOptions} [flowControl] Flow control options.
  * @property {boolean} [useLegacyFlowControl] Disables enforcing flow control
@@ -239,6 +233,21 @@ const minAckSecondsForExactlyOnce = 60;
  *     of only enforcing flow control at the client side.
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
  */
+export interface SubscriberOptions {
+  /** @deprecated Use minAckDeadline and maxAckDeadline. */
+  ackDeadline?: number;
+
+  minAckDeadline?: Duration;
+  maxAckDeadline?: Duration;
+  batching?: BatchOptions;
+  flowControl?: FlowControlOptions;
+  useLegacyFlowControl?: boolean;
+  streamingOptions?: MessageStreamOptions;
+  enableOpenTelemetryTracing?: boolean;
+}
+
+const minAckDeadlineForExactlyOnce = Duration.from({seconds: 60});
+
 /**
  * Subscriber class is used to manage all message related functionality.
  *
@@ -307,24 +316,24 @@ export class Subscriber extends EventEmitter {
 
     // If this is an exactly-once subscription, and the user didn't set their
     // own minimum ack periods, set it to the default for exactly-once.
-    const defaultMinExtensionMinutes = this.isExactlyOnce
-      ? minAckSecondsForExactlyOnce / 60
-      : defaultOptions.subscription.minExtensionMinutes;
-    const defaultMaxExtensionMinutes =
-      defaultOptions.subscription.maxExtensionMinutes;
+    const defaultMinDeadline = this.isExactlyOnce
+      ? minAckDeadlineForExactlyOnce
+      : defaultOptions.subscription.minAckDeadline;
+    const defaultMaxDeadline = defaultOptions.subscription.maxAckDeadline;
 
     // Pull in any user-set min/max.
-    const minExtensionSeconds =
-      (this._options.flowControl?.minExtensionMinutes ??
-        defaultMinExtensionMinutes) * 60;
-    const maxExtensionSeconds =
-      (this._options.flowControl?.maxExtensionMinutes ??
-        defaultMaxExtensionMinutes) * 60;
+    const minDeadline = this._options.minAckDeadline ?? defaultMinDeadline;
+    const maxDeadline = this._options.maxAckDeadline ?? defaultMaxDeadline;
 
-    this.ackDeadline = Math.min(
-      maxExtensionSeconds,
-      Math.max(ackDeadline, minExtensionSeconds)
-    );
+    // We could still have `undefined` for both of the above.
+    if (minDeadline) {
+      ackDeadline = Math.min(ackDeadline, minDeadline.totalOf('second'));
+    }
+    if (maxDeadline) {
+      ackDeadline = Math.max(ackDeadline, maxDeadline.totalOf('second'));
+    }
+
+    this.ackDeadline = ackDeadline;
   }
 
   /**
@@ -518,16 +527,13 @@ export class Subscriber extends EventEmitter {
 
     this._useOpentelemetry = options.enableOpenTelemetryTracing || false;
 
-    if (options.ackDeadline) {
-      this.ackDeadline = options.ackDeadline;
-
-      // Make sure the flow control options exist so we can set min/max.
-      options.flowControl = options.flowControl ?? {};
-
-      // The user-set ackDeadline value basically pegs the extension time.
-      // We'll emulate it by overwriting min/max.
-      options.flowControl.minExtensionMinutes = this.ackDeadline;
-      options.flowControl.maxExtensionMinutes = this.ackDeadline;
+    // The user-set ackDeadline value basically pegs the extension time.
+    // We'll emulate it by overwriting min/max.
+    const passedAckDeadline = options.ackDeadline;
+    if (passedAckDeadline !== undefined) {
+      this.ackDeadline = passedAckDeadline;
+      options.minAckDeadline = Duration.from({seconds: passedAckDeadline});
+      options.maxAckDeadline = Duration.from({seconds: passedAckDeadline});
     }
 
     this.useLegacyFlowControl = options.useLegacyFlowControl || false;
