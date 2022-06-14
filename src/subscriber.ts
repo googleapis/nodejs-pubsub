@@ -434,15 +434,6 @@ export class Subscriber extends EventEmitter {
 
     this.subscriptionProperties = subscriptionProperties;
 
-    // If this is an exactly-once subscription, and the user didn't set their
-    // own minimum ack periods, set it to the default for exactly-once.
-    if (this.exactlyOnce && !this._isUserSetDeadline) {
-      this.ackDeadline = Math.max(
-        this.ackDeadline,
-        minAckSecondsForExactlyOnce
-      );
-    }
-
     // Update ackDeadline in case the flag switched.
     if (previouslyEnabled !== this.isExactlyOnce) {
       this.updateAckDeadline();
@@ -511,7 +502,8 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async ackWithResponse(message: Message): Promise<AckResponse> {
-    this.updateAckDeadline(message);
+    const ackTimeSeconds = (Date.now() - message.received) / 1000;
+    this.updateAckDeadline(ackTimeSeconds);
 
     const response = await this._acks.add(message);
     this._inventory.remove(message);
