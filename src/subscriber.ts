@@ -338,6 +338,8 @@ export class Subscriber extends EventEmitter {
 
   /**
    * Returns true if an exactly once subscription has been detected.
+   *
+   * @private
    */
   get isExactlyOnce(): boolean {
     if (!this.subscriptionProperties) {
