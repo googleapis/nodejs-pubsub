@@ -153,7 +153,6 @@ export abstract class MessageQueue {
 
     try {
       await this._sendBatch(batch);
-      // TODO: catch results from ack sending and call result promises
     } catch (e) {
       // These queues are used for ack and modAck messages, which should
       // never surface an error to the user level. However, we'll emit
