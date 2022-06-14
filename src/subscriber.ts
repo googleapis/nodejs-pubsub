@@ -438,11 +438,6 @@ export class Subscriber extends EventEmitter {
     if (previouslyEnabled !== this.isExactlyOnce) {
       this.updateAckDeadline();
     }
-
-    // Update ackDeadline in case the flag switched.
-    if (previouslyEnabled !== this.isExactlyOnce) {
-      this.updateAckDeadline();
-    }
   }
 
   /**
@@ -507,7 +502,8 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async ackWithResponse(message: Message): Promise<AckResponse> {
-    this.updateAckDeadline(message);
+    const ackTimeSeconds = (Date.now() - message.received) / 1000;
+    this.updateAckDeadline(ackTimeSeconds);
 
     const response = await this._acks.add(message);
     this._inventory.remove(message);
