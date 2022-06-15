@@ -43,10 +43,14 @@ export type AckErrorCodes = Map<string, AckError>;
  * @private
  */
 export function processAckError(rpcError: GoogleError): AckErrorCodes {
+  const ret = new Map<string, AckError>();
+
+  if (!rpcError.errorInfoMetadata) {
+    return ret;
+  }
+
   // The typing for errorInfoMetadata is currently incorrect.
   const metadata = rpcError.errorInfoMetadata as StringToString;
-
-  const ret = new Map<string, AckError>();
 
   for (const ackId of Object.getOwnPropertyNames(metadata)) {
     const code = metadata[ackId];
