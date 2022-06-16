@@ -19,13 +19,19 @@ import defer = require('p-defer');
 
 import {AckResponse, AckResponses, Message, Subscriber} from './subscriber';
 
-interface QueuedMessage {
+/**
+ * @private
+ */
+export interface QueuedMessage {
   ackId: string;
   deadline?: number;
   responsePromise?: defer.DeferredPromise<AckResponse>;
 }
 
-type QueuedMessages = Array<QueuedMessage>;
+/**
+ * @private
+ */
+export type QueuedMessages = Array<QueuedMessage>;
 
 export interface BatchOptions {
   callOptions?: CallOptions;

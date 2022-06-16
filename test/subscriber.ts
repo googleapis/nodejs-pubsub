@@ -99,7 +99,9 @@ class FakeQueue {
     this.options = options;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  add(message: s.Message, deadline?: number): void {}
+  async add(message: s.Message, deadline?: number): Promise<s.AckResponse> {
+    return s.AckResponses.Success;
+  }
   async flush(): Promise<void> {}
   async onFlush(): Promise<void> {}
   async onDrain(): Promise<void> {}

@@ -189,10 +189,10 @@ describe('MessageQueues', () => {
         messageQueue.add(message as Message, deadline);
         messageQueue.flush();
 
-        const expectedBatch = [[message.ackId, deadline]];
         const [batch] = messageQueue.batches;
-
-        assert.deepStrictEqual(batch, expectedBatch);
+        assert.strictEqual(batch[0].ackId, message.ackId);
+        assert.strictEqual(batch[0].deadline, deadline);
+        assert.ok(batch[0].responsePromise.resolve);
       });
 
       it('should emit any errors as debug events', done => {
