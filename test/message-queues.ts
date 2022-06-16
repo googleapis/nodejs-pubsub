@@ -159,6 +159,24 @@ describe('MessageQueues', () => {
         clock.tick(delay);
         assert.strictEqual(stub.callCount, 1);
       });
+
+      it('should return a Promise that resolves when the ack is sent', async () => {
+        const clock = sandbox.useFakeTimers();
+        const delay = 1000;
+        messageQueue.setOptions({maxMilliseconds: delay});
+
+        sandbox
+          .stub(messageQueue, '_sendBatch')
+          .callsFake((batch: messageTypes.QueuedMessages) => {
+            batch.forEach(m => {
+              m.responsePromise?.resolve();
+            });
+          });
+
+        const completion = messageQueue.add(new FakeMessage() as Message);
+        clock.tick(delay);
+        await completion;
+      });
     });
 
     describe('flush', () => {
@@ -391,6 +409,26 @@ describe('MessageQueues', () => {
       messages.forEach(message => ackQueue.add(message as Message));
       ackQueue.flush();
     });
+
+    it('should appropriately resolve result promises', async () => {
+      const stub = sandbox.stub(subscriber.client, 'acknowledge').resolves();
+
+      const message = new FakeMessage() as Message;
+      const completion = ackQueue.add(message);
+      await ackQueue.flush();
+      assert.strictEqual(stub.callCount, 1);
+      await completion;
+    });
+
+    it('should appropriately reject result promises', async () => {
+      const stub = sandbox.stub(subscriber.client, 'acknowledge').resolves();
+
+      const message = new FakeMessage() as Message;
+      const completion = ackQueue.add(message);
+      await ackQueue.flush();
+      assert.strictEqual(stub.callCount, 1);
+      await completion;
+    });
   });
 
   describe('ModAckQueue', () => {
@@ -515,6 +553,30 @@ describe('MessageQueues', () => {
 
       messages.forEach(message => modAckQueue.add(message as Message));
       modAckQueue.flush();
+    });
+
+    it('should appropriately resolve result promises', async () => {
+      const stub = sandbox
+        .stub(subscriber.client, 'modifyAckDeadline')
+        .resolves();
+
+      const message = new FakeMessage() as Message;
+      const completion = modAckQueue.add(message);
+      await modAckQueue.flush();
+      assert.strictEqual(stub.callCount, 1);
+      await completion;
+    });
+
+    it('should appropriately reject result promises', async () => {
+      const stub = sandbox
+        .stub(subscriber.client, 'modifyAckDeadline')
+        .resolves();
+
+      const message = new FakeMessage() as Message;
+      const completion = modAckQueue.add(message);
+      await modAckQueue.flush();
+      assert.strictEqual(stub.callCount, 1);
+      await completion;
     });
   });
 });

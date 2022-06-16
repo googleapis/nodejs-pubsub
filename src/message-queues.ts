@@ -237,6 +237,9 @@ export class AckQueue extends MessageQueue {
         responsePromise?.resolve(AckResponses.Success);
       });
     } catch (e) {
+      batch.forEach(({responsePromise}) => {
+        responsePromise?.reject(e);
+      });
       throw new BatchError(e as ServiceError, ackIds, 'acknowledge');
     }
   }
@@ -286,6 +289,9 @@ export class ModAckQueue extends MessageQueue {
           responsePromise?.resolve(AckResponses.Success);
         });
       } catch (e) {
+        batch.forEach(({responsePromise}) => {
+          responsePromise?.reject(e);
+        });
         throw new BatchError(e as ServiceError, ackIds, 'modifyAckDeadline');
       }
     });
