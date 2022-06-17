@@ -40,7 +40,7 @@ export type SubscriptionProperties =
 type ValueOf<T> = T[keyof T];
 export const AckResponses = {
   PermissionDenied: 'PERMISSION_DENIED' as const,
-  Unordered: 'UNORDERED' as const,
+  FailedPrecondition: 'FAILED_PRECONDITION' as const,
   Success: 'SUCCESS' as const,
   Invalid: 'INVALID' as const,
   Other: 'OTHER' as const,

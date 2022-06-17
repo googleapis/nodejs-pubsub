@@ -12,12 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {GoogleError} from 'google-gax';
+import {GoogleError, Status} from 'google-gax';
 import {AckResponse, AckResponses} from './subscriber';
 
 const permanentFailureInvalidAckId = 'PERMANENT_FAILURE_INVALID_ACK_ID';
 const transientFailurePrefix = 'TRANSIENT_';
 
+// If we get these as RPC errors, they will trigger a retry.
+const exactlyOnceTemporaryRetryErrors = [
+  Status.DEADLINE_EXCEEDED,
+  Status.RESOURCE_EXHAUSTED,
+  Status.ABORTED,
+  Status.INTERNAL,
+  Status.UNAVAILABLE,
+];
+
+/**
+ * @private
+ */
 interface StringToString {
   [propname: string]: string;
 }
@@ -31,7 +43,8 @@ interface StringToString {
 export interface AckError {
   transient: boolean;
   response?: AckResponse;
-  rawErrorCode: string;
+  rawErrorCode?: string;
+  gpcErrorCode?: Status;
 }
 
 export type AckErrorCodes = Map<string, AckError>;
@@ -42,7 +55,7 @@ export type AckErrorCodes = Map<string, AckError>;
  *
  * @private
  */
-export function processAckError(rpcError: GoogleError): AckErrorCodes {
+export function processAckErrorInfo(rpcError: GoogleError): AckErrorCodes {
   const ret = new Map<string, AckError>();
 
   if (!rpcError.errorInfoMetadata) {
@@ -66,14 +79,34 @@ export function processAckError(rpcError: GoogleError): AckErrorCodes {
         transient: true,
         rawErrorCode: code,
       });
-    } else {
-      ret.set(ackId, {
-        transient: false,
-        response: AckResponses.Other,
-        rawErrorCode: code,
-      });
     }
   }
 
   return ret;
+}
+
+/**
+ * For a completely failed RPC call, this will find the appropriate
+ * error information to return to an ack() caller.
+ *
+ * @private
+ */
+export function processAckRpcError(grpcCode: Status): AckError {
+  const ackError: AckError = {
+    transient: exactlyOnceTemporaryRetryErrors.includes(grpcCode!),
+    gpcErrorCode: grpcCode,
+  };
+  switch (grpcCode) {
+    case Status.PERMISSION_DENIED:
+      ackError.response = AckResponses.PermissionDenied;
+      break;
+    case Status.FAILED_PRECONDITION:
+      ackError.response = AckResponses.FailedPrecondition;
+      break;
+    default:
+      ackError.response = AckResponses.Other;
+      break;
+  }
+
+  return ackError;
 }

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import {CallOptions, grpc, ServiceError} from 'google-gax';
+import {CallOptions, GoogleError, grpc} from 'google-gax';
 import defer = require('p-defer');
+import {processAckErrorInfo, processAckRpcError} from './ack-metadata';
 
 import {AckResponse, AckResponses, Message, Subscriber} from './subscriber';
 
@@ -94,7 +95,7 @@ export abstract class MessageQueue {
   protected _requests: QueuedMessages;
   protected _subscriber: Subscriber;
   protected _timer?: NodeJS.Timer;
-  protected abstract _sendBatch(batch: QueuedMessages): Promise<void>;
+  protected abstract _sendBatch(batch: QueuedMessages): Promise<QueuedMessages>;
   constructor(sub: Subscriber, options = {} as BatchOptions) {
     this.numPendingRequests = 0;
     this.numInFlightRequests = 0;
@@ -158,7 +159,8 @@ export abstract class MessageQueue {
     delete this._onFlush;
 
     try {
-      await this._sendBatch(batch);
+      // TODO
+      const newBatch = await this._sendBatch(batch);
     } catch (e) {
       // These queues are used for ack and modAck messages, which should
       // never surface an error to the user level. However, we'll emit
@@ -208,6 +210,80 @@ export abstract class MessageQueue {
 
     this._options = Object.assign(defaults, options);
   }
+
+  /**
+   * Succeed a whole batch of Acks/Modacks for an OK RPC response.
+   *
+   * @private
+   */
+  handleAckSuccesses(batch: QueuedMessages) {
+    // Everyone gets a resolve!
+    batch.forEach(({responsePromise}) => {
+      responsePromise?.resolve(AckResponses.Success);
+    });
+  }
+
+  /**
+   * If we get an RPC failure of any kind, this will sort out the mess
+   * and follow up on any Promises. If some need to be retried, those
+   * will be returned as a new batch.
+   *
+   * @private
+   */
+  handleAckFailures(
+    batch: QueuedMessages,
+    rpcError: GoogleError
+  ): QueuedMessages {
+    const toSucceed: QueuedMessages = [];
+    const toRetry: QueuedMessages = [];
+    const toError = new Map<string, QueuedMessages>([
+      [AckResponses.PermissionDenied, []],
+      [AckResponses.FailedPrecondition, []],
+      [AckResponses.Other, []],
+    ]);
+
+    // Did we have a full RPC failure? If so, just process that first.
+    if (rpcError.code !== undefined) {
+      const error = processAckRpcError(rpcError.code);
+      batch.forEach(m => {
+        if (error.transient) {
+          toRetry.push(m);
+        } else {
+          toError.get(error.response!)!.push(m);
+        }
+      });
+    } else {
+      // Just an ErrorInfo to handle.
+      const codes = processAckErrorInfo(rpcError);
+
+      for (const m of batch) {
+        if (codes.has(m.ackId)) {
+          const code = codes.get(m.ackId)!;
+          if (code.transient) {
+            // Transient errors get retried.
+            toRetry.push(m);
+          } else {
+            // It's a permanent error.
+            toError.get(code.response!)!.push(m);
+          }
+        } else {
+          // Looks like this one worked out.
+          toSucceed.push(m);
+        }
+      }
+    }
+
+    // Take care of following up on all the Promises.
+    toSucceed.forEach(m => {
+      m.responsePromise?.resolve(AckResponses.Success);
+    });
+    for (const e of toError.entries()) {
+      e[1].forEach(m => {
+        m.responsePromise?.reject(e[0]);
+      });
+    }
+    return toRetry;
+  }
 }
 
 /**
@@ -225,22 +301,19 @@ export class AckQueue extends MessageQueue {
    * @param {Array.<Array.<string|number>>} batch Array of ackIds and deadlines.
    * @return {Promise}
    */
-  protected async _sendBatch(batch: QueuedMessages): Promise<void> {
+  protected async _sendBatch(batch: QueuedMessages): Promise<QueuedMessages> {
     const client = await this._subscriber.getClient();
     const ackIds = batch.map(({ackId}) => ackId);
     const reqOpts = {subscription: this._subscriber.name, ackIds};
 
     try {
-      // TODO: Deal with errors from exactly once.
       await client.acknowledge(reqOpts, this._options.callOptions!);
-      batch.forEach(({responsePromise}) => {
-        responsePromise?.resolve(AckResponses.Success);
-      });
+      this.handleAckSuccesses(batch);
+      return [];
     } catch (e) {
-      batch.forEach(({responsePromise}) => {
-        responsePromise?.reject(e);
-      });
-      throw new BatchError(e as ServiceError, ackIds, 'acknowledge');
+      const grpcError = e as GoogleError;
+      return this.handleAckFailures(batch, grpcError);
+      //throw new BatchError(e as ServiceError, ackIds, 'acknowledge');
     }
   }
 }
@@ -261,7 +334,7 @@ export class ModAckQueue extends MessageQueue {
    * @param {Array.<Array.<string|number>>} batch Array of ackIds and deadlines.
    * @return {Promise}
    */
-  protected async _sendBatch(batch: QueuedMessages): Promise<void> {
+  protected async _sendBatch(batch: QueuedMessages): Promise<QueuedMessages> {
     const client = await this._subscriber.getClient();
     const subscription = this._subscriber.name;
     const modAckTable: {[index: string]: QueuedMessages} = batch.reduce(
@@ -276,6 +349,7 @@ export class ModAckQueue extends MessageQueue {
       {}
     );
 
+    const allNewBatches: QueuedMessages = [];
     const modAckRequests = Object.keys(modAckTable).map(async deadline => {
       const messages = modAckTable[deadline];
       const ackIds = messages.map(m => m.ackId);
@@ -283,19 +357,18 @@ export class ModAckQueue extends MessageQueue {
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};
 
       try {
-        // TODO: Deal with errors from exactly once.
         await client.modifyAckDeadline(reqOpts, this._options.callOptions!);
-        messages.forEach(({responsePromise}) => {
-          responsePromise?.resolve(AckResponses.Success);
-        });
+        this.handleAckSuccesses(messages);
       } catch (e) {
-        batch.forEach(({responsePromise}) => {
-          responsePromise?.reject(e);
-        });
-        throw new BatchError(e as ServiceError, ackIds, 'modifyAckDeadline');
+        const grpcError = e as GoogleError;
+
+        const newBatch = this.handleAckFailures(messages, grpcError);
+        allNewBatches.concat(newBatch);
+        // throw new BatchError(e as ServiceError, ackIds, 'modifyAckDeadline');
       }
     });
 
     await Promise.all(modAckRequests);
+    // TODO allNewBatches
   }
 }
