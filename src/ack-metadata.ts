@@ -44,7 +44,7 @@ export interface AckError {
   transient: boolean;
   response?: AckResponse;
   rawErrorCode?: string;
-  gpcErrorCode?: Status;
+  grpcErrorCode?: Status;
 }
 
 export type AckErrorCodes = Map<string, AckError>;
@@ -94,7 +94,7 @@ export function processAckErrorInfo(rpcError: GoogleError): AckErrorCodes {
 export function processAckRpcError(grpcCode: Status): AckError {
   const ackError: AckError = {
     transient: exactlyOnceTemporaryRetryErrors.includes(grpcCode!),
-    gpcErrorCode: grpcCode,
+    grpcErrorCode: grpcCode,
   };
   switch (grpcCode) {
     case Status.PERMISSION_DENIED:
