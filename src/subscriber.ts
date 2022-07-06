@@ -308,12 +308,31 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   updateAckDeadline(ackTimeSeconds?: number) {
+    // Start with the value we already have.
     let ackDeadline = this.ackDeadline;
+
+    // If we got an ack time reading, update the histogram (and ackDeadline).
     if (ackTimeSeconds) {
       this._histogram.add(ackTimeSeconds);
       ackDeadline = this._histogram.percentile(99);
     }
 
+    // Grab our current min/max deadline values, based on whether exactly-once
+    // is enabled, and the defaults.
+    const [minDeadline, maxDeadline] = this.getMinMaxDeadlines();
+
+    if (minDeadline) {
+      ackDeadline = Math.max(ackDeadline, minDeadline.totalOf('second'));
+    }
+    if (maxDeadline) {
+      ackDeadline = Math.min(ackDeadline, maxDeadline.totalOf('second'));
+    }
+
+    // Set the bounded result back.
+    this.ackDeadline = ackDeadline;
+  }
+
+  private getMinMaxDeadlines(): [Duration?, Duration?] {
     // If this is an exactly-once subscription, and the user didn't set their
     // own minimum ack periods, set it to the default for exactly-once.
     const defaultMinDeadline = this.isExactlyOnce
@@ -325,15 +344,7 @@ export class Subscriber extends EventEmitter {
     const minDeadline = this._options.minAckDeadline ?? defaultMinDeadline;
     const maxDeadline = this._options.maxAckDeadline ?? defaultMaxDeadline;
 
-    // We could still have `undefined` for both of the above.
-    if (minDeadline) {
-      ackDeadline = Math.max(ackDeadline, minDeadline.totalOf('second'));
-    }
-    if (maxDeadline) {
-      ackDeadline = Math.min(ackDeadline, maxDeadline.totalOf('second'));
-    }
-
-    this.ackDeadline = ackDeadline;
+    return [minDeadline, maxDeadline];
   }
 
   /**
