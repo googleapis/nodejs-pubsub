@@ -281,7 +281,7 @@ describe('Subscriber', () => {
       const expectedSeconds = (now - message.received) / 1000;
       const addStub = sandbox.stub(histogram, 'add').withArgs(expectedSeconds);
 
-      const fakeDeadline = 312123;
+      const fakeDeadline = 598;
 
       sandbox.stub(histogram, 'percentile').withArgs(99).returns(fakeDeadline);
 
