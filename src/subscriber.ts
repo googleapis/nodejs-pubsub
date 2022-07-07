@@ -280,7 +280,7 @@ export class Subscriber extends EventEmitter {
   constructor(subscription: Subscription, options = {}) {
     super();
 
-    this.ackDeadline = 10;
+    this.ackDeadline = defaultOptions.subscription.ackDeadline;
     this.maxMessages = defaultOptions.subscription.maxOutstandingMessages;
     this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
     this.useLegacyFlowControl = false;
