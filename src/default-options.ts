@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {Duration} from './temporal';
+
 // These options will be used library-wide. They're specified here so that
 // they can be changed easily in the future.
 export const defaultOptions = {
@@ -26,6 +28,12 @@ export const defaultOptions = {
     // in bytes, with the default lease manager.
     maxOutstandingBytes: 100 * 1024 * 1024,
 
+    // The minimum length of time a message's lease will be extended by.
+    minAckDeadline: undefined,
+
+    // The maximum length of time a message's lease will be extended by.
+    maxAckDeadline: Duration.from({minutes: 10}),
+
     // The maximum number of minutes that a message's lease will ever
     // be extended.
     maxExtensionMinutes: 60,
@@ -33,6 +41,9 @@ export const defaultOptions = {
     // The maximum number of subscription streams/threads that will ever
     // be opened.
     maxStreams: 5,
+
+    // The starting number of seconds that ack deadlines will be extended.
+    ackDeadline: 10,
   },
 
   publish: {

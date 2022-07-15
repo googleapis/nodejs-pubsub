@@ -31,6 +31,7 @@ import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
 import {createSpan} from './opentelemetry-tracing';
 import {Throttler} from './util';
+import {Duration} from './temporal';
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 export type SubscriptionProperties =
@@ -156,6 +157,7 @@ export class Message {
     this._length = this.data.length;
     this._subscriber = sub;
   }
+
   /**
    * The length of the message data.
    *
@@ -164,6 +166,7 @@ export class Message {
   get length() {
     return this._length;
   }
+
   /**
    * Acknowledges the message.
    *
@@ -180,6 +183,7 @@ export class Message {
       this._subscriber.ack(this);
     }
   }
+
   /**
    * Modifies the ack deadline.
    *
@@ -191,6 +195,7 @@ export class Message {
       this._subscriber.modAck(this, deadline);
     }
   }
+
   /**
    * Removes the message from our inventory and schedules it to be redelivered.
    *
@@ -209,20 +214,18 @@ export class Message {
   }
 }
 
-export interface SubscriberOptions {
-  ackDeadline?: number;
-  batching?: BatchOptions;
-  flowControl?: FlowControlOptions;
-  useLegacyFlowControl?: boolean;
-  streamingOptions?: MessageStreamOptions;
-  enableOpenTelemetryTracing?: boolean;
-}
-
 /**
  * @typedef {object} SubscriberOptions
  * @property {number} [ackDeadline=10] Acknowledge deadline in seconds. If left
- *     unset the initial value will be 10 seconds, but it will evolve into the
- *     99th percentile time it takes to acknowledge a message.
+ *     unset, the initial value will be 10 seconds, but it will evolve into the
+ *     99th percentile time it takes to acknowledge a message, subject to the
+ *     limitations of minAckDeadline and maxAckDeadline. If ackDeadline is set
+ *     by the user, then the min/max values will be set to match it. New code
+ *     should prefer setting minAckDeadline and maxAckDeadline directly.
+ * @property {Duration} [minAckDeadline] The minimum time that ackDeadline should
+ *     ever have, while it's under library control.
+ * @property {Duration} [maxAckDeadline] The maximum time that ackDeadline should
+ *     ever have, while it's under library control.
  * @property {BatchOptions} [batching] Request batching options.
  * @property {FlowControlOptions} [flowControl] Flow control options.
  * @property {boolean} [useLegacyFlowControl] Disables enforcing flow control
@@ -230,6 +233,21 @@ export interface SubscriberOptions {
  *     of only enforcing flow control at the client side.
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
  */
+export interface SubscriberOptions {
+  /** @deprecated Use minAckDeadline and maxAckDeadline. */
+  ackDeadline?: number;
+
+  minAckDeadline?: Duration;
+  maxAckDeadline?: Duration;
+  batching?: BatchOptions;
+  flowControl?: FlowControlOptions;
+  useLegacyFlowControl?: boolean;
+  streamingOptions?: MessageStreamOptions;
+  enableOpenTelemetryTracing?: boolean;
+}
+
+const minAckDeadlineForExactlyOnce = Duration.from({seconds: 60});
+
 /**
  * Subscriber class is used to manage all message related functionality.
  *
@@ -248,7 +266,6 @@ export class Subscriber extends EventEmitter {
   private _acks!: AckQueue;
   private _histogram: Histogram;
   private _inventory!: LeaseManager;
-  private _isUserSetDeadline: boolean;
   private _useOpentelemetry: boolean;
   private _latencies: Histogram;
   private _modAcks!: ModAckQueue;
@@ -263,12 +280,11 @@ export class Subscriber extends EventEmitter {
   constructor(subscription: Subscription, options = {}) {
     super();
 
-    this.ackDeadline = 10;
+    this.ackDeadline = defaultOptions.subscription.ackDeadline;
     this.maxMessages = defaultOptions.subscription.maxOutstandingMessages;
     this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
     this.useLegacyFlowControl = false;
     this.isOpen = false;
-    this._isUserSetDeadline = false;
     this._useOpentelemetry = false;
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
@@ -279,16 +295,85 @@ export class Subscriber extends EventEmitter {
   }
 
   /**
-   * Sets our subscription properties from the first incoming message.
+   * Update our ack extension time that will be used by the lease manager
+   * for sending modAcks.
+   *
+   * Should not be called from outside this class, except for unit tests.
+   *
+   * @param {number} [ackTimeSeconds] The number of seconds that the last
+   *   ack took after the message was received. If this is undefined, then
+   *   we won't update the histogram, but we will still recalculate the
+   *   ackDeadline based on the situation.
+   *
+   * @private
+   */
+  updateAckDeadline(ackTimeSeconds?: number) {
+    // Start with the value we already have.
+    let ackDeadline = this.ackDeadline;
+
+    // If we got an ack time reading, update the histogram (and ackDeadline).
+    if (ackTimeSeconds) {
+      this._histogram.add(ackTimeSeconds);
+      ackDeadline = this._histogram.percentile(99);
+    }
+
+    // Grab our current min/max deadline values, based on whether exactly-once
+    // is enabled, and the defaults.
+    const [minDeadline, maxDeadline] = this.getMinMaxDeadlines();
+
+    if (minDeadline) {
+      ackDeadline = Math.max(ackDeadline, minDeadline.totalOf('second'));
+    }
+    if (maxDeadline) {
+      ackDeadline = Math.min(ackDeadline, maxDeadline.totalOf('second'));
+    }
+
+    // Set the bounded result back.
+    this.ackDeadline = ackDeadline;
+  }
+
+  private getMinMaxDeadlines(): [Duration?, Duration?] {
+    // If this is an exactly-once subscription, and the user didn't set their
+    // own minimum ack periods, set it to the default for exactly-once.
+    const defaultMinDeadline = this.isExactlyOnce
+      ? minAckDeadlineForExactlyOnce
+      : defaultOptions.subscription.minAckDeadline;
+    const defaultMaxDeadline = defaultOptions.subscription.maxAckDeadline;
+
+    // Pull in any user-set min/max.
+    const minDeadline = this._options.minAckDeadline ?? defaultMinDeadline;
+    const maxDeadline = this._options.maxAckDeadline ?? defaultMaxDeadline;
+
+    return [minDeadline, maxDeadline];
+  }
+
+  /**
+   * Returns true if an exactly once subscription has been detected.
+   *
+   * @private
+   */
+  get isExactlyOnce(): boolean {
+    if (!this.subscriptionProperties) {
+      return false;
+    }
+
+    return !!this.subscriptionProperties.exactlyOnceDeliveryEnabled;
+  }
+
+  /**
+   * Sets our subscription properties from incoming messages.
    *
    * @param {SubscriptionProperties} subscriptionProperties The new properties.
    * @private
    */
   setSubscriptionProperties(subscriptionProperties: SubscriptionProperties) {
+    const previouslyEnabled = this.isExactlyOnce;
+
     this.subscriptionProperties = subscriptionProperties;
 
-    // If this is an exactly-once subscription, warn the user that they may have difficulty.
+    // If this is an exactly-once subscription...
     if (this.subscriptionProperties.exactlyOnceDeliveryEnabled) {
+      // Warn the user that they may have difficulty.
       this._errorLog.doMaybe(() =>
         console.error(
           'WARNING: Exactly-once subscriptions are not yet supported ' +
@@ -296,6 +381,11 @@ export class Subscriber extends EventEmitter {
             'in a future release.'
         )
       );
+    }
+
+    // Update ackDeadline in case the flag switched.
+    if (previouslyEnabled !== this.isExactlyOnce) {
+      this.updateAckDeadline();
     }
   }
 
@@ -315,6 +405,7 @@ export class Subscriber extends EventEmitter {
 
     return latency * 1000 + bufferTime;
   }
+
   /**
    * The full name of the Subscription.
    *
@@ -329,6 +420,7 @@ export class Subscriber extends EventEmitter {
 
     return this._name;
   }
+
   /**
    * Acknowledges the supplied message.
    *
@@ -337,16 +429,14 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async ack(message: Message): Promise<void> {
-    if (!this._isUserSetDeadline) {
-      const ackTimeSeconds = (Date.now() - message.received) / 1000;
-      this._histogram.add(ackTimeSeconds);
-      this.ackDeadline = this._histogram.percentile(99);
-    }
+    const ackTimeSeconds = (Date.now() - message.received) / 1000;
+    this.updateAckDeadline(ackTimeSeconds);
 
     this._acks.add(message);
     await this._acks.onFlush();
     this._inventory.remove(message);
   }
+
   /**
    * Closes the subscriber. The returned promise will resolve once any pending
    * acks/modAcks are finished.
@@ -367,6 +457,7 @@ export class Subscriber extends EventEmitter {
 
     this.emit('close');
   }
+
   /**
    * Gets the subscriber client instance.
    *
@@ -381,6 +472,7 @@ export class Subscriber extends EventEmitter {
 
     return client;
   }
+
   /**
    * Modifies the acknowledge deadline for the provided message.
    *
@@ -398,6 +490,7 @@ export class Subscriber extends EventEmitter {
     const latency = (Date.now() - startTime) / 1000;
     this._latencies.add(latency);
   }
+
   /**
    * Modfies the acknowledge deadline for the provided message and then removes
    * it from our inventory.
@@ -410,6 +503,7 @@ export class Subscriber extends EventEmitter {
     await this.modAck(message, 0);
     this._inventory.remove(message);
   }
+
   /**
    * Starts pulling messages.
    * @private
@@ -434,6 +528,7 @@ export class Subscriber extends EventEmitter {
 
     this.isOpen = true;
   }
+
   /**
    * Sets subscriber options.
    *
@@ -445,18 +540,22 @@ export class Subscriber extends EventEmitter {
 
     this._useOpentelemetry = options.enableOpenTelemetryTracing || false;
 
-    if (options.ackDeadline) {
-      this.ackDeadline = options.ackDeadline;
-      this._isUserSetDeadline = true;
+    // The user-set ackDeadline value basically pegs the extension time.
+    // We'll emulate it by overwriting min/max.
+    const passedAckDeadline = options.ackDeadline;
+    if (passedAckDeadline !== undefined) {
+      this.ackDeadline = passedAckDeadline;
+      options.minAckDeadline = Duration.from({seconds: passedAckDeadline});
+      options.maxAckDeadline = Duration.from({seconds: passedAckDeadline});
     }
 
     this.useLegacyFlowControl = options.useLegacyFlowControl || false;
     if (options.flowControl) {
       this.maxMessages =
-        options.flowControl!.maxMessages ||
+        options.flowControl.maxMessages ||
         defaultOptions.subscription.maxOutstandingMessages;
       this.maxBytes =
-        options.flowControl!.maxBytes ||
+        options.flowControl.maxBytes ||
         defaultOptions.subscription.maxOutstandingBytes;
 
       // In the event that the user has specified the maxMessages option, we
