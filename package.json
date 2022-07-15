@@ -89,7 +89,7 @@
     "mv": "^2.1.1",
     "ncp": "^2.0.0",
     "null-loader": "^4.0.0",
-    "protobufjs": "^6.10.1",
+    "protobufjs": "^7.0.0",
     "proxyquire": "^2.0.0",
     "sinon": "^14.0.0",
     "tmp": "^0.2.0",
