@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.1.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.0.3...v3.1.0) (2022-07-15)
+
+
+### Features
+
+* add minExtension setting and plug it into EOS and ackDeadline settings ([#1582](https://github.com/googleapis/nodejs-pubsub/issues/1582)) ([8709979](https://github.com/googleapis/nodejs-pubsub/commit/87099799960b9f299d3fad609c48bd13e03c9097))
+
 ## [3.0.3](https://github.com/googleapis/nodejs-pubsub/compare/v3.0.2...v3.0.3) (2022-07-08)
 
 
