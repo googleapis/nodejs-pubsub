@@ -79,6 +79,12 @@ export function processAckErrorInfo(rpcError: GoogleError): AckErrorCodes {
         transient: true,
         rawErrorCode: code,
       });
+    } else {
+      ret.set(ackId, {
+        transient: false,
+        response: AckResponses.Other,
+        rawErrorCode: code,
+      });
     }
   }
 
@@ -93,7 +99,7 @@ export function processAckErrorInfo(rpcError: GoogleError): AckErrorCodes {
  */
 export function processAckRpcError(grpcCode: Status): AckError {
   const ackError: AckError = {
-    transient: exactlyOnceTemporaryRetryErrors.includes(grpcCode!),
+    transient: exactlyOnceTemporaryRetryErrors.includes(grpcCode),
     grpcErrorCode: grpcCode,
   };
   switch (grpcCode) {

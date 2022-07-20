@@ -17,7 +17,6 @@
 import {CallOptions, GoogleError, grpc} from 'google-gax';
 import defer = require('p-defer');
 import {processAckErrorInfo, processAckRpcError} from './ack-metadata';
-
 import {AckResponse, AckResponses, Message, Subscriber} from './subscriber';
 
 /**
@@ -43,17 +42,19 @@ export interface BatchOptions {
 /**
  * Error class used to signal a batch failure.
  *
+ * Now that we have exactly once subscriptions, we'll only throw one
+ * of these if there was an unknown error.
+ *
  * @class
  *
  * @param {string} message The error message.
- * @param {ServiceError} err The grpc service error.
+ * @param {GoogleError} err The grpc error.
  */
-export class BatchError extends Error implements grpc.ServiceError {
+export class BatchError extends Error {
   ackIds: string[];
   code: grpc.status;
   details: string;
-  metadata: grpc.Metadata;
-  constructor(err: grpc.ServiceError, ackIds: string[], rpc: string) {
+  constructor(err: GoogleError, ackIds: string[], rpc: string) {
     super(
       `Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${
         process.env.DEBUG_GRPC ? err.stack : err.message
@@ -61,9 +62,8 @@ export class BatchError extends Error implements grpc.ServiceError {
     );
 
     this.ackIds = ackIds;
-    this.code = err.code;
-    this.details = err.details;
-    this.metadata = err.metadata;
+    this.code = err.code!;
+    this.details = err.message;
   }
 }
 
@@ -159,8 +159,12 @@ export abstract class MessageQueue {
     delete this._onFlush;
 
     try {
-      // TODO
       const newBatch = await this._sendBatch(batch);
+
+      // We'll get back anything that needs a retry for transient errors.
+      this._requests = newBatch;
+      this.numPendingRequests += newBatch.length;
+      this.numInFlightRequests += newBatch.length;
     } catch (e) {
       // These queues are used for ack and modAck messages, which should
       // never surface an error to the user level. However, we'll emit
@@ -231,9 +235,10 @@ export abstract class MessageQueue {
    * @private
    */
   handleAckFailures(
+    operation: string,
     batch: QueuedMessages,
     rpcError: GoogleError
-  ): QueuedMessages {
+  ) {
     const toSucceed: QueuedMessages = [];
     const toRetry: QueuedMessages = [];
     const toError = new Map<string, QueuedMessages>([
@@ -273,6 +278,17 @@ export abstract class MessageQueue {
       }
     }
 
+    // To remain consistent with previous behaviour, we will push a debug
+    // stream message if an unknown error happens during ack.
+    const others = toError.get(AckResponses.Other);
+    if (others?.length) {
+      const otherIds = others.map(e => e.ackId);
+      this._subscriber.emit(
+        'debug',
+        new BatchError(rpcError, otherIds, operation)
+      );
+    }
+
     // Take care of following up on all the Promises.
     toSucceed.forEach(m => {
       m.responsePromise?.resolve(AckResponses.Success);
@@ -282,7 +298,10 @@ export abstract class MessageQueue {
         m.responsePromise?.reject(e[0]);
       });
     }
-    return toRetry;
+    return {
+      toError,
+      toRetry,
+    };
   }
 }
 
@@ -312,8 +331,8 @@ export class AckQueue extends MessageQueue {
       return [];
     } catch (e) {
       const grpcError = e as GoogleError;
-      return this.handleAckFailures(batch, grpcError);
-      //throw new BatchError(e as ServiceError, ackIds, 'acknowledge');
+      const results = this.handleAckFailures('ack', batch, grpcError);
+      return results.toRetry;
     }
   }
 }
@@ -362,13 +381,12 @@ export class ModAckQueue extends MessageQueue {
       } catch (e) {
         const grpcError = e as GoogleError;
 
-        const newBatch = this.handleAckFailures(messages, grpcError);
-        allNewBatches.concat(newBatch);
-        // throw new BatchError(e as ServiceError, ackIds, 'modifyAckDeadline');
+        const newBatch = this.handleAckFailures('modAck', messages, grpcError);
+        allNewBatches.concat(newBatch.toRetry);
       }
     });
 
     await Promise.all(modAckRequests);
-    // TODO allNewBatches
+    return allNewBatches;
   }
 }

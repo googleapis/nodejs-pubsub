@@ -17,7 +17,7 @@
 import * as assert from 'assert';
 import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
-import {CallOptions, grpc} from 'google-gax';
+import {CallOptions, GoogleError, Status} from 'google-gax';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import * as uuid from 'uuid';
@@ -380,7 +380,7 @@ describe('MessageQueues', () => {
       assert.strictEqual(callOptions, fakeCallOptions);
     });
 
-    it('should throw a BatchError on "debug" if unable to ack', done => {
+    it('should throw a BatchError on "debug" if unable to ack due to grpc error', done => {
       const messages = [
         new FakeMessage(),
         new FakeMessage(),
@@ -389,12 +389,10 @@ describe('MessageQueues', () => {
 
       const ackIds = messages.map(message => message.ackId);
 
-      const fakeError = new Error('Err.') as grpc.ServiceError;
-      fakeError.code = 2;
-      fakeError.metadata = new grpc.Metadata();
+      const fakeError = new Error('Err.') as GoogleError;
+      fakeError.code = Status.DATA_LOSS;
 
-      const expectedMessage =
-        'Failed to "acknowledge" for 3 message(s). Reason: Err.';
+      const expectedMessage = 'Failed to "ack" for 3 message(s). Reason: Err.';
 
       sandbox.stub(subscriber.client, 'acknowledge').rejects(fakeError);
 
@@ -402,7 +400,6 @@ describe('MessageQueues', () => {
         assert.strictEqual(err.message, expectedMessage);
         assert.deepStrictEqual(err.ackIds, ackIds);
         assert.strictEqual(err.code, fakeError.code);
-        assert.strictEqual(err.metadata, fakeError.metadata);
         done();
       });
 
@@ -525,7 +522,7 @@ describe('MessageQueues', () => {
       assert.strictEqual(callOptions, fakeCallOptions);
     });
 
-    it('should throw a BatchError on "debug" if unable to modAck', done => {
+    it('should throw a BatchError on "debug" if unable to modAck due to gRPC error', done => {
       const messages = [
         new FakeMessage(),
         new FakeMessage(),
@@ -534,12 +531,11 @@ describe('MessageQueues', () => {
 
       const ackIds = messages.map(message => message.ackId);
 
-      const fakeError = new Error('Err.') as grpc.ServiceError;
-      fakeError.code = 2;
-      fakeError.metadata = new grpc.Metadata();
+      const fakeError = new Error('Err.') as GoogleError;
+      fakeError.code = Status.DATA_LOSS;
 
       const expectedMessage =
-        'Failed to "modifyAckDeadline" for 3 message(s). Reason: Err.';
+        'Failed to "modAck" for 3 message(s). Reason: Err.';
 
       sandbox.stub(subscriber.client, 'modifyAckDeadline').rejects(fakeError);
 
@@ -547,7 +543,6 @@ describe('MessageQueues', () => {
         assert.strictEqual(err.message, expectedMessage);
         assert.deepStrictEqual(err.ackIds, ackIds);
         assert.strictEqual(err.code, fakeError.code);
-        assert.strictEqual(err.metadata, fakeError.metadata);
         done();
       });
 
