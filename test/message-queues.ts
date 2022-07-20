@@ -89,8 +89,11 @@ describe('MessageQueues', () => {
 
     MessageQueue = class MessageQueue extends queues.MessageQueue {
       batches = [] as QueuedMessages[];
-      protected async _sendBatch(batch: QueuedMessages): Promise<void> {
+      protected async _sendBatch(
+        batch: QueuedMessages
+      ): Promise<QueuedMessages> {
         this.batches.push(batch);
+        return [];
       }
     };
   });
