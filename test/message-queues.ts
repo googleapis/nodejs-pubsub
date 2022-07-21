@@ -18,7 +18,6 @@ import * as assert from 'assert';
 import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import {CallOptions, GoogleError, Status} from 'google-gax';
-import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import * as uuid from 'uuid';
 import defer = require('p-defer');
@@ -67,45 +66,49 @@ class FakeMessage {
   }
 }
 
+function fakeMessage() {
+  return new FakeMessage() as unknown as Message;
+}
+
+class MessageQueue extends messageTypes.MessageQueue {
+  batches: messageTypes.QueuedMessages[] = [];
+  async _sendBatch(
+    batch: messageTypes.QueuedMessages
+  ): Promise<messageTypes.QueuedMessages> {
+    this.batches.push(batch);
+    return [];
+  }
+}
+
+class AckQueue extends messageTypes.AckQueue {
+  get requests() {
+    return this._requests;
+  }
+}
+
+class ModAckQueue extends messageTypes.ModAckQueue {
+  get requests() {
+    return this._requests;
+  }
+}
+
 describe('MessageQueues', () => {
   const sandbox = sinon.createSandbox();
 
-  let subscriber: FakeSubscriber;
+  let fakeSubscriber: FakeSubscriber;
+  let subscriber: Subscriber;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let MessageQueue: any;
-  // tslint:disable-next-line variable-name
-  let AckQueue: typeof messageTypes.AckQueue;
-  // tslint:disable-next-line variable-name
-  let ModAckQueue: typeof messageTypes.ModAckQueue;
-
-  type QueuedMessages = Array<[string, number?]>;
-
-  before(() => {
-    const queues = proxyquire('../src/message-queues.js', {});
-
-    AckQueue = queues.AckQueue;
-    ModAckQueue = queues.ModAckQueue;
-
-    MessageQueue = class MessageQueue extends queues.MessageQueue {
-      batches = [] as QueuedMessages[];
-      protected async _sendBatch(
-        batch: QueuedMessages
-      ): Promise<QueuedMessages> {
-        this.batches.push(batch);
-        return [];
-      }
-    };
-  });
+  before(() => {});
 
   beforeEach(() => {
-    subscriber = new FakeSubscriber();
+    fakeSubscriber = new FakeSubscriber();
+    subscriber = fakeSubscriber as unknown as Subscriber;
   });
 
   afterEach(() => sandbox.restore());
 
   describe('MessageQueue', () => {
-    let messageQueue: typeof MessageQueue;
+    let messageQueue: MessageQueue;
 
     beforeEach(() => {
       messageQueue = new MessageQueue(subscriber);
@@ -174,6 +177,7 @@ describe('MessageQueues', () => {
             batch.forEach(m => {
               m.responsePromise?.resolve();
             });
+            return Promise.resolve([]);
           });
 
         const completion = messageQueue.add(new FakeMessage() as Message);
@@ -213,7 +217,7 @@ describe('MessageQueues', () => {
         const [batch] = messageQueue.batches;
         assert.strictEqual(batch[0].ackId, message.ackId);
         assert.strictEqual(batch[0].deadline, deadline);
-        assert.ok(batch[0].responsePromise.resolve);
+        assert.ok(batch[0].responsePromise?.resolve);
       });
 
       it('should emit any errors as debug events', done => {
@@ -242,6 +246,7 @@ describe('MessageQueues', () => {
           log.push('send:start');
           await sendDone.promise;
           log.push('send:end');
+          return [];
         });
 
         const message = new FakeMessage();
@@ -301,7 +306,7 @@ describe('MessageQueues', () => {
 
         for (let i = 0; i < 3000; i++) {
           assert.strictEqual(stub.callCount, 0);
-          messageQueue.add(new FakeMessage());
+          messageQueue.add(fakeMessage());
         }
 
         assert.strictEqual(stub.callCount, 1);
@@ -315,7 +320,7 @@ describe('MessageQueues', () => {
 
         for (let i = 0; i < maxMessages; i++) {
           assert.strictEqual(stub.callCount, 0);
-          messageQueue.add(new FakeMessage());
+          messageQueue.add(fakeMessage());
         }
 
         assert.strictEqual(stub.callCount, 1);
@@ -325,7 +330,7 @@ describe('MessageQueues', () => {
         const clock = sandbox.useFakeTimers();
         const stub = sandbox.stub(messageQueue, 'flush');
 
-        messageQueue.add(new FakeMessage());
+        messageQueue.add(fakeMessage());
         clock.tick(100);
 
         assert.strictEqual(stub.callCount, 1);
@@ -337,7 +342,7 @@ describe('MessageQueues', () => {
         const maxMilliseconds = 10000;
 
         messageQueue.setOptions({maxMilliseconds});
-        messageQueue.add(new FakeMessage());
+        messageQueue.add(fakeMessage());
         clock.tick(maxMilliseconds);
 
         assert.strictEqual(stub.callCount, 1);
@@ -346,7 +351,7 @@ describe('MessageQueues', () => {
   });
 
   describe('AckQueue', () => {
-    let ackQueue: messageTypes.AckQueue;
+    let ackQueue: AckQueue;
 
     beforeEach(() => {
       ackQueue = new AckQueue(subscriber as {} as Subscriber);
@@ -359,7 +364,9 @@ describe('MessageQueues', () => {
         new FakeMessage(),
       ];
 
-      const stub = sandbox.stub(subscriber.client, 'acknowledge').resolves();
+      const stub = sandbox
+        .stub(fakeSubscriber.client, 'acknowledge')
+        .resolves();
       const expectedReqOpts = {
         subscription: subscriber.name,
         ackIds: messages.map(({ackId}) => ackId),
@@ -374,7 +381,9 @@ describe('MessageQueues', () => {
 
     it('should send call options', async () => {
       const fakeCallOptions = {timeout: 10000};
-      const stub = sandbox.stub(subscriber.client, 'acknowledge').resolves();
+      const stub = sandbox
+        .stub(fakeSubscriber.client, 'acknowledge')
+        .resolves();
 
       ackQueue.setOptions({callOptions: fakeCallOptions});
       await ackQueue.flush();
@@ -397,7 +406,7 @@ describe('MessageQueues', () => {
 
       const expectedMessage = 'Failed to "ack" for 3 message(s). Reason: Err.';
 
-      sandbox.stub(subscriber.client, 'acknowledge').rejects(fakeError);
+      sandbox.stub(fakeSubscriber.client, 'acknowledge').rejects(fakeError);
 
       subscriber.on('debug', (err: BatchError) => {
         assert.strictEqual(err.message, expectedMessage);
@@ -411,7 +420,9 @@ describe('MessageQueues', () => {
     });
 
     it('should appropriately resolve result promises', async () => {
-      const stub = sandbox.stub(subscriber.client, 'acknowledge').resolves();
+      const stub = sandbox
+        .stub(fakeSubscriber.client, 'acknowledge')
+        .resolves();
 
       const message = new FakeMessage() as Message;
       const completion = ackQueue.add(message);
@@ -421,7 +432,9 @@ describe('MessageQueues', () => {
     });
 
     it('should appropriately reject result promises', async () => {
-      const stub = sandbox.stub(subscriber.client, 'acknowledge').resolves();
+      const stub = sandbox
+        .stub(fakeSubscriber.client, 'acknowledge')
+        .resolves();
 
       const message = new FakeMessage() as Message;
       const completion = ackQueue.add(message);
@@ -432,7 +445,7 @@ describe('MessageQueues', () => {
   });
 
   describe('ModAckQueue', () => {
-    let modAckQueue: messageTypes.ModAckQueue;
+    let modAckQueue: ModAckQueue;
 
     beforeEach(() => {
       modAckQueue = new ModAckQueue(subscriber as {} as Subscriber);
@@ -447,7 +460,7 @@ describe('MessageQueues', () => {
       ];
 
       const stub = sandbox
-        .stub(subscriber.client, 'modifyAckDeadline')
+        .stub(fakeSubscriber.client, 'modifyAckDeadline')
         .resolves();
 
       const expectedReqOpts = {
@@ -481,7 +494,7 @@ describe('MessageQueues', () => {
       ];
 
       const stub = sandbox
-        .stub(subscriber.client, 'modifyAckDeadline')
+        .stub(fakeSubscriber.client, 'modifyAckDeadline')
         .resolves();
 
       const expectedReqOpts1 = {
@@ -514,7 +527,7 @@ describe('MessageQueues', () => {
     it('should send call options', async () => {
       const fakeCallOptions = {timeout: 10000};
       const stub = sandbox
-        .stub(subscriber.client, 'modifyAckDeadline')
+        .stub(fakeSubscriber.client, 'modifyAckDeadline')
         .resolves();
 
       modAckQueue.setOptions({callOptions: fakeCallOptions});
@@ -540,7 +553,9 @@ describe('MessageQueues', () => {
       const expectedMessage =
         'Failed to "modAck" for 3 message(s). Reason: Err.';
 
-      sandbox.stub(subscriber.client, 'modifyAckDeadline').rejects(fakeError);
+      sandbox
+        .stub(fakeSubscriber.client, 'modifyAckDeadline')
+        .rejects(fakeError);
 
       subscriber.on('debug', (err: BatchError) => {
         assert.strictEqual(err.message, expectedMessage);
@@ -555,7 +570,7 @@ describe('MessageQueues', () => {
 
     it('should appropriately resolve result promises', async () => {
       const stub = sandbox
-        .stub(subscriber.client, 'modifyAckDeadline')
+        .stub(fakeSubscriber.client, 'modifyAckDeadline')
         .resolves();
 
       const message = new FakeMessage() as Message;
@@ -567,7 +582,7 @@ describe('MessageQueues', () => {
 
     it('should appropriately reject result promises', async () => {
       const stub = sandbox
-        .stub(subscriber.client, 'modifyAckDeadline')
+        .stub(fakeSubscriber.client, 'modifyAckDeadline')
         .resolves();
 
       const message = new FakeMessage() as Message;
