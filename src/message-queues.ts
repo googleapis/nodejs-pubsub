@@ -17,9 +17,21 @@
 import {CallOptions, grpc, ServiceError} from 'google-gax';
 import defer = require('p-defer');
 
-import {Message, Subscriber} from './subscriber';
+import {AckResponse, AckResponses, Message, Subscriber} from './subscriber';
 
-type QueuedMessages = Array<[string, number?]>;
+/**
+ * @private
+ */
+export interface QueuedMessage {
+  ackId: string;
+  deadline?: number;
+  responsePromise?: defer.DeferredPromise<AckResponse>;
+}
+
+/**
+ * @private
+ */
+export type QueuedMessages = Array<QueuedMessage>;
 
 export interface BatchOptions {
   callOptions?: CallOptions;
@@ -107,10 +119,15 @@ export abstract class MessageQueue {
    * @param {number} [deadline] The deadline.
    * @private
    */
-  add({ackId}: Message, deadline?: number): void {
+  add({ackId}: Message, deadline?: number): Promise<AckResponse> {
     const {maxMessages, maxMilliseconds} = this._options;
 
-    this._requests.push([ackId, deadline]);
+    const responsePromise = defer<AckResponse>();
+    this._requests.push({
+      ackId,
+      deadline,
+      responsePromise,
+    });
     this.numPendingRequests += 1;
     this.numInFlightRequests += 1;
 
@@ -119,6 +136,8 @@ export abstract class MessageQueue {
     } else if (!this._timer) {
       this._timer = setTimeout(() => this.flush(), maxMilliseconds!);
     }
+
+    return responsePromise.promise;
   }
   /**
    * Sends a batch of messages.
@@ -208,12 +227,19 @@ export class AckQueue extends MessageQueue {
    */
   protected async _sendBatch(batch: QueuedMessages): Promise<void> {
     const client = await this._subscriber.getClient();
-    const ackIds = batch.map(([ackId]) => ackId);
+    const ackIds = batch.map(({ackId}) => ackId);
     const reqOpts = {subscription: this._subscriber.name, ackIds};
 
     try {
+      // TODO: Deal with errors from exactly once.
       await client.acknowledge(reqOpts, this._options.callOptions!);
+      batch.forEach(({responsePromise}) => {
+        responsePromise?.resolve(AckResponses.Success);
+      });
     } catch (e) {
+      batch.forEach(({responsePromise}) => {
+        responsePromise?.reject(e);
+      });
       throw new BatchError(e as ServiceError, ackIds, 'acknowledge');
     }
   }
@@ -238,26 +264,34 @@ export class ModAckQueue extends MessageQueue {
   protected async _sendBatch(batch: QueuedMessages): Promise<void> {
     const client = await this._subscriber.getClient();
     const subscription = this._subscriber.name;
-    const modAckTable: {[index: string]: string[]} = batch.reduce(
-      (table: {[index: string]: string[]}, [ackId, deadline]) => {
-        if (!table[deadline!]) {
-          table[deadline!] = [];
+    const modAckTable: {[index: string]: QueuedMessages} = batch.reduce(
+      (table: {[index: string]: QueuedMessages}, message) => {
+        if (!table[message.deadline!]) {
+          table[message.deadline!] = [];
         }
 
-        table[deadline!].push(ackId);
+        table[message.deadline!].push(message);
         return table;
       },
       {}
     );
 
     const modAckRequests = Object.keys(modAckTable).map(async deadline => {
-      const ackIds = modAckTable[deadline];
+      const messages = modAckTable[deadline];
+      const ackIds = messages.map(m => m.ackId);
       const ackDeadlineSeconds = Number(deadline);
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};
 
       try {
+        // TODO: Deal with errors from exactly once.
         await client.modifyAckDeadline(reqOpts, this._options.callOptions!);
+        messages.forEach(({responsePromise}) => {
+          responsePromise?.resolve(AckResponses.Success);
+        });
       } catch (e) {
+        batch.forEach(({responsePromise}) => {
+          responsePromise?.reject(e);
+        });
         throw new BatchError(e as ServiceError, ackIds, 'modifyAckDeadline');
       }
     });
