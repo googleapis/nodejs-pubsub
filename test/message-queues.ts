@@ -24,7 +24,7 @@ import defer = require('p-defer');
 
 import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
-import {Message, Subscriber} from '../src/subscriber';
+import {AckResponses, Message, Subscriber} from '../src/subscriber';
 
 class FakeClient {
   async acknowledge(
@@ -90,6 +90,34 @@ class ModAckQueue extends messageTypes.ModAckQueue {
   get requests() {
     return this._requests;
   }
+}
+
+// This discount polyfill for Promise.allSettled can be removed after we drop Node 12.
+type AllSettledResult<T> = {
+  status: 'fulfilled' | 'rejected';
+  value?: T;
+  reason?: T;
+};
+function allSettled<T>(proms: Promise<T>[]): Promise<AllSettledResult<T>[]> {
+  const checkedProms = proms.map((r: Promise<T>) =>
+    r
+      .then(
+        (value: T) =>
+          ({
+            status: 'fulfilled',
+            value,
+          } as AllSettledResult<T>)
+      )
+      .catch(
+        (value: T) =>
+          ({
+            status: 'rejected',
+            reason: value,
+          } as AllSettledResult<T>)
+      )
+  );
+
+  return Promise.all(checkedProms);
 }
 
 describe('MessageQueues', () => {
@@ -419,6 +447,72 @@ describe('MessageQueues', () => {
       ackQueue.flush();
     });
 
+    // The analogous modAck version is very similar, so please sync changes.
+    describe('handle ack responses', () => {
+      it('should trigger Promise resolves on no errors', async () => {
+        const messages = [fakeMessage(), fakeMessage(), fakeMessage()];
+        messages.forEach(m => ackQueue.add(m));
+
+        sandbox.stub(fakeSubscriber.client, 'acknowledge').resolves();
+        const proms = ackQueue.requests.map(
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+        );
+        await ackQueue.flush();
+        const results = await allSettled(proms);
+        const oneSuccess = {status: 'fulfilled', value: AckResponses.Success};
+        assert.deepStrictEqual(results, [oneSuccess, oneSuccess, oneSuccess]);
+      });
+
+      it('should trigger Promise failures on grpc errors', async () => {
+        const messages = [fakeMessage(), fakeMessage(), fakeMessage()];
+
+        const fakeError = new Error('Err.') as GoogleError;
+        fakeError.code = Status.DATA_LOSS;
+
+        messages.forEach(m => ackQueue.add(m));
+
+        sandbox.stub(fakeSubscriber.client, 'acknowledge').rejects(fakeError);
+        const proms = ackQueue.requests.map(
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+        );
+        await ackQueue.flush();
+
+        const results = await allSettled(proms);
+        const oneFail = {status: 'rejected', reason: AckResponses.Other};
+        assert.deepStrictEqual(results, [oneFail, oneFail, oneFail]);
+      });
+
+      it('should correctly handle a mix of errors and successes', async () => {
+        const messages = [fakeMessage(), fakeMessage(), fakeMessage()];
+
+        const fakeError = new Error('Err.') as GoogleError;
+        delete fakeError.code;
+        fakeError.errorInfoMetadata = {
+          [messages[0].ackId]: 'PERMANENT_FAILURE_INVALID_ACK_ID',
+          [messages[1].ackId]: 'TRANSIENT_CAT_ATE_HOMEWORK',
+        };
+        // TODO(feywind) Should this have an RPC error code as well?
+
+        messages.forEach(m => ackQueue.add(m));
+
+        sandbox.stub(fakeSubscriber.client, 'acknowledge').rejects(fakeError);
+
+        const proms = [
+          ackQueue.requests[0].responsePromise!.promise,
+          ackQueue.requests[2].responsePromise!.promise,
+        ];
+        await ackQueue.flush();
+
+        const results = await allSettled(proms);
+        const oneFail = {status: 'rejected', reason: AckResponses.Invalid};
+        const oneSuccess = {status: 'fulfilled', value: AckResponses.Success};
+        assert.deepStrictEqual(results, [oneFail, oneSuccess]);
+
+        assert.strictEqual(ackQueue.requests.length, 1);
+        assert.strictEqual(ackQueue.requests[0].ackId, messages[1].ackId);
+      });
+    });
+
     it('should appropriately resolve result promises', async () => {
       const stub = sandbox
         .stub(fakeSubscriber.client, 'acknowledge')
@@ -566,6 +660,76 @@ describe('MessageQueues', () => {
 
       messages.forEach(message => modAckQueue.add(message as Message));
       modAckQueue.flush();
+    });
+
+    // The analogous ack version is very similar, so please sync changes.
+    describe('handle modAck responses', () => {
+      it('should trigger Promise resolves on no errors', async () => {
+        const messages = [fakeMessage(), fakeMessage(), fakeMessage()];
+        messages.forEach(m => modAckQueue.add(m));
+
+        sandbox.stub(fakeSubscriber.client, 'modifyAckDeadline').resolves();
+        const proms = modAckQueue.requests.map(
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+        );
+        await modAckQueue.flush();
+        const results = await allSettled(proms);
+        const oneSuccess = {status: 'fulfilled', value: AckResponses.Success};
+        assert.deepStrictEqual(results, [oneSuccess, oneSuccess, oneSuccess]);
+      });
+
+      it('should trigger Promise failures on grpc errors', async () => {
+        const messages = [fakeMessage(), fakeMessage(), fakeMessage()];
+
+        const fakeError = new Error('Err.') as GoogleError;
+        fakeError.code = Status.DATA_LOSS;
+
+        messages.forEach(m => modAckQueue.add(m));
+
+        sandbox
+          .stub(fakeSubscriber.client, 'modifyAckDeadline')
+          .rejects(fakeError);
+        const proms = modAckQueue.requests.map(
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+        );
+        await modAckQueue.flush();
+
+        const results = await allSettled(proms);
+        const oneFail = {status: 'rejected', reason: AckResponses.Other};
+        assert.deepStrictEqual(results, [oneFail, oneFail, oneFail]);
+      });
+
+      it('should correctly handle a mix of errors and successes', async () => {
+        const messages = [fakeMessage(), fakeMessage(), fakeMessage()];
+
+        const fakeError = new Error('Err.') as GoogleError;
+        delete fakeError.code;
+        fakeError.errorInfoMetadata = {
+          [messages[0].ackId]: 'PERMANENT_FAILURE_INVALID_ACK_ID',
+          [messages[1].ackId]: 'TRANSIENT_CAT_ATE_HOMEWORK',
+        };
+        // TODO(feywind) Should this have an RPC error code as well?
+
+        messages.forEach(m => modAckQueue.add(m));
+
+        sandbox
+          .stub(fakeSubscriber.client, 'modifyAckDeadline')
+          .rejects(fakeError);
+
+        const proms = [
+          modAckQueue.requests[0].responsePromise!.promise,
+          modAckQueue.requests[2].responsePromise!.promise,
+        ];
+        await modAckQueue.flush();
+
+        const results = await allSettled(proms);
+        const oneFail = {status: 'rejected', reason: AckResponses.Invalid};
+        const oneSuccess = {status: 'fulfilled', value: AckResponses.Success};
+        assert.deepStrictEqual(results, [oneFail, oneSuccess]);
+
+        assert.strictEqual(modAckQueue.requests.length, 1);
+        assert.strictEqual(modAckQueue.requests[0].ackId, messages[1].ackId);
+      });
     });
 
     it('should appropriately resolve result promises', async () => {

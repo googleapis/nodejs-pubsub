@@ -254,7 +254,9 @@ export abstract class MessageQueue {
         if (error.transient) {
           toRetry.push(m);
         } else {
-          toError.get(error.response!)!.push(m);
+          const arr = toError.get(error.response!) ?? [];
+          toError.set(error.response!, arr);
+          arr.push(m);
         }
       });
     } else {
@@ -269,7 +271,9 @@ export abstract class MessageQueue {
             toRetry.push(m);
           } else {
             // It's a permanent error.
-            toError.get(code.response!)!.push(m);
+            const arr = toError.get(code.response!) ?? [];
+            arr.push(m);
+            toError.set(code.response!, arr);
           }
         } else {
           // Looks like this one worked out.
@@ -331,8 +335,16 @@ export class AckQueue extends MessageQueue {
       return [];
     } catch (e) {
       const grpcError = e as GoogleError;
-      const results = this.handleAckFailures('ack', batch, grpcError);
-      return results.toRetry;
+      try {
+        const results = this.handleAckFailures('ack', batch, grpcError);
+        return results.toRetry;
+      } catch (e) {
+        // Errors during error processing shouldn't result in lost messages, so
+        // just retry everything even if it might've failed.
+        // TODO(reviewers) - Is this the right behaviour?
+        this._subscriber.emit('debug', e);
+        return batch;
+      }
     }
   }
 }
@@ -368,7 +380,6 @@ export class ModAckQueue extends MessageQueue {
       {}
     );
 
-    const allNewBatches: QueuedMessages = [];
     const modAckRequests = Object.keys(modAckTable).map(async deadline => {
       const messages = modAckTable[deadline];
       const ackIds = messages.map(m => m.ackId);
@@ -378,15 +389,27 @@ export class ModAckQueue extends MessageQueue {
       try {
         await client.modifyAckDeadline(reqOpts, this._options.callOptions!);
         this.handleAckSuccesses(messages);
+        return [];
       } catch (e) {
         const grpcError = e as GoogleError;
 
         const newBatch = this.handleAckFailures('modAck', messages, grpcError);
-        allNewBatches.concat(newBatch.toRetry);
+        return newBatch.toRetry;
       }
     });
 
-    await Promise.all(modAckRequests);
-    return allNewBatches;
+    try {
+      const allNewBatches: QueuedMessages[] = await Promise.all(modAckRequests);
+      return allNewBatches.reduce((p: QueuedMessage[], c: QueuedMessage[]) => [
+        ...(p ?? []),
+        ...c,
+      ]);
+    } catch (e) {
+      // Errors during error processing shouldn't result in lost messages, so
+      // just retry everything even if it might've failed.
+      // TODO(reviewers) - Is this the right behaviour?
+      this._subscriber.emit('debug', e);
+      return batch;
+    }
   }
 }
