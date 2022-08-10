@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {describe, it} from 'mocha';
-import {Throttler} from '../src/util';
+import {addToBucket, Throttler} from '../src/util';
 import * as assert from 'assert';
 
 describe('utils', () => {
@@ -41,6 +41,21 @@ describe('utils', () => {
       });
 
       assert.strictEqual(totalCalls, 'FIRSTTHIRD');
+    });
+  });
+
+  describe('addToBucket', () => {
+    it('adds to a non-existent bucket', () => {
+      const map = new Map<string, string[]>();
+      addToBucket(map, 'a', 'b');
+      assert.deepStrictEqual(map.get('a'), ['b']);
+    });
+
+    it('adds to an existent bucket', () => {
+      const map = new Map<string, string[]>();
+      map.set('a', ['c']);
+      addToBucket(map, 'a', 'b');
+      assert.deepStrictEqual(map.get('a'), ['c', 'b']);
     });
   });
 });

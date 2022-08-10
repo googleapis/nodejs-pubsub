@@ -16,8 +16,14 @@
 
 import {CallOptions, GoogleError, grpc} from 'google-gax';
 import defer = require('p-defer');
-import {processAckErrorInfo, processAckRpcError} from './ack-metadata';
+import {
+  AckError,
+  AckErrorCodes,
+  processAckErrorInfo,
+  processAckRpcError,
+} from './ack-metadata';
 import {AckResponse, AckResponses, Message, Subscriber} from './subscriber';
+import {addToBucket} from './util';
 
 /**
  * @private
@@ -247,38 +253,34 @@ export abstract class MessageQueue {
       [AckResponses.Other, []],
     ]);
 
-    // Did we have a full RPC failure? If so, just process that first.
-    if (rpcError.code !== undefined) {
-      const error = processAckRpcError(rpcError.code);
-      batch.forEach(m => {
+    // Parse any error codes, both for the RPC call and the ErrorInfo.
+    const error: AckError | undefined = rpcError.code
+      ? processAckRpcError(rpcError.code)
+      : undefined;
+    const codes: AckErrorCodes = processAckErrorInfo(rpcError);
+
+    for (const m of batch) {
+      if (codes.has(m.ackId)) {
+        // This ack has an ErrorInfo entry, so use that to route it.
+        const code = codes.get(m.ackId)!;
+        if (code.transient) {
+          // Transient errors get retried.
+          toRetry.push(m);
+        } else {
+          // It's a permanent error.
+          addToBucket(toError, code.response!, m);
+        }
+      } else if (error !== undefined) {
+        // This ack doesn't have an ErrorInfo entry, but we do have an RPC
+        // error, so use that to route it.
         if (error.transient) {
           toRetry.push(m);
         } else {
-          const arr = toError.get(error.response!) ?? [];
-          toError.set(error.response!, arr);
-          arr.push(m);
+          addToBucket(toError, error.response!, m);
         }
-      });
-    } else {
-      // Just an ErrorInfo to handle.
-      const codes = processAckErrorInfo(rpcError);
-
-      for (const m of batch) {
-        if (codes.has(m.ackId)) {
-          const code = codes.get(m.ackId)!;
-          if (code.transient) {
-            // Transient errors get retried.
-            toRetry.push(m);
-          } else {
-            // It's a permanent error.
-            const arr = toError.get(code.response!) ?? [];
-            arr.push(m);
-            toError.set(code.response!, arr);
-          }
-        } else {
-          // Looks like this one worked out.
-          toSucceed.push(m);
-        }
+      } else {
+        // Looks like this one worked out.
+        toSucceed.push(m);
       }
     }
 

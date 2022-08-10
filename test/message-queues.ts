@@ -468,6 +468,10 @@ describe('MessageQueues', () => {
 
         const fakeError = new Error('Err.') as GoogleError;
         fakeError.code = Status.DATA_LOSS;
+        fakeError.errorInfoMetadata = {
+          // These should be routed by the errorInfo resolver.
+          [messages[0].ackId]: 'TRANSIENT_CAT_ATE_HOMEWORK',
+        };
 
         messages.forEach(m => ackQueue.add(m));
 
@@ -475,11 +479,16 @@ describe('MessageQueues', () => {
         const proms = ackQueue.requests.map(
           (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
         );
+        proms.shift();
         await ackQueue.flush();
 
         const results = await allSettled(proms);
         const oneFail = {status: 'rejected', reason: AckResponses.Other};
-        assert.deepStrictEqual(results, [oneFail, oneFail, oneFail]);
+        assert.deepStrictEqual(results, [oneFail, oneFail]);
+
+        // Make sure the one handled by errorInfo was retried.
+        assert.strictEqual(ackQueue.requests.length, 1);
+        assert.strictEqual(ackQueue.requests[0].ackId, messages[0].ackId);
       });
 
       it('should correctly handle a mix of errors and successes', async () => {
@@ -491,7 +500,6 @@ describe('MessageQueues', () => {
           [messages[0].ackId]: 'PERMANENT_FAILURE_INVALID_ACK_ID',
           [messages[1].ackId]: 'TRANSIENT_CAT_ATE_HOMEWORK',
         };
-        // TODO(feywind) Should this have an RPC error code as well?
 
         messages.forEach(m => ackQueue.add(m));
 
@@ -506,8 +514,11 @@ describe('MessageQueues', () => {
         const results = await allSettled(proms);
         const oneFail = {status: 'rejected', reason: AckResponses.Invalid};
         const oneSuccess = {status: 'fulfilled', value: AckResponses.Success};
+
+        // Since there's no RPC error, the last one should've succeeded.
         assert.deepStrictEqual(results, [oneFail, oneSuccess]);
 
+        // Make sure the transient one was retried.
         assert.strictEqual(ackQueue.requests.length, 1);
         assert.strictEqual(ackQueue.requests[0].ackId, messages[1].ackId);
       });
@@ -683,6 +694,10 @@ describe('MessageQueues', () => {
 
         const fakeError = new Error('Err.') as GoogleError;
         fakeError.code = Status.DATA_LOSS;
+        fakeError.errorInfoMetadata = {
+          // These should be routed by the errorInfo resolver.
+          [messages[0].ackId]: 'TRANSIENT_CAT_ATE_HOMEWORK',
+        };
 
         messages.forEach(m => modAckQueue.add(m));
 
@@ -692,11 +707,16 @@ describe('MessageQueues', () => {
         const proms = modAckQueue.requests.map(
           (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
         );
+        proms.shift();
         await modAckQueue.flush();
 
         const results = await allSettled(proms);
         const oneFail = {status: 'rejected', reason: AckResponses.Other};
-        assert.deepStrictEqual(results, [oneFail, oneFail, oneFail]);
+        assert.deepStrictEqual(results, [oneFail, oneFail]);
+
+        // Make sure the one handled by errorInfo was retried.
+        assert.strictEqual(modAckQueue.requests.length, 1);
+        assert.strictEqual(modAckQueue.requests[0].ackId, messages[0].ackId);
       });
 
       it('should correctly handle a mix of errors and successes', async () => {
@@ -708,7 +728,6 @@ describe('MessageQueues', () => {
           [messages[0].ackId]: 'PERMANENT_FAILURE_INVALID_ACK_ID',
           [messages[1].ackId]: 'TRANSIENT_CAT_ATE_HOMEWORK',
         };
-        // TODO(feywind) Should this have an RPC error code as well?
 
         messages.forEach(m => modAckQueue.add(m));
 
@@ -725,8 +744,11 @@ describe('MessageQueues', () => {
         const results = await allSettled(proms);
         const oneFail = {status: 'rejected', reason: AckResponses.Invalid};
         const oneSuccess = {status: 'fulfilled', value: AckResponses.Success};
+
+        // Since there's no RPC error, the last one should've succeeded.
         assert.deepStrictEqual(results, [oneFail, oneSuccess]);
 
+        // Make sure the transient one was retried.
         assert.strictEqual(modAckQueue.requests.length, 1);
         assert.strictEqual(modAckQueue.requests[0].ackId, messages[1].ackId);
       });
