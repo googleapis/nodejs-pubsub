@@ -438,6 +438,11 @@ export class Subscriber extends EventEmitter {
     if (previouslyEnabled !== this.isExactlyOnce) {
       this.updateAckDeadline();
     }
+
+    // Update ackDeadline in case the flag switched.
+    if (previouslyEnabled !== this.isExactlyOnce) {
+      this.updateAckDeadline();
+    }
   }
 
   /**

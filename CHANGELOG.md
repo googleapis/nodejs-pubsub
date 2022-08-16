@@ -4,6 +4,20 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.1.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.0.3...v3.1.0) (2022-07-15)
+
+
+### Features
+
+* add minExtension setting and plug it into EOS and ackDeadline settings ([#1582](https://github.com/googleapis/nodejs-pubsub/issues/1582)) ([8709979](https://github.com/googleapis/nodejs-pubsub/commit/87099799960b9f299d3fad609c48bd13e03c9097))
+
+## [3.0.3](https://github.com/googleapis/nodejs-pubsub/compare/v3.0.2...v3.0.3) (2022-07-08)
+
+
+### Bug Fixes
+
+* pin @opentelemetry/semantic-conventions for Node 12 support ([#1596](https://github.com/googleapis/nodejs-pubsub/issues/1596)) ([f594061](https://github.com/googleapis/nodejs-pubsub/commit/f5940613f53c3647ab9941adfd8442f2bc0bb857))
+
 ## [3.0.2](https://github.com/googleapis/nodejs-pubsub/compare/v3.0.1...v3.0.2) (2022-06-30)
 
 
