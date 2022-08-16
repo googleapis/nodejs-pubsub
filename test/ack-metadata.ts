@@ -15,7 +15,7 @@
 import {describe, it} from 'mocha';
 import * as assert from 'assert';
 import {
-  AckError,
+  AckErrorInfo,
   processAckErrorInfo,
   processAckRpcError,
 } from '../src/ack-metadata';
@@ -104,7 +104,7 @@ describe('ack-metadata', () => {
       'TRANSIENT_FAILURE_ESPRESSO_BAR_CLOSED',
       'NO_IDEA_ERROR',
     ];
-    const expectedResults = new Map<string, AckError>([
+    const expectedResults = new Map<string, AckErrorInfo>([
       [
         ackIds[0],
         {

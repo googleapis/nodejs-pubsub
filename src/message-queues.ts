@@ -17,7 +17,7 @@
 import {CallOptions, GoogleError, grpc} from 'google-gax';
 import defer = require('p-defer');
 import {
-  AckError,
+  AckErrorInfo,
   AckErrorCodes,
   processAckErrorInfo,
   processAckRpcError,
@@ -254,7 +254,7 @@ export abstract class MessageQueue {
     ]);
 
     // Parse any error codes, both for the RPC call and the ErrorInfo.
-    const error: AckError | undefined = rpcError.code
+    const error: AckErrorInfo | undefined = rpcError.code
       ? processAckRpcError(rpcError.code)
       : undefined;
     const codes: AckErrorCodes = processAckErrorInfo(rpcError);

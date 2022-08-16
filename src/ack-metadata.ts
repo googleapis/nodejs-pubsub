@@ -40,14 +40,14 @@ interface StringToString {
  *
  * @private
  */
-export interface AckError {
+export interface AckErrorInfo {
   transient: boolean;
   response?: AckResponse;
   rawErrorCode?: string;
   grpcErrorCode?: Status;
 }
 
-export type AckErrorCodes = Map<string, AckError>;
+export type AckErrorCodes = Map<string, AckErrorInfo>;
 
 /**
  * Processes the raw RPC information when sending a batch of acks
@@ -56,7 +56,7 @@ export type AckErrorCodes = Map<string, AckError>;
  * @private
  */
 export function processAckErrorInfo(rpcError: GoogleError): AckErrorCodes {
-  const ret = new Map<string, AckError>();
+  const ret = new Map<string, AckErrorInfo>();
 
   if (!rpcError.errorInfoMetadata) {
     return ret;
@@ -97,8 +97,8 @@ export function processAckErrorInfo(rpcError: GoogleError): AckErrorCodes {
  *
  * @private
  */
-export function processAckRpcError(grpcCode: Status): AckError {
-  const ackError: AckError = {
+export function processAckRpcError(grpcCode: Status): AckErrorInfo {
+  const ackError: AckErrorInfo = {
     transient: exactlyOnceTemporaryRetryErrors.includes(grpcCode),
     grpcErrorCode: grpcCode,
   };
