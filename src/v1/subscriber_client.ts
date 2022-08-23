@@ -31,7 +31,6 @@ import {
 } from 'google-gax';
 
 import {Transform} from 'stream';
-import {RequestType} from 'google-gax/build/src/apitypes';
 import {PassThrough} from 'stream';
 import * as protos from '../../protos/protos';
 import jsonProtos = require('../../protos/protos.json');
@@ -312,7 +311,8 @@ export class SubscriberClient {
       const apiCall = this._gaxModule.createApiCall(
         callPromise,
         this._defaults[methodName],
-        descriptor
+        descriptor,
+        this._opts.fallback
       );
 
       this.innerApiCalls[methodName] = apiCall;
@@ -1862,7 +1862,7 @@ export class SubscriberClient {
     const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSubscriptions.createStream(
-      this.innerApiCalls.listSubscriptions as gax.GaxCall,
+      this.innerApiCalls.listSubscriptions as GaxCall,
       request,
       callSettings
     );
@@ -1911,7 +1911,7 @@ export class SubscriberClient {
     this.initialize();
     return this.descriptors.page.listSubscriptions.asyncIterate(
       this.innerApiCalls['listSubscriptions'] as GaxCall,
-      request as unknown as RequestType,
+      request as {},
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ISubscription>;
   }
@@ -2054,7 +2054,7 @@ export class SubscriberClient {
     const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSnapshots.createStream(
-      this.innerApiCalls.listSnapshots as gax.GaxCall,
+      this.innerApiCalls.listSnapshots as GaxCall,
       request,
       callSettings
     );
@@ -2103,7 +2103,7 @@ export class SubscriberClient {
     this.initialize();
     return this.descriptors.page.listSnapshots.asyncIterate(
       this.innerApiCalls['listSnapshots'] as GaxCall,
-      request as unknown as RequestType,
+      request as {},
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ISnapshot>;
   }

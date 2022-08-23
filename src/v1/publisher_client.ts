@@ -30,7 +30,6 @@ import {
 } from 'google-gax';
 
 import {Transform} from 'stream';
-import {RequestType} from 'google-gax/build/src/apitypes';
 import * as protos from '../../protos/protos';
 import jsonProtos = require('../../protos/protos.json');
 /**
@@ -304,7 +303,8 @@ export class PublisherClient {
       const apiCall = this._gaxModule.createApiCall(
         callPromise,
         this._defaults[methodName],
-        descriptor
+        descriptor,
+        this._opts.fallback
       );
 
       this.innerApiCalls[methodName] = apiCall;
@@ -1044,7 +1044,7 @@ export class PublisherClient {
     const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listTopics.createStream(
-      this.innerApiCalls.listTopics as gax.GaxCall,
+      this.innerApiCalls.listTopics as GaxCall,
       request,
       callSettings
     );
@@ -1093,7 +1093,7 @@ export class PublisherClient {
     this.initialize();
     return this.descriptors.page.listTopics.asyncIterate(
       this.innerApiCalls['listTopics'] as GaxCall,
-      request as unknown as RequestType,
+      request as {},
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ITopic>;
   }
@@ -1244,7 +1244,7 @@ export class PublisherClient {
     const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listTopicSubscriptions.createStream(
-      this.innerApiCalls.listTopicSubscriptions as gax.GaxCall,
+      this.innerApiCalls.listTopicSubscriptions as GaxCall,
       request,
       callSettings
     );
@@ -1293,7 +1293,7 @@ export class PublisherClient {
     this.initialize();
     return this.descriptors.page.listTopicSubscriptions.asyncIterate(
       this.innerApiCalls['listTopicSubscriptions'] as GaxCall,
-      request as unknown as RequestType,
+      request as {},
       callSettings
     ) as AsyncIterable<string>;
   }
@@ -1438,7 +1438,7 @@ export class PublisherClient {
     const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listTopicSnapshots.createStream(
-      this.innerApiCalls.listTopicSnapshots as gax.GaxCall,
+      this.innerApiCalls.listTopicSnapshots as GaxCall,
       request,
       callSettings
     );
@@ -1487,7 +1487,7 @@ export class PublisherClient {
     this.initialize();
     return this.descriptors.page.listTopicSnapshots.asyncIterate(
       this.innerApiCalls['listTopicSnapshots'] as GaxCall,
-      request as unknown as RequestType,
+      request as {},
       callSettings
     ) as AsyncIterable<string>;
   }
