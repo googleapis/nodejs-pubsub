@@ -22,7 +22,13 @@ import {
   processAckErrorInfo,
   processAckRpcError,
 } from './ack-metadata';
-import {AckResponse, AckResponses, Message, Subscriber} from './subscriber';
+import {
+  AckError,
+  AckResponse,
+  AckResponses,
+  Message,
+  Subscriber,
+} from './subscriber';
 import {addToBucket} from './util';
 
 /**
@@ -43,6 +49,15 @@ export interface BatchOptions {
   callOptions?: CallOptions;
   maxMessages?: number;
   maxMilliseconds?: number;
+}
+
+/**
+ * Used to communicate status from the subscriber to the queues.
+ *
+ * @private
+ */
+export interface QueueSubcriptionStatus {
+  isExactlyOnce: boolean;
 }
 
 /**
@@ -102,6 +117,8 @@ export abstract class MessageQueue {
   protected _subscriber: Subscriber;
   protected _timer?: NodeJS.Timer;
   protected abstract _sendBatch(batch: QueuedMessages): Promise<QueuedMessages>;
+  protected _status?: QueueSubcriptionStatus;
+
   constructor(sub: Subscriber, options = {} as BatchOptions) {
     this.numPendingRequests = 0;
     this.numInFlightRequests = 0;
@@ -110,6 +127,7 @@ export abstract class MessageQueue {
 
     this.setOptions(options);
   }
+
   /**
    * Gets the default buffer time in ms.
    *
@@ -119,6 +137,7 @@ export abstract class MessageQueue {
   get maxMilliseconds(): number {
     return this._options!.maxMilliseconds!;
   }
+
   /**
    * Adds a message to the queue.
    *
@@ -146,6 +165,7 @@ export abstract class MessageQueue {
 
     return responsePromise.promise;
   }
+
   /**
    * Sends a batch of messages.
    * @private
@@ -188,6 +208,7 @@ export abstract class MessageQueue {
       delete this._onDrain;
     }
   }
+
   /**
    * Returns a promise that resolves after the next flush occurs.
    *
@@ -200,6 +221,7 @@ export abstract class MessageQueue {
     }
     return this._onFlush.promise;
   }
+
   /**
    * Returns a promise that resolves when all in-flight messages have settled.
    */
@@ -209,6 +231,7 @@ export abstract class MessageQueue {
     }
     return this._onDrain.promise;
   }
+
   /**
    * Set the batching options.
    *
@@ -219,6 +242,16 @@ export abstract class MessageQueue {
     const defaults: BatchOptions = {maxMessages: 3000, maxMilliseconds: 100};
 
     this._options = Object.assign(defaults, options);
+  }
+
+  /**
+   * Set the subscription status we're attached to.
+   *
+   * @param {QueueSubcriptionStatus} status
+   * @private
+   */
+  setStatus(status: QueueSubcriptionStatus): void {
+    this._status = status;
   }
 
   /**
@@ -247,7 +280,7 @@ export abstract class MessageQueue {
   ) {
     const toSucceed: QueuedMessages = [];
     const toRetry: QueuedMessages = [];
-    const toError = new Map<string, QueuedMessages>([
+    const toError = new Map<AckResponse, QueuedMessages>([
       [AckResponses.PermissionDenied, []],
       [AckResponses.FailedPrecondition, []],
       [AckResponses.Other, []],
@@ -301,7 +334,8 @@ export abstract class MessageQueue {
     });
     for (const e of toError.entries()) {
       e[1].forEach(m => {
-        m.responsePromise?.reject(e[0]);
+        const exc = new AckError(e[0], rpcError.message);
+        m.responsePromise?.reject(exc);
       });
     }
     return {
@@ -333,19 +367,32 @@ export class AckQueue extends MessageQueue {
 
     try {
       await client.acknowledge(reqOpts, this._options.callOptions!);
+
+      // It's okay if these pass through since they're successful anyway.
       this.handleAckSuccesses(batch);
       return [];
     } catch (e) {
-      const grpcError = e as GoogleError;
-      try {
-        const results = this.handleAckFailures('ack', batch, grpcError);
-        return results.toRetry;
-      } catch (e) {
-        // Errors during error processing shouldn't result in lost messages, so
-        // just retry everything even if it might've failed.
-        // TODO(reviewers) - Is this the right behaviour?
+      // If exactly-once isn't enabled, don't do error processing.
+      if (!this._status?.isExactlyOnce) {
         this._subscriber.emit('debug', e);
-        return batch;
+        batch.forEach(m => {
+          m.responsePromise?.resolve(AckResponses.Success);
+        });
+        return [];
+      } else {
+        const grpcError = e as GoogleError;
+        try {
+          const results = this.handleAckFailures('ack', batch, grpcError);
+          return results.toRetry;
+        } catch (e) {
+          // This should only ever happen if there's a code failure.
+          this._subscriber.emit('debug', e);
+          const exc = new AckError(AckResponses.Other, 'Code error');
+          batch.forEach(m => {
+            m.responsePromise?.reject(exc);
+          });
+          return [];
+        }
       }
     }
   }
@@ -390,13 +437,28 @@ export class ModAckQueue extends MessageQueue {
 
       try {
         await client.modifyAckDeadline(reqOpts, this._options.callOptions!);
+
+        // It's okay if these pass through since they're successful anyway.
         this.handleAckSuccesses(messages);
         return [];
       } catch (e) {
-        const grpcError = e as GoogleError;
+        // If exactly-once isn't enabled, don't do error processing.
+        if (!this._status?.isExactlyOnce) {
+          this._subscriber.emit('debug', e);
+          batch.forEach(m => {
+            m.responsePromise?.resolve(AckResponses.Success);
+          });
+          return [];
+        } else {
+          const grpcError = e as GoogleError;
 
-        const newBatch = this.handleAckFailures('modAck', messages, grpcError);
-        return newBatch.toRetry;
+          const newBatch = this.handleAckFailures(
+            'modAck',
+            messages,
+            grpcError
+          );
+          return newBatch.toRetry;
+        }
       }
     });
 
@@ -407,11 +469,13 @@ export class ModAckQueue extends MessageQueue {
         ...c,
       ]);
     } catch (e) {
-      // Errors during error processing shouldn't result in lost messages, so
-      // just retry everything even if it might've failed.
-      // TODO(reviewers) - Is this the right behaviour?
+      // This should only ever happen if there's a code failure.
       this._subscriber.emit('debug', e);
-      return batch;
+      const exc = new AckError(AckResponses.Other, 'Code error');
+      batch.forEach(m => {
+        m.responsePromise?.reject(exc);
+      });
+      return [];
     }
   }
 }

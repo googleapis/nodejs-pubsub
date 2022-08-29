@@ -48,6 +48,24 @@ export const AckResponses = {
 export type AckResponse = ValueOf<typeof AckResponses>;
 
 /**
+ * Thrown when an error is detected in an ack/nack/modack call, when
+ * exactly-once is enabled on the subscription. This will only be thrown
+ * for actual errors that can't be retried.
+ */
+export class AckError extends Error {
+  errorCode: AckResponse;
+
+  constructor(errorCode: AckResponse, message?: string) {
+    let finalMessage = `${errorCode}`;
+    if (message) {
+      finalMessage += ` : ${message}`;
+    }
+    super(finalMessage);
+    this.errorCode = errorCode;
+  }
+}
+
+/**
  * Date object with nanosecond precision. Supports all standard Date arguments
  * in addition to several custom types.
  *
