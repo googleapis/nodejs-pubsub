@@ -227,7 +227,7 @@ export class PublisherClient {
         'messages',
         ['topic'],
         'message_ids',
-        gax.createByteLengthFunction(
+        this._gaxModule.GrpcClient.createByteLengthFunction(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           protoFilesRoot.lookupType('google.pubsub.v1.PubsubMessage') as any
         )
