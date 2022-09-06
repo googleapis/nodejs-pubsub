@@ -30,7 +30,6 @@ import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
 import {createSpan} from './opentelemetry-tracing';
-import {Throttler} from './util';
 import {Duration} from './temporal';
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
@@ -354,7 +353,6 @@ export class Subscriber extends EventEmitter {
   private _options!: SubscriberOptions;
   private _stream!: MessageStream;
   private _subscription: Subscription;
-  private _errorLog: Throttler;
 
   subscriptionProperties?: SubscriptionProperties;
 
@@ -370,7 +368,6 @@ export class Subscriber extends EventEmitter {
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
     this._subscription = subscription;
-    this._errorLog = new Throttler(60 * 1000);
 
     this.setOptions(options);
   }
