@@ -24,7 +24,7 @@ import defer = require('p-defer');
 
 import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
-import {AckResponses, Message, Subscriber} from '../src/subscriber';
+import {AckError, Message, Subscriber} from '../src/subscriber';
 
 class FakeClient {
   async acknowledge(
@@ -48,14 +48,20 @@ class FakeClient {
 class FakeSubscriber extends EventEmitter {
   name: string;
   client: FakeClient;
+  iEOS: boolean;
+
   constructor() {
     super();
 
     this.name = uuid.v4();
     this.client = new FakeClient();
+    this.iEOS = false;
   }
   async getClient(): Promise<FakeClient> {
     return this.client;
+  }
+  get isExactlyOnce(): boolean {
+    return this.iEOS;
   }
 }
 
@@ -93,12 +99,14 @@ class ModAckQueue extends messageTypes.ModAckQueue {
 }
 
 // This discount polyfill for Promise.allSettled can be removed after we drop Node 12.
-type AllSettledResult<T> = {
+type AllSettledResult<T, U> = {
   status: 'fulfilled' | 'rejected';
   value?: T;
-  reason?: T;
+  reason?: U;
 };
-function allSettled<T>(proms: Promise<T>[]): Promise<AllSettledResult<T>[]> {
+function allSettled<T, U>(
+  proms: Promise<T>[]
+): Promise<AllSettledResult<T, U>[]> {
   const checkedProms = proms.map((r: Promise<T>) =>
     r
       .then(
@@ -106,14 +114,14 @@ function allSettled<T>(proms: Promise<T>[]): Promise<AllSettledResult<T>[]> {
           ({
             status: 'fulfilled',
             value,
-          } as AllSettledResult<T>)
+          } as AllSettledResult<T, U>)
       )
       .catch(
-        (value: T) =>
+        (error: U) =>
           ({
             status: 'rejected',
-            reason: value,
-          } as AllSettledResult<T>)
+            reason: error,
+          } as AllSettledResult<T, U>)
       )
   );
 
@@ -382,7 +390,7 @@ describe('MessageQueues', () => {
     let ackQueue: AckQueue;
 
     beforeEach(() => {
-      ackQueue = new AckQueue(subscriber as {} as Subscriber);
+      ackQueue = new AckQueue(subscriber);
     });
 
     it('should send batches via Client#acknowledge', async () => {
@@ -432,15 +440,22 @@ describe('MessageQueues', () => {
       const fakeError = new Error('Err.') as GoogleError;
       fakeError.code = Status.DATA_LOSS;
 
+      // Since this runs without EOS enabled, we should get the old error handling.
       const expectedMessage = 'Failed to "ack" for 3 message(s). Reason: Err.';
 
       sandbox.stub(fakeSubscriber.client, 'acknowledge').rejects(fakeError);
 
       subscriber.on('debug', (err: BatchError) => {
-        assert.strictEqual(err.message, expectedMessage);
-        assert.deepStrictEqual(err.ackIds, ackIds);
-        assert.strictEqual(err.code, fakeError.code);
-        done();
+        try {
+          assert.strictEqual(err.message, expectedMessage);
+          assert.deepStrictEqual(err.ackIds, ackIds);
+          assert.strictEqual(err.code, fakeError.code);
+          done();
+        } catch (e) {
+          // I'm unsure why Mocha's regular handler doesn't work here,
+          // but manually throw the exception from asserts.
+          done(e);
+        }
       });
 
       messages.forEach(message => ackQueue.add(message as Message));
@@ -448,7 +463,29 @@ describe('MessageQueues', () => {
     });
 
     // The analogous modAck version is very similar, so please sync changes.
-    describe('handle ack responses', () => {
+    describe('handle ack responses when !isExactlyOnce', () => {
+      it('should appropriately resolve result promises when !isExactlyOnce', async () => {
+        const fakeError = new Error('Err.') as GoogleError;
+        fakeError.code = Status.DATA_LOSS;
+
+        const stub = sandbox
+          .stub(fakeSubscriber.client, 'acknowledge')
+          .rejects(fakeError);
+
+        const message = new FakeMessage() as Message;
+        const completion = ackQueue.add(message);
+        await ackQueue.flush();
+        assert.strictEqual(stub.callCount, 1);
+        await assert.doesNotReject(completion);
+      });
+    });
+
+    // The analogous modAck version is very similar, so please sync changes.
+    describe('handle ack responses for exactly-once', () => {
+      beforeEach(() => {
+        fakeSubscriber.iEOS = true;
+      });
+
       it('should trigger Promise resolves on no errors', async () => {
         const messages = [fakeMessage(), fakeMessage(), fakeMessage()];
         messages.forEach(m => ackQueue.add(m));
@@ -459,7 +496,7 @@ describe('MessageQueues', () => {
         );
         await ackQueue.flush();
         const results = await allSettled(proms);
-        const oneSuccess = {status: 'fulfilled', value: AckResponses.Success};
+        const oneSuccess = {status: 'fulfilled', value: undefined};
         assert.deepStrictEqual(results, [oneSuccess, oneSuccess, oneSuccess]);
       });
 
@@ -482,9 +519,11 @@ describe('MessageQueues', () => {
         proms.shift();
         await ackQueue.flush();
 
-        const results = await allSettled(proms);
-        const oneFail = {status: 'rejected', reason: AckResponses.Other};
-        assert.deepStrictEqual(results, [oneFail, oneFail]);
+        const results = await allSettled<void, AckError>(proms);
+        assert.strictEqual(results[0].status, 'rejected');
+        assert.strictEqual(results[0].reason?.errorCode, 'OTHER');
+        assert.strictEqual(results[1].status, 'rejected');
+        assert.strictEqual(results[1].reason?.errorCode, 'OTHER');
 
         // Make sure the one handled by errorInfo was retried.
         assert.strictEqual(ackQueue.requests.length, 1);
@@ -511,12 +550,13 @@ describe('MessageQueues', () => {
         ];
         await ackQueue.flush();
 
-        const results = await allSettled(proms);
-        const oneFail = {status: 'rejected', reason: AckResponses.Invalid};
-        const oneSuccess = {status: 'fulfilled', value: AckResponses.Success};
+        const results = await allSettled<void, AckError>(proms);
+        assert.strictEqual(results[0].status, 'rejected');
+        assert.strictEqual(results[0].reason?.errorCode, 'INVALID');
 
         // Since there's no RPC error, the last one should've succeeded.
-        assert.deepStrictEqual(results, [oneFail, oneSuccess]);
+        const oneSuccess = {status: 'fulfilled', value: undefined};
+        assert.deepStrictEqual(results[1], oneSuccess);
 
         // Make sure the transient one was retried.
         assert.strictEqual(ackQueue.requests.length, 1);
@@ -553,7 +593,7 @@ describe('MessageQueues', () => {
     let modAckQueue: ModAckQueue;
 
     beforeEach(() => {
-      modAckQueue = new ModAckQueue(subscriber as {} as Subscriber);
+      modAckQueue = new ModAckQueue(subscriber);
     });
 
     it('should send batches via Client#modifyAckDeadline', async () => {
@@ -655,6 +695,7 @@ describe('MessageQueues', () => {
       const fakeError = new Error('Err.') as GoogleError;
       fakeError.code = Status.DATA_LOSS;
 
+      // Since this runs without EOS enabled, we should get the old error handling.
       const expectedMessage =
         'Failed to "modAck" for 3 message(s). Reason: Err.';
 
@@ -663,18 +704,45 @@ describe('MessageQueues', () => {
         .rejects(fakeError);
 
       subscriber.on('debug', (err: BatchError) => {
-        assert.strictEqual(err.message, expectedMessage);
-        assert.deepStrictEqual(err.ackIds, ackIds);
-        assert.strictEqual(err.code, fakeError.code);
-        done();
+        try {
+          assert.strictEqual(err.message, expectedMessage);
+          assert.deepStrictEqual(err.ackIds, ackIds);
+          assert.strictEqual(err.code, fakeError.code);
+          done();
+        } catch (e) {
+          // I'm unsure why Mocha's regular handler doesn't work here,
+          // but manually throw the exception from asserts.
+          done(e);
+        }
       });
 
       messages.forEach(message => modAckQueue.add(message as Message));
       modAckQueue.flush();
     });
 
+    describe('handle modAck responses when !isExactlyOnce', () => {
+      it('should appropriately resolve result promises when !isExactlyOnce', async () => {
+        const fakeError = new Error('Err.') as GoogleError;
+        fakeError.code = Status.DATA_LOSS;
+
+        const stub = sandbox
+          .stub(fakeSubscriber.client, 'modifyAckDeadline')
+          .rejects(fakeError);
+
+        const message = new FakeMessage() as Message;
+        const completion = modAckQueue.add(message);
+        await modAckQueue.flush();
+        assert.strictEqual(stub.callCount, 1);
+        await assert.doesNotReject(completion);
+      });
+    });
+
     // The analogous ack version is very similar, so please sync changes.
-    describe('handle modAck responses', () => {
+    describe('handle modAck responses for exactly-once', () => {
+      beforeEach(() => {
+        fakeSubscriber.iEOS = true;
+      });
+
       it('should trigger Promise resolves on no errors', async () => {
         const messages = [fakeMessage(), fakeMessage(), fakeMessage()];
         messages.forEach(m => modAckQueue.add(m));
@@ -685,7 +753,7 @@ describe('MessageQueues', () => {
         );
         await modAckQueue.flush();
         const results = await allSettled(proms);
-        const oneSuccess = {status: 'fulfilled', value: AckResponses.Success};
+        const oneSuccess = {status: 'fulfilled', value: undefined};
         assert.deepStrictEqual(results, [oneSuccess, oneSuccess, oneSuccess]);
       });
 
@@ -710,9 +778,11 @@ describe('MessageQueues', () => {
         proms.shift();
         await modAckQueue.flush();
 
-        const results = await allSettled(proms);
-        const oneFail = {status: 'rejected', reason: AckResponses.Other};
-        assert.deepStrictEqual(results, [oneFail, oneFail]);
+        const results = await allSettled<void, AckError>(proms);
+        assert.strictEqual(results[0].status, 'rejected');
+        assert.strictEqual(results[0].reason?.errorCode, 'OTHER');
+        assert.strictEqual(results[1].status, 'rejected');
+        assert.strictEqual(results[1].reason?.errorCode, 'OTHER');
 
         // Make sure the one handled by errorInfo was retried.
         assert.strictEqual(modAckQueue.requests.length, 1);
@@ -741,12 +811,13 @@ describe('MessageQueues', () => {
         ];
         await modAckQueue.flush();
 
-        const results = await allSettled(proms);
-        const oneFail = {status: 'rejected', reason: AckResponses.Invalid};
-        const oneSuccess = {status: 'fulfilled', value: AckResponses.Success};
+        const results = await allSettled<void, AckError>(proms);
+        assert.strictEqual(results[0].status, 'rejected');
+        assert.strictEqual(results[0].reason?.errorCode, 'INVALID');
 
         // Since there's no RPC error, the last one should've succeeded.
-        assert.deepStrictEqual(results, [oneFail, oneSuccess]);
+        const oneSuccess = {status: 'fulfilled', value: undefined};
+        assert.deepStrictEqual(results[1], oneSuccess);
 
         // Make sure the transient one was retried.
         assert.strictEqual(modAckQueue.requests.length, 1);

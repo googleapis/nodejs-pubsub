@@ -37,7 +37,7 @@ import {addToBucket} from './util';
 export interface QueuedMessage {
   ackId: string;
   deadline?: number;
-  responsePromise?: defer.DeferredPromise<AckResponse>;
+  responsePromise?: defer.DeferredPromise<void>;
 }
 
 /**
@@ -135,10 +135,10 @@ export abstract class MessageQueue {
    * @param {number} [deadline] The deadline.
    * @private
    */
-  add({ackId}: Message, deadline?: number): Promise<AckResponse> {
+  add({ackId}: Message, deadline?: number): Promise<void> {
     const {maxMessages, maxMilliseconds} = this._options;
 
-    const responsePromise = defer<AckResponse>();
+    const responsePromise = defer<void>();
     this._requests.push({
       ackId,
       deadline,
@@ -242,7 +242,7 @@ export abstract class MessageQueue {
   handleAckSuccesses(batch: QueuedMessages) {
     // Everyone gets a resolve!
     batch.forEach(({responsePromise}) => {
-      responsePromise?.resolve(AckResponses.Success);
+      responsePromise?.resolve();
     });
   }
 
@@ -310,7 +310,7 @@ export abstract class MessageQueue {
 
     // Take care of following up on all the Promises.
     toSucceed.forEach(m => {
-      m.responsePromise?.resolve(AckResponses.Success);
+      m.responsePromise?.resolve();
     });
     for (const e of toError.entries()) {
       e[1].forEach(m => {
@@ -355,9 +355,9 @@ export class AckQueue extends MessageQueue {
       // If exactly-once isn't enabled, don't do error processing.
       if (!this._subscriber.isExactlyOnce) {
         batch.forEach(m => {
-          m.responsePromise?.resolve(AckResponses.Success);
+          m.responsePromise?.resolve();
         });
-        return [];
+        throw new BatchError(e as GoogleError, ackIds, 'ack');
       } else {
         const grpcError = e as GoogleError;
         try {
@@ -424,9 +424,9 @@ export class ModAckQueue extends MessageQueue {
         // If exactly-once isn't enabled, don't do error processing.
         if (!this._subscriber.isExactlyOnce) {
           batch.forEach(m => {
-            m.responsePromise?.resolve(AckResponses.Success);
+            m.responsePromise?.resolve();
           });
-          return [];
+          throw new BatchError(e as GoogleError, ackIds, 'modAck');
         } else {
           const grpcError = e as GoogleError;
 
@@ -440,20 +440,11 @@ export class ModAckQueue extends MessageQueue {
       }
     });
 
-    try {
-      const allNewBatches: QueuedMessages[] = await Promise.all(modAckRequests);
-      return allNewBatches.reduce((p: QueuedMessage[], c: QueuedMessage[]) => [
-        ...(p ?? []),
-        ...c,
-      ]);
-    } catch (e) {
-      // This should only ever happen if there's a code failure.
-      this._subscriber.emit('debug', e);
-      const exc = new AckError(AckResponses.Other, 'Code error');
-      batch.forEach(m => {
-        m.responsePromise?.reject(exc);
-      });
-      return [];
-    }
+    // This catches the sub-failures and bubbles up anything we need to bubble.
+    const allNewBatches: QueuedMessages[] = await Promise.all(modAckRequests);
+    return allNewBatches.reduce((p: QueuedMessage[], c: QueuedMessage[]) => [
+      ...(p ?? []),
+      ...c,
+    ]);
   }
 }

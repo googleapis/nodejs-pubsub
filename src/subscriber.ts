@@ -518,10 +518,11 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    const response = await this._acks.add(message);
+    await this._acks.add(message);
     this._inventory.remove(message);
 
-    return response;
+    // No exception means Success.
+    return AckResponses.Success;
   }
 
   /**
@@ -596,12 +597,13 @@ export class Subscriber extends EventEmitter {
   ): Promise<AckResponse> {
     const startTime = Date.now();
 
-    const response = await this._modAcks.add(message, deadline);
+    await this._modAcks.add(message, deadline);
 
     const latency = (Date.now() - startTime) / 1000;
     this._latencies.add(latency);
 
-    return response;
+    // No exception means Success.
+    return AckResponses.Success;
   }
 
   /**
