@@ -448,8 +448,6 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   setSubscriptionProperties(subscriptionProperties: SubscriptionProperties) {
-    const previouslyEnabled = this.isExactlyOnce;
-
     this.subscriptionProperties = subscriptionProperties;
 
     // Update ackDeadline in case the flag switched.

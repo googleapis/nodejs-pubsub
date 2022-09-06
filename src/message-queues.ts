@@ -52,15 +52,6 @@ export interface BatchOptions {
 }
 
 /**
- * Used to communicate status from the subscriber to the queues.
- *
- * @private
- */
-export interface QueueSubcriptionStatus {
-  isExactlyOnce: boolean;
-}
-
-/**
  * Error class used to signal a batch failure.
  *
  * Now that we have exactly once subscriptions, we'll only throw one
@@ -117,7 +108,6 @@ export abstract class MessageQueue {
   protected _subscriber: Subscriber;
   protected _timer?: NodeJS.Timer;
   protected abstract _sendBatch(batch: QueuedMessages): Promise<QueuedMessages>;
-  protected _status?: QueueSubcriptionStatus;
 
   constructor(sub: Subscriber, options = {} as BatchOptions) {
     this.numPendingRequests = 0;
@@ -245,16 +235,6 @@ export abstract class MessageQueue {
   }
 
   /**
-   * Set the subscription status we're attached to.
-   *
-   * @param {QueueSubcriptionStatus} status
-   * @private
-   */
-  setStatus(status: QueueSubcriptionStatus): void {
-    this._status = status;
-  }
-
-  /**
    * Succeed a whole batch of Acks/Modacks for an OK RPC response.
    *
    * @private
@@ -373,8 +353,7 @@ export class AckQueue extends MessageQueue {
       return [];
     } catch (e) {
       // If exactly-once isn't enabled, don't do error processing.
-      if (!this._status?.isExactlyOnce) {
-        this._subscriber.emit('debug', e);
+      if (!this._subscriber.isExactlyOnce) {
         batch.forEach(m => {
           m.responsePromise?.resolve(AckResponses.Success);
         });
@@ -443,8 +422,7 @@ export class ModAckQueue extends MessageQueue {
         return [];
       } catch (e) {
         // If exactly-once isn't enabled, don't do error processing.
-        if (!this._status?.isExactlyOnce) {
-          this._subscriber.emit('debug', e);
+        if (!this._subscriber.isExactlyOnce) {
           batch.forEach(m => {
             m.responsePromise?.resolve(AckResponses.Success);
           });
