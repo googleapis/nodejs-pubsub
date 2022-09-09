@@ -23,6 +23,7 @@ import {PullRetry} from './pull-retry';
 import {Subscriber} from './subscriber';
 import {google} from '../protos/protos';
 import {defaultOptions} from './default-options';
+import {Duration} from './temporal';
 
 /*!
  * Frequency to ping streams.
@@ -151,6 +152,24 @@ export class MessageStream extends PassThrough {
     );
     this._keepAliveHandle.unref();
   }
+
+  /**
+   * Updates the stream ack deadline with the server.
+   *
+   * @param {Duration} deadline The new deadline value to set.
+   */
+  setAckDeadline(deadline: Duration) {
+    const request: StreamingPullRequest = {
+      subscription: this._subscriber.name,
+      streamAckDeadlineSeconds: deadline.totalOf('second'),
+    };
+
+    for (const stream of this._streams.keys()) {
+      // We don't need a callback on this one, it's advisory.
+      stream.write(request);
+    }
+  }
+
   /**
    * Destroys the stream and any underlying streams.
    *

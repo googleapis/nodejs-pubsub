@@ -452,6 +452,13 @@ export class Subscriber extends EventEmitter {
     // Update ackDeadline in case the flag switched.
     if (previouslyEnabled !== this.isExactlyOnce) {
       this.updateAckDeadline();
+
+      // For exactly once, make sure the subscription ack deadline is 60.
+      // (Otherwise fall back to the default of 10 seconds.)
+      const subscriptionAckDeadlineSeconds = this.isExactlyOnce ? 60 : 10;
+      this._stream.setAckDeadline(
+        Duration.from({seconds: subscriptionAckDeadlineSeconds})
+      );
     }
   }
 
