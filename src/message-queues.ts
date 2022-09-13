@@ -22,6 +22,7 @@ import {
   processAckErrorInfo,
   processAckRpcError,
 } from './ack-metadata';
+import {ExponentialRetry} from './exponential-retry';
 import {
   AckError,
   AckResponse,
@@ -29,6 +30,7 @@ import {
   Message,
   Subscriber,
 } from './subscriber';
+import {Duration} from './temporal';
 import {addToBucket} from './util';
 
 /**
@@ -38,6 +40,7 @@ export interface QueuedMessage {
   ackId: string;
   deadline?: number;
   responsePromise?: defer.DeferredPromise<void>;
+  retryCount: number;
 }
 
 /**
@@ -101,19 +104,26 @@ export class BatchError extends Error {
 export abstract class MessageQueue {
   numPendingRequests: number;
   numInFlightRequests: number;
+  numInRetryRequests: number;
   protected _onFlush?: defer.DeferredPromise<void>;
   protected _onDrain?: defer.DeferredPromise<void>;
   protected _options!: BatchOptions;
   protected _requests: QueuedMessages;
   protected _subscriber: Subscriber;
   protected _timer?: NodeJS.Timer;
+  protected _retrier: ExponentialRetry<QueuedMessage>;
   protected abstract _sendBatch(batch: QueuedMessages): Promise<QueuedMessages>;
 
   constructor(sub: Subscriber, options = {} as BatchOptions) {
     this.numPendingRequests = 0;
     this.numInFlightRequests = 0;
+    this.numInRetryRequests = 0;
     this._requests = [];
     this._subscriber = sub;
+    this._retrier = new ExponentialRetry<QueuedMessage>(
+      Duration.from({seconds: 1}),
+      Duration.from({seconds: 64})
+    );
 
     this.setOptions(options);
   }
@@ -143,9 +153,10 @@ export abstract class MessageQueue {
       ackId,
       deadline,
       responsePromise,
+      retryCount: 0,
     });
-    this.numPendingRequests += 1;
-    this.numInFlightRequests += 1;
+    this.numPendingRequests++;
+    this.numInFlightRequests++;
 
     if (this._requests.length >= maxMessages!) {
       this.flush();
@@ -154,6 +165,46 @@ export abstract class MessageQueue {
     }
 
     return responsePromise.promise;
+  }
+
+  /**
+   * Retry handler for acks/modacks that have transient failures. Unless
+   * it's passed the final deadline, we will just re-queue it for sending.
+   *
+   * @private
+   */
+  private handleRetry(message: QueuedMessage, totalTime: Duration) {
+    // Has it been too long?
+    if (totalTime.totalOf('minute') >= 10 || this.shouldFailEarly(message)) {
+      message.responsePromise?.reject(
+        new AckError(AckResponses.Invalid, 'Retried for too long')
+      );
+      return;
+    }
+
+    // Just throw it in for another round of processing on the next batch.
+    this._requests.push(message);
+    this.numPendingRequests++;
+    this.numInFlightRequests++;
+    this.numInRetryRequests--;
+
+    // Make sure we actually do have another batch scheduled.
+    if (!this._timer) {
+      this._timer = setTimeout(
+        () => this.flush(),
+        this._options.maxMilliseconds!
+      );
+    }
+  }
+
+  /**
+   * This hook lets a subclass tell the retry handler to go ahead and fail early.
+   *
+   * @private
+   */
+  protected shouldFailEarly(message: QueuedMessage): boolean {
+    message;
+    return false;
   }
 
   /**
@@ -175,12 +226,14 @@ export abstract class MessageQueue {
     delete this._onFlush;
 
     try {
-      const newBatch = await this._sendBatch(batch);
+      const toRetry = await this._sendBatch(batch);
 
       // We'll get back anything that needs a retry for transient errors.
-      this._requests = newBatch;
-      this.numPendingRequests += newBatch.length;
-      this.numInFlightRequests += newBatch.length;
+      for (const m of toRetry) {
+        this.numInRetryRequests++;
+        m.retryCount++;
+        this._retrier.retryLater(m, this.handleRetry.bind(this));
+      }
     } catch (e) {
       // These queues are used for ack and modAck messages, which should
       // never surface an error to the user level. However, we'll emit
@@ -193,7 +246,11 @@ export abstract class MessageQueue {
       deferred.resolve();
     }
 
-    if (this.numInFlightRequests <= 0 && this._onDrain) {
+    if (
+      this.numInFlightRequests <= 0 &&
+      this.numInRetryRequests <= 0 &&
+      this._onDrain
+    ) {
       this._onDrain.resolve();
       delete this._onDrain;
     }
@@ -446,5 +503,10 @@ export class ModAckQueue extends MessageQueue {
       ...(p ?? []),
       ...c,
     ]);
+  }
+
+  // For modacks only, we'll stop retrying after 3 tries.
+  protected shouldFailEarly(message: QueuedMessage): boolean {
+    return message.retryCount >= 3;
   }
 }

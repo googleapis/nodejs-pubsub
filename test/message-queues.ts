@@ -526,8 +526,7 @@ describe('MessageQueues', () => {
         assert.strictEqual(results[1].reason?.errorCode, 'OTHER');
 
         // Make sure the one handled by errorInfo was retried.
-        assert.strictEqual(ackQueue.requests.length, 1);
-        assert.strictEqual(ackQueue.requests[0].ackId, messages[0].ackId);
+        assert.strictEqual(ackQueue.numInRetryRequests, 1);
       });
 
       it('should correctly handle a mix of errors and successes', async () => {
@@ -559,8 +558,41 @@ describe('MessageQueues', () => {
         assert.deepStrictEqual(results[1], oneSuccess);
 
         // Make sure the transient one was retried.
+        assert.strictEqual(ackQueue.numInRetryRequests, 1);
+      });
+
+      // This is separate because the retry mechanism itself could fail, and
+      // we want to make sure that transients actually make it back into the
+      // queue for retry.
+      //
+      // This doesn't need to be duplicated down to modAck because it's just
+      // testing common code.
+      it('should retry transient failures', async () => {
+        const clock = sandbox.useFakeTimers();
+        sandbox.stub(global.Math, 'random').returns(0.5);
+
+        const message = fakeMessage();
+        const fakeError = new Error('Err.') as GoogleError;
+        fakeError.code = Status.DATA_LOSS;
+        fakeError.errorInfoMetadata = {
+          // These should be routed by the errorInfo resolver.
+          [message.ackId]: 'TRANSIENT_CAT_ATE_HOMEWORK',
+        };
+
+        sandbox.stub(fakeSubscriber.client, 'acknowledge').rejects(fakeError);
+        ackQueue.add(message);
+        await ackQueue.flush();
+
+        // Make sure the one handled by errorInfo was retried.
+        assert.strictEqual(ackQueue.numInRetryRequests, 1);
+
+        // And wait for a second attempt.
+        clock.tick(1000);
+
         assert.strictEqual(ackQueue.requests.length, 1);
-        assert.strictEqual(ackQueue.requests[0].ackId, messages[1].ackId);
+        assert.strictEqual(ackQueue.requests[0].ackId, message.ackId);
+        assert.strictEqual(ackQueue.numInRetryRequests, 0);
+        assert.strictEqual(ackQueue.numPendingRequests, 1);
       });
     });
 
@@ -785,8 +817,7 @@ describe('MessageQueues', () => {
         assert.strictEqual(results[1].reason?.errorCode, 'OTHER');
 
         // Make sure the one handled by errorInfo was retried.
-        assert.strictEqual(modAckQueue.requests.length, 1);
-        assert.strictEqual(modAckQueue.requests[0].ackId, messages[0].ackId);
+        assert.strictEqual(modAckQueue.numInRetryRequests, 1);
       });
 
       it('should correctly handle a mix of errors and successes', async () => {
@@ -820,8 +851,7 @@ describe('MessageQueues', () => {
         assert.deepStrictEqual(results[1], oneSuccess);
 
         // Make sure the transient one was retried.
-        assert.strictEqual(modAckQueue.requests.length, 1);
-        assert.strictEqual(modAckQueue.requests[0].ackId, messages[1].ackId);
+        assert.strictEqual(modAckQueue.numInRetryRequests, 1);
       });
     });
 
