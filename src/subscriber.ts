@@ -30,7 +30,6 @@ import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
 import {createSpan} from './opentelemetry-tracing';
-import {Throttler} from './util';
 import {Duration} from './temporal';
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
@@ -40,12 +39,30 @@ export type SubscriptionProperties =
 type ValueOf<T> = T[keyof T];
 export const AckResponses = {
   PermissionDenied: 'PERMISSION_DENIED' as const,
-  Unordered: 'UNORDERED' as const,
+  FailedPrecondition: 'FAILED_PRECONDITION' as const,
   Success: 'SUCCESS' as const,
   Invalid: 'INVALID' as const,
   Other: 'OTHER' as const,
 };
 export type AckResponse = ValueOf<typeof AckResponses>;
+
+/**
+ * Thrown when an error is detected in an ack/nack/modack call, when
+ * exactly-once is enabled on the subscription. This will only be thrown
+ * for actual errors that can't be retried.
+ */
+export class AckError extends Error {
+  errorCode: AckResponse;
+
+  constructor(errorCode: AckResponse, message?: string) {
+    let finalMessage = `${errorCode}`;
+    if (message) {
+      finalMessage += ` : ${message}`;
+    }
+    super(finalMessage);
+    this.errorCode = errorCode;
+  }
+}
 
 /**
  * Date object with nanosecond precision. Supports all standard Date arguments
@@ -336,7 +353,6 @@ export class Subscriber extends EventEmitter {
   private _options!: SubscriberOptions;
   private _stream!: MessageStream;
   private _subscription: Subscription;
-  private _errorLog: Throttler;
 
   subscriptionProperties?: SubscriptionProperties;
 
@@ -352,7 +368,6 @@ export class Subscriber extends EventEmitter {
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
     this._subscription = subscription;
-    this._errorLog = new Throttler(60 * 1000);
 
     this.setOptions(options);
   }
@@ -437,11 +452,13 @@ export class Subscriber extends EventEmitter {
     // Update ackDeadline in case the flag switched.
     if (previouslyEnabled !== this.isExactlyOnce) {
       this.updateAckDeadline();
-    }
 
-    // Update ackDeadline in case the flag switched.
-    if (previouslyEnabled !== this.isExactlyOnce) {
-      this.updateAckDeadline();
+      // For exactly once, make sure the subscription ack deadline is 60.
+      // (Otherwise fall back to the default of 10 seconds.)
+      const subscriptionAckDeadlineSeconds = this.isExactlyOnce ? 60 : 10;
+      this._stream.setAckDeadline(
+        Duration.from({seconds: subscriptionAckDeadlineSeconds})
+      );
     }
   }
 
@@ -510,10 +527,11 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    const response = await this._acks.add(message);
+    await this._acks.add(message);
     this._inventory.remove(message);
 
-    return response;
+    // No exception means Success.
+    return AckResponses.Success;
   }
 
   /**
@@ -588,12 +606,13 @@ export class Subscriber extends EventEmitter {
   ): Promise<AckResponse> {
     const startTime = Date.now();
 
-    const response = await this._modAcks.add(message, deadline);
+    await this._modAcks.add(message, deadline);
 
     const latency = (Date.now() - startTime) / 1000;
     this._latencies.add(latency);
 
-    return response;
+    // No exception means Success.
+    return AckResponses.Success;
   }
 
   /**

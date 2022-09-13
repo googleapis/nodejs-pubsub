@@ -72,3 +72,14 @@ export class Throttler {
     }
   }
 }
+
+/**
+ * Takes care of managing a Map of buckets to the bucket arrays themselves.
+ *
+ * @private
+ */
+export function addToBucket<T, U>(map: Map<T, U[]>, bucket: T, item: U) {
+  const items = map.get(bucket) ?? [];
+  items.push(item);
+  map.set(bucket, items);
+}

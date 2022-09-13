@@ -24,6 +24,7 @@ import * as uuid from 'uuid';
 import * as messageTypes from '../src/message-stream';
 import {Subscriber} from '../src/subscriber';
 import {defaultOptions} from '../src/default-options';
+import {Duration} from '../src/temporal';
 
 const FAKE_STREAMING_PULL_TIMEOUT = 123456789;
 const FAKE_CLIENT_CONFIG = {
@@ -511,6 +512,24 @@ describe('MessageStream', () => {
           const [data] = stub.lastCall.args;
           assert.deepStrictEqual(data, {});
         });
+      });
+    });
+
+    it('should allow updating the ack deadline', async () => {
+      const stubs = client.streams.map(stream => {
+        return sandbox.stub(stream, 'write');
+      });
+
+      messageStream.setAckDeadline(Duration.from({seconds: 10}));
+
+      const expected = {
+        subscription: subscriber.name,
+        streamAckDeadlineSeconds: 10,
+      };
+
+      stubs.forEach(stub => {
+        const [data] = stub.lastCall.args;
+        assert.deepStrictEqual(data, expected);
       });
     });
   });

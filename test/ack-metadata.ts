@@ -14,14 +14,18 @@
 
 import {describe, it} from 'mocha';
 import * as assert from 'assert';
-import {AckError, processAckError} from '../src/ack-metadata';
-import {GoogleError} from 'google-gax';
+import {
+  AckErrorInfo,
+  processAckErrorInfo,
+  processAckRpcError,
+} from '../src/ack-metadata';
+import {GoogleError, Status} from 'google-gax';
 import {AckResponses} from '../src/subscriber';
 
 describe('ack-metadata', () => {
   it('deals with no ErrorInfo', () => {
     const error = {} as GoogleError;
-    const results = processAckError(error);
+    const results = processAckErrorInfo(error);
     assert.strictEqual(results.size, 0);
   });
 
@@ -34,7 +38,7 @@ describe('ack-metadata', () => {
       },
     } as unknown as GoogleError;
 
-    const results = processAckError(error);
+    const results = processAckErrorInfo(error);
 
     assert.deepStrictEqual(Array.from(results.entries()), [
       [
@@ -57,7 +61,7 @@ describe('ack-metadata', () => {
       },
     } as unknown as GoogleError;
 
-    const results = processAckError(error);
+    const results = processAckErrorInfo(error);
 
     assert.deepStrictEqual(Array.from(results.entries()), [
       [
@@ -79,7 +83,7 @@ describe('ack-metadata', () => {
       },
     } as unknown as GoogleError;
 
-    const results = processAckError(error);
+    const results = processAckErrorInfo(error);
 
     assert.deepStrictEqual(Array.from(results.entries()), [
       [
@@ -100,7 +104,7 @@ describe('ack-metadata', () => {
       'TRANSIENT_FAILURE_ESPRESSO_BAR_CLOSED',
       'NO_IDEA_ERROR',
     ];
-    const expectedResults = new Map<string, AckError>([
+    const expectedResults = new Map<string, AckErrorInfo>([
       [
         ackIds[0],
         {
@@ -136,12 +140,86 @@ describe('ack-metadata', () => {
       errorInfoMetadata: metaData,
     } as unknown as GoogleError;
 
-    const results = processAckError(error);
+    const results = processAckErrorInfo(error);
 
     ackIds.forEach(id => {
       const ackError = results.get(id);
       const expected = expectedResults.get(id);
       assert.deepStrictEqual(ackError, expected);
     });
+  });
+
+  it('handles gRPC errors', () => {
+    const testTable = [
+      {
+        code: Status.DEADLINE_EXCEEDED,
+        result: {
+          transient: true,
+          grpcErrorCode: Status.DEADLINE_EXCEEDED,
+          response: AckResponses.Other,
+        },
+      },
+      {
+        code: Status.RESOURCE_EXHAUSTED,
+        result: {
+          transient: true,
+          grpcErrorCode: Status.RESOURCE_EXHAUSTED,
+          response: AckResponses.Other,
+        },
+      },
+      {
+        code: Status.ABORTED,
+        result: {
+          transient: true,
+          grpcErrorCode: Status.ABORTED,
+          response: AckResponses.Other,
+        },
+      },
+      {
+        code: Status.INTERNAL,
+        result: {
+          transient: true,
+          grpcErrorCode: Status.INTERNAL,
+          response: AckResponses.Other,
+        },
+      },
+      {
+        code: Status.UNAVAILABLE,
+        result: {
+          transient: true,
+          grpcErrorCode: Status.UNAVAILABLE,
+          response: AckResponses.Other,
+        },
+      },
+      {
+        code: Status.PERMISSION_DENIED,
+        result: {
+          transient: false,
+          grpcErrorCode: Status.PERMISSION_DENIED,
+          response: AckResponses.PermissionDenied,
+        },
+      },
+      {
+        code: Status.FAILED_PRECONDITION,
+        result: {
+          transient: false,
+          grpcErrorCode: Status.FAILED_PRECONDITION,
+          response: AckResponses.FailedPrecondition,
+        },
+      },
+      {
+        code: Status.UNIMPLEMENTED,
+        result: {
+          transient: false,
+          grpcErrorCode: Status.UNIMPLEMENTED,
+          response: AckResponses.Other,
+        },
+      },
+    ];
+
+    for (const t of testTable) {
+      const result = processAckRpcError(t.code);
+      assert.deepStrictEqual(result, t.result);
+    }
   });
 });
