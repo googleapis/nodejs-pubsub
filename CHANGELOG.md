@@ -4,6 +4,18 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.1.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.1.0...v3.1.1) (2022-09-01)
+
+
+### Bug Fixes
+
+* Add hashes to requirements.txt ([#1544](https://github.com/googleapis/nodejs-pubsub/issues/1544)) ([#1614](https://github.com/googleapis/nodejs-pubsub/issues/1614)) ([359d098](https://github.com/googleapis/nodejs-pubsub/commit/359d098b60422b37230024128ed10f04018670a0))
+* Allow passing gax instance to client constructor ([#1617](https://github.com/googleapis/nodejs-pubsub/issues/1617)) ([8eabe38](https://github.com/googleapis/nodejs-pubsub/commit/8eabe3802bbc50309f3d6a0b9997752ab7f367e1))
+* Better support for fallback mode ([#1610](https://github.com/googleapis/nodejs-pubsub/issues/1610)) ([d9e7311](https://github.com/googleapis/nodejs-pubsub/commit/d9e7311d6f6bb78bb3f06454a7ce3cf02fff314c))
+* Change import long to require ([#1611](https://github.com/googleapis/nodejs-pubsub/issues/1611)) ([5553af2](https://github.com/googleapis/nodejs-pubsub/commit/5553af2684ba87ed361d9d79bf2e2a6d7cd3763c))
+* **deps:** Update dependency protobufjs to v7 ([#1602](https://github.com/googleapis/nodejs-pubsub/issues/1602)) ([6e0ec60](https://github.com/googleapis/nodejs-pubsub/commit/6e0ec60a8f6efc7d8e7b67c431dddd7073895ae6))
+* Do not import the whole google-gax from proto JS ([#1553](https://github.com/googleapis/nodejs-pubsub/issues/1553)) ([#1616](https://github.com/googleapis/nodejs-pubsub/issues/1616)) ([31c7fa2](https://github.com/googleapis/nodejs-pubsub/commit/31c7fa234ca3d0455979065199d0da1599ed216b))
+
 ## [3.1.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.0.3...v3.1.0) (2022-07-15)
 
 
