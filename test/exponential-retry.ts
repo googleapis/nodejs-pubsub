@@ -192,8 +192,8 @@ describe('exponential retry class', () => {
       callbackCounts[idx]++;
       callbackTimes[idx] = t;
 
-      if (idx === 0 && callbackCounts[0] < 2) {
-        er.retryLater(items[0], callback);
+      if (callbackCounts[idx] < 2) {
+        er.retryLater(items[idx], callback);
       }
     };
 
@@ -220,7 +220,11 @@ describe('exponential retry class', () => {
       [300, 100]
     );
 
+    // Make sure that we did in fact set another timer for the next event.
+    const eri = introspect(er);
+    assert.ok(eri._timer);
+
     const leftovers = er.close();
-    assert.strictEqual(leftovers.length, 0);
+    assert.strictEqual(leftovers.length, 1);
   });
 });

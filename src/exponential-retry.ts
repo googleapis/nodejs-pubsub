@@ -15,23 +15,48 @@
 import Heap from 'heap-js';
 import {Duration} from './temporal';
 
+/**
+ * This interface specifies what we'll add to retried items in order
+ * to track them through the exponential backoff.
+ *
+ * @private
+ */
 export interface RetriedItem<T> {
   retryInfo?: RetryInfo<T>;
 }
 
+/**
+ * These items will go inside the added retry metadata.
+ *
+ * @private
+ */
 export interface RetryInfo<T> {
+  // Date.now() value of when we first started retrying.
   firstRetry: number;
+
+  // Date.now() value of when we will next retry.
   nextRetry: number;
+
+  // The current multiplier for exponential backoff.
   multiplier: number;
+
+  // The user callback to call when it next comes off retry wait.
   callback: RetryCallback<T>;
 }
 
+// Compare function for Heap so we can use it as a priority queue.
 function comparator<T>(a: RetriedItem<T>, b: RetriedItem<T>) {
   return a.retryInfo!.nextRetry - b.retryInfo!.nextRetry;
 }
 
+/**
+ * Users of this class will pass in a callback in this form when
+ * an item is ready to be retried. The item must be placed
+ * back on the queue if it needs to be retried again.
+ *
+ * @private
+ */
 export interface RetryCallback<T> {
-  // Return true to continue retrying.
   (item: T, totalTime: Duration): void;
 }
 
@@ -56,6 +81,12 @@ export class ExponentialRetry<T> {
     this._maxBackoffMs = maxBackoff.totalOf('millisecond');
   }
 
+  /**
+   * Shut down all operations/timers/etc and return a list of
+   * items that were still pending retry.
+   *
+   * @private
+   */
   close(): RetriedItem<T>[] {
     if (this._timer) {
       clearTimeout(this._timer);
@@ -66,6 +97,13 @@ export class ExponentialRetry<T> {
     return leftovers;
   }
 
+  /**
+   * Place an item on the retry queue. It's important that it's the
+   * same exact item that was already on the queue, if it's being retried
+   * more than once.
+   *
+   * @private
+   */
   retryLater(item: T, callback: RetryCallback<T>) {
     const retried = item as RetriedItem<T>;
     const retryInfo = retried.retryInfo;
@@ -100,6 +138,7 @@ export class ExponentialRetry<T> {
     this.scheduleRetry();
   }
 
+  // Takes a time delta and adds fuzz.
   private randomizeDelta(durationMs: number): number {
     // The fuzz distance should never exceed one second, but in the
     // case of smaller things, don't end up with a negative delta.
@@ -108,6 +147,7 @@ export class ExponentialRetry<T> {
     return durationMs + offset;
   }
 
+  // Looks through the queue to see if there's anything to handle.
   private doRetries() {
     const now = Date.now();
     while (!this._items.isEmpty()) {
@@ -125,8 +165,14 @@ export class ExponentialRetry<T> {
         break;
       }
     }
+
+    // Is there stuff to retry still?
+    if (!this._items.isEmpty()) {
+      this.scheduleRetry();
+    }
   }
 
+  // If there are items to retry, schedule the next timer event.
   private scheduleRetry() {
     // What's next?
     const next = this._items.peek();
