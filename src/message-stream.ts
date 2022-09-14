@@ -160,7 +160,6 @@ export class MessageStream extends PassThrough {
    */
   setAckDeadline(deadline: Duration) {
     const request: StreamingPullRequest = {
-      subscription: this._subscriber.name,
       streamAckDeadlineSeconds: deadline.totalOf('second'),
     };
 

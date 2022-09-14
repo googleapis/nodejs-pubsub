@@ -523,7 +523,6 @@ describe('MessageStream', () => {
       messageStream.setAckDeadline(Duration.from({seconds: 10}));
 
       const expected = {
-        subscription: subscriber.name,
         streamAckDeadlineSeconds: 10,
       };
 
