@@ -20,6 +20,10 @@
  * at https://cloud.google.com/pubsub/docs.
  */
 
+// This is a generated sample. Please see typescript/README.md for more info.
+
+'use strict';
+
 // sample-metadata:
 //   title: Create an exactly-once delivery subscription
 //   description: Demonstrates how to create a subscription for exactly-once delivery.
@@ -33,14 +37,14 @@
 // const subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID';
 
 // Imports the Google Cloud client library
-import {PubSub} from '@google-cloud/pubsub';
+const {PubSub} = require('@google-cloud/pubsub');
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
 async function createSubscriptionWithExactlyOnceDelivery(
-  topicNameOrId: string,
-  subscriptionNameOrId: string
+  topicNameOrId,
+  subscriptionNameOrId
 ) {
   // Creates a new subscription
   await pubSubClient

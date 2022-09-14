@@ -20,6 +20,10 @@
  * at https://cloud.google.com/pubsub/docs.
  */
 
+// This is a generated sample. Please see typescript/README.md for more info.
+
+'use strict';
+
 // sample-metadata:
 //   title: Listen with exactly-once delivery
 //   description: Listen for messages on an exactly-once delivery subscription.
@@ -32,21 +36,21 @@
 // const subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID';
 
 // Imports the Google Cloud client library
-import {Message, PubSub, AckError} from '@google-cloud/pubsub';
+const {PubSub} = require('@google-cloud/pubsub');
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
 async function listenOnSubscriptionWithExactlyOnceDelivery(
-  subscriptionNameOrId: string,
-  timeout: number
+  subscriptionNameOrId,
+  timeout
 ) {
   // References an existing subscription
   const subscription = pubSubClient.subscription(subscriptionNameOrId);
 
   // Create an event handler to handle messages
   let messageCount = 0;
-  const messageHandler = async (message: Message) => {
+  const messageHandler = async message => {
     console.log(`Received message ${message.id}:`);
     console.log(`\tData: ${message.data}`);
     console.log(`\tAttributes: ${message.attributes}`);
@@ -64,7 +68,7 @@ async function listenOnSubscriptionWithExactlyOnceDelivery(
     } catch (e) {
       // In all other cases, the error passed on reject will explain why. This
       // is only for permanent failures; transient errors are retried for a while.
-      const ackError = e as AckError;
+      const ackError = e;
       console.log(
         `Ack for message ${message.id} failed with error: ${ackError.errorCode}`
       );
