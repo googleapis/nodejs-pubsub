@@ -596,7 +596,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        name: request.name || '',
+        name: request.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.createSubscription(request, options, callback);
@@ -678,7 +678,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        subscription: request.subscription || '',
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.getSubscription(request, options, callback);
@@ -763,7 +763,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        'subscription.name': request.subscription!.name || '',
+        'subscription.name': request.subscription!.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.updateSubscription(request, options, callback);
@@ -849,7 +849,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        subscription: request.subscription || '',
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.deleteSubscription(request, options, callback);
@@ -946,7 +946,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        subscription: request.subscription || '',
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.modifyAckDeadline(request, options, callback);
@@ -1038,7 +1038,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        subscription: request.subscription || '',
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.acknowledge(request, options, callback);
@@ -1134,7 +1134,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        subscription: request.subscription || '',
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.pull(request, options, callback);
@@ -1228,7 +1228,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        subscription: request.subscription || '',
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.modifyPushConfig(request, options, callback);
@@ -1314,7 +1314,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        snapshot: request.snapshot || '',
+        snapshot: request.snapshot ?? '',
       });
     this.initialize();
     return this.innerApiCalls.getSnapshot(request, options, callback);
@@ -1428,7 +1428,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        name: request.name || '',
+        name: request.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.createSnapshot(request, options, callback);
@@ -1517,7 +1517,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        'snapshot.name': request.snapshot!.name || '',
+        'snapshot.name': request.snapshot!.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.updateSnapshot(request, options, callback);
@@ -1607,7 +1607,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        snapshot: request.snapshot || '',
+        snapshot: request.snapshot ?? '',
       });
     this.initialize();
     return this.innerApiCalls.deleteSnapshot(request, options, callback);
@@ -1710,7 +1710,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        subscription: request.subscription || '',
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.seek(request, options, callback);
@@ -1828,7 +1828,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        project: request.project || '',
+        project: request.project ?? '',
       });
     this.initialize();
     return this.innerApiCalls.listSubscriptions(request, options, callback);
@@ -1869,7 +1869,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        project: request.project || '',
+        project: request.project ?? '',
       });
     const defaultCallSettings = this._defaults['listSubscriptions'];
     const callSettings = defaultCallSettings.merge(options);
@@ -1917,7 +1917,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        project: request.project || '',
+        project: request.project ?? '',
       });
     const defaultCallSettings = this._defaults['listSubscriptions'];
     const callSettings = defaultCallSettings.merge(options);
@@ -2020,7 +2020,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        project: request.project || '',
+        project: request.project ?? '',
       });
     this.initialize();
     return this.innerApiCalls.listSnapshots(request, options, callback);
@@ -2061,7 +2061,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        project: request.project || '',
+        project: request.project ?? '',
       });
     const defaultCallSettings = this._defaults['listSnapshots'];
     const callSettings = defaultCallSettings.merge(options);
@@ -2109,7 +2109,7 @@ export class SubscriberClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        project: request.project || '',
+        project: request.project ?? '',
       });
     const defaultCallSettings = this._defaults['listSnapshots'];
     const callSettings = defaultCallSettings.merge(options);

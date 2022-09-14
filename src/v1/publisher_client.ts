@@ -490,7 +490,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        name: request.name || '',
+        name: request.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.createTopic(request, options, callback);
@@ -578,7 +578,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        'topic.name': request.topic!.name || '',
+        'topic.name': request.topic!.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.updateTopic(request, options, callback);
@@ -663,7 +663,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        topic: request.topic || '',
+        topic: request.topic ?? '',
       });
     this.initialize();
     return this.innerApiCalls.publish(request, options, callback);
@@ -745,7 +745,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        topic: request.topic || '',
+        topic: request.topic ?? '',
       });
     this.initialize();
     return this.innerApiCalls.getTopic(request, options, callback);
@@ -831,7 +831,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        topic: request.topic || '',
+        topic: request.topic ?? '',
       });
     this.initialize();
     return this.innerApiCalls.deleteTopic(request, options, callback);
@@ -916,7 +916,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        subscription: request.subscription || '',
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.detachSubscription(request, options, callback);
@@ -1010,7 +1010,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        project: request.project || '',
+        project: request.project ?? '',
       });
     this.initialize();
     return this.innerApiCalls.listTopics(request, options, callback);
@@ -1051,7 +1051,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        project: request.project || '',
+        project: request.project ?? '',
       });
     const defaultCallSettings = this._defaults['listTopics'];
     const callSettings = defaultCallSettings.merge(options);
@@ -1099,7 +1099,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        project: request.project || '',
+        project: request.project ?? '',
       });
     const defaultCallSettings = this._defaults['listTopics'];
     const callSettings = defaultCallSettings.merge(options);
@@ -1206,7 +1206,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        topic: request.topic || '',
+        topic: request.topic ?? '',
       });
     this.initialize();
     return this.innerApiCalls.listTopicSubscriptions(
@@ -1251,7 +1251,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        topic: request.topic || '',
+        topic: request.topic ?? '',
       });
     const defaultCallSettings = this._defaults['listTopicSubscriptions'];
     const callSettings = defaultCallSettings.merge(options);
@@ -1299,7 +1299,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        topic: request.topic || '',
+        topic: request.topic ?? '',
       });
     const defaultCallSettings = this._defaults['listTopicSubscriptions'];
     const callSettings = defaultCallSettings.merge(options);
@@ -1404,7 +1404,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        topic: request.topic || '',
+        topic: request.topic ?? '',
       });
     this.initialize();
     return this.innerApiCalls.listTopicSnapshots(request, options, callback);
@@ -1445,7 +1445,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        topic: request.topic || '',
+        topic: request.topic ?? '',
       });
     const defaultCallSettings = this._defaults['listTopicSnapshots'];
     const callSettings = defaultCallSettings.merge(options);
@@ -1493,7 +1493,7 @@ export class PublisherClient {
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
       this._gaxModule.routingHeader.fromParams({
-        topic: request.topic || '',
+        topic: request.topic ?? '',
       });
     const defaultCallSettings = this._defaults['listTopicSnapshots'];
     const callSettings = defaultCallSettings.merge(options);
