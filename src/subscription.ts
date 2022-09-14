@@ -46,6 +46,8 @@ import {Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';
 import {promisifySome} from './util';
 
+export {AckError, AckResponse, AckResponses} from './subscriber';
+
 export type PushConfig = google.pubsub.v1.IPushConfig;
 export type OidcToken = google.pubsub.v1.PushConfig.IOidcToken;
 
