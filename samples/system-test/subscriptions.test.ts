@@ -511,7 +511,9 @@ describe('subscriptions', () => {
     const topic = await createTopic(testId);
     const subName = reserveSub(testId);
     const output = execSync(
-      `${commandFor('exactlyOnceCreate')} ${topic.name} ${subName}`
+      `${commandFor('createSubscriptionWithExactlyOnceDelivery')} ${
+        topic.name
+      } ${subName}`
     );
     assert.include(
       output,
@@ -535,7 +537,7 @@ describe('subscriptions', () => {
     ];
 
     const output2 = execSync(
-      `${commandFor('exactlyOnceListen')} ${subName} 15`
+      `${commandFor('listenForMessagesWithExactlyOnceDelivery')} ${subName} 15`
     );
 
     for (const id of messageIds) {

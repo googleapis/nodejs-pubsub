@@ -23,7 +23,7 @@
 // sample-metadata:
 //   title: Create an exactly-once delivery subscription
 //   description: Demonstrates how to create a subscription for exactly-once delivery.
-//   usage: node exactlyOnceCreate.js <topic-name-or-id> <subscription-name-or-id>
+//   usage: node createSubscriptionWithExactlyOnceDelivery.js <topic-name-or-id> <subscription-name-or-id>
 
 // [START pubsub_create_subscription_with_exactly_once_delivery]
 /**
