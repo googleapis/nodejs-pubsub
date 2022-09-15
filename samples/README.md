@@ -34,6 +34,8 @@ guides.
   * [Delete Subscription](#delete-subscription)
   * [Delete Topic](#delete-topic)
   * [Detach Subscription](#detach-subscription)
+  * [Create an exactly-once delivery subscription](#create-an-exactly-once-delivery-subscription)
+  * [Listen with exactly-once delivery](#listen-with-exactly-once-delivery)
   * [Get a previously created schema](#get-a-previously-created-schema)
   * [Get Subscription](#get-subscription)
   * [Get Subscription Policy](#get-subscription-policy)
@@ -344,6 +346,44 @@ __Usage:__
 
 
 `node detachSubscription.js <existing-subscription-name-or-id>`
+
+
+-----
+
+
+
+
+### Create an exactly-once delivery subscription
+
+Demonstrates how to create a subscription for exactly-once delivery.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/exactlyOnceCreate.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/exactlyOnceCreate.js,samples/README.md)
+
+__Usage:__
+
+
+`node exactlyOnceCreate.js <topic-name-or-id> <subscription-name-or-id>`
+
+
+-----
+
+
+
+
+### Listen with exactly-once delivery
+
+Listen for messages on an exactly-once delivery subscription.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/exactlyOnceListen.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/exactlyOnceListen.js,samples/README.md)
+
+__Usage:__
+
+
+`node exactlyOnceListen.js <subscription-name-or-id>`
 
 
 -----
