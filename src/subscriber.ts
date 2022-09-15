@@ -212,7 +212,7 @@ export class Message {
   }
 
   /**
-   * Acknowledges the message, expecting a response (for exactly once subscriptions).
+   * Acknowledges the message, expecting a response (for exactly-once delivery subscriptions).
    *
    * @example
    * ```
@@ -243,7 +243,7 @@ export class Message {
   }
 
   /**
-   * Modifies the ack deadline, expecting a response (for exactly once subscriptions).
+   * Modifies the ack deadline, expecting a response (for exactly-once delivery subscriptions).
    *
    * @param {number} deadline The number of seconds to extend the deadline.
    * @private
@@ -275,7 +275,7 @@ export class Message {
 
   /**
    * Removes the message from our inventory and schedules it to be redelivered,
-   * with the modAck response being returned (for exactly once subscriptions).
+   * with the modAck response being returned (for exactly-once delivery subscriptions).
    *
    * @example
    * ```
@@ -454,7 +454,7 @@ export class Subscriber extends EventEmitter {
     if (previouslyEnabled !== this.isExactlyOnceDelivery) {
       this.updateAckDeadline();
 
-      // For exactly once, make sure the subscription ack deadline is 60.
+      // For exactly-once delivery, make sure the subscription ack deadline is 60.
       // (Otherwise fall back to the default of 10 seconds.)
       const subscriptionAckDeadlineSeconds = this.isExactlyOnceDelivery
         ? 60
@@ -596,7 +596,7 @@ export class Subscriber extends EventEmitter {
 
   /**
    * Modifies the acknowledge deadline for the provided message, expecting
-   * a reply (for exactly once subscriptions).
+   * a reply (for exactly-once delivery subscriptions).
    *
    * @param {Message} message The message to modify.
    * @param {number} deadline The deadline.
@@ -634,7 +634,7 @@ export class Subscriber extends EventEmitter {
   /**
    * Modfies the acknowledge deadline for the provided message and then removes
    * it from our inventory, expecting a response from modAck (for
-   * exactly once subscriptions).
+   * exactly-once delivery subscriptions).
    *
    * @param {Message} message The message.
    * @return {Promise<AckResponse>}
@@ -788,7 +788,7 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   private _onData(response: PullResponse): void {
-    // Grab the subscription properties for exactly once and ordering flags.
+    // Grab the subscription properties for exactly-once delivery and ordering flags.
     if (response.subscriptionProperties) {
       this.setSubscriptionProperties(response.subscriptionProperties);
     }

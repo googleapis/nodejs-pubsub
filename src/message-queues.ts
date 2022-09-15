@@ -57,8 +57,8 @@ export interface BatchOptions {
 /**
  * Error class used to signal a batch failure.
  *
- * Now that we have exactly once subscriptions, we'll only throw one
- * of these if there was an unknown error.
+ * Now that we have exactly-once delivery subscriptions, we'll only
+ * throw one of these if there was an unknown error.
  *
  * @class
  *
