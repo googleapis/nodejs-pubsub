@@ -65,8 +65,8 @@ export interface RetryCallback<T> {
  * exponential backoff" strategy.
  *
  * Most of the pieces of this library are doing retries via gax, but for
- * exactly-once we have some things where gRPC failures won't take care
- * of it.
+ * exactly-once delivery, we have some things where gRPC failures won't
+ * take care of it.
  *
  * @private
  */

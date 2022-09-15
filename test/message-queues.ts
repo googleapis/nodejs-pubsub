@@ -60,7 +60,7 @@ class FakeSubscriber extends EventEmitter {
   async getClient(): Promise<FakeClient> {
     return this.client;
   }
-  get isExactlyOnce(): boolean {
+  get isExactlyOnceDelivery(): boolean {
     return this.iEOS;
   }
 }
@@ -463,8 +463,8 @@ describe('MessageQueues', () => {
     });
 
     // The analogous modAck version is very similar, so please sync changes.
-    describe('handle ack responses when !isExactlyOnce', () => {
-      it('should appropriately resolve result promises when !isExactlyOnce', async () => {
+    describe('handle ack responses when !isExactlyOnceDelivery', () => {
+      it('should appropriately resolve result promises when !isExactlyOnceDelivery', async () => {
         const fakeError = new Error('Err.') as GoogleError;
         fakeError.code = Status.DATA_LOSS;
 
@@ -481,7 +481,7 @@ describe('MessageQueues', () => {
     });
 
     // The analogous modAck version is very similar, so please sync changes.
-    describe('handle ack responses for exactly-once', () => {
+    describe('handle ack responses for exactly-once delivery', () => {
       beforeEach(() => {
         fakeSubscriber.iEOS = true;
       });
@@ -752,8 +752,8 @@ describe('MessageQueues', () => {
       modAckQueue.flush();
     });
 
-    describe('handle modAck responses when !isExactlyOnce', () => {
-      it('should appropriately resolve result promises when !isExactlyOnce', async () => {
+    describe('handle modAck responses when !isExactlyOnceDelivery', () => {
+      it('should appropriately resolve result promises when !isExactlyOnceDelivery', async () => {
         const fakeError = new Error('Err.') as GoogleError;
         fakeError.code = Status.DATA_LOSS;
 
@@ -770,7 +770,7 @@ describe('MessageQueues', () => {
     });
 
     // The analogous ack version is very similar, so please sync changes.
-    describe('handle modAck responses for exactly-once', () => {
+    describe('handle modAck responses for exactly-once delivery', () => {
       beforeEach(() => {
         fakeSubscriber.iEOS = true;
       });

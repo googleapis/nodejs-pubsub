@@ -409,8 +409,8 @@ export class AckQueue extends MessageQueue {
       this.handleAckSuccesses(batch);
       return [];
     } catch (e) {
-      // If exactly-once isn't enabled, don't do error processing.
-      if (!this._subscriber.isExactlyOnce) {
+      // If exactly-once delivery isn't enabled, don't do error processing.
+      if (!this._subscriber.isExactlyOnceDelivery) {
         batch.forEach(m => {
           m.responsePromise?.resolve();
         });
@@ -478,8 +478,8 @@ export class ModAckQueue extends MessageQueue {
         this.handleAckSuccesses(messages);
         return [];
       } catch (e) {
-        // If exactly-once isn't enabled, don't do error processing.
-        if (!this._subscriber.isExactlyOnce) {
+        // If exactly-once delivery isn't enabled, don't do error processing.
+        if (!this._subscriber.isExactlyOnceDelivery) {
           batch.forEach(m => {
             m.responsePromise?.resolve();
           });

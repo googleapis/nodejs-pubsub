@@ -19,7 +19,7 @@ const permanentFailureInvalidAckId = 'PERMANENT_FAILURE_INVALID_ACK_ID';
 const transientFailurePrefix = 'TRANSIENT_';
 
 // If we get these as RPC errors, they will trigger a retry.
-const exactlyOnceTemporaryRetryErrors = [
+const exactlyOnceDeliveryTemporaryRetryErrors = [
   Status.DEADLINE_EXCEEDED,
   Status.RESOURCE_EXHAUSTED,
   Status.ABORTED,
@@ -99,7 +99,7 @@ export function processAckErrorInfo(rpcError: GoogleError): AckErrorCodes {
  */
 export function processAckRpcError(grpcCode: Status): AckErrorInfo {
   const ackError: AckErrorInfo = {
-    transient: exactlyOnceTemporaryRetryErrors.includes(grpcCode),
+    transient: exactlyOnceDeliveryTemporaryRetryErrors.includes(grpcCode),
     grpcErrorCode: grpcCode,
   };
   switch (grpcCode) {

@@ -326,7 +326,7 @@ describe('Subscriber', () => {
       assert.strictEqual(subscriber.ackDeadline, 10);
     });
 
-    it('should default to 60s min for exactly-once subscriptions', () => {
+    it('should default to 60s min for exactly-once delivery subscriptions', () => {
       subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
 
       const histogram: FakeHistogram = stubs.get('histogram');

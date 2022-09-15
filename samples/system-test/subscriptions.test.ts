@@ -506,7 +506,7 @@ describe('subscriptions', () => {
     assert.strictEqual(subscription.metadata?.enableMessageOrdering, true);
   });
 
-  it('should create an exactly-once sub and listen on it.', async () => {
+  it('should create an exactly-once delivery sub and listen on it.', async () => {
     const testId = 'eos';
     const topic = await createTopic(testId);
     const subName = reserveSub(testId);

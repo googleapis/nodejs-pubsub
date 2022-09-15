@@ -48,8 +48,8 @@ export type AckResponse = ValueOf<typeof AckResponses>;
 
 /**
  * Thrown when an error is detected in an ack/nack/modack call, when
- * exactly-once is enabled on the subscription. This will only be thrown
- * for actual errors that can't be retried.
+ * exactly-once delivery is enabled on the subscription. This will
+ * only be thrown for actual errors that can't be retried.
  */
 export class AckError extends Error {
   errorCode: AckResponse;
@@ -326,7 +326,7 @@ export interface SubscriberOptions {
   enableOpenTelemetryTracing?: boolean;
 }
 
-const minAckDeadlineForExactlyOnce = Duration.from({seconds: 60});
+const minAckDeadlineForExactlyOnceDelivery = Duration.from({seconds: 60});
 
 /**
  * Subscriber class is used to manage all message related functionality.
@@ -396,7 +396,7 @@ export class Subscriber extends EventEmitter {
     }
 
     // Grab our current min/max deadline values, based on whether exactly-once
-    // is enabled, and the defaults.
+    // delivery is enabled, and the defaults.
     const [minDeadline, maxDeadline] = this.getMinMaxDeadlines();
 
     if (minDeadline) {
@@ -411,10 +411,11 @@ export class Subscriber extends EventEmitter {
   }
 
   private getMinMaxDeadlines(): [Duration?, Duration?] {
-    // If this is an exactly-once subscription, and the user didn't set their
-    // own minimum ack periods, set it to the default for exactly-once.
-    const defaultMinDeadline = this.isExactlyOnce
-      ? minAckDeadlineForExactlyOnce
+    // If this is an exactly-once delivery subscription, and the user
+    // didn't set their own minimum ack periods, set it to the default
+    // for exactly-once delivery.
+    const defaultMinDeadline = this.isExactlyOnceDelivery
+      ? minAckDeadlineForExactlyOnceDelivery
       : defaultOptions.subscription.minAckDeadline;
     const defaultMaxDeadline = defaultOptions.subscription.maxAckDeadline;
 
@@ -426,11 +427,11 @@ export class Subscriber extends EventEmitter {
   }
 
   /**
-   * Returns true if an exactly once subscription has been detected.
+   * Returns true if an exactly-once delivery subscription has been detected.
    *
    * @private
    */
-  get isExactlyOnce(): boolean {
+  get isExactlyOnceDelivery(): boolean {
     if (!this.subscriptionProperties) {
       return false;
     }
@@ -445,17 +446,19 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   setSubscriptionProperties(subscriptionProperties: SubscriptionProperties) {
-    const previouslyEnabled = this.isExactlyOnce;
+    const previouslyEnabled = this.isExactlyOnceDelivery;
 
     this.subscriptionProperties = subscriptionProperties;
 
     // Update ackDeadline in case the flag switched.
-    if (previouslyEnabled !== this.isExactlyOnce) {
+    if (previouslyEnabled !== this.isExactlyOnceDelivery) {
       this.updateAckDeadline();
 
       // For exactly once, make sure the subscription ack deadline is 60.
       // (Otherwise fall back to the default of 10 seconds.)
-      const subscriptionAckDeadlineSeconds = this.isExactlyOnce ? 60 : 10;
+      const subscriptionAckDeadlineSeconds = this.isExactlyOnceDelivery
+        ? 60
+        : 10;
       this._stream.setAckDeadline(
         Duration.from({seconds: subscriptionAckDeadlineSeconds})
       );
