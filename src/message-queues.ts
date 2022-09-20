@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {CallOptions, GoogleError, grpc} from 'google-gax';
+import {CallOptions, GoogleError, grpc, RetryOptions} from 'google-gax';
 import defer = require('p-defer');
 import {
   AckErrorInfo,
@@ -380,6 +380,29 @@ export abstract class MessageQueue {
       toRetry,
     };
   }
+
+  /**
+   * Since we handle our own retries for ack/modAck calls when exactly-once
+   * delivery is enabled on a subscription, we conditionally need to disable
+   * the gax retries. This returns an appropriate CallOptions for the
+   * subclasses to pass down.
+   *
+   * @private
+   */
+  protected getCallOptions(): CallOptions | undefined {
+    let callOptions = this._options.callOptions;
+    if (this._subscriber.isExactlyOnceDelivery) {
+      // If exactly-once-delivery is enabled, tell gax not to do retries for us.
+      callOptions = Object.assign({}, callOptions ?? {});
+      callOptions.retry = new RetryOptions([], {
+        initialRetryDelayMillis: 0,
+        retryDelayMultiplier: 0,
+        maxRetryDelayMillis: 0,
+      });
+    }
+
+    return callOptions;
+  }
 }
 
 /**
@@ -403,7 +426,7 @@ export class AckQueue extends MessageQueue {
     const reqOpts = {subscription: this._subscriber.name, ackIds};
 
     try {
-      await client.acknowledge(reqOpts, this._options.callOptions!);
+      await client.acknowledge(reqOpts, this.getCallOptions());
 
       // It's okay if these pass through since they're successful anyway.
       this.handleAckSuccesses(batch);
@@ -465,6 +488,7 @@ export class ModAckQueue extends MessageQueue {
       {}
     );
 
+    const callOptions = this.getCallOptions();
     const modAckRequests = Object.keys(modAckTable).map(async deadline => {
       const messages = modAckTable[deadline];
       const ackIds = messages.map(m => m.ackId);
@@ -472,7 +496,7 @@ export class ModAckQueue extends MessageQueue {
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};
 
       try {
-        await client.modifyAckDeadline(reqOpts, this._options.callOptions!);
+        await client.modifyAckDeadline(reqOpts, callOptions);
 
         // It's okay if these pass through since they're successful anyway.
         this.handleAckSuccesses(messages);
