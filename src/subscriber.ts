@@ -213,6 +213,7 @@ export class Message {
 
   /**
    * Acknowledges the message, expecting a response (for exactly-once delivery subscriptions).
+   * If exactly-once delivery is not enabled, this will immediately resolve successfully.
    *
    * @example
    * ```
@@ -222,6 +223,11 @@ export class Message {
    * ```
    */
   async ackWithResponse(): Promise<AckResponse> {
+    if (!this._subscriber.isExactlyOnceDelivery) {
+      this.ack();
+      return AckResponses.Success;
+    }
+
     if (!this._handled) {
       this._handled = true;
       return await this._subscriber.ackWithResponse(this);
@@ -244,11 +250,17 @@ export class Message {
 
   /**
    * Modifies the ack deadline, expecting a response (for exactly-once delivery subscriptions).
+   * If exactly-once delivery is not enabled, this will immediately resolve successfully.
    *
    * @param {number} deadline The number of seconds to extend the deadline.
    * @private
    */
   async modAckWithResponse(deadline: number): Promise<AckResponse> {
+    if (!this._subscriber.isExactlyOnceDelivery) {
+      this.modAck(deadline);
+      return AckResponses.Success;
+    }
+
     if (!this._handled) {
       return await this._subscriber.modAckWithResponse(this, deadline);
     } else {
@@ -276,6 +288,7 @@ export class Message {
   /**
    * Removes the message from our inventory and schedules it to be redelivered,
    * with the modAck response being returned (for exactly-once delivery subscriptions).
+   * If exactly-once delivery is not enabled, this will immediately resolve successfully.
    *
    * @example
    * ```
@@ -285,6 +298,11 @@ export class Message {
    * ```
    */
   async nackWithResponse(): Promise<AckResponse> {
+    if (!this._subscriber.isExactlyOnceDelivery) {
+      this.nack();
+      return AckResponses.Success;
+    }
+
     if (!this._handled) {
       this._handled = true;
       return await this._subscriber.nackWithResponse(this);
