@@ -62,7 +62,9 @@ async function listenForMessagesWithExactlyOnceDelivery(
     // if the ack Promise resolves.
     try {
       // When the Promise resolves, the value is always AckResponses.Success,
-      // signaling that the ack was accepted.
+      // signaling that the ack was accepted. Note that you may call this
+      // method on a subscription without exactly-once delivery, but it will
+      // always return AckResponses.Success.
       await message.ackWithResponse();
       console.log(`Ack for message ${message.id} successful.`);
     } catch (e) {
