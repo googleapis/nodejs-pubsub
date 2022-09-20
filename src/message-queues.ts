@@ -344,9 +344,14 @@ export abstract class MessageQueue {
   }
 
   /**
-   * If we get an RPC failure of any kind, this will sort out the mess
-   * and follow up on any Promises. If some need to be retried, those
-   * will be returned as a new batch.
+   * If we get an RPC failure of any kind, this will take care of deciding
+   * what to do for each related ack/modAck. Successful ones will have their
+   * Promises resolved, permanent errors will have their Promises rejected,
+   * and transients will be returned for retry.
+   *
+   * Note that this is only used for subscriptions with exactly-once
+   * delivery enabled, so short-circuit to a success resolve on errors
+   * isn't handled here.
    *
    * @private
    */
@@ -472,7 +477,9 @@ export class AckQueue extends MessageQueue {
       this.handleAckSuccesses(batch);
       return [];
     } catch (e) {
-      // If exactly-once delivery isn't enabled, don't do error processing.
+      // If exactly-once delivery isn't enabled, don't do error processing. We'll
+      // emulate previous behaviour by resolving all pending Promises with
+      // a success status, and then throwing a BatchError for debug logging.
       if (!this._subscriber.isExactlyOnceDelivery) {
         batch.forEach(m => {
           m.responsePromise?.resolve();
@@ -542,7 +549,9 @@ export class ModAckQueue extends MessageQueue {
         this.handleAckSuccesses(messages);
         return [];
       } catch (e) {
-        // If exactly-once delivery isn't enabled, don't do error processing.
+        // If exactly-once delivery isn't enabled, don't do error processing. We'll
+        // emulate previous behaviour by resolving all pending Promises with
+        // a success status, and then throwing a BatchError for debug logging.
         if (!this._subscriber.isExactlyOnceDelivery) {
           batch.forEach(m => {
             m.responsePromise?.resolve();
