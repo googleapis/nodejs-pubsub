@@ -98,6 +98,7 @@ class FakeQueue {
   constructor(sub: s.Subscriber, options: BatchOptions) {
     this.options = options;
   }
+  close() {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async add(message: s.Message, deadline?: number): Promise<s.AckResponse> {
     return s.AckResponses.Success;

@@ -112,6 +112,7 @@ export abstract class MessageQueue {
   protected _subscriber: Subscriber;
   protected _timer?: NodeJS.Timer;
   protected _retrier: ExponentialRetry<QueuedMessage>;
+  protected _closed = false;
   protected abstract _sendBatch(batch: QueuedMessages): Promise<QueuedMessages>;
 
   constructor(sub: Subscriber, options = {} as BatchOptions) {
@@ -126,6 +127,37 @@ export abstract class MessageQueue {
     );
 
     this.setOptions(options);
+  }
+
+  /**
+   * Shuts down this message queue gracefully. Any acks/modAcks pending in
+   * the queue or waiting for retry will be removed. If exactly-once delivery
+   * is enabled on the subscription, we'll send permanent failures to
+   * anyone waiting on completions; otherwise we'll send successes.
+   *
+   * If a flush is desired first, do it before calling close().
+   *
+   * @private
+   */
+  close() {
+    let requests = this._requests;
+    this._requests = [];
+    this.numInFlightRequests = this.numPendingRequests = 0;
+    requests = requests.concat(this._retrier.close());
+    const isExactlyOnceDelivery = this._subscriber.isExactlyOnceDelivery;
+    requests.forEach(r => {
+      if (r.responsePromise) {
+        if (isExactlyOnceDelivery) {
+          r.responsePromise.reject(
+            new AckError(AckResponses.Invalid, 'Subscriber closed')
+          );
+        } else {
+          r.responsePromise.resolve();
+        }
+      }
+    });
+
+    this._closed = true;
   }
 
   /**
@@ -146,6 +178,14 @@ export abstract class MessageQueue {
    * @private
    */
   add({ackId}: Message, deadline?: number): Promise<void> {
+    if (this._closed) {
+      if (this._subscriber.isExactlyOnceDelivery) {
+        throw new AckError(AckResponses.Invalid, 'Subscriber closed');
+      } else {
+        return Promise.resolve();
+      }
+    }
+
     const {maxMessages, maxMilliseconds} = this._options;
 
     const responsePromise = defer<void>();

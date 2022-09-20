@@ -87,14 +87,14 @@ export class ExponentialRetry<T> {
    *
    * @private
    */
-  close(): RetriedItem<T>[] {
+  close(): T[] {
     if (this._timer) {
       clearTimeout(this._timer);
     }
 
     const leftovers = this._items.toArray();
     this._items.clear();
-    return leftovers;
+    return leftovers as T[];
   }
 
   /**
