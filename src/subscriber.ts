@@ -459,7 +459,7 @@ export class Subscriber extends EventEmitter {
       const subscriptionAckDeadlineSeconds = this.isExactlyOnceDelivery
         ? 60
         : 10;
-      this._stream.setAckDeadline(
+      this._stream.setStreamAckDeadline(
         Duration.from({seconds: subscriptionAckDeadlineSeconds})
       );
     }

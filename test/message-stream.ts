@@ -520,7 +520,7 @@ describe('MessageStream', () => {
         return sandbox.stub(stream, 'write');
       });
 
-      messageStream.setAckDeadline(Duration.from({seconds: 10}));
+      messageStream.setStreamAckDeadline(Duration.from({seconds: 10}));
 
       const expected = {
         streamAckDeadlineSeconds: 10,
