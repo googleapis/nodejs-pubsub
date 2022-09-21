@@ -353,44 +353,6 @@ __Usage:__
 
 
 
-### Create an exactly-once delivery subscription
-
-Demonstrates how to create a subscription for exactly-once delivery.
-
-View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/exactlyOnceCreate.js).
-
-[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/exactlyOnceCreate.js,samples/README.md)
-
-__Usage:__
-
-
-`node exactlyOnceCreate.js <topic-name-or-id> <subscription-name-or-id>`
-
-
------
-
-
-
-
-### Listen with exactly-once delivery
-
-Listen for messages on an exactly-once delivery subscription.
-
-View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/exactlyOnceListen.js).
-
-[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/exactlyOnceListen.js,samples/README.md)
-
-__Usage:__
-
-
-`node exactlyOnceListen.js <subscription-name-or-id>`
-
-
------
-
-
-
-
 ### Get a previously created schema
 
 Gets information about a schema which was previously created in the project.

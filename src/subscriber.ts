@@ -48,8 +48,8 @@ export type AckResponse = ValueOf<typeof AckResponses>;
 
 /**
  * Thrown when an error is detected in an ack/nack/modack call, when
- * exactly-once is enabled on the subscription. This will only be thrown
- * for actual errors that can't be retried.
+ * exactly-once delivery is enabled on the subscription. This will
+ * only be thrown for actual errors that can't be retried.
  */
 export class AckError extends Error {
   errorCode: AckResponse;
@@ -212,7 +212,8 @@ export class Message {
   }
 
   /**
-   * Acknowledges the message, expecting a response (for exactly once subscriptions).
+   * Acknowledges the message, expecting a response (for exactly-once delivery subscriptions).
+   * If exactly-once delivery is not enabled, this will immediately resolve successfully.
    *
    * @example
    * ```
@@ -222,6 +223,11 @@ export class Message {
    * ```
    */
   async ackWithResponse(): Promise<AckResponse> {
+    if (!this._subscriber.isExactlyOnceDelivery) {
+      this.ack();
+      return AckResponses.Success;
+    }
+
     if (!this._handled) {
       this._handled = true;
       return await this._subscriber.ackWithResponse(this);
@@ -243,12 +249,18 @@ export class Message {
   }
 
   /**
-   * Modifies the ack deadline, expecting a response (for exactly once subscriptions).
+   * Modifies the ack deadline, expecting a response (for exactly-once delivery subscriptions).
+   * If exactly-once delivery is not enabled, this will immediately resolve successfully.
    *
    * @param {number} deadline The number of seconds to extend the deadline.
    * @private
    */
   async modAckWithResponse(deadline: number): Promise<AckResponse> {
+    if (!this._subscriber.isExactlyOnceDelivery) {
+      this.modAck(deadline);
+      return AckResponses.Success;
+    }
+
     if (!this._handled) {
       return await this._subscriber.modAckWithResponse(this, deadline);
     } else {
@@ -275,7 +287,8 @@ export class Message {
 
   /**
    * Removes the message from our inventory and schedules it to be redelivered,
-   * with the modAck response being returned (for exactly once subscriptions).
+   * with the modAck response being returned (for exactly-once delivery subscriptions).
+   * If exactly-once delivery is not enabled, this will immediately resolve successfully.
    *
    * @example
    * ```
@@ -285,6 +298,11 @@ export class Message {
    * ```
    */
   async nackWithResponse(): Promise<AckResponse> {
+    if (!this._subscriber.isExactlyOnceDelivery) {
+      this.nack();
+      return AckResponses.Success;
+    }
+
     if (!this._handled) {
       this._handled = true;
       return await this._subscriber.nackWithResponse(this);
@@ -326,7 +344,7 @@ export interface SubscriberOptions {
   enableOpenTelemetryTracing?: boolean;
 }
 
-const minAckDeadlineForExactlyOnce = Duration.from({seconds: 60});
+const minAckDeadlineForExactlyOnceDelivery = Duration.from({seconds: 60});
 
 /**
  * Subscriber class is used to manage all message related functionality.
@@ -396,7 +414,7 @@ export class Subscriber extends EventEmitter {
     }
 
     // Grab our current min/max deadline values, based on whether exactly-once
-    // is enabled, and the defaults.
+    // delivery is enabled, and the defaults.
     const [minDeadline, maxDeadline] = this.getMinMaxDeadlines();
 
     if (minDeadline) {
@@ -411,10 +429,11 @@ export class Subscriber extends EventEmitter {
   }
 
   private getMinMaxDeadlines(): [Duration?, Duration?] {
-    // If this is an exactly-once subscription, and the user didn't set their
-    // own minimum ack periods, set it to the default for exactly-once.
-    const defaultMinDeadline = this.isExactlyOnce
-      ? minAckDeadlineForExactlyOnce
+    // If this is an exactly-once delivery subscription, and the user
+    // didn't set their own minimum ack periods, set it to the default
+    // for exactly-once delivery.
+    const defaultMinDeadline = this.isExactlyOnceDelivery
+      ? minAckDeadlineForExactlyOnceDelivery
       : defaultOptions.subscription.minAckDeadline;
     const defaultMaxDeadline = defaultOptions.subscription.maxAckDeadline;
 
@@ -426,11 +445,11 @@ export class Subscriber extends EventEmitter {
   }
 
   /**
-   * Returns true if an exactly once subscription has been detected.
+   * Returns true if an exactly-once delivery subscription has been detected.
    *
    * @private
    */
-  get isExactlyOnce(): boolean {
+  get isExactlyOnceDelivery(): boolean {
     if (!this.subscriptionProperties) {
       return false;
     }
@@ -445,18 +464,20 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   setSubscriptionProperties(subscriptionProperties: SubscriptionProperties) {
-    const previouslyEnabled = this.isExactlyOnce;
+    const previouslyEnabled = this.isExactlyOnceDelivery;
 
     this.subscriptionProperties = subscriptionProperties;
 
     // Update ackDeadline in case the flag switched.
-    if (previouslyEnabled !== this.isExactlyOnce) {
+    if (previouslyEnabled !== this.isExactlyOnceDelivery) {
       this.updateAckDeadline();
 
-      // For exactly once, make sure the subscription ack deadline is 60.
+      // For exactly-once delivery, make sure the subscription ack deadline is 60.
       // (Otherwise fall back to the default of 10 seconds.)
-      const subscriptionAckDeadlineSeconds = this.isExactlyOnce ? 60 : 10;
-      this._stream.setAckDeadline(
+      const subscriptionAckDeadlineSeconds = this.isExactlyOnceDelivery
+        ? 60
+        : 10;
+      this._stream.setStreamAckDeadline(
         Duration.from({seconds: subscriptionAckDeadlineSeconds})
       );
     }
@@ -553,6 +574,9 @@ export class Subscriber extends EventEmitter {
     await this._waitForFlush();
 
     this.emit('close');
+
+    this._acks.close();
+    this._modAcks.close();
   }
 
   /**
@@ -593,7 +617,7 @@ export class Subscriber extends EventEmitter {
 
   /**
    * Modifies the acknowledge deadline for the provided message, expecting
-   * a reply (for exactly once subscriptions).
+   * a reply (for exactly-once delivery subscriptions).
    *
    * @param {Message} message The message to modify.
    * @param {number} deadline The deadline.
@@ -631,7 +655,7 @@ export class Subscriber extends EventEmitter {
   /**
    * Modfies the acknowledge deadline for the provided message and then removes
    * it from our inventory, expecting a response from modAck (for
-   * exactly once subscriptions).
+   * exactly-once delivery subscriptions).
    *
    * @param {Message} message The message.
    * @return {Promise<AckResponse>}
@@ -785,7 +809,7 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   private _onData(response: PullResponse): void {
-    // Grab the subscription properties for exactly once and ordering flags.
+    // Grab the subscription properties for exactly-once delivery and ordering flags.
     if (response.subscriptionProperties) {
       this.setSubscriptionProperties(response.subscriptionProperties);
     }

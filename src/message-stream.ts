@@ -158,7 +158,7 @@ export class MessageStream extends PassThrough {
    *
    * @param {Duration} deadline The new deadline value to set.
    */
-  setAckDeadline(deadline: Duration) {
+  setStreamAckDeadline(deadline: Duration) {
     const request: StreamingPullRequest = {
       streamAckDeadlineSeconds: deadline.totalOf('second'),
     };

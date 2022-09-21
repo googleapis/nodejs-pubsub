@@ -506,12 +506,14 @@ describe('subscriptions', () => {
     assert.strictEqual(subscription.metadata?.enableMessageOrdering, true);
   });
 
-  it('should create an exactly-once sub and listen on it.', async () => {
+  it('should create an exactly-once delivery sub and listen on it.', async () => {
     const testId = 'eos';
     const topic = await createTopic(testId);
     const subName = reserveSub(testId);
     const output = execSync(
-      `${commandFor('exactlyOnceCreate')} ${topic.name} ${subName}`
+      `${commandFor('createSubscriptionWithExactlyOnceDelivery')} ${
+        topic.name
+      } ${subName}`
     );
     assert.include(
       output,
@@ -535,7 +537,7 @@ describe('subscriptions', () => {
     ];
 
     const output2 = execSync(
-      `${commandFor('exactlyOnceListen')} ${subName} 15`
+      `${commandFor('listenForMessagesWithExactlyOnceDelivery')} ${subName} 15`
     );
 
     for (const id of messageIds) {

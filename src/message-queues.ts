@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {CallOptions, GoogleError, grpc} from 'google-gax';
+import {CallOptions, GoogleError, grpc, RetryOptions} from 'google-gax';
 import defer = require('p-defer');
 import {
   AckErrorInfo,
@@ -57,8 +57,8 @@ export interface BatchOptions {
 /**
  * Error class used to signal a batch failure.
  *
- * Now that we have exactly once subscriptions, we'll only throw one
- * of these if there was an unknown error.
+ * Now that we have exactly-once delivery subscriptions, we'll only
+ * throw one of these if there was an unknown error.
  *
  * @class
  *
@@ -112,6 +112,7 @@ export abstract class MessageQueue {
   protected _subscriber: Subscriber;
   protected _timer?: NodeJS.Timer;
   protected _retrier: ExponentialRetry<QueuedMessage>;
+  protected _closed = false;
   protected abstract _sendBatch(batch: QueuedMessages): Promise<QueuedMessages>;
 
   constructor(sub: Subscriber, options = {} as BatchOptions) {
@@ -126,6 +127,37 @@ export abstract class MessageQueue {
     );
 
     this.setOptions(options);
+  }
+
+  /**
+   * Shuts down this message queue gracefully. Any acks/modAcks pending in
+   * the queue or waiting for retry will be removed. If exactly-once delivery
+   * is enabled on the subscription, we'll send permanent failures to
+   * anyone waiting on completions; otherwise we'll send successes.
+   *
+   * If a flush is desired first, do it before calling close().
+   *
+   * @private
+   */
+  close() {
+    let requests = this._requests;
+    this._requests = [];
+    this.numInFlightRequests = this.numPendingRequests = 0;
+    requests = requests.concat(this._retrier.close());
+    const isExactlyOnceDelivery = this._subscriber.isExactlyOnceDelivery;
+    requests.forEach(r => {
+      if (r.responsePromise) {
+        if (isExactlyOnceDelivery) {
+          r.responsePromise.reject(
+            new AckError(AckResponses.Invalid, 'Subscriber closed')
+          );
+        } else {
+          r.responsePromise.resolve();
+        }
+      }
+    });
+
+    this._closed = true;
   }
 
   /**
@@ -146,6 +178,14 @@ export abstract class MessageQueue {
    * @private
    */
   add({ackId}: Message, deadline?: number): Promise<void> {
+    if (this._closed) {
+      if (this._subscriber.isExactlyOnceDelivery) {
+        throw new AckError(AckResponses.Invalid, 'Subscriber closed');
+      } else {
+        return Promise.resolve();
+      }
+    }
+
     const {maxMessages, maxMilliseconds} = this._options;
 
     const responsePromise = defer<void>();
@@ -304,9 +344,14 @@ export abstract class MessageQueue {
   }
 
   /**
-   * If we get an RPC failure of any kind, this will sort out the mess
-   * and follow up on any Promises. If some need to be retried, those
-   * will be returned as a new batch.
+   * If we get an RPC failure of any kind, this will take care of deciding
+   * what to do for each related ack/modAck. Successful ones will have their
+   * Promises resolved, permanent errors will have their Promises rejected,
+   * and transients will be returned for retry.
+   *
+   * Note that this is only used for subscriptions with exactly-once
+   * delivery enabled, so short-circuit to a success resolve on errors
+   * isn't handled here.
    *
    * @private
    */
@@ -380,6 +425,29 @@ export abstract class MessageQueue {
       toRetry,
     };
   }
+
+  /**
+   * Since we handle our own retries for ack/modAck calls when exactly-once
+   * delivery is enabled on a subscription, we conditionally need to disable
+   * the gax retries. This returns an appropriate CallOptions for the
+   * subclasses to pass down.
+   *
+   * @private
+   */
+  protected getCallOptions(): CallOptions | undefined {
+    let callOptions = this._options.callOptions;
+    if (this._subscriber.isExactlyOnceDelivery) {
+      // If exactly-once-delivery is enabled, tell gax not to do retries for us.
+      callOptions = Object.assign({}, callOptions ?? {});
+      callOptions.retry = new RetryOptions([], {
+        initialRetryDelayMillis: 0,
+        retryDelayMultiplier: 0,
+        maxRetryDelayMillis: 0,
+      });
+    }
+
+    return callOptions;
+  }
 }
 
 /**
@@ -403,14 +471,16 @@ export class AckQueue extends MessageQueue {
     const reqOpts = {subscription: this._subscriber.name, ackIds};
 
     try {
-      await client.acknowledge(reqOpts, this._options.callOptions!);
+      await client.acknowledge(reqOpts, this.getCallOptions());
 
       // It's okay if these pass through since they're successful anyway.
       this.handleAckSuccesses(batch);
       return [];
     } catch (e) {
-      // If exactly-once isn't enabled, don't do error processing.
-      if (!this._subscriber.isExactlyOnce) {
+      // If exactly-once delivery isn't enabled, don't do error processing. We'll
+      // emulate previous behaviour by resolving all pending Promises with
+      // a success status, and then throwing a BatchError for debug logging.
+      if (!this._subscriber.isExactlyOnceDelivery) {
         batch.forEach(m => {
           m.responsePromise?.resolve();
         });
@@ -465,6 +535,7 @@ export class ModAckQueue extends MessageQueue {
       {}
     );
 
+    const callOptions = this.getCallOptions();
     const modAckRequests = Object.keys(modAckTable).map(async deadline => {
       const messages = modAckTable[deadline];
       const ackIds = messages.map(m => m.ackId);
@@ -472,14 +543,16 @@ export class ModAckQueue extends MessageQueue {
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};
 
       try {
-        await client.modifyAckDeadline(reqOpts, this._options.callOptions!);
+        await client.modifyAckDeadline(reqOpts, callOptions);
 
         // It's okay if these pass through since they're successful anyway.
         this.handleAckSuccesses(messages);
         return [];
       } catch (e) {
-        // If exactly-once isn't enabled, don't do error processing.
-        if (!this._subscriber.isExactlyOnce) {
+        // If exactly-once delivery isn't enabled, don't do error processing. We'll
+        // emulate previous behaviour by resolving all pending Promises with
+        // a success status, and then throwing a BatchError for debug logging.
+        if (!this._subscriber.isExactlyOnceDelivery) {
           batch.forEach(m => {
             m.responsePromise?.resolve();
           });

@@ -23,7 +23,7 @@
 // sample-metadata:
 //   title: Listen with exactly-once delivery
 //   description: Listen for messages on an exactly-once delivery subscription.
-//   usage: node exactlyOnceListen.js <subscription-name-or-id>
+//   usage: node listenForMessagesWithExactlyOnceDelivery.js <subscription-name-or-id>
 
 // [START pubsub_subscriber_exactly_once]
 /**
@@ -37,7 +37,7 @@ import {Message, PubSub, AckError} from '@google-cloud/pubsub';
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function listenOnSubscriptionWithExactlyOnceDelivery(
+async function listenForMessagesWithExactlyOnceDelivery(
   subscriptionNameOrId: string,
   timeout: number
 ) {
@@ -58,7 +58,9 @@ async function listenOnSubscriptionWithExactlyOnceDelivery(
     // if the ack Promise resolves.
     try {
       // When the Promise resolves, the value is always AckResponses.Success,
-      // signaling that the ack was accepted.
+      // signaling that the ack was accepted. Note that you may call this
+      // method on a subscription without exactly-once delivery, but it will
+      // always return AckResponses.Success.
       await message.ackWithResponse();
       console.log(`Ack for message ${message.id} successful.`);
     } catch (e) {
@@ -85,7 +87,7 @@ function main(
   subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID',
   timeout = 60
 ) {
-  listenOnSubscriptionWithExactlyOnceDelivery(
+  listenForMessagesWithExactlyOnceDelivery(
     subscriptionNameOrId,
     Number(timeout)
   ).catch(err => {

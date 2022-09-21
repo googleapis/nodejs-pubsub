@@ -98,6 +98,7 @@ class FakeQueue {
   constructor(sub: s.Subscriber, options: BatchOptions) {
     this.options = options;
   }
+  close() {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async add(message: s.Message, deadline?: number): Promise<s.AckResponse> {
     return s.AckResponses.Success;
@@ -326,7 +327,7 @@ describe('Subscriber', () => {
       assert.strictEqual(subscriber.ackDeadline, 10);
     });
 
-    it('should default to 60s min for exactly-once subscriptions', () => {
+    it('should default to 60s min for exactly-once delivery subscriptions', () => {
       subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
 
       const histogram: FakeHistogram = stubs.get('histogram');
