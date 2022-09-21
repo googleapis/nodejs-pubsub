@@ -129,7 +129,7 @@ export class Publisher {
     );
 
     const allPublishes = Promise.all(
-      toDrain.map(q => promisify(q.publish.bind(q))())
+      toDrain.map(q => promisify(q.publish).bind(q)())
     );
 
     allPublishes
