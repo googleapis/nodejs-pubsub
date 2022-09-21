@@ -110,13 +110,30 @@ export class Publisher {
   flush(callback?: EmptyCallback): Promise<void> | void {
     const definedCallback = callback ? callback : () => {};
 
-    const publishes = [promisify(this.queue.publish).bind(this.queue)()];
-    Array.from(this.orderedQueues.values()).forEach(q =>
-      publishes.push(promisify(q.publish).bind(q)())
+    const toDrain = [this.queue, ...Array.from(this.orderedQueues.values())];
+
+    const allDrains = Promise.all(
+      toDrain.map(
+        q =>
+          new Promise<void>(resolve => {
+            const flushResolver = () => {
+              resolve();
+
+              // flush() maybe called more than once, so remove these
+              // event listeners after we've completed flush().
+              q.removeListener('drain', flushResolver);
+            };
+            return q.on('drain', flushResolver);
+          })
+      )
     );
-    const allPublishes = Promise.all(publishes);
+
+    const allPublishes = Promise.all(
+      toDrain.map(q => promisify(q.publish.bind(q))())
+    );
 
     allPublishes
+      .then(() => allDrains)
       .then(() => {
         definedCallback(null);
       })
