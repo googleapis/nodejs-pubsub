@@ -237,9 +237,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('CreateSchemaRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CreateSchemaRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -267,9 +268,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('CreateSchemaRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CreateSchemaRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -313,9 +315,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('CreateSchemaRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CreateSchemaRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -343,9 +346,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('CreateSchemaRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CreateSchemaRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
@@ -363,7 +367,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('GetSchemaRequest', ['name']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSchemaRequest',
+        ['name']
+      );
       request.name = defaultValue1;
       const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -391,7 +398,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('GetSchemaRequest', ['name']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSchemaRequest',
+        ['name']
+      );
       request.name = defaultValue1;
       const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -435,7 +445,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('GetSchemaRequest', ['name']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSchemaRequest',
+        ['name']
+      );
       request.name = defaultValue1;
       const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -460,7 +473,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('GetSchemaRequest', ['name']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSchemaRequest',
+        ['name']
+      );
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
@@ -478,9 +494,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DeleteSchemaRequest', [
-        'name',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSchemaRequest',
+        ['name']
+      );
       request.name = defaultValue1;
       const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -508,9 +525,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DeleteSchemaRequest', [
-        'name',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSchemaRequest',
+        ['name']
+      );
       request.name = defaultValue1;
       const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -554,9 +572,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DeleteSchemaRequest', [
-        'name',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSchemaRequest',
+        ['name']
+      );
       request.name = defaultValue1;
       const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -584,9 +603,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DeleteSchemaRequest', [
-        'name',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSchemaRequest',
+        ['name']
+      );
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
@@ -604,9 +624,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ValidateSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ValidateSchemaRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ValidateSchemaRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -634,9 +655,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ValidateSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ValidateSchemaRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ValidateSchemaRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -680,9 +702,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ValidateSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ValidateSchemaRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ValidateSchemaRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -710,9 +733,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ValidateSchemaRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ValidateSchemaRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ValidateSchemaRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
@@ -730,9 +754,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ValidateMessageRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ValidateMessageRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ValidateMessageRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -760,9 +785,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ValidateMessageRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ValidateMessageRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ValidateMessageRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -806,9 +832,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ValidateMessageRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ValidateMessageRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ValidateMessageRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -836,9 +863,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ValidateMessageRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ValidateMessageRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ValidateMessageRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
@@ -856,9 +884,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListSchemasRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemasRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedResponse = [
@@ -888,9 +917,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListSchemasRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemasRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedResponse = [
@@ -936,9 +966,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListSchemasRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemasRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -966,9 +997,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListSchemasRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemasRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedResponse = [
@@ -1016,9 +1048,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListSchemasRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemasRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -1063,9 +1096,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListSchemasRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemasRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedResponse = [
@@ -1105,9 +1139,10 @@ describe('v1.SchemaServiceClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSchemasRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListSchemasRequest', [
-        'parent',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemasRequest',
+        ['parent']
+      );
       request.parent = defaultValue1;
       const expectedHeaderRequestParams = `parent=${defaultValue1}`;
       const expectedError = new Error('expected');

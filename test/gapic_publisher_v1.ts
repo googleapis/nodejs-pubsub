@@ -235,7 +235,9 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
-      const defaultValue1 = getTypeDefaultValue('Topic', ['name']);
+      const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
+        'name',
+      ]);
       request.name = defaultValue1;
       const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -263,7 +265,9 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
-      const defaultValue1 = getTypeDefaultValue('Topic', ['name']);
+      const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
+        'name',
+      ]);
       request.name = defaultValue1;
       const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -307,7 +311,9 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
-      const defaultValue1 = getTypeDefaultValue('Topic', ['name']);
+      const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
+        'name',
+      ]);
       request.name = defaultValue1;
       const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -335,7 +341,9 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
-      const defaultValue1 = getTypeDefaultValue('Topic', ['name']);
+      const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
+        'name',
+      ]);
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
@@ -354,10 +362,10 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.UpdateTopicRequest()
       );
       request.topic ??= {};
-      const defaultValue1 = getTypeDefaultValue('UpdateTopicRequest', [
-        'topic',
-        'name',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateTopicRequest',
+        ['topic', 'name']
+      );
       request.topic.name = defaultValue1;
       const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -386,10 +394,10 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.UpdateTopicRequest()
       );
       request.topic ??= {};
-      const defaultValue1 = getTypeDefaultValue('UpdateTopicRequest', [
-        'topic',
-        'name',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateTopicRequest',
+        ['topic', 'name']
+      );
       request.topic.name = defaultValue1;
       const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -434,10 +442,10 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.UpdateTopicRequest()
       );
       request.topic ??= {};
-      const defaultValue1 = getTypeDefaultValue('UpdateTopicRequest', [
-        'topic',
-        'name',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateTopicRequest',
+        ['topic', 'name']
+      );
       request.topic.name = defaultValue1;
       const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -466,10 +474,10 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.UpdateTopicRequest()
       );
       request.topic ??= {};
-      const defaultValue1 = getTypeDefaultValue('UpdateTopicRequest', [
-        'topic',
-        'name',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateTopicRequest',
+        ['topic', 'name']
+      );
       request.topic.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
@@ -487,7 +495,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PublishRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('PublishRequest', ['topic']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PublishRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -515,7 +526,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PublishRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('PublishRequest', ['topic']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PublishRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -559,7 +573,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PublishRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('PublishRequest', ['topic']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PublishRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -584,7 +601,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PublishRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('PublishRequest', ['topic']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PublishRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
@@ -602,7 +622,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetTopicRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('GetTopicRequest', ['topic']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetTopicRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -630,7 +653,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetTopicRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('GetTopicRequest', ['topic']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetTopicRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -674,7 +700,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetTopicRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('GetTopicRequest', ['topic']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetTopicRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -699,7 +728,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetTopicRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('GetTopicRequest', ['topic']);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetTopicRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
@@ -717,9 +749,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteTopicRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DeleteTopicRequest', [
-        'topic',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteTopicRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -747,9 +780,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteTopicRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DeleteTopicRequest', [
-        'topic',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteTopicRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -793,9 +827,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteTopicRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DeleteTopicRequest', [
-        'topic',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteTopicRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -823,9 +858,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteTopicRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DeleteTopicRequest', [
-        'topic',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteTopicRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
@@ -843,9 +879,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DetachSubscriptionRequest', [
-        'subscription',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DetachSubscriptionRequest',
+        ['subscription']
+      );
       request.subscription = defaultValue1;
       const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -874,9 +911,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DetachSubscriptionRequest', [
-        'subscription',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DetachSubscriptionRequest',
+        ['subscription']
+      );
       request.subscription = defaultValue1;
       const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
@@ -920,9 +958,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DetachSubscriptionRequest', [
-        'subscription',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DetachSubscriptionRequest',
+        ['subscription']
+      );
       request.subscription = defaultValue1;
       const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -950,9 +989,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('DetachSubscriptionRequest', [
-        'subscription',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DetachSubscriptionRequest',
+        ['subscription']
+      );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
@@ -970,9 +1010,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicsRequest', [
-        'project',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
@@ -1002,9 +1043,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicsRequest', [
-        'project',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
@@ -1050,9 +1092,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicsRequest', [
-        'project',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -1080,9 +1123,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicsRequest', [
-        'project',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
@@ -1130,9 +1174,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicsRequest', [
-        'project',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -1177,9 +1222,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicsRequest', [
-        'project',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
@@ -1219,9 +1265,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicsRequest', [
-        'project',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -1263,7 +1310,7 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
       const defaultValue1 = getTypeDefaultValue(
-        'ListTopicSubscriptionsRequest',
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
         ['topic']
       );
       request.topic = defaultValue1;
@@ -1293,7 +1340,7 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
       const defaultValue1 = getTypeDefaultValue(
-        'ListTopicSubscriptionsRequest',
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
         ['topic']
       );
       request.topic = defaultValue1;
@@ -1335,7 +1382,7 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
       const defaultValue1 = getTypeDefaultValue(
-        'ListTopicSubscriptionsRequest',
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
         ['topic']
       );
       request.topic = defaultValue1;
@@ -1369,7 +1416,7 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
       const defaultValue1 = getTypeDefaultValue(
-        'ListTopicSubscriptionsRequest',
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
         ['topic']
       );
       request.topic = defaultValue1;
@@ -1422,7 +1469,7 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
       const defaultValue1 = getTypeDefaultValue(
-        'ListTopicSubscriptionsRequest',
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
         ['topic']
       );
       request.topic = defaultValue1;
@@ -1474,7 +1521,7 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
       const defaultValue1 = getTypeDefaultValue(
-        'ListTopicSubscriptionsRequest',
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
         ['topic']
       );
       request.topic = defaultValue1;
@@ -1517,7 +1564,7 @@ describe('v1.PublisherClient', () => {
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
       const defaultValue1 = getTypeDefaultValue(
-        'ListTopicSubscriptionsRequest',
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
         ['topic']
       );
       request.topic = defaultValue1;
@@ -1562,9 +1609,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicSnapshotsRequest', [
-        'topic',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
@@ -1591,9 +1639,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicSnapshotsRequest', [
-        'topic',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
@@ -1632,9 +1681,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicSnapshotsRequest', [
-        'topic',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -1662,9 +1712,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicSnapshotsRequest', [
-        'topic',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
@@ -1708,9 +1759,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicSnapshotsRequest', [
-        'topic',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
@@ -1753,9 +1805,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicSnapshotsRequest', [
-        'topic',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
@@ -1791,9 +1844,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      const defaultValue1 = getTypeDefaultValue('ListTopicSnapshotsRequest', [
-        'topic',
-      ]);
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
