@@ -350,8 +350,8 @@ export abstract class MessageQueue {
    * and transients will be returned for retry.
    *
    * Note that this is only used for subscriptions with exactly-once
-   * delivery enabled, so short-circuit to a success resolve on errors
-   * isn't handled here.
+   * delivery enabled, so _sendBatch() in the classes below take care of
+   * resolving errors to success; they don't make it here.
    *
    * @private
    */
