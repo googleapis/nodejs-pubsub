@@ -4,6 +4,19 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.2.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.1.1...v3.2.0) (2022-09-22)
+
+
+### Features
+
+* Add support for exactly once subscriptions ([#1572](https://github.com/googleapis/nodejs-pubsub/issues/1572)) ([998de35](https://github.com/googleapis/nodejs-pubsub/commit/998de35d4bffde4fcffd217347307c04031df3e2))
+
+
+### Bug Fixes
+
+* Preserve default values in x-goog-request-params header ([#1622](https://github.com/googleapis/nodejs-pubsub/issues/1622)) ([76c0ab5](https://github.com/googleapis/nodejs-pubsub/commit/76c0ab55ecfcf0cee5fad1314ecf2317d471c13a))
+* Wait for 'drain' as well ([#1636](https://github.com/googleapis/nodejs-pubsub/issues/1636)) ([d72db50](https://github.com/googleapis/nodejs-pubsub/commit/d72db503bfa3b9b6d7481ce44eb161a031f76715))
+
 ## [3.1.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.1.0...v3.1.1) (2022-09-01)
 
 
