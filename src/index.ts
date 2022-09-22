@@ -154,6 +154,9 @@ export {
   SetSubscriptionMetadataCallback,
   SetSubscriptionMetadataResponse,
   Subscription,
+  AckError,
+  AckResponse,
+  AckResponses,
 } from './subscription';
 export {
   CreateTopicCallback,
