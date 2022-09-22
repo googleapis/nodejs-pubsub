@@ -69,7 +69,7 @@ async function listenForMessagesWithExactlyOnceDelivery(
       console.log(`Ack for message ${message.id} successful.`);
     } catch (e) {
       // In all other cases, the error passed on reject will explain why. This
-      // is only for permanent failures; transient errors are retried for a while.
+      // is only for permanent failures; transient errors are retried automatically.
       const ackError = e;
       console.log(
         `Ack for message ${message.id} failed with error: ${ackError.errorCode}`
