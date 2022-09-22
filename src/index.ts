@@ -154,6 +154,9 @@ export {
   SetSubscriptionMetadataCallback,
   SetSubscriptionMetadataResponse,
   Subscription,
+  AckError,
+  AckResponse,
+  AckResponses,
 } from './subscription';
 export {
   CreateTopicCallback,
@@ -170,6 +173,7 @@ export {
   Topic,
   TopicMetadata,
 } from './topic';
+export {Duration, TotalOfUnit, DurationLike} from './temporal';
 
 if (process.env.DEBUG_GRPC) {
   console.info('gRPC logging set to verbose');

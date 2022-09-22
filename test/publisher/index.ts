@@ -347,6 +347,11 @@ describe('Publisher', () => {
         sandbox
           .stub(FakeQueue.prototype, '_publish')
           .callsFake((messages, callbacks, callback) => {
+            // Simulate the drain taking longer than the publishes. This can
+            // happen if more messages are queued during the publish().
+            process.nextTick(() => {
+              publisher.queue.emit('drain');
+            });
             if (typeof callback === 'function') callback(null);
           });
 
@@ -356,7 +361,12 @@ describe('Publisher', () => {
             const queue = publisher.orderedQueues.get(
               orderingKey
             ) as unknown as FakeOrderedQueue;
-            queue.emit('drain');
+            // Simulate the drain taking longer than the publishes. This can
+            // happen on some ordered queue scenarios, especially if we have more
+            // than one queue to empty.
+            process.nextTick(() => {
+              queue.emit('drain');
+            });
             if (typeof callback === 'function') callback(null);
           });
 
@@ -495,6 +505,11 @@ describe('Publisher', () => {
       sandbox
         .stub(publisher.queue, '_publish')
         .callsFake((messages, callbacks, callback) => {
+          // Simulate the drain taking longer than the publishes. This can
+          // happen if more messages are queued during the publish().
+          process.nextTick(() => {
+            publisher.queue.emit('drain');
+          });
           if (typeof callback === 'function') callback(null);
         });
 

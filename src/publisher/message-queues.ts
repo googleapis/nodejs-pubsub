@@ -158,8 +158,11 @@ export class Queue extends MessageQueue {
   }
   /**
    * Cancels any pending publishes and calls _publish immediately.
+   *
+   * @emits Queue#drain when all messages are sent.
    */
   publish(callback?: PublishDone): void {
+    const definedCallback = callback || (() => {});
     const {messages, callbacks} = this.batch;
 
     this.batch = new MessageBatch(this.batchOptions);
@@ -169,7 +172,17 @@ export class Queue extends MessageQueue {
       delete this.pending;
     }
 
-    this._publish(messages, callbacks, callback);
+    this._publish(messages, callbacks, (err: null | ServiceError) => {
+      if (err) {
+        definedCallback(err);
+      } else if (this.batch.messages.length) {
+        // Make another go-around, we're trying to drain the queues fully.
+        this.publish(callback);
+      } else {
+        this.emit('drain');
+        definedCallback(null);
+      }
+    });
   }
 }
 

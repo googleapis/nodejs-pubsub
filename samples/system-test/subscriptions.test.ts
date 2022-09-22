@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {BigQuery} from '@google-cloud/bigquery';
 import {
   CreateSubscriptionOptions,
   PubSub,
@@ -61,6 +62,50 @@ describe('subscriptions', () => {
     } else {
       return `projects/${projectId}/subscriptions/${subId}`;
     }
+  }
+
+  function reserveBigQueryName(testName: string): string {
+    return resources.generateBigQueryName(testName);
+  }
+
+  function fullBigQueryTableName(datasetId: string, tableId: string): string {
+    return `${projectId}.${datasetId}.${tableId}`;
+  }
+
+  async function createBigQueryTable(datasetId: string, tableId: string) {
+    const bigquery = new BigQuery({
+      projectId: projectId,
+    });
+
+    const datasetOptions = {
+      location: 'US',
+    };
+    await bigquery.createDataset(datasetId, datasetOptions);
+
+    const schema = [
+      {name: 'data', type: 'STRING'},
+      {name: 'message_id', type: 'STRING'},
+      {name: 'attributes', type: 'STRING'},
+      {name: 'subscription_name', type: 'STRING'},
+      {name: 'publish_time', type: 'TIMESTAMP'},
+    ];
+    const tableOptions = {
+      location: 'US',
+      schema: schema,
+    };
+    await bigquery.dataset(datasetId).createTable(tableId, tableOptions);
+  }
+
+  async function cleanBigQueryDataset(datasetId: string) {
+    const bigquery = new BigQuery({
+      projectId: projectId,
+    });
+
+    const deleteOptions = {
+      force: true,
+    };
+
+    await bigquery.dataset(datasetId).delete(deleteOptions);
   }
 
   async function cleanSubs() {
@@ -124,6 +169,28 @@ describe('subscriptions', () => {
     assert.include(output, `Subscription ${subName} created.`);
     const [subscriptions] = await pubsub.topic(topic.name).getSubscriptions();
     assert(subscriptions.some(s => s.name === fullSubName(subName)));
+  });
+
+  it('should create a BigQuery subscription', async () => {
+    const testId = 'bigquery_sub';
+    const topic = await createTopic(testId);
+    const subName = reserveSub(testId);
+    const datasetId = reserveBigQueryName(testId);
+    const tableId = reserveBigQueryName(testId);
+    const fullTableName = fullBigQueryTableName(datasetId, tableId);
+
+    await createBigQueryTable(datasetId, tableId);
+
+    const output = execSync(
+      `${commandFor('createBigQuerySubscription')} ${
+        topic.name
+      } ${subName} ${fullTableName}`
+    );
+    assert.include(output, `Subscription ${subName} created.`);
+    const [subscriptions] = await pubsub.topic(topic.name).getSubscriptions();
+    assert(subscriptions.some(s => s.name === fullSubName(subName)));
+
+    await cleanBigQueryDataset(datasetId);
   });
 
   it('should modify the config of an existing push subscription', async () => {
@@ -437,5 +504,44 @@ describe('subscriptions', () => {
       .subscription(subName)
       .get();
     assert.strictEqual(subscription.metadata?.enableMessageOrdering, true);
+  });
+
+  it('should create an exactly-once delivery sub and listen on it.', async () => {
+    const testId = 'eos';
+    const topic = await createTopic(testId);
+    const subName = reserveSub(testId);
+    const output = execSync(
+      `${commandFor('createSubscriptionWithExactlyOnceDelivery')} ${
+        topic.name
+      } ${subName}`
+    );
+    assert.include(
+      output,
+      `Created subscription ${subName} with exactly-once delivery.`
+    );
+
+    const [subscription] = await pubsub
+      .topic(topic.name)
+      .subscription(subName)
+      .get();
+    assert.strictEqual(subscription.metadata?.enableExactlyOnceDelivery, true);
+
+    const message = Buffer.from('test message');
+    const messageIds = [
+      await topic.publishMessage({
+        data: message,
+      }),
+      await topic.publishMessage({
+        data: message,
+      }),
+    ];
+
+    const output2 = execSync(
+      `${commandFor('listenForMessagesWithExactlyOnceDelivery')} ${subName} 15`
+    );
+
+    for (const id of messageIds) {
+      assert.include(output2, `Ack for message ${id} successful`);
+    }
   });
 });
