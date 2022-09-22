@@ -349,9 +349,9 @@ describe('Publisher', () => {
           .callsFake((messages, callbacks, callback) => {
             // Simulate the drain taking longer than the publishes. This can
             // happen if more messages are queued during the publish().
-            setTimeout(() => {
+            process.nextTick(() => {
               publisher.queue.emit('drain');
-            }, 50);
+            });
             if (typeof callback === 'function') callback(null);
           });
 
@@ -364,9 +364,9 @@ describe('Publisher', () => {
             // Simulate the drain taking longer than the publishes. This can
             // happen on some ordered queue scenarios, especially if we have more
             // than one queue to empty.
-            setTimeout(() => {
+            process.nextTick(() => {
               queue.emit('drain');
-            }, 50);
+            });
             if (typeof callback === 'function') callback(null);
           });
 
@@ -507,9 +507,9 @@ describe('Publisher', () => {
         .callsFake((messages, callbacks, callback) => {
           // Simulate the drain taking longer than the publishes. This can
           // happen if more messages are queued during the publish().
-          setTimeout(() => {
+          process.nextTick(() => {
             publisher.queue.emit('drain');
-          }, 50);
+          });
           if (typeof callback === 'function') callback(null);
         });
 
