@@ -209,8 +209,7 @@ export class SubscriberClient {
     // Provide descriptors for these.
     this.descriptors.stream = {
       streamingPull: new this._gaxModule.StreamDescriptor(
-        gax.StreamType.BIDI_STREAMING,
-        opts.fallback === 'rest'
+        gax.StreamType.BIDI_STREAMING
       ),
     };
 
