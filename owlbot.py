@@ -14,4 +14,8 @@
 
 import synthtool.languages.node as node
 
-node.owlbot_main(templates_excludes=['src/index.ts'])
+node.owlbot_main(templates_excludes=[
+    'src/index.ts',
+    '.github/PULL_REQUEST_TEMPLATE.md',
+    '.github/release-please.yml'
+])
