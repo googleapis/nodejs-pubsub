@@ -1,2 +1,6 @@
 handleGHRelease: true
 releaseType: node
+branches:
+- branch: legacy-v2
+  releaseType: node
+  handleGHRelease: true
