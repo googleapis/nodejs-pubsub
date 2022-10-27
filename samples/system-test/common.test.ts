@@ -20,11 +20,17 @@ import * as path from 'path';
 describe('common (unit)', () => {
   it('commandFor finds TS samples', () => {
     const result = commandFor('createAvroSchema');
-    assert.strictEqual(result, `node ${path.join('build', 'typescript', 'createAvroSchema.js')}`);
+    assert.strictEqual(
+      result,
+      `node ${path.join('build', 'typescript', 'createAvroSchema.js')}`
+    );
   });
 
   it('commandFor finds JS samples', () => {
     const result = commandFor('createSubscription');
-    assert.strictEqual(result, `node ${path.join('build', 'createSubscription.js')}`);
+    assert.strictEqual(
+      result,
+      `node ${path.join('build', 'createSubscription.js')}`
+    );
   });
 });
