@@ -14,6 +14,8 @@
 
 import synthtool.languages.node as node
 
+node.typeless_samples_hermetic()
+
 node.owlbot_main(templates_excludes=[
     'src/index.ts',
     '.github/PULL_REQUEST_TEMPLATE.md',

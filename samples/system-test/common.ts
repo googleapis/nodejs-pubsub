@@ -13,10 +13,19 @@
 // limitations under the License.
 
 import * as cp from 'child_process';
+import * as path from 'path';
+import * as fs from 'fs';
 
 export const execSync = (cmd: string): string =>
   cp.execSync(cmd, {encoding: 'utf-8'});
 
+// This favours the built TS version if one exists.
 export function commandFor(action: string): string {
-  return `node ${action}.js`;
+  const tsPath = path.join('build', 'typescript', `${action}.js`);
+  if (fs.existsSync(tsPath)) {
+    return `node ${tsPath}`;
+  } else {
+    const jsPath = path.join('build', `${action}.js`);
+    return `node ${jsPath}`;
+  }
 }
