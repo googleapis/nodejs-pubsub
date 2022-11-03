@@ -21,11 +21,6 @@ export const execSync = (cmd: string): string =>
 
 // This favours the built TS version if one exists.
 export function commandFor(action: string): string {
-  const tsPath = path.join('build', 'typescript', `${action}.js`);
-  if (fs.existsSync(tsPath)) {
-    return `node ${tsPath}`;
-  } else {
-    const jsPath = path.join('build', `${action}.js`);
-    return `node ${jsPath}`;
-  }
+  const jsPath = path.join('build', `${action}.js`);
+  return `node ${jsPath}`;
 }
