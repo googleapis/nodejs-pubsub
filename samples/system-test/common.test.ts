@@ -22,7 +22,7 @@ describe('common (unit)', () => {
     const result = commandFor('createAvroSchema');
     assert.strictEqual(
       result,
-      `node ${path.join('build', 'typescript', 'createAvroSchema.js')}`
+      `node ${path.join('build', 'createAvroSchema.js')}`
     );
   });
 

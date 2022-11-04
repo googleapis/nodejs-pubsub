@@ -13,9 +13,28 @@
 # limitations under the License.
 
 import synthtool.languages.node as node
+import os
+from synthtool import shell
+from synthtool.log import logger
 
 # Testing workaround for babel cwd issue.
-node.typeless_samples_hermetic()
+old_path = os.getcwd()
+os.chdir("/synthtool")
+logger.debug("Run typeless sample bot [manual]")
+shell.run(
+    [
+        "./node_modules/.bin/typeless-sample-bot",
+        "-t",
+        os.path.join(old_path, "samples"),
+        "-r",
+    ],
+    check=False,
+    hide_output=False,
+)
+os.chdir(old_path)
+
+# Still some bugs being worked out on this.
+#node.typeless_samples_hermetic()
 
 node.owlbot_main(templates_excludes=[
     'src/index.ts',

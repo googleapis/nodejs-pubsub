@@ -14,12 +14,12 @@
 
 import * as cp from 'child_process';
 import * as path from 'path';
-import * as fs from 'fs';
 
 export const execSync = (cmd: string): string =>
   cp.execSync(cmd, {encoding: 'utf-8'});
 
-// This favours the built TS version if one exists.
+// Processed versions of TS samples go to the same build location
+// as the rest of the JS samples.
 export function commandFor(action: string): string {
   const jsPath = path.join('build', `${action}.js`);
   return `node ${jsPath}`;
