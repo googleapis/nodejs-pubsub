@@ -19,9 +19,10 @@ import {describe, it, beforeEach} from 'mocha';
 
 import * as api from '@opentelemetry/api';
 import * as trace from '@opentelemetry/tracing';
-import {createSpan} from '../src/opentelemetry-tracing';
+import * as otel from '../src/opentelemetry-tracing';
 import {exporter} from './tracing';
 import {SpanKind} from '@opentelemetry/api';
+import sinon = require('sinon');
 
 describe('OpenTelemetryTracer', () => {
   let span: trace.Span;
@@ -31,7 +32,7 @@ describe('OpenTelemetryTracer', () => {
     spanId: '6e0c63257de34c92',
     traceFlags: api.TraceFlags.SAMPLED,
   };
-  const spanAttributes: api.SpanAttributes = {
+  const spanAttributes: otel.SpanAttributes = {
     foo: 'bar',
   };
 
@@ -40,7 +41,7 @@ describe('OpenTelemetryTracer', () => {
   });
 
   it('creates a span', () => {
-    span = createSpan(
+    span = otel.createSpan(
       spanName,
       SpanKind.PRODUCER,
       spanAttributes,
@@ -56,5 +57,101 @@ describe('OpenTelemetryTracer', () => {
     assert.deepStrictEqual(exportedSpan.attributes, spanAttributes);
     assert.strictEqual(exportedSpan.parentSpanId, spanContext.spanId);
     assert.strictEqual(exportedSpan.kind, SpanKind.PRODUCER);
+  });
+
+  it('injects a trace context', () => {
+    span = otel.createSpan(
+      spanName,
+      SpanKind.PRODUCER,
+      spanAttributes,
+      spanContext
+    ) as trace.Span;
+
+    const message = {
+      attributes: {},
+    };
+
+    otel.injectSpan(span, message, otel.OpenTelemetryLevel.Modern);
+
+    assert.strictEqual(
+      Object.getOwnPropertyNames(message.attributes).includes(
+        otel.modernAttributeName
+      ),
+      true
+    );
+  });
+
+  it('injects a trace context and legacy baggage', () => {
+    span = otel.createSpan(
+      spanName,
+      SpanKind.PRODUCER,
+      spanAttributes,
+      spanContext
+    ) as trace.Span;
+
+    const message = {
+      attributes: {},
+    };
+
+    otel.injectSpan(span, message, otel.OpenTelemetryLevel.Legacy);
+    assert.strictEqual(
+      Object.getOwnPropertyNames(message.attributes).includes(
+        otel.modernAttributeName
+      ),
+      true
+    );
+    assert.strictEqual(
+      Object.getOwnPropertyNames(message.attributes).includes(
+        otel.legacyAttributeName
+      ),
+      true
+    );
+  });
+
+  it('should issue a warning if OpenTelemetry span context key is set', () => {
+    span = otel.createSpan(
+      spanName,
+      SpanKind.PRODUCER,
+      spanAttributes,
+      spanContext
+    ) as trace.Span;
+
+    const warnSpy = sinon.spy(console, 'warn');
+    try {
+      const message = {
+        attributes: {
+          [otel.legacyAttributeName]: 'foobar',
+          [otel.modernAttributeName]: 'bazbar',
+        },
+      };
+      otel.injectSpan(span, message, otel.OpenTelemetryLevel.Legacy);
+      assert.strictEqual(warnSpy.callCount, 2);
+    } finally {
+      warnSpy.restore();
+    }
+  });
+
+  it('extracts a trace context', () => {
+    span = otel.createSpan(
+      spanName,
+      SpanKind.PRODUCER,
+      spanAttributes,
+      spanContext
+    ) as trace.Span;
+
+    const message = {
+      attributes: {
+        [otel.modernAttributeName]:
+          '00-d4cda95b652f4a1592b449d5929fda1b-553964cd9101a314-01',
+      },
+    };
+
+    const libraryTracer = api.trace.getTracer('@google-cloud/pubsub', '1.0.0');
+    const parentCtx = otel.extractSpan(message);
+    const childSpan = libraryTracer.startSpan('child', undefined, parentCtx);
+    assert.strictEqual(
+      childSpan.spanContext().traceId,
+      'd4cda95b652f4a1592b449d5929fda1b'
+    );
   });
 });

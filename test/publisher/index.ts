@@ -28,6 +28,7 @@ import {PublishError} from '../../src/publisher/publish-error';
 import * as util from '../../src/util';
 
 import {defaultOptions} from '../../src/default-options';
+import * as otel from '../../src/opentelemetry-tracing';
 import {exporter} from '../tracing';
 import {SpanKind} from '@opentelemetry/api';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
@@ -196,7 +197,7 @@ describe('Publisher', () => {
       // Setup trace exporting
       tracingPublisher = new Publisher(topic, enableTracing);
 
-      tracingPublisher.publish(buffer);
+      tracingPublisher.publishMessage({data: buffer});
       const spans = exporter.getFinishedSpans();
       assert.notStrictEqual(spans.length, 0, 'has span');
       const createdSpan = spans.concat().pop()!;
@@ -383,7 +384,7 @@ describe('Publisher', () => {
       it('should issue a warning if OpenTelemetry span context key is set', () => {
         const warnSpy = sinon.spy(console, 'warn');
         const attributes = {
-          googclient_OpenTelemetrySpanContext: 'foobar',
+          [otel.legacyAttributeName]: 'foobar',
         };
         const fakeMessageWithOTKey = {data, attributes};
         const publisherTracing = new Publisher(topic, {

@@ -25,7 +25,7 @@ import {Queue, OrderedQueue} from './message-queues';
 import {Topic} from '../topic';
 import {RequestCallback, EmptyCallback} from '../pubsub';
 import {defaultOptions} from '../default-options';
-import {createSpan} from '../opentelemetry-tracing';
+import * as otel from '../opentelemetry-tracing';
 
 import {FlowControl, FlowControlOptions} from './flow-control';
 import {promisifySome} from '../util';
@@ -215,22 +215,18 @@ export class Publisher {
 
     if (!message.orderingKey) {
       this.queue.add(message, callback!);
-      if (span) {
-        span.end();
+    } else {
+      const key = message.orderingKey;
+
+      if (!this.orderedQueues.has(key)) {
+        const queue = new OrderedQueue(this, key);
+        this.orderedQueues.set(key, queue);
+        queue.once('drain', () => this.orderedQueues.delete(key));
       }
-      return;
+
+      const queue = this.orderedQueues.get(key)!;
+      queue.add(message, callback!);
     }
-
-    const key = message.orderingKey;
-
-    if (!this.orderedQueues.has(key)) {
-      const queue = new OrderedQueue(this, key);
-      this.orderedQueues.set(key, queue);
-      queue.once('drain', () => this.orderedQueues.delete(key));
-    }
-
-    const queue = this.orderedQueues.get(key)!;
-    queue.add(message, callback!);
 
     if (span) {
       span.end();
@@ -341,7 +337,9 @@ export class Publisher {
    * @param {PubsubMessage} message The message to create a span for
    */
   constructSpan(message: PubsubMessage): Span | undefined {
-    if (!this.settings.enableOpenTelemetryTracing) {
+    const enabled = otel.isEnabled(this.settings);
+
+    if (!enabled) {
       return undefined;
     }
 
@@ -358,30 +356,17 @@ export class Publisher {
       [SemanticAttributes.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]:
         message.data?.length,
       'messaging.pubsub.ordering_key': message.orderingKey,
-    } as Attributes;
+    } as otel.SpanAttributes;
 
-    const span: Span = createSpan(
+    const span: Span = otel.createSpan(
       `${this.topic.name} send`,
       SpanKind.PRODUCER,
       spanAttributes
     );
 
-    // If the span's context is valid we should pass the span context special attribute
+    // If the span's context is valid we should inject the propagation trace context.
     if (isSpanContextValid(span.spanContext())) {
-      if (
-        message.attributes &&
-        message.attributes['googclient_OpenTelemetrySpanContext']
-      ) {
-        console.warn(
-          'googclient_OpenTelemetrySpanContext key set as message attribute, but will be overridden.'
-        );
-      }
-      if (!message.attributes) {
-        message.attributes = {};
-      }
-
-      message.attributes['googclient_OpenTelemetrySpanContext'] =
-        JSON.stringify(span.spanContext());
+      otel.injectSpan(span, message, enabled);
     }
 
     return span;

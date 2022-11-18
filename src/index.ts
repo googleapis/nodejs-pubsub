@@ -183,3 +183,5 @@ if (process.env.DEBUG_GRPC) {
 }
 import * as protos from '../protos/protos';
 export {protos};
+
+export * as openTelemetry from './opentelemetry-tracing';

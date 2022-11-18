@@ -49,7 +49,7 @@ function main(
   const {PubSub} = require('@google-cloud/pubsub');
 
   // Imports the OpenTelemetry API
-  const opentelemetry = require('@opentelemetry/api');
+  const openTelemetryApi = require('@opentelemetry/api');
 
   // Imports the OpenTelemetry span handlers and exporter
   const {
@@ -62,10 +62,11 @@ function main(
   const provider = new BasicTracerProvider();
   const exporter = new ConsoleSpanExporter();
   provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-  // Enable the diagnostic logger for Opentelemetry
-  opentelemetry.diag.setLogger(
-    new opentelemetry.DiagConsoleLogger(),
-    opentelemetry.DiagLogLevel.INFO
+
+  // Enable the diagnostic logger for OpenTelemetry
+  openTelemetryApi.diag.setLogger(
+    new openTelemetryApi.DiagConsoleLogger(),
+    openTelemetryApi.DiagLogLevel.INFO
   );
 
   provider.register();
@@ -76,7 +77,7 @@ function main(
     enableOpenTelemetryTracing: true,
   };
 
-  // Creates a client; cache this for further use
+  // Creates a client; cache this for further use.
   const pubSubClient = new PubSub();
 
   async function publishMessage() {
@@ -84,7 +85,7 @@ function main(
     const dataBuffer = Buffer.from(data);
     const messageId = await pubSubClient
       .topic(topicNameOrId, enableOpenTelemetryTracing)
-      .publish(dataBuffer);
+      .publishMessage({data: dataBuffer});
     console.log(`Message ${messageId} published.`);
   }
 
