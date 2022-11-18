@@ -35,6 +35,7 @@ describe('OpenTelemetryTracer', () => {
   const spanAttributes: otel.SpanAttributes = {
     foo: 'bar',
   };
+  const context = otel.spanContextToContext(spanContext);
 
   beforeEach(() => {
     exporter.reset();
@@ -45,7 +46,7 @@ describe('OpenTelemetryTracer', () => {
       spanName,
       SpanKind.PRODUCER,
       spanAttributes,
-      spanContext
+      context
     ) as trace.Span;
     span.end();
 
@@ -64,7 +65,7 @@ describe('OpenTelemetryTracer', () => {
       spanName,
       SpanKind.PRODUCER,
       spanAttributes,
-      spanContext
+      context
     ) as trace.Span;
 
     const message = {
@@ -86,7 +87,7 @@ describe('OpenTelemetryTracer', () => {
       spanName,
       SpanKind.PRODUCER,
       spanAttributes,
-      spanContext
+      context
     ) as trace.Span;
 
     const message = {
@@ -113,7 +114,7 @@ describe('OpenTelemetryTracer', () => {
       spanName,
       SpanKind.PRODUCER,
       spanAttributes,
-      spanContext
+      context
     ) as trace.Span;
 
     const warnSpy = sinon.spy(console, 'warn');
@@ -131,12 +132,31 @@ describe('OpenTelemetryTracer', () => {
     }
   });
 
+  it('should be able to determine if attributes are present', () => {
+    let message: otel.MessageWithAttributes = {
+      attributes: {
+        [otel.legacyAttributeName]: 'foobar',
+      },
+    };
+    assert.strictEqual(otel.containsSpanContext(message), true);
+
+    message = {
+      attributes: {
+        [otel.modernAttributeName]: 'foobar',
+      },
+    };
+    assert.strictEqual(otel.containsSpanContext(message), true);
+
+    message = {};
+    assert.strictEqual(otel.containsSpanContext(message), false);
+  });
+
   it('extracts a trace context', () => {
     span = otel.createSpan(
       spanName,
       SpanKind.PRODUCER,
       spanAttributes,
-      spanContext
+      context
     ) as trace.Span;
 
     const message = {
@@ -146,11 +166,14 @@ describe('OpenTelemetryTracer', () => {
       },
     };
 
-    const libraryTracer = api.trace.getTracer('@google-cloud/pubsub', '1.0.0');
-    const parentCtx = otel.extractSpan(message);
-    const childSpan = libraryTracer.startSpan('child', undefined, parentCtx);
+    const childSpan = otel.extractSpan(
+      message,
+      'child',
+      {},
+      otel.OpenTelemetryLevel.Modern
+    );
     assert.strictEqual(
-      childSpan.spanContext().traceId,
+      childSpan!.spanContext().traceId,
       'd4cda95b652f4a1592b449d5929fda1b'
     );
   });

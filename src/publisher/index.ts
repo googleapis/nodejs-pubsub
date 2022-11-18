@@ -40,6 +40,8 @@ export interface PublishOptions {
   flowControlOptions?: FlowControlOptions;
   gaxOpts?: CallOptions;
   messageOrdering?: boolean;
+
+  /** @deprecated Unset and use context propagation. */
   enableOpenTelemetryTracing?: boolean;
 }
 

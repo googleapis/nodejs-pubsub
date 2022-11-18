@@ -99,7 +99,7 @@ export function isEnabled(
  *
  * @private
  */
-interface MessageWithAttributes {
+export interface MessageWithAttributes {
   attributes?: Attributes | null | undefined;
 }
 
@@ -168,7 +168,7 @@ export interface SpanAttributes {
  *
  * @param {string} spanName the name for the span
  * @param {Attributes?} attributes an object containing the attributes to be set for the span
- * @param {SpanContext?} parent the context of the parent span to link to the span
+ * @param {Context?} parent the context of the parent span to link to the span
  *
  * @private
  */
@@ -176,7 +176,7 @@ export function createSpan(
   spanName: string,
   kind: SpanKind,
   attributes?: SpanAttributes,
-  parent?: SpanContext
+  parent?: Context
 ): Span {
   return libraryTracer.startSpan(
     spanName,
@@ -184,8 +184,19 @@ export function createSpan(
       kind,
       attributes,
     },
-    parent ? trace.setSpanContext(context.active(), parent) : undefined
+    parent
   );
+}
+
+/**
+ * Converts a SpanContext to a full Context, as needed.
+ *
+ * @private
+ */
+export function spanContextToContext(
+  parent?: SpanContext
+): Context | undefined {
+  return parent ? trace.setSpanContext(context.active(), parent) : undefined;
 }
 
 /**
@@ -248,11 +259,61 @@ export function injectSpan(
 }
 
 /**
+ * Returns true if this message potentially contains a span context attribute.
+ *
+ * @private
+ */
+export function containsSpanContext(message: MessageWithAttributes): boolean {
+  if (!message.attributes) {
+    return false;
+  }
+
+  const keys = Object.getOwnPropertyNames(message.attributes);
+  return !!keys.find(
+    n => n === legacyAttributeName || n === modernAttributeName
+  );
+}
+
+/**
  * Extracts the trace context from a Pub/Sub message (or other object with
  * an 'attributes' object) from a propagation.
  *
  * @private
  */
-export function extractSpan(carrier: MessageWithAttributes): Context {
-  return propagation.extract(ROOT_CONTEXT, carrier, pubsubGetter);
+export function extractSpan(
+  message: MessageWithAttributes,
+  spanName: string,
+  spanAttributes: SpanAttributes,
+  enabled: OpenTelemetryLevel
+): Span | undefined {
+  if (!message.attributes) {
+    return undefined;
+  }
+  const keys = Object.getOwnPropertyNames(message.attributes);
+
+  let context: Context | undefined;
+
+  if (enabled === OpenTelemetryLevel.Legacy) {
+    // Only prefer the legacy attributes to no trace context attribute.
+    if (
+      keys.includes(legacyAttributeName) &&
+      !keys.includes(modernAttributeName)
+    ) {
+      const legacyValue = message.attributes[legacyAttributeName];
+      const parentSpanContext: SpanContext | undefined = legacyValue
+        ? JSON.parse(legacyValue)
+        : undefined;
+      if (parentSpanContext) {
+        context = spanContextToContext(parentSpanContext);
+      }
+    }
+  } else {
+    if (keys.includes(modernAttributeName)) {
+      context = propagation.extract(ROOT_CONTEXT, message, pubsubGetter);
+    }
+  }
+
+  return context
+    ? createSpan(spanName, SpanKind.CONSUMER, spanAttributes, context)
+    : undefined;
 }

@@ -733,31 +733,31 @@ describe('Subscriber', () => {
 
     it('should not instantiate a tracer when tracing is disabled', () => {
       subscriber = new Subscriber(subscription, {});
-      assert.strictEqual(subscriber['_useOpentelemetry'], false);
+      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], false);
     });
 
     it('should instantiate a tracer when tracing is enabled through constructor', () => {
       subscriber = new Subscriber(subscription, enableTracing);
-      assert.ok(subscriber['_useOpentelemetry']);
+      assert.ok(subscriber['_useLegacyOpenTelemetry']);
     });
 
     it('should instantiate a tracer when tracing is enabled through setOptions', () => {
       subscriber = new Subscriber(subscription, {});
       subscriber.setOptions(enableTracing);
-      assert.ok(subscriber['_useOpentelemetry']);
+      assert.ok(subscriber['_useLegacyOpenTelemetry']);
     });
 
     it('should disable tracing when tracing is disabled through setOptions', () => {
       subscriber = new Subscriber(subscription, enableTracing);
       subscriber.setOptions(disableTracing);
-      assert.strictEqual(subscriber['_useOpentelemetry'], false);
+      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], false);
     });
 
     it('exports a span once it is created', () => {
       subscription = new FakeSubscription() as {} as Subscription;
       subscriber = new Subscriber(subscription, enableTracing);
       message = new Message(subscriber, RECEIVED_MESSAGE);
-      assert.strictEqual(subscriber['_useOpentelemetry'], true);
+      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], true);
       subscriber.open();
 
       // Construct mock of received message with span context

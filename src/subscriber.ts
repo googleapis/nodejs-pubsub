@@ -29,7 +29,7 @@ import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
-import {createSpan} from './opentelemetry-tracing';
+import * as otel from './opentelemetry-tracing';
 import {Duration} from './temporal';
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
@@ -341,6 +341,8 @@ export interface SubscriberOptions {
   flowControl?: FlowControlOptions;
   useLegacyFlowControl?: boolean;
   streamingOptions?: MessageStreamOptions;
+
+  /** @deprecated Unset and use context propagation. */
   enableOpenTelemetryTracing?: boolean;
 }
 
@@ -364,7 +366,7 @@ export class Subscriber extends EventEmitter {
   private _acks!: AckQueue;
   private _histogram: Histogram;
   private _inventory!: LeaseManager;
-  private _useOpentelemetry: boolean;
+  private _useLegacyOpenTelemetry: boolean;
   private _latencies: Histogram;
   private _modAcks!: ModAckQueue;
   private _name!: string;
@@ -382,7 +384,7 @@ export class Subscriber extends EventEmitter {
     this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
     this.useLegacyFlowControl = false;
     this.isOpen = false;
-    this._useOpentelemetry = false;
+    this._useLegacyOpenTelemetry = false;
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
     this._subscription = subscription;
@@ -699,7 +701,7 @@ export class Subscriber extends EventEmitter {
   setOptions(options: SubscriberOptions): void {
     this._options = options;
 
-    this._useOpentelemetry = options.enableOpenTelemetryTracing || false;
+    this._useLegacyOpenTelemetry = options.enableOpenTelemetryTracing || false;
 
     // The user-set ackDeadline value basically pegs the extension time.
     // We'll emulate it by overwriting min/max.
@@ -744,18 +746,21 @@ export class Subscriber extends EventEmitter {
    */
   private _constructSpan(message: Message): Span | undefined {
     // Handle cases where OpenTelemetry is disabled or no span context was sent through message
-    if (
-      !this._useOpentelemetry ||
-      !message.attributes ||
-      !message.attributes['googclient_OpenTelemetrySpanContext']
-    ) {
+    if (!this._useLegacyOpenTelemetry || !message.attributes) {
       return undefined;
     }
 
-    const spanValue = message.attributes['googclient_OpenTelemetrySpanContext'];
-    const parentSpanContext: SpanContext | undefined = spanValue
-      ? JSON.parse(spanValue)
-      : undefined;
+    const enabled = otel.isEnabled({
+      enableOpenTelemetryTracing: this._useLegacyOpenTelemetry,
+    });
+    if (!enabled) {
+      return undefined;
+    }
+
+    if (!otel.containsSpanContext(message)) {
+      return undefined;
+    }
+
     const spanAttributes = {
       // Original span attributes
       ackId: message.ackId,
@@ -780,15 +785,8 @@ export class Subscriber extends EventEmitter {
     // Subscriber spans should always have a publisher span as a parent.
     // Return undefined if no parent is provided
     const spanName = `${this.name} process`;
-    const span = parentSpanContext
-      ? createSpan(
-          spanName.trim(),
-          SpanKind.CONSUMER,
-          spanAttributes,
-          parentSpanContext
-        )
-      : undefined;
-    return span;
+
+    return otel.extractSpan(message, spanName, spanAttributes, enabled);
   }
 
   /**
