@@ -17,36 +17,23 @@
 import * as assert from 'assert';
 import {describe, it, beforeEach} from 'mocha';
 
-import * as api from '@opentelemetry/api';
 import * as trace from '@opentelemetry/tracing';
 import * as otel from '../src/opentelemetry-tracing';
 import {exporter} from './tracing';
 import {SpanKind} from '@opentelemetry/api';
 import sinon = require('sinon');
+import {PubsubMessage} from '../src/publisher';
 
 describe('OpenTelemetryTracer', () => {
-  let span: trace.Span;
-  const spanName = 'test-span';
-  const spanContext: api.SpanContext = {
-    traceId: 'd4cda95b652f4a1592b449d5929fda1b',
-    spanId: '6e0c63257de34c92',
-    traceFlags: api.TraceFlags.SAMPLED,
-  };
-  const spanAttributes: otel.SpanAttributes = {
-    foo: 'bar',
-  };
-  const context = otel.spanContextToContext(spanContext);
-
   beforeEach(() => {
     exporter.reset();
   });
 
   it('creates a span', () => {
-    span = otel.createSpan(
-      spanName,
-      SpanKind.PRODUCER,
-      spanAttributes,
-      context
+    const message: PubsubMessage = {};
+    const span = otel.SpanMaker.createPublisherSpan(
+      message,
+      'test topic'
     ) as trace.Span;
     span.end();
 
@@ -54,23 +41,18 @@ describe('OpenTelemetryTracer', () => {
     assert.notStrictEqual(spans.length, 0);
     const exportedSpan = spans.concat().pop()!;
 
-    assert.strictEqual(exportedSpan.name, spanName);
-    assert.deepStrictEqual(exportedSpan.attributes, spanAttributes);
-    assert.strictEqual(exportedSpan.parentSpanId, spanContext.spanId);
+    assert.strictEqual(exportedSpan.name, 'test topic send');
     assert.strictEqual(exportedSpan.kind, SpanKind.PRODUCER);
   });
 
   it('injects a trace context', () => {
-    span = otel.createSpan(
-      spanName,
-      SpanKind.PRODUCER,
-      spanAttributes,
-      context
-    ) as trace.Span;
-
-    const message = {
+    const message: PubsubMessage = {
       attributes: {},
     };
+    const span = otel.SpanMaker.createPublisherSpan(
+      message,
+      'test topic'
+    ) as trace.Span;
 
     otel.injectSpan(span, message, otel.OpenTelemetryLevel.Modern);
 
@@ -83,18 +65,13 @@ describe('OpenTelemetryTracer', () => {
   });
 
   it('injects a trace context and legacy baggage', () => {
-    span = otel.createSpan(
-      spanName,
-      SpanKind.PRODUCER,
-      spanAttributes,
-      context
-    ) as trace.Span;
-
-    const message = {
+    const message: PubsubMessage = {
       attributes: {},
     };
+    const span = otel.SpanMaker.createPublisherSpan(message, 'test topic');
 
     otel.injectSpan(span, message, otel.OpenTelemetryLevel.Legacy);
+
     assert.strictEqual(
       Object.getOwnPropertyNames(message.attributes).includes(
         otel.modernAttributeName
@@ -110,21 +87,16 @@ describe('OpenTelemetryTracer', () => {
   });
 
   it('should issue a warning if OpenTelemetry span context key is set', () => {
-    span = otel.createSpan(
-      spanName,
-      SpanKind.PRODUCER,
-      spanAttributes,
-      context
-    ) as trace.Span;
+    const message: PubsubMessage = {
+      attributes: {
+        [otel.legacyAttributeName]: 'foobar',
+        [otel.modernAttributeName]: 'bazbar',
+      },
+    };
+    const span = otel.SpanMaker.createPublisherSpan(message, 'test topic');
 
     const warnSpy = sinon.spy(console, 'warn');
     try {
-      const message = {
-        attributes: {
-          [otel.legacyAttributeName]: 'foobar',
-          [otel.modernAttributeName]: 'bazbar',
-        },
-      };
       otel.injectSpan(span, message, otel.OpenTelemetryLevel.Legacy);
       assert.strictEqual(warnSpy.callCount, 2);
     } finally {
@@ -152,13 +124,6 @@ describe('OpenTelemetryTracer', () => {
   });
 
   it('extracts a trace context', () => {
-    span = otel.createSpan(
-      spanName,
-      SpanKind.PRODUCER,
-      spanAttributes,
-      context
-    ) as trace.Span;
-
     const message = {
       attributes: {
         [otel.modernAttributeName]:
@@ -168,8 +133,7 @@ describe('OpenTelemetryTracer', () => {
 
     const childSpan = otel.extractSpan(
       message,
-      'child',
-      {},
+      'test sub',
       otel.OpenTelemetryLevel.Modern
     );
     assert.strictEqual(

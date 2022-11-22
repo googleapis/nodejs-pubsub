@@ -17,8 +17,7 @@
 import {promisify} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
-import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
-import {isSpanContextValid, Span, SpanKind} from '@opentelemetry/api';
+import {isSpanContextValid, Span} from '@opentelemetry/api';
 
 import {BatchPublishOptions} from './message-batch';
 import {Queue, OrderedQueue} from './message-queues';
@@ -213,7 +212,7 @@ export class Publisher {
       }
     }
 
-    const span: Span | undefined = this.constructSpan(message);
+    const span: Span | undefined = this.getParentSpan(message);
 
     if (!message.orderingKey) {
       this.queue.add(message, callback!);
@@ -332,39 +331,24 @@ export class Publisher {
   }
 
   /**
-   * Constructs an OpenTelemetry span
+   * Finds or constructs an OpenTelemetry publish/parent span for a message,
+   * if OTel is enabled.
    *
    * @private
    *
    * @param {PubsubMessage} message The message to create a span for
    */
-  constructSpan(message: PubsubMessage): Span | undefined {
+  getParentSpan(message: PubsubMessage): Span | undefined {
     const enabled = otel.isEnabled(this.settings);
-
     if (!enabled) {
       return undefined;
     }
 
-    const spanAttributes = {
-      // Add Opentelemetry semantic convention attributes to the span, based on:
-      // https://github.com/open-telemetry/opentelemetry-specification/blob/v1.1.0/specification/trace/semantic_conventions/messaging.md
-      [SemanticAttributes.MESSAGING_TEMP_DESTINATION]: false,
-      [SemanticAttributes.MESSAGING_SYSTEM]: 'pubsub',
-      [SemanticAttributes.MESSAGING_OPERATION]: 'send',
-      [SemanticAttributes.MESSAGING_DESTINATION]: this.topic.name,
-      [SemanticAttributes.MESSAGING_DESTINATION_KIND]: 'topic',
-      [SemanticAttributes.MESSAGING_MESSAGE_ID]: message.messageId,
-      [SemanticAttributes.MESSAGING_PROTOCOL]: 'pubsub',
-      [SemanticAttributes.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]:
-        message.data?.length,
-      'messaging.pubsub.ordering_key': message.orderingKey,
-    } as otel.SpanAttributes;
+    if (message.telemetrySpan) {
+      return message.telemetrySpan;
+    }
 
-    const span: Span = otel.createSpan(
-      `${this.topic.name} send`,
-      SpanKind.PRODUCER,
-      spanAttributes
-    );
+    const span = otel.SpanMaker.createPublisherSpan(message, this.topic.name);
 
     // If the span's context is valid we should inject the propagation trace context.
     if (isSpanContextValid(span.spanContext())) {

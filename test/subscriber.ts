@@ -32,7 +32,6 @@ import {MessageStreamOptions} from '../src/message-stream';
 import * as s from '../src/subscriber';
 import {Subscription} from '../src/subscription';
 import {SpanKind} from '@opentelemetry/api';
-import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 import {Duration} from '../src';
 
 const stubs = new Map();
@@ -649,6 +648,11 @@ describe('Subscriber', () => {
       const inventory: FakeLeaseManager = stubs.get('inventory');
       const addStub = sandbox.stub(inventory, 'add').callsFake(() => {
         const [addMsg] = addStub.lastCall.args;
+
+        // OTel is enabled during tests, so we need to delete the baggage.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        delete (addMsg as any).telemetrySpan;
+
         assert.deepStrictEqual(addMsg, message);
 
         // test for receipt
@@ -794,7 +798,7 @@ describe('Subscriber', () => {
       assert.strictEqual(firstSpan.parentSpanId, parentSpanContext.spanId);
       assert.strictEqual(
         firstSpan.name,
-        `${subscriber.name} process`,
+        `${subscriber.name} receive`,
         'name of span should match'
       );
       assert.strictEqual(
@@ -802,32 +806,9 @@ describe('Subscriber', () => {
         SpanKind.CONSUMER,
         'span kind should be CONSUMER'
       );
-      assert.strictEqual(
-        firstSpan.attributes[SemanticAttributes.MESSAGING_OPERATION],
-        'process',
-        'span messaging operation should match'
-      );
-      assert.strictEqual(
-        firstSpan.attributes[SemanticAttributes.MESSAGING_SYSTEM],
-        'pubsub'
-      );
-      assert.strictEqual(
-        firstSpan.attributes[SemanticAttributes.MESSAGING_MESSAGE_ID],
-        messageWithSpanContext.message.messageId,
-        'span messaging id should match'
-      );
-      assert.strictEqual(
-        firstSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION],
-        subscriber.name,
-        'span messaging destination should match'
-      );
-      assert.strictEqual(
-        firstSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION_KIND],
-        'topic'
-      );
     });
 
-    it('does not export a span when a span context is not present on message', () => {
+    it('exports a span even when a span context is not present on message', () => {
       subscriber = new Subscriber(subscription, enableTracing);
 
       const pullResponse: s.PullResponse = {
@@ -837,7 +818,7 @@ describe('Subscriber', () => {
       // Receive message and assert that it was exported
       const stream: FakeMessageStream = stubs.get('messageStream');
       stream.emit('data', pullResponse);
-      assert.strictEqual(exporter.getFinishedSpans().length, 0);
+      assert.strictEqual(exporter.getFinishedSpans().length, 1);
     });
   });
 

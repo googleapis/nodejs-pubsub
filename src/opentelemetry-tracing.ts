@@ -26,8 +26,10 @@ import {
   ROOT_CONTEXT,
   Context,
 } from '@opentelemetry/api';
-import {Attributes} from './publisher/pubsub-message';
+import {Attributes, PubsubMessage} from './publisher/pubsub-message';
 import {PublishOptions} from './publisher/index';
+import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
+import {Duration} from './temporal';
 
 // We need this to get the library version.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -97,10 +99,14 @@ export function isEnabled(
  * object, which is one of several possible Message classes. (They're
  * different for publish and subscribe.)
  *
+ * Also we add a telemetrySpan optional member for passing around the
+ * actual Span object within the client library.
+ *
  * @private
  */
 export interface MessageWithAttributes {
   attributes?: Attributes | null | undefined;
+  telemetrySpan?: Span;
 }
 
 /**
@@ -164,31 +170,6 @@ export interface SpanAttributes {
 }
 
 /**
- * Creates a new span with the given properties
- *
- * @param {string} spanName the name for the span
- * @param {Attributes?} attributes an object containing the attributes to be set for the span
- * @param {Context?} parent the context of the parent span to link to the span
- *
- * @private
- */
-export function createSpan(
-  spanName: string,
-  kind: SpanKind,
-  attributes?: SpanAttributes,
-  parent?: Context
-): Span {
-  return libraryTracer.startSpan(
-    spanName,
-    {
-      kind,
-      attributes,
-    },
-    parent
-  );
-}
-
-/**
  * Converts a SpanContext to a full Context, as needed.
  *
  * @private
@@ -217,6 +198,132 @@ export const modernAttributeName = 'googclient_traceparent';
  * @private
  */
 export const legacyAttributeName = 'googclient_OpenTelemetrySpanContext';
+
+export class SpanMaker {
+  static createPublisherSpan(message: PubsubMessage, topicName: string): Span {
+    const spanAttributes = {
+      // Add Opentelemetry semantic convention attributes to the span, based on:
+      // https://github.com/open-telemetry/opentelemetry-specification/blob/v1.1.0/specification/trace/semantic_conventions/messaging.md
+      [SemanticAttributes.MESSAGING_TEMP_DESTINATION]: false,
+      [SemanticAttributes.MESSAGING_SYSTEM]: 'pubsub',
+      [SemanticAttributes.MESSAGING_OPERATION]: 'send',
+      [SemanticAttributes.MESSAGING_DESTINATION]: topicName,
+      [SemanticAttributes.MESSAGING_DESTINATION_KIND]: 'topic',
+      [SemanticAttributes.MESSAGING_PROTOCOL]: 'pubsub',
+      [SemanticAttributes.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]:
+        message.data?.length,
+      'messaging.pubsub.ordering_key': message.orderingKey,
+    } as SpanAttributes;
+
+    const span: Span = libraryTracer.startSpan(`${topicName} send`, {
+      kind: SpanKind.PRODUCER,
+      attributes: spanAttributes,
+    });
+
+    return span;
+  }
+
+  static createReceiveSpan(
+    message: MessageWithAttributes,
+    subName: string,
+    parent: Context | undefined
+  ): Span {
+    const name = `${subName} receive`;
+
+    // Mostly we want to keep the context IDs; the attributes and such
+    // are only something we do on the publish side.
+    if (context) {
+      return libraryTracer.startSpan(
+        name,
+        {
+          kind: SpanKind.CONSUMER,
+          attributes: {},
+        },
+        parent
+      );
+    } else {
+      return libraryTracer.startSpan(name, {
+        kind: SpanKind.CONSUMER,
+      });
+    }
+  }
+
+  static createChildSpan(
+    message: MessageWithAttributes,
+    name: string
+  ): Span | undefined {
+    const parent = message.telemetrySpan;
+    if (parent) {
+      return libraryTracer.startSpan(
+        name,
+        {
+          kind: SpanKind.INTERNAL,
+          attributes: {},
+        },
+        spanContextToContext(parent.spanContext())
+      );
+    } else {
+      return undefined;
+    }
+  }
+
+  static createPublishFlowSpan(message: PubsubMessage): Span | undefined {
+    return SpanMaker.createChildSpan(message, 'publisher flow control');
+  }
+
+  static createPublishBatchSpan(message: PubsubMessage): Span | undefined {
+    return SpanMaker.createChildSpan(message, 'publish scheduler');
+  }
+
+  static createPublishRpcSpan(message: PubsubMessage): Span | undefined {
+    return SpanMaker.createChildSpan(message, 'send Publish');
+  }
+
+  static createReceiveFlowSpan(
+    message: MessageWithAttributes
+  ): Span | undefined {
+    return SpanMaker.createChildSpan(message, 'subscriber flow control');
+  }
+
+  static createSchedulerSpan(message: MessageWithAttributes): Span | undefined {
+    return SpanMaker.createChildSpan(message, 'subscribe scheduler');
+  }
+
+  static createProcessSpan(
+    message: MessageWithAttributes,
+    subName: string
+  ): Span | undefined {
+    return SpanMaker.createChildSpan(message, `${subName} process`);
+  }
+
+  static setProcessResult(span: Span, isAck: boolean) {
+    span.setAttribute('messaging.pubsub.result', isAck ? 'ack' : 'nack');
+  }
+
+  static createLeaseSpan(
+    message: MessageWithAttributes,
+    deadline: Duration,
+    isInitial: boolean
+  ): Span | undefined {
+    const span = SpanMaker.createChildSpan(message, 'send ModifyAckDeadline');
+    span?.setAttribute(
+      'messaging.pubsub.modack_deadline_seconds',
+      deadline.totalOf('second')
+    );
+    span?.setAttribute('messaging.pubsub.is_receipt_modack', isInitial);
+    return span;
+  }
+
+  static createResponseSpan(
+    message: MessageWithAttributes,
+    isAck: boolean
+  ): Span | undefined {
+    const name = isAck
+      ? 'send Acknowledgement'
+      : 'send Negative Acknowledgement';
+    return SpanMaker.createChildSpan(message, name);
+  }
+}
 
 /**
  * Injects the trace context into a Pub/Sub message (or other object with
@@ -256,14 +363,22 @@ export function injectSpan(
   // Always do propagation injection with the trace context.
   const context = trace.setSpanContext(ROOT_CONTEXT, span.spanContext());
   propagation.inject(context, message, pubsubSetter);
+
+  // Also put the direct reference to the Span object for while we're
+  // passing it around in the client library.
+  message.telemetrySpan = span;
 }
 
 /**
- * Returns true if this message potentially contains a span context attribute.
+ * Returns true if this message potentially contains a span context.
  *
  * @private
  */
 export function containsSpanContext(message: MessageWithAttributes): boolean {
+  if (message.telemetrySpan) {
+    return true;
+  }
+
   if (!message.attributes) {
     return false;
   }
@@ -276,20 +391,21 @@ export function containsSpanContext(message: MessageWithAttributes): boolean {
 
 /**
  * Extracts the trace context from a Pub/Sub message (or other object with
- * an 'attributes' object) from a propagation.
+ * an 'attributes' object) from a propagation, for receive processing. If no
+ * context was present, create a new parent span.
  *
  * @private
  */
 export function extractSpan(
   message: MessageWithAttributes,
-  spanName: string,
-  spanAttributes: SpanAttributes,
+  subName: string,
   enabled: OpenTelemetryLevel
 ): Span | undefined {
-  if (!message.attributes) {
-    return undefined;
+  if (message.telemetrySpan) {
+    return message.telemetrySpan;
   }
-  const keys = Object.getOwnPropertyNames(message.attributes);
+
+  const keys = Object.getOwnPropertyNames(message.attributes ?? {});
 
   let context: Context | undefined;
 
@@ -299,12 +415,14 @@ export function extractSpan(
       keys.includes(legacyAttributeName) &&
       !keys.includes(modernAttributeName)
     ) {
-      const legacyValue = message.attributes[legacyAttributeName];
-      const parentSpanContext: SpanContext | undefined = legacyValue
-        ? JSON.parse(legacyValue)
-        : undefined;
-      if (parentSpanContext) {
-        context = spanContextToContext(parentSpanContext);
+      const legacyValue = message.attributes?.[legacyAttributeName];
+      if (legacyValue) {
+        const parentSpanContext: SpanContext | undefined = legacyValue
+          ? JSON.parse(legacyValue)
+          : undefined;
+        if (parentSpanContext) {
+          context = spanContextToContext(parentSpanContext);
+        }
       }
     }
   } else {
@@ -313,7 +431,7 @@ export function extractSpan(
     }
   }
 
-  return context
-    ? createSpan(spanName, SpanKind.CONSUMER, spanAttributes, context)
-    : undefined;
+  const span = SpanMaker.createReceiveSpan(message, subName, context);
+  message.telemetrySpan = span;
+  return span;
 }

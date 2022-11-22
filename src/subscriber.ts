@@ -18,7 +18,7 @@ import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
-import {SpanContext, Span, SpanKind} from '@opentelemetry/api';
+import {Span} from '@opentelemetry/api';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 
 import {google} from '../protos/protos';
@@ -91,7 +91,7 @@ export class AckError extends Error {
  * });
  * ```
  */
-export class Message {
+export class Message implements otel.MessageWithAttributes {
   ackId: string;
   attributes: {[key: string]: string};
   data: Buffer;
@@ -744,12 +744,7 @@ export class Subscriber extends EventEmitter {
    * @param {Message} message One of the received messages
    * @private
    */
-  private _constructSpan(message: Message): Span | undefined {
-    // Handle cases where OpenTelemetry is disabled or no span context was sent through message
-    if (!this._useLegacyOpenTelemetry || !message.attributes) {
-      return undefined;
-    }
-
+  private getParentSpan(message: Message): Span | undefined {
     const enabled = otel.isEnabled({
       enableOpenTelemetryTracing: this._useLegacyOpenTelemetry,
     });
@@ -757,36 +752,7 @@ export class Subscriber extends EventEmitter {
       return undefined;
     }
 
-    if (!otel.containsSpanContext(message)) {
-      return undefined;
-    }
-
-    const spanAttributes = {
-      // Original span attributes
-      ackId: message.ackId,
-      deliveryAttempt: message.deliveryAttempt,
-      //
-      // based on https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/messaging.md#topic-with-multiple-consumers
-      [SemanticAttributes.MESSAGING_SYSTEM]: 'pubsub',
-      [SemanticAttributes.MESSAGING_OPERATION]: 'process',
-      [SemanticAttributes.MESSAGING_DESTINATION]: this.name,
-      [SemanticAttributes.MESSAGING_DESTINATION_KIND]: 'topic',
-      [SemanticAttributes.MESSAGING_MESSAGE_ID]: message.id,
-      [SemanticAttributes.MESSAGING_PROTOCOL]: 'pubsub',
-      [SemanticAttributes.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: (
-        message.data as Buffer
-      ).length,
-      // Not in Opentelemetry semantic convention but mimics naming
-      'messaging.pubsub.received_at': message.received,
-      'messaging.pubsub.acknowlege_id': message.ackId,
-      'messaging.pubsub.delivery_attempt': message.deliveryAttempt,
-    };
-
-    // Subscriber spans should always have a publisher span as a parent.
-    // Return undefined if no parent is provided
-    const spanName = `${this.name} process`;
-
-    return otel.extractSpan(message, spanName, spanAttributes, enabled);
+    return otel.extractSpan(message, this.name, enabled);
   }
 
   /**
@@ -816,7 +782,7 @@ export class Subscriber extends EventEmitter {
     for (const data of receivedMessages!) {
       const message = new Message(this, data);
 
-      const span: Span | undefined = this._constructSpan(message);
+      const span: Span | undefined = this.getParentSpan(message);
 
       if (this.isOpen) {
         message.modAck(this.ackDeadline);
