@@ -38,6 +38,23 @@ export interface PubsubMessage
    * @private
    */
   calculatedSize?: number;
+
+  // The following are here instead of inside an object (like subs) because we
+  // don't get to control what these objects are. They come from grpc.
+
+  /**
+   * If telemetry is enabled, track the batch span.
+   *
+   * @private
+   */
+  telemetryBatching?: otel.Span;
+
+  /**
+   * If telemetry is enabled, track the RPC send time span.
+   *
+   * @private
+   */
+  telemetryRpc?: otel.Span;
 }
 
 /**

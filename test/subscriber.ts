@@ -26,7 +26,7 @@ import * as uuid from 'uuid';
 import * as opentelemetry from '@opentelemetry/api';
 
 import {HistogramOptions} from '../src/histogram';
-import {FlowControlOptions} from '../src/lease-manager';
+import {FlowControlOptions, LeaseManager} from '../src/lease-manager';
 import {BatchOptions} from '../src/message-queues';
 import {MessageStreamOptions} from '../src/message-stream';
 import * as s from '../src/subscriber';
@@ -57,6 +57,10 @@ class FakeSubscription {
   name = uuid.v4();
   projectId = uuid.v4();
   pubsub = new FakePubSub();
+}
+
+interface PublicInventory {
+  _inventory: LeaseManager;
 }
 
 class FakeHistogram {
@@ -787,9 +791,16 @@ describe('Subscriber', () => {
         receivedMessages: [messageWithSpanContext],
       };
 
+      const openedSub = subscriber as unknown as PublicInventory;
+      sandbox.stub(openedSub._inventory, 'add').callsFake((m: s.Message) => {
+        message = m;
+      });
+
       // Receive message and assert that it was exported
       const msgStream = stubs.get('messageStream');
       msgStream.emit('data', pullResponse);
+
+      message.telemetrySpan?.end();
 
       const spans = exporter.getFinishedSpans();
       assert.strictEqual(spans.length, 1);
@@ -810,14 +821,22 @@ describe('Subscriber', () => {
 
     it('exports a span even when a span context is not present on message', () => {
       subscriber = new Subscriber(subscription, enableTracing);
+      subscriber.open();
 
       const pullResponse: s.PullResponse = {
         receivedMessages: [RECEIVED_MESSAGE],
       };
 
+      const openedSub = subscriber as unknown as PublicInventory;
+      sandbox.stub(openedSub._inventory, 'add').callsFake((m: s.Message) => {
+        message = m;
+      });
+
       // Receive message and assert that it was exported
       const stream: FakeMessageStream = stubs.get('messageStream');
       stream.emit('data', pullResponse);
+
+      message.telemetrySpan?.end();
       assert.strictEqual(exporter.getFinishedSpans().length, 1);
     });
   });

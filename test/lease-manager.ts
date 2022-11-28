@@ -36,9 +36,20 @@ class FakeSubscriber extends EventEmitter {
   async modAck(): Promise<void> {}
 }
 
+class FakeSubscriberTelemetry {
+  flowStart() {}
+  flowEnd() {}
+  schedulerStart() {}
+  schedulerEnd() {}
+  processingStart(subName: string) {}
+  processingEnd() {}
+}
+
 class FakeMessage {
   length = 20;
   received: number;
+  telemetrySub: FakeSubscriberTelemetry = new FakeSubscriberTelemetry();
+
   constructor() {
     this.received = Date.now();
   }

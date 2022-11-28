@@ -18,8 +18,6 @@ import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
 import {EventEmitter} from 'events';
-import {Span} from '@opentelemetry/api';
-import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -65,6 +63,67 @@ export class AckError extends Error {
 }
 
 /**
+ * Tracks the various spans in receive telemetry.
+ *
+ * @private
+ */
+export class SubscriberTelemetry {
+  parent: Message;
+  sub: Subscriber;
+
+  constructor(parent: Message, sub: Subscriber) {
+    this.parent = parent;
+    this.sub = sub;
+  }
+
+  flowStart() {
+    if (!this.flow) {
+      this.flow = otel.SpanMaker.createReceiveFlowSpan(this.parent);
+    }
+  }
+
+  flowEnd() {
+    if (this.flow) {
+      this.flow.end();
+      this.flow = undefined;
+    }
+  }
+
+  schedulerStart() {
+    if (!this.scheduler) {
+      this.scheduler = otel.SpanMaker.createReceiveSchedulerSpan(this.parent);
+    }
+  }
+
+  schedulerEnd() {
+    if (this.scheduler) {
+      this.scheduler.end();
+      this.scheduler = undefined;
+    }
+  }
+
+  processingStart(subName: string) {
+    if (!this.processing) {
+      this.processing = otel.SpanMaker.createReceiveProcessSpan(
+        this.parent,
+        subName
+      );
+    }
+  }
+
+  processingEnd() {
+    if (this.processing) {
+      this.processing.end();
+      this.processing = undefined;
+    }
+  }
+
+  private flow?: otel.Span;
+  private scheduler?: otel.Span;
+  private processing?: otel.Span;
+}
+
+/**
  * Date object with nanosecond precision. Supports all standard Date arguments
  * in addition to several custom types.
  *
@@ -103,6 +162,26 @@ export class Message implements otel.MessageWithAttributes {
   private _handled: boolean;
   private _length: number;
   private _subscriber: Subscriber;
+
+  /**
+   * @private
+   *
+   * Tracks any telemetry span through the library, on the receive side. This will
+   * be the original publisher-side span if we have one.
+   *
+   * This needs to be declared explicitly here, because having a public class
+   * implement a private interface seems to confuse TypeScript. (And it's needed
+   * in unit tests.)
+   */
+  telemetrySpan?: otel.Span;
+
+  /**
+   * @private
+   *
+   * Tracks subscriber-specific telemetry spans through the library.
+   */
+  telemetrySub: SubscriberTelemetry;
+
   /**
    * @hideconstructor
    *
@@ -179,6 +258,13 @@ export class Message implements otel.MessageWithAttributes {
      * @type {number}
      */
     this.received = Date.now();
+
+    /**
+     * Telemetry tracking objects.
+     *
+     * @private
+     */
+    this.telemetrySub = new SubscriberTelemetry(this, sub);
 
     this._handled = false;
     this._length = this.data.length;
@@ -528,6 +614,8 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
+    const ackSpan = otel.SpanMaker.createReceiveResponseSpan(message, true);
+
     // Ignore this in this version of the method (but hook then/catch
     // to avoid unhandled exceptions).
     const resultPromise = this._acks.add(message);
@@ -535,6 +623,9 @@ export class Subscriber extends EventEmitter {
     resultPromise.catch(() => {});
 
     await this._acks.onFlush();
+
+    ackSpan?.end();
+
     this._inventory.remove(message);
   }
 
@@ -550,7 +641,12 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
+    const ackSpan = otel.SpanMaker.createReceiveResponseSpan(message, true);
+
     await this._acks.add(message);
+
+    ackSpan?.end();
+
     this._inventory.remove(message);
 
     // No exception means Success.
@@ -650,7 +746,12 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nack(message: Message): Promise<void> {
+    const ackSpan = otel.SpanMaker.createReceiveResponseSpan(message, false);
+
     await this.modAck(message, 0);
+
+    ackSpan?.end();
+
     this._inventory.remove(message);
   }
 
@@ -664,7 +765,10 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nackWithResponse(message: Message): Promise<AckResponse> {
-    return await this.modAckWithResponse(message, 0);
+    const ackSpan = otel.SpanMaker.createReceiveResponseSpan(message, false);
+    const response = await this.modAckWithResponse(message, 0);
+    ackSpan?.end();
+    return response;
   }
 
   /**
@@ -744,15 +848,13 @@ export class Subscriber extends EventEmitter {
    * @param {Message} message One of the received messages
    * @private
    */
-  private getParentSpan(message: Message): Span | undefined {
+  private createParentSpan(message: Message): void {
     const enabled = otel.isEnabled({
       enableOpenTelemetryTracing: this._useLegacyOpenTelemetry,
     });
-    if (!enabled) {
-      return undefined;
+    if (enabled) {
+      otel.extractSpan(message, this.name, enabled);
     }
-
-    return otel.extractSpan(message, this.name, enabled);
   }
 
   /**
@@ -782,16 +884,13 @@ export class Subscriber extends EventEmitter {
     for (const data of receivedMessages!) {
       const message = new Message(this, data);
 
-      const span: Span | undefined = this.getParentSpan(message);
+      this.createParentSpan(message);
 
       if (this.isOpen) {
         message.modAck(this.ackDeadline);
         this._inventory.add(message);
       } else {
         message.nack();
-      }
-      if (span) {
-        span.end();
       }
     }
   }

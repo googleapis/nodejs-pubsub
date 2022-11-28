@@ -21,6 +21,7 @@ import {BatchPublishOptions, MessageBatch} from './message-batch';
 import {PublishError} from './publish-error';
 import {Publisher, PubsubMessage, PublishCallback} from './';
 import {google} from '../../protos/protos';
+import * as otel from '../opentelemetry-tracing';
 
 export interface PublishDone {
   (err: ServiceError | null): void;
@@ -96,6 +97,10 @@ export abstract class MessageQueue extends EventEmitter {
       return;
     }
 
+    messages.forEach(m => {
+      m.telemetryRpc = otel.SpanMaker.createPublishRpcSpan(m);
+    });
+
     topic.request<google.pubsub.v1.IPublishResponse>(
       {
         client: 'PublisherClient',
@@ -104,6 +109,10 @@ export abstract class MessageQueue extends EventEmitter {
         gaxOpts: settings.gaxOpts!,
       },
       (err, resp) => {
+        messages.forEach(m => {
+          m.telemetryRpc?.end();
+        });
+
         const messageIds = (resp && resp.messageIds) || [];
         callbacks.forEach((callback, i) => callback(err, messageIds[i]));
 
@@ -147,6 +156,8 @@ export class Queue extends MessageQueue {
       this.publish();
     }
 
+    message.telemetryBatching = otel.SpanMaker.createPublishBatchSpan(message);
+
     this.batch.add(message, callback);
 
     if (this.batch.isFull()) {
@@ -171,6 +182,8 @@ export class Queue extends MessageQueue {
       clearTimeout(this.pending);
       delete this.pending;
     }
+
+    messages.forEach(m => m.telemetryBatching?.end());
 
     this._publish(messages, callbacks, (err: null | ServiceError) => {
       if (err) {

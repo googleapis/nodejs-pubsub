@@ -31,6 +31,8 @@ import {PublishOptions} from './publisher/index';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 import {Duration} from './temporal';
 
+export {Span};
+
 // We need this to get the library version.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageJson = require('../../package.json');
@@ -285,22 +287,24 @@ export class SpanMaker {
     return SpanMaker.createChildSpan(message, 'subscriber flow control');
   }
 
-  static createSchedulerSpan(message: MessageWithAttributes): Span | undefined {
+  static createReceiveSchedulerSpan(
+    message: MessageWithAttributes
+  ): Span | undefined {
     return SpanMaker.createChildSpan(message, 'subscribe scheduler');
   }
 
-  static createProcessSpan(
+  static createReceiveProcessSpan(
     message: MessageWithAttributes,
     subName: string
   ): Span | undefined {
     return SpanMaker.createChildSpan(message, `${subName} process`);
   }
 
-  static setProcessResult(span: Span, isAck: boolean) {
+  static setReceiveProcessResult(span: Span, isAck: boolean) {
     span.setAttribute('messaging.pubsub.result', isAck ? 'ack' : 'nack');
   }
 
-  static createLeaseSpan(
+  static createReceiveLeaseSpan(
     message: MessageWithAttributes,
     deadline: Duration,
     isInitial: boolean
@@ -314,7 +318,7 @@ export class SpanMaker {
     return span;
   }
 
-  static createResponseSpan(
+  static createReceiveResponseSpan(
     message: MessageWithAttributes,
     isAck: boolean
   ): Span | undefined {
