@@ -17,7 +17,6 @@
 import {EventEmitter} from 'events';
 import {Message, Subscriber} from './subscriber';
 import {defaultOptions} from './default-options';
-import * as otel from './opentelemetry-tracing';
 
 export interface FlowControlOptions {
   allowExcessMessages?: boolean;
@@ -105,8 +104,6 @@ export class LeaseManager extends EventEmitter {
     this._messages.add(message);
     this.bytes += message.length;
 
-    // TODO: How do these two related in Node?
-    message.telemetrySub.schedulerStart();
     message.telemetrySub.flowStart();
 
     if (allowExcessMessages! || !wasFull) {
@@ -246,14 +243,8 @@ export class LeaseManager extends EventEmitter {
   private _dispense(message: Message): void {
     if (this._subscriber.isOpen) {
       message.telemetrySub.flowEnd();
-      message.telemetrySub.schedulerEnd();
       process.nextTick(() => {
-        const span = otel.SpanMaker.createReceiveProcessSpan(
-          message,
-          this._subscriber.name
-        );
         this._subscriber.emit('message', message);
-        span?.end();
       });
     }
   }
