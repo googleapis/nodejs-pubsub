@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC
+// Copyright 2019-2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,63 +14,72 @@
 
 /**
  * This application demonstrates how to perform basic operations on
- * schemas with the Google Cloud Pub/Sub API.
+ * subscriptions with the Google Cloud Pub/Sub API.
  *
  * For more information, see the README.md under /pubsub and the documentation
  * at https://cloud.google.com/pubsub/docs.
  */
 
 // sample-metadata:
-//   title: Listen with exactly-once delivery
-//   description: Listen for messages on an exactly-once delivery subscription.
-//   usage: node listenForMessagesWithExactlyOnceDelivery.js <subscription-name-or-id>
+//   title: Listen For Avro Records
+//   description: Listens for records in Avro encoding from a subscription.
+//   usage: node listenForAvroRecords.js <subscription-name-or-id> [timeout-in-seconds]
 
-// [START pubsub_subscriber_exactly_once]
+// [START pubsub_subscribe_avro_records]
 /**
- * TODO(developer): Uncomment this variable before running the sample.
+ * TODO(developer): Uncomment these variables before running the sample.
  */
 // const subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID';
+// const timeout = 60;
 
 // Imports the Google Cloud client library
-const {PubSub} = require('@google-cloud/pubsub');
+const {PubSub, Schema, Encodings} = require('@google-cloud/pubsub');
+
+// Node FS library, to load definitions
+const fs = require('fs');
+
+// And the Apache Avro library
+const avro = require('avro-js');
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function listenForMessagesWithExactlyOnceDelivery(
-  subscriptionNameOrId,
-  timeout
-) {
+function listenForAvroRecords(subscriptionNameOrId, timeout) {
   // References an existing subscription
   const subscription = pubSubClient.subscription(subscriptionNameOrId);
+
+  // Make an encoder using the official avro-js library.
+  const definition = fs
+    .readFileSync('system-test/fixtures/provinces.avsc')
+    .toString();
+  const type = avro.parse(definition);
 
   // Create an event handler to handle messages
   let messageCount = 0;
   const messageHandler = async message => {
-    console.log(`Received message ${message.id}:`);
-    console.log(`\tData: ${message.data}`);
-    console.log(`\tAttributes: ${message.attributes}`);
-    messageCount++;
+    // "Ack" (acknowledge receipt of) the message
+    message.ack();
 
-    // Use `ackWithResponse()` instead of `ack()` to get a Promise that tracks
-    // the result of the acknowledge call. When exactly-once delivery is enabled
-    // on the subscription, the message is guaranteed not to be delivered again
-    // if the ack Promise resolves.
-    try {
-      // When the Promise resolves, the value is always AckResponses.Success,
-      // signaling that the ack was accepted. Note that you may call this
-      // method on a subscription without exactly-once delivery, but it will
-      // always return AckResponses.Success.
-      await message.ackWithResponse();
-      console.log(`Ack for message ${message.id} successful.`);
-    } catch (e) {
-      // In all other cases, the error passed on reject will explain why. This
-      // is only for permanent failures; transient errors are retried automatically.
-      const ackError = e;
-      console.log(
-        `Ack for message ${message.id} failed with error: ${ackError.errorCode}`
-      );
+    // Get the schema metadata from the message.
+    const schemaMetadata = Schema.metadataFromMessage(message.attributes);
+
+    let result;
+    switch (schemaMetadata.encoding) {
+      case Encodings.Binary:
+        result = type.fromBuffer(message.data);
+        break;
+      case Encodings.Json:
+        result = type.fromString(message.data.toString());
+        break;
+      default:
+        console.log(`Unknown schema encoding: ${schemaMetadata.encoding}`);
+        break;
     }
+
+    console.log(`Received message ${message.id}:`);
+    console.log(`\tData: ${JSON.stringify(result, null, 4)}`);
+    console.log(`\tAttributes: ${message.attributes}`);
+    messageCount += 1;
   };
 
   // Listen for new messages until timeout is hit
@@ -81,19 +90,20 @@ async function listenForMessagesWithExactlyOnceDelivery(
     console.log(`${messageCount} message(s) received.`);
   }, timeout * 1000);
 }
-// [END pubsub_subscriber_exactly_once]
+// [END pubsub_subscribe_avro_records]
 
 function main(
   subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID',
   timeout = 60
 ) {
-  listenForMessagesWithExactlyOnceDelivery(
-    subscriptionNameOrId,
-    Number(timeout)
-  ).catch(err => {
+  timeout = Number(timeout);
+
+  try {
+    listenForAvroRecords(subscriptionNameOrId, timeout);
+  } catch (err) {
     console.error(err.message);
     process.exitCode = 1;
-  });
+  }
 }
 
 main(...process.argv.slice(2));
