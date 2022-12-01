@@ -13,7 +13,7 @@
   },
   "scripts": {
     "test": "mocha build/system-test --timeout 600000",
-    "pretest": "npm run compile && cp -f *.js build/ && cp -f typescript/*.js build/",
+    "pretest": "npm run compile && cp -f *.js build/",
     "tsc": "tsc -p .",
     "sampletsc": "cd typescript && tsc -p . && cd ..",
     "compile": "npm run tsc && npm run sampletsc",
