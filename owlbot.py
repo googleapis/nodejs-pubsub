@@ -21,17 +21,21 @@ from synthtool.log import logger
 old_path = os.getcwd()
 os.chdir("/synthtool")
 logger.debug("Run typeless sample bot [manual]")
+shell.run(["npm i typeless-sample-bot@1.1.0"])
+os.chdir(old_path)
+
 shell.run(
     [
-        "./node_modules/.bin/typeless-sample-bot",
-        "-t",
-        os.path.join(old_path, "samples"),
-        "-r",
+        "/synthtool/node_modules/.bin/typeless-sample-bot",
+        "--outputpath",
+        "samples",
+        "--targets",
+        "samples",
+        "--recursive",
     ],
     check=False,
     hide_output=False,
 )
-os.chdir(old_path)
 
 # Still some bugs being worked out on this.
 #node.typeless_samples_hermetic()
