@@ -21,7 +21,7 @@ from synthtool.log import logger
 old_path = os.getcwd()
 os.chdir("/synthtool")
 logger.debug("Run typeless sample bot [manual]")
-shell.run(["npm i typeless-sample-bot@1.1.0"])
+shell.run(["npm", "i", "@google-cloud/typeless-sample-bot@1.1.0"])
 os.chdir(old_path)
 
 shell.run(
