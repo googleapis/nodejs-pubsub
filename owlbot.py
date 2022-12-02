@@ -13,11 +13,12 @@
 # limitations under the License.
 
 import synthtool.languages.node as node
-import os
-from synthtool import shell
-from synthtool.log import logger
+#import os
+#from synthtool import shell
+#from synthtool.log import logger
 
 # Testing workaround for babel cwd issue.
+"""
 old_path = os.getcwd()
 os.chdir("/synthtool")
 logger.debug("Run typeless sample bot [manual]")
@@ -36,9 +37,10 @@ shell.run(
     check=False,
     hide_output=False,
 )
+"""
 
 # Still some bugs being worked out on this.
-#node.typeless_samples_hermetic()
+node.typeless_samples_hermetic()
 
 node.owlbot_main(templates_excludes=[
     'src/index.ts',
