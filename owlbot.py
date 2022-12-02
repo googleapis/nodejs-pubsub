@@ -13,33 +13,21 @@
 # limitations under the License.
 
 import synthtool.languages.node as node
-#import os
-#from synthtool import shell
-#from synthtool.log import logger
 
-# Testing workaround for babel cwd issue.
+# This code snippet can be used to manually update the typeless bot
+# to a different version than OwlBot has baked in, but this shouldn't
+# be needed once it's settled down.
 """
+import os
+from synthtool import shell
+from synthtool.log import logger
 old_path = os.getcwd()
 os.chdir("/synthtool")
-logger.debug("Run typeless sample bot [manual]")
+logger.debug("Update typeless sample bot [1.1.0]")
 shell.run(["npm", "i", "@google-cloud/typeless-sample-bot@1.1.0"])
 os.chdir(old_path)
-
-shell.run(
-    [
-        "/synthtool/node_modules/.bin/typeless-sample-bot",
-        "--outputpath",
-        "samples",
-        "--targets",
-        "samples",
-        "--recursive",
-    ],
-    check=False,
-    hide_output=False,
-)
 """
 
-# Still some bugs being worked out on this.
 node.typeless_samples_hermetic()
 
 node.owlbot_main(templates_excludes=[
