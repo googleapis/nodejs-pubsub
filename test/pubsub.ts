@@ -156,10 +156,6 @@ describe('PubSub', () => {
 
   const PUBSUB_EMULATOR_HOST = process.env.PUBSUB_EMULATOR_HOST;
 
-  interface PostCloseCallback {
-    (err: Error | null): void;
-  }
-
   before(() => {
     delete process.env.PUBSUB_EMULATOR_HOST;
     PubSub = proxyquire('../src/pubsub', {
