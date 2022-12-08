@@ -278,7 +278,7 @@ export class SpanMaker {
   }
 
   static createPublishRpcSpan(message: PubsubMessage): Span | undefined {
-    return SpanMaker.createChildSpan(message, 'send Publish');
+    return SpanMaker.createChildSpan(message, 'publish');
   }
 
   static createReceiveFlowSpan(
@@ -309,7 +309,7 @@ export class SpanMaker {
     deadline: Duration,
     isInitial: boolean
   ): Span | undefined {
-    const span = SpanMaker.createChildSpan(message, 'send ModifyAckDeadline');
+    const span = SpanMaker.createChildSpan(message, 'modify ack deadline');
     span?.setAttribute(
       'messaging.pubsub.modack_deadline_seconds',
       deadline.totalOf('second')
@@ -322,9 +322,7 @@ export class SpanMaker {
     message: MessageWithAttributes,
     isAck: boolean
   ): Span | undefined {
-    const name = isAck
-      ? 'send Acknowledgement'
-      : 'send Negative Acknowledgement';
+    const name = isAck ? 'ack' : 'nack';
     return SpanMaker.createChildSpan(message, name);
   }
 }
