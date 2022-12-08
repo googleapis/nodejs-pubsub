@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {EventEmitter} from 'events';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 import snakeCase = require('lodash.snakecase');
@@ -42,11 +41,14 @@ import {
   SeekResponse,
   Snapshot,
 } from './snapshot';
-import {Subscriber, SubscriberOptions} from './subscriber';
+import {Message, Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';
 import {promisifySome} from './util';
 
 export {AckError, AckResponse, AckResponses} from './subscriber';
+
+import {EmitterCallback, WrappingEmitter} from './wrapping-emitter';
+import * as otel from './opentelemetry-tracing';
 
 export type PushConfig = google.pubsub.v1.IPushConfig;
 export type OidcToken = google.pubsub.v1.PushConfig.IOidcToken;
@@ -266,7 +268,7 @@ export type DetachSubscriptionResponse = EmptyResponse;
  * });
  * ```
  */
-export class Subscription extends EventEmitter {
+export class Subscription extends WrappingEmitter {
   pubsub: PubSub;
   iam: IAM;
   name: string;
@@ -276,6 +278,8 @@ export class Subscription extends EventEmitter {
   private _subscriber: Subscriber;
   constructor(pubsub: PubSub, name: string, options?: SubscriptionOptions) {
     super();
+
+    this.setEmitterWrapper(this.listenerWrapper.bind(this));
 
     options = options || {};
 
@@ -332,6 +336,38 @@ export class Subscription extends EventEmitter {
       .on('close', () => this.emit('close'));
 
     this._listen();
+  }
+
+  /**
+   * This wrapper will be called as part of the emit() process. This lets
+   * us capture the full time span of processing even if the user is using
+   * async callbacks.
+   *
+   * @private
+   */
+  private listenerWrapper(
+    eventName: string | symbol,
+    listener: EmitterCallback,
+    args: unknown[]
+  ) {
+    if (eventName !== 'message') {
+      return listener(...args);
+    } else {
+      const span = otel.SpanMaker.createReceiveProcessSpan(
+        args[0] as Message,
+        this.name
+      );
+
+      // If the user returned a Promise, that means they used an async handler.
+      // In that case, we need to tag on to their Promise to end the span.
+      // Otherwise, the listener chain is sync, and we can close out sync.
+      const result = listener(...args) as unknown as Promise<void>;
+      if (!!result && typeof result.then === 'function') {
+        result.then(() => span?.end());
+      } else {
+        span?.end();
+      }
+    }
   }
 
   /**

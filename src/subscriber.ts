@@ -28,7 +28,7 @@ import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
 import * as otel from './opentelemetry-tracing';
 import {Duration} from './temporal';
-import {EmitterCallback, WrappingEmitter} from './wrapping-emitter';
+import {EventEmitter} from 'events';
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 export type SubscriptionProperties =
@@ -443,7 +443,7 @@ const minAckDeadlineForExactlyOnceDelivery = Duration.from({seconds: 60});
  * @param {Subscription} subscription The corresponding subscription.
  * @param {SubscriberOptions} options The subscriber options.
  */
-export class Subscriber extends WrappingEmitter {
+export class Subscriber extends EventEmitter {
   ackDeadline: number;
   maxMessages: number;
   maxBytes: number;
@@ -464,7 +464,6 @@ export class Subscriber extends WrappingEmitter {
 
   constructor(subscription: Subscription, options = {}) {
     super();
-    this.setEmitterWrapper(this.listenerWrapper.bind(this));
 
     this.ackDeadline = defaultOptions.subscription.ackDeadline;
     this.maxMessages = defaultOptions.subscription.maxOutstandingMessages;
@@ -477,38 +476,6 @@ export class Subscriber extends WrappingEmitter {
     this._subscription = subscription;
 
     this.setOptions(options);
-  }
-
-  /**
-   * This wrapper will be called as part of the emit() process. This lets
-   * us capture the full time span of processing even if the user is using
-   * async callbacks.
-   *
-   * @private
-   */
-  private listenerWrapper(
-    eventName: string | symbol,
-    listener: EmitterCallback,
-    args: unknown[]
-  ) {
-    if (eventName !== 'message') {
-      return listener(...args);
-    } else {
-      const span = otel.SpanMaker.createReceiveProcessSpan(
-        args[0] as Message,
-        this.name
-      );
-
-      // If the user returned a Promise, that means they used an async handler.
-      // In that case, we need to tag on to their Promise to end the span.
-      // Otherwise, the listener chain is sync, and we can close out sync.
-      const result = listener(...args) as unknown as Promise<void>;
-      if (!!result && typeof result.then === 'function') {
-        result.then(() => span?.end());
-      } else {
-        span?.end();
-      }
-    }
   }
 
   /**
