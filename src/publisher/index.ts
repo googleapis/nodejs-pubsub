@@ -228,10 +228,6 @@ export class Publisher {
       const queue = this.orderedQueues.get(key)!;
       queue.add(message, callback!);
     }
-
-    if (span) {
-      span.end();
-    }
   }
 
   /**

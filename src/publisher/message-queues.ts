@@ -112,6 +112,7 @@ export abstract class MessageQueue extends EventEmitter {
       (err, resp) => {
         messages.forEach(m => {
           m.telemetryRpc?.end();
+          m.telemetrySpan?.end();
         });
 
         const messageIds = (resp && resp.messageIds) || [];
