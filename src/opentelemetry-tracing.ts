@@ -42,10 +42,14 @@ const packageJson = require('../../package.json');
  *
  * @private
  */
-const libraryTracer: Tracer = trace.getTracer(
-  '@google-cloud/pubsub',
-  packageJson.version
-);
+let cachedTracer: Tracer | undefined;
+function getTracer(): Tracer {
+  const tracer =
+    cachedTracer ??
+    trace.getTracer('@google-cloud/pubsub', packageJson.version);
+  cachedTracer = tracer;
+  return cachedTracer;
+}
 
 /**
  * Determination of the level of OTel support we're providing.
@@ -217,7 +221,7 @@ export class SpanMaker {
       'messaging.pubsub.ordering_key': message.orderingKey,
     } as SpanAttributes;
 
-    const span: Span = libraryTracer.startSpan(`${topicName} send`, {
+    const span: Span = getTracer().startSpan(`${topicName} send`, {
       kind: SpanKind.PRODUCER,
       attributes: spanAttributes,
     });
@@ -235,7 +239,7 @@ export class SpanMaker {
     // Mostly we want to keep the context IDs; the attributes and such
     // are only something we do on the publish side.
     if (context) {
-      return libraryTracer.startSpan(
+      return getTracer().startSpan(
         name,
         {
           kind: SpanKind.CONSUMER,
@@ -244,7 +248,7 @@ export class SpanMaker {
         parent
       );
     } else {
-      return libraryTracer.startSpan(name, {
+      return getTracer().startSpan(name, {
         kind: SpanKind.CONSUMER,
       });
     }
@@ -256,7 +260,7 @@ export class SpanMaker {
   ): Span | undefined {
     const parent = message.telemetrySpan;
     if (parent) {
-      return libraryTracer.startSpan(
+      return getTracer().startSpan(
         name,
         {
           kind: SpanKind.INTERNAL,
