@@ -58,6 +58,18 @@ export interface PubsubMessage
 }
 
 /**
+ * Since we tag a fair number of extra things into messages sent to the Pub/Sub
+ * server, this filters everything down to what needs to be sent. This should be
+ * used right before gRPC calls.
+ */
+export function filterMessage(
+  message: PubsubMessage
+): google.pubsub.v1.IPubsubMessage {
+  const {data, attributes, messageId, publishTime, orderingKey} = message;
+  return {data, attributes, messageId, publishTime, orderingKey};
+}
+
+/**
  * Precisely calculates the size of a message with optional `data` and
  * `attributes` fields. If a `data` field is present, its {@link Buffer#length}
  * member will be used. If `attributes` are present, each attribute's

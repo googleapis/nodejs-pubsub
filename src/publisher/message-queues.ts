@@ -22,6 +22,7 @@ import {PublishError} from './publish-error';
 import {Publisher, PubsubMessage, PublishCallback} from './';
 import {google} from '../../protos/protos';
 import * as otel from '../opentelemetry-tracing';
+import {filterMessage} from './pubsub-message';
 
 export interface PublishDone {
   (err: ServiceError | null): void;
@@ -88,7 +89,7 @@ export abstract class MessageQueue extends EventEmitter {
     const {topic, settings} = this.publisher;
     const reqOpts = {
       topic: topic.name,
-      messages,
+      messages: messages.map(filterMessage),
     };
     if (messages.length === 0) {
       if (typeof callback === 'function') {
