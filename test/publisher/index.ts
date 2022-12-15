@@ -184,20 +184,22 @@ describe('Publisher', () => {
 
   describe('OpenTelemetry tracing', () => {
     let tracingPublisher: p.Publisher = {} as p.Publisher;
-    const enableTracing: p.PublishOptions = {
-      enableOpenTelemetryTracing: true,
-    };
     const buffer = Buffer.from('Hello, world!');
 
     beforeEach(() => {
       exporter.reset();
     });
 
-    it('export created spans', () => {
+    it('export created spans', async () => {
       // Setup trace exporting
-      tracingPublisher = new Publisher(topic, enableTracing);
+      tracingPublisher = new Publisher(topic);
+      const msg = {data: buffer} as p.PubsubMessage;
+      tracingPublisher.publishMessage(msg);
 
-      tracingPublisher.publishMessage({data: buffer});
+      // publishMessage is only the first part of the process now,
+      // so we need to manually end the span.
+      msg.telemetrySpan?.end();
+
       const spans = exporter.getFinishedSpans();
       assert.notStrictEqual(spans.length, 0, 'has span');
       const createdSpan = spans.concat().pop()!;
