@@ -99,7 +99,10 @@ export abstract class MessageQueue extends EventEmitter {
     }
 
     messages.forEach(m => {
-      m.telemetryRpc = otel.SpanMaker.createPublishRpcSpan(m);
+      const span = otel.SpanMaker.createPublishRpcSpan(m);
+      if (span) {
+        m.telemetryRpc = span;
+      }
     });
 
     topic.request<google.pubsub.v1.IPublishResponse>(

@@ -65,8 +65,23 @@ export interface PubsubMessage
 export function filterMessage(
   message: PubsubMessage
 ): google.pubsub.v1.IPubsubMessage {
-  const {data, attributes, messageId, publishTime, orderingKey} = message;
-  return {data, attributes, messageId, publishTime, orderingKey};
+  const filtered = {} as PubsubMessage;
+  if (message.data) {
+    filtered.data = message.data;
+  }
+  if (message.attributes) {
+    filtered.attributes = message.attributes;
+  }
+  if (message.messageId) {
+    filtered.messageId = message.messageId;
+  }
+  if (message.publishTime) {
+    filtered.publishTime = message.publishTime;
+  }
+  if (message.orderingKey) {
+    filtered.orderingKey = message.orderingKey;
+  }
+  return filtered;
 }
 
 /**
