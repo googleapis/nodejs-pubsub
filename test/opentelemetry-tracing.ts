@@ -17,7 +17,7 @@
 import * as assert from 'assert';
 import {describe, it, beforeEach} from 'mocha';
 
-import * as trace from '@opentelemetry/tracing';
+import * as trace from '@opentelemetry/sdk-trace-base';
 import * as otel from '../src/opentelemetry-tracing';
 import {exporter} from './tracing';
 import {SpanKind} from '@opentelemetry/api';
