@@ -65,7 +65,7 @@ subscriptionNameOrId)
 
   // Process the messages.
   const ackIds = [];
-  for (const message of response.receivedMessages ?? []) {
+  for (const message of response.receivedMessages || []) {
     console.log(`Received message: ${message.message?.data}`);
     if (message.ackId) {
       ackIds.push(message.ackId);
