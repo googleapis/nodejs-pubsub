@@ -212,7 +212,7 @@ export class Publisher {
       }
     }
 
-    const span: Span | undefined = this.getParentSpan(message);
+    this.getParentSpan(message);
 
     if (!message.orderingKey) {
       this.queue.add(message, callback!);
