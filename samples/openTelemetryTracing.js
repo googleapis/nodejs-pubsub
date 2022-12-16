@@ -41,19 +41,21 @@ const SUBSCRIBER_TIMEOUT = 10;
 // const data = 'Hello, world!";
 
 // Imports the Google Cloud client library
-const { PubSub } = require("@google-cloud/pubsub");
+const {PubSub} = require('@google-cloud/pubsub');
 
 // Imports the OpenTelemetry API
-const otel = require("@opentelemetry/sdk-trace-node");
-const { diag, DiagConsoleLogger, DiagLogLevel } = require("@opentelemetry/api");
-const { NodeTracerProvider } = otel;
-const { SimpleSpanProcessor, ConsoleSpanExporter } = require("@opentelemetry/sdk-trace-base");
+const otel = require('@opentelemetry/sdk-trace-node');
+const {diag, DiagConsoleLogger, DiagLogLevel} = require('@opentelemetry/api');
+const {NodeTracerProvider} = otel;
+const {
+  SimpleSpanProcessor,
+  ConsoleSpanExporter,
+} = require('@opentelemetry/sdk-trace-base');
 
-
-
-
-const { Resource } = require("@opentelemetry/resources");
-const { SemanticResourceAttributes } = require("@opentelemetry/semantic-conventions");
+const {Resource} = require('@opentelemetry/resources');
+const {
+  SemanticResourceAttributes,
+} = require('@opentelemetry/semantic-conventions');
 
 // Enable the diagnostic logger for OpenTelemetry
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
@@ -62,8 +64,8 @@ const exporter = new ConsoleSpanExporter();
 
 const provider = new NodeTracerProvider({
   resource: new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: 'otel example'
-  })
+    [SemanticResourceAttributes.SERVICE_NAME]: 'otel example',
+  }),
 });
 const processor = new SimpleSpanProcessor(exporter);
 provider.addSpanProcessor(processor);
@@ -75,15 +77,15 @@ const pubSubClient = new PubSub();
 async function publishMessage(topicNameOrId, data) {
   // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
   const dataBuffer = Buffer.from(data);
-  const messageId = await pubSubClient.
-  topic(topicNameOrId).
-  publishMessage({ data: dataBuffer });
+  const messageId = await pubSubClient
+    .topic(topicNameOrId)
+    .publishMessage({data: dataBuffer});
   console.log(`Message ${messageId} published.`);
 }
 
 async function subscriptionListen(subscriptionNameOrId) {
   // Message handler for subscriber
-  const messageHandler = (message) => {
+  const messageHandler = message => {
     console.log(`Message ${message.id} received.`);
     message.ack();
 
@@ -95,7 +97,7 @@ async function subscriptionListen(subscriptionNameOrId) {
     });
   };
 
-  const errorHandler = (error) => {
+  const errorHandler = error => {
     console.log('Received error:', error);
 
     console.log('Cleaning up OpenTelemetry exporter...');
@@ -117,16 +119,16 @@ async function subscriptionListen(subscriptionNameOrId) {
 // [END opentelemetry_tracing]
 
 function main(
-topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
-subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID',
-data = 'Hello, world!')
-{
-  publishMessage(topicNameOrId, data).
-  then(() => subscriptionListen(subscriptionNameOrId)).
-  catch((err) => {
-    console.error(err.message);
-    process.exitCode = 1;
-  });
+  topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
+  subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID',
+  data = 'Hello, world!'
+) {
+  publishMessage(topicNameOrId, data)
+    .then(() => subscriptionListen(subscriptionNameOrId))
+    .catch(err => {
+      console.error(err.message);
+      process.exitCode = 1;
+    });
 }
 
 main(...process.argv.slice(2));
