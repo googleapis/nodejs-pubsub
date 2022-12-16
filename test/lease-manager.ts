@@ -41,7 +41,7 @@ class FakeSubscriberTelemetry {
   flowEnd() {}
   schedulerStart() {}
   schedulerEnd() {}
-  processingStart(subName: string) {}
+  processingStart() {}
   processingEnd() {}
 }
 
