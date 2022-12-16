@@ -21,49 +21,59 @@
  */
 
 // sample-metadata:
-//   title: Set Topic IAM Policy
-//   description: Sets the IAM policy for a topic.
-//   usage: node setTopicPolicy.js <topic-name-or-id>
+//   title: Validate a schema definition
+//   description: Validates an Avro-based schema definition before creation (or other use).
+//   usage: node validateSchema.js <schema-text>
 
-// [START pubsub_set_topic_policy]
+// (No tag, currently - this sample is non-canonical)
 /**
  * TODO(developer): Uncomment this variable before running the sample.
  */
-// const topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID';
+// const schemaText = 'YOUR_SCHEMA_TEXT';
 
 // Imports the Google Cloud client library
-import {PubSub, Policy} from '@google-cloud/pubsub';
+import {PubSub, SchemaTypes} from '@google-cloud/pubsub';
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function setTopicPolicy(topicNameOrId: string) {
-  // The new IAM policy
-  const newPolicy: Policy = {
-    bindings: [
-      {
-        // Add a group as editors
-        role: 'roles/pubsub.editor',
-        members: ['group:cloud-logs@google.com'],
-      },
-      {
-        // Add all users as viewers
-        role: 'roles/pubsub.viewer',
-        members: ['allUsers'],
-      },
-    ],
-  };
-
-  // Updates the IAM policy for the topic
-  const [updatedPolicy] = await pubSubClient
-    .topic(topicNameOrId)
-    .iam.setPolicy(newPolicy);
-  console.log('Updated policy for topic: %j', updatedPolicy.bindings);
+async function validateSchema(schemaText: string) {
+  try {
+    await pubSubClient.validateSchema({
+      type: SchemaTypes.Avro,
+      definition: schemaText,
+    });
+    console.log('Validated with no error.');
+  } catch (e) {
+    console.log('Received error:', e);
+  }
 }
-// [END pubsub_set_topic_policy]
+// (No tag, currently - this sample is non-canonical)
 
-function main(topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID') {
-  setTopicPolicy(topicNameOrId).catch(err => {
+// Just a sample AVSC definition to try.
+const sampleAvsc = `
+{
+  "type":"record",
+  "name":"Province",
+  "namespace":"utilities",
+  "doc":"A list of provinces in Canada.",
+  "fields":[
+  {
+    "name":"name",
+    "type":"string",
+    "doc":"The common name of the province."
+  },
+  {
+    "name":"post_abbr",
+    "type":"string",
+    "doc":"The postal code abbreviation of the province."
+  }
+  ]
+}
+`;
+
+function main(schemaText = sampleAvsc) {
+  validateSchema(schemaText).catch(err => {
     console.error(err.message);
     process.exitCode = 1;
   });
