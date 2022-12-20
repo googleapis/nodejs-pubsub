@@ -15,7 +15,7 @@
  */
 
 import {google} from '../../protos/protos';
-import * as otel from '../opentelemetry-tracing';
+import * as tracing from '../telemetry-tracing';
 
 /**
  * Strings are the only allowed values for keys and values in message attributes.
@@ -27,7 +27,7 @@ export type Attributes = Record<string, string>;
  */
 export interface PubsubMessage
   extends google.pubsub.v1.IPubsubMessage,
-    otel.MessageWithAttributes {
+    tracing.MessageWithAttributes {
   /**
    * If we've calculated the size of this message, it will be cached here.
    * This is done to avoid having to build up the attribute size over and over.
@@ -47,14 +47,14 @@ export interface PubsubMessage
    *
    * @private
    */
-  telemetryBatching?: otel.Span;
+  telemetryBatching?: tracing.Span;
 
   /**
    * If telemetry is enabled, track the RPC send time span.
    *
    * @private
    */
-  telemetryRpc?: otel.Span;
+  telemetryRpc?: tracing.Span;
 }
 
 /**

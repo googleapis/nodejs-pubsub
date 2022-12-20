@@ -48,7 +48,7 @@ import {promisifySome} from './util';
 export {AckError, AckResponse, AckResponses} from './subscriber';
 
 import {EmitterCallback, WrappingEmitter} from './wrapping-emitter';
-import * as otel from './opentelemetry-tracing';
+import * as tracing from './telemetry-tracing';
 
 export type PushConfig = google.pubsub.v1.IPushConfig;
 export type OidcToken = google.pubsub.v1.PushConfig.IOidcToken;
@@ -353,7 +353,7 @@ export class Subscription extends WrappingEmitter {
     if (eventName !== 'message') {
       return listener(...args);
     } else {
-      const span = otel.SpanMaker.createReceiveProcessSpan(
+      const span = tracing.SpanMaker.createReceiveProcessSpan(
         args[0] as Message,
         this.name
       );

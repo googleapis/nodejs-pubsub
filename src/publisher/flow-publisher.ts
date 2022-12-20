@@ -17,7 +17,7 @@
 import {Publisher} from '.';
 import {FlowControl} from './flow-control';
 import {PubsubMessage, calculateMessageSize} from './pubsub-message';
-import * as otel from '../opentelemetry-tracing';
+import * as tracing from '../telemetry-tracing';
 
 /**
  * Encapsulates a series of message publishes from a rapid loop (or similar
@@ -78,7 +78,7 @@ export class FlowControlledPublisher {
    */
   publish(message: PubsubMessage): Promise<void> | null {
     const flowSpan = message.telemetrySpan
-      ? otel.SpanMaker.createPublishFlowSpan(message)
+      ? tracing.SpanMaker.createPublishFlowSpan(message)
       : undefined;
     const doPublish = () => {
       flowSpan?.end();

@@ -386,7 +386,7 @@ describe('Publisher', () => {
       it('should issue a warning if OpenTelemetry span context key is set', () => {
         const warnSpy = sinon.spy(console, 'warn');
         const attributes = {
-          [otel.legacyAttributeName]: 'foobar',
+          [tracing.legacyAttributeName]: 'foobar',
         };
         const fakeMessageWithOTKey = {data, attributes};
         const publisherTracing = new Publisher(topic, {

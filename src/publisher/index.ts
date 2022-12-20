@@ -24,7 +24,7 @@ import {Queue, OrderedQueue} from './message-queues';
 import {Topic} from '../topic';
 import {RequestCallback, EmptyCallback} from '../pubsub';
 import {defaultOptions} from '../default-options';
-import * as otel from '../opentelemetry-tracing';
+import * as tracing from '../telemetry-tracing';
 
 import {FlowControl, FlowControlOptions} from './flow-control';
 import {promisifySome} from '../util';
@@ -327,15 +327,14 @@ export class Publisher {
   }
 
   /**
-   * Finds or constructs an OpenTelemetry publish/parent span for a message,
-   * if OTel is enabled.
+   * Finds or constructs an telemetry publish/parent span for a message.
    *
    * @private
    *
    * @param {PubsubMessage} message The message to create a span for
    */
   getParentSpan(message: PubsubMessage): Span | undefined {
-    const enabled = otel.isEnabled(this.settings);
+    const enabled = tracing.isEnabled(this.settings);
     if (!enabled) {
       return undefined;
     }
@@ -344,11 +343,14 @@ export class Publisher {
       return message.telemetrySpan;
     }
 
-    const span = otel.SpanMaker.createPublisherSpan(message, this.topic.name);
+    const span = tracing.SpanMaker.createPublisherSpan(
+      message,
+      this.topic.name
+    );
 
     // If the span's context is valid we should inject the propagation trace context.
     if (isSpanContextValid(span.spanContext())) {
-      otel.injectSpan(span, message, enabled);
+      tracing.injectSpan(span, message, enabled);
     }
 
     return span;

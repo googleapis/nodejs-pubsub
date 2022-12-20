@@ -21,7 +21,7 @@ import {BatchPublishOptions, MessageBatch} from './message-batch';
 import {PublishError} from './publish-error';
 import {Publisher, PubsubMessage, PublishCallback} from './';
 import {google} from '../../protos/protos';
-import * as otel from '../opentelemetry-tracing';
+import * as tracing from '../telemetry-tracing';
 import {filterMessage} from './pubsub-message';
 
 export interface PublishDone {
@@ -99,7 +99,7 @@ export abstract class MessageQueue extends EventEmitter {
     }
 
     messages.forEach(m => {
-      const span = otel.SpanMaker.createPublishRpcSpan(m);
+      const span = tracing.SpanMaker.createPublishRpcSpan(m);
       if (span) {
         m.telemetryRpc = span;
       }
@@ -161,7 +161,7 @@ export class Queue extends MessageQueue {
       this.publish();
     }
 
-    message.telemetryBatching = otel.SpanMaker.createPublishBatchSpan(message);
+    message.telemetryBatching = tracing.SpanMaker.createPublishBatchSpan(message);
 
     this.batch.add(message, callback);
 

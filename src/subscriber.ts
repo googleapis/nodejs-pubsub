@@ -26,7 +26,7 @@ import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
-import * as otel from './opentelemetry-tracing';
+import * as tracing from './telemetry-tracing';
 import {Duration} from './temporal';
 import {EventEmitter} from 'events';
 
@@ -78,7 +78,7 @@ export class SubscriberTelemetry {
 
   flowStart() {
     if (!this.flow) {
-      this.flow = otel.SpanMaker.createReceiveFlowSpan(this.parent);
+      this.flow = tracing.SpanMaker.createReceiveFlowSpan(this.parent);
     }
   }
 
@@ -91,7 +91,9 @@ export class SubscriberTelemetry {
 
   schedulerStart() {
     if (!this.scheduler) {
-      this.scheduler = otel.SpanMaker.createReceiveSchedulerSpan(this.parent);
+      this.scheduler = tracing.SpanMaker.createReceiveSchedulerSpan(
+        this.parent
+      );
     }
   }
 
@@ -104,7 +106,7 @@ export class SubscriberTelemetry {
 
   processingStart(subName: string) {
     if (!this.processing) {
-      this.processing = otel.SpanMaker.createReceiveProcessSpan(
+      this.processing = tracing.SpanMaker.createReceiveProcessSpan(
         this.parent,
         subName
       );
@@ -118,9 +120,9 @@ export class SubscriberTelemetry {
     }
   }
 
-  private flow?: otel.Span;
-  private scheduler?: otel.Span;
-  private processing?: otel.Span;
+  private flow?: tracing.Span;
+  private scheduler?: tracing.Span;
+  private processing?: tracing.Span;
 }
 
 /**
@@ -150,7 +152,7 @@ export class SubscriberTelemetry {
  * });
  * ```
  */
-export class Message implements otel.MessageWithAttributes {
+export class Message implements tracing.MessageWithAttributes {
   ackId: string;
   attributes: {[key: string]: string};
   data: Buffer;
@@ -173,7 +175,7 @@ export class Message implements otel.MessageWithAttributes {
    * implement a private interface seems to confuse TypeScript. (And it's needed
    * in unit tests.)
    */
-  telemetrySpan?: otel.Span;
+  telemetrySpan?: tracing.Span;
 
   /**
    * @private
@@ -614,7 +616,7 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    const ackSpan = otel.SpanMaker.createReceiveResponseSpan(message, true);
+    const ackSpan = tracing.SpanMaker.createReceiveResponseSpan(message, true);
 
     // Ignore this in this version of the method (but hook then/catch
     // to avoid unhandled exceptions).
@@ -641,7 +643,7 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    const ackSpan = otel.SpanMaker.createReceiveResponseSpan(message, true);
+    const ackSpan = tracing.SpanMaker.createReceiveResponseSpan(message, true);
 
     await this._acks.add(message);
 
@@ -746,7 +748,7 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nack(message: Message): Promise<void> {
-    const ackSpan = otel.SpanMaker.createReceiveResponseSpan(message, false);
+    const ackSpan = tracing.SpanMaker.createReceiveResponseSpan(message, false);
 
     await this.modAck(message, 0);
 
@@ -765,7 +767,7 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nackWithResponse(message: Message): Promise<AckResponse> {
-    const ackSpan = otel.SpanMaker.createReceiveResponseSpan(message, false);
+    const ackSpan = tracing.SpanMaker.createReceiveResponseSpan(message, false);
     const response = await this.modAckWithResponse(message, 0);
     ackSpan?.end();
     return response;
@@ -843,17 +845,17 @@ export class Subscriber extends EventEmitter {
   }
 
   /**
-   * Constructs an OpenTelemetry span from the incoming message.
+   * Constructs a telemetry span from the incoming message.
    *
    * @param {Message} message One of the received messages
    * @private
    */
   private createParentSpan(message: Message): void {
-    const enabled = otel.isEnabled({
+    const enabled = tracing.isEnabled({
       enableOpenTelemetryTracing: this._useLegacyOpenTelemetry,
     });
     if (enabled) {
-      otel.extractSpan(message, this.name, enabled);
+      tracing.extractSpan(message, this.name, enabled);
     }
   }
 

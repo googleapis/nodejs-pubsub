@@ -441,3 +441,28 @@ export function extractSpan(
   message.telemetrySpan = span;
   return span;
 }
+
+// Since these were exported on the main Pub/Sub index in the previous
+// version, we have to export them until the next major.
+export const legacyExports = {
+  /**
+   * @deprecated
+   * Use the new telemetry functionality instead; see the updated OpenTelemetry
+   * sample for an example.
+   */
+  createSpan: function (
+    spanName: string,
+    kind: SpanKind,
+    attributes?: SpanAttributes,
+    parent?: SpanContext
+  ): Span {
+    return getTracer().startSpan(
+      spanName,
+      {
+        kind,
+        attributes,
+      },
+      parent ? trace.setSpanContext(context.active(), parent) : undefined
+    );
+  },
+};
