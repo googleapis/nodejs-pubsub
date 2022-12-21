@@ -187,7 +187,6 @@ describe('PubSub', () => {
     v1ClientOverrides = {};
     googleAuthOverride = null;
     pubsub = new PubSub(OPTIONS);
-    pubsub.projectId = PROJECT_ID;
   });
 
   describe('instantiation', () => {
