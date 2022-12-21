@@ -528,8 +528,8 @@ export class SubscriberClient {
    *   the `message_retention_duration` field in `Topic`. This field is set only
    *   in responses from the server; it is ignored if it is set in any requests.
    * @param {google.pubsub.v1.Subscription.State} request.state
-   *   Output only. An output-only field indicating whether or not the subscription can receive
-   *   messages.
+   *   Output only. An output-only field indicating whether or not the
+   *   subscription can receive messages.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
