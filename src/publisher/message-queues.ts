@@ -93,19 +93,16 @@ export abstract class MessageQueue extends EventEmitter {
     // Make sure we have a projectId filled in to update telemetry spans.
     // The overall spans may not have the correct projectId because it wasn't
     // known at the time publishMessage was called.
-    const anySpans = !!messages.find(m => m.telemetrySpan);
-    if (anySpans) {
+    const spanMessages = messages.filter(m => !!m.telemetrySpan);
+    if (spanMessages.length) {
       if (!topic.pubsub.isIdResolved) {
         await topic.pubsub.getClientConfig();
       }
-
-      messages.forEach(m => {
-        if (m.telemetrySpan) {
-          tracing.SpanMaker.updatePublisherTopicName(
-            m.telemetrySpan,
-            topic.name
-          );
-        }
+      spanMessages.forEach(m => {
+        tracing.SpanMaker.updatePublisherTopicName(
+          m.telemetrySpan!,
+          topic.name
+        );
       });
     }
 
