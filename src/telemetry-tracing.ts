@@ -229,6 +229,11 @@ export class SpanMaker {
     return span;
   }
 
+  static updatePublisherTopicName(span: Span, topicName: string) {
+    span.updateName(`${topicName} send`);
+    span.setAttribute(SemanticAttributes.MESSAGING_DESTINATION, topicName);
+  }
+
   static createReceiveSpan(
     message: MessageWithAttributes,
     subName: string,
