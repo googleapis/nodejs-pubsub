@@ -271,11 +271,12 @@ export type DetachSubscriptionResponse = EmptyResponse;
 export class Subscription extends WrappingEmitter {
   pubsub: PubSub;
   iam: IAM;
-  name: string;
   topic?: Topic | string;
   metadata?: google.pubsub.v1.ISubscription;
   request: typeof PubSub.prototype.request;
+
   private _subscriber: Subscriber;
+
   constructor(pubsub: PubSub, name: string, options?: SubscriptionOptions) {
     super();
 
@@ -285,7 +286,7 @@ export class Subscription extends WrappingEmitter {
 
     this.pubsub = pubsub;
     this.request = pubsub.request.bind(pubsub);
-    this.name = Subscription.formatName_(this.projectId, name);
+    this.id_ = name;
     this.topic = options.topic;
 
     /**
@@ -326,7 +327,7 @@ export class Subscription extends WrappingEmitter {
      * });
      * ```
      */
-    this.iam = new IAM(pubsub, this.name);
+    this.iam = new IAM(pubsub, this);
 
     this._subscriber = new Subscriber(this, options);
     this._subscriber
@@ -336,6 +337,11 @@ export class Subscription extends WrappingEmitter {
       .on('close', () => this.emit('close'));
 
     this._listen();
+  }
+
+  private id_: string;
+  get name(): string {
+    return Subscription.formatName_(this.pubsub.projectId, this.id_);
   }
 
   /**
