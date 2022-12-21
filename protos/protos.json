@@ -1233,26 +1233,17 @@
                         "ackIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 1,
-                          "options": {
-                            "ctype": "CORD"
-                          }
+                          "id": 1
                         },
                         "invalidAckIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 2,
-                          "options": {
-                            "ctype": "CORD"
-                          }
+                          "id": 2
                         },
                         "unorderedAckIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 3,
-                          "options": {
-                            "ctype": "CORD"
-                          }
+                          "id": 3
                         }
                       }
                     },
@@ -1261,18 +1252,12 @@
                         "ackIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 1,
-                          "options": {
-                            "ctype": "CORD"
-                          }
+                          "id": 1
                         },
                         "invalidAckIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 2,
-                          "options": {
-                            "ctype": "CORD"
-                          }
+                          "id": 2
                         }
                       }
                     },
