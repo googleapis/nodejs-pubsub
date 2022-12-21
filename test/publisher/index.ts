@@ -28,7 +28,7 @@ import {PublishError} from '../../src/publisher/publish-error';
 import * as util from '../../src/util';
 
 import {defaultOptions} from '../../src/default-options';
-import * as otel from '../../src/opentelemetry-tracing';
+import * as tracing from '../../src/telemetry-tracing';
 import {exporter} from '../tracing';
 import {SpanKind} from '@opentelemetry/api';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
@@ -61,16 +61,14 @@ class FakeQueue extends EventEmitter {
   updateOptions() {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: p.PubsubMessage, callback: p.PublishCallback): void {}
-  publish(callback: (err: Error | null) => void) {
-    this._publish([], [], callback);
+  async publish() {
+    await this._publish([], []);
   }
-  _publish(
+  async _publish(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     messages: p.PubsubMessage[],
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    callbacks: p.PublishCallback[],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    callback?: q.PublishDone
+    callbacks: p.PublishCallback[]
   ) {}
 }
 
@@ -82,17 +80,14 @@ class FakeOrderedQueue extends FakeQueue {
     this.orderingKey = key;
   }
   resumePublishing(): void {}
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  publish(callback: (err: Error | null) => void) {
-    this._publish([], [], callback);
+  async publish() {
+    await this._publish([], []);
   }
-  _publish(
+  async _publish(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     messages: p.PubsubMessage[],
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    callbacks: p.PublishCallback[],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    callback?: q.PublishDone
+    callbacks: p.PublishCallback[]
   ) {}
 }
 
@@ -349,18 +344,17 @@ describe('Publisher', () => {
         // We have to stub out the regular queue as well, so that the flush() operation finishes.
         sandbox
           .stub(FakeQueue.prototype, '_publish')
-          .callsFake((messages, callbacks, callback) => {
+          .callsFake(async (messages, callbacks) => {
             // Simulate the drain taking longer than the publishes. This can
             // happen if more messages are queued during the publish().
             process.nextTick(() => {
               publisher.queue.emit('drain');
             });
-            if (typeof callback === 'function') callback(null);
           });
 
         sandbox
           .stub(FakeOrderedQueue.prototype, '_publish')
-          .callsFake((messages, callbacks, callback) => {
+          .callsFake(async (messages, callbacks) => {
             const queue = publisher.orderedQueues.get(
               orderingKey
             ) as unknown as FakeOrderedQueue;
@@ -370,7 +364,6 @@ describe('Publisher', () => {
             process.nextTick(() => {
               queue.emit('drain');
             });
-            if (typeof callback === 'function') callback(null);
           });
 
         publisher.orderedQueues.clear();
@@ -507,13 +500,12 @@ describe('Publisher', () => {
     it('should drain the main publish queue', done => {
       sandbox
         .stub(publisher.queue, '_publish')
-        .callsFake((messages, callbacks, callback) => {
+        .callsFake(async (messages, callbacks) => {
           // Simulate the drain taking longer than the publishes. This can
           // happen if more messages are queued during the publish().
           process.nextTick(() => {
             publisher.queue.emit('drain');
           });
-          if (typeof callback === 'function') callback(null);
         });
 
       publisher.flush(err => {

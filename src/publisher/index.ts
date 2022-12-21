@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {promisify} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 import {isSpanContextValid, Span} from '@opentelemetry/api';
@@ -129,9 +128,7 @@ export class Publisher {
       )
     );
 
-    const allPublishes = Promise.all(
-      toDrain.map(q => promisify(q.publish).bind(q)())
-    );
+    const allPublishes = Promise.all(toDrain.map(q => q.publish.bind(q)()));
 
     allPublishes
       .then(() => allDrains)

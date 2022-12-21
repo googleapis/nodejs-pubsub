@@ -23,10 +23,7 @@ import {Publisher, PubsubMessage, PublishCallback} from './';
 import {google} from '../../protos/protos';
 import * as tracing from '../telemetry-tracing';
 import {filterMessage} from './pubsub-message';
-
-export interface PublishDone {
-  (err: ServiceError | null): void;
-}
+import {promisify} from 'util';
 
 /**
  * Queues are used to manage publishing batches of messages.
@@ -73,29 +70,43 @@ export abstract class MessageQueue extends EventEmitter {
    *
    * @abstract
    */
-  abstract publish(): void;
+  abstract publish(): Promise<void>;
   /**
    * Accepts a batch of messages and publishes them to the API.
    *
    * @param {object[]} messages The messages to publish.
    * @param {PublishCallback[]} callbacks The corresponding callback functions.
-   * @param {function} [callback] Callback to be fired when publish is done.
    */
-  _publish(
+  async _publish(
     messages: PubsubMessage[],
-    callbacks: PublishCallback[],
-    callback?: PublishDone
-  ): void {
+    callbacks: PublishCallback[]
+  ): Promise<void> {
     const {topic, settings} = this.publisher;
     const reqOpts = {
       topic: topic.name,
       messages: messages.map(filterMessage),
     };
     if (messages.length === 0) {
-      if (typeof callback === 'function') {
-        callback(null);
-      }
       return;
+    }
+
+    // Make sure we have a projectId filled in to update telemetry spans.
+    // The overall spans may not have the correct projectId because it wasn't
+    // known at the time publishMessage was called.
+    const anySpans = !!messages.find(m => m.telemetrySpan);
+    if (anySpans) {
+      if (!topic.pubsub.isIdResolved) {
+        await topic.pubsub.getClientConfig();
+      }
+
+      messages.forEach(m => {
+        if (m.telemetrySpan) {
+          tracing.SpanMaker.updatePublisherTopicName(
+            m.telemetrySpan,
+            topic.name
+          );
+        }
+      });
     }
 
     messages.forEach(m => {
@@ -105,27 +116,31 @@ export abstract class MessageQueue extends EventEmitter {
       }
     });
 
-    topic.request<google.pubsub.v1.IPublishResponse>(
-      {
+    const requestCallback = topic.request<google.pubsub.v1.IPublishResponse>;
+    const request = promisify(requestCallback.bind(topic));
+    try {
+      const resp = await request({
         client: 'PublisherClient',
         method: 'publish',
         reqOpts,
         gaxOpts: settings.gaxOpts!,
-      },
-      (err, resp) => {
-        messages.forEach(m => {
-          m.telemetryRpc?.end();
-          m.telemetrySpan?.end();
-        });
+      });
 
-        const messageIds = (resp && resp.messageIds) || [];
-        callbacks.forEach((callback, i) => callback(err, messageIds[i]));
-
-        if (typeof callback === 'function') {
-          callback(err);
-        }
+      if (resp) {
+        const messageIds = resp.messageIds || [];
+        callbacks.forEach((callback, i) => callback(null, messageIds[i]));
       }
-    );
+    } catch (e) {
+      const err = e as ServiceError;
+      callbacks.forEach(callback => callback(err));
+
+      throw e;
+    } finally {
+      messages.forEach(m => {
+        m.telemetryRpc?.end();
+        m.telemetrySpan?.end();
+      });
+    }
   }
 }
 
@@ -158,18 +173,24 @@ export class Queue extends MessageQueue {
    */
   add(message: PubsubMessage, callback: PublishCallback): void {
     if (!this.batch.canFit(message)) {
-      this.publish();
+      // Ignore errors.
+      this.publish().catch(() => {});
     }
 
-    message.telemetryBatching = tracing.SpanMaker.createPublishBatchSpan(message);
+    message.telemetryBatching =
+      tracing.SpanMaker.createPublishBatchSpan(message);
 
     this.batch.add(message, callback);
 
     if (this.batch.isFull()) {
-      this.publish();
+      // Ignore errors.
+      this.publish().catch(() => {});
     } else if (!this.pending) {
       const {maxMilliseconds} = this.batchOptions;
-      this.pending = setTimeout(() => this.publish(), maxMilliseconds!);
+      this.pending = setTimeout(() => {
+        // Ignore errors.
+        this.publish().catch(() => {});
+      }, maxMilliseconds!);
     }
   }
   /**
@@ -177,8 +198,7 @@ export class Queue extends MessageQueue {
    *
    * @emits Queue#drain when all messages are sent.
    */
-  publish(callback?: PublishDone): void {
-    const definedCallback = callback || (() => {});
+  async publish(): Promise<void> {
     const {messages, callbacks} = this.batch;
 
     this.batch = new MessageBatch(this.batchOptions);
@@ -190,17 +210,13 @@ export class Queue extends MessageQueue {
 
     messages.forEach(m => m.telemetryBatching?.end());
 
-    this._publish(messages, callbacks, (err: null | ServiceError) => {
-      if (err) {
-        definedCallback(err);
-      } else if (this.batch.messages.length) {
-        // Make another go-around, we're trying to drain the queues fully.
-        this.publish(callback);
-      } else {
-        this.emit('drain');
-        definedCallback(null);
-      }
-    });
+    await this._publish(messages, callbacks);
+    if (this.batch.messages.length) {
+      // Make another go-around, we're trying to drain the queues fully.
+      await this.publish();
+    } else {
+      this.emit('drain');
+    }
   }
 }
 
@@ -267,7 +283,8 @@ export class OrderedQueue extends MessageQueue {
     }
 
     if (!this.currentBatch.canFit(message)) {
-      this.publish();
+      // Ignore errors.
+      this.publish().catch(() => {});
     }
 
     this.currentBatch.add(message, callback);
@@ -276,7 +293,8 @@ export class OrderedQueue extends MessageQueue {
     // check again here
     if (!this.inFlight) {
       if (this.currentBatch.isFull()) {
-        this.publish();
+        // Ignore errors.
+        this.publish().catch(() => {});
       } else if (!this.pending) {
         this.beginNextPublish();
       }
@@ -290,7 +308,10 @@ export class OrderedQueue extends MessageQueue {
     const timeWaiting = Date.now() - this.currentBatch.created;
     const delay = Math.max(0, maxMilliseconds - timeWaiting);
 
-    this.pending = setTimeout(() => this.publish(), delay);
+    this.pending = setTimeout(() => {
+      // Ignore errors.
+      this.publish().catch(() => {});
+    }, delay);
   }
   /**
    * Creates a new {@link MessageBatch} instance.
@@ -325,8 +346,7 @@ export class OrderedQueue extends MessageQueue {
    *
    * @fires OrderedQueue#drain
    */
-  publish(callback?: PublishDone): void {
-    const definedCallback = callback || (() => {});
+  async publish(): Promise<void> {
     this.inFlight = true;
 
     if (this.pending) {
@@ -336,19 +356,21 @@ export class OrderedQueue extends MessageQueue {
 
     const {messages, callbacks} = this.batches.pop()!;
 
-    this._publish(messages, callbacks, (err: null | ServiceError) => {
+    try {
+      await this._publish(messages, callbacks);
+    } catch (e) {
+      const err = e as ServiceError;
       this.inFlight = false;
+      this.handlePublishFailure(err);
+    } finally {
+      this.inFlight = false;
+    }
 
-      if (err) {
-        this.handlePublishFailure(err);
-        definedCallback(err);
-      } else if (this.batches.length) {
-        this.beginNextPublish();
-      } else {
-        this.emit('drain');
-        definedCallback(null);
-      }
-    });
+    if (this.batches.length) {
+      this.beginNextPublish();
+    } else {
+      this.emit('drain');
+    }
   }
 
   /**
