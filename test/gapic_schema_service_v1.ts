@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -481,6 +481,397 @@ describe('v1.SchemaServiceClient', () => {
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.getSchema(request), expectedError);
+    });
+  });
+
+  describe('commitSchema', () => {
+    it('invokes commitSchema without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.CommitSchemaRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CommitSchemaRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.Schema()
+      );
+      client.innerApiCalls.commitSchema = stubSimpleCall(expectedResponse);
+      const [response] = await client.commitSchema(request);
+      assert.deepStrictEqual(response, expectedResponse);
+      const actualRequest = (
+        client.innerApiCalls.commitSchema as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.commitSchema as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes commitSchema without error using callback', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.CommitSchemaRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CommitSchemaRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.Schema()
+      );
+      client.innerApiCalls.commitSchema =
+        stubSimpleCallWithCallback(expectedResponse);
+      const promise = new Promise((resolve, reject) => {
+        client.commitSchema(
+          request,
+          (
+            err?: Error | null,
+            result?: protos.google.pubsub.v1.ISchema | null
+          ) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+      });
+      const response = await promise;
+      assert.deepStrictEqual(response, expectedResponse);
+      const actualRequest = (
+        client.innerApiCalls.commitSchema as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.commitSchema as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes commitSchema with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.CommitSchemaRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CommitSchemaRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedError = new Error('expected');
+      client.innerApiCalls.commitSchema = stubSimpleCall(
+        undefined,
+        expectedError
+      );
+      await assert.rejects(client.commitSchema(request), expectedError);
+      const actualRequest = (
+        client.innerApiCalls.commitSchema as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.commitSchema as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes commitSchema with closed client', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.CommitSchemaRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CommitSchemaRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.commitSchema(request), expectedError);
+    });
+  });
+
+  describe('rollbackSchema', () => {
+    it('invokes rollbackSchema without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.RollbackSchemaRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.RollbackSchemaRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.Schema()
+      );
+      client.innerApiCalls.rollbackSchema = stubSimpleCall(expectedResponse);
+      const [response] = await client.rollbackSchema(request);
+      assert.deepStrictEqual(response, expectedResponse);
+      const actualRequest = (
+        client.innerApiCalls.rollbackSchema as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.rollbackSchema as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes rollbackSchema without error using callback', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.RollbackSchemaRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.RollbackSchemaRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.Schema()
+      );
+      client.innerApiCalls.rollbackSchema =
+        stubSimpleCallWithCallback(expectedResponse);
+      const promise = new Promise((resolve, reject) => {
+        client.rollbackSchema(
+          request,
+          (
+            err?: Error | null,
+            result?: protos.google.pubsub.v1.ISchema | null
+          ) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+      });
+      const response = await promise;
+      assert.deepStrictEqual(response, expectedResponse);
+      const actualRequest = (
+        client.innerApiCalls.rollbackSchema as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.rollbackSchema as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes rollbackSchema with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.RollbackSchemaRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.RollbackSchemaRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedError = new Error('expected');
+      client.innerApiCalls.rollbackSchema = stubSimpleCall(
+        undefined,
+        expectedError
+      );
+      await assert.rejects(client.rollbackSchema(request), expectedError);
+      const actualRequest = (
+        client.innerApiCalls.rollbackSchema as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.rollbackSchema as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes rollbackSchema with closed client', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.RollbackSchemaRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.RollbackSchemaRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.rollbackSchema(request), expectedError);
+    });
+  });
+
+  describe('deleteSchemaRevision', () => {
+    it('invokes deleteSchemaRevision without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSchemaRevisionRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.Schema()
+      );
+      client.innerApiCalls.deleteSchemaRevision =
+        stubSimpleCall(expectedResponse);
+      const [response] = await client.deleteSchemaRevision(request);
+      assert.deepStrictEqual(response, expectedResponse);
+      const actualRequest = (
+        client.innerApiCalls.deleteSchemaRevision as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteSchemaRevision as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes deleteSchemaRevision without error using callback', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSchemaRevisionRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedResponse = generateSampleMessage(
+        new protos.google.pubsub.v1.Schema()
+      );
+      client.innerApiCalls.deleteSchemaRevision =
+        stubSimpleCallWithCallback(expectedResponse);
+      const promise = new Promise((resolve, reject) => {
+        client.deleteSchemaRevision(
+          request,
+          (
+            err?: Error | null,
+            result?: protos.google.pubsub.v1.ISchema | null
+          ) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+      });
+      const response = await promise;
+      assert.deepStrictEqual(response, expectedResponse);
+      const actualRequest = (
+        client.innerApiCalls.deleteSchemaRevision as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteSchemaRevision as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes deleteSchemaRevision with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSchemaRevisionRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedError = new Error('expected');
+      client.innerApiCalls.deleteSchemaRevision = stubSimpleCall(
+        undefined,
+        expectedError
+      );
+      await assert.rejects(client.deleteSchemaRevision(request), expectedError);
+      const actualRequest = (
+        client.innerApiCalls.deleteSchemaRevision as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteSchemaRevision as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes deleteSchemaRevision with closed client', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSchemaRevisionRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedError = new Error('The client has already been closed.');
+      client.close();
+      await assert.rejects(client.deleteSchemaRevision(request), expectedError);
     });
   });
 
@@ -1165,6 +1556,302 @@ describe('v1.SchemaServiceClient', () => {
       );
       assert(
         (client.descriptors.page.listSchemas.asyncIterate as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
+      );
+    });
+  });
+
+  describe('listSchemaRevisions', () => {
+    it('invokes listSchemaRevisions without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemaRevisionsRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedResponse = [
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+      ];
+      client.innerApiCalls.listSchemaRevisions =
+        stubSimpleCall(expectedResponse);
+      const [response] = await client.listSchemaRevisions(request);
+      assert.deepStrictEqual(response, expectedResponse);
+      const actualRequest = (
+        client.innerApiCalls.listSchemaRevisions as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listSchemaRevisions as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes listSchemaRevisions without error using callback', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemaRevisionsRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedResponse = [
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+      ];
+      client.innerApiCalls.listSchemaRevisions =
+        stubSimpleCallWithCallback(expectedResponse);
+      const promise = new Promise((resolve, reject) => {
+        client.listSchemaRevisions(
+          request,
+          (
+            err?: Error | null,
+            result?: protos.google.pubsub.v1.ISchema[] | null
+          ) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+      });
+      const response = await promise;
+      assert.deepStrictEqual(response, expectedResponse);
+      const actualRequest = (
+        client.innerApiCalls.listSchemaRevisions as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listSchemaRevisions as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes listSchemaRevisions with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemaRevisionsRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedError = new Error('expected');
+      client.innerApiCalls.listSchemaRevisions = stubSimpleCall(
+        undefined,
+        expectedError
+      );
+      await assert.rejects(client.listSchemaRevisions(request), expectedError);
+      const actualRequest = (
+        client.innerApiCalls.listSchemaRevisions as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listSchemaRevisions as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
+    });
+
+    it('invokes listSchemaRevisionsStream without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemaRevisionsRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedResponse = [
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+      ];
+      client.descriptors.page.listSchemaRevisions.createStream =
+        stubPageStreamingCall(expectedResponse);
+      const stream = client.listSchemaRevisionsStream(request);
+      const promise = new Promise((resolve, reject) => {
+        const responses: protos.google.pubsub.v1.Schema[] = [];
+        stream.on('data', (response: protos.google.pubsub.v1.Schema) => {
+          responses.push(response);
+        });
+        stream.on('end', () => {
+          resolve(responses);
+        });
+        stream.on('error', (err: Error) => {
+          reject(err);
+        });
+      });
+      const responses = await promise;
+      assert.deepStrictEqual(responses, expectedResponse);
+      assert(
+        (client.descriptors.page.listSchemaRevisions.createStream as SinonStub)
+          .getCall(0)
+          .calledWith(client.innerApiCalls.listSchemaRevisions, request)
+      );
+      assert(
+        (client.descriptors.page.listSchemaRevisions.createStream as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
+      );
+    });
+
+    it('invokes listSchemaRevisionsStream with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemaRevisionsRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedError = new Error('expected');
+      client.descriptors.page.listSchemaRevisions.createStream =
+        stubPageStreamingCall(undefined, expectedError);
+      const stream = client.listSchemaRevisionsStream(request);
+      const promise = new Promise((resolve, reject) => {
+        const responses: protos.google.pubsub.v1.Schema[] = [];
+        stream.on('data', (response: protos.google.pubsub.v1.Schema) => {
+          responses.push(response);
+        });
+        stream.on('end', () => {
+          resolve(responses);
+        });
+        stream.on('error', (err: Error) => {
+          reject(err);
+        });
+      });
+      await assert.rejects(promise, expectedError);
+      assert(
+        (client.descriptors.page.listSchemaRevisions.createStream as SinonStub)
+          .getCall(0)
+          .calledWith(client.innerApiCalls.listSchemaRevisions, request)
+      );
+      assert(
+        (client.descriptors.page.listSchemaRevisions.createStream as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
+      );
+    });
+
+    it('uses async iteration with listSchemaRevisions without error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemaRevisionsRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedResponse = [
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+        generateSampleMessage(new protos.google.pubsub.v1.Schema()),
+      ];
+      client.descriptors.page.listSchemaRevisions.asyncIterate =
+        stubAsyncIterationCall(expectedResponse);
+      const responses: protos.google.pubsub.v1.ISchema[] = [];
+      const iterable = client.listSchemaRevisionsAsync(request);
+      for await (const resource of iterable) {
+        responses.push(resource!);
+      }
+      assert.deepStrictEqual(responses, expectedResponse);
+      assert.deepStrictEqual(
+        (
+          client.descriptors.page.listSchemaRevisions.asyncIterate as SinonStub
+        ).getCall(0).args[1],
+        request
+      );
+      assert(
+        (client.descriptors.page.listSchemaRevisions.asyncIterate as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
+      );
+    });
+
+    it('uses async iteration with listSchemaRevisions with error', async () => {
+      const client = new schemaserviceModule.v1.SchemaServiceClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      const request = generateSampleMessage(
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+      );
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSchemaRevisionsRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedError = new Error('expected');
+      client.descriptors.page.listSchemaRevisions.asyncIterate =
+        stubAsyncIterationCall(undefined, expectedError);
+      const iterable = client.listSchemaRevisionsAsync(request);
+      await assert.rejects(async () => {
+        const responses: protos.google.pubsub.v1.ISchema[] = [];
+        for await (const resource of iterable) {
+          responses.push(resource!);
+        }
+      });
+      assert.deepStrictEqual(
+        (
+          client.descriptors.page.listSchemaRevisions.asyncIterate as SinonStub
+        ).getCall(0).args[1],
+        request
+      );
+      assert(
+        (client.descriptors.page.listSchemaRevisions.asyncIterate as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers['x-goog-request-params'].includes(
             expectedHeaderRequestParams
