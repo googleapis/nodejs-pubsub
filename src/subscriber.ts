@@ -526,10 +526,9 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    // Ignore this in this version of the method (but hook then/catch
+    // Ignore this in this version of the method (but hook catch
     // to avoid unhandled exceptions).
     const resultPromise = this._acks.add(message);
-    resultPromise.then(() => {});
     resultPromise.catch(() => {});
 
     await this._acks.onFlush();
@@ -606,7 +605,6 @@ export class Subscriber extends EventEmitter {
     const startTime = Date.now();
 
     const responsePromise = this._modAcks.add(message, deadline);
-    responsePromise.then(() => {});
     responsePromise.catch(() => {});
 
     await this._modAcks.onFlush();
