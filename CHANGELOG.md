@@ -4,6 +4,18 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.3.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.2.1...v3.3.0) (2023-01-23)
+
+
+### Features
+
+* Add schema evolution methods and fields ([#1672](https://github.com/googleapis/nodejs-pubsub/issues/1672)) ([7a5bc29](https://github.com/googleapis/nodejs-pubsub/commit/7a5bc29e8a39e5c1991a5eae4200a5045f21997d))
+
+
+### Bug Fixes
+
+* Remove redundant .then() ([#1671](https://github.com/googleapis/nodejs-pubsub/issues/1671)) ([108edc3](https://github.com/googleapis/nodejs-pubsub/commit/108edc3cd2d3d512e2a9777a68541dae1f6aba23))
+
 ## [3.2.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.2.0...v3.2.1) (2022-11-04)
 
 
