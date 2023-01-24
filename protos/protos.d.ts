@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Long from "long";
-import {protobuf as $protobuf} from "google-gax";
+import type {protobuf as $protobuf} from "google-gax";
+import Long = require("long");
 /** Namespace google. */
 export namespace google {
 
@@ -173,63 +173,63 @@ export namespace google {
             namespace Publisher {
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#createTopic}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher|createTopic}.
                  * @param error Error, if any
                  * @param [response] Topic
                  */
                 type CreateTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#updateTopic}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher|updateTopic}.
                  * @param error Error, if any
                  * @param [response] Topic
                  */
                 type UpdateTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#publish}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher|publish}.
                  * @param error Error, if any
                  * @param [response] PublishResponse
                  */
                 type PublishCallback = (error: (Error|null), response?: google.pubsub.v1.PublishResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#getTopic}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher|getTopic}.
                  * @param error Error, if any
                  * @param [response] Topic
                  */
                 type GetTopicCallback = (error: (Error|null), response?: google.pubsub.v1.Topic) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopics}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher|listTopics}.
                  * @param error Error, if any
                  * @param [response] ListTopicsResponse
                  */
                 type ListTopicsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicsResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSubscriptions}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher|listTopicSubscriptions}.
                  * @param error Error, if any
                  * @param [response] ListTopicSubscriptionsResponse
                  */
                 type ListTopicSubscriptionsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicSubscriptionsResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#listTopicSnapshots}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher|listTopicSnapshots}.
                  * @param error Error, if any
                  * @param [response] ListTopicSnapshotsResponse
                  */
                 type ListTopicSnapshotsCallback = (error: (Error|null), response?: google.pubsub.v1.ListTopicSnapshotsResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#deleteTopic}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher|deleteTopic}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type DeleteTopicCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Publisher#detachSubscription}.
+                 * Callback as used by {@link google.pubsub.v1.Publisher|detachSubscription}.
                  * @param error Error, if any
                  * @param [response] DetachSubscriptionResponse
                  */
@@ -324,6 +324,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for MessageStoragePolicy
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a SchemaSettings. */
@@ -334,6 +341,12 @@ export namespace google {
 
                 /** SchemaSettings encoding */
                 encoding?: (google.pubsub.v1.Encoding|keyof typeof google.pubsub.v1.Encoding|null);
+
+                /** SchemaSettings firstRevisionId */
+                firstRevisionId?: (string|null);
+
+                /** SchemaSettings lastRevisionId */
+                lastRevisionId?: (string|null);
             }
 
             /** Represents a SchemaSettings. */
@@ -350,6 +363,12 @@ export namespace google {
 
                 /** SchemaSettings encoding. */
                 public encoding: (google.pubsub.v1.Encoding|keyof typeof google.pubsub.v1.Encoding);
+
+                /** SchemaSettings firstRevisionId. */
+                public firstRevisionId: string;
+
+                /** SchemaSettings lastRevisionId. */
+                public lastRevisionId: string;
 
                 /**
                  * Creates a new SchemaSettings instance using the specified properties.
@@ -420,6 +439,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for SchemaSettings
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a Topic. */
@@ -546,6 +572,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Topic
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a PubsubMessage. */
@@ -660,6 +693,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for PubsubMessage
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a GetTopicRequest. */
@@ -750,6 +790,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for GetTopicRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of an UpdateTopicRequest. */
@@ -846,6 +893,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for UpdateTopicRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a PublishRequest. */
@@ -942,6 +996,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for PublishRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a PublishResponse. */
@@ -1032,6 +1093,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for PublishResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListTopicsRequest. */
@@ -1134,6 +1202,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListTopicsRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListTopicsResponse. */
@@ -1230,6 +1305,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListTopicsResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListTopicSubscriptionsRequest. */
@@ -1332,6 +1414,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListTopicSubscriptionsRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListTopicSubscriptionsResponse. */
@@ -1428,6 +1517,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListTopicSubscriptionsResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListTopicSnapshotsRequest. */
@@ -1530,6 +1626,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListTopicSnapshotsRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListTopicSnapshotsResponse. */
@@ -1626,6 +1729,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListTopicSnapshotsResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a DeleteTopicRequest. */
@@ -1716,6 +1826,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for DeleteTopicRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a DetachSubscriptionRequest. */
@@ -1806,6 +1923,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for DetachSubscriptionRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a DetachSubscriptionResponse. */
@@ -1890,6 +2014,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for DetachSubscriptionResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Represents a Subscriber */
@@ -2140,112 +2271,112 @@ export namespace google {
             namespace Subscriber {
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#createSubscription}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|createSubscription}.
                  * @param error Error, if any
                  * @param [response] Subscription
                  */
                 type CreateSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#getSubscription}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|getSubscription}.
                  * @param error Error, if any
                  * @param [response] Subscription
                  */
                 type GetSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#updateSubscription}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|updateSubscription}.
                  * @param error Error, if any
                  * @param [response] Subscription
                  */
                 type UpdateSubscriptionCallback = (error: (Error|null), response?: google.pubsub.v1.Subscription) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#listSubscriptions}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|listSubscriptions}.
                  * @param error Error, if any
                  * @param [response] ListSubscriptionsResponse
                  */
                 type ListSubscriptionsCallback = (error: (Error|null), response?: google.pubsub.v1.ListSubscriptionsResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSubscription}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|deleteSubscription}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type DeleteSubscriptionCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#modifyAckDeadline}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|modifyAckDeadline}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type ModifyAckDeadlineCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#acknowledge}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|acknowledge}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type AcknowledgeCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#pull}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|pull}.
                  * @param error Error, if any
                  * @param [response] PullResponse
                  */
                 type PullCallback = (error: (Error|null), response?: google.pubsub.v1.PullResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#streamingPull}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|streamingPull}.
                  * @param error Error, if any
                  * @param [response] StreamingPullResponse
                  */
                 type StreamingPullCallback = (error: (Error|null), response?: google.pubsub.v1.StreamingPullResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#modifyPushConfig}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|modifyPushConfig}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type ModifyPushConfigCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#getSnapshot}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|getSnapshot}.
                  * @param error Error, if any
                  * @param [response] Snapshot
                  */
                 type GetSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#listSnapshots}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|listSnapshots}.
                  * @param error Error, if any
                  * @param [response] ListSnapshotsResponse
                  */
                 type ListSnapshotsCallback = (error: (Error|null), response?: google.pubsub.v1.ListSnapshotsResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#createSnapshot}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|createSnapshot}.
                  * @param error Error, if any
                  * @param [response] Snapshot
                  */
                 type CreateSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#updateSnapshot}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|updateSnapshot}.
                  * @param error Error, if any
                  * @param [response] Snapshot
                  */
                 type UpdateSnapshotCallback = (error: (Error|null), response?: google.pubsub.v1.Snapshot) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#deleteSnapshot}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|deleteSnapshot}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type DeleteSnapshotCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.Subscriber#seek}.
+                 * Callback as used by {@link google.pubsub.v1.Subscriber|seek}.
                  * @param error Error, if any
                  * @param [response] SeekResponse
                  */
@@ -2436,6 +2567,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Subscription
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             namespace Subscription {
@@ -2542,6 +2680,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RetryPolicy
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a DeadLetterPolicy. */
@@ -2638,6 +2783,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for DeadLetterPolicy
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of an ExpirationPolicy. */
@@ -2728,6 +2880,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ExpirationPolicy
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a PushConfig. */
@@ -2833,6 +2992,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for PushConfig
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             namespace PushConfig {
@@ -2931,6 +3097,13 @@ export namespace google {
                      * @returns JSON object
                      */
                     public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for OidcToken
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
                 }
             }
 
@@ -3046,6 +3219,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for BigQueryConfig
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             namespace BigQueryConfig {
@@ -3160,6 +3340,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ReceivedMessage
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a GetSubscriptionRequest. */
@@ -3250,6 +3437,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for GetSubscriptionRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of an UpdateSubscriptionRequest. */
@@ -3346,6 +3540,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for UpdateSubscriptionRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListSubscriptionsRequest. */
@@ -3448,6 +3649,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListSubscriptionsRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListSubscriptionsResponse. */
@@ -3544,6 +3752,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListSubscriptionsResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a DeleteSubscriptionRequest. */
@@ -3634,6 +3849,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for DeleteSubscriptionRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ModifyPushConfigRequest. */
@@ -3730,6 +3952,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ModifyPushConfigRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a PullRequest. */
@@ -3832,6 +4061,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for PullRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a PullResponse. */
@@ -3922,6 +4158,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for PullResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ModifyAckDeadlineRequest. */
@@ -4024,6 +4267,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ModifyAckDeadlineRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of an AcknowledgeRequest. */
@@ -4120,6 +4370,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for AcknowledgeRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a StreamingPullRequest. */
@@ -4252,6 +4509,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for StreamingPullRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a StreamingPullResponse. */
@@ -4360,6 +4624,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for StreamingPullResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             namespace StreamingPullResponse {
@@ -4464,6 +4735,13 @@ export namespace google {
                      * @returns JSON object
                      */
                     public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for AcknowledgeConfirmation
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
                 }
 
                 /** Properties of a ModifyAckDeadlineConfirmation. */
@@ -4560,6 +4838,13 @@ export namespace google {
                      * @returns JSON object
                      */
                     public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for ModifyAckDeadlineConfirmation
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
                 }
 
                 /** Properties of a SubscriptionProperties. */
@@ -4656,6 +4941,13 @@ export namespace google {
                      * @returns JSON object
                      */
                     public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for SubscriptionProperties
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
                 }
             }
 
@@ -4759,6 +5051,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for CreateSnapshotRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of an UpdateSnapshotRequest. */
@@ -4855,6 +5154,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for UpdateSnapshotRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a Snapshot. */
@@ -4963,6 +5269,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Snapshot
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a GetSnapshotRequest. */
@@ -5053,6 +5366,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for GetSnapshotRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListSnapshotsRequest. */
@@ -5155,6 +5475,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListSnapshotsRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListSnapshotsResponse. */
@@ -5251,6 +5578,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListSnapshotsResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a DeleteSnapshotRequest. */
@@ -5341,6 +5675,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for DeleteSnapshotRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a SeekRequest. */
@@ -5446,6 +5787,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for SeekRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a SeekResponse. */
@@ -5530,6 +5878,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for SeekResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Represents a SchemaService */
@@ -5595,6 +5950,62 @@ export namespace google {
                 public listSchemas(request: google.pubsub.v1.IListSchemasRequest): Promise<google.pubsub.v1.ListSchemasResponse>;
 
                 /**
+                 * Calls ListSchemaRevisions.
+                 * @param request ListSchemaRevisionsRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and ListSchemaRevisionsResponse
+                 */
+                public listSchemaRevisions(request: google.pubsub.v1.IListSchemaRevisionsRequest, callback: google.pubsub.v1.SchemaService.ListSchemaRevisionsCallback): void;
+
+                /**
+                 * Calls ListSchemaRevisions.
+                 * @param request ListSchemaRevisionsRequest message or plain object
+                 * @returns Promise
+                 */
+                public listSchemaRevisions(request: google.pubsub.v1.IListSchemaRevisionsRequest): Promise<google.pubsub.v1.ListSchemaRevisionsResponse>;
+
+                /**
+                 * Calls CommitSchema.
+                 * @param request CommitSchemaRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Schema
+                 */
+                public commitSchema(request: google.pubsub.v1.ICommitSchemaRequest, callback: google.pubsub.v1.SchemaService.CommitSchemaCallback): void;
+
+                /**
+                 * Calls CommitSchema.
+                 * @param request CommitSchemaRequest message or plain object
+                 * @returns Promise
+                 */
+                public commitSchema(request: google.pubsub.v1.ICommitSchemaRequest): Promise<google.pubsub.v1.Schema>;
+
+                /**
+                 * Calls RollbackSchema.
+                 * @param request RollbackSchemaRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Schema
+                 */
+                public rollbackSchema(request: google.pubsub.v1.IRollbackSchemaRequest, callback: google.pubsub.v1.SchemaService.RollbackSchemaCallback): void;
+
+                /**
+                 * Calls RollbackSchema.
+                 * @param request RollbackSchemaRequest message or plain object
+                 * @returns Promise
+                 */
+                public rollbackSchema(request: google.pubsub.v1.IRollbackSchemaRequest): Promise<google.pubsub.v1.Schema>;
+
+                /**
+                 * Calls DeleteSchemaRevision.
+                 * @param request DeleteSchemaRevisionRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Schema
+                 */
+                public deleteSchemaRevision(request: google.pubsub.v1.IDeleteSchemaRevisionRequest, callback: google.pubsub.v1.SchemaService.DeleteSchemaRevisionCallback): void;
+
+                /**
+                 * Calls DeleteSchemaRevision.
+                 * @param request DeleteSchemaRevisionRequest message or plain object
+                 * @returns Promise
+                 */
+                public deleteSchemaRevision(request: google.pubsub.v1.IDeleteSchemaRevisionRequest): Promise<google.pubsub.v1.Schema>;
+
+                /**
                  * Calls DeleteSchema.
                  * @param request DeleteSchemaRequest message or plain object
                  * @param callback Node-style callback called with the error, if any, and Empty
@@ -5640,42 +6051,70 @@ export namespace google {
             namespace SchemaService {
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService#createSchema}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService|createSchema}.
                  * @param error Error, if any
                  * @param [response] Schema
                  */
                 type CreateSchemaCallback = (error: (Error|null), response?: google.pubsub.v1.Schema) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService#getSchema}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService|getSchema}.
                  * @param error Error, if any
                  * @param [response] Schema
                  */
                 type GetSchemaCallback = (error: (Error|null), response?: google.pubsub.v1.Schema) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService#listSchemas}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService|listSchemas}.
                  * @param error Error, if any
                  * @param [response] ListSchemasResponse
                  */
                 type ListSchemasCallback = (error: (Error|null), response?: google.pubsub.v1.ListSchemasResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService#deleteSchema}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService|listSchemaRevisions}.
+                 * @param error Error, if any
+                 * @param [response] ListSchemaRevisionsResponse
+                 */
+                type ListSchemaRevisionsCallback = (error: (Error|null), response?: google.pubsub.v1.ListSchemaRevisionsResponse) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.SchemaService|commitSchema}.
+                 * @param error Error, if any
+                 * @param [response] Schema
+                 */
+                type CommitSchemaCallback = (error: (Error|null), response?: google.pubsub.v1.Schema) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.SchemaService|rollbackSchema}.
+                 * @param error Error, if any
+                 * @param [response] Schema
+                 */
+                type RollbackSchemaCallback = (error: (Error|null), response?: google.pubsub.v1.Schema) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.SchemaService|deleteSchemaRevision}.
+                 * @param error Error, if any
+                 * @param [response] Schema
+                 */
+                type DeleteSchemaRevisionCallback = (error: (Error|null), response?: google.pubsub.v1.Schema) => void;
+
+                /**
+                 * Callback as used by {@link google.pubsub.v1.SchemaService|deleteSchema}.
                  * @param error Error, if any
                  * @param [response] Empty
                  */
                 type DeleteSchemaCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService#validateSchema}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService|validateSchema}.
                  * @param error Error, if any
                  * @param [response] ValidateSchemaResponse
                  */
                 type ValidateSchemaCallback = (error: (Error|null), response?: google.pubsub.v1.ValidateSchemaResponse) => void;
 
                 /**
-                 * Callback as used by {@link google.pubsub.v1.SchemaService#validateMessage}.
+                 * Callback as used by {@link google.pubsub.v1.SchemaService|validateMessage}.
                  * @param error Error, if any
                  * @param [response] ValidateMessageResponse
                  */
@@ -5693,6 +6132,12 @@ export namespace google {
 
                 /** Schema definition */
                 definition?: (string|null);
+
+                /** Schema revisionId */
+                revisionId?: (string|null);
+
+                /** Schema revisionCreateTime */
+                revisionCreateTime?: (google.protobuf.ITimestamp|null);
             }
 
             /** Represents a Schema. */
@@ -5712,6 +6157,12 @@ export namespace google {
 
                 /** Schema definition. */
                 public definition: string;
+
+                /** Schema revisionId. */
+                public revisionId: string;
+
+                /** Schema revisionCreateTime. */
+                public revisionCreateTime?: (google.protobuf.ITimestamp|null);
 
                 /**
                  * Creates a new Schema instance using the specified properties.
@@ -5782,6 +6233,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Schema
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             namespace Schema {
@@ -5792,6 +6250,13 @@ export namespace google {
                     PROTOCOL_BUFFER = 1,
                     AVRO = 2
                 }
+            }
+
+            /** SchemaView enum. */
+            enum SchemaView {
+                SCHEMA_VIEW_UNSPECIFIED = 0,
+                BASIC = 1,
+                FULL = 2
             }
 
             /** Properties of a CreateSchemaRequest. */
@@ -5894,13 +6359,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
-            }
 
-            /** SchemaView enum. */
-            enum SchemaView {
-                SCHEMA_VIEW_UNSPECIFIED = 0,
-                BASIC = 1,
-                FULL = 2
+                /**
+                 * Gets the default type url for CreateSchemaRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a GetSchemaRequest. */
@@ -5997,6 +6462,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for GetSchemaRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListSchemasRequest. */
@@ -6105,6 +6577,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListSchemasRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ListSchemasResponse. */
@@ -6201,6 +6680,540 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListSchemasResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a ListSchemaRevisionsRequest. */
+            interface IListSchemaRevisionsRequest {
+
+                /** ListSchemaRevisionsRequest name */
+                name?: (string|null);
+
+                /** ListSchemaRevisionsRequest view */
+                view?: (google.pubsub.v1.SchemaView|keyof typeof google.pubsub.v1.SchemaView|null);
+
+                /** ListSchemaRevisionsRequest pageSize */
+                pageSize?: (number|null);
+
+                /** ListSchemaRevisionsRequest pageToken */
+                pageToken?: (string|null);
+            }
+
+            /** Represents a ListSchemaRevisionsRequest. */
+            class ListSchemaRevisionsRequest implements IListSchemaRevisionsRequest {
+
+                /**
+                 * Constructs a new ListSchemaRevisionsRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListSchemaRevisionsRequest);
+
+                /** ListSchemaRevisionsRequest name. */
+                public name: string;
+
+                /** ListSchemaRevisionsRequest view. */
+                public view: (google.pubsub.v1.SchemaView|keyof typeof google.pubsub.v1.SchemaView);
+
+                /** ListSchemaRevisionsRequest pageSize. */
+                public pageSize: number;
+
+                /** ListSchemaRevisionsRequest pageToken. */
+                public pageToken: string;
+
+                /**
+                 * Creates a new ListSchemaRevisionsRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListSchemaRevisionsRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListSchemaRevisionsRequest): google.pubsub.v1.ListSchemaRevisionsRequest;
+
+                /**
+                 * Encodes the specified ListSchemaRevisionsRequest message. Does not implicitly {@link google.pubsub.v1.ListSchemaRevisionsRequest.verify|verify} messages.
+                 * @param message ListSchemaRevisionsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListSchemaRevisionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListSchemaRevisionsRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSchemaRevisionsRequest.verify|verify} messages.
+                 * @param message ListSchemaRevisionsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListSchemaRevisionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListSchemaRevisionsRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListSchemaRevisionsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSchemaRevisionsRequest;
+
+                /**
+                 * Decodes a ListSchemaRevisionsRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListSchemaRevisionsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSchemaRevisionsRequest;
+
+                /**
+                 * Verifies a ListSchemaRevisionsRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListSchemaRevisionsRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListSchemaRevisionsRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSchemaRevisionsRequest;
+
+                /**
+                 * Creates a plain object from a ListSchemaRevisionsRequest message. Also converts values to other types if specified.
+                 * @param message ListSchemaRevisionsRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListSchemaRevisionsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListSchemaRevisionsRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListSchemaRevisionsRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a ListSchemaRevisionsResponse. */
+            interface IListSchemaRevisionsResponse {
+
+                /** ListSchemaRevisionsResponse schemas */
+                schemas?: (google.pubsub.v1.ISchema[]|null);
+
+                /** ListSchemaRevisionsResponse nextPageToken */
+                nextPageToken?: (string|null);
+            }
+
+            /** Represents a ListSchemaRevisionsResponse. */
+            class ListSchemaRevisionsResponse implements IListSchemaRevisionsResponse {
+
+                /**
+                 * Constructs a new ListSchemaRevisionsResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IListSchemaRevisionsResponse);
+
+                /** ListSchemaRevisionsResponse schemas. */
+                public schemas: google.pubsub.v1.ISchema[];
+
+                /** ListSchemaRevisionsResponse nextPageToken. */
+                public nextPageToken: string;
+
+                /**
+                 * Creates a new ListSchemaRevisionsResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ListSchemaRevisionsResponse instance
+                 */
+                public static create(properties?: google.pubsub.v1.IListSchemaRevisionsResponse): google.pubsub.v1.ListSchemaRevisionsResponse;
+
+                /**
+                 * Encodes the specified ListSchemaRevisionsResponse message. Does not implicitly {@link google.pubsub.v1.ListSchemaRevisionsResponse.verify|verify} messages.
+                 * @param message ListSchemaRevisionsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IListSchemaRevisionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified ListSchemaRevisionsResponse message, length delimited. Does not implicitly {@link google.pubsub.v1.ListSchemaRevisionsResponse.verify|verify} messages.
+                 * @param message ListSchemaRevisionsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IListSchemaRevisionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a ListSchemaRevisionsResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ListSchemaRevisionsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.ListSchemaRevisionsResponse;
+
+                /**
+                 * Decodes a ListSchemaRevisionsResponse message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns ListSchemaRevisionsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.ListSchemaRevisionsResponse;
+
+                /**
+                 * Verifies a ListSchemaRevisionsResponse message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a ListSchemaRevisionsResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ListSchemaRevisionsResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.ListSchemaRevisionsResponse;
+
+                /**
+                 * Creates a plain object from a ListSchemaRevisionsResponse message. Also converts values to other types if specified.
+                 * @param message ListSchemaRevisionsResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.ListSchemaRevisionsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ListSchemaRevisionsResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ListSchemaRevisionsResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a CommitSchemaRequest. */
+            interface ICommitSchemaRequest {
+
+                /** CommitSchemaRequest name */
+                name?: (string|null);
+
+                /** CommitSchemaRequest schema */
+                schema?: (google.pubsub.v1.ISchema|null);
+            }
+
+            /** Represents a CommitSchemaRequest. */
+            class CommitSchemaRequest implements ICommitSchemaRequest {
+
+                /**
+                 * Constructs a new CommitSchemaRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.ICommitSchemaRequest);
+
+                /** CommitSchemaRequest name. */
+                public name: string;
+
+                /** CommitSchemaRequest schema. */
+                public schema?: (google.pubsub.v1.ISchema|null);
+
+                /**
+                 * Creates a new CommitSchemaRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns CommitSchemaRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.ICommitSchemaRequest): google.pubsub.v1.CommitSchemaRequest;
+
+                /**
+                 * Encodes the specified CommitSchemaRequest message. Does not implicitly {@link google.pubsub.v1.CommitSchemaRequest.verify|verify} messages.
+                 * @param message CommitSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.ICommitSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified CommitSchemaRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.CommitSchemaRequest.verify|verify} messages.
+                 * @param message CommitSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.ICommitSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a CommitSchemaRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns CommitSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.CommitSchemaRequest;
+
+                /**
+                 * Decodes a CommitSchemaRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns CommitSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.CommitSchemaRequest;
+
+                /**
+                 * Verifies a CommitSchemaRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a CommitSchemaRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns CommitSchemaRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.CommitSchemaRequest;
+
+                /**
+                 * Creates a plain object from a CommitSchemaRequest message. Also converts values to other types if specified.
+                 * @param message CommitSchemaRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.CommitSchemaRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this CommitSchemaRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for CommitSchemaRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RollbackSchemaRequest. */
+            interface IRollbackSchemaRequest {
+
+                /** RollbackSchemaRequest name */
+                name?: (string|null);
+
+                /** RollbackSchemaRequest revisionId */
+                revisionId?: (string|null);
+            }
+
+            /** Represents a RollbackSchemaRequest. */
+            class RollbackSchemaRequest implements IRollbackSchemaRequest {
+
+                /**
+                 * Constructs a new RollbackSchemaRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IRollbackSchemaRequest);
+
+                /** RollbackSchemaRequest name. */
+                public name: string;
+
+                /** RollbackSchemaRequest revisionId. */
+                public revisionId: string;
+
+                /**
+                 * Creates a new RollbackSchemaRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RollbackSchemaRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IRollbackSchemaRequest): google.pubsub.v1.RollbackSchemaRequest;
+
+                /**
+                 * Encodes the specified RollbackSchemaRequest message. Does not implicitly {@link google.pubsub.v1.RollbackSchemaRequest.verify|verify} messages.
+                 * @param message RollbackSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IRollbackSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified RollbackSchemaRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.RollbackSchemaRequest.verify|verify} messages.
+                 * @param message RollbackSchemaRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IRollbackSchemaRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RollbackSchemaRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RollbackSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.RollbackSchemaRequest;
+
+                /**
+                 * Decodes a RollbackSchemaRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns RollbackSchemaRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.RollbackSchemaRequest;
+
+                /**
+                 * Verifies a RollbackSchemaRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a RollbackSchemaRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RollbackSchemaRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.RollbackSchemaRequest;
+
+                /**
+                 * Creates a plain object from a RollbackSchemaRequest message. Also converts values to other types if specified.
+                 * @param message RollbackSchemaRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.RollbackSchemaRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RollbackSchemaRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RollbackSchemaRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a DeleteSchemaRevisionRequest. */
+            interface IDeleteSchemaRevisionRequest {
+
+                /** DeleteSchemaRevisionRequest name */
+                name?: (string|null);
+
+                /** DeleteSchemaRevisionRequest revisionId */
+                revisionId?: (string|null);
+            }
+
+            /** Represents a DeleteSchemaRevisionRequest. */
+            class DeleteSchemaRevisionRequest implements IDeleteSchemaRevisionRequest {
+
+                /**
+                 * Constructs a new DeleteSchemaRevisionRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IDeleteSchemaRevisionRequest);
+
+                /** DeleteSchemaRevisionRequest name. */
+                public name: string;
+
+                /** DeleteSchemaRevisionRequest revisionId. */
+                public revisionId: string;
+
+                /**
+                 * Creates a new DeleteSchemaRevisionRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns DeleteSchemaRevisionRequest instance
+                 */
+                public static create(properties?: google.pubsub.v1.IDeleteSchemaRevisionRequest): google.pubsub.v1.DeleteSchemaRevisionRequest;
+
+                /**
+                 * Encodes the specified DeleteSchemaRevisionRequest message. Does not implicitly {@link google.pubsub.v1.DeleteSchemaRevisionRequest.verify|verify} messages.
+                 * @param message DeleteSchemaRevisionRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IDeleteSchemaRevisionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified DeleteSchemaRevisionRequest message, length delimited. Does not implicitly {@link google.pubsub.v1.DeleteSchemaRevisionRequest.verify|verify} messages.
+                 * @param message DeleteSchemaRevisionRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IDeleteSchemaRevisionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a DeleteSchemaRevisionRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns DeleteSchemaRevisionRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.DeleteSchemaRevisionRequest;
+
+                /**
+                 * Decodes a DeleteSchemaRevisionRequest message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns DeleteSchemaRevisionRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.DeleteSchemaRevisionRequest;
+
+                /**
+                 * Verifies a DeleteSchemaRevisionRequest message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a DeleteSchemaRevisionRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns DeleteSchemaRevisionRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.DeleteSchemaRevisionRequest;
+
+                /**
+                 * Creates a plain object from a DeleteSchemaRevisionRequest message. Also converts values to other types if specified.
+                 * @param message DeleteSchemaRevisionRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.DeleteSchemaRevisionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this DeleteSchemaRevisionRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for DeleteSchemaRevisionRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a DeleteSchemaRequest. */
@@ -6291,6 +7304,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for DeleteSchemaRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ValidateSchemaRequest. */
@@ -6387,6 +7407,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ValidateSchemaRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ValidateSchemaResponse. */
@@ -6471,6 +7498,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ValidateSchemaResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ValidateMessageRequest. */
@@ -6588,6 +7622,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ValidateMessageRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ValidateMessageResponse. */
@@ -6672,6 +7713,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ValidateMessageResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Encoding enum. */
@@ -6780,6 +7828,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Http
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a HttpRule. */
@@ -6927,6 +7982,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for HttpRule
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a CustomHttpPattern. */
@@ -7023,6 +8085,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for CustomHttpPattern
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** FieldBehavior enum. */
@@ -7161,6 +8230,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ResourceDescriptor
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         namespace ResourceDescriptor {
@@ -7273,6 +8349,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ResourceReference
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
     }
 
@@ -7367,6 +8450,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for FileDescriptorSet
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a FileDescriptorProto. */
@@ -7407,6 +8497,9 @@ export namespace google {
 
             /** FileDescriptorProto syntax */
             syntax?: (string|null);
+
+            /** FileDescriptorProto edition */
+            edition?: (string|null);
         }
 
         /** Represents a FileDescriptorProto. */
@@ -7453,6 +8546,9 @@ export namespace google {
 
             /** FileDescriptorProto syntax. */
             public syntax: string;
+
+            /** FileDescriptorProto edition. */
+            public edition: string;
 
             /**
              * Creates a new FileDescriptorProto instance using the specified properties.
@@ -7523,6 +8619,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for FileDescriptorProto
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a DescriptorProto. */
@@ -7667,6 +8770,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for DescriptorProto
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         namespace DescriptorProto {
@@ -7771,6 +8881,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ExtensionRange
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a ReservedRange. */
@@ -7867,6 +8984,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ReservedRange
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
         }
 
@@ -7958,6 +9082,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ExtensionRangeOptions
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a FieldDescriptorProto. */
@@ -8108,6 +9239,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for FieldDescriptorProto
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         namespace FieldDescriptorProto {
@@ -8236,6 +9374,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for OneofDescriptorProto
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of an EnumDescriptorProto. */
@@ -8350,6 +9495,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for EnumDescriptorProto
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         namespace EnumDescriptorProto {
@@ -8448,6 +9600,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for EnumReservedRange
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
         }
 
@@ -8551,6 +9710,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for EnumValueDescriptorProto
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a ServiceDescriptorProto. */
@@ -8653,6 +9819,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ServiceDescriptorProto
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a MethodDescriptorProto. */
@@ -8773,6 +9946,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for MethodDescriptorProto
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a FileOptions. */
@@ -8986,6 +10166,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for FileOptions
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         namespace FileOptions {
@@ -9113,6 +10300,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for MessageOptions
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a FieldOptions. */
@@ -9129,6 +10323,9 @@ export namespace google {
 
             /** FieldOptions lazy */
             lazy?: (boolean|null);
+
+            /** FieldOptions unverifiedLazy */
+            unverifiedLazy?: (boolean|null);
 
             /** FieldOptions deprecated */
             deprecated?: (boolean|null);
@@ -9166,6 +10363,9 @@ export namespace google {
 
             /** FieldOptions lazy. */
             public lazy: boolean;
+
+            /** FieldOptions unverifiedLazy. */
+            public unverifiedLazy: boolean;
 
             /** FieldOptions deprecated. */
             public deprecated: boolean;
@@ -9245,6 +10445,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for FieldOptions
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         namespace FieldOptions {
@@ -9352,6 +10559,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for OneofOptions
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of an EnumOptions. */
@@ -9454,6 +10668,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for EnumOptions
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of an EnumValueOptions. */
@@ -9550,6 +10771,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for EnumValueOptions
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a ServiceOptions. */
@@ -9652,6 +10880,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ServiceOptions
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a MethodOptions. */
@@ -9760,6 +10995,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for MethodOptions
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         namespace MethodOptions {
@@ -9896,6 +11138,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for UninterpretedOption
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         namespace UninterpretedOption {
@@ -9994,6 +11243,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for NamePart
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
         }
 
@@ -10085,6 +11341,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for SourceCodeInfo
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         namespace SourceCodeInfo {
@@ -10201,6 +11464,13 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Location
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
         }
 
@@ -10292,6 +11562,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for GeneratedCodeInfo
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         namespace GeneratedCodeInfo {
@@ -10310,6 +11587,9 @@ export namespace google {
 
                 /** Annotation end */
                 end?: (number|null);
+
+                /** Annotation semantic */
+                semantic?: (google.protobuf.GeneratedCodeInfo.Annotation.Semantic|keyof typeof google.protobuf.GeneratedCodeInfo.Annotation.Semantic|null);
             }
 
             /** Represents an Annotation. */
@@ -10332,6 +11612,9 @@ export namespace google {
 
                 /** Annotation end. */
                 public end: number;
+
+                /** Annotation semantic. */
+                public semantic: (google.protobuf.GeneratedCodeInfo.Annotation.Semantic|keyof typeof google.protobuf.GeneratedCodeInfo.Annotation.Semantic);
 
                 /**
                  * Creates a new Annotation instance using the specified properties.
@@ -10402,6 +11685,23 @@ export namespace google {
                  * @returns JSON object
                  */
                 public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Annotation
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            namespace Annotation {
+
+                /** Semantic enum. */
+                enum Semantic {
+                    NONE = 0,
+                    SET = 1,
+                    ALIAS = 2
+                }
             }
         }
 
@@ -10499,6 +11799,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Duration
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of an Empty. */
@@ -10583,6 +11890,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Empty
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a FieldMask. */
@@ -10673,6 +11987,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for FieldMask
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a Timestamp. */
@@ -10769,6 +12090,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Timestamp
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
     }
 }

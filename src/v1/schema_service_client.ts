@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 // ** All changes to this file may be overwritten. **
 
 /* global window */
-import * as gax from 'google-gax';
-import {
+import type * as gax from 'google-gax';
+import type {
   Callback,
   CallOptions,
   Descriptors,
@@ -28,9 +28,7 @@ import {
   IamClient,
   IamProtos,
 } from 'google-gax';
-
 import {Transform} from 'stream';
-import {RequestType} from 'google-gax/build/src/apitypes';
 import * as protos from '../../protos/protos';
 import jsonProtos = require('../../protos/protos.json');
 /**
@@ -39,7 +37,6 @@ import jsonProtos = require('../../protos/protos.json');
  * This file defines retry strategy and timeouts for all API methods in this library.
  */
 import * as gapicConfig from './schema_service_client_config.json';
-
 const version = require('../../../package.json').version;
 
 /**
@@ -100,8 +97,18 @@ export class SchemaServiceClient {
    *     Pass "rest" to use HTTP/1.1 REST API instead of gRPC.
    *     For more information, please check the
    *     {@link https://github.com/googleapis/gax-nodejs/blob/main/client-libraries.md#http11-rest-api-mode documentation}.
+   * @param {gax} [gaxInstance]: loaded instance of `google-gax`. Useful if you
+   *     need to avoid loading the default gRPC version and want to use the fallback
+   *     HTTP implementation. Load only fallback version and pass it to the constructor:
+   *     ```
+   *     const gax = require('google-gax/build/src/fallback'); // avoids loading google-gax with gRPC
+   *     const client = new SchemaServiceClient({fallback: 'rest'}, gax);
+   *     ```
    */
-  constructor(opts?: ClientOptions) {
+  constructor(
+    opts?: ClientOptions,
+    gaxInstance?: typeof gax | typeof gax.fallback
+  ) {
     // Ensure that options include all the required fields.
     const staticMembers = this.constructor as typeof SchemaServiceClient;
     const servicePath =
@@ -116,13 +123,21 @@ export class SchemaServiceClient {
       (typeof window !== 'undefined' && typeof window?.fetch === 'function');
     opts = Object.assign({servicePath, port, clientConfig, fallback}, opts);
 
+    // Request numeric enum values if REST transport is used.
+    opts.numericEnums = true;
+
     // If scopes are unset in options and we're connecting to a non-default endpoint, set scopes just in case.
     if (servicePath !== staticMembers.servicePath && !('scopes' in opts)) {
       opts['scopes'] = staticMembers.scopes;
     }
 
+    // Load google-gax module synchronously if needed
+    if (!gaxInstance) {
+      gaxInstance = require('google-gax') as typeof gax;
+    }
+
     // Choose either gRPC or proto-over-HTTP implementation of google-gax.
-    this._gaxModule = opts.fallback ? gax.fallback : gax;
+    this._gaxModule = opts.fallback ? gaxInstance.fallback : gaxInstance;
 
     // Create a `gaxGrpc` object, with any grpc-specific options sent to the client.
     this._gaxGrpc = new this._gaxModule.GrpcClient(opts);
@@ -143,7 +158,7 @@ export class SchemaServiceClient {
     if (servicePath === staticMembers.servicePath) {
       this.auth.defaultScopes = staticMembers.scopes;
     }
-    this.iamClient = new IamClient(this._gaxGrpc, opts);
+    this.iamClient = new this._gaxModule.IamClient(this._gaxGrpc, opts);
 
     // Determine the client header string.
     const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${version}`];
@@ -193,6 +208,11 @@ export class SchemaServiceClient {
         'nextPageToken',
         'schemas'
       ),
+      listSchemaRevisions: new this._gaxModule.PageDescriptor(
+        'pageToken',
+        'nextPageToken',
+        'schemas'
+      ),
     };
 
     // Put together the default options sent with requests.
@@ -209,7 +229,7 @@ export class SchemaServiceClient {
     this.innerApiCalls = {};
 
     // Add a warn function to the client constructor so it can be easily tested.
-    this.warn = gax.warn;
+    this.warn = this._gaxModule.warn;
   }
 
   /**
@@ -248,6 +268,10 @@ export class SchemaServiceClient {
       'createSchema',
       'getSchema',
       'listSchemas',
+      'listSchemaRevisions',
+      'commitSchema',
+      'rollbackSchema',
+      'deleteSchemaRevision',
       'deleteSchema',
       'validateSchema',
       'validateMessage',
@@ -271,7 +295,8 @@ export class SchemaServiceClient {
       const apiCall = this._gaxModule.createApiCall(
         callPromise,
         this._defaults[methodName],
-        descriptor
+        descriptor,
+        this._opts.fallback
       );
 
       this.innerApiCalls[methodName] = apiCall;
@@ -424,8 +449,8 @@ export class SchemaServiceClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
+      this._gaxModule.routingHeader.fromParams({
+        parent: request.parent ?? '',
       });
     this.initialize();
     return this.innerApiCalls.createSchema(request, options, callback);
@@ -440,8 +465,7 @@ export class SchemaServiceClient {
    *   Format is `projects/{project}/schemas/{schema}`.
    * @param {google.pubsub.v1.SchemaView} request.view
    *   The set of fields to return in the response. If not set, returns a Schema
-   *   with `name` and `type`, but not `definition`. Set to `FULL` to retrieve all
-   *   fields.
+   *   with all fields filled out. Set to `BASIC` to omit the `definition`.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -510,11 +534,272 @@ export class SchemaServiceClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        name: request.name || '',
+      this._gaxModule.routingHeader.fromParams({
+        name: request.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.getSchema(request, options, callback);
+  }
+  /**
+   * Commits a new schema revision to an existing schema.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.name
+   *   Required. The name of the schema we are revising.
+   *   Format is `projects/{project}/schemas/{schema}`.
+   * @param {google.pubsub.v1.Schema} request.schema
+   *   Required. The schema revision to commit.
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is an object representing [Schema]{@link google.pubsub.v1.Schema}.
+   *   Please see the
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   for more details and examples.
+   */
+  commitSchema(
+    request?: protos.google.pubsub.v1.ICommitSchemaRequest,
+    options?: CallOptions
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICommitSchemaRequest | undefined,
+      {} | undefined
+    ]
+  >;
+  commitSchema(
+    request: protos.google.pubsub.v1.ICommitSchemaRequest,
+    options: CallOptions,
+    callback: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICommitSchemaRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
+  commitSchema(
+    request: protos.google.pubsub.v1.ICommitSchemaRequest,
+    callback: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICommitSchemaRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
+  commitSchema(
+    request?: protos.google.pubsub.v1.ICommitSchemaRequest,
+    optionsOrCallback?:
+      | CallOptions
+      | Callback<
+          protos.google.pubsub.v1.ISchema,
+          protos.google.pubsub.v1.ICommitSchemaRequest | null | undefined,
+          {} | null | undefined
+        >,
+    callback?: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICommitSchemaRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.ICommitSchemaRequest | undefined,
+      {} | undefined
+    ]
+  > | void {
+    request = request || {};
+    let options: CallOptions;
+    if (typeof optionsOrCallback === 'function' && callback === undefined) {
+      callback = optionsOrCallback;
+      options = {};
+    } else {
+      options = optionsOrCallback as CallOptions;
+    }
+    options = options || {};
+    options.otherArgs = options.otherArgs || {};
+    options.otherArgs.headers = options.otherArgs.headers || {};
+    options.otherArgs.headers['x-goog-request-params'] =
+      this._gaxModule.routingHeader.fromParams({
+        name: request.name ?? '',
+      });
+    this.initialize();
+    return this.innerApiCalls.commitSchema(request, options, callback);
+  }
+  /**
+   * Creates a new schema revision that is a copy of the provided revision_id.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.name
+   *   Required. The schema being rolled back with revision id.
+   * @param {string} request.revisionId
+   *   Required. The revision ID to roll back to.
+   *   It must be a revision of the same schema.
+   *
+   *     Example: c7cfa2a8
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is an object representing [Schema]{@link google.pubsub.v1.Schema}.
+   *   Please see the
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   for more details and examples.
+   */
+  rollbackSchema(
+    request?: protos.google.pubsub.v1.IRollbackSchemaRequest,
+    options?: CallOptions
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IRollbackSchemaRequest | undefined,
+      {} | undefined
+    ]
+  >;
+  rollbackSchema(
+    request: protos.google.pubsub.v1.IRollbackSchemaRequest,
+    options: CallOptions,
+    callback: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IRollbackSchemaRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
+  rollbackSchema(
+    request: protos.google.pubsub.v1.IRollbackSchemaRequest,
+    callback: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IRollbackSchemaRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
+  rollbackSchema(
+    request?: protos.google.pubsub.v1.IRollbackSchemaRequest,
+    optionsOrCallback?:
+      | CallOptions
+      | Callback<
+          protos.google.pubsub.v1.ISchema,
+          protos.google.pubsub.v1.IRollbackSchemaRequest | null | undefined,
+          {} | null | undefined
+        >,
+    callback?: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IRollbackSchemaRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IRollbackSchemaRequest | undefined,
+      {} | undefined
+    ]
+  > | void {
+    request = request || {};
+    let options: CallOptions;
+    if (typeof optionsOrCallback === 'function' && callback === undefined) {
+      callback = optionsOrCallback;
+      options = {};
+    } else {
+      options = optionsOrCallback as CallOptions;
+    }
+    options = options || {};
+    options.otherArgs = options.otherArgs || {};
+    options.otherArgs.headers = options.otherArgs.headers || {};
+    options.otherArgs.headers['x-goog-request-params'] =
+      this._gaxModule.routingHeader.fromParams({
+        name: request.name ?? '',
+      });
+    this.initialize();
+    return this.innerApiCalls.rollbackSchema(request, options, callback);
+  }
+  /**
+   * Deletes a specific schema revision.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.name
+   *   Required. The name of the schema revision to be deleted, with a revision ID
+   *   explicitly included.
+   *
+   *   Example: projects/123/schemas/my-schema@c7cfa2a8
+   * @param {string} request.revisionId
+   *   Required. The revision ID to roll back to.
+   *   It must be a revision of the same schema.
+   *
+   *     Example: c7cfa2a8
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is an object representing [Schema]{@link google.pubsub.v1.Schema}.
+   *   Please see the
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   for more details and examples.
+   */
+  deleteSchemaRevision(
+    request?: protos.google.pubsub.v1.IDeleteSchemaRevisionRequest,
+    options?: CallOptions
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IDeleteSchemaRevisionRequest | undefined,
+      {} | undefined
+    ]
+  >;
+  deleteSchemaRevision(
+    request: protos.google.pubsub.v1.IDeleteSchemaRevisionRequest,
+    options: CallOptions,
+    callback: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IDeleteSchemaRevisionRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
+  deleteSchemaRevision(
+    request: protos.google.pubsub.v1.IDeleteSchemaRevisionRequest,
+    callback: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IDeleteSchemaRevisionRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): void;
+  deleteSchemaRevision(
+    request?: protos.google.pubsub.v1.IDeleteSchemaRevisionRequest,
+    optionsOrCallback?:
+      | CallOptions
+      | Callback<
+          protos.google.pubsub.v1.ISchema,
+          | protos.google.pubsub.v1.IDeleteSchemaRevisionRequest
+          | null
+          | undefined,
+          {} | null | undefined
+        >,
+    callback?: Callback<
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IDeleteSchemaRevisionRequest | null | undefined,
+      {} | null | undefined
+    >
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema,
+      protos.google.pubsub.v1.IDeleteSchemaRevisionRequest | undefined,
+      {} | undefined
+    ]
+  > | void {
+    request = request || {};
+    let options: CallOptions;
+    if (typeof optionsOrCallback === 'function' && callback === undefined) {
+      callback = optionsOrCallback;
+      options = {};
+    } else {
+      options = optionsOrCallback as CallOptions;
+    }
+    options = options || {};
+    options.otherArgs = options.otherArgs || {};
+    options.otherArgs.headers = options.otherArgs.headers || {};
+    options.otherArgs.headers['x-goog-request-params'] =
+      this._gaxModule.routingHeader.fromParams({
+        name: request.name ?? '',
+      });
+    this.initialize();
+    return this.innerApiCalls.deleteSchemaRevision(request, options, callback);
   }
   /**
    * Deletes a schema.
@@ -592,8 +877,8 @@ export class SchemaServiceClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        name: request.name || '',
+      this._gaxModule.routingHeader.fromParams({
+        name: request.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.deleteSchema(request, options, callback);
@@ -676,8 +961,8 @@ export class SchemaServiceClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
+      this._gaxModule.routingHeader.fromParams({
+        parent: request.parent ?? '',
       });
     this.initialize();
     return this.innerApiCalls.validateSchema(request, options, callback);
@@ -768,8 +1053,8 @@ export class SchemaServiceClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
+      this._gaxModule.routingHeader.fromParams({
+        parent: request.parent ?? '',
       });
     this.initialize();
     return this.innerApiCalls.validateMessage(request, options, callback);
@@ -866,8 +1151,8 @@ export class SchemaServiceClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
+      this._gaxModule.routingHeader.fromParams({
+        parent: request.parent ?? '',
       });
     this.initialize();
     return this.innerApiCalls.listSchemas(request, options, callback);
@@ -911,14 +1196,14 @@ export class SchemaServiceClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
+      this._gaxModule.routingHeader.fromParams({
+        parent: request.parent ?? '',
       });
     const defaultCallSettings = this._defaults['listSchemas'];
     const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSchemas.createStream(
-      this.innerApiCalls.listSchemas as gax.GaxCall,
+      this.innerApiCalls.listSchemas as GaxCall,
       request,
       callSettings
     );
@@ -963,15 +1248,211 @@ export class SchemaServiceClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        parent: request.parent || '',
+      this._gaxModule.routingHeader.fromParams({
+        parent: request.parent ?? '',
       });
     const defaultCallSettings = this._defaults['listSchemas'];
     const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSchemas.asyncIterate(
       this.innerApiCalls['listSchemas'] as GaxCall,
-      request as unknown as RequestType,
+      request as {},
+      callSettings
+    ) as AsyncIterable<protos.google.pubsub.v1.ISchema>;
+  }
+  /**
+   * Lists all schema revisions for the named schema.
+   *
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.name
+   *   Required. The name of the schema to list revisions for.
+   * @param {google.pubsub.v1.SchemaView} request.view
+   *   The set of Schema fields to return in the response. If not set, returns
+   *   Schemas with `name` and `type`, but not `definition`. Set to `FULL` to
+   *   retrieve all fields.
+   * @param {number} request.pageSize
+   *   The maximum number of revisions to return per page.
+   * @param {string} request.pageToken
+   *   The page token, received from a previous ListSchemaRevisions call.
+   *   Provide this to retrieve the subsequent page.
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Promise} - The promise which resolves to an array.
+   *   The first element of the array is Array of [Schema]{@link google.pubsub.v1.Schema}.
+   *   The client library will perform auto-pagination by default: it will call the API as many
+   *   times as needed and will merge results from all the pages into this array.
+   *   Note that it can affect your quota.
+   *   We recommend using `listSchemaRevisionsAsync()`
+   *   method described below for async iteration which you can stop as needed.
+   *   Please see the
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   for more details and examples.
+   */
+  listSchemaRevisions(
+    request?: protos.google.pubsub.v1.IListSchemaRevisionsRequest,
+    options?: CallOptions
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema[],
+      protos.google.pubsub.v1.IListSchemaRevisionsRequest | null,
+      protos.google.pubsub.v1.IListSchemaRevisionsResponse
+    ]
+  >;
+  listSchemaRevisions(
+    request: protos.google.pubsub.v1.IListSchemaRevisionsRequest,
+    options: CallOptions,
+    callback: PaginationCallback<
+      protos.google.pubsub.v1.IListSchemaRevisionsRequest,
+      protos.google.pubsub.v1.IListSchemaRevisionsResponse | null | undefined,
+      protos.google.pubsub.v1.ISchema
+    >
+  ): void;
+  listSchemaRevisions(
+    request: protos.google.pubsub.v1.IListSchemaRevisionsRequest,
+    callback: PaginationCallback<
+      protos.google.pubsub.v1.IListSchemaRevisionsRequest,
+      protos.google.pubsub.v1.IListSchemaRevisionsResponse | null | undefined,
+      protos.google.pubsub.v1.ISchema
+    >
+  ): void;
+  listSchemaRevisions(
+    request?: protos.google.pubsub.v1.IListSchemaRevisionsRequest,
+    optionsOrCallback?:
+      | CallOptions
+      | PaginationCallback<
+          protos.google.pubsub.v1.IListSchemaRevisionsRequest,
+          | protos.google.pubsub.v1.IListSchemaRevisionsResponse
+          | null
+          | undefined,
+          protos.google.pubsub.v1.ISchema
+        >,
+    callback?: PaginationCallback<
+      protos.google.pubsub.v1.IListSchemaRevisionsRequest,
+      protos.google.pubsub.v1.IListSchemaRevisionsResponse | null | undefined,
+      protos.google.pubsub.v1.ISchema
+    >
+  ): Promise<
+    [
+      protos.google.pubsub.v1.ISchema[],
+      protos.google.pubsub.v1.IListSchemaRevisionsRequest | null,
+      protos.google.pubsub.v1.IListSchemaRevisionsResponse
+    ]
+  > | void {
+    request = request || {};
+    let options: CallOptions;
+    if (typeof optionsOrCallback === 'function' && callback === undefined) {
+      callback = optionsOrCallback;
+      options = {};
+    } else {
+      options = optionsOrCallback as CallOptions;
+    }
+    options = options || {};
+    options.otherArgs = options.otherArgs || {};
+    options.otherArgs.headers = options.otherArgs.headers || {};
+    options.otherArgs.headers['x-goog-request-params'] =
+      this._gaxModule.routingHeader.fromParams({
+        name: request.name ?? '',
+      });
+    this.initialize();
+    return this.innerApiCalls.listSchemaRevisions(request, options, callback);
+  }
+
+  /**
+   * Equivalent to `method.name.toCamelCase()`, but returns a NodeJS Stream object.
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.name
+   *   Required. The name of the schema to list revisions for.
+   * @param {google.pubsub.v1.SchemaView} request.view
+   *   The set of Schema fields to return in the response. If not set, returns
+   *   Schemas with `name` and `type`, but not `definition`. Set to `FULL` to
+   *   retrieve all fields.
+   * @param {number} request.pageSize
+   *   The maximum number of revisions to return per page.
+   * @param {string} request.pageToken
+   *   The page token, received from a previous ListSchemaRevisions call.
+   *   Provide this to retrieve the subsequent page.
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Stream}
+   *   An object stream which emits an object representing [Schema]{@link google.pubsub.v1.Schema} on 'data' event.
+   *   The client library will perform auto-pagination by default: it will call the API as many
+   *   times as needed. Note that it can affect your quota.
+   *   We recommend using `listSchemaRevisionsAsync()`
+   *   method described below for async iteration which you can stop as needed.
+   *   Please see the
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   for more details and examples.
+   */
+  listSchemaRevisionsStream(
+    request?: protos.google.pubsub.v1.IListSchemaRevisionsRequest,
+    options?: CallOptions
+  ): Transform {
+    request = request || {};
+    options = options || {};
+    options.otherArgs = options.otherArgs || {};
+    options.otherArgs.headers = options.otherArgs.headers || {};
+    options.otherArgs.headers['x-goog-request-params'] =
+      this._gaxModule.routingHeader.fromParams({
+        name: request.name ?? '',
+      });
+    const defaultCallSettings = this._defaults['listSchemaRevisions'];
+    const callSettings = defaultCallSettings.merge(options);
+    this.initialize();
+    return this.descriptors.page.listSchemaRevisions.createStream(
+      this.innerApiCalls.listSchemaRevisions as GaxCall,
+      request,
+      callSettings
+    );
+  }
+
+  /**
+   * Equivalent to `listSchemaRevisions`, but returns an iterable object.
+   *
+   * `for`-`await`-`of` syntax is used with the iterable to get response elements on-demand.
+   * @param {Object} request
+   *   The request object that will be sent.
+   * @param {string} request.name
+   *   Required. The name of the schema to list revisions for.
+   * @param {google.pubsub.v1.SchemaView} request.view
+   *   The set of Schema fields to return in the response. If not set, returns
+   *   Schemas with `name` and `type`, but not `definition`. Set to `FULL` to
+   *   retrieve all fields.
+   * @param {number} request.pageSize
+   *   The maximum number of revisions to return per page.
+   * @param {string} request.pageToken
+   *   The page token, received from a previous ListSchemaRevisions call.
+   *   Provide this to retrieve the subsequent page.
+   * @param {object} [options]
+   *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
+   * @returns {Object}
+   *   An iterable Object that allows [async iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols).
+   *   When you iterate the returned iterable, each element will be an object representing
+   *   [Schema]{@link google.pubsub.v1.Schema}. The API will be called under the hood as needed, once per the page,
+   *   so you can stop the iteration when you don't need more results.
+   *   Please see the
+   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   for more details and examples.
+   */
+  listSchemaRevisionsAsync(
+    request?: protos.google.pubsub.v1.IListSchemaRevisionsRequest,
+    options?: CallOptions
+  ): AsyncIterable<protos.google.pubsub.v1.ISchema> {
+    request = request || {};
+    options = options || {};
+    options.otherArgs = options.otherArgs || {};
+    options.otherArgs.headers = options.otherArgs.headers || {};
+    options.otherArgs.headers['x-goog-request-params'] =
+      this._gaxModule.routingHeader.fromParams({
+        name: request.name ?? '',
+      });
+    const defaultCallSettings = this._defaults['listSchemaRevisions'];
+    const callSettings = defaultCallSettings.merge(options);
+    this.initialize();
+    return this.descriptors.page.listSchemaRevisions.asyncIterate(
+      this.innerApiCalls['listSchemaRevisions'] as GaxCall,
+      request as {},
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ISchema>;
   }

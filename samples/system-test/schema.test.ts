@@ -28,6 +28,7 @@ import * as cp from 'child_process';
 import * as path from 'path';
 import * as defer from 'p-defer';
 import {TestResources} from './testResources';
+import {commandFor} from './common';
 
 // Tests run as Node 12.
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
@@ -56,8 +57,6 @@ describe('schema', () => {
   function fullSchemaName(base: string) {
     return `projects/${projectId}/schemas/${base}`;
   }
-
-  const commandFor = (action: string) => `node ${action}.js`;
 
   async function cleanAllSchemas() {
     const schemas = [];
@@ -238,7 +237,7 @@ describe('schema', () => {
     await topic.flush();
 
     const output = execSync(
-      `${commandFor('listenForAvroRecords')} ${sub.name} 3`
+      `${commandFor('listenForAvroRecords')} ${sub.name} 10`
     );
     assert.include(output, 'Received message');
     assert.include(output, 'Alberta');
@@ -262,7 +261,7 @@ describe('schema', () => {
     await topic.flush();
 
     const output = execSync(
-      `${commandFor('listenForProtobufMessages')} ${sub.name} 3`
+      `${commandFor('listenForProtobufMessages')} ${sub.name} 10`
     );
     assert.include(output, 'Received message');
     assert.include(output, 'Quebec');

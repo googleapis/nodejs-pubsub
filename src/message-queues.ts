@@ -14,12 +14,39 @@
  * limitations under the License.
  */
 
-import {CallOptions, grpc, ServiceError} from 'google-gax';
+import {CallOptions, GoogleError, grpc, RetryOptions} from 'google-gax';
 import defer = require('p-defer');
+import {
+  AckErrorInfo,
+  AckErrorCodes,
+  processAckErrorInfo,
+  processAckRpcError,
+} from './ack-metadata';
+import {ExponentialRetry} from './exponential-retry';
+import {
+  AckError,
+  AckResponse,
+  AckResponses,
+  Message,
+  Subscriber,
+} from './subscriber';
+import {Duration} from './temporal';
+import {addToBucket} from './util';
 
-import {Message, Subscriber} from './subscriber';
+/**
+ * @private
+ */
+export interface QueuedMessage {
+  ackId: string;
+  deadline?: number;
+  responsePromise?: defer.DeferredPromise<void>;
+  retryCount: number;
+}
 
-type QueuedMessages = Array<[string, number?]>;
+/**
+ * @private
+ */
+export type QueuedMessages = Array<QueuedMessage>;
 
 export interface BatchOptions {
   callOptions?: CallOptions;
@@ -30,17 +57,19 @@ export interface BatchOptions {
 /**
  * Error class used to signal a batch failure.
  *
+ * Now that we have exactly-once delivery subscriptions, we'll only
+ * throw one of these if there was an unknown error.
+ *
  * @class
  *
  * @param {string} message The error message.
- * @param {ServiceError} err The grpc service error.
+ * @param {GoogleError} err The grpc error.
  */
-export class BatchError extends Error implements grpc.ServiceError {
+export class BatchError extends Error {
   ackIds: string[];
   code: grpc.status;
   details: string;
-  metadata: grpc.Metadata;
-  constructor(err: grpc.ServiceError, ackIds: string[], rpc: string) {
+  constructor(err: GoogleError, ackIds: string[], rpc: string) {
     super(
       `Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${
         process.env.DEBUG_GRPC ? err.stack : err.message
@@ -48,9 +77,8 @@ export class BatchError extends Error implements grpc.ServiceError {
     );
 
     this.ackIds = ackIds;
-    this.code = err.code;
-    this.details = err.details;
-    this.metadata = err.metadata;
+    this.code = err.code!;
+    this.details = err.message;
   }
 }
 
@@ -76,21 +104,62 @@ export class BatchError extends Error implements grpc.ServiceError {
 export abstract class MessageQueue {
   numPendingRequests: number;
   numInFlightRequests: number;
+  numInRetryRequests: number;
   protected _onFlush?: defer.DeferredPromise<void>;
   protected _onDrain?: defer.DeferredPromise<void>;
   protected _options!: BatchOptions;
   protected _requests: QueuedMessages;
   protected _subscriber: Subscriber;
   protected _timer?: NodeJS.Timer;
-  protected abstract _sendBatch(batch: QueuedMessages): Promise<void>;
+  protected _retrier: ExponentialRetry<QueuedMessage>;
+  protected _closed = false;
+  protected abstract _sendBatch(batch: QueuedMessages): Promise<QueuedMessages>;
+
   constructor(sub: Subscriber, options = {} as BatchOptions) {
     this.numPendingRequests = 0;
     this.numInFlightRequests = 0;
+    this.numInRetryRequests = 0;
     this._requests = [];
     this._subscriber = sub;
+    this._retrier = new ExponentialRetry<QueuedMessage>(
+      Duration.from({seconds: 1}),
+      Duration.from({seconds: 64})
+    );
 
     this.setOptions(options);
   }
+
+  /**
+   * Shuts down this message queue gracefully. Any acks/modAcks pending in
+   * the queue or waiting for retry will be removed. If exactly-once delivery
+   * is enabled on the subscription, we'll send permanent failures to
+   * anyone waiting on completions; otherwise we'll send successes.
+   *
+   * If a flush is desired first, do it before calling close().
+   *
+   * @private
+   */
+  close() {
+    let requests = this._requests;
+    this._requests = [];
+    this.numInFlightRequests = this.numPendingRequests = 0;
+    requests = requests.concat(this._retrier.close());
+    const isExactlyOnceDelivery = this._subscriber.isExactlyOnceDelivery;
+    requests.forEach(r => {
+      if (r.responsePromise) {
+        if (isExactlyOnceDelivery) {
+          r.responsePromise.reject(
+            new AckError(AckResponses.Invalid, 'Subscriber closed')
+          );
+        } else {
+          r.responsePromise.resolve();
+        }
+      }
+    });
+
+    this._closed = true;
+  }
+
   /**
    * Gets the default buffer time in ms.
    *
@@ -100,6 +169,7 @@ export abstract class MessageQueue {
   get maxMilliseconds(): number {
     return this._options!.maxMilliseconds!;
   }
+
   /**
    * Adds a message to the queue.
    *
@@ -107,19 +177,76 @@ export abstract class MessageQueue {
    * @param {number} [deadline] The deadline.
    * @private
    */
-  add({ackId}: Message, deadline?: number): void {
+  add({ackId}: Message, deadline?: number): Promise<void> {
+    if (this._closed) {
+      if (this._subscriber.isExactlyOnceDelivery) {
+        throw new AckError(AckResponses.Invalid, 'Subscriber closed');
+      } else {
+        return Promise.resolve();
+      }
+    }
+
     const {maxMessages, maxMilliseconds} = this._options;
 
-    this._requests.push([ackId, deadline]);
-    this.numPendingRequests += 1;
-    this.numInFlightRequests += 1;
+    const responsePromise = defer<void>();
+    this._requests.push({
+      ackId,
+      deadline,
+      responsePromise,
+      retryCount: 0,
+    });
+    this.numPendingRequests++;
+    this.numInFlightRequests++;
 
     if (this._requests.length >= maxMessages!) {
       this.flush();
     } else if (!this._timer) {
       this._timer = setTimeout(() => this.flush(), maxMilliseconds!);
     }
+
+    return responsePromise.promise;
   }
+
+  /**
+   * Retry handler for acks/modacks that have transient failures. Unless
+   * it's passed the final deadline, we will just re-queue it for sending.
+   *
+   * @private
+   */
+  private handleRetry(message: QueuedMessage, totalTime: Duration) {
+    // Has it been too long?
+    if (totalTime.totalOf('minute') >= 10 || this.shouldFailEarly(message)) {
+      message.responsePromise?.reject(
+        new AckError(AckResponses.Invalid, 'Retried for too long')
+      );
+      return;
+    }
+
+    // Just throw it in for another round of processing on the next batch.
+    this._requests.push(message);
+    this.numPendingRequests++;
+    this.numInFlightRequests++;
+    this.numInRetryRequests--;
+
+    // Make sure we actually do have another batch scheduled.
+    if (!this._timer) {
+      this._timer = setTimeout(
+        () => this.flush(),
+        this._options.maxMilliseconds!
+      );
+    }
+  }
+
+  /**
+   * This hook lets a subclass tell the retry handler to go ahead and fail early.
+   *
+   * @private
+   */
+  protected shouldFailEarly(message: QueuedMessage): boolean {
+    message;
+    return false;
+  }
+
   /**
    * Sends a batch of messages.
    * @private
@@ -139,7 +266,14 @@ export abstract class MessageQueue {
     delete this._onFlush;
 
     try {
-      await this._sendBatch(batch);
+      const toRetry = await this._sendBatch(batch);
+
+      // We'll get back anything that needs a retry for transient errors.
+      for (const m of toRetry) {
+        this.numInRetryRequests++;
+        m.retryCount++;
+        this._retrier.retryLater(m, this.handleRetry.bind(this));
+      }
     } catch (e) {
       // These queues are used for ack and modAck messages, which should
       // never surface an error to the user level. However, we'll emit
@@ -152,11 +286,16 @@ export abstract class MessageQueue {
       deferred.resolve();
     }
 
-    if (this.numInFlightRequests <= 0 && this._onDrain) {
+    if (
+      this.numInFlightRequests <= 0 &&
+      this.numInRetryRequests <= 0 &&
+      this._onDrain
+    ) {
       this._onDrain.resolve();
       delete this._onDrain;
     }
   }
+
   /**
    * Returns a promise that resolves after the next flush occurs.
    *
@@ -169,6 +308,7 @@ export abstract class MessageQueue {
     }
     return this._onFlush.promise;
   }
+
   /**
    * Returns a promise that resolves when all in-flight messages have settled.
    */
@@ -178,6 +318,7 @@ export abstract class MessageQueue {
     }
     return this._onDrain.promise;
   }
+
   /**
    * Set the batching options.
    *
@@ -188,6 +329,124 @@ export abstract class MessageQueue {
     const defaults: BatchOptions = {maxMessages: 3000, maxMilliseconds: 100};
 
     this._options = Object.assign(defaults, options);
+  }
+
+  /**
+   * Succeed a whole batch of Acks/Modacks for an OK RPC response.
+   *
+   * @private
+   */
+  handleAckSuccesses(batch: QueuedMessages) {
+    // Everyone gets a resolve!
+    batch.forEach(({responsePromise}) => {
+      responsePromise?.resolve();
+    });
+  }
+
+  /**
+   * If we get an RPC failure of any kind, this will take care of deciding
+   * what to do for each related ack/modAck. Successful ones will have their
+   * Promises resolved, permanent errors will have their Promises rejected,
+   * and transients will be returned for retry.
+   *
+   * Note that this is only used for subscriptions with exactly-once
+   * delivery enabled, so _sendBatch() in the classes below take care of
+   * resolving errors to success; they don't make it here.
+   *
+   * @private
+   */
+  handleAckFailures(
+    operation: string,
+    batch: QueuedMessages,
+    rpcError: GoogleError
+  ) {
+    const toSucceed: QueuedMessages = [];
+    const toRetry: QueuedMessages = [];
+    const toError = new Map<AckResponse, QueuedMessages>([
+      [AckResponses.PermissionDenied, []],
+      [AckResponses.FailedPrecondition, []],
+      [AckResponses.Other, []],
+    ]);
+
+    // Parse any error codes, both for the RPC call and the ErrorInfo.
+    const error: AckErrorInfo | undefined = rpcError.code
+      ? processAckRpcError(rpcError.code)
+      : undefined;
+    const codes: AckErrorCodes = processAckErrorInfo(rpcError);
+
+    for (const m of batch) {
+      if (codes.has(m.ackId)) {
+        // This ack has an ErrorInfo entry, so use that to route it.
+        const code = codes.get(m.ackId)!;
+        if (code.transient) {
+          // Transient errors get retried.
+          toRetry.push(m);
+        } else {
+          // It's a permanent error.
+          addToBucket(toError, code.response!, m);
+        }
+      } else if (error !== undefined) {
+        // This ack doesn't have an ErrorInfo entry, but we do have an RPC
+        // error, so use that to route it.
+        if (error.transient) {
+          toRetry.push(m);
+        } else {
+          addToBucket(toError, error.response!, m);
+        }
+      } else {
+        // Looks like this one worked out.
+        toSucceed.push(m);
+      }
+    }
+
+    // To remain consistent with previous behaviour, we will push a debug
+    // stream message if an unknown error happens during ack.
+    const others = toError.get(AckResponses.Other);
+    if (others?.length) {
+      const otherIds = others.map(e => e.ackId);
+      this._subscriber.emit(
+        'debug',
+        new BatchError(rpcError, otherIds, operation)
+      );
+    }
+
+    // Take care of following up on all the Promises.
+    toSucceed.forEach(m => {
+      m.responsePromise?.resolve();
+    });
+    for (const e of toError.entries()) {
+      e[1].forEach(m => {
+        const exc = new AckError(e[0], rpcError.message);
+        m.responsePromise?.reject(exc);
+      });
+    }
+    return {
+      toError,
+      toRetry,
+    };
+  }
+
+  /**
+   * Since we handle our own retries for ack/modAck calls when exactly-once
+   * delivery is enabled on a subscription, we conditionally need to disable
+   * the gax retries. This returns an appropriate CallOptions for the
+   * subclasses to pass down.
+   *
+   * @private
+   */
+  protected getCallOptions(): CallOptions | undefined {
+    let callOptions = this._options.callOptions;
+    if (this._subscriber.isExactlyOnceDelivery) {
+      // If exactly-once-delivery is enabled, tell gax not to do retries for us.
+      callOptions = Object.assign({}, callOptions ?? {});
+      callOptions.retry = new RetryOptions([], {
+        initialRetryDelayMillis: 0,
+        retryDelayMultiplier: 0,
+        maxRetryDelayMillis: 0,
+      });
+    }
+
+    return callOptions;
   }
 }
 
@@ -206,15 +465,41 @@ export class AckQueue extends MessageQueue {
    * @param {Array.<Array.<string|number>>} batch Array of ackIds and deadlines.
    * @return {Promise}
    */
-  protected async _sendBatch(batch: QueuedMessages): Promise<void> {
+  protected async _sendBatch(batch: QueuedMessages): Promise<QueuedMessages> {
     const client = await this._subscriber.getClient();
-    const ackIds = batch.map(([ackId]) => ackId);
+    const ackIds = batch.map(({ackId}) => ackId);
     const reqOpts = {subscription: this._subscriber.name, ackIds};
 
     try {
-      await client.acknowledge(reqOpts, this._options.callOptions!);
+      await client.acknowledge(reqOpts, this.getCallOptions());
+
+      // It's okay if these pass through since they're successful anyway.
+      this.handleAckSuccesses(batch);
+      return [];
     } catch (e) {
-      throw new BatchError(e as ServiceError, ackIds, 'acknowledge');
+      // If exactly-once delivery isn't enabled, don't do error processing. We'll
+      // emulate previous behaviour by resolving all pending Promises with
+      // a success status, and then throwing a BatchError for debug logging.
+      if (!this._subscriber.isExactlyOnceDelivery) {
+        batch.forEach(m => {
+          m.responsePromise?.resolve();
+        });
+        throw new BatchError(e as GoogleError, ackIds, 'ack');
+      } else {
+        const grpcError = e as GoogleError;
+        try {
+          const results = this.handleAckFailures('ack', batch, grpcError);
+          return results.toRetry;
+        } catch (e) {
+          // This should only ever happen if there's a code failure.
+          this._subscriber.emit('debug', e);
+          const exc = new AckError(AckResponses.Other, 'Code error');
+          batch.forEach(m => {
+            m.responsePromise?.reject(exc);
+          });
+          return [];
+        }
+      }
     }
   }
 }
@@ -235,33 +520,66 @@ export class ModAckQueue extends MessageQueue {
    * @param {Array.<Array.<string|number>>} batch Array of ackIds and deadlines.
    * @return {Promise}
    */
-  protected async _sendBatch(batch: QueuedMessages): Promise<void> {
+  protected async _sendBatch(batch: QueuedMessages): Promise<QueuedMessages> {
     const client = await this._subscriber.getClient();
     const subscription = this._subscriber.name;
-    const modAckTable: {[index: string]: string[]} = batch.reduce(
-      (table: {[index: string]: string[]}, [ackId, deadline]) => {
-        if (!table[deadline!]) {
-          table[deadline!] = [];
+    const modAckTable: {[index: string]: QueuedMessages} = batch.reduce(
+      (table: {[index: string]: QueuedMessages}, message) => {
+        if (!table[message.deadline!]) {
+          table[message.deadline!] = [];
         }
 
-        table[deadline!].push(ackId);
+        table[message.deadline!].push(message);
         return table;
       },
       {}
     );
 
+    const callOptions = this.getCallOptions();
     const modAckRequests = Object.keys(modAckTable).map(async deadline => {
-      const ackIds = modAckTable[deadline];
+      const messages = modAckTable[deadline];
+      const ackIds = messages.map(m => m.ackId);
       const ackDeadlineSeconds = Number(deadline);
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};
 
       try {
-        await client.modifyAckDeadline(reqOpts, this._options.callOptions!);
+        await client.modifyAckDeadline(reqOpts, callOptions);
+
+        // It's okay if these pass through since they're successful anyway.
+        this.handleAckSuccesses(messages);
+        return [];
       } catch (e) {
-        throw new BatchError(e as ServiceError, ackIds, 'modifyAckDeadline');
+        // If exactly-once delivery isn't enabled, don't do error processing. We'll
+        // emulate previous behaviour by resolving all pending Promises with
+        // a success status, and then throwing a BatchError for debug logging.
+        if (!this._subscriber.isExactlyOnceDelivery) {
+          batch.forEach(m => {
+            m.responsePromise?.resolve();
+          });
+          throw new BatchError(e as GoogleError, ackIds, 'modAck');
+        } else {
+          const grpcError = e as GoogleError;
+
+          const newBatch = this.handleAckFailures(
+            'modAck',
+            messages,
+            grpcError
+          );
+          return newBatch.toRetry;
+        }
       }
     });
 
-    await Promise.all(modAckRequests);
+    // This catches the sub-failures and bubbles up anything we need to bubble.
+    const allNewBatches: QueuedMessages[] = await Promise.all(modAckRequests);
+    return allNewBatches.reduce((p: QueuedMessage[], c: QueuedMessage[]) => [
+      ...(p ?? []),
+      ...c,
+    ]);
+  }
+
+  // For modacks only, we'll stop retrying after 3 tries.
+  protected shouldFailEarly(message: QueuedMessage): boolean {
+    return message.retryCount >= 3;
   }
 }

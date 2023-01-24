@@ -21,8 +21,6 @@
 import arrify = require('arrify');
 import {CallOptions, IamProtos} from 'google-gax';
 
-import {google} from '../protos/protos';
-
 import {Omit, PubSub, RequestCallback, ResourceCallback} from './pubsub';
 import {promisifySome} from './util';
 

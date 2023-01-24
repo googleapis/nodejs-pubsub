@@ -13,23 +13,20 @@
   },
   "scripts": {
     "test": "mocha build/system-test --timeout 600000",
-    "pretest": "npm run compile",
+    "pretest": "npm run compile && cp -f *.js build/",
     "tsc": "tsc -p .",
-    "simplifier": "node ./utils/simplifier.js post build/typescript/build/*.js",
-    "copybuilt": "cp *.js build/ && cp build/typescript/build/*.js build/",
     "sampletsc": "cd typescript && tsc -p . && cd ..",
-    "compile": "npm run tsc && npm run sampletsc && npm run simplifier && npm run copybuilt",
+    "compile": "npm run tsc && npm run sampletsc",
     "clean": "gts clean && rm -rf build/",
-    "precompile": "npm run clean && node ./utils/simplifier.js commentify typescript/*.ts",
-    "updatejs": "cp build/*.js ."
+    "precompile": "npm run clean"
   },
   "dependencies": {
-    "@google-cloud/pubsub": "^3.0.2",
+    "@google-cloud/pubsub": "^3.3.0",
     "@opentelemetry/api": "^1.0.0",
     "@opentelemetry/tracing": "^0.24.0",
     "avro-js": "^1.10.1",
     "p-defer": "^3.0.0",
-    "protobufjs": "^6.11.2"
+    "protobufjs": "^7.0.0"
   },
   "devDependencies": {
     "@google-cloud/bigquery": "^6.0.0",
@@ -38,8 +35,8 @@
     "chai": "^4.2.0",
     "gts": "^3.1.0",
     "mocha": "^8.0.0",
-    "rimraf": "^3.0.2",
+    "rimraf": "^4.0.0",
     "typescript": "~4.3.0",
-    "uuid": "^8.0.0"
+    "uuid": "^9.0.0"
   }
 }

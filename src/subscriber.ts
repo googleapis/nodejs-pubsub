@@ -30,11 +30,39 @@ import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
 import {createSpan} from './opentelemetry-tracing';
-import {Throttler} from './util';
+import {Duration} from './temporal';
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 export type SubscriptionProperties =
   google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties;
+
+type ValueOf<T> = T[keyof T];
+export const AckResponses = {
+  PermissionDenied: 'PERMISSION_DENIED' as const,
+  FailedPrecondition: 'FAILED_PRECONDITION' as const,
+  Success: 'SUCCESS' as const,
+  Invalid: 'INVALID' as const,
+  Other: 'OTHER' as const,
+};
+export type AckResponse = ValueOf<typeof AckResponses>;
+
+/**
+ * Thrown when an error is detected in an ack/nack/modack call, when
+ * exactly-once delivery is enabled on the subscription. This will
+ * only be thrown for actual errors that can't be retried.
+ */
+export class AckError extends Error {
+  errorCode: AckResponse;
+
+  constructor(errorCode: AckResponse, message?: string) {
+    let finalMessage = `${errorCode}`;
+    if (message) {
+      finalMessage += ` : ${message}`;
+    }
+    super(finalMessage);
+    this.errorCode = errorCode;
+  }
+}
 
 /**
  * Date object with nanosecond precision. Supports all standard Date arguments
@@ -156,6 +184,7 @@ export class Message {
     this._length = this.data.length;
     this._subscriber = sub;
   }
+
   /**
    * The length of the message data.
    *
@@ -164,6 +193,7 @@ export class Message {
   get length() {
     return this._length;
   }
+
   /**
    * Acknowledges the message.
    *
@@ -180,6 +210,32 @@ export class Message {
       this._subscriber.ack(this);
     }
   }
+
+  /**
+   * Acknowledges the message, expecting a response (for exactly-once delivery subscriptions).
+   * If exactly-once delivery is not enabled, this will immediately resolve successfully.
+   *
+   * @example
+   * ```
+   * subscription.on('message', async (message) => {
+   *   const response = await message.ackWithResponse();
+   * });
+   * ```
+   */
+  async ackWithResponse(): Promise<AckResponse> {
+    if (!this._subscriber.isExactlyOnceDelivery) {
+      this.ack();
+      return AckResponses.Success;
+    }
+
+    if (!this._handled) {
+      this._handled = true;
+      return await this._subscriber.ackWithResponse(this);
+    } else {
+      return AckResponses.Invalid;
+    }
+  }
+
   /**
    * Modifies the ack deadline.
    *
@@ -191,6 +247,27 @@ export class Message {
       this._subscriber.modAck(this, deadline);
     }
   }
+
+  /**
+   * Modifies the ack deadline, expecting a response (for exactly-once delivery subscriptions).
+   * If exactly-once delivery is not enabled, this will immediately resolve successfully.
+   *
+   * @param {number} deadline The number of seconds to extend the deadline.
+   * @private
+   */
+  async modAckWithResponse(deadline: number): Promise<AckResponse> {
+    if (!this._subscriber.isExactlyOnceDelivery) {
+      this.modAck(deadline);
+      return AckResponses.Success;
+    }
+
+    if (!this._handled) {
+      return await this._subscriber.modAckWithResponse(this, deadline);
+    } else {
+      return AckResponses.Invalid;
+    }
+  }
+
   /**
    * Removes the message from our inventory and schedules it to be redelivered.
    *
@@ -207,22 +284,46 @@ export class Message {
       this._subscriber.nack(this);
     }
   }
-}
 
-export interface SubscriberOptions {
-  ackDeadline?: number;
-  batching?: BatchOptions;
-  flowControl?: FlowControlOptions;
-  useLegacyFlowControl?: boolean;
-  streamingOptions?: MessageStreamOptions;
-  enableOpenTelemetryTracing?: boolean;
+  /**
+   * Removes the message from our inventory and schedules it to be redelivered,
+   * with the modAck response being returned (for exactly-once delivery subscriptions).
+   * If exactly-once delivery is not enabled, this will immediately resolve successfully.
+   *
+   * @example
+   * ```
+   * subscription.on('message', async (message) => {
+   *   const response = await message.nackWithResponse();
+   * });
+   * ```
+   */
+  async nackWithResponse(): Promise<AckResponse> {
+    if (!this._subscriber.isExactlyOnceDelivery) {
+      this.nack();
+      return AckResponses.Success;
+    }
+
+    if (!this._handled) {
+      this._handled = true;
+      return await this._subscriber.nackWithResponse(this);
+    } else {
+      return AckResponses.Invalid;
+    }
+  }
 }
 
 /**
  * @typedef {object} SubscriberOptions
  * @property {number} [ackDeadline=10] Acknowledge deadline in seconds. If left
- *     unset the initial value will be 10 seconds, but it will evolve into the
- *     99th percentile time it takes to acknowledge a message.
+ *     unset, the initial value will be 10 seconds, but it will evolve into the
+ *     99th percentile time it takes to acknowledge a message, subject to the
+ *     limitations of minAckDeadline and maxAckDeadline. If ackDeadline is set
+ *     by the user, then the min/max values will be set to match it. New code
+ *     should prefer setting minAckDeadline and maxAckDeadline directly.
+ * @property {Duration} [minAckDeadline] The minimum time that ackDeadline should
+ *     ever have, while it's under library control.
+ * @property {Duration} [maxAckDeadline] The maximum time that ackDeadline should
+ *     ever have, while it's under library control.
  * @property {BatchOptions} [batching] Request batching options.
  * @property {FlowControlOptions} [flowControl] Flow control options.
  * @property {boolean} [useLegacyFlowControl] Disables enforcing flow control
@@ -230,6 +331,21 @@ export interface SubscriberOptions {
  *     of only enforcing flow control at the client side.
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
  */
+export interface SubscriberOptions {
+  /** @deprecated Use minAckDeadline and maxAckDeadline. */
+  ackDeadline?: number;
+
+  minAckDeadline?: Duration;
+  maxAckDeadline?: Duration;
+  batching?: BatchOptions;
+  flowControl?: FlowControlOptions;
+  useLegacyFlowControl?: boolean;
+  streamingOptions?: MessageStreamOptions;
+  enableOpenTelemetryTracing?: boolean;
+}
+
+const minAckDeadlineForExactlyOnceDelivery = Duration.from({seconds: 60});
+
 /**
  * Subscriber class is used to manage all message related functionality.
  *
@@ -248,7 +364,6 @@ export class Subscriber extends EventEmitter {
   private _acks!: AckQueue;
   private _histogram: Histogram;
   private _inventory!: LeaseManager;
-  private _isUserSetDeadline: boolean;
   private _useOpentelemetry: boolean;
   private _latencies: Histogram;
   private _modAcks!: ModAckQueue;
@@ -256,45 +371,114 @@ export class Subscriber extends EventEmitter {
   private _options!: SubscriberOptions;
   private _stream!: MessageStream;
   private _subscription: Subscription;
-  private _errorLog: Throttler;
 
   subscriptionProperties?: SubscriptionProperties;
 
   constructor(subscription: Subscription, options = {}) {
     super();
 
-    this.ackDeadline = 10;
+    this.ackDeadline = defaultOptions.subscription.ackDeadline;
     this.maxMessages = defaultOptions.subscription.maxOutstandingMessages;
     this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
     this.useLegacyFlowControl = false;
     this.isOpen = false;
-    this._isUserSetDeadline = false;
     this._useOpentelemetry = false;
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
     this._subscription = subscription;
-    this._errorLog = new Throttler(60 * 1000);
 
     this.setOptions(options);
   }
 
   /**
-   * Sets our subscription properties from the first incoming message.
+   * Update our ack extension time that will be used by the lease manager
+   * for sending modAcks.
+   *
+   * Should not be called from outside this class, except for unit tests.
+   *
+   * @param {number} [ackTimeSeconds] The number of seconds that the last
+   *   ack took after the message was received. If this is undefined, then
+   *   we won't update the histogram, but we will still recalculate the
+   *   ackDeadline based on the situation.
+   *
+   * @private
+   */
+  updateAckDeadline(ackTimeSeconds?: number) {
+    // Start with the value we already have.
+    let ackDeadline = this.ackDeadline;
+
+    // If we got an ack time reading, update the histogram (and ackDeadline).
+    if (ackTimeSeconds) {
+      this._histogram.add(ackTimeSeconds);
+      ackDeadline = this._histogram.percentile(99);
+    }
+
+    // Grab our current min/max deadline values, based on whether exactly-once
+    // delivery is enabled, and the defaults.
+    const [minDeadline, maxDeadline] = this.getMinMaxDeadlines();
+
+    if (minDeadline) {
+      ackDeadline = Math.max(ackDeadline, minDeadline.totalOf('second'));
+    }
+    if (maxDeadline) {
+      ackDeadline = Math.min(ackDeadline, maxDeadline.totalOf('second'));
+    }
+
+    // Set the bounded result back.
+    this.ackDeadline = ackDeadline;
+  }
+
+  private getMinMaxDeadlines(): [Duration?, Duration?] {
+    // If this is an exactly-once delivery subscription, and the user
+    // didn't set their own minimum ack periods, set it to the default
+    // for exactly-once delivery.
+    const defaultMinDeadline = this.isExactlyOnceDelivery
+      ? minAckDeadlineForExactlyOnceDelivery
+      : defaultOptions.subscription.minAckDeadline;
+    const defaultMaxDeadline = defaultOptions.subscription.maxAckDeadline;
+
+    // Pull in any user-set min/max.
+    const minDeadline = this._options.minAckDeadline ?? defaultMinDeadline;
+    const maxDeadline = this._options.maxAckDeadline ?? defaultMaxDeadline;
+
+    return [minDeadline, maxDeadline];
+  }
+
+  /**
+   * Returns true if an exactly-once delivery subscription has been detected.
+   *
+   * @private
+   */
+  get isExactlyOnceDelivery(): boolean {
+    if (!this.subscriptionProperties) {
+      return false;
+    }
+
+    return !!this.subscriptionProperties.exactlyOnceDeliveryEnabled;
+  }
+
+  /**
+   * Sets our subscription properties from incoming messages.
    *
    * @param {SubscriptionProperties} subscriptionProperties The new properties.
    * @private
    */
   setSubscriptionProperties(subscriptionProperties: SubscriptionProperties) {
+    const previouslyEnabled = this.isExactlyOnceDelivery;
+
     this.subscriptionProperties = subscriptionProperties;
 
-    // If this is an exactly-once subscription, warn the user that they may have difficulty.
-    if (this.subscriptionProperties.exactlyOnceDeliveryEnabled) {
-      this._errorLog.doMaybe(() =>
-        console.error(
-          'WARNING: Exactly-once subscriptions are not yet supported ' +
-            'by the Node client library. This feature will be added ' +
-            'in a future release.'
-        )
+    // Update ackDeadline in case the flag switched.
+    if (previouslyEnabled !== this.isExactlyOnceDelivery) {
+      this.updateAckDeadline();
+
+      // For exactly-once delivery, make sure the subscription ack deadline is 60.
+      // (Otherwise fall back to the default of 10 seconds.)
+      const subscriptionAckDeadlineSeconds = this.isExactlyOnceDelivery
+        ? 60
+        : 10;
+      this._stream.setStreamAckDeadline(
+        Duration.from({seconds: subscriptionAckDeadlineSeconds})
       );
     }
   }
@@ -315,6 +499,7 @@ export class Subscriber extends EventEmitter {
 
     return latency * 1000 + bufferTime;
   }
+
   /**
    * The full name of the Subscription.
    *
@@ -329,24 +514,46 @@ export class Subscriber extends EventEmitter {
 
     return this._name;
   }
+
   /**
    * Acknowledges the supplied message.
    *
    * @param {Message} message The message to acknowledge.
-   * @returns {Promise}
+   * @returns {Promise<void>}
    * @private
    */
   async ack(message: Message): Promise<void> {
-    if (!this._isUserSetDeadline) {
-      const ackTimeSeconds = (Date.now() - message.received) / 1000;
-      this._histogram.add(ackTimeSeconds);
-      this.ackDeadline = this._histogram.percentile(99);
-    }
+    const ackTimeSeconds = (Date.now() - message.received) / 1000;
+    this.updateAckDeadline(ackTimeSeconds);
 
-    this._acks.add(message);
+    // Ignore this in this version of the method (but hook catch
+    // to avoid unhandled exceptions).
+    const resultPromise = this._acks.add(message);
+    resultPromise.catch(() => {});
+
     await this._acks.onFlush();
     this._inventory.remove(message);
   }
+
+  /**
+   * Acknowledges the supplied message, expecting a response (for exactly
+   * once subscriptions).
+   *
+   * @param {Message} message The message to acknowledge.
+   * @returns {Promise<AckResponse>}
+   * @private
+   */
+  async ackWithResponse(message: Message): Promise<AckResponse> {
+    const ackTimeSeconds = (Date.now() - message.received) / 1000;
+    this.updateAckDeadline(ackTimeSeconds);
+
+    await this._acks.add(message);
+    this._inventory.remove(message);
+
+    // No exception means Success.
+    return AckResponses.Success;
+  }
+
   /**
    * Closes the subscriber. The returned promise will resolve once any pending
    * acks/modAcks are finished.
@@ -366,7 +573,11 @@ export class Subscriber extends EventEmitter {
     await this._waitForFlush();
 
     this.emit('close');
+
+    this._acks.close();
+    this._modAcks.close();
   }
+
   /**
    * Gets the subscriber client instance.
    *
@@ -381,35 +592,77 @@ export class Subscriber extends EventEmitter {
 
     return client;
   }
+
   /**
    * Modifies the acknowledge deadline for the provided message.
    *
    * @param {Message} message The message to modify.
    * @param {number} deadline The deadline.
-   * @returns {Promise}
+   * @returns {Promise<void>}
    * @private
    */
   async modAck(message: Message, deadline: number): Promise<void> {
     const startTime = Date.now();
 
-    this._modAcks.add(message, deadline);
+    const responsePromise = this._modAcks.add(message, deadline);
+    responsePromise.catch(() => {});
+
     await this._modAcks.onFlush();
 
     const latency = (Date.now() - startTime) / 1000;
     this._latencies.add(latency);
   }
+
+  /**
+   * Modifies the acknowledge deadline for the provided message, expecting
+   * a reply (for exactly-once delivery subscriptions).
+   *
+   * @param {Message} message The message to modify.
+   * @param {number} deadline The deadline.
+   * @returns {Promise<AckResponse>}
+   * @private
+   */
+  async modAckWithResponse(
+    message: Message,
+    deadline: number
+  ): Promise<AckResponse> {
+    const startTime = Date.now();
+
+    await this._modAcks.add(message, deadline);
+
+    const latency = (Date.now() - startTime) / 1000;
+    this._latencies.add(latency);
+
+    // No exception means Success.
+    return AckResponses.Success;
+  }
+
   /**
    * Modfies the acknowledge deadline for the provided message and then removes
    * it from our inventory.
    *
    * @param {Message} message The message.
-   * @return {Promise}
+   * @return {Promise<void>}
    * @private
    */
   async nack(message: Message): Promise<void> {
     await this.modAck(message, 0);
     this._inventory.remove(message);
   }
+
+  /**
+   * Modfies the acknowledge deadline for the provided message and then removes
+   * it from our inventory, expecting a response from modAck (for
+   * exactly-once delivery subscriptions).
+   *
+   * @param {Message} message The message.
+   * @return {Promise<AckResponse>}
+   * @private
+   */
+  async nackWithResponse(message: Message): Promise<AckResponse> {
+    return await this.modAckWithResponse(message, 0);
+  }
+
   /**
    * Starts pulling messages.
    * @private
@@ -434,6 +687,7 @@ export class Subscriber extends EventEmitter {
 
     this.isOpen = true;
   }
+
   /**
    * Sets subscriber options.
    *
@@ -445,18 +699,22 @@ export class Subscriber extends EventEmitter {
 
     this._useOpentelemetry = options.enableOpenTelemetryTracing || false;
 
-    if (options.ackDeadline) {
-      this.ackDeadline = options.ackDeadline;
-      this._isUserSetDeadline = true;
+    // The user-set ackDeadline value basically pegs the extension time.
+    // We'll emulate it by overwriting min/max.
+    const passedAckDeadline = options.ackDeadline;
+    if (passedAckDeadline !== undefined) {
+      this.ackDeadline = passedAckDeadline;
+      options.minAckDeadline = Duration.from({seconds: passedAckDeadline});
+      options.maxAckDeadline = Duration.from({seconds: passedAckDeadline});
     }
 
     this.useLegacyFlowControl = options.useLegacyFlowControl || false;
     if (options.flowControl) {
       this.maxMessages =
-        options.flowControl!.maxMessages ||
+        options.flowControl.maxMessages ||
         defaultOptions.subscription.maxOutstandingMessages;
       this.maxBytes =
-        options.flowControl!.maxBytes ||
+        options.flowControl.maxBytes ||
         defaultOptions.subscription.maxOutstandingBytes;
 
       // In the event that the user has specified the maxMessages option, we
@@ -549,7 +807,7 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   private _onData(response: PullResponse): void {
-    // Grab the subscription properties for exactly once and ordering flags.
+    // Grab the subscription properties for exactly-once delivery and ordering flags.
     if (response.subscriptionProperties) {
       this.setSubscriptionProperties(response.subscriptionProperties);
     }

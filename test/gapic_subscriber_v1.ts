@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,21 @@ import * as subscriberModule from '../src';
 import {PassThrough} from 'stream';
 
 import {protobuf, IamProtos} from 'google-gax';
+
+// Dynamically loaded proto JSON is needed to get the type information
+// to fill in default values for request objects
+const root = protobuf.Root.fromJSON(
+  require('../protos/protos.json')
+).resolveAll();
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function getTypeDefaultValue(typeName: string, fields: string[]) {
+  let type = root.lookupType(typeName) as protobuf.Type;
+  for (const field of fields.slice(0, -1)) {
+    type = type.fields[field]?.resolvedType as protobuf.Type;
+  }
+  return type.fields[fields[fields.length - 1]]?.defaultValue;
+}
 
 function generateSampleMessage<T extends object>(instance: T) {
   const filledObject = (
@@ -127,99 +142,101 @@ function stubAsyncIterationCall<ResponseType>(
 }
 
 describe('v1.SubscriberClient', () => {
-  it('has servicePath', () => {
-    const servicePath = subscriberModule.v1.SubscriberClient.servicePath;
-    assert(servicePath);
-  });
-
-  it('has apiEndpoint', () => {
-    const apiEndpoint = subscriberModule.v1.SubscriberClient.apiEndpoint;
-    assert(apiEndpoint);
-  });
-
-  it('has port', () => {
-    const port = subscriberModule.v1.SubscriberClient.port;
-    assert(port);
-    assert(typeof port === 'number');
-  });
-
-  it('should create a client with no option', () => {
-    const client = new subscriberModule.v1.SubscriberClient();
-    assert(client);
-  });
-
-  it('should create a client with gRPC fallback', () => {
-    const client = new subscriberModule.v1.SubscriberClient({
-      fallback: true,
+  describe('Common methods', () => {
+    it('has servicePath', () => {
+      const servicePath = subscriberModule.v1.SubscriberClient.servicePath;
+      assert(servicePath);
     });
-    assert(client);
-  });
 
-  it('has initialize method and supports deferred initialization', async () => {
-    const client = new subscriberModule.v1.SubscriberClient({
-      credentials: {client_email: 'bogus', private_key: 'bogus'},
-      projectId: 'bogus',
+    it('has apiEndpoint', () => {
+      const apiEndpoint = subscriberModule.v1.SubscriberClient.apiEndpoint;
+      assert(apiEndpoint);
     });
-    assert.strictEqual(client.subscriberStub, undefined);
-    await client.initialize();
-    assert(client.subscriberStub);
-  });
 
-  it('has close method for the initialized client', done => {
-    const client = new subscriberModule.v1.SubscriberClient({
-      credentials: {client_email: 'bogus', private_key: 'bogus'},
-      projectId: 'bogus',
+    it('has port', () => {
+      const port = subscriberModule.v1.SubscriberClient.port;
+      assert(port);
+      assert(typeof port === 'number');
     });
-    client.initialize();
-    assert(client.subscriberStub);
-    client.close().then(() => {
-      done();
-    });
-  });
 
-  it('has close method for the non-initialized client', done => {
-    const client = new subscriberModule.v1.SubscriberClient({
-      credentials: {client_email: 'bogus', private_key: 'bogus'},
-      projectId: 'bogus',
+    it('should create a client with no option', () => {
+      const client = new subscriberModule.v1.SubscriberClient();
+      assert(client);
     });
-    assert.strictEqual(client.subscriberStub, undefined);
-    client.close().then(() => {
-      done();
-    });
-  });
 
-  it('has getProjectId method', async () => {
-    const fakeProjectId = 'fake-project-id';
-    const client = new subscriberModule.v1.SubscriberClient({
-      credentials: {client_email: 'bogus', private_key: 'bogus'},
-      projectId: 'bogus',
+    it('should create a client with gRPC fallback', () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        fallback: true,
+      });
+      assert(client);
     });
-    client.auth.getProjectId = sinon.stub().resolves(fakeProjectId);
-    const result = await client.getProjectId();
-    assert.strictEqual(result, fakeProjectId);
-    assert((client.auth.getProjectId as SinonStub).calledWithExactly());
-  });
 
-  it('has getProjectId method with callback', async () => {
-    const fakeProjectId = 'fake-project-id';
-    const client = new subscriberModule.v1.SubscriberClient({
-      credentials: {client_email: 'bogus', private_key: 'bogus'},
-      projectId: 'bogus',
+    it('has initialize method and supports deferred initialization', async () => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      assert.strictEqual(client.subscriberStub, undefined);
+      await client.initialize();
+      assert(client.subscriberStub);
     });
-    client.auth.getProjectId = sinon
-      .stub()
-      .callsArgWith(0, null, fakeProjectId);
-    const promise = new Promise((resolve, reject) => {
-      client.getProjectId((err?: Error | null, projectId?: string | null) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(projectId);
-        }
+
+    it('has close method for the initialized client', done => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      assert(client.subscriberStub);
+      client.close().then(() => {
+        done();
       });
     });
-    const result = await promise;
-    assert.strictEqual(result, fakeProjectId);
+
+    it('has close method for the non-initialized client', done => {
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      assert.strictEqual(client.subscriberStub, undefined);
+      client.close().then(() => {
+        done();
+      });
+    });
+
+    it('has getProjectId method', async () => {
+      const fakeProjectId = 'fake-project-id';
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.auth.getProjectId = sinon.stub().resolves(fakeProjectId);
+      const result = await client.getProjectId();
+      assert.strictEqual(result, fakeProjectId);
+      assert((client.auth.getProjectId as SinonStub).calledWithExactly());
+    });
+
+    it('has getProjectId method with callback', async () => {
+      const fakeProjectId = 'fake-project-id';
+      const client = new subscriberModule.v1.SubscriberClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.auth.getProjectId = sinon
+        .stub()
+        .callsArgWith(0, null, fakeProjectId);
+      const promise = new Promise((resolve, reject) => {
+        client.getProjectId((err?: Error | null, projectId?: string | null) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(projectId);
+          }
+        });
+      });
+      const result = await promise;
+      assert.strictEqual(result, fakeProjectId);
+    });
   });
 
   describe('createSubscription', () => {
@@ -232,15 +249,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.Subscription',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
@@ -248,11 +262,14 @@ describe('v1.SubscriberClient', () => {
         stubSimpleCall(expectedResponse);
       const [response] = await client.createSubscription(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.createSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.createSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.createSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes createSubscription without error using callback', async () => {
@@ -264,15 +281,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.Subscription',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
@@ -295,11 +309,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.createSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.createSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.createSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes createSubscription with error', async () => {
@@ -311,26 +328,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.Subscription',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.createSubscription = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.createSubscription(request), expectedError);
-      assert(
-        (client.innerApiCalls.createSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.createSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.createSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes createSubscription with closed client', async () => {
@@ -342,7 +359,11 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
-      request.name = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.Subscription',
+        ['name']
+      );
+      request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.createSubscription(request), expectedError);
@@ -359,26 +380,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSubscriptionRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
       client.innerApiCalls.getSubscription = stubSimpleCall(expectedResponse);
       const [response] = await client.getSubscription(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.getSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.getSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.getSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes getSubscription without error using callback', async () => {
@@ -390,15 +411,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSubscriptionRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
@@ -421,11 +439,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.getSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.getSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.getSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes getSubscription with error', async () => {
@@ -437,26 +458,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSubscriptionRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.getSubscription = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.getSubscription(request), expectedError);
-      assert(
-        (client.innerApiCalls.getSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.getSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.getSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes getSubscription with closed client', async () => {
@@ -468,7 +489,11 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSubscriptionRequest()
       );
-      request.subscription = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.getSubscription(request), expectedError);
@@ -485,16 +510,13 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSubscriptionRequest()
       );
-      request.subscription = {};
-      request.subscription.name = '';
-      const expectedHeaderRequestParams = 'subscription.name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      request.subscription ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateSubscriptionRequest',
+        ['subscription', 'name']
+      );
+      request.subscription.name = defaultValue1;
+      const expectedHeaderRequestParams = `subscription.name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
@@ -502,11 +524,14 @@ describe('v1.SubscriberClient', () => {
         stubSimpleCall(expectedResponse);
       const [response] = await client.updateSubscription(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.updateSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.updateSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.updateSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes updateSubscription without error using callback', async () => {
@@ -518,16 +543,13 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSubscriptionRequest()
       );
-      request.subscription = {};
-      request.subscription.name = '';
-      const expectedHeaderRequestParams = 'subscription.name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      request.subscription ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateSubscriptionRequest',
+        ['subscription', 'name']
+      );
+      request.subscription.name = defaultValue1;
+      const expectedHeaderRequestParams = `subscription.name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
@@ -550,11 +572,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.updateSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.updateSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.updateSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes updateSubscription with error', async () => {
@@ -566,27 +591,27 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSubscriptionRequest()
       );
-      request.subscription = {};
-      request.subscription.name = '';
-      const expectedHeaderRequestParams = 'subscription.name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      request.subscription ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateSubscriptionRequest',
+        ['subscription', 'name']
+      );
+      request.subscription.name = defaultValue1;
+      const expectedHeaderRequestParams = `subscription.name=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.updateSubscription = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.updateSubscription(request), expectedError);
-      assert(
-        (client.innerApiCalls.updateSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.updateSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.updateSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes updateSubscription with closed client', async () => {
@@ -598,8 +623,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSubscriptionRequest()
       );
-      request.subscription = {};
-      request.subscription.name = '';
+      request.subscription ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateSubscriptionRequest',
+        ['subscription', 'name']
+      );
+      request.subscription.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.updateSubscription(request), expectedError);
@@ -616,15 +645,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSubscriptionRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -632,11 +658,14 @@ describe('v1.SubscriberClient', () => {
         stubSimpleCall(expectedResponse);
       const [response] = await client.deleteSubscription(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.deleteSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.deleteSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes deleteSubscription without error using callback', async () => {
@@ -648,15 +677,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSubscriptionRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -679,11 +705,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.deleteSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.deleteSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes deleteSubscription with error', async () => {
@@ -695,26 +724,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSubscriptionRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.deleteSubscription = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.deleteSubscription(request), expectedError);
-      assert(
-        (client.innerApiCalls.deleteSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.deleteSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes deleteSubscription with closed client', async () => {
@@ -726,7 +755,11 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSubscriptionRequest()
       );
-      request.subscription = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.deleteSubscription(request), expectedError);
@@ -743,26 +776,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyAckDeadlineRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ModifyAckDeadlineRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
       client.innerApiCalls.modifyAckDeadline = stubSimpleCall(expectedResponse);
       const [response] = await client.modifyAckDeadline(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.modifyAckDeadline as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.modifyAckDeadline as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.modifyAckDeadline as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes modifyAckDeadline without error using callback', async () => {
@@ -774,15 +807,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyAckDeadlineRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ModifyAckDeadlineRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -805,11 +835,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.modifyAckDeadline as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.modifyAckDeadline as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.modifyAckDeadline as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes modifyAckDeadline with error', async () => {
@@ -821,26 +854,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyAckDeadlineRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ModifyAckDeadlineRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.modifyAckDeadline = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.modifyAckDeadline(request), expectedError);
-      assert(
-        (client.innerApiCalls.modifyAckDeadline as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.modifyAckDeadline as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.modifyAckDeadline as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes modifyAckDeadline with closed client', async () => {
@@ -852,7 +885,11 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyAckDeadlineRequest()
       );
-      request.subscription = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ModifyAckDeadlineRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.modifyAckDeadline(request), expectedError);
@@ -869,26 +906,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.AcknowledgeRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.AcknowledgeRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
       client.innerApiCalls.acknowledge = stubSimpleCall(expectedResponse);
       const [response] = await client.acknowledge(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.acknowledge as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.acknowledge as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.acknowledge as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes acknowledge without error using callback', async () => {
@@ -900,15 +937,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.AcknowledgeRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.AcknowledgeRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -931,11 +965,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.acknowledge as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.acknowledge as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.acknowledge as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes acknowledge with error', async () => {
@@ -947,26 +984,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.AcknowledgeRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.AcknowledgeRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.acknowledge = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.acknowledge(request), expectedError);
-      assert(
-        (client.innerApiCalls.acknowledge as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.acknowledge as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.acknowledge as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes acknowledge with closed client', async () => {
@@ -978,7 +1015,11 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.AcknowledgeRequest()
       );
-      request.subscription = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.AcknowledgeRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.acknowledge(request), expectedError);
@@ -995,26 +1036,25 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PullRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PullRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.PullResponse()
       );
       client.innerApiCalls.pull = stubSimpleCall(expectedResponse);
       const [response] = await client.pull(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.pull as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (client.innerApiCalls.pull as SinonStub).getCall(0)
+        .args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.pull as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes pull without error using callback', async () => {
@@ -1026,15 +1066,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PullRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PullRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.PullResponse()
       );
@@ -1056,11 +1093,13 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.pull as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (client.innerApiCalls.pull as SinonStub).getCall(0)
+        .args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.pull as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes pull with error', async () => {
@@ -1072,23 +1111,22 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PullRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PullRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.pull = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.pull(request), expectedError);
-      assert(
-        (client.innerApiCalls.pull as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (client.innerApiCalls.pull as SinonStub).getCall(0)
+        .args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.pull as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes pull with closed client', async () => {
@@ -1100,7 +1138,11 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PullRequest()
       );
-      request.subscription = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PullRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.pull(request), expectedError);
@@ -1117,26 +1159,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyPushConfigRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ModifyPushConfigRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
       client.innerApiCalls.modifyPushConfig = stubSimpleCall(expectedResponse);
       const [response] = await client.modifyPushConfig(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.modifyPushConfig as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.modifyPushConfig as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.modifyPushConfig as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes modifyPushConfig without error using callback', async () => {
@@ -1148,15 +1190,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyPushConfigRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ModifyPushConfigRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -1179,11 +1218,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.modifyPushConfig as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.modifyPushConfig as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.modifyPushConfig as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes modifyPushConfig with error', async () => {
@@ -1195,26 +1237,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyPushConfigRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ModifyPushConfigRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.modifyPushConfig = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.modifyPushConfig(request), expectedError);
-      assert(
-        (client.innerApiCalls.modifyPushConfig as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.modifyPushConfig as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.modifyPushConfig as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes modifyPushConfig with closed client', async () => {
@@ -1226,7 +1268,11 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyPushConfigRequest()
       );
-      request.subscription = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ModifyPushConfigRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.modifyPushConfig(request), expectedError);
@@ -1243,26 +1289,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSnapshotRequest()
       );
-      request.snapshot = '';
-      const expectedHeaderRequestParams = 'snapshot=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSnapshotRequest',
+        ['snapshot']
+      );
+      request.snapshot = defaultValue1;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
       client.innerApiCalls.getSnapshot = stubSimpleCall(expectedResponse);
       const [response] = await client.getSnapshot(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.getSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.getSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.getSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes getSnapshot without error using callback', async () => {
@@ -1274,15 +1320,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSnapshotRequest()
       );
-      request.snapshot = '';
-      const expectedHeaderRequestParams = 'snapshot=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSnapshotRequest',
+        ['snapshot']
+      );
+      request.snapshot = defaultValue1;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
@@ -1305,11 +1348,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.getSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.getSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.getSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes getSnapshot with error', async () => {
@@ -1321,26 +1367,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSnapshotRequest()
       );
-      request.snapshot = '';
-      const expectedHeaderRequestParams = 'snapshot=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSnapshotRequest',
+        ['snapshot']
+      );
+      request.snapshot = defaultValue1;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.getSnapshot = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.getSnapshot(request), expectedError);
-      assert(
-        (client.innerApiCalls.getSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.getSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.getSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes getSnapshot with closed client', async () => {
@@ -1352,7 +1398,11 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSnapshotRequest()
       );
-      request.snapshot = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetSnapshotRequest',
+        ['snapshot']
+      );
+      request.snapshot = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.getSnapshot(request), expectedError);
@@ -1369,26 +1419,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSnapshotRequest()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CreateSnapshotRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
       client.innerApiCalls.createSnapshot = stubSimpleCall(expectedResponse);
       const [response] = await client.createSnapshot(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.createSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.createSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.createSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes createSnapshot without error using callback', async () => {
@@ -1400,15 +1450,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSnapshotRequest()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CreateSnapshotRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
@@ -1431,11 +1478,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.createSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.createSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.createSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes createSnapshot with error', async () => {
@@ -1447,26 +1497,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSnapshotRequest()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CreateSnapshotRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.createSnapshot = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.createSnapshot(request), expectedError);
-      assert(
-        (client.innerApiCalls.createSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.createSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.createSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes createSnapshot with closed client', async () => {
@@ -1478,7 +1528,11 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSnapshotRequest()
       );
-      request.name = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.CreateSnapshotRequest',
+        ['name']
+      );
+      request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.createSnapshot(request), expectedError);
@@ -1495,27 +1549,27 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSnapshotRequest()
       );
-      request.snapshot = {};
-      request.snapshot.name = '';
-      const expectedHeaderRequestParams = 'snapshot.name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      request.snapshot ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateSnapshotRequest',
+        ['snapshot', 'name']
+      );
+      request.snapshot.name = defaultValue1;
+      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
       client.innerApiCalls.updateSnapshot = stubSimpleCall(expectedResponse);
       const [response] = await client.updateSnapshot(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.updateSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.updateSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.updateSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes updateSnapshot without error using callback', async () => {
@@ -1527,16 +1581,13 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSnapshotRequest()
       );
-      request.snapshot = {};
-      request.snapshot.name = '';
-      const expectedHeaderRequestParams = 'snapshot.name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      request.snapshot ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateSnapshotRequest',
+        ['snapshot', 'name']
+      );
+      request.snapshot.name = defaultValue1;
+      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
@@ -1559,11 +1610,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.updateSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.updateSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.updateSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes updateSnapshot with error', async () => {
@@ -1575,27 +1629,27 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSnapshotRequest()
       );
-      request.snapshot = {};
-      request.snapshot.name = '';
-      const expectedHeaderRequestParams = 'snapshot.name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      request.snapshot ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateSnapshotRequest',
+        ['snapshot', 'name']
+      );
+      request.snapshot.name = defaultValue1;
+      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.updateSnapshot = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.updateSnapshot(request), expectedError);
-      assert(
-        (client.innerApiCalls.updateSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.updateSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.updateSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes updateSnapshot with closed client', async () => {
@@ -1607,8 +1661,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSnapshotRequest()
       );
-      request.snapshot = {};
-      request.snapshot.name = '';
+      request.snapshot ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateSnapshotRequest',
+        ['snapshot', 'name']
+      );
+      request.snapshot.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.updateSnapshot(request), expectedError);
@@ -1625,26 +1683,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSnapshotRequest()
       );
-      request.snapshot = '';
-      const expectedHeaderRequestParams = 'snapshot=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSnapshotRequest',
+        ['snapshot']
+      );
+      request.snapshot = defaultValue1;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
       client.innerApiCalls.deleteSnapshot = stubSimpleCall(expectedResponse);
       const [response] = await client.deleteSnapshot(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.deleteSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.deleteSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes deleteSnapshot without error using callback', async () => {
@@ -1656,15 +1714,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSnapshotRequest()
       );
-      request.snapshot = '';
-      const expectedHeaderRequestParams = 'snapshot=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSnapshotRequest',
+        ['snapshot']
+      );
+      request.snapshot = defaultValue1;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -1687,11 +1742,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.deleteSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.deleteSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes deleteSnapshot with error', async () => {
@@ -1703,26 +1761,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSnapshotRequest()
       );
-      request.snapshot = '';
-      const expectedHeaderRequestParams = 'snapshot=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSnapshotRequest',
+        ['snapshot']
+      );
+      request.snapshot = defaultValue1;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.deleteSnapshot = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.deleteSnapshot(request), expectedError);
-      assert(
-        (client.innerApiCalls.deleteSnapshot as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.deleteSnapshot as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteSnapshot as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes deleteSnapshot with closed client', async () => {
@@ -1734,7 +1792,11 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSnapshotRequest()
       );
-      request.snapshot = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteSnapshotRequest',
+        ['snapshot']
+      );
+      request.snapshot = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.deleteSnapshot(request), expectedError);
@@ -1751,26 +1813,25 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.SeekRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.SeekRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.SeekResponse()
       );
       client.innerApiCalls.seek = stubSimpleCall(expectedResponse);
       const [response] = await client.seek(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.seek as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (client.innerApiCalls.seek as SinonStub).getCall(0)
+        .args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.seek as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes seek without error using callback', async () => {
@@ -1782,15 +1843,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.SeekRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.SeekRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.SeekResponse()
       );
@@ -1812,11 +1870,13 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.seek as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (client.innerApiCalls.seek as SinonStub).getCall(0)
+        .args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.seek as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes seek with error', async () => {
@@ -1828,23 +1888,22 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.SeekRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.SeekRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.seek = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.seek(request), expectedError);
-      assert(
-        (client.innerApiCalls.seek as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (client.innerApiCalls.seek as SinonStub).getCall(0)
+        .args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.seek as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes seek with closed client', async () => {
@@ -1856,7 +1915,11 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.SeekRequest()
       );
-      request.subscription = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.SeekRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.seek(request), expectedError);
@@ -1873,6 +1936,7 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.StreamingPullRequest()
       );
+
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.StreamingPullResponse()
       );
@@ -1958,15 +2022,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSubscriptionsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -1975,11 +2036,14 @@ describe('v1.SubscriberClient', () => {
       client.innerApiCalls.listSubscriptions = stubSimpleCall(expectedResponse);
       const [response] = await client.listSubscriptions(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listSubscriptions as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listSubscriptions as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listSubscriptions as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listSubscriptions without error using callback', async () => {
@@ -1991,15 +2055,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSubscriptionsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -2024,11 +2085,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listSubscriptions as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listSubscriptions as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listSubscriptions as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listSubscriptions with error', async () => {
@@ -2040,26 +2104,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSubscriptionsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listSubscriptions = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.listSubscriptions(request), expectedError);
-      assert(
-        (client.innerApiCalls.listSubscriptions as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listSubscriptions as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listSubscriptions as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listSubscriptionsStream without error', async () => {
@@ -2071,8 +2135,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSubscriptionsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -2100,11 +2168,12 @@ describe('v1.SubscriberClient', () => {
           .getCall(0)
           .calledWith(client.innerApiCalls.listSubscriptions, request)
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listSubscriptions.createStream as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listSubscriptions.createStream as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -2117,8 +2186,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSubscriptionsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSubscriptions.createStream =
         stubPageStreamingCall(undefined, expectedError);
@@ -2141,11 +2214,12 @@ describe('v1.SubscriberClient', () => {
           .getCall(0)
           .calledWith(client.innerApiCalls.listSubscriptions, request)
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listSubscriptions.createStream as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listSubscriptions.createStream as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -2158,8 +2232,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSubscriptionsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -2179,11 +2257,12 @@ describe('v1.SubscriberClient', () => {
         ).getCall(0).args[1],
         request
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listSubscriptions.asyncIterate as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listSubscriptions.asyncIterate as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -2196,8 +2275,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSubscriptionsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSubscriptions.asyncIterate =
         stubAsyncIterationCall(undefined, expectedError);
@@ -2214,11 +2297,12 @@ describe('v1.SubscriberClient', () => {
         ).getCall(0).args[1],
         request
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listSubscriptions.asyncIterate as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listSubscriptions.asyncIterate as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
   });
@@ -2233,15 +2317,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSnapshotsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2250,11 +2331,14 @@ describe('v1.SubscriberClient', () => {
       client.innerApiCalls.listSnapshots = stubSimpleCall(expectedResponse);
       const [response] = await client.listSnapshots(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listSnapshots as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listSnapshots as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listSnapshots as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listSnapshots without error using callback', async () => {
@@ -2266,15 +2350,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSnapshotsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2299,11 +2380,14 @@ describe('v1.SubscriberClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listSnapshots as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listSnapshots as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listSnapshots as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listSnapshots with error', async () => {
@@ -2315,26 +2399,26 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSnapshotsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listSnapshots = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.listSnapshots(request), expectedError);
-      assert(
-        (client.innerApiCalls.listSnapshots as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listSnapshots as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listSnapshots as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listSnapshotsStream without error', async () => {
@@ -2346,8 +2430,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSnapshotsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2375,11 +2463,12 @@ describe('v1.SubscriberClient', () => {
           .getCall(0)
           .calledWith(client.innerApiCalls.listSnapshots, request)
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listSnapshots.createStream as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listSnapshots.createStream as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -2392,8 +2481,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSnapshotsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSnapshots.createStream =
         stubPageStreamingCall(undefined, expectedError);
@@ -2416,11 +2509,12 @@ describe('v1.SubscriberClient', () => {
           .getCall(0)
           .calledWith(client.innerApiCalls.listSnapshots, request)
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listSnapshots.createStream as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listSnapshots.createStream as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -2433,8 +2527,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSnapshotsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2454,11 +2552,12 @@ describe('v1.SubscriberClient', () => {
         ).getCall(0).args[1],
         request
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listSnapshots.asyncIterate as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listSnapshots.asyncIterate as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -2471,8 +2570,12 @@ describe('v1.SubscriberClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListSnapshotsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSnapshots.asyncIterate =
         stubAsyncIterationCall(undefined, expectedError);
@@ -2489,11 +2592,12 @@ describe('v1.SubscriberClient', () => {
         ).getCall(0).args[1],
         request
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listSnapshots.asyncIterate as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listSnapshots.asyncIterate as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
   });

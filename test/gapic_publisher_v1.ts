@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,21 @@ import * as publisherModule from '../src';
 import {PassThrough} from 'stream';
 
 import {protobuf, IamProtos} from 'google-gax';
+
+// Dynamically loaded proto JSON is needed to get the type information
+// to fill in default values for request objects
+const root = protobuf.Root.fromJSON(
+  require('../protos/protos.json')
+).resolveAll();
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function getTypeDefaultValue(typeName: string, fields: string[]) {
+  let type = root.lookupType(typeName) as protobuf.Type;
+  for (const field of fields.slice(0, -1)) {
+    type = type.fields[field]?.resolvedType as protobuf.Type;
+  }
+  return type.fields[fields[fields.length - 1]]?.defaultValue;
+}
 
 function generateSampleMessage<T extends object>(instance: T) {
   const filledObject = (
@@ -113,99 +128,101 @@ function stubAsyncIterationCall<ResponseType>(
 }
 
 describe('v1.PublisherClient', () => {
-  it('has servicePath', () => {
-    const servicePath = publisherModule.v1.PublisherClient.servicePath;
-    assert(servicePath);
-  });
-
-  it('has apiEndpoint', () => {
-    const apiEndpoint = publisherModule.v1.PublisherClient.apiEndpoint;
-    assert(apiEndpoint);
-  });
-
-  it('has port', () => {
-    const port = publisherModule.v1.PublisherClient.port;
-    assert(port);
-    assert(typeof port === 'number');
-  });
-
-  it('should create a client with no option', () => {
-    const client = new publisherModule.v1.PublisherClient();
-    assert(client);
-  });
-
-  it('should create a client with gRPC fallback', () => {
-    const client = new publisherModule.v1.PublisherClient({
-      fallback: true,
+  describe('Common methods', () => {
+    it('has servicePath', () => {
+      const servicePath = publisherModule.v1.PublisherClient.servicePath;
+      assert(servicePath);
     });
-    assert(client);
-  });
 
-  it('has initialize method and supports deferred initialization', async () => {
-    const client = new publisherModule.v1.PublisherClient({
-      credentials: {client_email: 'bogus', private_key: 'bogus'},
-      projectId: 'bogus',
+    it('has apiEndpoint', () => {
+      const apiEndpoint = publisherModule.v1.PublisherClient.apiEndpoint;
+      assert(apiEndpoint);
     });
-    assert.strictEqual(client.publisherStub, undefined);
-    await client.initialize();
-    assert(client.publisherStub);
-  });
 
-  it('has close method for the initialized client', done => {
-    const client = new publisherModule.v1.PublisherClient({
-      credentials: {client_email: 'bogus', private_key: 'bogus'},
-      projectId: 'bogus',
+    it('has port', () => {
+      const port = publisherModule.v1.PublisherClient.port;
+      assert(port);
+      assert(typeof port === 'number');
     });
-    client.initialize();
-    assert(client.publisherStub);
-    client.close().then(() => {
-      done();
-    });
-  });
 
-  it('has close method for the non-initialized client', done => {
-    const client = new publisherModule.v1.PublisherClient({
-      credentials: {client_email: 'bogus', private_key: 'bogus'},
-      projectId: 'bogus',
+    it('should create a client with no option', () => {
+      const client = new publisherModule.v1.PublisherClient();
+      assert(client);
     });
-    assert.strictEqual(client.publisherStub, undefined);
-    client.close().then(() => {
-      done();
-    });
-  });
 
-  it('has getProjectId method', async () => {
-    const fakeProjectId = 'fake-project-id';
-    const client = new publisherModule.v1.PublisherClient({
-      credentials: {client_email: 'bogus', private_key: 'bogus'},
-      projectId: 'bogus',
+    it('should create a client with gRPC fallback', () => {
+      const client = new publisherModule.v1.PublisherClient({
+        fallback: true,
+      });
+      assert(client);
     });
-    client.auth.getProjectId = sinon.stub().resolves(fakeProjectId);
-    const result = await client.getProjectId();
-    assert.strictEqual(result, fakeProjectId);
-    assert((client.auth.getProjectId as SinonStub).calledWithExactly());
-  });
 
-  it('has getProjectId method with callback', async () => {
-    const fakeProjectId = 'fake-project-id';
-    const client = new publisherModule.v1.PublisherClient({
-      credentials: {client_email: 'bogus', private_key: 'bogus'},
-      projectId: 'bogus',
+    it('has initialize method and supports deferred initialization', async () => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      assert.strictEqual(client.publisherStub, undefined);
+      await client.initialize();
+      assert(client.publisherStub);
     });
-    client.auth.getProjectId = sinon
-      .stub()
-      .callsArgWith(0, null, fakeProjectId);
-    const promise = new Promise((resolve, reject) => {
-      client.getProjectId((err?: Error | null, projectId?: string | null) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(projectId);
-        }
+
+    it('has close method for the initialized client', done => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.initialize();
+      assert(client.publisherStub);
+      client.close().then(() => {
+        done();
       });
     });
-    const result = await promise;
-    assert.strictEqual(result, fakeProjectId);
+
+    it('has close method for the non-initialized client', done => {
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      assert.strictEqual(client.publisherStub, undefined);
+      client.close().then(() => {
+        done();
+      });
+    });
+
+    it('has getProjectId method', async () => {
+      const fakeProjectId = 'fake-project-id';
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.auth.getProjectId = sinon.stub().resolves(fakeProjectId);
+      const result = await client.getProjectId();
+      assert.strictEqual(result, fakeProjectId);
+      assert((client.auth.getProjectId as SinonStub).calledWithExactly());
+    });
+
+    it('has getProjectId method with callback', async () => {
+      const fakeProjectId = 'fake-project-id';
+      const client = new publisherModule.v1.PublisherClient({
+        credentials: {client_email: 'bogus', private_key: 'bogus'},
+        projectId: 'bogus',
+      });
+      client.auth.getProjectId = sinon
+        .stub()
+        .callsArgWith(0, null, fakeProjectId);
+      const promise = new Promise((resolve, reject) => {
+        client.getProjectId((err?: Error | null, projectId?: string | null) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(projectId);
+          }
+        });
+      });
+      const result = await promise;
+      assert.strictEqual(result, fakeProjectId);
+    });
   });
 
   describe('createTopic', () => {
@@ -218,26 +235,25 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
+        'name',
+      ]);
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
       client.innerApiCalls.createTopic = stubSimpleCall(expectedResponse);
       const [response] = await client.createTopic(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.createTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.createTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.createTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes createTopic without error using callback', async () => {
@@ -249,15 +265,11 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
+        'name',
+      ]);
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
@@ -280,11 +292,14 @@ describe('v1.PublisherClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.createTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.createTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.createTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes createTopic with error', async () => {
@@ -296,26 +311,25 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
-      request.name = '';
-      const expectedHeaderRequestParams = 'name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
+        'name',
+      ]);
+      request.name = defaultValue1;
+      const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.createTopic = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.createTopic(request), expectedError);
-      assert(
-        (client.innerApiCalls.createTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.createTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.createTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes createTopic with closed client', async () => {
@@ -327,7 +341,10 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
-      request.name = '';
+      const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
+        'name',
+      ]);
+      request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.createTopic(request), expectedError);
@@ -344,27 +361,27 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateTopicRequest()
       );
-      request.topic = {};
-      request.topic.name = '';
-      const expectedHeaderRequestParams = 'topic.name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      request.topic ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateTopicRequest',
+        ['topic', 'name']
+      );
+      request.topic.name = defaultValue1;
+      const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
       client.innerApiCalls.updateTopic = stubSimpleCall(expectedResponse);
       const [response] = await client.updateTopic(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.updateTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.updateTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.updateTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes updateTopic without error using callback', async () => {
@@ -376,16 +393,13 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateTopicRequest()
       );
-      request.topic = {};
-      request.topic.name = '';
-      const expectedHeaderRequestParams = 'topic.name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      request.topic ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateTopicRequest',
+        ['topic', 'name']
+      );
+      request.topic.name = defaultValue1;
+      const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
@@ -408,11 +422,14 @@ describe('v1.PublisherClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.updateTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.updateTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.updateTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes updateTopic with error', async () => {
@@ -424,27 +441,27 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateTopicRequest()
       );
-      request.topic = {};
-      request.topic.name = '';
-      const expectedHeaderRequestParams = 'topic.name=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      request.topic ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateTopicRequest',
+        ['topic', 'name']
+      );
+      request.topic.name = defaultValue1;
+      const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.updateTopic = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.updateTopic(request), expectedError);
-      assert(
-        (client.innerApiCalls.updateTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.updateTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.updateTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes updateTopic with closed client', async () => {
@@ -456,8 +473,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateTopicRequest()
       );
-      request.topic = {};
-      request.topic.name = '';
+      request.topic ??= {};
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.UpdateTopicRequest',
+        ['topic', 'name']
+      );
+      request.topic.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.updateTopic(request), expectedError);
@@ -474,26 +495,26 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PublishRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PublishRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.PublishResponse()
       );
       client.innerApiCalls.publish = stubSimpleCall(expectedResponse);
       const [response] = await client.publish(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.publish as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (client.innerApiCalls.publish as SinonStub).getCall(
+        0
+      ).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.publish as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes publish without error using callback', async () => {
@@ -505,15 +526,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PublishRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PublishRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.PublishResponse()
       );
@@ -536,11 +554,14 @@ describe('v1.PublisherClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.publish as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (client.innerApiCalls.publish as SinonStub).getCall(
+        0
+      ).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.publish as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes publish with error', async () => {
@@ -552,23 +573,23 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PublishRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PublishRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.publish = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.publish(request), expectedError);
-      assert(
-        (client.innerApiCalls.publish as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (client.innerApiCalls.publish as SinonStub).getCall(
+        0
+      ).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.publish as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes publish with closed client', async () => {
@@ -580,7 +601,11 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PublishRequest()
       );
-      request.topic = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.PublishRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.publish(request), expectedError);
@@ -597,26 +622,26 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetTopicRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetTopicRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
       client.innerApiCalls.getTopic = stubSimpleCall(expectedResponse);
       const [response] = await client.getTopic(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.getTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.getTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.getTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes getTopic without error using callback', async () => {
@@ -628,15 +653,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetTopicRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetTopicRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
@@ -659,11 +681,14 @@ describe('v1.PublisherClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.getTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.getTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.getTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes getTopic with error', async () => {
@@ -675,23 +700,23 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetTopicRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetTopicRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.getTopic = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.getTopic(request), expectedError);
-      assert(
-        (client.innerApiCalls.getTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.getTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.getTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes getTopic with closed client', async () => {
@@ -703,7 +728,11 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetTopicRequest()
       );
-      request.topic = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.GetTopicRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.getTopic(request), expectedError);
@@ -720,26 +749,26 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteTopicRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteTopicRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
       client.innerApiCalls.deleteTopic = stubSimpleCall(expectedResponse);
       const [response] = await client.deleteTopic(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.deleteTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.deleteTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes deleteTopic without error using callback', async () => {
@@ -751,15 +780,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteTopicRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteTopicRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -782,11 +808,14 @@ describe('v1.PublisherClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.deleteTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.deleteTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes deleteTopic with error', async () => {
@@ -798,26 +827,26 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteTopicRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteTopicRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.deleteTopic = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.deleteTopic(request), expectedError);
-      assert(
-        (client.innerApiCalls.deleteTopic as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.deleteTopic as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.deleteTopic as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes deleteTopic with closed client', async () => {
@@ -829,7 +858,11 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteTopicRequest()
       );
-      request.topic = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DeleteTopicRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.deleteTopic(request), expectedError);
@@ -846,15 +879,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DetachSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionResponse()
       );
@@ -862,11 +892,14 @@ describe('v1.PublisherClient', () => {
         stubSimpleCall(expectedResponse);
       const [response] = await client.detachSubscription(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.detachSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.detachSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.detachSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes detachSubscription without error using callback', async () => {
@@ -878,15 +911,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DetachSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionResponse()
       );
@@ -909,11 +939,14 @@ describe('v1.PublisherClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.detachSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.detachSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.detachSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes detachSubscription with error', async () => {
@@ -925,26 +958,26 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionRequest()
       );
-      request.subscription = '';
-      const expectedHeaderRequestParams = 'subscription=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DetachSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.detachSubscription = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.detachSubscription(request), expectedError);
-      assert(
-        (client.innerApiCalls.detachSubscription as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.detachSubscription as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.detachSubscription as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes detachSubscription with closed client', async () => {
@@ -956,7 +989,11 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionRequest()
       );
-      request.subscription = '';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.DetachSubscriptionRequest',
+        ['subscription']
+      );
+      request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
       client.close();
       await assert.rejects(client.detachSubscription(request), expectedError);
@@ -973,15 +1010,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
@@ -990,11 +1024,14 @@ describe('v1.PublisherClient', () => {
       client.innerApiCalls.listTopics = stubSimpleCall(expectedResponse);
       const [response] = await client.listTopics(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listTopics as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listTopics as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listTopics as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listTopics without error using callback', async () => {
@@ -1006,15 +1043,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
@@ -1039,11 +1073,14 @@ describe('v1.PublisherClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listTopics as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listTopics as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listTopics as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listTopics with error', async () => {
@@ -1055,26 +1092,26 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listTopics = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.listTopics(request), expectedError);
-      assert(
-        (client.innerApiCalls.listTopics as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listTopics as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listTopics as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listTopicsStream without error', async () => {
@@ -1086,8 +1123,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
@@ -1115,11 +1156,12 @@ describe('v1.PublisherClient', () => {
           .getCall(0)
           .calledWith(client.innerApiCalls.listTopics, request)
       );
-      assert.strictEqual(
-        (client.descriptors.page.listTopics.createStream as SinonStub).getCall(
-          0
-        ).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listTopics.createStream as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -1132,8 +1174,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopics.createStream = stubPageStreamingCall(
         undefined,
@@ -1158,11 +1204,12 @@ describe('v1.PublisherClient', () => {
           .getCall(0)
           .calledWith(client.innerApiCalls.listTopics, request)
       );
-      assert.strictEqual(
-        (client.descriptors.page.listTopics.createStream as SinonStub).getCall(
-          0
-        ).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listTopics.createStream as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -1175,8 +1222,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
@@ -1196,11 +1247,12 @@ describe('v1.PublisherClient', () => {
         ).args[1],
         request
       );
-      assert.strictEqual(
-        (client.descriptors.page.listTopics.asyncIterate as SinonStub).getCall(
-          0
-        ).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listTopics.asyncIterate as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -1213,8 +1265,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicsRequest()
       );
-      request.project = '';
-      const expectedHeaderRequestParams = 'project=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicsRequest',
+        ['project']
+      );
+      request.project = defaultValue1;
+      const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopics.asyncIterate = stubAsyncIterationCall(
         undefined,
@@ -1233,11 +1289,12 @@ describe('v1.PublisherClient', () => {
         ).args[1],
         request
       );
-      assert.strictEqual(
-        (client.descriptors.page.listTopics.asyncIterate as SinonStub).getCall(
-          0
-        ).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listTopics.asyncIterate as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
   });
@@ -1252,25 +1309,25 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSubscriptions =
         stubSimpleCall(expectedResponse);
       const [response] = await client.listTopicSubscriptions(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listTopicSubscriptions as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listTopicSubscriptions as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listTopicSubscriptions as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listTopicSubscriptions without error using callback', async () => {
@@ -1282,15 +1339,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSubscriptions =
         stubSimpleCallWithCallback(expectedResponse);
@@ -1308,11 +1362,14 @@ describe('v1.PublisherClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listTopicSubscriptions as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listTopicSubscriptions as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listTopicSubscriptions as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listTopicSubscriptions with error', async () => {
@@ -1324,15 +1381,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listTopicSubscriptions = stubSimpleCall(
         undefined,
@@ -1342,11 +1396,14 @@ describe('v1.PublisherClient', () => {
         client.listTopicSubscriptions(request),
         expectedError
       );
-      assert(
-        (client.innerApiCalls.listTopicSubscriptions as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listTopicSubscriptions as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listTopicSubscriptions as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listTopicSubscriptionsStream without error', async () => {
@@ -1358,8 +1415,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSubscriptions.createStream =
         stubPageStreamingCall(expectedResponse);
@@ -1386,12 +1447,15 @@ describe('v1.PublisherClient', () => {
           .getCall(0)
           .calledWith(client.innerApiCalls.listTopicSubscriptions, request)
       );
-      assert.strictEqual(
+      assert(
         (
           client.descriptors.page.listTopicSubscriptions
             .createStream as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+        )
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -1404,8 +1468,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopicSubscriptions.createStream =
         stubPageStreamingCall(undefined, expectedError);
@@ -1431,12 +1499,15 @@ describe('v1.PublisherClient', () => {
           .getCall(0)
           .calledWith(client.innerApiCalls.listTopicSubscriptions, request)
       );
-      assert.strictEqual(
+      assert(
         (
           client.descriptors.page.listTopicSubscriptions
             .createStream as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+        )
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -1449,8 +1520,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSubscriptions.asyncIterate =
         stubAsyncIterationCall(expectedResponse);
@@ -1467,12 +1542,15 @@ describe('v1.PublisherClient', () => {
         ).getCall(0).args[1],
         request
       );
-      assert.strictEqual(
+      assert(
         (
           client.descriptors.page.listTopicSubscriptions
             .asyncIterate as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+        )
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -1485,8 +1563,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSubscriptionsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopicSubscriptions.asyncIterate =
         stubAsyncIterationCall(undefined, expectedError);
@@ -1504,12 +1586,15 @@ describe('v1.PublisherClient', () => {
         ).getCall(0).args[1],
         request
       );
-      assert.strictEqual(
+      assert(
         (
           client.descriptors.page.listTopicSubscriptions
             .asyncIterate as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+        )
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
   });
@@ -1524,25 +1609,25 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSnapshots =
         stubSimpleCall(expectedResponse);
       const [response] = await client.listTopicSnapshots(request);
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listTopicSnapshots as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listTopicSnapshots as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listTopicSnapshots as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listTopicSnapshots without error using callback', async () => {
@@ -1554,15 +1639,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSnapshots =
         stubSimpleCallWithCallback(expectedResponse);
@@ -1580,11 +1662,14 @@ describe('v1.PublisherClient', () => {
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
-      assert(
-        (client.innerApiCalls.listTopicSnapshots as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions /*, callback defined above */)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listTopicSnapshots as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listTopicSnapshots as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listTopicSnapshots with error', async () => {
@@ -1596,26 +1681,26 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
-      const expectedOptions = {
-        otherArgs: {
-          headers: {
-            'x-goog-request-params': expectedHeaderRequestParams,
-          },
-        },
-      };
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listTopicSnapshots = stubSimpleCall(
         undefined,
         expectedError
       );
       await assert.rejects(client.listTopicSnapshots(request), expectedError);
-      assert(
-        (client.innerApiCalls.listTopicSnapshots as SinonStub)
-          .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
-      );
+      const actualRequest = (
+        client.innerApiCalls.listTopicSnapshots as SinonStub
+      ).getCall(0).args[0];
+      assert.deepStrictEqual(actualRequest, request);
+      const actualHeaderRequestParams = (
+        client.innerApiCalls.listTopicSnapshots as SinonStub
+      ).getCall(0).args[1].otherArgs.headers['x-goog-request-params'];
+      assert(actualHeaderRequestParams.includes(expectedHeaderRequestParams));
     });
 
     it('invokes listTopicSnapshotsStream without error', async () => {
@@ -1627,8 +1712,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSnapshots.createStream =
         stubPageStreamingCall(expectedResponse);
@@ -1652,11 +1741,12 @@ describe('v1.PublisherClient', () => {
           .getCall(0)
           .calledWith(client.innerApiCalls.listTopicSnapshots, request)
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listTopicSnapshots.createStream as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listTopicSnapshots.createStream as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -1669,8 +1759,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopicSnapshots.createStream =
         stubPageStreamingCall(undefined, expectedError);
@@ -1693,11 +1787,12 @@ describe('v1.PublisherClient', () => {
           .getCall(0)
           .calledWith(client.innerApiCalls.listTopicSnapshots, request)
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listTopicSnapshots.createStream as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listTopicSnapshots.createStream as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -1710,8 +1805,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSnapshots.asyncIterate =
         stubAsyncIterationCall(expectedResponse);
@@ -1727,11 +1826,12 @@ describe('v1.PublisherClient', () => {
         ).getCall(0).args[1],
         request
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listTopicSnapshots.asyncIterate as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listTopicSnapshots.asyncIterate as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
 
@@ -1744,8 +1844,12 @@ describe('v1.PublisherClient', () => {
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
       );
-      request.topic = '';
-      const expectedHeaderRequestParams = 'topic=';
+      const defaultValue1 = getTypeDefaultValue(
+        '.google.pubsub.v1.ListTopicSnapshotsRequest',
+        ['topic']
+      );
+      request.topic = defaultValue1;
+      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopicSnapshots.asyncIterate =
         stubAsyncIterationCall(undefined, expectedError);
@@ -1762,11 +1866,12 @@ describe('v1.PublisherClient', () => {
         ).getCall(0).args[1],
         request
       );
-      assert.strictEqual(
-        (
-          client.descriptors.page.listTopicSnapshots.asyncIterate as SinonStub
-        ).getCall(0).args[2].otherArgs.headers['x-goog-request-params'],
-        expectedHeaderRequestParams
+      assert(
+        (client.descriptors.page.listTopicSnapshots.asyncIterate as SinonStub)
+          .getCall(0)
+          .args[2].otherArgs.headers['x-goog-request-params'].includes(
+            expectedHeaderRequestParams
+          )
       );
     });
   });

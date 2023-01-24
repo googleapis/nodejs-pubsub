@@ -5,3 +5,5 @@ Thank you for opening a Pull Request! Before submitting your PR, there are a few
 - [ ] Appropriate docs were updated (if necessary)
 
 Fixes #<issue_number_goes_here> 🦕
+
+Note: If you are opening a pull request against a `legacy` branch, PLEASE BE AWARE that we generally won't accept these except for things like important security fixes, and only for a limited time.

@@ -4,6 +4,64 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.3.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.2.1...v3.3.0) (2023-01-23)
+
+
+### Features
+
+* Add schema evolution methods and fields ([#1672](https://github.com/googleapis/nodejs-pubsub/issues/1672)) ([7a5bc29](https://github.com/googleapis/nodejs-pubsub/commit/7a5bc29e8a39e5c1991a5eae4200a5045f21997d))
+
+
+### Bug Fixes
+
+* Remove redundant .then() ([#1671](https://github.com/googleapis/nodejs-pubsub/issues/1671)) ([108edc3](https://github.com/googleapis/nodejs-pubsub/commit/108edc3cd2d3d512e2a9777a68541dae1f6aba23))
+
+## [3.2.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.2.0...v3.2.1) (2022-11-04)
+
+
+### Bug Fixes
+
+* **deps:** Use google-gax v3.5.2 ([#1652](https://github.com/googleapis/nodejs-pubsub/issues/1652)) ([ee308b5](https://github.com/googleapis/nodejs-pubsub/commit/ee308b596802ad5537a89804a95429d630595eb4))
+
+## [3.2.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.1.1...v3.2.0) (2022-09-22)
+
+
+### Features
+
+* Add support for exactly once subscriptions ([#1572](https://github.com/googleapis/nodejs-pubsub/issues/1572)) ([998de35](https://github.com/googleapis/nodejs-pubsub/commit/998de35d4bffde4fcffd217347307c04031df3e2))
+
+
+### Bug Fixes
+
+* Preserve default values in x-goog-request-params header ([#1622](https://github.com/googleapis/nodejs-pubsub/issues/1622)) ([76c0ab5](https://github.com/googleapis/nodejs-pubsub/commit/76c0ab55ecfcf0cee5fad1314ecf2317d471c13a))
+* Wait for 'drain' as well ([#1636](https://github.com/googleapis/nodejs-pubsub/issues/1636)) ([d72db50](https://github.com/googleapis/nodejs-pubsub/commit/d72db503bfa3b9b6d7481ce44eb161a031f76715))
+
+## [3.1.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.1.0...v3.1.1) (2022-09-01)
+
+
+### Bug Fixes
+
+* Add hashes to requirements.txt ([#1544](https://github.com/googleapis/nodejs-pubsub/issues/1544)) ([#1614](https://github.com/googleapis/nodejs-pubsub/issues/1614)) ([359d098](https://github.com/googleapis/nodejs-pubsub/commit/359d098b60422b37230024128ed10f04018670a0))
+* Allow passing gax instance to client constructor ([#1617](https://github.com/googleapis/nodejs-pubsub/issues/1617)) ([8eabe38](https://github.com/googleapis/nodejs-pubsub/commit/8eabe3802bbc50309f3d6a0b9997752ab7f367e1))
+* Better support for fallback mode ([#1610](https://github.com/googleapis/nodejs-pubsub/issues/1610)) ([d9e7311](https://github.com/googleapis/nodejs-pubsub/commit/d9e7311d6f6bb78bb3f06454a7ce3cf02fff314c))
+* Change import long to require ([#1611](https://github.com/googleapis/nodejs-pubsub/issues/1611)) ([5553af2](https://github.com/googleapis/nodejs-pubsub/commit/5553af2684ba87ed361d9d79bf2e2a6d7cd3763c))
+* **deps:** Update dependency protobufjs to v7 ([#1602](https://github.com/googleapis/nodejs-pubsub/issues/1602)) ([6e0ec60](https://github.com/googleapis/nodejs-pubsub/commit/6e0ec60a8f6efc7d8e7b67c431dddd7073895ae6))
+* Do not import the whole google-gax from proto JS ([#1553](https://github.com/googleapis/nodejs-pubsub/issues/1553)) ([#1616](https://github.com/googleapis/nodejs-pubsub/issues/1616)) ([31c7fa2](https://github.com/googleapis/nodejs-pubsub/commit/31c7fa234ca3d0455979065199d0da1599ed216b))
+
+## [3.1.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.0.3...v3.1.0) (2022-07-15)
+
+
+### Features
+
+* add minExtension setting and plug it into EOS and ackDeadline settings ([#1582](https://github.com/googleapis/nodejs-pubsub/issues/1582)) ([8709979](https://github.com/googleapis/nodejs-pubsub/commit/87099799960b9f299d3fad609c48bd13e03c9097))
+
+## [3.0.3](https://github.com/googleapis/nodejs-pubsub/compare/v3.0.2...v3.0.3) (2022-07-08)
+
+
+### Bug Fixes
+
+* pin @opentelemetry/semantic-conventions for Node 12 support ([#1596](https://github.com/googleapis/nodejs-pubsub/issues/1596)) ([f594061](https://github.com/googleapis/nodejs-pubsub/commit/f5940613f53c3647ab9941adfd8442f2bc0bb857))
+
 ## [3.0.2](https://github.com/googleapis/nodejs-pubsub/compare/v3.0.1...v3.0.2) (2022-06-30)
 
 

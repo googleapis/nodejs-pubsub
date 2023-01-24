@@ -14,24 +14,23 @@
 
 /**
  * This application demonstrates how to perform basic operations on
- * subscriptions with the Google Cloud Pub/Sub API.
+ * schemas with the Google Cloud Pub/Sub API.
  *
  * For more information, see the README.md under /pubsub and the documentation
  * at https://cloud.google.com/pubsub/docs.
  */
 
 // sample-metadata:
-//   title: Create Subscription With Filtering
-//   description: Creates a new subscription with filtering.
-//   usage: node createSubscriptionWithFiltering.js <topic-name-or-id> <subscription-name-or-id> <filter-string>
+//   title: Create an exactly-once delivery subscription
+//   description: Demonstrates how to create a subscription for exactly-once delivery.
+//   usage: node createSubscriptionWithExactlyOnceDelivery.js <topic-name-or-id> <subscription-name-or-id>
 
-// [START pubsub_create_subscription_with_filter]
+// [START pubsub_create_subscription_with_exactly_once_delivery]
 /**
  * TODO(developer): Uncomment these variables before running the sample.
  */
 // const topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID';
 // const subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID';
-// const filterString = 'YOUR_FILTER_STRING';   // e.g. 'attributes.author="unknown"'
 
 // Imports the Google Cloud client library
 const {PubSub} = require('@google-cloud/pubsub');
@@ -39,32 +38,33 @@ const {PubSub} = require('@google-cloud/pubsub');
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function createSubscriptionWithFilter(
+async function createSubscriptionWithExactlyOnceDelivery(
   topicNameOrId,
-  subscriptionNameOrId,
-  filterString
+  subscriptionNameOrId
 ) {
   // Creates a new subscription
   await pubSubClient
     .topic(topicNameOrId)
     .createSubscription(subscriptionNameOrId, {
-      filter: filterString,
+      enableExactlyOnceDelivery: true,
     });
   console.log(
-    `Created subscription ${subscriptionNameOrId} with filter ${filterString}.`
+    `Created subscription ${subscriptionNameOrId} with exactly-once delivery.`
+  );
+
+  console.log(
+    'To process messages, remember to check the return value of ackWithResponse().'
   );
 }
-// [END pubsub_create_subscription_with_filter]
+// [END pubsub_create_subscription_with_exactly_once_delivery]
 
 function main(
   topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
-  subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID',
-  filterString = 'YOUR_FILTER_STRING'
+  subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID'
 ) {
-  createSubscriptionWithFilter(
+  createSubscriptionWithExactlyOnceDelivery(
     topicNameOrId,
-    subscriptionNameOrId,
-    filterString
+    subscriptionNameOrId
   ).catch(err => {
     console.error(err.message);
     process.exitCode = 1;

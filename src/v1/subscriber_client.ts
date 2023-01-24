@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,22 +17,18 @@
 // ** All changes to this file may be overwritten. **
 
 /* global window */
-import * as gax from 'google-gax';
-import {
+import type * as gax from 'google-gax';
+import type {
   Callback,
   CallOptions,
   Descriptors,
   ClientOptions,
   PaginationCallback,
   GaxCall,
-  GoogleError,
   IamClient,
   IamProtos,
 } from 'google-gax';
-
-import {Transform} from 'stream';
-import {RequestType} from 'google-gax/build/src/apitypes';
-import {PassThrough} from 'stream';
+import {Transform, PassThrough} from 'stream';
 import * as protos from '../../protos/protos';
 import jsonProtos = require('../../protos/protos.json');
 /**
@@ -41,7 +37,6 @@ import jsonProtos = require('../../protos/protos.json');
  * This file defines retry strategy and timeouts for all API methods in this library.
  */
 import * as gapicConfig from './subscriber_client_config.json';
-
 const version = require('../../../package.json').version;
 
 /**
@@ -104,8 +99,18 @@ export class SubscriberClient {
    *     Pass "rest" to use HTTP/1.1 REST API instead of gRPC.
    *     For more information, please check the
    *     {@link https://github.com/googleapis/gax-nodejs/blob/main/client-libraries.md#http11-rest-api-mode documentation}.
+   * @param {gax} [gaxInstance]: loaded instance of `google-gax`. Useful if you
+   *     need to avoid loading the default gRPC version and want to use the fallback
+   *     HTTP implementation. Load only fallback version and pass it to the constructor:
+   *     ```
+   *     const gax = require('google-gax/build/src/fallback'); // avoids loading google-gax with gRPC
+   *     const client = new SubscriberClient({fallback: 'rest'}, gax);
+   *     ```
    */
-  constructor(opts?: ClientOptions) {
+  constructor(
+    opts?: ClientOptions,
+    gaxInstance?: typeof gax | typeof gax.fallback
+  ) {
     // Ensure that options include all the required fields.
     const staticMembers = this.constructor as typeof SubscriberClient;
     const servicePath =
@@ -120,13 +125,21 @@ export class SubscriberClient {
       (typeof window !== 'undefined' && typeof window?.fetch === 'function');
     opts = Object.assign({servicePath, port, clientConfig, fallback}, opts);
 
+    // Request numeric enum values if REST transport is used.
+    opts.numericEnums = true;
+
     // If scopes are unset in options and we're connecting to a non-default endpoint, set scopes just in case.
     if (servicePath !== staticMembers.servicePath && !('scopes' in opts)) {
       opts['scopes'] = staticMembers.scopes;
     }
 
+    // Load google-gax module synchronously if needed
+    if (!gaxInstance) {
+      gaxInstance = require('google-gax') as typeof gax;
+    }
+
     // Choose either gRPC or proto-over-HTTP implementation of google-gax.
-    this._gaxModule = opts.fallback ? gax.fallback : gax;
+    this._gaxModule = opts.fallback ? gaxInstance.fallback : gaxInstance;
 
     // Create a `gaxGrpc` object, with any grpc-specific options sent to the client.
     this._gaxGrpc = new this._gaxModule.GrpcClient(opts);
@@ -147,7 +160,7 @@ export class SubscriberClient {
     if (servicePath === staticMembers.servicePath) {
       this.auth.defaultScopes = staticMembers.scopes;
     }
-    this.iamClient = new IamClient(this._gaxGrpc, opts);
+    this.iamClient = new this._gaxModule.IamClient(this._gaxGrpc, opts);
 
     // Determine the client header string.
     const clientHeader = [`gax/${this._gaxModule.version}`, `gapic/${version}`];
@@ -208,7 +221,7 @@ export class SubscriberClient {
     // Provide descriptors for these.
     this.descriptors.stream = {
       streamingPull: new this._gaxModule.StreamDescriptor(
-        gax.StreamType.BIDI_STREAMING,
+        this._gaxModule.StreamType.BIDI_STREAMING,
         opts.fallback === 'rest'
       ),
     };
@@ -227,7 +240,7 @@ export class SubscriberClient {
     this.innerApiCalls = {};
 
     // Add a warn function to the client constructor so it can be easily tested.
-    this.warn = gax.warn;
+    this.warn = this._gaxModule.warn;
   }
 
   /**
@@ -290,7 +303,9 @@ export class SubscriberClient {
                 setImmediate(() => {
                   stream.emit(
                     'error',
-                    new GoogleError('The client has already been closed.')
+                    new this._gaxModule.GoogleError(
+                      'The client has already been closed.'
+                    )
                   );
                 });
                 return stream;
@@ -312,7 +327,8 @@ export class SubscriberClient {
       const apiCall = this._gaxModule.createApiCall(
         callPromise,
         this._defaults[methodName],
-        descriptor
+        descriptor,
+        this._opts.fallback
       );
 
       this.innerApiCalls[methodName] = apiCall;
@@ -512,8 +528,8 @@ export class SubscriberClient {
    *   the `message_retention_duration` field in `Topic`. This field is set only
    *   in responses from the server; it is ignored if it is set in any requests.
    * @param {google.pubsub.v1.Subscription.State} request.state
-   *   Output only. An output-only field indicating whether or not the subscription can receive
-   *   messages.
+   *   Output only. An output-only field indicating whether or not the
+   *   subscription can receive messages.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -582,8 +598,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        name: request.name || '',
+      this._gaxModule.routingHeader.fromParams({
+        name: request.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.createSubscription(request, options, callback);
@@ -664,8 +680,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
+      this._gaxModule.routingHeader.fromParams({
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.getSubscription(request, options, callback);
@@ -749,8 +765,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        'subscription.name': request.subscription!.name || '',
+      this._gaxModule.routingHeader.fromParams({
+        'subscription.name': request.subscription!.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.updateSubscription(request, options, callback);
@@ -835,8 +851,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
+      this._gaxModule.routingHeader.fromParams({
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.deleteSubscription(request, options, callback);
@@ -932,8 +948,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
+      this._gaxModule.routingHeader.fromParams({
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.modifyAckDeadline(request, options, callback);
@@ -1024,8 +1040,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
+      this._gaxModule.routingHeader.fromParams({
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.acknowledge(request, options, callback);
@@ -1120,8 +1136,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
+      this._gaxModule.routingHeader.fromParams({
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.pull(request, options, callback);
@@ -1214,8 +1230,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
+      this._gaxModule.routingHeader.fromParams({
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.modifyPushConfig(request, options, callback);
@@ -1300,8 +1316,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        snapshot: request.snapshot || '',
+      this._gaxModule.routingHeader.fromParams({
+        snapshot: request.snapshot ?? '',
       });
     this.initialize();
     return this.innerApiCalls.getSnapshot(request, options, callback);
@@ -1414,8 +1430,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        name: request.name || '',
+      this._gaxModule.routingHeader.fromParams({
+        name: request.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.createSnapshot(request, options, callback);
@@ -1503,8 +1519,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        'snapshot.name': request.snapshot!.name || '',
+      this._gaxModule.routingHeader.fromParams({
+        'snapshot.name': request.snapshot!.name ?? '',
       });
     this.initialize();
     return this.innerApiCalls.updateSnapshot(request, options, callback);
@@ -1593,8 +1609,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        snapshot: request.snapshot || '',
+      this._gaxModule.routingHeader.fromParams({
+        snapshot: request.snapshot ?? '',
       });
     this.initialize();
     return this.innerApiCalls.deleteSnapshot(request, options, callback);
@@ -1696,8 +1712,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        subscription: request.subscription || '',
+      this._gaxModule.routingHeader.fromParams({
+        subscription: request.subscription ?? '',
       });
     this.initialize();
     return this.innerApiCalls.seek(request, options, callback);
@@ -1814,8 +1830,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
+      this._gaxModule.routingHeader.fromParams({
+        project: request.project ?? '',
       });
     this.initialize();
     return this.innerApiCalls.listSubscriptions(request, options, callback);
@@ -1855,14 +1871,14 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
+      this._gaxModule.routingHeader.fromParams({
+        project: request.project ?? '',
       });
     const defaultCallSettings = this._defaults['listSubscriptions'];
     const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSubscriptions.createStream(
-      this.innerApiCalls.listSubscriptions as gax.GaxCall,
+      this.innerApiCalls.listSubscriptions as GaxCall,
       request,
       callSettings
     );
@@ -1903,15 +1919,15 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
+      this._gaxModule.routingHeader.fromParams({
+        project: request.project ?? '',
       });
     const defaultCallSettings = this._defaults['listSubscriptions'];
     const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSubscriptions.asyncIterate(
       this.innerApiCalls['listSubscriptions'] as GaxCall,
-      request as unknown as RequestType,
+      request as {},
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ISubscription>;
   }
@@ -2006,8 +2022,8 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
+      this._gaxModule.routingHeader.fromParams({
+        project: request.project ?? '',
       });
     this.initialize();
     return this.innerApiCalls.listSnapshots(request, options, callback);
@@ -2047,14 +2063,14 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
+      this._gaxModule.routingHeader.fromParams({
+        project: request.project ?? '',
       });
     const defaultCallSettings = this._defaults['listSnapshots'];
     const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSnapshots.createStream(
-      this.innerApiCalls.listSnapshots as gax.GaxCall,
+      this.innerApiCalls.listSnapshots as GaxCall,
       request,
       callSettings
     );
@@ -2095,15 +2111,15 @@ export class SubscriberClient {
     options.otherArgs = options.otherArgs || {};
     options.otherArgs.headers = options.otherArgs.headers || {};
     options.otherArgs.headers['x-goog-request-params'] =
-      gax.routingHeader.fromParams({
-        project: request.project || '',
+      this._gaxModule.routingHeader.fromParams({
+        project: request.project ?? '',
       });
     const defaultCallSettings = this._defaults['listSnapshots'];
     const callSettings = defaultCallSettings.merge(options);
     this.initialize();
     return this.descriptors.page.listSnapshots.asyncIterate(
       this.innerApiCalls['listSnapshots'] as GaxCall,
-      request as unknown as RequestType,
+      request as {},
       callSettings
     ) as AsyncIterable<protos.google.pubsub.v1.ISnapshot>;
   }
