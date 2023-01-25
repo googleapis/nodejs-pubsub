@@ -206,6 +206,14 @@
                     "encoding": {
                       "type": "Encoding",
                       "id": 2
+                    },
+                    "firstRevisionId": {
+                      "type": "string",
+                      "id": 3
+                    },
+                    "lastRevisionId": {
+                      "type": "string",
+                      "id": 4
                     }
                   }
                 },
@@ -1233,26 +1241,17 @@
                         "ackIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 1,
-                          "options": {
-                            "ctype": "CORD"
-                          }
+                          "id": 1
                         },
                         "invalidAckIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 2,
-                          "options": {
-                            "ctype": "CORD"
-                          }
+                          "id": 2
                         },
                         "unorderedAckIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 3,
-                          "options": {
-                            "ctype": "CORD"
-                          }
+                          "id": 3
                         }
                       }
                     },
@@ -1261,18 +1260,12 @@
                         "ackIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 1,
-                          "options": {
-                            "ctype": "CORD"
-                          }
+                          "id": 1
                         },
                         "invalidAckIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 2,
-                          "options": {
-                            "ctype": "CORD"
-                          }
+                          "id": 2
                         }
                       }
                     },
@@ -1514,6 +1507,82 @@
                         }
                       ]
                     },
+                    "ListSchemaRevisions": {
+                      "requestType": "ListSchemaRevisionsRequest",
+                      "responseType": "ListSchemaRevisionsResponse",
+                      "options": {
+                        "(google.api.http).get": "/v1/{name=projects/*/schemas/*}:listRevisions",
+                        "(google.api.method_signature)": "name"
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "get": "/v1/{name=projects/*/schemas/*}:listRevisions"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "name"
+                        }
+                      ]
+                    },
+                    "CommitSchema": {
+                      "requestType": "CommitSchemaRequest",
+                      "responseType": "Schema",
+                      "options": {
+                        "(google.api.http).post": "/v1/{name=projects/*/schemas/*}:commit",
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "name,schema"
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{name=projects/*/schemas/*}:commit",
+                            "body": "*"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "name,schema"
+                        }
+                      ]
+                    },
+                    "RollbackSchema": {
+                      "requestType": "RollbackSchemaRequest",
+                      "responseType": "Schema",
+                      "options": {
+                        "(google.api.http).post": "/v1/{name=projects/*/schemas/*}:rollback",
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "name,revision_id"
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "post": "/v1/{name=projects/*/schemas/*}:rollback",
+                            "body": "*"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "name,revision_id"
+                        }
+                      ]
+                    },
+                    "DeleteSchemaRevision": {
+                      "requestType": "DeleteSchemaRevisionRequest",
+                      "responseType": "Schema",
+                      "options": {
+                        "(google.api.http).delete": "/v1/{name=projects/*/schemas/*}:deleteRevision",
+                        "(google.api.method_signature)": "name,revision_id"
+                      },
+                      "parsedOptions": [
+                        {
+                          "(google.api.http)": {
+                            "delete": "/v1/{name=projects/*/schemas/*}:deleteRevision"
+                          }
+                        },
+                        {
+                          "(google.api.method_signature)": "name,revision_id"
+                        }
+                      ]
+                    },
                     "DeleteSchema": {
                       "requestType": "DeleteSchemaRequest",
                       "responseType": "google.protobuf.Empty",
@@ -1590,6 +1659,20 @@
                     "definition": {
                       "type": "string",
                       "id": 3
+                    },
+                    "revisionId": {
+                      "type": "string",
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
+                    },
+                    "revisionCreateTime": {
+                      "type": "google.protobuf.Timestamp",
+                      "id": 6,
+                      "options": {
+                        "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
                     }
                   },
                   "nested": {
@@ -1600,6 +1683,13 @@
                         "AVRO": 2
                       }
                     }
+                  }
+                },
+                "SchemaView": {
+                  "values": {
+                    "SCHEMA_VIEW_UNSPECIFIED": 0,
+                    "BASIC": 1,
+                    "FULL": 2
                   }
                 },
                 "CreateSchemaRequest": {
@@ -1623,13 +1713,6 @@
                       "type": "string",
                       "id": 3
                     }
-                  }
-                },
-                "SchemaView": {
-                  "values": {
-                    "SCHEMA_VIEW_UNSPECIFIED": 0,
-                    "BASIC": 1,
-                    "FULL": 2
                   }
                 },
                 "GetSchemaRequest": {
@@ -1682,6 +1765,100 @@
                     "nextPageToken": {
                       "type": "string",
                       "id": 2
+                    }
+                  }
+                },
+                "ListSchemaRevisionsRequest": {
+                  "fields": {
+                    "name": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Schema"
+                      }
+                    },
+                    "view": {
+                      "type": "SchemaView",
+                      "id": 2
+                    },
+                    "pageSize": {
+                      "type": "int32",
+                      "id": 3
+                    },
+                    "pageToken": {
+                      "type": "string",
+                      "id": 4
+                    }
+                  }
+                },
+                "ListSchemaRevisionsResponse": {
+                  "fields": {
+                    "schemas": {
+                      "rule": "repeated",
+                      "type": "Schema",
+                      "id": 1
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "id": 2
+                    }
+                  }
+                },
+                "CommitSchemaRequest": {
+                  "fields": {
+                    "name": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Schema"
+                      }
+                    },
+                    "schema": {
+                      "type": "Schema",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "RollbackSchemaRequest": {
+                  "fields": {
+                    "name": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Schema"
+                      }
+                    },
+                    "revisionId": {
+                      "type": "string",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "DeleteSchemaRevisionRequest": {
+                  "fields": {
+                    "name": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Schema"
+                      }
+                    },
+                    "revisionId": {
+                      "type": "string",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
                     }
                   }
                 },
