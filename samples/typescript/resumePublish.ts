@@ -83,7 +83,7 @@ async function main(
 }
 
 // This needs to be exported directly so that the system tests can find it.
-export const resumePublishFunc = resumePublish;
+module.exports.resumePublishFunc = resumePublish;
 
 if (require.main === module) {
   main(...process.argv.slice(2)).catch(console.error);
