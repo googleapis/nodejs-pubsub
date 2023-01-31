@@ -22,8 +22,8 @@ from synthtool import shell
 from synthtool.log import logger
 old_path = os.getcwd()
 os.chdir("/synthtool")
-logger.debug("Update typeless sample bot [1.2.0]")
-shell.run(["npm", "i", "@google-cloud/typeless-sample-bot@1.2.0"])
+logger.debug("Update typeless sample bot [1.3.0]")
+shell.run(["npm", "i", "@google-cloud/typeless-sample-bot@1.3.0"])
 os.chdir(old_path)
 
 node.typeless_samples_hermetic()
