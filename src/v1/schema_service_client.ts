@@ -719,12 +719,11 @@ export class SchemaServiceClient {
    *   Required. The name of the schema revision to be deleted, with a revision ID
    *   explicitly included.
    *
-   *   Example: projects/123/schemas/my-schema@c7cfa2a8
-   * @param {string} request.revisionId
-   *   Required. The revision ID to roll back to.
-   *   It must be a revision of the same schema.
-   *
-   *     Example: c7cfa2a8
+   *   Example: `projects/123/schemas/my-schema@c7cfa2a8`
+   * @param {string} [request.revisionId]
+   *   Optional. This field is deprecated and should not be used for specifying
+   *   the revision ID. The revision ID should be specified via the `name`
+   *   parameter.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
