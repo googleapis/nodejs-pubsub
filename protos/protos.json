@@ -1264,6 +1264,11 @@
                           "rule": "repeated",
                           "type": "string",
                           "id": 3
+                        },
+                        "temporaryFailedAckIds": {
+                          "rule": "repeated",
+                          "type": "string",
+                          "id": 4
                         }
                       }
                     },
