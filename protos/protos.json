@@ -47,7 +47,8 @@
                       "responseType": "Topic",
                       "options": {
                         "(google.api.http).patch": "/v1/{topic.name=projects/*/topics/*}",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "topic,update_mask"
                       },
                       "parsedOptions": [
                         {
@@ -55,6 +56,9 @@
                             "patch": "/v1/{topic.name=projects/*/topics/*}",
                             "body": "*"
                           }
+                        },
+                        {
+                          "(google.api.method_signature)": "topic,update_mask"
                         }
                       ]
                     },
@@ -519,7 +523,8 @@
                       "responseType": "Subscription",
                       "options": {
                         "(google.api.http).patch": "/v1/{subscription.name=projects/*/subscriptions/*}",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "subscription,update_mask"
                       },
                       "parsedOptions": [
                         {
@@ -527,6 +532,9 @@
                             "patch": "/v1/{subscription.name=projects/*/subscriptions/*}",
                             "body": "*"
                           }
+                        },
+                        {
+                          "(google.api.method_signature)": "subscription,update_mask"
                         }
                       ]
                     },
@@ -716,7 +724,8 @@
                       "responseType": "Snapshot",
                       "options": {
                         "(google.api.http).patch": "/v1/{snapshot.name=projects/*/snapshots/*}",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "snapshot,update_mask"
                       },
                       "parsedOptions": [
                         {
@@ -724,6 +733,9 @@
                             "patch": "/v1/{snapshot.name=projects/*/snapshots/*}",
                             "body": "*"
                           }
+                        },
+                        {
+                          "(google.api.method_signature)": "snapshot,update_mask"
                         }
                       ]
                     },
