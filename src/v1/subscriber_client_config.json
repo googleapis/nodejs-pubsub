@@ -15,6 +15,12 @@
         "unavailable": [
           "UNAVAILABLE"
         ],
+        "unknown_aborted_internal_unavailable": [
+          "UNKNOWN",
+          "ABORTED",
+          "INTERNAL",
+          "UNAVAILABLE"
+        ],
         "deadline_exceeded_resource_exhausted_aborted_internal_unavailable": [
           "DEADLINE_EXCEEDED",
           "RESOURCE_EXHAUSTED",
@@ -72,7 +78,7 @@
         },
         "Pull": {
           "timeout_millis": 60000,
-          "retry_codes_name": "unknown_aborted_unavailable",
+          "retry_codes_name": "unknown_aborted_internal_unavailable",
           "retry_params_name": "default"
         },
         "StreamingPull": {
