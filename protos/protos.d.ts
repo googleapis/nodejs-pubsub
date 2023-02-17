@@ -4646,6 +4646,9 @@ export namespace google {
 
                     /** AcknowledgeConfirmation unorderedAckIds */
                     unorderedAckIds?: (string[]|null);
+
+                    /** AcknowledgeConfirmation temporaryFailedAckIds */
+                    temporaryFailedAckIds?: (string[]|null);
                 }
 
                 /** Represents an AcknowledgeConfirmation. */
@@ -4665,6 +4668,9 @@ export namespace google {
 
                     /** AcknowledgeConfirmation unorderedAckIds. */
                     public unorderedAckIds: string[];
+
+                    /** AcknowledgeConfirmation temporaryFailedAckIds. */
+                    public temporaryFailedAckIds: string[];
 
                     /**
                      * Creates a new AcknowledgeConfirmation instance using the specified properties.
@@ -4752,6 +4758,9 @@ export namespace google {
 
                     /** ModifyAckDeadlineConfirmation invalidAckIds */
                     invalidAckIds?: (string[]|null);
+
+                    /** ModifyAckDeadlineConfirmation temporaryFailedAckIds */
+                    temporaryFailedAckIds?: (string[]|null);
                 }
 
                 /** Represents a ModifyAckDeadlineConfirmation. */
@@ -4768,6 +4777,9 @@ export namespace google {
 
                     /** ModifyAckDeadlineConfirmation invalidAckIds. */
                     public invalidAckIds: string[];
+
+                    /** ModifyAckDeadlineConfirmation temporaryFailedAckIds. */
+                    public temporaryFailedAckIds: string[];
 
                     /**
                      * Creates a new ModifyAckDeadlineConfirmation instance using the specified properties.
