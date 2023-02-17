@@ -96,7 +96,7 @@ async function quickstart(
   });
 
   // Send a message to the topic
-  topic.publish(Buffer.from('Test message!'));
+  topic.publishMessage({data: Buffer.from('Test message!')});
 }
 
 ```
@@ -174,6 +174,7 @@ Samples are in the [`samples/`](https://github.com/googleapis/nodejs-pubsub/tree
 | Test Subscription Permissions | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/testSubscriptionPermissions.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/testSubscriptionPermissions.js,samples/README.md) |
 | Test Topic Permissions | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/testTopicPermissions.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/testTopicPermissions.js,samples/README.md) |
 | Update Dead Letter Policy | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/updateDeadLetterPolicy.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/updateDeadLetterPolicy.js,samples/README.md) |
+| Validate a schema definition | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/validateSchema.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/validateSchema.js,samples/README.md) |
 
 
 
