@@ -1241,12 +1241,6 @@
                       "id": 4
                     }
                   },
-                  "reserved": [
-                    [
-                      2,
-                      2
-                    ]
-                  ],
                   "nested": {
                     "AcknowledgeConfirmation": {
                       "fields": {
@@ -1283,6 +1277,11 @@
                           "rule": "repeated",
                           "type": "string",
                           "id": 2
+                        },
+                        "temporaryFailedAckIds": {
+                          "rule": "repeated",
+                          "type": "string",
+                          "id": 3
                         }
                       }
                     },

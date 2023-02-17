@@ -4758,6 +4758,9 @@ export namespace google {
 
                     /** ModifyAckDeadlineConfirmation invalidAckIds */
                     invalidAckIds?: (string[]|null);
+
+                    /** ModifyAckDeadlineConfirmation temporaryFailedAckIds */
+                    temporaryFailedAckIds?: (string[]|null);
                 }
 
                 /** Represents a ModifyAckDeadlineConfirmation. */
@@ -4774,6 +4777,9 @@ export namespace google {
 
                     /** ModifyAckDeadlineConfirmation invalidAckIds. */
                     public invalidAckIds: string[];
+
+                    /** ModifyAckDeadlineConfirmation temporaryFailedAckIds. */
+                    public temporaryFailedAckIds: string[];
 
                     /**
                      * Creates a new ModifyAckDeadlineConfirmation instance using the specified properties.

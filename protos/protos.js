@@ -11136,6 +11136,7 @@
                          * @interface IModifyAckDeadlineConfirmation
                          * @property {Array.<string>|null} [ackIds] ModifyAckDeadlineConfirmation ackIds
                          * @property {Array.<string>|null} [invalidAckIds] ModifyAckDeadlineConfirmation invalidAckIds
+                         * @property {Array.<string>|null} [temporaryFailedAckIds] ModifyAckDeadlineConfirmation temporaryFailedAckIds
                          */
     
                         /**
@@ -11149,6 +11150,7 @@
                         function ModifyAckDeadlineConfirmation(properties) {
                             this.ackIds = [];
                             this.invalidAckIds = [];
+                            this.temporaryFailedAckIds = [];
                             if (properties)
                                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                     if (properties[keys[i]] != null)
@@ -11170,6 +11172,14 @@
                          * @instance
                          */
                         ModifyAckDeadlineConfirmation.prototype.invalidAckIds = $util.emptyArray;
+    
+                        /**
+                         * ModifyAckDeadlineConfirmation temporaryFailedAckIds.
+                         * @member {Array.<string>} temporaryFailedAckIds
+                         * @memberof google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation
+                         * @instance
+                         */
+                        ModifyAckDeadlineConfirmation.prototype.temporaryFailedAckIds = $util.emptyArray;
     
                         /**
                          * Creates a new ModifyAckDeadlineConfirmation instance using the specified properties.
@@ -11201,6 +11211,9 @@
                             if (message.invalidAckIds != null && message.invalidAckIds.length)
                                 for (var i = 0; i < message.invalidAckIds.length; ++i)
                                     writer.uint32(/* id 2, wireType 2 =*/18).string(message.invalidAckIds[i]);
+                            if (message.temporaryFailedAckIds != null && message.temporaryFailedAckIds.length)
+                                for (var i = 0; i < message.temporaryFailedAckIds.length; ++i)
+                                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.temporaryFailedAckIds[i]);
                             return writer;
                         };
     
@@ -11245,6 +11258,12 @@
                                         if (!(message.invalidAckIds && message.invalidAckIds.length))
                                             message.invalidAckIds = [];
                                         message.invalidAckIds.push(reader.string());
+                                        break;
+                                    }
+                                case 3: {
+                                        if (!(message.temporaryFailedAckIds && message.temporaryFailedAckIds.length))
+                                            message.temporaryFailedAckIds = [];
+                                        message.temporaryFailedAckIds.push(reader.string());
                                         break;
                                     }
                                 default:
@@ -11296,6 +11315,13 @@
                                     if (!$util.isString(message.invalidAckIds[i]))
                                         return "invalidAckIds: string[] expected";
                             }
+                            if (message.temporaryFailedAckIds != null && message.hasOwnProperty("temporaryFailedAckIds")) {
+                                if (!Array.isArray(message.temporaryFailedAckIds))
+                                    return "temporaryFailedAckIds: array expected";
+                                for (var i = 0; i < message.temporaryFailedAckIds.length; ++i)
+                                    if (!$util.isString(message.temporaryFailedAckIds[i]))
+                                        return "temporaryFailedAckIds: string[] expected";
+                            }
                             return null;
                         };
     
@@ -11325,6 +11351,13 @@
                                 for (var i = 0; i < object.invalidAckIds.length; ++i)
                                     message.invalidAckIds[i] = String(object.invalidAckIds[i]);
                             }
+                            if (object.temporaryFailedAckIds) {
+                                if (!Array.isArray(object.temporaryFailedAckIds))
+                                    throw TypeError(".google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation.temporaryFailedAckIds: array expected");
+                                message.temporaryFailedAckIds = [];
+                                for (var i = 0; i < object.temporaryFailedAckIds.length; ++i)
+                                    message.temporaryFailedAckIds[i] = String(object.temporaryFailedAckIds[i]);
+                            }
                             return message;
                         };
     
@@ -11344,6 +11377,7 @@
                             if (options.arrays || options.defaults) {
                                 object.ackIds = [];
                                 object.invalidAckIds = [];
+                                object.temporaryFailedAckIds = [];
                             }
                             if (message.ackIds && message.ackIds.length) {
                                 object.ackIds = [];
@@ -11354,6 +11388,11 @@
                                 object.invalidAckIds = [];
                                 for (var j = 0; j < message.invalidAckIds.length; ++j)
                                     object.invalidAckIds[j] = message.invalidAckIds[j];
+                            }
+                            if (message.temporaryFailedAckIds && message.temporaryFailedAckIds.length) {
+                                object.temporaryFailedAckIds = [];
+                                for (var j = 0; j < message.temporaryFailedAckIds.length; ++j)
+                                    object.temporaryFailedAckIds[j] = message.temporaryFailedAckIds[j];
                             }
                             return object;
                         };
