@@ -66,12 +66,23 @@ export abstract class MessageQueue extends EventEmitter {
    * @param {PublishCallback} callback The publish callback.
    */
   abstract add(message: PubsubMessage, callback: PublishCallback): void;
+
   /**
-   * Method to initiate publishing.
+   * Method to initiate publishing. Full drain behaviour depends on whether the
+   * queues are ordered or not.
    *
    * @abstract
    */
   abstract publish(): void;
+
+  /**
+   * Method to finalize publishing. Does as many publishes as are needed
+   * to finish emptying the queues, and fires a drain event afterward.
+   *
+   * @abstract
+   */
+  abstract publishDrain(): void;
+
   /**
    * Accepts a batch of messages and publishes them to the API.
    *
@@ -156,12 +167,33 @@ export class Queue extends MessageQueue {
       this.pending = setTimeout(() => this.publish(), maxMilliseconds!);
     }
   }
+
+  /**
+   * Cancels any pending publishes and calls _publish immediately.
+   *
+   * _Does_ attempt to further drain after one batch is sent.
+   *
+   * @emits Queue#drain when all messages are sent.
+   */
+  publishDrain(callback?: PublishDone): void {
+    this._publishInternal(true, callback);
+  }
+
+  /**
+   * Cancels any pending publishes and calls _publish immediately.
+   *
+   * Does _not_ attempt to further drain after one batch is sent.
+   */
+  publish(callback?: PublishDone): void {
+    this._publishInternal(false, callback);
+  }
+
   /**
    * Cancels any pending publishes and calls _publish immediately.
    *
    * @emits Queue#drain when all messages are sent.
    */
-  publish(callback?: PublishDone): void {
+  _publishInternal(fullyDrain: boolean, callback?: PublishDone): void {
     const definedCallback = callback || (() => {});
     const {messages, callbacks} = this.batch;
 
@@ -176,8 +208,12 @@ export class Queue extends MessageQueue {
       if (err) {
         definedCallback(err);
       } else if (this.batch.messages.length) {
-        // Make another go-around, we're trying to drain the queues fully.
-        this.publish(callback);
+        // We only do the indefinite go-arounds when we're trying to do a
+        // final drain for flush(). In all other cases, we want to leave
+        // subsequent batches alone so that they can time out as needed.
+        if (fullyDrain) {
+          this._publishInternal(true, callback);
+        }
       } else {
         this.emit('drain');
         definedCallback(null);
@@ -279,7 +315,7 @@ export class OrderedQueue extends MessageQueue {
    *
    * @returns {MessageBatch}
    */
-  createBatch() {
+  createBatch(): MessageBatch {
     return new MessageBatch(this.batchOptions);
   }
   /**
@@ -331,6 +367,15 @@ export class OrderedQueue extends MessageQueue {
         definedCallback(null);
       }
     });
+  }
+
+  /**
+   * For ordered queues, this does exactly the same thing as `publish()`.
+   *
+   * @fires OrderedQueue#drain
+   */
+  publishDrain(callback?: PublishDone): void {
+    this.publish(callback);
   }
 
   /**

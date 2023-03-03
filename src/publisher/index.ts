@@ -119,7 +119,7 @@ export class Publisher {
             const flushResolver = () => {
               resolve();
 
-              // flush() maybe called more than once, so remove these
+              // flush() may be called more than once, so remove these
               // event listeners after we've completed flush().
               q.removeListener('drain', flushResolver);
             };
@@ -129,7 +129,7 @@ export class Publisher {
     );
 
     const allPublishes = Promise.all(
-      toDrain.map(q => promisify(q.publish).bind(q)())
+      toDrain.map(q => promisify(q.publishDrain).bind(q)())
     );
 
     allPublishes
