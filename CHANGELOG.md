@@ -4,6 +4,20 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.4.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.3.0...v3.4.0) (2023-03-06)
+
+
+### Features
+
+* Add google.api.method.signature to update methods ([1e28405](https://github.com/googleapis/nodejs-pubsub/commit/1e2840529a8451c94d5d845062da84729b7843db))
+* Add temporary_failed_ack_ids to ModifyAckDeadlineConfirmation ([1e28405](https://github.com/googleapis/nodejs-pubsub/commit/1e2840529a8451c94d5d845062da84729b7843db))
+* Make INTERNAL a retryable error for Pull ([#1681](https://github.com/googleapis/nodejs-pubsub/issues/1681)) ([1e28405](https://github.com/googleapis/nodejs-pubsub/commit/1e2840529a8451c94d5d845062da84729b7843db))
+
+
+### Bug Fixes
+
+* Don't do multiple drains per publish() in message queues unless requested ([#1691](https://github.com/googleapis/nodejs-pubsub/issues/1691)) ([d9b3a63](https://github.com/googleapis/nodejs-pubsub/commit/d9b3a63ddbfec0581a0e05fdbfcf9e9326b3dcf9))
+
 ## [3.3.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.2.1...v3.3.0) (2023-01-23)
 
 
