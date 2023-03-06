@@ -53,11 +53,13 @@ class FakeMessageBatch {
   created: number;
   messages: p.PubsubMessage[];
   options: b.BatchPublishOptions;
+  bytes: number;
   constructor(options = {} as b.BatchPublishOptions) {
     this.callbacks = [];
     this.created = Date.now();
     this.messages = [];
     this.options = options;
+    this.bytes = 0;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: p.PubsubMessage, callback: p.PublishCallback): void {}
@@ -331,6 +333,75 @@ describe('Message Queues', () => {
         const [messages, callbacks] = stub.lastCall.args;
         assert.strictEqual(messages, batch.messages);
         assert.strictEqual(callbacks, batch.callbacks);
+      });
+
+      describe('publish chaining', () => {
+        let fakeMessages: p.PubsubMessage[];
+        let spies: p.PublishCallback[];
+        beforeEach(() => {
+          fakeMessages = [{}, {}] as p.PubsubMessage[];
+          spies = [sandbox.spy(), sandbox.spy()] as p.PublishCallback[];
+        });
+
+        it('should begin another publish(drain) if there are pending batches', () => {
+          const stub = sandbox.stub(queue, '_publish');
+          let once = false;
+          stub.callsFake((m, c, done) => {
+            if (!once) {
+              // Drop in a second batch before calling the callback.
+              const secondBatch = new FakeMessageBatch();
+              secondBatch.messages = fakeMessages;
+              secondBatch.callbacks = spies;
+              queue.batch = secondBatch;
+            }
+            once = true;
+
+            done!(null);
+          });
+
+          queue.batch = new FakeMessageBatch();
+          queue.batch.messages = fakeMessages;
+          queue.batch.callbacks = spies;
+          queue.publishDrain();
+
+          assert.strictEqual(stub.callCount, 2);
+        });
+
+        it('should not begin another publish(non-drain) if there are pending batches', () => {
+          const stub = sandbox.stub(queue, '_publish');
+          let once = false;
+          stub.callsFake((m, c, done) => {
+            if (!once) {
+              // Drop in a second batch before calling the callback.
+              const secondBatch = new FakeMessageBatch();
+              secondBatch.messages = fakeMessages;
+              secondBatch.callbacks = spies;
+              queue.batch = secondBatch;
+            }
+            once = true;
+
+            done!(null);
+          });
+
+          queue.batch = new FakeMessageBatch();
+          queue.batch.messages = fakeMessages;
+          queue.batch.callbacks = spies;
+          queue.publish();
+
+          assert.strictEqual(stub.callCount, 1);
+        });
+
+        it('should emit "drain" if there is nothing left to publish', () => {
+          const spy = sandbox.spy();
+          sandbox
+            .stub(queue, '_publish')
+            .callsFake((m, c, done) => done!(null));
+
+          queue.on('drain', spy);
+          queue.publish();
+
+          assert.strictEqual(spy.callCount, 1);
+        });
       });
     });
   });

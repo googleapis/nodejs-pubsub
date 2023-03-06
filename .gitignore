@@ -8,6 +8,7 @@
 /build/
 system-test/secrets.js
 system-test/*key.json
+samples/**/build
 *.lock
 .DS_Store
 package-lock.json

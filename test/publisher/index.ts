@@ -63,6 +63,9 @@ class FakeQueue extends EventEmitter {
   publish(callback: (err: Error | null) => void) {
     this._publish([], [], callback);
   }
+  publishDrain(callback: (err: Error | null) => void) {
+    this.publish(callback);
+  }
   _publish(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     messages: p.PubsubMessage[],
@@ -84,6 +87,9 @@ class FakeOrderedQueue extends FakeQueue {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   publish(callback: (err: Error | null) => void) {
     this._publish([], [], callback);
+  }
+  publishDrain(callback: (err: Error | null) => void) {
+    this.publish(callback);
   }
   _publish(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
