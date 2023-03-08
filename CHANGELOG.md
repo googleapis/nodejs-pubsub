@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.4.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.4.0...v3.4.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* Update minimum google-gax to avoid taffydb vulnerabilities ([#1695](https://github.com/googleapis/nodejs-pubsub/issues/1695)) ([11372e6](https://github.com/googleapis/nodejs-pubsub/commit/11372e6d40577704a8a22b6c010623be7e36b34a))
+
 ## [3.4.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.3.0...v3.4.0) (2023-03-06)
 
 
