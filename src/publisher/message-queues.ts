@@ -303,12 +303,12 @@ export class OrderedQueue extends MessageQueue {
   /**
    * Starts a timeout to publish any pending messages.
    */
-  beginNextPublish(): void {
+  beginNextPublish(callback?: PublishDone): void {
     const maxMilliseconds = this.batchOptions.maxMilliseconds!;
     const timeWaiting = Date.now() - this.currentBatch.created;
     const delay = Math.max(0, maxMilliseconds - timeWaiting);
 
-    this.pending = setTimeout(() => this.publish(), delay);
+    this.pending = setTimeout(() => this.publish(callback), delay);
   }
   /**
    * Creates a new {@link MessageBatch} instance.
@@ -361,7 +361,7 @@ export class OrderedQueue extends MessageQueue {
         this.handlePublishFailure(err);
         definedCallback(err);
       } else if (this.batches.length) {
-        this.beginNextPublish();
+        this.beginNextPublish(callback);
       } else {
         this.emit('drain');
         definedCallback(null);
