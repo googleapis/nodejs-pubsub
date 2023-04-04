@@ -8,7 +8,7 @@
               "options": {
                 "cc_enable_arenas": true,
                 "csharp_namespace": "Google.Cloud.PubSub.V1",
-                "go_package": "google.golang.org/genproto/googleapis/pubsub/v1;pubsub",
+                "go_package": "cloud.google.com/go/pubsub/apiv1/pubsubpb;pubsubpb",
                 "java_multiple_files": true,
                 "java_outer_classname": "SchemaProto",
                 "java_package": "com.google.pubsub.v1",
