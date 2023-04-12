@@ -819,8 +819,22 @@ export class Subscriber extends EventEmitter {
       const span: Span | undefined = this._constructSpan(message);
 
       if (this.isOpen) {
-        message.modAck(this.ackDeadline);
-        this._inventory.add(message);
+        if (this.isExactlyOnceDelivery) {
+          // For exactly-once delivery, we must validate that we got a valid
+          // lease on the message before actually leasing it.
+          message
+            .modAckWithResponse(this.ackDeadline)
+            .then(() => {
+              this._inventory.add(message);
+            })
+            .catch(() => {
+              // Temporary failures will retry, so if an error reaches us
+              // here, that means a permanent failure. Silently drop these.
+            });
+        } else {
+          message.modAck(this.ackDeadline);
+          this._inventory.add(message);
+        }
       } else {
         message.nack();
       }
