@@ -257,7 +257,15 @@ export class LeaseManager extends EventEmitter {
       const lifespan = (Date.now() - message.received) / (60 * 1000);
 
       if (lifespan < this._options.maxExtensionMinutes!) {
-        message.modAck(deadline);
+        if (this._subscriber.isExactlyOnceDelivery) {
+          message.modAckWithResponse(deadline).catch(() => {
+            // In the case of a permanent failure (temporary failures are retried),
+            // we need to stop trying to lease-manage the message.
+            this.remove(message);
+          });
+        } else {
+          message.modAck(deadline);
+        }
       } else {
         this.remove(message);
       }
