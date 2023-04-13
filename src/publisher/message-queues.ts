@@ -102,7 +102,8 @@ export abstract class MessageQueue extends EventEmitter {
     };
     if (messages.length === 0) {
       if (typeof callback === 'function') {
-        callback(null);
+        // Do this on the next tick to avoid Zalgo with the publish request below.
+        process.nextTick(() => callback(null));
       }
       return;
     }
