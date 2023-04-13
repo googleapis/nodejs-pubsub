@@ -19,9 +19,16 @@ import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
+import * as defer from 'p-defer';
 
 import * as leaseTypes from '../src/lease-manager';
-import {Message, Subscriber} from '../src/subscriber';
+import {
+  AckError,
+  AckResponse,
+  AckResponses,
+  Message,
+  Subscriber,
+} from '../src/subscriber';
 import {defaultOptions} from '../src/default-options';
 
 const FREE_MEM = 9376387072;
@@ -34,6 +41,10 @@ class FakeSubscriber extends EventEmitter {
   isOpen = true;
   modAckLatency = 2000;
   async modAck(): Promise<void> {}
+  async modAckWithResponse(): Promise<AckResponse> {
+    return AckResponses.Success;
+  }
+  isExactlyOnceDelivery = false;
 }
 
 class FakeMessage {
@@ -43,6 +54,17 @@ class FakeMessage {
     this.received = Date.now();
   }
   modAck(): void {}
+}
+
+interface LeaseManagerInternals {
+  _extendDeadlines(): void;
+  _messages: Set<Message>;
+  _isLeasing: boolean;
+  _scheduleExtension(): void;
+}
+
+function getLMInternals(mgr: leaseTypes.LeaseManager): LeaseManagerInternals {
+  return mgr as unknown as LeaseManagerInternals;
 }
 
 describe('LeaseManager', () => {
@@ -196,6 +218,18 @@ describe('LeaseManager', () => {
       });
 
       it('should schedule a lease extension', () => {
+        const message = new FakeMessage() as {} as Message;
+        const stub = sandbox
+          .stub(message, 'modAck')
+          .withArgs(subscriber.ackDeadline);
+
+        leaseManager.add(message);
+        clock.tick(expectedTimeout);
+
+        assert.strictEqual(stub.callCount, 1);
+      });
+
+      it('should schedule a lease extension for exactly-once delivery', () => {
         const message = new FakeMessage() as {} as Message;
         const stub = sandbox
           .stub(message, 'modAck')
@@ -471,6 +505,88 @@ describe('LeaseManager', () => {
       }
 
       assert.strictEqual(leaseManager.isFull(), true);
+    });
+  });
+
+  describe('deadline extension', () => {
+    beforeEach(() => {
+      sandbox.useFakeTimers();
+    });
+    afterEach(() => {
+      sandbox.clock.restore();
+    });
+
+    it('calls regular modAck periodically w/o exactly-once', () => {
+      const lmi = getLMInternals(leaseManager);
+      const msg = new Message(subscriber, {
+        ackId: 'ackack',
+        message: {data: ''},
+        deliveryAttempt: 0,
+      });
+      sandbox.clock.tick(1);
+
+      const maStub = sandbox.stub(msg, 'modAck');
+
+      lmi._messages.add(msg);
+      lmi._extendDeadlines();
+
+      assert.ok(maStub.calledOnce);
+    });
+
+    it('calls modAckWithResponse periodically w/exactly-once, successful', async () => {
+      const lmi = getLMInternals(leaseManager);
+      const msg = new Message(subscriber, {
+        ackId: 'ackack',
+        message: {data: ''},
+        deliveryAttempt: 0,
+      });
+      sandbox.clock.tick(1);
+      (subscriber as unknown as FakeSubscriber).isExactlyOnceDelivery = true;
+
+      const done = defer();
+      sandbox.stub(msg, 'modAck').callsFake(() => {
+        console.error('oops we did it wrong');
+      });
+
+      const maStub = sandbox.stub(msg, 'modAckWithResponse');
+      maStub.callsFake(async () => {
+        done.resolve();
+        return AckResponses.Success;
+      });
+
+      lmi._messages.add(msg);
+      lmi._extendDeadlines();
+
+      await done.promise;
+      assert.ok(maStub.calledOnce);
+    });
+
+    it('calls modAckWithResponse periodically w/exactly-once, failure', async () => {
+      const lmi = getLMInternals(leaseManager);
+      const msg = new Message(subscriber, {
+        ackId: 'ackack',
+        message: {data: ''},
+        deliveryAttempt: 0,
+      });
+      sandbox.clock.tick(1);
+      (subscriber as unknown as FakeSubscriber).isExactlyOnceDelivery = true;
+
+      const done = defer();
+
+      const maStub = sandbox.stub(msg, 'modAckWithResponse');
+      maStub.callsFake(async () => {
+        done.resolve();
+        throw new AckError(AckResponses.Invalid);
+      });
+      const rmStub = sandbox.stub(leaseManager, 'remove');
+
+      lmi._messages.add(msg);
+      lmi._extendDeadlines();
+
+      await done.promise;
+
+      assert.ok(maStub.calledOnce);
+      assert.ok(rmStub.calledOnce);
     });
   });
 });

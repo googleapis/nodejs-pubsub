@@ -24,6 +24,8 @@ import * as sinon from 'sinon';
 import {PassThrough} from 'stream';
 import * as uuid from 'uuid';
 import * as opentelemetry from '@opentelemetry/api';
+import {google} from '../protos/protos';
+import * as defer from 'p-defer';
 
 import {HistogramOptions} from '../src/histogram';
 import {FlowControlOptions} from '../src/lease-manager';
@@ -34,6 +36,8 @@ import {Subscription} from '../src/subscription';
 import {SpanKind} from '@opentelemetry/api';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 import {Duration} from '../src';
+
+type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 
 const stubs = new Map();
 
@@ -129,6 +133,7 @@ class FakeMessageStream extends PassThrough {
     this.options = options;
     stubs.set('messageStream', this);
   }
+  setStreamAckDeadline(): void {}
   _destroy(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _error: Error | null,
@@ -154,6 +159,17 @@ const RECEIVED_MESSAGE = {
     publishTime: {seconds: 12, nanos: 32},
   },
 };
+
+interface SubInternals {
+  _stream: FakeMessageStream;
+  _inventory: FakeLeaseManager;
+  _onData(response: PullResponse): void;
+  _discardMessage(message: s.Message): void;
+}
+
+function getSubInternals(sub: s.Subscriber) {
+  return sub as unknown as SubInternals;
+}
 
 describe('Subscriber', () => {
   let sandbox: sinon.SinonSandbox;
@@ -229,6 +245,106 @@ describe('Subscriber', () => {
 
       const [options] = stub.lastCall.args;
       assert.strictEqual(options, fakeOptions);
+    });
+  });
+
+  describe('receive', () => {
+    it('should add incoming messages to inventory w/o exactly-once', () => {
+      const sub = new Subscriber(subscription);
+      sub.isOpen = true;
+      const subint = getSubInternals(sub);
+      const modAckStub = sandbox.stub(sub, 'modAck');
+      subint._inventory = new FakeLeaseManager(sub, {});
+      const addStub = sandbox.stub(subint._inventory, 'add');
+      subint._onData({
+        subscriptionProperties: {
+          exactlyOnceDeliveryEnabled: false,
+          messageOrderingEnabled: false,
+        },
+        receivedMessages: [
+          {
+            ackId: 'ackack',
+            message: {
+              data: 'foo',
+              attributes: {},
+            },
+          },
+        ],
+      });
+
+      assert.ok(modAckStub.calledOnce);
+      assert.ok(addStub.calledOnce);
+    });
+
+    it('should add incoming messages to inventory w/exactly-once, success', async () => {
+      const sub = new Subscriber(subscription);
+      sub.isOpen = true;
+      const subint = getSubInternals(sub);
+      subint._stream = new FakeMessageStream(sub, {});
+      subint._inventory = new FakeLeaseManager(sub, {});
+      const modAckStub = sandbox.stub(sub, 'modAckWithResponse');
+      modAckStub.callsFake(async () => s.AckResponses.Success);
+      const addStub = sandbox.stub(subint._inventory, 'add');
+      const done = defer();
+      addStub.callsFake(() => {
+        assert.ok(modAckStub.calledOnce);
+        done.resolve();
+      });
+      subint._onData({
+        subscriptionProperties: {
+          exactlyOnceDeliveryEnabled: true,
+          messageOrderingEnabled: false,
+        },
+        receivedMessages: [
+          {
+            ackId: 'ackack',
+            message: {
+              data: 'foo',
+              attributes: {},
+            },
+          },
+        ],
+      });
+
+      await done.promise;
+    });
+
+    it('should add incoming messages to inventory w/exactly-once, permanent failure', async () => {
+      const sub = new Subscriber(subscription);
+      sub.isOpen = true;
+      const subint = getSubInternals(sub);
+      subint._stream = new FakeMessageStream(sub, {});
+      subint._inventory = new FakeLeaseManager(sub, {});
+
+      const done = defer();
+
+      const modAckStub = sandbox.stub(sub, 'modAckWithResponse');
+      modAckStub.rejects(new s.AckError(s.AckResponses.Invalid));
+      const addStub = sandbox.stub(subint._inventory, 'add');
+      const discardStub = sandbox.stub(subint, '_discardMessage');
+      discardStub.callsFake(() => {
+        assert.ok(modAckStub.calledOnce);
+        assert.ok(addStub.notCalled);
+        done.resolve();
+      });
+
+      subint._onData({
+        subscriptionProperties: {
+          exactlyOnceDeliveryEnabled: true,
+          messageOrderingEnabled: false,
+        },
+        receivedMessages: [
+          {
+            ackId: 'ackack',
+            message: {
+              data: 'foo',
+              attributes: {},
+            },
+          },
+        ],
+      });
+
+      await done.promise;
     });
   });
 

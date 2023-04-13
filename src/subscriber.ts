@@ -830,6 +830,7 @@ export class Subscriber extends EventEmitter {
             .catch(() => {
               // Temporary failures will retry, so if an error reaches us
               // here, that means a permanent failure. Silently drop these.
+              this._discardMessage(message);
             });
         } else {
           message.modAck(this.ackDeadline);
@@ -842,6 +843,11 @@ export class Subscriber extends EventEmitter {
         span.end();
       }
     }
+  }
+
+  // Internal: This is here to provide a hook for unit testing, at least for now.
+  private _discardMessage(message: Message): void {
+    message;
   }
 
   /**
