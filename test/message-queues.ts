@@ -25,6 +25,7 @@ import defer = require('p-defer');
 import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
 import {AckError, Message, Subscriber} from '../src/subscriber';
+import {DebugMessage} from '../src/debug';
 
 class FakeClient {
   async acknowledge(
@@ -261,8 +262,8 @@ describe('MessageQueues', () => {
 
         sandbox.stub(messageQueue.batches, 'push').throws(fakeError);
 
-        subscriber.on('debug', err => {
-          assert.strictEqual(err, fakeError);
+        subscriber.on('debug', msg => {
+          assert.strictEqual(msg.message, fakeError.message);
           done();
         });
 
@@ -445,11 +446,13 @@ describe('MessageQueues', () => {
 
       sandbox.stub(fakeSubscriber.client, 'acknowledge').rejects(fakeError);
 
-      subscriber.on('debug', (err: BatchError) => {
+      subscriber.on('debug', (msg: DebugMessage) => {
         try {
-          assert.strictEqual(err.message, expectedMessage);
-          assert.deepStrictEqual(err.ackIds, ackIds);
-          assert.strictEqual(err.code, fakeError.code);
+          assert.strictEqual(msg.message, expectedMessage);
+          const batchError = msg.error! as unknown as BatchError;
+          assert.strictEqual(batchError.message, expectedMessage);
+          assert.deepStrictEqual(batchError.ackIds, ackIds);
+          assert.strictEqual(batchError.code, fakeError.code);
           done();
         } catch (e) {
           // I'm unsure why Mocha's regular handler doesn't work here,
@@ -735,11 +738,13 @@ describe('MessageQueues', () => {
         .stub(fakeSubscriber.client, 'modifyAckDeadline')
         .rejects(fakeError);
 
-      subscriber.on('debug', (err: BatchError) => {
+      subscriber.on('debug', (msg: DebugMessage) => {
         try {
-          assert.strictEqual(err.message, expectedMessage);
-          assert.deepStrictEqual(err.ackIds, ackIds);
-          assert.strictEqual(err.code, fakeError.code);
+          assert.strictEqual(msg.message, expectedMessage);
+          const batchError = msg.error! as unknown as BatchError;
+          assert.strictEqual(batchError.message, expectedMessage);
+          assert.deepStrictEqual(batchError.ackIds, ackIds);
+          assert.strictEqual(batchError.code, fakeError.code);
           done();
         } catch (e) {
           // I'm unsure why Mocha's regular handler doesn't work here,

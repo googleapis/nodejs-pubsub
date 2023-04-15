@@ -174,6 +174,7 @@ export {
   TopicMetadata,
 } from './topic';
 export {Duration, TotalOfUnit, DurationLike} from './temporal';
+export {DebugMessage} from './debug';
 
 if (process.env.DEBUG_GRPC) {
   console.info('gRPC logging set to verbose');

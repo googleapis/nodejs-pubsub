@@ -677,7 +677,7 @@ export class Subscriber extends EventEmitter {
 
     this._stream
       .on('error', err => this.emit('error', err))
-      .on('debug', err => this.emit('debug', err))
+      .on('debug', msg => this.emit('debug', msg))
       .on('data', (data: PullResponse) => this._onData(data))
       .once('close', () => this.close());
 

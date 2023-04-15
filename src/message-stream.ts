@@ -25,6 +25,7 @@ import {google} from '../protos/protos';
 import {defaultOptions} from './default-options';
 import {Duration} from './temporal';
 import {ExponentialRetry} from './exponential-retry';
+import {DebugMessage} from './debug';
 
 /*!
  * Frequency to ping streams.
@@ -359,7 +360,7 @@ export class MessageStream extends PassThrough {
     if (PullRetry.retry(status)) {
       this.emit(
         'debug',
-        new Error(
+        new DebugMessage(
           `Subscriber stream ${index} has ended with status ${status.code}; will be retried.`
         )
       );
@@ -372,7 +373,7 @@ export class MessageStream extends PassThrough {
     } else if (this._activeStreams() === 0) {
       this.emit(
         'debug',
-        new Error(
+        new DebugMessage(
           `Subscriber stream ${index} has ended with status ${status.code}; will not be retried.`
         )
       );
