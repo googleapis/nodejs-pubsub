@@ -63,7 +63,7 @@ const DEFAULT_OPTIONS: MessageStreamOptions = {
   maxStreams: defaultOptions.subscription.maxStreams,
   timeout: 300000,
   retryMinBackoff: Duration.from({millis: 100}),
-  retryMaxBackoff: Duration.from({millis: 5000}),
+  retryMaxBackoff: Duration.from({seconds: 60}),
 };
 
 interface StreamState {
