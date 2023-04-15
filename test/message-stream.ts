@@ -21,10 +21,13 @@ import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {Duplex, PassThrough} from 'stream';
 import * as uuid from 'uuid';
+import * as defer from 'p-defer';
+
 import * as messageTypes from '../src/message-stream';
 import {Subscriber} from '../src/subscriber';
 import {defaultOptions} from '../src/default-options';
 import {Duration} from '../src/temporal';
+import {promisify} from 'util';
 
 const FAKE_STREAMING_PULL_TIMEOUT = 123456789;
 const FAKE_CLIENT_CONFIG = {
@@ -152,18 +155,20 @@ describe('MessageStream', () => {
     }).MessageStream;
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    sandbox.useFakeTimers();
     now = Date.now();
-    sandbox.stub(global.Date, 'now').returns(now);
 
     const gaxClient = new FakeGaxClient();
     client = gaxClient.client; // we hit the grpc client directly
     subscriber = new FakeSubscriber(gaxClient) as {} as Subscriber;
     messageStream = new MessageStream(subscriber);
+    await messageStream.start();
   });
 
   afterEach(() => {
     messageStream.destroy();
+    sandbox.clock.restore();
     sandbox.restore();
   });
 
@@ -235,44 +240,43 @@ describe('MessageStream', () => {
           delete client.deadline;
         });
 
-        it('should respect the highWaterMark option', done => {
+        it('should respect the highWaterMark option', async () => {
           const highWaterMark = 3;
 
           messageStream = new MessageStream(subscriber, {highWaterMark});
+          await messageStream.start();
 
-          setImmediate(() => {
+          await promisify(process.nextTick)();
+
+          assert.strictEqual(
+            client.streams.length,
+            defaultOptions.subscription.maxStreams
+          );
+          client.streams.forEach(stream => {
             assert.strictEqual(
-              client.streams.length,
-              defaultOptions.subscription.maxStreams
+              stream._readableState.highWaterMark,
+              highWaterMark
             );
-            client.streams.forEach(stream => {
-              assert.strictEqual(
-                stream._readableState.highWaterMark,
-                highWaterMark
-              );
-            });
-            done();
           });
         });
 
-        it('should respect the maxStreams option', done => {
+        it('should respect the maxStreams option', async () => {
           const maxStreams = 3;
 
           messageStream = new MessageStream(subscriber, {maxStreams});
+          await messageStream.start();
 
-          setImmediate(() => {
-            assert.strictEqual(client.streams.length, maxStreams);
-            done();
-          });
+          await promisify(process.nextTick)();
+          assert.strictEqual(client.streams.length, maxStreams);
         });
 
-        it('should respect the timeout option', done => {
+        it('should respect the timeout option', async () => {
           const timeout = 12345;
           messageStream = new MessageStream(subscriber, {timeout});
-          setImmediate(() => {
-            assert.strictEqual(client.deadline, now + timeout);
-            done();
-          });
+          await messageStream.start();
+
+          await promisify(process.nextTick)();
+          assert.strictEqual(client.deadline, now + timeout);
         });
       });
     });
@@ -292,14 +296,13 @@ describe('MessageStream', () => {
     });
 
     it('should stop keeping the streams alive', () => {
-      const clock = sandbox.useFakeTimers();
       const frequency = 30000;
       const stubs = client.streams.map(stream => {
         return sandbox.stub(stream, 'write').throws();
       });
 
       messageStream.destroy();
-      clock.tick(frequency * 2); // for good measure
+      sandbox.clock.tick(frequency * 2); // for good measure
 
       stubs.forEach(stub => {
         assert.strictEqual(stub.callCount, 0);
@@ -338,7 +341,7 @@ describe('MessageStream', () => {
           });
 
         client.streams.forEach((stream, i) => stream.push(fakeResponses[i]));
-        setImmediate(() => messageStream.end());
+        process.nextTick(() => messageStream.end());
       });
 
       it('should not end the message stream', done => {
@@ -349,58 +352,71 @@ describe('MessageStream', () => {
           });
 
         client.streams.forEach(stream => stream.push(null));
-        setImmediate(done);
+        process.nextTick(done);
       });
     });
 
     describe('on error', () => {
-      it('should destroy the stream if unable to get client', done => {
+      it('should destroy the stream if unable to get client', async () => {
         const fakeError = new Error('err');
 
         sandbox.stub(subscriber, 'getClient').rejects(fakeError);
 
         const ms = new MessageStream(subscriber);
 
+        const prom = defer();
         ms.on('error', err => {
           assert.strictEqual(err, fakeError);
           assert.strictEqual(ms.destroyed, true);
-          done();
+          prom.resolve();
         });
+
+        await ms.start();
+        await prom.promise;
       });
 
-      it('should destroy the stream if unable to connect to channel', done => {
+      it('should destroy the stream if unable to connect to channel', async () => {
         const stub = sandbox.stub(client, 'waitForReady');
         const ms = new MessageStream(subscriber);
         const fakeError = new Error('err');
         const expectedMessage = 'Failed to connect to channel. Reason: err';
 
+        const prom = defer();
         ms.on('error', (err: grpc.ServiceError) => {
           assert.strictEqual(err.code, 2);
           assert.strictEqual(err.message, expectedMessage);
           assert.strictEqual(ms.destroyed, true);
-          done();
+          prom.resolve();
         });
 
-        setImmediate(() => {
-          const [, callback] = stub.lastCall.args;
-          callback(fakeError);
+        stub.callsFake((_, callback) => {
+          _;
+          process.nextTick(() => callback(fakeError));
         });
+
+        await ms.start();
+
+        await prom.promise;
       });
 
-      it('should give a deadline error if waitForReady times out', done => {
+      it('should give a deadline error if waitForReady times out', async () => {
         const stub = sandbox.stub(client, 'waitForReady');
         const ms = new MessageStream(subscriber);
         const fakeError = new Error('Failed to connect before the deadline');
 
+        const prom = defer();
         ms.on('error', (err: grpc.ServiceError) => {
           assert.strictEqual(err.code, 4);
-          done();
+          prom.resolve();
         });
 
-        setImmediate(() => {
-          const [, callback] = stub.lastCall.args;
-          callback(fakeError);
+        stub.callsFake((_, callback) => {
+          _;
+          process.nextTick(() => callback(fakeError));
         });
+
+        await ms.start();
+        await prom.promise;
       });
 
       it('should emit non-status errors', done => {
@@ -422,7 +438,7 @@ describe('MessageStream', () => {
         stream.emit('error', status);
         stream.emit('status', status);
 
-        setImmediate(done);
+        process.nextTick(done);
       });
 
       it('should ignore errors that come in after the status', done => {
@@ -432,7 +448,7 @@ describe('MessageStream', () => {
         stream.emit('status', {code: 0});
         stream.emit('error', {code: 2});
 
-        setImmediate(done);
+        process.nextTick(done);
       });
     });
 
@@ -447,7 +463,7 @@ describe('MessageStream', () => {
         assert.strictEqual(stream.listenerCount('end'), expectedCount);
 
         stream.push(null);
-        setImmediate(() => {
+        process.nextTick(() => {
           assert.strictEqual(client.streams.length, 5);
           done();
         });
@@ -459,13 +475,13 @@ describe('MessageStream', () => {
         messageStream.on('error', done);
         stream.push(null);
 
-        setImmediate(() => {
+        process.nextTick(() => {
           const count = stream.listenerCount('end');
 
           stream.emit('status', {code: 2});
           assert.strictEqual(stream.listenerCount('end'), count);
 
-          setImmediate(() => {
+          process.nextTick(() => {
             assert.strictEqual(client.streams.length, 5);
             done();
           });
@@ -494,19 +510,13 @@ describe('MessageStream', () => {
     });
 
     describe('keeping streams alive', () => {
-      let clock: sinon.SinonFakeTimers;
-
-      before(() => {
-        clock = sandbox.useFakeTimers();
-      });
-
       it('should keep the streams alive', () => {
         const frequency = 30000;
         const stubs = client.streams.map(stream => {
           return sandbox.stub(stream, 'write');
         });
 
-        clock.tick(frequency * 1.5);
+        sandbox.clock.tick(frequency * 1.5);
 
         stubs.forEach(stub => {
           const [data] = stub.lastCall.args;

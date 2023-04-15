@@ -685,6 +685,11 @@ export class Subscriber extends EventEmitter {
       .on('full', () => this._stream.pause())
       .on('free', () => this._stream.resume());
 
+    this._stream.start().catch(err => {
+      this.emit('error', err);
+      this.close();
+    });
+
     this.isOpen = true;
   }
 

@@ -24,6 +24,7 @@ import {Subscriber} from './subscriber';
 import {google} from '../protos/protos';
 import {defaultOptions} from './default-options';
 import {Duration} from './temporal';
+import {ExponentialRetry} from './exponential-retry';
 
 /*!
  * Frequency to ping streams.
@@ -37,6 +38,23 @@ const PULL_TIMEOUT = require('./v1/subscriber_client_config.json').interfaces[
   'google.pubsub.v1.Subscriber'
 ].methods.StreamingPull.timeout_millis;
 
+/**
+ * @typedef {object} MessageStreamOptions
+ * @property {number} [highWaterMark=0] Configures the Buffer level for all
+ *     underlying streams. See
+ *     {@link https://nodejs.org/en/docs/guides/backpressuring-in-streams/} for
+ *     more details.
+ * @property {number} [maxStreams=5] Number of streaming connections to make.
+ * @property {number} [timeout=300000] Timeout for establishing a connection.
+ */
+export interface MessageStreamOptions {
+  highWaterMark?: number;
+  maxStreams?: number;
+  timeout?: number;
+  retryBackoff?: Duration;
+  retryMaxBackoff?: Duration;
+}
+
 /*!
  * default stream options
  */
@@ -44,6 +62,8 @@ const DEFAULT_OPTIONS: MessageStreamOptions = {
   highWaterMark: 0,
   maxStreams: defaultOptions.subscription.maxStreams,
   timeout: 300000,
+  retryBackoff: Duration.from({millis: 100}),
+  retryMaxBackoff: Duration.from({millis: 5000}),
 };
 
 interface StreamState {
@@ -103,21 +123,13 @@ export class ChannelError extends Error implements grpc.ServiceError {
   }
 }
 
-export interface MessageStreamOptions {
-  highWaterMark?: number;
-  maxStreams?: number;
-  timeout?: number;
+// Provide a lightweight wrapper around streams so we can track them
+// deterministically for retries.
+interface StreamTracked {
+  stream?: PullStream;
+  receivedStatus?: boolean;
 }
 
-/**
- * @typedef {object} MessageStreamOptions
- * @property {number} [highWaterMark=0] Configures the Buffer level for all
- *     underlying streams. See
- *     {@link https://nodejs.org/en/docs/guides/backpressuring-in-streams/} for
- *     more details.
- * @property {number} [maxStreams=5] Number of streaming connections to make.
- * @property {number} [timeout=300000] Timeout for establishing a connection.
- */
 /**
  * Streaming class used to manage multiple StreamingPull requests.
  *
@@ -128,11 +140,12 @@ export interface MessageStreamOptions {
  * @param {MessageStreamOptions} [options] The message stream options.
  */
 export class MessageStream extends PassThrough {
-  private _keepAliveHandle: NodeJS.Timer;
-  private _fillHandle?: NodeJS.Timer;
+  private _keepAliveHandle?: NodeJS.Timer;
   private _options: MessageStreamOptions;
-  private _retrier: PullRetry;
-  private _streams: Map<PullStream, boolean>;
+  private _retrier: ExponentialRetry<StreamTracked>;
+
+  private _streams: StreamTracked[];
+
   private _subscriber: Subscriber;
   constructor(sub: Subscriber, options = {} as MessageStreamOptions) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -140,11 +153,27 @@ export class MessageStream extends PassThrough {
     super({objectMode: true, highWaterMark: options.highWaterMark});
 
     this._options = options;
-    this._retrier = new PullRetry();
-    this._streams = new Map();
-    this._subscriber = sub;
+    this._retrier = new ExponentialRetry<{}>(
+      options.retryBackoff!, // Filled by DEFAULT_OPTIONS
+      options.retryMaxBackoff!
+    );
 
-    this._fillStreamPool();
+    this._streams = [];
+    for (let i = 0; i < options.maxStreams!; i++) {
+      this._streams.push({});
+    }
+
+    this._subscriber = sub;
+  }
+
+  /**
+   * Actually starts the stream setup and subscription pulls.
+   * This is separated so that others can properly wait on the promise.
+   *
+   * @private
+   */
+  async start(): Promise<void> {
+    await this._fillStreamPool();
 
     this._keepAliveHandle = setInterval(
       () => this._keepAlive(),
@@ -163,9 +192,11 @@ export class MessageStream extends PassThrough {
       streamAckDeadlineSeconds: deadline.totalOf('second'),
     };
 
-    for (const stream of this._streams.keys()) {
+    for (const tracker of this._streams) {
       // We don't need a callback on this one, it's advisory.
-      stream.write(request);
+      if (tracker.stream) {
+        tracker.stream.write(request);
+      }
     }
   }
 
@@ -177,15 +208,22 @@ export class MessageStream extends PassThrough {
    * @private
    */
   _destroy(error: Error | null, callback: (error: Error | null) => void): void {
-    clearInterval(this._keepAliveHandle);
+    if (this._keepAliveHandle) {
+      clearInterval(this._keepAliveHandle);
+    }
 
-    for (const stream of this._streams.keys()) {
-      this._removeStream(stream);
-      stream.cancel();
+    this._retrier.close();
+
+    for (let i = 0; i < this._streams.length; i++) {
+      const tracker = this._streams[i];
+      if (tracker.stream) {
+        this._removeStream(i);
+      }
     }
 
     callback(error);
   }
+
   /**
    * Adds a StreamingPull stream to the combined stream.
    *
@@ -193,15 +231,28 @@ export class MessageStream extends PassThrough {
    *
    * @param {stream} stream The StreamingPull stream.
    */
-  private _addStream(stream: PullStream): void {
+  private _replaceStream(index: number, stream: PullStream): void {
+    this._removeStream(index);
+
     this._setHighWaterMark(stream);
-    this._streams.set(stream, false);
+    const tracker = this._streams[index];
+    tracker.stream = stream;
+    tracker.receivedStatus = false;
 
     stream
-      .on('error', err => this._onError(stream, err))
-      .once('status', status => this._onStatus(stream, status))
-      .pipe(this, {end: false});
+      .on('error', err => this._onError(index, err))
+      .once('status', status => this._onStatus(index, status))
+      .on('data', (data: PullResponse) => this._onData(index, data));
   }
+
+  private _onData(index: number, data: PullResponse): void {
+    // Mark this stream as alive again. (reset backoff)
+    const tracker = this._streams[index];
+    this._retrier.reset(tracker);
+
+    this.emit('data', data);
+  }
+
   /**
    * Attempts to create and cache the desired number of StreamingPull requests.
    * gRPC does not supply a way to confirm that a stream is connected, so our
@@ -238,12 +289,13 @@ export class MessageStream extends PassThrough {
         : this._subscriber.maxBytes,
     };
 
-    delete this._fillHandle;
-
-    for (let i = this._streams.size; i < this._options.maxStreams!; i++) {
-      const stream: PullStream = client.streamingPull({deadline});
-      this._addStream(stream);
-      stream.write(request);
+    for (let i = 0; i < this._streams.length; i++) {
+      const tracker = this._streams[i];
+      if (!tracker.stream) {
+        const stream: PullStream = client.streamingPull({deadline});
+        this._replaceStream(i, stream);
+        stream.write(request);
+      }
     }
 
     try {
@@ -253,6 +305,7 @@ export class MessageStream extends PassThrough {
       this.destroy(err);
     }
   }
+
   /**
    * It is critical that we keep as few `PullResponse` objects in memory as
    * possible to reduce the number of potential redeliveries. Because of this we
@@ -268,6 +321,7 @@ export class MessageStream extends PassThrough {
     client.initialize();
     return client.subscriberStub as Promise<ClientStub>;
   }
+
   /**
    * Since we do not use the streams to ack/modAck messages, they will close
    * by themselves unless we periodically send empty messages.
@@ -275,38 +329,46 @@ export class MessageStream extends PassThrough {
    * @private
    */
   private _keepAlive(): void {
-    this._streams.forEach((receivedStatus, stream) => {
-      // its possible that a status event fires off (signaling the rpc being
-      // closed) but the stream hasn't drained yet, writing to this stream will
-      // result in a `write after end` error
-      if (!receivedStatus) {
-        stream.write({});
+    this._streams.forEach(tracker => {
+      // It's possible that a status event fires off (signaling the rpc being
+      // closed) but the stream hasn't drained yet. Writing to such a stream will
+      // result in a `write after end` error.
+      if (!tracker.receivedStatus && tracker.stream) {
+        tracker.stream.write({});
       }
     });
   }
+
+  // Returns the number of tracked streams that contain an actual stream (good or not).
+  private _activeStreams(): number {
+    return this._streams.reduce((p, t) => (t.stream ? 1 : 0) + p, 0);
+  }
+
   /**
    * Once the stream has nothing left to read, we'll remove it and attempt to
    * refill our stream pool if needed.
    *
    * @private
    *
-   * @param {Duplex} stream The ended stream.
+   * @param {number} index The ended stream.
    * @param {object} status The stream status.
    */
-  private _onEnd(stream: PullStream, status: grpc.StatusObject): void {
-    this._removeStream(stream);
+  private _onEnd(index: number, status: grpc.StatusObject): void {
+    this._removeStream(index);
 
-    if (this._fillHandle) {
-      return;
-    }
-
-    if (this._retrier.retry(status)) {
-      const delay = this._retrier.createTimeout();
-      this._fillHandle = setTimeout(() => this._fillStreamPool(), delay);
-    } else if (!this._streams.size) {
+    if (PullRetry.retry(status)) {
+      if (PullRetry.resetFailures(status)) {
+        this._retrier.reset(this._streams[index]);
+      }
+      this._retrier.retryLater(this._streams[index], () => {
+        this._fillStreamPool();
+      });
+    } else if (this._activeStreams() === 0) {
+      // No streams left, and nothing to retry.
       this.destroy(new StatusError(status));
     }
   }
+
   /**
    * gRPC will usually emit a status as a ServiceError via `error` event before
    * it emits the status itself. In order to cut back on emitted errors, we'll
@@ -314,19 +376,22 @@ export class MessageStream extends PassThrough {
    *
    * @private
    *
-   * @param {stream} stream The stream that errored.
+   * @param {number} index The stream that errored.
    * @param {Error} err The error.
    */
-  private async _onError(stream: PullStream, err: Error): Promise<void> {
-    await promisify(setImmediate)();
+  private async _onError(index: number, err: Error): Promise<void> {
+    await promisify(process.nextTick)();
 
     const code = (err as StatusError).code;
-    const receivedStatus = this._streams.get(stream) !== false;
+    const tracker = this._streams[index];
+    const receivedStatus =
+      !tracker.stream || (tracker.stream && !tracker.receivedStatus);
 
     if (typeof code !== 'number' || !receivedStatus) {
       this.emit('error', err);
     }
   }
+
   /**
    * gRPC streams will emit a status event once the connection has been
    * terminated. This is preferable to end/close events because we'll receive
@@ -337,33 +402,45 @@ export class MessageStream extends PassThrough {
    * @param {stream} stream The stream that was closed.
    * @param {object} status The status message stating why it was closed.
    */
-  private _onStatus(stream: PullStream, status: grpc.StatusObject): void {
+  private _onStatus(index: number, status: grpc.StatusObject): void {
     if (this.destroyed) {
       return;
     }
 
-    this._streams.set(stream, true);
+    const tracker = this._streams[index];
+    tracker.receivedStatus = true;
+    if (!tracker.stream) {
+      // This shouldn't really happen, but in case wires get crossed.
+      return;
+    }
 
-    if (isStreamEnded(stream)) {
-      this._onEnd(stream, status);
+    if (isStreamEnded(tracker.stream)) {
+      this._onEnd(index, status);
     } else {
-      stream.once('end', () => this._onEnd(stream, status));
-      stream.push(null);
+      tracker.stream.once('end', () => this._onEnd(index, status));
+      tracker.stream.push(null);
     }
   }
+
   /**
    * Removes a stream from the combined stream.
    *
    * @private
    *
-   * @param {stream} stream The stream to remove.
+   * @param {number} index The stream to remove.
    */
-  private _removeStream(stream: PullStream): void {
-    stream.unpipe(this);
-    this._streams.delete(stream);
+  private _removeStream(index: number): void {
+    const tracker = this._streams[index];
+    if (tracker.stream) {
+      tracker.stream.unpipe(this);
+      tracker.stream.cancel();
+      tracker.stream = undefined;
+      tracker.receivedStatus = undefined;
+    }
   }
+
   /**
-   * Neither gRPC or gax allow for the highWaterMark option to be specified.
+   * Neither gRPC nor gax allow for the highWaterMark option to be specified.
    * However using the default value (16) it is possible to end up with a lot of
    * PullResponse objects stored in internal buffers. If this were to happen
    * and the client were slow to process messages, we could potentially see a
@@ -378,8 +455,9 @@ export class MessageStream extends PassThrough {
   private _setHighWaterMark(stream: PullStream): void {
     stream._readableState.highWaterMark = this._options.highWaterMark!;
   }
+
   /**
-   * Promisified version of gRPCs Client#waitForReady function.
+   * Promisified version of gRPC's Client#waitForReady function.
    *
    * @private
    *
