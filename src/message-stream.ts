@@ -357,6 +357,12 @@ export class MessageStream extends PassThrough {
     this._removeStream(index);
 
     if (PullRetry.retry(status)) {
+      this.emit(
+        'debug',
+        new Error(
+          `Subscriber stream ${index} has ended with status ${status.code}; will be retried.`
+        )
+      );
       if (PullRetry.resetFailures(status)) {
         this._retrier.reset(this._streams[index]);
       }
@@ -364,6 +370,13 @@ export class MessageStream extends PassThrough {
         this._fillStreamPool();
       });
     } else if (this._activeStreams() === 0) {
+      this.emit(
+        'debug',
+        new Error(
+          `Subscriber stream ${index} has ended with status ${status.code}; will not be retried.`
+        )
+      );
+
       // No streams left, and nothing to retry.
       this.destroy(new StatusError(status));
     }
