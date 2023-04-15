@@ -51,7 +51,7 @@ export interface MessageStreamOptions {
   highWaterMark?: number;
   maxStreams?: number;
   timeout?: number;
-  retryBackoff?: Duration;
+  retryMinBackoff?: Duration;
   retryMaxBackoff?: Duration;
 }
 
@@ -62,7 +62,7 @@ const DEFAULT_OPTIONS: MessageStreamOptions = {
   highWaterMark: 0,
   maxStreams: defaultOptions.subscription.maxStreams,
   timeout: 300000,
-  retryBackoff: Duration.from({millis: 100}),
+  retryMinBackoff: Duration.from({millis: 100}),
   retryMaxBackoff: Duration.from({millis: 5000}),
 };
 
@@ -154,7 +154,7 @@ export class MessageStream extends PassThrough {
 
     this._options = options;
     this._retrier = new ExponentialRetry<{}>(
-      options.retryBackoff!, // Filled by DEFAULT_OPTIONS
+      options.retryMinBackoff!, // Filled by DEFAULT_OPTIONS
       options.retryMaxBackoff!
     );
 
