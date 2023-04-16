@@ -138,6 +138,17 @@ export class ExponentialRetry<T> {
     this.scheduleRetry();
   }
 
+  /**
+   * Resets an item that was previously retried. This is useful if you have
+   * persistent items that just need to be retried occasionally.
+   *
+   * @private
+   */
+  reset(item: T) {
+    const retried = item as RetriedItem<T>;
+    delete retried.retryInfo;
+  }
+
   // Takes a time delta and adds fuzz.
   private randomizeDelta(durationMs: number): number {
     // The fuzz distance should never exceed one second, but in the

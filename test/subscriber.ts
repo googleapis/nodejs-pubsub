@@ -135,6 +135,7 @@ class FakeMessageStream extends PassThrough {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _callback: (error: Error | null) => void
   ): void {}
+  async start() {}
 }
 
 class FakePreciseDate {
