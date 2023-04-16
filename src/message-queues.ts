@@ -32,6 +32,7 @@ import {
 } from './subscriber';
 import {Duration} from './temporal';
 import {addToBucket} from './util';
+import {DebugMessage} from './debug';
 
 /**
  * @private
@@ -65,7 +66,7 @@ export interface BatchOptions {
  * @param {string} message The error message.
  * @param {GoogleError} err The grpc error.
  */
-export class BatchError extends Error {
+export class BatchError extends DebugMessage {
   ackIds: string[];
   code: grpc.status;
   details: string;
@@ -73,7 +74,8 @@ export class BatchError extends Error {
     super(
       `Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${
         process.env.DEBUG_GRPC ? err.stack : err.message
-      }`
+      }`,
+      err
     );
 
     this.ackIds = ackIds;
@@ -278,7 +280,9 @@ export abstract class MessageQueue {
       // These queues are used for ack and modAck messages, which should
       // never surface an error to the user level. However, we'll emit
       // them onto this debug channel in case debug info is needed.
-      this._subscriber.emit('debug', e);
+      const err = e as Error;
+      const debugMsg = new DebugMessage(err.message, err);
+      this._subscriber.emit('debug', debugMsg);
     }
 
     this.numInFlightRequests -= batchSize;
@@ -404,10 +408,8 @@ export abstract class MessageQueue {
     const others = toError.get(AckResponses.Other);
     if (others?.length) {
       const otherIds = others.map(e => e.ackId);
-      this._subscriber.emit(
-        'debug',
-        new BatchError(rpcError, otherIds, operation)
-      );
+      const debugMsg = new BatchError(rpcError, otherIds, operation);
+      this._subscriber.emit('debug', debugMsg);
     }
 
     // Take care of following up on all the Promises.
@@ -492,7 +494,8 @@ export class AckQueue extends MessageQueue {
           return results.toRetry;
         } catch (e) {
           // This should only ever happen if there's a code failure.
-          this._subscriber.emit('debug', e);
+          const err = e as Error;
+          this._subscriber.emit('debug', new DebugMessage(err.message, err));
           const exc = new AckError(AckResponses.Other, 'Code error');
           batch.forEach(m => {
             m.responsePromise?.reject(exc);
