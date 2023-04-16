@@ -265,6 +265,10 @@ export class MessageStream extends PassThrough {
    * @returns {Promise}
    */
   private async _fillStreamPool(): Promise<void> {
+    if (this.destroyed) {
+      return;
+    }
+
     let client!: ClientStub;
 
     try {
@@ -274,8 +278,38 @@ export class MessageStream extends PassThrough {
       this.destroy(err);
     }
 
+    const all: Promise<void>[] = [];
+    for (let i = 0; i < this._streams.length; i++) {
+      all.push(this._fillOne(i, client));
+    }
+    await Promise.all(all);
+
+    try {
+      await this._waitForClientReady(client);
+    } catch (e) {
+      const err = e as Error;
+      this.destroy(err);
+    }
+  }
+
+  private async _fillOne(index: number, client?: ClientStub) {
     if (this.destroyed) {
       return;
+    }
+
+    const tracker = this._streams[index];
+    if (tracker.stream) {
+      return;
+    }
+
+    if (!client) {
+      try {
+        client = await this._getClient();
+      } catch (e) {
+        const err = e as Error;
+        this.destroy(err);
+        return;
+      }
     }
 
     const deadline = Date.now() + PULL_TIMEOUT;
@@ -290,21 +324,9 @@ export class MessageStream extends PassThrough {
         : this._subscriber.maxBytes,
     };
 
-    for (let i = 0; i < this._streams.length; i++) {
-      const tracker = this._streams[i];
-      if (!tracker.stream) {
-        const stream: PullStream = client.streamingPull({deadline});
-        this._replaceStream(i, stream);
-        stream.write(request);
-      }
-    }
-
-    try {
-      await this._waitForClientReady(client);
-    } catch (e) {
-      const err = e as Error;
-      this.destroy(err);
-    }
+    const stream: PullStream = client.streamingPull({deadline});
+    this._replaceStream(index, stream);
+    stream.write(request);
   }
 
   /**
@@ -368,7 +390,7 @@ export class MessageStream extends PassThrough {
         this._retrier.reset(this._streams[index]);
       }
       this._retrier.retryLater(this._streams[index], () => {
-        this._fillStreamPool();
+        this._fillOne(index);
       });
     } else if (this._activeStreams() === 0) {
       this.emit(
