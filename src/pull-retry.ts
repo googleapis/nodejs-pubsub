@@ -35,21 +35,6 @@ export const RETRY_CODES: grpc.status[] = [
  * @private
  */
 export class PullRetry {
-  private failures = 0;
-  /**
-   * Generates a timeout that can be used for applying a backoff based on the
-   * current number of failed requests.
-   *
-   * @see {@link https://cloud.google.com/iot/docs/how-tos/exponential-backoff}
-   * @private
-   * @returns {number}
-   */
-  createTimeout(): number {
-    if (this.failures === 0) {
-      return 0;
-    }
-    return Math.pow(2, this.failures) * 1000 + Math.floor(Math.random() * 1000);
-  }
   /**
    * Determines if a request grpc.status should be retried.
    *
@@ -63,16 +48,7 @@ export class PullRetry {
    * @param {object} grpc.status The request grpc.status.
    * @returns {boolean}
    */
-  retry(err: grpc.StatusObject): boolean {
-    if (
-      err.code === grpc.status.OK ||
-      err.code === grpc.status.DEADLINE_EXCEEDED
-    ) {
-      this.failures = 0;
-    } else {
-      this.failures += 1;
-    }
-
+  static retry(err: grpc.StatusObject): boolean {
     if (
       err.code === grpc.status.UNAVAILABLE &&
       err.details &&
@@ -82,5 +58,11 @@ export class PullRetry {
     }
 
     return RETRY_CODES.includes(err.code);
+  }
+
+  static resetFailures(err: grpc.StatusObject): boolean {
+    return (
+      err.code === grpc.status.OK || err.code === grpc.status.DEADLINE_EXCEEDED
+    );
   }
 }
