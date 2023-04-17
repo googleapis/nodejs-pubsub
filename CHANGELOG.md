@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.5.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.4.1...v3.5.0) (2023-04-16)
+
+
+### Features
+
+* Rework low level message stream retries, add debugging ([#1713](https://github.com/googleapis/nodejs-pubsub/issues/1713)) ([c1cc6e0](https://github.com/googleapis/nodejs-pubsub/commit/c1cc6e043ab2e532f9c8c9f9158c46e9a424d3dd))
+
 ## [3.4.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.4.0...v3.4.1) (2023-03-08)
 
 
