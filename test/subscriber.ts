@@ -1048,6 +1048,27 @@ describe('Subscriber', () => {
         assert.strictEqual(msg, message);
       });
 
+      it('should ack the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'ackWithResponse');
+
+        stub.resolves(s.AckResponses.Success);
+        const response = await message.ackWithResponse();
+        assert.strictEqual(response, s.AckResponses.Success);
+      });
+
+      it('should fail to ack the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'ackWithResponse');
+
+        stub.rejects(new s.AckError(s.AckResponses.Invalid));
+        await assert.rejects(message.ackWithResponse());
+
+        // Should cache the result also.
+        await assert.rejects(message.ackWithResponse());
+        assert.strictEqual(stub.callCount, 1);
+      });
+
       it('should not ack the message if its been handled', () => {
         const stub = sandbox.stub(subscriber, 'ack');
 
@@ -1070,6 +1091,27 @@ describe('Subscriber', () => {
         assert.strictEqual(deadline, fakeDeadline);
       });
 
+      it('should modAck the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'modAckWithResponse');
+
+        stub.resolves(s.AckResponses.Success);
+        const response = await message.modAckWithResponse(0);
+        assert.strictEqual(response, s.AckResponses.Success);
+      });
+
+      it('should fail to modAck the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'modAckWithResponse');
+
+        stub.rejects(new s.AckError(s.AckResponses.Invalid));
+        await assert.rejects(message.modAckWithResponse(0));
+
+        // Should cache the result also.
+        await assert.rejects(message.modAckWithResponse(0));
+        assert.strictEqual(stub.callCount, 1);
+      });
+
       it('should not modAck the message if its been handled', () => {
         const deadline = 10;
         const stub = sandbox.stub(subscriber, 'modAck');
@@ -1090,6 +1132,27 @@ describe('Subscriber', () => {
         const [msg, delay] = stub.lastCall.args;
         assert.strictEqual(msg, message);
         assert.strictEqual(delay, 0);
+      });
+
+      it('should nack the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'nackWithResponse');
+
+        stub.resolves(s.AckResponses.Success);
+        const response = await message.nackWithResponse();
+        assert.strictEqual(response, s.AckResponses.Success);
+      });
+
+      it('should fail to nack the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'nackWithResponse');
+
+        stub.rejects(new s.AckError(s.AckResponses.Invalid));
+        await assert.rejects(message.nackWithResponse());
+
+        // Should cache the result also.
+        await assert.rejects(message.nackWithResponse());
+        assert.strictEqual(stub.callCount, 1);
       });
 
       it('should not nack the message if its been handled', () => {

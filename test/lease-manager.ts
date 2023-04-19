@@ -54,6 +54,10 @@ class FakeMessage {
     this.received = Date.now();
   }
   modAck(): void {}
+  async modAckWithResponse(): Promise<AckResponse> {
+    return AckResponses.Success;
+  }
+  ackFailed() {}
 }
 
 interface LeaseManagerInternals {
@@ -306,6 +310,32 @@ describe('LeaseManager', () => {
 
         const [deadline] = modAckStub.lastCall.args as {} as [number];
         assert.strictEqual(deadline, subscriber.ackDeadline);
+      });
+
+      it('should remove and ackFailed any messages that fail to ack', done => {
+        (subscriber as unknown as FakeSubscriber).isExactlyOnceDelivery = true;
+
+        leaseManager.setOptions({
+          maxExtensionMinutes: 600,
+        });
+
+        const goodMessage = new FakeMessage();
+
+        const removeStub = sandbox.stub(leaseManager, 'remove');
+        const mawrStub = sandbox
+          .stub(goodMessage, 'modAckWithResponse')
+          .rejects(new AckError(AckResponses.Invalid));
+        const failed = sandbox.stub(goodMessage, 'ackFailed');
+
+        removeStub.callsFake(() => {
+          assert.strictEqual(mawrStub.callCount, 1);
+          assert.strictEqual(removeStub.callCount, 1);
+          assert.strictEqual(failed.callCount, 1);
+          done();
+        });
+
+        leaseManager.add(goodMessage as {} as Message);
+        clock.tick(halfway * 2 + 1);
       });
 
       it('should continuously extend the deadlines', () => {

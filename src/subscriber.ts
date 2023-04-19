@@ -103,6 +103,8 @@ export class Message {
   private _handled: boolean;
   private _length: number;
   private _subscriber: Subscriber;
+  private _ackFailed?: AckError;
+
   /**
    * @hideconstructor
    *
@@ -195,6 +197,16 @@ export class Message {
   }
 
   /**
+   * Sets this message's exactly once delivery acks to permanent failure. This is
+   * meant for internal library use only.
+   *
+   * @private
+   */
+  ackFailed(error: AckError): void {
+    this._ackFailed = error;
+  }
+
+  /**
    * Acknowledges the message.
    *
    * @example
@@ -228,9 +240,18 @@ export class Message {
       return AckResponses.Success;
     }
 
+    if (this._ackFailed) {
+      throw this._ackFailed;
+    }
+
     if (!this._handled) {
       this._handled = true;
-      return await this._subscriber.ackWithResponse(this);
+      try {
+        return await this._subscriber.ackWithResponse(this);
+      } catch (e) {
+        this.ackFailed(e as AckError);
+        throw e;
+      }
     } else {
       return AckResponses.Invalid;
     }
@@ -261,8 +282,17 @@ export class Message {
       return AckResponses.Success;
     }
 
+    if (this._ackFailed) {
+      throw this._ackFailed;
+    }
+
     if (!this._handled) {
-      return await this._subscriber.modAckWithResponse(this, deadline);
+      try {
+        return await this._subscriber.modAckWithResponse(this, deadline);
+      } catch (e) {
+        this.ackFailed(e as AckError);
+        throw e;
+      }
     } else {
       return AckResponses.Invalid;
     }
@@ -303,9 +333,18 @@ export class Message {
       return AckResponses.Success;
     }
 
+    if (this._ackFailed) {
+      throw this._ackFailed;
+    }
+
     if (!this._handled) {
       this._handled = true;
-      return await this._subscriber.nackWithResponse(this);
+      try {
+        return await this._subscriber.nackWithResponse(this);
+      } catch (e) {
+        this.ackFailed(e as AckError);
+        throw e;
+      }
     } else {
       return AckResponses.Invalid;
     }
