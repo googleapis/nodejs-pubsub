@@ -15,7 +15,7 @@
  */
 
 import {EventEmitter} from 'events';
-import {Message, Subscriber} from './subscriber';
+import {AckError, Message, Subscriber} from './subscriber';
 import {defaultOptions} from './default-options';
 
 export interface FlowControlOptions {
@@ -257,7 +257,16 @@ export class LeaseManager extends EventEmitter {
       const lifespan = (Date.now() - message.received) / (60 * 1000);
 
       if (lifespan < this._options.maxExtensionMinutes!) {
-        message.modAck(deadline);
+        if (this._subscriber.isExactlyOnceDelivery) {
+          message.modAckWithResponse(deadline).catch(e => {
+            // In the case of a permanent failure (temporary failures are retried),
+            // we need to stop trying to lease-manage the message.
+            message.ackFailed(e as AckError);
+            this.remove(message);
+          });
+        } else {
+          message.modAck(deadline);
+        }
       } else {
         this.remove(message);
       }
