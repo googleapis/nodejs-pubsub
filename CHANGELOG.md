@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.5.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.5.0...v3.5.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* Handle receipt modAck and lease extensions with exactly-once delivery correctly ([#1709](https://github.com/googleapis/nodejs-pubsub/issues/1709)) ([d786d22](https://github.com/googleapis/nodejs-pubsub/commit/d786d22bfec61b91891e5049f1b5ae2d9a81d788))
+
 ## [3.5.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.4.1...v3.5.0) (2023-04-16)
 
 
