@@ -64,6 +64,9 @@ class FakeQueue extends EventEmitter {
   async publish() {
     await this._publish([], []);
   }
+  async publishDrain() {
+    await this.publish();
+  }
   async _publish(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     messages: p.PubsubMessage[],
@@ -82,6 +85,9 @@ class FakeOrderedQueue extends FakeQueue {
   resumePublishing(): void {}
   async publish() {
     await this._publish([], []);
+  }
+  async publishDrain() {
+    await this.publish();
   }
   async _publish(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

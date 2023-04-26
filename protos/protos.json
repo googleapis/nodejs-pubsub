@@ -8,7 +8,7 @@
               "options": {
                 "cc_enable_arenas": true,
                 "csharp_namespace": "Google.Cloud.PubSub.V1",
-                "go_package": "google.golang.org/genproto/googleapis/pubsub/v1;pubsub",
+                "go_package": "cloud.google.com/go/pubsub/apiv1/pubsubpb;pubsubpb",
                 "java_multiple_files": true,
                 "java_outer_classname": "SchemaProto",
                 "java_package": "com.google.pubsub.v1",
@@ -47,7 +47,8 @@
                       "responseType": "Topic",
                       "options": {
                         "(google.api.http).patch": "/v1/{topic.name=projects/*/topics/*}",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "topic,update_mask"
                       },
                       "parsedOptions": [
                         {
@@ -55,6 +56,9 @@
                             "patch": "/v1/{topic.name=projects/*/topics/*}",
                             "body": "*"
                           }
+                        },
+                        {
+                          "(google.api.method_signature)": "topic,update_mask"
                         }
                       ]
                     },
@@ -519,7 +523,8 @@
                       "responseType": "Subscription",
                       "options": {
                         "(google.api.http).patch": "/v1/{subscription.name=projects/*/subscriptions/*}",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "subscription,update_mask"
                       },
                       "parsedOptions": [
                         {
@@ -527,6 +532,9 @@
                             "patch": "/v1/{subscription.name=projects/*/subscriptions/*}",
                             "body": "*"
                           }
+                        },
+                        {
+                          "(google.api.method_signature)": "subscription,update_mask"
                         }
                       ]
                     },
@@ -716,7 +724,8 @@
                       "responseType": "Snapshot",
                       "options": {
                         "(google.api.http).patch": "/v1/{snapshot.name=projects/*/snapshots/*}",
-                        "(google.api.http).body": "*"
+                        "(google.api.http).body": "*",
+                        "(google.api.method_signature)": "snapshot,update_mask"
                       },
                       "parsedOptions": [
                         {
@@ -724,6 +733,9 @@
                             "patch": "/v1/{snapshot.name=projects/*/snapshots/*}",
                             "body": "*"
                           }
+                        },
+                        {
+                          "(google.api.method_signature)": "snapshot,update_mask"
                         }
                       ]
                     },
@@ -1229,12 +1241,6 @@
                       "id": 4
                     }
                   },
-                  "reserved": [
-                    [
-                      2,
-                      2
-                    ]
-                  ],
                   "nested": {
                     "AcknowledgeConfirmation": {
                       "fields": {
@@ -1252,6 +1258,11 @@
                           "rule": "repeated",
                           "type": "string",
                           "id": 3
+                        },
+                        "temporaryFailedAckIds": {
+                          "rule": "repeated",
+                          "type": "string",
+                          "id": 4
                         }
                       }
                     },
@@ -1266,6 +1277,11 @@
                           "rule": "repeated",
                           "type": "string",
                           "id": 2
+                        },
+                        "temporaryFailedAckIds": {
+                          "rule": "repeated",
+                          "type": "string",
+                          "id": 3
                         }
                       }
                     },
@@ -1857,7 +1873,8 @@
                       "type": "string",
                       "id": 2,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
+                        "deprecated": true,
+                        "(google.api.field_behavior)": "OPTIONAL"
                       }
                     }
                   }

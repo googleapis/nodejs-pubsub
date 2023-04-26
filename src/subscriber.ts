@@ -184,6 +184,8 @@ export class Message implements tracing.MessageWithAttributes {
    */
   telemetrySub: SubscriberTelemetry;
 
+  private _ackFailed?: AckError;
+
   /**
    * @hideconstructor
    *
@@ -283,6 +285,16 @@ export class Message implements tracing.MessageWithAttributes {
   }
 
   /**
+   * Sets this message's exactly once delivery acks to permanent failure. This is
+   * meant for internal library use only.
+   *
+   * @private
+   */
+  ackFailed(error: AckError): void {
+    this._ackFailed = error;
+  }
+
+  /**
    * Acknowledges the message.
    *
    * @example
@@ -316,9 +328,18 @@ export class Message implements tracing.MessageWithAttributes {
       return AckResponses.Success;
     }
 
+    if (this._ackFailed) {
+      throw this._ackFailed;
+    }
+
     if (!this._handled) {
       this._handled = true;
-      return await this._subscriber.ackWithResponse(this);
+      try {
+        return await this._subscriber.ackWithResponse(this);
+      } catch (e) {
+        this.ackFailed(e as AckError);
+        throw e;
+      }
     } else {
       return AckResponses.Invalid;
     }
@@ -349,8 +370,17 @@ export class Message implements tracing.MessageWithAttributes {
       return AckResponses.Success;
     }
 
+    if (this._ackFailed) {
+      throw this._ackFailed;
+    }
+
     if (!this._handled) {
-      return await this._subscriber.modAckWithResponse(this, deadline);
+      try {
+        return await this._subscriber.modAckWithResponse(this, deadline);
+      } catch (e) {
+        this.ackFailed(e as AckError);
+        throw e;
+      }
     } else {
       return AckResponses.Invalid;
     }
@@ -391,9 +421,18 @@ export class Message implements tracing.MessageWithAttributes {
       return AckResponses.Success;
     }
 
+    if (this._ackFailed) {
+      throw this._ackFailed;
+    }
+
     if (!this._handled) {
       this._handled = true;
-      return await this._subscriber.nackWithResponse(this);
+      try {
+        return await this._subscriber.nackWithResponse(this);
+      } catch (e) {
+        this.ackFailed(e as AckError);
+        throw e;
+      }
     } else {
       return AckResponses.Invalid;
     }
@@ -785,13 +824,18 @@ export class Subscriber extends EventEmitter {
 
     this._stream
       .on('error', err => this.emit('error', err))
-      .on('debug', err => this.emit('debug', err))
+      .on('debug', msg => this.emit('debug', msg))
       .on('data', (data: PullResponse) => this._onData(data))
       .once('close', () => this.close());
 
     this._inventory
       .on('full', () => this._stream.pause())
       .on('free', () => this._stream.resume());
+
+    this._stream.start().catch(err => {
+      this.emit('error', err);
+      this.close();
+    });
 
     this.isOpen = true;
   }
@@ -887,12 +931,32 @@ export class Subscriber extends EventEmitter {
       this.createParentSpan(message);
 
       if (this.isOpen) {
-        message.modAck(this.ackDeadline);
-        this._inventory.add(message);
+        if (this.isExactlyOnceDelivery) {
+          // For exactly-once delivery, we must validate that we got a valid
+          // lease on the message before actually leasing it.
+          message
+            .modAckWithResponse(this.ackDeadline)
+            .then(() => {
+              this._inventory.add(message);
+            })
+            .catch(() => {
+              // Temporary failures will retry, so if an error reaches us
+              // here, that means a permanent failure. Silently drop these.
+              this._discardMessage(message);
+            });
+        } else {
+          message.modAck(this.ackDeadline);
+          this._inventory.add(message);
+        }
       } else {
         message.nack();
       }
     }
+  }
+
+  // Internal: This is here to provide a hook for unit testing, at least for now.
+  private _discardMessage(message: Message): void {
+    message;
   }
 
   /**

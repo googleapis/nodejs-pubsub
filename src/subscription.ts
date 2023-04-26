@@ -108,7 +108,7 @@ export type DetachSubscriptionResponse = EmptyResponse;
     listener: (error: StatusError) => void
   ): this;
   on(event: 'close', listener: () => void): this;
-  on(event: 'debug', listener: (error: StatusError) => void); this;
+  on(event: 'debug', listener: (msg: DebugMessage) => void); this;
 
   // Only used internally.
   on(event: 'newListener', listener: Function): this;
@@ -160,7 +160,7 @@ export type DetachSubscriptionResponse = EmptyResponse;
  * on(event: 'error', listener: (error: Error) => void): this;
  *
  * Upon receipt of a (non-fatal) debug warning:
- * on(event: 'debug', listener: (error: Error) => void): this;
+ * on(event: 'debug', listener: (msg: DebugMessage) => void): this;
  *
  * Upon the closing of the subscriber:
  * on(event: 'close', listener: Function): this;
@@ -228,8 +228,8 @@ export type DetachSubscriptionResponse = EmptyResponse;
  * // Register an error handler.
  * subscription.on('error', (err) => {});
  *
- * // Register a debug handler, to catch non-fatal errors.
- * subscription.on('debug', (err) => { console.error(err); });
+ * // Register a debug handler, to catch non-fatal errors and other messages.
+ * subscription.on('debug', msg => { console.log(msg.message); });
  *
  * // Register a close handler in case the subscriber closes unexpectedly
  * subscription.on('close', () => {});
@@ -332,7 +332,7 @@ export class Subscription extends WrappingEmitter {
     this._subscriber = new Subscriber(this, options);
     this._subscriber
       .on('error', err => this.emit('error', err))
-      .on('debug', err => this.emit('debug', err))
+      .on('debug', msg => this.emit('debug', msg))
       .on('message', message => this.emit('message', message))
       .on('close', () => this.emit('close'));
 

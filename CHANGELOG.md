@@ -4,6 +4,41 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.5.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.5.0...v3.5.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* Handle receipt modAck and lease extensions with exactly-once delivery correctly ([#1709](https://github.com/googleapis/nodejs-pubsub/issues/1709)) ([d786d22](https://github.com/googleapis/nodejs-pubsub/commit/d786d22bfec61b91891e5049f1b5ae2d9a81d788))
+
+## [3.5.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.4.1...v3.5.0) (2023-04-16)
+
+
+### Features
+
+* Rework low level message stream retries, add debugging ([#1713](https://github.com/googleapis/nodejs-pubsub/issues/1713)) ([c1cc6e0](https://github.com/googleapis/nodejs-pubsub/commit/c1cc6e043ab2e532f9c8c9f9158c46e9a424d3dd))
+
+## [3.4.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.4.0...v3.4.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* Update minimum google-gax to avoid taffydb vulnerabilities ([#1695](https://github.com/googleapis/nodejs-pubsub/issues/1695)) ([11372e6](https://github.com/googleapis/nodejs-pubsub/commit/11372e6d40577704a8a22b6c010623be7e36b34a))
+
+## [3.4.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.3.0...v3.4.0) (2023-03-06)
+
+
+### Features
+
+* Add google.api.method.signature to update methods ([1e28405](https://github.com/googleapis/nodejs-pubsub/commit/1e2840529a8451c94d5d845062da84729b7843db))
+* Add temporary_failed_ack_ids to ModifyAckDeadlineConfirmation ([1e28405](https://github.com/googleapis/nodejs-pubsub/commit/1e2840529a8451c94d5d845062da84729b7843db))
+* Make INTERNAL a retryable error for Pull ([#1681](https://github.com/googleapis/nodejs-pubsub/issues/1681)) ([1e28405](https://github.com/googleapis/nodejs-pubsub/commit/1e2840529a8451c94d5d845062da84729b7843db))
+
+
+### Bug Fixes
+
+* Don't do multiple drains per publish() in message queues unless requested ([#1691](https://github.com/googleapis/nodejs-pubsub/issues/1691)) ([d9b3a63](https://github.com/googleapis/nodejs-pubsub/commit/d9b3a63ddbfec0581a0e05fdbfcf9e9326b3dcf9))
+
 ## [3.3.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.2.1...v3.3.0) (2023-01-23)
 
 

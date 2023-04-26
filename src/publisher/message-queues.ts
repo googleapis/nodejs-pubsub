@@ -65,12 +65,23 @@ export abstract class MessageQueue extends EventEmitter {
    * @param {PublishCallback} callback The publish callback.
    */
   abstract add(message: PubsubMessage, callback: PublishCallback): void;
+
   /**
-   * Method to initiate publishing.
+   * Method to initiate publishing. Full drain behaviour depends on whether the
+   * queues are ordered or not.
    *
    * @abstract
    */
   abstract publish(): Promise<void>;
+
+  /**
+   * Method to finalize publishing. Does as many publishes as are needed
+   * to finish emptying the queues, and fires a drain event afterward.
+   *
+   * @abstract
+   */
+  abstract publishDrain(): Promise<void>;
+
   /**
    * Accepts a batch of messages and publishes them to the API.
    *
@@ -190,12 +201,33 @@ export class Queue extends MessageQueue {
       }, maxMilliseconds!);
     }
   }
+
+  /**
+   * Cancels any pending publishes and calls _publish immediately.
+   *
+   * _Does_ attempt to further drain after one batch is sent.
+   *
+   * @emits Queue#drain when all messages are sent.
+   */
+  async publishDrain(): Promise<void> {
+    await this._publishInternal(true);
+  }
+
+  /**
+   * Cancels any pending publishes and calls _publish immediately.
+   *
+   * Does _not_ attempt to further drain after one batch is sent.
+   */
+  async publish(): Promise<void> {
+    await this._publishInternal(false);
+  }
+
   /**
    * Cancels any pending publishes and calls _publish immediately.
    *
    * @emits Queue#drain when all messages are sent.
    */
-  async publish(): Promise<void> {
+  async _publishInternal(fullyDrain: boolean): Promise<void> {
     const {messages, callbacks} = this.batch;
 
     this.batch = new MessageBatch(this.batchOptions);
@@ -209,8 +241,12 @@ export class Queue extends MessageQueue {
 
     await this._publish(messages, callbacks);
     if (this.batch.messages.length) {
-      // Make another go-around, we're trying to drain the queues fully.
-      await this.publish();
+      // We only do the indefinite go-arounds when we're trying to do a
+      // final drain for flush(). In all other cases, we want to leave
+      // subsequent batches alone so that they can time out as needed.
+      if (fullyDrain) {
+        await this._publishInternal(true);
+      }
     } else {
       this.emit('drain');
     }
@@ -315,7 +351,7 @@ export class OrderedQueue extends MessageQueue {
    *
    * @returns {MessageBatch}
    */
-  createBatch() {
+  createBatch(): MessageBatch {
     return new MessageBatch(this.batchOptions);
   }
   /**
@@ -368,6 +404,15 @@ export class OrderedQueue extends MessageQueue {
     } else {
       this.emit('drain');
     }
+  }
+
+  /**
+   * For ordered queues, this does exactly the same thing as `publish()`.
+   *
+   * @fires OrderedQueue#drain
+   */
+  async publishDrain(): Promise<void> {
+    await this.publish();
   }
 
   /**

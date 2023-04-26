@@ -24,6 +24,7 @@ import {Snapshot} from '../src/snapshot';
 import {Message, SubscriberOptions} from '../src/subscriber';
 import * as subby from '../src/subscription';
 import * as util from '../src/util';
+import {DebugMessage} from '../src/debug';
 
 let promisified = false;
 const fakeUtil = Object.assign({}, util, {
@@ -511,6 +512,7 @@ describe('Subscription', () => {
 
   describe('debug', () => {
     const error = new Error('err') as ServiceError;
+    const msg = new DebugMessage(error.message, error);
 
     beforeEach(() => {
       subscription.request = (config, callback) => {
@@ -519,12 +521,12 @@ describe('Subscription', () => {
     });
 
     it('should return the debug events to the callback', done => {
-      subscription.on?.('debug', err => {
-        assert.strictEqual(err, error);
+      subscription.on?.('debug', (msg: DebugMessage) => {
+        assert.strictEqual(msg.error, error);
         done();
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (subscription as any)._subscriber.emit('debug', error);
+      (subscription as any)._subscriber.emit('debug', msg);
     });
   });
 
