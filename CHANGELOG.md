@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.5.2](https://github.com/googleapis/nodejs-pubsub/compare/v3.5.1...v3.5.2) (2023-04-26)
+
+
+### Bug Fixes
+
+* Avoid zalgo when calling down to publish messages ([#1710](https://github.com/googleapis/nodejs-pubsub/issues/1710)) ([dedae1e](https://github.com/googleapis/nodejs-pubsub/commit/dedae1e46cb3214abc33578a878a2298cdae6cac))
+
 ## [3.5.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.5.0...v3.5.1) (2023-04-20)
 
 
