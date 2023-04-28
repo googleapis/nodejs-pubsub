@@ -348,19 +348,17 @@ describe('Publisher', () => {
 
       it('should drain any ordered queues on flush', done => {
         // We have to stub out the regular queue as well, so that the flush() operation finishes.
-        sandbox
-          .stub(FakeQueue.prototype, '_publish')
-          .callsFake(async (messages, callbacks) => {
-            // Simulate the drain taking longer than the publishes. This can
-            // happen if more messages are queued during the publish().
-            process.nextTick(() => {
-              publisher.queue.emit('drain');
-            });
+        sandbox.stub(FakeQueue.prototype, '_publish').callsFake(async () => {
+          // Simulate the drain taking longer than the publishes. This can
+          // happen if more messages are queued during the publish().
+          process.nextTick(() => {
+            publisher.queue.emit('drain');
           });
+        });
 
         sandbox
           .stub(FakeOrderedQueue.prototype, '_publish')
-          .callsFake(async (messages, callbacks) => {
+          .callsFake(async () => {
             const queue = publisher.orderedQueues.get(
               orderingKey
             ) as unknown as FakeOrderedQueue;
@@ -504,15 +502,13 @@ describe('Publisher', () => {
   describe('flush', () => {
     // The ordered queue drain test is above with the ordered queue tests.
     it('should drain the main publish queue', done => {
-      sandbox
-        .stub(publisher.queue, '_publish')
-        .callsFake(async (messages, callbacks) => {
-          // Simulate the drain taking longer than the publishes. This can
-          // happen if more messages are queued during the publish().
-          process.nextTick(() => {
-            publisher.queue.emit('drain');
-          });
+      sandbox.stub(publisher.queue, '_publish').callsFake(async () => {
+        // Simulate the drain taking longer than the publishes. This can
+        // happen if more messages are queued during the publish().
+        process.nextTick(() => {
+          publisher.queue.emit('drain');
         });
+      });
 
       publisher.flush(err => {
         assert.strictEqual(err, null);

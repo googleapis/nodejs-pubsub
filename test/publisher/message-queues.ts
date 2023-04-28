@@ -341,10 +341,10 @@ describe('Message Queues', () => {
           spies = [sandbox.spy(), sandbox.spy()] as p.PublishCallback[];
         });
 
-        it('should begin another publish(drain) if there are pending batches', () => {
+        it('should begin another publish(drain) if there are pending batches', done => {
           const stub = sandbox.stub(queue, '_publish');
           let once = false;
-          stub.callsFake((m, c, done) => {
+          stub.callsFake(async () => {
             if (!once) {
               // Drop in a second batch before calling the callback.
               const secondBatch = new FakeMessageBatch();
@@ -353,22 +353,23 @@ describe('Message Queues', () => {
               queue.batch = secondBatch;
             }
             once = true;
-
-            done!(null);
           });
 
           queue.batch = new FakeMessageBatch();
           queue.batch.messages = fakeMessages;
           queue.batch.callbacks = spies;
-          queue.publishDrain();
-
-          assert.strictEqual(stub.callCount, 2);
+          queue.publishDrain().then(() => {
+            process.nextTick(() => {
+              assert.strictEqual(stub.callCount, 2);
+              done();
+            });
+          });
         });
 
         it('should not begin another publish(non-drain) if there are pending batches', () => {
           const stub = sandbox.stub(queue, '_publish');
           let once = false;
-          stub.callsFake((m, c, done) => {
+          stub.callsFake(async () => {
             if (!once) {
               // Drop in a second batch before calling the callback.
               const secondBatch = new FakeMessageBatch();
@@ -377,28 +378,27 @@ describe('Message Queues', () => {
               queue.batch = secondBatch;
             }
             once = true;
-
-            done!(null);
           });
 
           queue.batch = new FakeMessageBatch();
           queue.batch.messages = fakeMessages;
           queue.batch.callbacks = spies;
-          queue.publish();
-
-          assert.strictEqual(stub.callCount, 1);
+          queue.publish().then(() => {
+            assert.strictEqual(stub.callCount, 1);
+          });
         });
 
-        it('should emit "drain" if there is nothing left to publish', () => {
+        it('should emit "drain" if there is nothing left to publish', done => {
           const spy = sandbox.spy();
-          sandbox
-            .stub(queue, '_publish')
-            .callsFake((m, c, done) => done!(null));
+          sandbox.stub(queue, '_publish').callsFake(async () => {});
 
           queue.on('drain', spy);
-          queue.publish();
-
-          assert.strictEqual(spy.callCount, 1);
+          queue.publish().then(() => {
+            process.nextTick(() => {
+              assert.strictEqual(spy.callCount, 1);
+              done();
+            });
+          });
         });
       });
     });
