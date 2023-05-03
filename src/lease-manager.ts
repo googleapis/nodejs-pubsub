@@ -17,6 +17,7 @@
 import {EventEmitter} from 'events';
 import {AckError, Message, Subscriber} from './subscriber';
 import {defaultOptions} from './default-options';
+import {Duration} from './temporal';
 
 export interface FlowControlOptions {
   allowExcessMessages?: boolean;
@@ -262,7 +263,10 @@ export class LeaseManager extends EventEmitter {
       const lifespan = (Date.now() - message.received) / (60 * 1000);
 
       if (lifespan < this._options.maxExtensionMinutes!) {
-        message.telemetrySub.modAckStart();
+        message.telemetrySub.modAckStart(
+          Duration.from({seconds: deadline}),
+          false
+        );
 
         if (this._subscriber.isExactlyOnceDelivery) {
           message

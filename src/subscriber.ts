@@ -94,9 +94,13 @@ export class SubscriberTelemetry {
   }
 
   // Start a leasing modAck span if needed.
-  modAckStart() {
+  modAckStart(deadline: Duration, isInitial: boolean) {
     if (!this.modAck) {
-      this.modAck = tracing.SpanMaker.createModAckSpan(this.parent);
+      this.modAck = tracing.SpanMaker.createModAckSpan(
+        this.parent,
+        deadline,
+        isInitial
+      );
     }
   }
 
@@ -961,6 +965,10 @@ export class Subscriber extends EventEmitter {
         if (this.isExactlyOnceDelivery) {
           // For exactly-once delivery, we must validate that we got a valid
           // lease on the message before actually leasing it.
+          message.telemetrySub.modAckStart(
+            Duration.from({seconds: this.ackDeadline}),
+            true
+          );
           message
             .modAckWithResponse(this.ackDeadline)
             .then(() => {
@@ -970,9 +978,17 @@ export class Subscriber extends EventEmitter {
               // Temporary failures will retry, so if an error reaches us
               // here, that means a permanent failure. Silently drop these.
               this._discardMessage(message);
+            })
+            .finally(() => {
+              message.telemetrySub.modAckStop();
             });
         } else {
+          message.telemetrySub.modAckStart(
+            Duration.from({seconds: this.ackDeadline}),
+            true
+          );
           message.modAck(this.ackDeadline);
+          message.telemetrySub.modAckStop();
           this._inventory.add(message);
         }
       } else {

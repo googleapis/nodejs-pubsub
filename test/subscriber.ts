@@ -759,6 +759,8 @@ describe('Subscriber', () => {
     });
 
     it('should add messages to the inventory', done => {
+      const message = new Message(subscriber, RECEIVED_MESSAGE);
+
       subscriber.open();
 
       const modAckStub = sandbox.stub(subscriber, 'modAck');
@@ -772,7 +774,11 @@ describe('Subscriber', () => {
 
         // OTel is enabled during tests, so we need to delete the baggage.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        delete (addMsg as any).telemetrySpan;
+        const [addMsgAny, msgAny] = [addMsg as any, message as any];
+        delete addMsgAny.telemetrySpan;
+        delete addMsgAny.telemetrySub;
+        delete msgAny.telemetrySpan;
+        delete msgAny.telemetrySub;
 
         assert.deepStrictEqual(addMsg, message);
 
@@ -920,8 +926,8 @@ describe('Subscriber', () => {
       message.telemetrySpan?.end();
 
       const spans = exporter.getFinishedSpans();
-      assert.strictEqual(spans.length, 1);
-      const firstSpan = spans.concat().shift();
+      assert.strictEqual(spans.length, 2);
+      const firstSpan = spans.pop();
       assert.ok(firstSpan);
       assert.strictEqual(firstSpan.parentSpanId, parentSpanContext.spanId);
       assert.strictEqual(
@@ -954,7 +960,7 @@ describe('Subscriber', () => {
       stream.emit('data', pullResponse);
 
       message.telemetrySpan?.end();
-      assert.strictEqual(exporter.getFinishedSpans().length, 1);
+      assert.strictEqual(exporter.getFinishedSpans().length, 2);
     });
   });
 

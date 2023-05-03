@@ -290,8 +290,19 @@ export class SpanMaker {
     return SpanMaker.createChildSpan(message, 'publish');
   }
 
-  static createModAckSpan(message: MessageWithAttributes) {
-    return SpanMaker.createChildSpan(message, 'modify ack deadline');
+  static createModAckSpan(
+    message: MessageWithAttributes,
+    deadline: Duration,
+    initial: boolean
+  ) {
+    const span = SpanMaker.createChildSpan(message, 'modify ack deadline');
+    if (span) {
+      span.setAttributes({
+        'messaging.pubsub.modack_deadline_seconds': deadline.totalOf('second'),
+        'messaging.pubsub.is_receipt_modack': initial ? 'true' : 'false',
+      } as unknown as Attributes);
+    }
+    return span;
   }
 
   static createReceiveFlowSpan(
