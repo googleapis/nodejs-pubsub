@@ -63,7 +63,8 @@ export class AckError extends Error {
 }
 
 /**
- * Tracks the various spans in receive telemetry.
+ * Tracks the various spans in receive telemetry. This is a little
+ * extra abstraction in case we want to allow more providers later.
  *
  * @private
  */
@@ -71,17 +72,20 @@ export class SubscriberTelemetry {
   parent: Message;
   sub: Subscriber;
 
+  // These are always attached to a message (and its subscriber).
   constructor(parent: Message, sub: Subscriber) {
     this.parent = parent;
     this.sub = sub;
   }
 
+  // Start a flow control span if needed.
   flowStart() {
     if (!this.flow) {
       this.flow = tracing.SpanMaker.createReceiveFlowSpan(this.parent);
     }
   }
 
+  // End any flow control span.
   flowEnd() {
     if (this.flow) {
       this.flow.end();
@@ -89,12 +93,14 @@ export class SubscriberTelemetry {
     }
   }
 
+  // Start a leasing modAck span if needed.
   modAckStart() {
     if (!this.modAck) {
       this.modAck = tracing.SpanMaker.createModAckSpan(this.parent);
     }
   }
 
+  // End any leasing modAck span.
   modAckStop() {
     if (this.modAck) {
       this.modAck.end();
@@ -102,6 +108,9 @@ export class SubscriberTelemetry {
     }
   }
 
+  // Start a scheduler span if needed.
+  // Note: This is not currently used in Node, because there is no
+  // scheduler process, due to the way messages are delivered one at a time.
   schedulerStart() {
     if (!this.scheduler) {
       this.scheduler = tracing.SpanMaker.createReceiveSchedulerSpan(
@@ -110,6 +119,7 @@ export class SubscriberTelemetry {
     }
   }
 
+  // End any schedular span.
   schedulerEnd() {
     if (this.scheduler) {
       this.scheduler.end();
@@ -117,6 +127,8 @@ export class SubscriberTelemetry {
     }
   }
 
+  // Start a processing span if needed.
+  // This is for user processing, during on('message') delivery.
   processingStart(subName: string) {
     if (!this.processing) {
       this.processing = tracing.SpanMaker.createReceiveProcessSpan(
@@ -126,6 +138,7 @@ export class SubscriberTelemetry {
     }
   }
 
+  // End any processing span.
   processingEnd() {
     if (this.processing) {
       this.processing.end();

@@ -54,8 +54,11 @@ import {SemanticResourceAttributes} from '@opentelemetry/semantic-conventions';
 // Enable the diagnostic logger for OpenTelemetry
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
+// Log spans out to the console for this test
 const exporter = new ConsoleSpanExporter();
 
+// Build a tracer provider and a span processor to do
+// something with the spans we're generating.
 const provider = new NodeTracerProvider({
   resource: new Resource({
     [SemanticResourceAttributes.SERVICE_NAME]: 'otel example',
@@ -105,7 +108,8 @@ async function subscriptionListen(subscriptionNameOrId: string) {
   pubSubClient.subscription(subscriptionNameOrId).on('message', messageHandler);
   pubSubClient.subscription(subscriptionNameOrId).on('error', errorHandler);
 
-  // Wait a bit for the subscription. For the sample only.
+  // Wait a bit for the subscription to receive messages.
+  // For the sample only.
   setTimeout(() => {
     pubSubClient.subscription(subscriptionNameOrId).removeAllListeners();
   }, SUBSCRIBER_TIMEOUT * 1000);

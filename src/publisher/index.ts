@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {promisify} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 import {isSpanContextValid, Span} from '@opentelemetry/api';
@@ -210,6 +209,8 @@ export class Publisher {
       }
     }
 
+    // Ensure that there's a parent span for subsequent publishes
+    // to hang off of.
     this.getParentSpan(message);
 
     if (!message.orderingKey) {

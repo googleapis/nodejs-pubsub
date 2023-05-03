@@ -145,6 +145,8 @@ export abstract class MessageQueue extends EventEmitter {
       throw e;
     } finally {
       messages.forEach(m => {
+        // We're finished with both the RPC and the whole publish operation,
+        // so close out all of the related spans.
         m.telemetryRpc?.end();
         m.telemetrySpan?.end();
       });
