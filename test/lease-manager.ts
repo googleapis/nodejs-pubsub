@@ -52,6 +52,8 @@ class FakeSubscriberTelemetry {
   flowEnd() {}
   schedulerStart() {}
   schedulerEnd() {}
+  modAckStart() {}
+  modAckStop() {}
   processingStart() {}
   processingEnd() {}
 }

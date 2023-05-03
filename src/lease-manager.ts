@@ -262,15 +262,23 @@ export class LeaseManager extends EventEmitter {
       const lifespan = (Date.now() - message.received) / (60 * 1000);
 
       if (lifespan < this._options.maxExtensionMinutes!) {
+        message.telemetrySub.modAckStart();
+
         if (this._subscriber.isExactlyOnceDelivery) {
-          message.modAckWithResponse(deadline).catch(e => {
-            // In the case of a permanent failure (temporary failures are retried),
-            // we need to stop trying to lease-manage the message.
-            message.ackFailed(e as AckError);
-            this.remove(message);
-          });
+          message
+            .modAckWithResponse(deadline)
+            .catch(e => {
+              // In the case of a permanent failure (temporary failures are retried),
+              // we need to stop trying to lease-manage the message.
+              message.ackFailed(e as AckError);
+              this.remove(message);
+            })
+            .finally(() => {
+              message.telemetrySub.modAckStop();
+            });
         } else {
           message.modAck(deadline);
+          message.telemetrySub.modAckStop();
         }
       } else {
         this.remove(message);

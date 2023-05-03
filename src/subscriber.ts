@@ -89,6 +89,19 @@ export class SubscriberTelemetry {
     }
   }
 
+  modAckStart() {
+    if (!this.modAck) {
+      this.modAck = tracing.SpanMaker.createModAckSpan(this.parent);
+    }
+  }
+
+  modAckStop() {
+    if (this.modAck) {
+      this.modAck.end();
+      this.modAck = undefined;
+    }
+  }
+
   schedulerStart() {
     if (!this.scheduler) {
       this.scheduler = tracing.SpanMaker.createReceiveSchedulerSpan(
@@ -120,6 +133,7 @@ export class SubscriberTelemetry {
     }
   }
 
+  private modAck?: tracing.Span;
   private flow?: tracing.Span;
   private scheduler?: tracing.Span;
   private processing?: tracing.Span;

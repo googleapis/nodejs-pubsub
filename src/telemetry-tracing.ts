@@ -290,6 +290,10 @@ export class SpanMaker {
     return SpanMaker.createChildSpan(message, 'publish');
   }
 
+  static createModAckSpan(message: MessageWithAttributes) {
+    return SpanMaker.createChildSpan(message, 'modify ack deadline');
+  }
+
   static createReceiveFlowSpan(
     message: MessageWithAttributes
   ): Span | undefined {
