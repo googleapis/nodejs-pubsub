@@ -159,6 +159,9 @@ export class LeaseManager extends EventEmitter {
    * @private
    */
   remove(message: Message): void {
+    // The subscriber span ends when it leaves leasing.
+    message.endTelemetrySpan();
+
     if (!this._messages.has(message)) {
       return;
     }

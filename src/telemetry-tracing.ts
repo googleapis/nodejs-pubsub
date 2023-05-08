@@ -355,6 +355,8 @@ export class SpanMaker {
  * Injects the trace context into a Pub/Sub message (or other object with
  * an 'attributes' object) for propagation.
  *
+ * This is for the publish side.
+ *
  * @private
  */
 export function injectSpan(
@@ -419,6 +421,8 @@ export function containsSpanContext(message: MessageWithAttributes): boolean {
  * Extracts the trace context from a Pub/Sub message (or other object with
  * an 'attributes' object) from a propagation, for receive processing. If no
  * context was present, create a new parent span.
+ *
+ * This is for the receive side.
  *
  * @private
  */

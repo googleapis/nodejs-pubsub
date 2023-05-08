@@ -211,6 +211,16 @@ export class Message implements tracing.MessageWithAttributes {
   /**
    * @private
    *
+   * Ends any open subscribe telemetry span.
+   */
+  endTelemetrySpan() {
+    this.telemetrySpan?.end();
+    delete this.telemetrySpan;
+  }
+
+  /**
+   * @private
+   *
    * Tracks subscriber-specific telemetry spans through the library.
    */
   telemetrySub: SubscriberTelemetry;
