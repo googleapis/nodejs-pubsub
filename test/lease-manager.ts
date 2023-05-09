@@ -71,6 +71,7 @@ class FakeMessage {
     return AckResponses.Success;
   }
   ackFailed() {}
+  endTelemetrySpan() {}
 }
 
 interface LeaseManagerInternals {
