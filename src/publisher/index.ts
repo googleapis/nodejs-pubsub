@@ -137,6 +137,7 @@ export class Publisher {
       })
       .catch(definedCallback);
   }
+
   /**
    * Publish the provided message.
    *
