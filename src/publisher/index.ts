@@ -123,14 +123,12 @@ export class Publisher {
               // event listeners after we've completed flush().
               q.removeListener('drain', flushResolver);
             };
-            return q.on('drain', flushResolver);
+            q.on('drain', flushResolver);
           })
       )
     );
 
-    const allPublishes = Promise.all(
-      toDrain.map(q => promisify(q.publishDrain).bind(q)())
-    );
+    const allPublishes = Promise.all(toDrain.map(q => q.publishDrain()));
 
     allPublishes
       .then(() => allDrains)
@@ -139,6 +137,7 @@ export class Publisher {
       })
       .catch(definedCallback);
   }
+
   /**
    * Publish the provided message.
    *
