@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {promisify} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
