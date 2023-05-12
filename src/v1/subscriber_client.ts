@@ -425,6 +425,9 @@ export class SubscriberClient {
    * @param {google.pubsub.v1.BigQueryConfig} request.bigqueryConfig
    *   If delivery to BigQuery is used with this subscription, this field is
    *   used to configure it.
+   * @param {google.pubsub.v1.CloudStorageConfig} request.cloudStorageConfig
+   *   If delivery to Google Cloud Storage is used with this subscription, this
+   *   field is used to configure it.
    * @param {number} request.ackDeadlineSeconds
    *   The approximate amount of time (on a best-effort basis) Pub/Sub waits for
    *   the subscriber to acknowledge receipt before resending the message. In the
