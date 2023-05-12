@@ -2398,6 +2398,9 @@ export namespace google {
                 /** Subscription bigqueryConfig */
                 bigqueryConfig?: (google.pubsub.v1.IBigQueryConfig|null);
 
+                /** Subscription cloudStorageConfig */
+                cloudStorageConfig?: (google.pubsub.v1.ICloudStorageConfig|null);
+
                 /** Subscription ackDeadlineSeconds */
                 ackDeadlineSeconds?: (number|null);
 
@@ -2458,6 +2461,9 @@ export namespace google {
 
                 /** Subscription bigqueryConfig. */
                 public bigqueryConfig?: (google.pubsub.v1.IBigQueryConfig|null);
+
+                /** Subscription cloudStorageConfig. */
+                public cloudStorageConfig?: (google.pubsub.v1.ICloudStorageConfig|null);
 
                 /** Subscription ackDeadlineSeconds. */
                 public ackDeadlineSeconds: number;
@@ -3237,6 +3243,347 @@ export namespace google {
                     PERMISSION_DENIED = 2,
                     NOT_FOUND = 3,
                     SCHEMA_MISMATCH = 4
+                }
+            }
+
+            /** Properties of a CloudStorageConfig. */
+            interface ICloudStorageConfig {
+
+                /** CloudStorageConfig bucket */
+                bucket?: (string|null);
+
+                /** CloudStorageConfig filenamePrefix */
+                filenamePrefix?: (string|null);
+
+                /** CloudStorageConfig filenameSuffix */
+                filenameSuffix?: (string|null);
+
+                /** CloudStorageConfig textConfig */
+                textConfig?: (google.pubsub.v1.CloudStorageConfig.ITextConfig|null);
+
+                /** CloudStorageConfig avroConfig */
+                avroConfig?: (google.pubsub.v1.CloudStorageConfig.IAvroConfig|null);
+
+                /** CloudStorageConfig maxDuration */
+                maxDuration?: (google.protobuf.IDuration|null);
+
+                /** CloudStorageConfig maxBytes */
+                maxBytes?: (number|Long|string|null);
+
+                /** CloudStorageConfig state */
+                state?: (google.pubsub.v1.CloudStorageConfig.State|keyof typeof google.pubsub.v1.CloudStorageConfig.State|null);
+            }
+
+            /** Represents a CloudStorageConfig. */
+            class CloudStorageConfig implements ICloudStorageConfig {
+
+                /**
+                 * Constructs a new CloudStorageConfig.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.ICloudStorageConfig);
+
+                /** CloudStorageConfig bucket. */
+                public bucket: string;
+
+                /** CloudStorageConfig filenamePrefix. */
+                public filenamePrefix: string;
+
+                /** CloudStorageConfig filenameSuffix. */
+                public filenameSuffix: string;
+
+                /** CloudStorageConfig textConfig. */
+                public textConfig?: (google.pubsub.v1.CloudStorageConfig.ITextConfig|null);
+
+                /** CloudStorageConfig avroConfig. */
+                public avroConfig?: (google.pubsub.v1.CloudStorageConfig.IAvroConfig|null);
+
+                /** CloudStorageConfig maxDuration. */
+                public maxDuration?: (google.protobuf.IDuration|null);
+
+                /** CloudStorageConfig maxBytes. */
+                public maxBytes: (number|Long|string);
+
+                /** CloudStorageConfig state. */
+                public state: (google.pubsub.v1.CloudStorageConfig.State|keyof typeof google.pubsub.v1.CloudStorageConfig.State);
+
+                /** CloudStorageConfig outputFormat. */
+                public outputFormat?: ("textConfig"|"avroConfig");
+
+                /**
+                 * Creates a new CloudStorageConfig instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns CloudStorageConfig instance
+                 */
+                public static create(properties?: google.pubsub.v1.ICloudStorageConfig): google.pubsub.v1.CloudStorageConfig;
+
+                /**
+                 * Encodes the specified CloudStorageConfig message. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.verify|verify} messages.
+                 * @param message CloudStorageConfig message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.ICloudStorageConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified CloudStorageConfig message, length delimited. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.verify|verify} messages.
+                 * @param message CloudStorageConfig message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.ICloudStorageConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a CloudStorageConfig message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns CloudStorageConfig
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.CloudStorageConfig;
+
+                /**
+                 * Decodes a CloudStorageConfig message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns CloudStorageConfig
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.CloudStorageConfig;
+
+                /**
+                 * Verifies a CloudStorageConfig message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a CloudStorageConfig message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns CloudStorageConfig
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.CloudStorageConfig;
+
+                /**
+                 * Creates a plain object from a CloudStorageConfig message. Also converts values to other types if specified.
+                 * @param message CloudStorageConfig
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.CloudStorageConfig, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this CloudStorageConfig to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for CloudStorageConfig
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            namespace CloudStorageConfig {
+
+                /** Properties of a TextConfig. */
+                interface ITextConfig {
+                }
+
+                /** Represents a TextConfig. */
+                class TextConfig implements ITextConfig {
+
+                    /**
+                     * Constructs a new TextConfig.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.CloudStorageConfig.ITextConfig);
+
+                    /**
+                     * Creates a new TextConfig instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns TextConfig instance
+                     */
+                    public static create(properties?: google.pubsub.v1.CloudStorageConfig.ITextConfig): google.pubsub.v1.CloudStorageConfig.TextConfig;
+
+                    /**
+                     * Encodes the specified TextConfig message. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.TextConfig.verify|verify} messages.
+                     * @param message TextConfig message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.CloudStorageConfig.ITextConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified TextConfig message, length delimited. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.TextConfig.verify|verify} messages.
+                     * @param message TextConfig message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.CloudStorageConfig.ITextConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes a TextConfig message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns TextConfig
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.CloudStorageConfig.TextConfig;
+
+                    /**
+                     * Decodes a TextConfig message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns TextConfig
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.CloudStorageConfig.TextConfig;
+
+                    /**
+                     * Verifies a TextConfig message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates a TextConfig message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns TextConfig
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.CloudStorageConfig.TextConfig;
+
+                    /**
+                     * Creates a plain object from a TextConfig message. Also converts values to other types if specified.
+                     * @param message TextConfig
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.CloudStorageConfig.TextConfig, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this TextConfig to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for TextConfig
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
+                /** Properties of an AvroConfig. */
+                interface IAvroConfig {
+
+                    /** AvroConfig writeMetadata */
+                    writeMetadata?: (boolean|null);
+                }
+
+                /** Represents an AvroConfig. */
+                class AvroConfig implements IAvroConfig {
+
+                    /**
+                     * Constructs a new AvroConfig.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.CloudStorageConfig.IAvroConfig);
+
+                    /** AvroConfig writeMetadata. */
+                    public writeMetadata: boolean;
+
+                    /**
+                     * Creates a new AvroConfig instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns AvroConfig instance
+                     */
+                    public static create(properties?: google.pubsub.v1.CloudStorageConfig.IAvroConfig): google.pubsub.v1.CloudStorageConfig.AvroConfig;
+
+                    /**
+                     * Encodes the specified AvroConfig message. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.AvroConfig.verify|verify} messages.
+                     * @param message AvroConfig message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.CloudStorageConfig.IAvroConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified AvroConfig message, length delimited. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.AvroConfig.verify|verify} messages.
+                     * @param message AvroConfig message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.CloudStorageConfig.IAvroConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes an AvroConfig message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns AvroConfig
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.CloudStorageConfig.AvroConfig;
+
+                    /**
+                     * Decodes an AvroConfig message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns AvroConfig
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.CloudStorageConfig.AvroConfig;
+
+                    /**
+                     * Verifies an AvroConfig message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates an AvroConfig message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns AvroConfig
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.CloudStorageConfig.AvroConfig;
+
+                    /**
+                     * Creates a plain object from an AvroConfig message. Also converts values to other types if specified.
+                     * @param message AvroConfig
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.CloudStorageConfig.AvroConfig, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this AvroConfig to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for AvroConfig
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
+                /** State enum. */
+                enum State {
+                    STATE_UNSPECIFIED = 0,
+                    ACTIVE = 1,
+                    PERMISSION_DENIED = 2,
+                    NOT_FOUND = 3
                 }
             }
 

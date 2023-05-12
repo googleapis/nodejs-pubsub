@@ -183,7 +183,9 @@ export class Queue extends MessageQueue {
    */
   add(message: PubsubMessage, callback: PublishCallback): void {
     if (!this.batch.canFit(message)) {
-      // Ignore errors.
+      // Make a background best-effort attempt to clear out the
+      // queue. If this fails, we'll basically just be overloaded
+      // for a bit.
       this.publish().catch(() => {});
     }
 
@@ -193,12 +195,14 @@ export class Queue extends MessageQueue {
     this.batch.add(message, callback);
 
     if (this.batch.isFull()) {
-      // Ignore errors.
+      // See comment above - best effort.
       this.publish().catch(() => {});
     } else if (!this.pending) {
       const {maxMilliseconds} = this.batchOptions;
       this.pending = setTimeout(() => {
-        // Ignore errors.
+        // See comment above - we are basically making a best effort
+        // to start clearing out the queue if nothing else happens
+        // before the batch timeout.
         this.publish().catch(() => {});
       }, maxMilliseconds!);
     }
@@ -318,7 +322,9 @@ export class OrderedQueue extends MessageQueue {
     }
 
     if (!this.currentBatch.canFit(message)) {
-      // Ignore errors.
+      // Make a best-effort attempt to clear out the publish queue,
+      // to make more space for the new batch. If this fails, we'll
+      // just be overfilled for a bit.
       this.publish().catch(() => {});
     }
 
@@ -328,7 +334,7 @@ export class OrderedQueue extends MessageQueue {
     // check again here
     if (!this.inFlight) {
       if (this.currentBatch.isFull()) {
-        // Ignore errors.
+        // See comment above - best-effort.
         this.publish().catch(() => {});
       } else if (!this.pending) {
         this.beginNextPublish();
@@ -344,7 +350,9 @@ export class OrderedQueue extends MessageQueue {
     const delay = Math.max(0, maxMilliseconds - timeWaiting);
 
     this.pending = setTimeout(() => {
-      // Ignore errors.
+      // Make a best-effort attempt to start a publish request. If
+      // this fails, we'll catch it again later, eventually, when more
+      // messages try to enter the queue.
       this.publish().catch(() => {});
     }, delay);
   }
