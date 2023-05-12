@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.6.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.5.2...v3.6.0) (2023-05-12)
+
+
+### Features
+
+* Add cloud storage subscription fields ([#1724](https://github.com/googleapis/nodejs-pubsub/issues/1724)) ([f61a64a](https://github.com/googleapis/nodejs-pubsub/commit/f61a64a2daffdfbf4c7b18d50434899c572d108c))
+
 ## [3.5.2](https://github.com/googleapis/nodejs-pubsub/compare/v3.5.1...v3.5.2) (2023-04-26)
 
 
