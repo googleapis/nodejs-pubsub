@@ -5189,6 +5189,7 @@
                      * @property {string|null} [topic] Subscription topic
                      * @property {google.pubsub.v1.IPushConfig|null} [pushConfig] Subscription pushConfig
                      * @property {google.pubsub.v1.IBigQueryConfig|null} [bigqueryConfig] Subscription bigqueryConfig
+                     * @property {google.pubsub.v1.ICloudStorageConfig|null} [cloudStorageConfig] Subscription cloudStorageConfig
                      * @property {number|null} [ackDeadlineSeconds] Subscription ackDeadlineSeconds
                      * @property {boolean|null} [retainAckedMessages] Subscription retainAckedMessages
                      * @property {google.protobuf.IDuration|null} [messageRetentionDuration] Subscription messageRetentionDuration
@@ -5251,6 +5252,14 @@
                      * @instance
                      */
                     Subscription.prototype.bigqueryConfig = null;
+    
+                    /**
+                     * Subscription cloudStorageConfig.
+                     * @member {google.pubsub.v1.ICloudStorageConfig|null|undefined} cloudStorageConfig
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.cloudStorageConfig = null;
     
                     /**
                      * Subscription ackDeadlineSeconds.
@@ -5415,6 +5424,8 @@
                             $root.google.pubsub.v1.BigQueryConfig.encode(message.bigqueryConfig, writer.uint32(/* id 18, wireType 2 =*/146).fork()).ldelim();
                         if (message.state != null && Object.hasOwnProperty.call(message, "state"))
                             writer.uint32(/* id 19, wireType 0 =*/152).int32(message.state);
+                        if (message.cloudStorageConfig != null && Object.hasOwnProperty.call(message, "cloudStorageConfig"))
+                            $root.google.pubsub.v1.CloudStorageConfig.encode(message.cloudStorageConfig, writer.uint32(/* id 22, wireType 2 =*/178).fork()).ldelim();
                         return writer;
                     };
     
@@ -5463,6 +5474,10 @@
                                 }
                             case 18: {
                                     message.bigqueryConfig = $root.google.pubsub.v1.BigQueryConfig.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 22: {
+                                    message.cloudStorageConfig = $root.google.pubsub.v1.CloudStorageConfig.decode(reader, reader.uint32());
                                     break;
                                 }
                             case 5: {
@@ -5587,6 +5602,11 @@
                             if (error)
                                 return "bigqueryConfig." + error;
                         }
+                        if (message.cloudStorageConfig != null && message.hasOwnProperty("cloudStorageConfig")) {
+                            var error = $root.google.pubsub.v1.CloudStorageConfig.verify(message.cloudStorageConfig);
+                            if (error)
+                                return "cloudStorageConfig." + error;
+                        }
                         if (message.ackDeadlineSeconds != null && message.hasOwnProperty("ackDeadlineSeconds"))
                             if (!$util.isInteger(message.ackDeadlineSeconds))
                                 return "ackDeadlineSeconds: integer expected";
@@ -5675,6 +5695,11 @@
                             if (typeof object.bigqueryConfig !== "object")
                                 throw TypeError(".google.pubsub.v1.Subscription.bigqueryConfig: object expected");
                             message.bigqueryConfig = $root.google.pubsub.v1.BigQueryConfig.fromObject(object.bigqueryConfig);
+                        }
+                        if (object.cloudStorageConfig != null) {
+                            if (typeof object.cloudStorageConfig !== "object")
+                                throw TypeError(".google.pubsub.v1.Subscription.cloudStorageConfig: object expected");
+                            message.cloudStorageConfig = $root.google.pubsub.v1.CloudStorageConfig.fromObject(object.cloudStorageConfig);
                         }
                         if (object.ackDeadlineSeconds != null)
                             message.ackDeadlineSeconds = object.ackDeadlineSeconds | 0;
@@ -5775,6 +5800,7 @@
                             object.topicMessageRetentionDuration = null;
                             object.bigqueryConfig = null;
                             object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                            object.cloudStorageConfig = null;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
                             object.name = message.name;
@@ -5814,6 +5840,8 @@
                             object.bigqueryConfig = $root.google.pubsub.v1.BigQueryConfig.toObject(message.bigqueryConfig, options);
                         if (message.state != null && message.hasOwnProperty("state"))
                             object.state = options.enums === String ? $root.google.pubsub.v1.Subscription.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.Subscription.State[message.state] : message.state;
+                        if (message.cloudStorageConfig != null && message.hasOwnProperty("cloudStorageConfig"))
+                            object.cloudStorageConfig = $root.google.pubsub.v1.CloudStorageConfig.toObject(message.cloudStorageConfig, options);
                         return object;
                     };
     
@@ -7419,6 +7447,852 @@
                     })();
     
                     return BigQueryConfig;
+                })();
+    
+                v1.CloudStorageConfig = (function() {
+    
+                    /**
+                     * Properties of a CloudStorageConfig.
+                     * @memberof google.pubsub.v1
+                     * @interface ICloudStorageConfig
+                     * @property {string|null} [bucket] CloudStorageConfig bucket
+                     * @property {string|null} [filenamePrefix] CloudStorageConfig filenamePrefix
+                     * @property {string|null} [filenameSuffix] CloudStorageConfig filenameSuffix
+                     * @property {google.pubsub.v1.CloudStorageConfig.ITextConfig|null} [textConfig] CloudStorageConfig textConfig
+                     * @property {google.pubsub.v1.CloudStorageConfig.IAvroConfig|null} [avroConfig] CloudStorageConfig avroConfig
+                     * @property {google.protobuf.IDuration|null} [maxDuration] CloudStorageConfig maxDuration
+                     * @property {number|Long|null} [maxBytes] CloudStorageConfig maxBytes
+                     * @property {google.pubsub.v1.CloudStorageConfig.State|null} [state] CloudStorageConfig state
+                     */
+    
+                    /**
+                     * Constructs a new CloudStorageConfig.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a CloudStorageConfig.
+                     * @implements ICloudStorageConfig
+                     * @constructor
+                     * @param {google.pubsub.v1.ICloudStorageConfig=} [properties] Properties to set
+                     */
+                    function CloudStorageConfig(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * CloudStorageConfig bucket.
+                     * @member {string} bucket
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    CloudStorageConfig.prototype.bucket = "";
+    
+                    /**
+                     * CloudStorageConfig filenamePrefix.
+                     * @member {string} filenamePrefix
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    CloudStorageConfig.prototype.filenamePrefix = "";
+    
+                    /**
+                     * CloudStorageConfig filenameSuffix.
+                     * @member {string} filenameSuffix
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    CloudStorageConfig.prototype.filenameSuffix = "";
+    
+                    /**
+                     * CloudStorageConfig textConfig.
+                     * @member {google.pubsub.v1.CloudStorageConfig.ITextConfig|null|undefined} textConfig
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    CloudStorageConfig.prototype.textConfig = null;
+    
+                    /**
+                     * CloudStorageConfig avroConfig.
+                     * @member {google.pubsub.v1.CloudStorageConfig.IAvroConfig|null|undefined} avroConfig
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    CloudStorageConfig.prototype.avroConfig = null;
+    
+                    /**
+                     * CloudStorageConfig maxDuration.
+                     * @member {google.protobuf.IDuration|null|undefined} maxDuration
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    CloudStorageConfig.prototype.maxDuration = null;
+    
+                    /**
+                     * CloudStorageConfig maxBytes.
+                     * @member {number|Long} maxBytes
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    CloudStorageConfig.prototype.maxBytes = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                    /**
+                     * CloudStorageConfig state.
+                     * @member {google.pubsub.v1.CloudStorageConfig.State} state
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    CloudStorageConfig.prototype.state = 0;
+    
+                    // OneOf field names bound to virtual getters and setters
+                    var $oneOfFields;
+    
+                    /**
+                     * CloudStorageConfig outputFormat.
+                     * @member {"textConfig"|"avroConfig"|undefined} outputFormat
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    Object.defineProperty(CloudStorageConfig.prototype, "outputFormat", {
+                        get: $util.oneOfGetter($oneOfFields = ["textConfig", "avroConfig"]),
+                        set: $util.oneOfSetter($oneOfFields)
+                    });
+    
+                    /**
+                     * Creates a new CloudStorageConfig instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @static
+                     * @param {google.pubsub.v1.ICloudStorageConfig=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.CloudStorageConfig} CloudStorageConfig instance
+                     */
+                    CloudStorageConfig.create = function create(properties) {
+                        return new CloudStorageConfig(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified CloudStorageConfig message. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @static
+                     * @param {google.pubsub.v1.ICloudStorageConfig} message CloudStorageConfig message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    CloudStorageConfig.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.bucket != null && Object.hasOwnProperty.call(message, "bucket"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.bucket);
+                        if (message.filenamePrefix != null && Object.hasOwnProperty.call(message, "filenamePrefix"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.filenamePrefix);
+                        if (message.filenameSuffix != null && Object.hasOwnProperty.call(message, "filenameSuffix"))
+                            writer.uint32(/* id 3, wireType 2 =*/26).string(message.filenameSuffix);
+                        if (message.textConfig != null && Object.hasOwnProperty.call(message, "textConfig"))
+                            $root.google.pubsub.v1.CloudStorageConfig.TextConfig.encode(message.textConfig, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                        if (message.avroConfig != null && Object.hasOwnProperty.call(message, "avroConfig"))
+                            $root.google.pubsub.v1.CloudStorageConfig.AvroConfig.encode(message.avroConfig, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                        if (message.maxDuration != null && Object.hasOwnProperty.call(message, "maxDuration"))
+                            $root.google.protobuf.Duration.encode(message.maxDuration, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                        if (message.maxBytes != null && Object.hasOwnProperty.call(message, "maxBytes"))
+                            writer.uint32(/* id 7, wireType 0 =*/56).int64(message.maxBytes);
+                        if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                            writer.uint32(/* id 9, wireType 0 =*/72).int32(message.state);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified CloudStorageConfig message, length delimited. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @static
+                     * @param {google.pubsub.v1.ICloudStorageConfig} message CloudStorageConfig message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    CloudStorageConfig.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a CloudStorageConfig message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.CloudStorageConfig} CloudStorageConfig
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    CloudStorageConfig.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CloudStorageConfig();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1: {
+                                    message.bucket = reader.string();
+                                    break;
+                                }
+                            case 2: {
+                                    message.filenamePrefix = reader.string();
+                                    break;
+                                }
+                            case 3: {
+                                    message.filenameSuffix = reader.string();
+                                    break;
+                                }
+                            case 4: {
+                                    message.textConfig = $root.google.pubsub.v1.CloudStorageConfig.TextConfig.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 5: {
+                                    message.avroConfig = $root.google.pubsub.v1.CloudStorageConfig.AvroConfig.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 6: {
+                                    message.maxDuration = $root.google.protobuf.Duration.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 7: {
+                                    message.maxBytes = reader.int64();
+                                    break;
+                                }
+                            case 9: {
+                                    message.state = reader.int32();
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a CloudStorageConfig message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.CloudStorageConfig} CloudStorageConfig
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    CloudStorageConfig.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a CloudStorageConfig message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    CloudStorageConfig.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        var properties = {};
+                        if (message.bucket != null && message.hasOwnProperty("bucket"))
+                            if (!$util.isString(message.bucket))
+                                return "bucket: string expected";
+                        if (message.filenamePrefix != null && message.hasOwnProperty("filenamePrefix"))
+                            if (!$util.isString(message.filenamePrefix))
+                                return "filenamePrefix: string expected";
+                        if (message.filenameSuffix != null && message.hasOwnProperty("filenameSuffix"))
+                            if (!$util.isString(message.filenameSuffix))
+                                return "filenameSuffix: string expected";
+                        if (message.textConfig != null && message.hasOwnProperty("textConfig")) {
+                            properties.outputFormat = 1;
+                            {
+                                var error = $root.google.pubsub.v1.CloudStorageConfig.TextConfig.verify(message.textConfig);
+                                if (error)
+                                    return "textConfig." + error;
+                            }
+                        }
+                        if (message.avroConfig != null && message.hasOwnProperty("avroConfig")) {
+                            if (properties.outputFormat === 1)
+                                return "outputFormat: multiple values";
+                            properties.outputFormat = 1;
+                            {
+                                var error = $root.google.pubsub.v1.CloudStorageConfig.AvroConfig.verify(message.avroConfig);
+                                if (error)
+                                    return "avroConfig." + error;
+                            }
+                        }
+                        if (message.maxDuration != null && message.hasOwnProperty("maxDuration")) {
+                            var error = $root.google.protobuf.Duration.verify(message.maxDuration);
+                            if (error)
+                                return "maxDuration." + error;
+                        }
+                        if (message.maxBytes != null && message.hasOwnProperty("maxBytes"))
+                            if (!$util.isInteger(message.maxBytes) && !(message.maxBytes && $util.isInteger(message.maxBytes.low) && $util.isInteger(message.maxBytes.high)))
+                                return "maxBytes: integer|Long expected";
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            switch (message.state) {
+                            default:
+                                return "state: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                                break;
+                            }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a CloudStorageConfig message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.CloudStorageConfig} CloudStorageConfig
+                     */
+                    CloudStorageConfig.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.CloudStorageConfig)
+                            return object;
+                        var message = new $root.google.pubsub.v1.CloudStorageConfig();
+                        if (object.bucket != null)
+                            message.bucket = String(object.bucket);
+                        if (object.filenamePrefix != null)
+                            message.filenamePrefix = String(object.filenamePrefix);
+                        if (object.filenameSuffix != null)
+                            message.filenameSuffix = String(object.filenameSuffix);
+                        if (object.textConfig != null) {
+                            if (typeof object.textConfig !== "object")
+                                throw TypeError(".google.pubsub.v1.CloudStorageConfig.textConfig: object expected");
+                            message.textConfig = $root.google.pubsub.v1.CloudStorageConfig.TextConfig.fromObject(object.textConfig);
+                        }
+                        if (object.avroConfig != null) {
+                            if (typeof object.avroConfig !== "object")
+                                throw TypeError(".google.pubsub.v1.CloudStorageConfig.avroConfig: object expected");
+                            message.avroConfig = $root.google.pubsub.v1.CloudStorageConfig.AvroConfig.fromObject(object.avroConfig);
+                        }
+                        if (object.maxDuration != null) {
+                            if (typeof object.maxDuration !== "object")
+                                throw TypeError(".google.pubsub.v1.CloudStorageConfig.maxDuration: object expected");
+                            message.maxDuration = $root.google.protobuf.Duration.fromObject(object.maxDuration);
+                        }
+                        if (object.maxBytes != null)
+                            if ($util.Long)
+                                (message.maxBytes = $util.Long.fromValue(object.maxBytes)).unsigned = false;
+                            else if (typeof object.maxBytes === "string")
+                                message.maxBytes = parseInt(object.maxBytes, 10);
+                            else if (typeof object.maxBytes === "number")
+                                message.maxBytes = object.maxBytes;
+                            else if (typeof object.maxBytes === "object")
+                                message.maxBytes = new $util.LongBits(object.maxBytes.low >>> 0, object.maxBytes.high >>> 0).toNumber();
+                        switch (object.state) {
+                        default:
+                            if (typeof object.state === "number") {
+                                message.state = object.state;
+                                break;
+                            }
+                            break;
+                        case "STATE_UNSPECIFIED":
+                        case 0:
+                            message.state = 0;
+                            break;
+                        case "ACTIVE":
+                        case 1:
+                            message.state = 1;
+                            break;
+                        case "PERMISSION_DENIED":
+                        case 2:
+                            message.state = 2;
+                            break;
+                        case "NOT_FOUND":
+                        case 3:
+                            message.state = 3;
+                            break;
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a CloudStorageConfig message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @static
+                     * @param {google.pubsub.v1.CloudStorageConfig} message CloudStorageConfig
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    CloudStorageConfig.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.bucket = "";
+                            object.filenamePrefix = "";
+                            object.filenameSuffix = "";
+                            object.maxDuration = null;
+                            if ($util.Long) {
+                                var long = new $util.Long(0, 0, false);
+                                object.maxBytes = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                            } else
+                                object.maxBytes = options.longs === String ? "0" : 0;
+                            object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                        }
+                        if (message.bucket != null && message.hasOwnProperty("bucket"))
+                            object.bucket = message.bucket;
+                        if (message.filenamePrefix != null && message.hasOwnProperty("filenamePrefix"))
+                            object.filenamePrefix = message.filenamePrefix;
+                        if (message.filenameSuffix != null && message.hasOwnProperty("filenameSuffix"))
+                            object.filenameSuffix = message.filenameSuffix;
+                        if (message.textConfig != null && message.hasOwnProperty("textConfig")) {
+                            object.textConfig = $root.google.pubsub.v1.CloudStorageConfig.TextConfig.toObject(message.textConfig, options);
+                            if (options.oneofs)
+                                object.outputFormat = "textConfig";
+                        }
+                        if (message.avroConfig != null && message.hasOwnProperty("avroConfig")) {
+                            object.avroConfig = $root.google.pubsub.v1.CloudStorageConfig.AvroConfig.toObject(message.avroConfig, options);
+                            if (options.oneofs)
+                                object.outputFormat = "avroConfig";
+                        }
+                        if (message.maxDuration != null && message.hasOwnProperty("maxDuration"))
+                            object.maxDuration = $root.google.protobuf.Duration.toObject(message.maxDuration, options);
+                        if (message.maxBytes != null && message.hasOwnProperty("maxBytes"))
+                            if (typeof message.maxBytes === "number")
+                                object.maxBytes = options.longs === String ? String(message.maxBytes) : message.maxBytes;
+                            else
+                                object.maxBytes = options.longs === String ? $util.Long.prototype.toString.call(message.maxBytes) : options.longs === Number ? new $util.LongBits(message.maxBytes.low >>> 0, message.maxBytes.high >>> 0).toNumber() : message.maxBytes;
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            object.state = options.enums === String ? $root.google.pubsub.v1.CloudStorageConfig.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.CloudStorageConfig.State[message.state] : message.state;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this CloudStorageConfig to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    CloudStorageConfig.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * Gets the default type url for CloudStorageConfig
+                     * @function getTypeUrl
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    CloudStorageConfig.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/google.pubsub.v1.CloudStorageConfig";
+                    };
+    
+                    CloudStorageConfig.TextConfig = (function() {
+    
+                        /**
+                         * Properties of a TextConfig.
+                         * @memberof google.pubsub.v1.CloudStorageConfig
+                         * @interface ITextConfig
+                         */
+    
+                        /**
+                         * Constructs a new TextConfig.
+                         * @memberof google.pubsub.v1.CloudStorageConfig
+                         * @classdesc Represents a TextConfig.
+                         * @implements ITextConfig
+                         * @constructor
+                         * @param {google.pubsub.v1.CloudStorageConfig.ITextConfig=} [properties] Properties to set
+                         */
+                        function TextConfig(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * Creates a new TextConfig instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.CloudStorageConfig.TextConfig
+                         * @static
+                         * @param {google.pubsub.v1.CloudStorageConfig.ITextConfig=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.CloudStorageConfig.TextConfig} TextConfig instance
+                         */
+                        TextConfig.create = function create(properties) {
+                            return new TextConfig(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified TextConfig message. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.TextConfig.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.CloudStorageConfig.TextConfig
+                         * @static
+                         * @param {google.pubsub.v1.CloudStorageConfig.ITextConfig} message TextConfig message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        TextConfig.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified TextConfig message, length delimited. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.TextConfig.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.CloudStorageConfig.TextConfig
+                         * @static
+                         * @param {google.pubsub.v1.CloudStorageConfig.ITextConfig} message TextConfig message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        TextConfig.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a TextConfig message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.CloudStorageConfig.TextConfig
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.CloudStorageConfig.TextConfig} TextConfig
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        TextConfig.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CloudStorageConfig.TextConfig();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a TextConfig message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.CloudStorageConfig.TextConfig
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.CloudStorageConfig.TextConfig} TextConfig
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        TextConfig.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a TextConfig message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.CloudStorageConfig.TextConfig
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        TextConfig.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a TextConfig message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.CloudStorageConfig.TextConfig
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.CloudStorageConfig.TextConfig} TextConfig
+                         */
+                        TextConfig.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.CloudStorageConfig.TextConfig)
+                                return object;
+                            return new $root.google.pubsub.v1.CloudStorageConfig.TextConfig();
+                        };
+    
+                        /**
+                         * Creates a plain object from a TextConfig message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.CloudStorageConfig.TextConfig
+                         * @static
+                         * @param {google.pubsub.v1.CloudStorageConfig.TextConfig} message TextConfig
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        TextConfig.toObject = function toObject() {
+                            return {};
+                        };
+    
+                        /**
+                         * Converts this TextConfig to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.CloudStorageConfig.TextConfig
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        TextConfig.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for TextConfig
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.CloudStorageConfig.TextConfig
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        TextConfig.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.CloudStorageConfig.TextConfig";
+                        };
+    
+                        return TextConfig;
+                    })();
+    
+                    CloudStorageConfig.AvroConfig = (function() {
+    
+                        /**
+                         * Properties of an AvroConfig.
+                         * @memberof google.pubsub.v1.CloudStorageConfig
+                         * @interface IAvroConfig
+                         * @property {boolean|null} [writeMetadata] AvroConfig writeMetadata
+                         */
+    
+                        /**
+                         * Constructs a new AvroConfig.
+                         * @memberof google.pubsub.v1.CloudStorageConfig
+                         * @classdesc Represents an AvroConfig.
+                         * @implements IAvroConfig
+                         * @constructor
+                         * @param {google.pubsub.v1.CloudStorageConfig.IAvroConfig=} [properties] Properties to set
+                         */
+                        function AvroConfig(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AvroConfig writeMetadata.
+                         * @member {boolean} writeMetadata
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @instance
+                         */
+                        AvroConfig.prototype.writeMetadata = false;
+    
+                        /**
+                         * Creates a new AvroConfig instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @static
+                         * @param {google.pubsub.v1.CloudStorageConfig.IAvroConfig=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.CloudStorageConfig.AvroConfig} AvroConfig instance
+                         */
+                        AvroConfig.create = function create(properties) {
+                            return new AvroConfig(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AvroConfig message. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.AvroConfig.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @static
+                         * @param {google.pubsub.v1.CloudStorageConfig.IAvroConfig} message AvroConfig message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AvroConfig.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.writeMetadata != null && Object.hasOwnProperty.call(message, "writeMetadata"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).bool(message.writeMetadata);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AvroConfig message, length delimited. Does not implicitly {@link google.pubsub.v1.CloudStorageConfig.AvroConfig.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @static
+                         * @param {google.pubsub.v1.CloudStorageConfig.IAvroConfig} message AvroConfig message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AvroConfig.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AvroConfig message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.CloudStorageConfig.AvroConfig} AvroConfig
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AvroConfig.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CloudStorageConfig.AvroConfig();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.writeMetadata = reader.bool();
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AvroConfig message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.CloudStorageConfig.AvroConfig} AvroConfig
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AvroConfig.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AvroConfig message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AvroConfig.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.writeMetadata != null && message.hasOwnProperty("writeMetadata"))
+                                if (typeof message.writeMetadata !== "boolean")
+                                    return "writeMetadata: boolean expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AvroConfig message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.CloudStorageConfig.AvroConfig} AvroConfig
+                         */
+                        AvroConfig.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.CloudStorageConfig.AvroConfig)
+                                return object;
+                            var message = new $root.google.pubsub.v1.CloudStorageConfig.AvroConfig();
+                            if (object.writeMetadata != null)
+                                message.writeMetadata = Boolean(object.writeMetadata);
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AvroConfig message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @static
+                         * @param {google.pubsub.v1.CloudStorageConfig.AvroConfig} message AvroConfig
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AvroConfig.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults)
+                                object.writeMetadata = false;
+                            if (message.writeMetadata != null && message.hasOwnProperty("writeMetadata"))
+                                object.writeMetadata = message.writeMetadata;
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AvroConfig to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AvroConfig.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AvroConfig
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AvroConfig.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.CloudStorageConfig.AvroConfig";
+                        };
+    
+                        return AvroConfig;
+                    })();
+    
+                    /**
+                     * State enum.
+                     * @name google.pubsub.v1.CloudStorageConfig.State
+                     * @enum {number}
+                     * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                     * @property {number} ACTIVE=1 ACTIVE value
+                     * @property {number} PERMISSION_DENIED=2 PERMISSION_DENIED value
+                     * @property {number} NOT_FOUND=3 NOT_FOUND value
+                     */
+                    CloudStorageConfig.State = (function() {
+                        var valuesById = {}, values = Object.create(valuesById);
+                        values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                        values[valuesById[1] = "ACTIVE"] = 1;
+                        values[valuesById[2] = "PERMISSION_DENIED"] = 2;
+                        values[valuesById[3] = "NOT_FOUND"] = 3;
+                        return values;
+                    })();
+    
+                    return CloudStorageConfig;
                 })();
     
                 v1.ReceivedMessage = (function() {

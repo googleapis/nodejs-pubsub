@@ -804,6 +804,10 @@
                       "type": "BigQueryConfig",
                       "id": 18
                     },
+                    "cloudStorageConfig": {
+                      "type": "CloudStorageConfig",
+                      "id": 22
+                    },
                     "ackDeadlineSeconds": {
                       "type": "int32",
                       "id": 5
@@ -978,6 +982,77 @@
                         "PERMISSION_DENIED": 2,
                         "NOT_FOUND": 3,
                         "SCHEMA_MISMATCH": 4
+                      }
+                    }
+                  }
+                },
+                "CloudStorageConfig": {
+                  "oneofs": {
+                    "outputFormat": {
+                      "oneof": [
+                        "textConfig",
+                        "avroConfig"
+                      ]
+                    }
+                  },
+                  "fields": {
+                    "bucket": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "filenamePrefix": {
+                      "type": "string",
+                      "id": 2
+                    },
+                    "filenameSuffix": {
+                      "type": "string",
+                      "id": 3
+                    },
+                    "textConfig": {
+                      "type": "TextConfig",
+                      "id": 4
+                    },
+                    "avroConfig": {
+                      "type": "AvroConfig",
+                      "id": 5
+                    },
+                    "maxDuration": {
+                      "type": "google.protobuf.Duration",
+                      "id": 6
+                    },
+                    "maxBytes": {
+                      "type": "int64",
+                      "id": 7
+                    },
+                    "state": {
+                      "type": "State",
+                      "id": 9,
+                      "options": {
+                        "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
+                    }
+                  },
+                  "nested": {
+                    "TextConfig": {
+                      "fields": {}
+                    },
+                    "AvroConfig": {
+                      "fields": {
+                        "writeMetadata": {
+                          "type": "bool",
+                          "id": 1
+                        }
+                      }
+                    },
+                    "State": {
+                      "values": {
+                        "STATE_UNSPECIFIED": 0,
+                        "ACTIVE": 1,
+                        "PERMISSION_DENIED": 2,
+                        "NOT_FOUND": 3
                       }
                     }
                   }
