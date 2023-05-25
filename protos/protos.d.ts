@@ -2906,6 +2906,12 @@ export namespace google {
 
                 /** PushConfig oidcToken */
                 oidcToken?: (google.pubsub.v1.PushConfig.IOidcToken|null);
+
+                /** PushConfig pubsubWrapper */
+                pubsubWrapper?: (google.pubsub.v1.PushConfig.IPubsubWrapper|null);
+
+                /** PushConfig noWrapper */
+                noWrapper?: (google.pubsub.v1.PushConfig.INoWrapper|null);
             }
 
             /** Represents a PushConfig. */
@@ -2926,8 +2932,17 @@ export namespace google {
                 /** PushConfig oidcToken. */
                 public oidcToken?: (google.pubsub.v1.PushConfig.IOidcToken|null);
 
+                /** PushConfig pubsubWrapper. */
+                public pubsubWrapper?: (google.pubsub.v1.PushConfig.IPubsubWrapper|null);
+
+                /** PushConfig noWrapper. */
+                public noWrapper?: (google.pubsub.v1.PushConfig.INoWrapper|null);
+
                 /** PushConfig authenticationMethod. */
                 public authenticationMethod?: "oidcToken";
+
+                /** PushConfig wrapper. */
+                public wrapper?: ("pubsubWrapper"|"noWrapper");
 
                 /**
                  * Creates a new PushConfig instance using the specified properties.
@@ -3106,6 +3121,194 @@ export namespace google {
 
                     /**
                      * Gets the default type url for OidcToken
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
+                /** Properties of a PubsubWrapper. */
+                interface IPubsubWrapper {
+                }
+
+                /** Represents a PubsubWrapper. */
+                class PubsubWrapper implements IPubsubWrapper {
+
+                    /**
+                     * Constructs a new PubsubWrapper.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.PushConfig.IPubsubWrapper);
+
+                    /**
+                     * Creates a new PubsubWrapper instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns PubsubWrapper instance
+                     */
+                    public static create(properties?: google.pubsub.v1.PushConfig.IPubsubWrapper): google.pubsub.v1.PushConfig.PubsubWrapper;
+
+                    /**
+                     * Encodes the specified PubsubWrapper message. Does not implicitly {@link google.pubsub.v1.PushConfig.PubsubWrapper.verify|verify} messages.
+                     * @param message PubsubWrapper message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.PushConfig.IPubsubWrapper, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified PubsubWrapper message, length delimited. Does not implicitly {@link google.pubsub.v1.PushConfig.PubsubWrapper.verify|verify} messages.
+                     * @param message PubsubWrapper message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.PushConfig.IPubsubWrapper, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes a PubsubWrapper message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns PubsubWrapper
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PushConfig.PubsubWrapper;
+
+                    /**
+                     * Decodes a PubsubWrapper message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns PubsubWrapper
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PushConfig.PubsubWrapper;
+
+                    /**
+                     * Verifies a PubsubWrapper message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates a PubsubWrapper message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns PubsubWrapper
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PushConfig.PubsubWrapper;
+
+                    /**
+                     * Creates a plain object from a PubsubWrapper message. Also converts values to other types if specified.
+                     * @param message PubsubWrapper
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.PushConfig.PubsubWrapper, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this PubsubWrapper to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for PubsubWrapper
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
+                /** Properties of a NoWrapper. */
+                interface INoWrapper {
+
+                    /** NoWrapper writeMetadata */
+                    writeMetadata?: (boolean|null);
+                }
+
+                /** Represents a NoWrapper. */
+                class NoWrapper implements INoWrapper {
+
+                    /**
+                     * Constructs a new NoWrapper.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.PushConfig.INoWrapper);
+
+                    /** NoWrapper writeMetadata. */
+                    public writeMetadata: boolean;
+
+                    /**
+                     * Creates a new NoWrapper instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns NoWrapper instance
+                     */
+                    public static create(properties?: google.pubsub.v1.PushConfig.INoWrapper): google.pubsub.v1.PushConfig.NoWrapper;
+
+                    /**
+                     * Encodes the specified NoWrapper message. Does not implicitly {@link google.pubsub.v1.PushConfig.NoWrapper.verify|verify} messages.
+                     * @param message NoWrapper message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.PushConfig.INoWrapper, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified NoWrapper message, length delimited. Does not implicitly {@link google.pubsub.v1.PushConfig.NoWrapper.verify|verify} messages.
+                     * @param message NoWrapper message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.PushConfig.INoWrapper, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes a NoWrapper message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns NoWrapper
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PushConfig.NoWrapper;
+
+                    /**
+                     * Decodes a NoWrapper message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns NoWrapper
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PushConfig.NoWrapper;
+
+                    /**
+                     * Verifies a NoWrapper message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates a NoWrapper message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns NoWrapper
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PushConfig.NoWrapper;
+
+                    /**
+                     * Creates a plain object from a NoWrapper message. Also converts values to other types if specified.
+                     * @param message NoWrapper
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.PushConfig.NoWrapper, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this NoWrapper to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for NoWrapper
                      * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
                      * @returns The default type url
                      */
