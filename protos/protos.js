@@ -6571,6 +6571,8 @@
                      * @property {string|null} [pushEndpoint] PushConfig pushEndpoint
                      * @property {Object.<string,string>|null} [attributes] PushConfig attributes
                      * @property {google.pubsub.v1.PushConfig.IOidcToken|null} [oidcToken] PushConfig oidcToken
+                     * @property {google.pubsub.v1.PushConfig.IPubsubWrapper|null} [pubsubWrapper] PushConfig pubsubWrapper
+                     * @property {google.pubsub.v1.PushConfig.INoWrapper|null} [noWrapper] PushConfig noWrapper
                      */
     
                     /**
@@ -6613,6 +6615,22 @@
                      */
                     PushConfig.prototype.oidcToken = null;
     
+                    /**
+                     * PushConfig pubsubWrapper.
+                     * @member {google.pubsub.v1.PushConfig.IPubsubWrapper|null|undefined} pubsubWrapper
+                     * @memberof google.pubsub.v1.PushConfig
+                     * @instance
+                     */
+                    PushConfig.prototype.pubsubWrapper = null;
+    
+                    /**
+                     * PushConfig noWrapper.
+                     * @member {google.pubsub.v1.PushConfig.INoWrapper|null|undefined} noWrapper
+                     * @memberof google.pubsub.v1.PushConfig
+                     * @instance
+                     */
+                    PushConfig.prototype.noWrapper = null;
+    
                     // OneOf field names bound to virtual getters and setters
                     var $oneOfFields;
     
@@ -6624,6 +6642,17 @@
                      */
                     Object.defineProperty(PushConfig.prototype, "authenticationMethod", {
                         get: $util.oneOfGetter($oneOfFields = ["oidcToken"]),
+                        set: $util.oneOfSetter($oneOfFields)
+                    });
+    
+                    /**
+                     * PushConfig wrapper.
+                     * @member {"pubsubWrapper"|"noWrapper"|undefined} wrapper
+                     * @memberof google.pubsub.v1.PushConfig
+                     * @instance
+                     */
+                    Object.defineProperty(PushConfig.prototype, "wrapper", {
+                        get: $util.oneOfGetter($oneOfFields = ["pubsubWrapper", "noWrapper"]),
                         set: $util.oneOfSetter($oneOfFields)
                     });
     
@@ -6658,6 +6687,10 @@
                                 writer.uint32(/* id 2, wireType 2 =*/18).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]).uint32(/* id 2, wireType 2 =*/18).string(message.attributes[keys[i]]).ldelim();
                         if (message.oidcToken != null && Object.hasOwnProperty.call(message, "oidcToken"))
                             $root.google.pubsub.v1.PushConfig.OidcToken.encode(message.oidcToken, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                        if (message.pubsubWrapper != null && Object.hasOwnProperty.call(message, "pubsubWrapper"))
+                            $root.google.pubsub.v1.PushConfig.PubsubWrapper.encode(message.pubsubWrapper, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                        if (message.noWrapper != null && Object.hasOwnProperty.call(message, "noWrapper"))
+                            $root.google.pubsub.v1.PushConfig.NoWrapper.encode(message.noWrapper, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
                         return writer;
                     };
     
@@ -6723,6 +6756,14 @@
                                     message.oidcToken = $root.google.pubsub.v1.PushConfig.OidcToken.decode(reader, reader.uint32());
                                     break;
                                 }
+                            case 4: {
+                                    message.pubsubWrapper = $root.google.pubsub.v1.PushConfig.PubsubWrapper.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 5: {
+                                    message.noWrapper = $root.google.pubsub.v1.PushConfig.NoWrapper.decode(reader, reader.uint32());
+                                    break;
+                                }
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -6778,6 +6819,24 @@
                                     return "oidcToken." + error;
                             }
                         }
+                        if (message.pubsubWrapper != null && message.hasOwnProperty("pubsubWrapper")) {
+                            properties.wrapper = 1;
+                            {
+                                var error = $root.google.pubsub.v1.PushConfig.PubsubWrapper.verify(message.pubsubWrapper);
+                                if (error)
+                                    return "pubsubWrapper." + error;
+                            }
+                        }
+                        if (message.noWrapper != null && message.hasOwnProperty("noWrapper")) {
+                            if (properties.wrapper === 1)
+                                return "wrapper: multiple values";
+                            properties.wrapper = 1;
+                            {
+                                var error = $root.google.pubsub.v1.PushConfig.NoWrapper.verify(message.noWrapper);
+                                if (error)
+                                    return "noWrapper." + error;
+                            }
+                        }
                         return null;
                     };
     
@@ -6806,6 +6865,16 @@
                             if (typeof object.oidcToken !== "object")
                                 throw TypeError(".google.pubsub.v1.PushConfig.oidcToken: object expected");
                             message.oidcToken = $root.google.pubsub.v1.PushConfig.OidcToken.fromObject(object.oidcToken);
+                        }
+                        if (object.pubsubWrapper != null) {
+                            if (typeof object.pubsubWrapper !== "object")
+                                throw TypeError(".google.pubsub.v1.PushConfig.pubsubWrapper: object expected");
+                            message.pubsubWrapper = $root.google.pubsub.v1.PushConfig.PubsubWrapper.fromObject(object.pubsubWrapper);
+                        }
+                        if (object.noWrapper != null) {
+                            if (typeof object.noWrapper !== "object")
+                                throw TypeError(".google.pubsub.v1.PushConfig.noWrapper: object expected");
+                            message.noWrapper = $root.google.pubsub.v1.PushConfig.NoWrapper.fromObject(object.noWrapper);
                         }
                         return message;
                     };
@@ -6839,6 +6908,16 @@
                             object.oidcToken = $root.google.pubsub.v1.PushConfig.OidcToken.toObject(message.oidcToken, options);
                             if (options.oneofs)
                                 object.authenticationMethod = "oidcToken";
+                        }
+                        if (message.pubsubWrapper != null && message.hasOwnProperty("pubsubWrapper")) {
+                            object.pubsubWrapper = $root.google.pubsub.v1.PushConfig.PubsubWrapper.toObject(message.pubsubWrapper, options);
+                            if (options.oneofs)
+                                object.wrapper = "pubsubWrapper";
+                        }
+                        if (message.noWrapper != null && message.hasOwnProperty("noWrapper")) {
+                            object.noWrapper = $root.google.pubsub.v1.PushConfig.NoWrapper.toObject(message.noWrapper, options);
+                            if (options.oneofs)
+                                object.wrapper = "noWrapper";
                         }
                         return object;
                     };
@@ -7094,6 +7173,384 @@
                         };
     
                         return OidcToken;
+                    })();
+    
+                    PushConfig.PubsubWrapper = (function() {
+    
+                        /**
+                         * Properties of a PubsubWrapper.
+                         * @memberof google.pubsub.v1.PushConfig
+                         * @interface IPubsubWrapper
+                         */
+    
+                        /**
+                         * Constructs a new PubsubWrapper.
+                         * @memberof google.pubsub.v1.PushConfig
+                         * @classdesc Represents a PubsubWrapper.
+                         * @implements IPubsubWrapper
+                         * @constructor
+                         * @param {google.pubsub.v1.PushConfig.IPubsubWrapper=} [properties] Properties to set
+                         */
+                        function PubsubWrapper(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * Creates a new PubsubWrapper instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.PushConfig.PubsubWrapper
+                         * @static
+                         * @param {google.pubsub.v1.PushConfig.IPubsubWrapper=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.PushConfig.PubsubWrapper} PubsubWrapper instance
+                         */
+                        PubsubWrapper.create = function create(properties) {
+                            return new PubsubWrapper(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified PubsubWrapper message. Does not implicitly {@link google.pubsub.v1.PushConfig.PubsubWrapper.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.PushConfig.PubsubWrapper
+                         * @static
+                         * @param {google.pubsub.v1.PushConfig.IPubsubWrapper} message PubsubWrapper message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        PubsubWrapper.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified PubsubWrapper message, length delimited. Does not implicitly {@link google.pubsub.v1.PushConfig.PubsubWrapper.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.PushConfig.PubsubWrapper
+                         * @static
+                         * @param {google.pubsub.v1.PushConfig.IPubsubWrapper} message PubsubWrapper message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        PubsubWrapper.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a PubsubWrapper message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.PushConfig.PubsubWrapper
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.PushConfig.PubsubWrapper} PubsubWrapper
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        PubsubWrapper.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PushConfig.PubsubWrapper();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a PubsubWrapper message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.PushConfig.PubsubWrapper
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.PushConfig.PubsubWrapper} PubsubWrapper
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        PubsubWrapper.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a PubsubWrapper message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.PushConfig.PubsubWrapper
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        PubsubWrapper.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a PubsubWrapper message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.PushConfig.PubsubWrapper
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.PushConfig.PubsubWrapper} PubsubWrapper
+                         */
+                        PubsubWrapper.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.PushConfig.PubsubWrapper)
+                                return object;
+                            return new $root.google.pubsub.v1.PushConfig.PubsubWrapper();
+                        };
+    
+                        /**
+                         * Creates a plain object from a PubsubWrapper message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.PushConfig.PubsubWrapper
+                         * @static
+                         * @param {google.pubsub.v1.PushConfig.PubsubWrapper} message PubsubWrapper
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        PubsubWrapper.toObject = function toObject() {
+                            return {};
+                        };
+    
+                        /**
+                         * Converts this PubsubWrapper to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.PushConfig.PubsubWrapper
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        PubsubWrapper.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for PubsubWrapper
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.PushConfig.PubsubWrapper
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        PubsubWrapper.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.PushConfig.PubsubWrapper";
+                        };
+    
+                        return PubsubWrapper;
+                    })();
+    
+                    PushConfig.NoWrapper = (function() {
+    
+                        /**
+                         * Properties of a NoWrapper.
+                         * @memberof google.pubsub.v1.PushConfig
+                         * @interface INoWrapper
+                         * @property {boolean|null} [writeMetadata] NoWrapper writeMetadata
+                         */
+    
+                        /**
+                         * Constructs a new NoWrapper.
+                         * @memberof google.pubsub.v1.PushConfig
+                         * @classdesc Represents a NoWrapper.
+                         * @implements INoWrapper
+                         * @constructor
+                         * @param {google.pubsub.v1.PushConfig.INoWrapper=} [properties] Properties to set
+                         */
+                        function NoWrapper(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * NoWrapper writeMetadata.
+                         * @member {boolean} writeMetadata
+                         * @memberof google.pubsub.v1.PushConfig.NoWrapper
+                         * @instance
+                         */
+                        NoWrapper.prototype.writeMetadata = false;
+    
+                        /**
+                         * Creates a new NoWrapper instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.PushConfig.NoWrapper
+                         * @static
+                         * @param {google.pubsub.v1.PushConfig.INoWrapper=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.PushConfig.NoWrapper} NoWrapper instance
+                         */
+                        NoWrapper.create = function create(properties) {
+                            return new NoWrapper(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified NoWrapper message. Does not implicitly {@link google.pubsub.v1.PushConfig.NoWrapper.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.PushConfig.NoWrapper
+                         * @static
+                         * @param {google.pubsub.v1.PushConfig.INoWrapper} message NoWrapper message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        NoWrapper.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.writeMetadata != null && Object.hasOwnProperty.call(message, "writeMetadata"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).bool(message.writeMetadata);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified NoWrapper message, length delimited. Does not implicitly {@link google.pubsub.v1.PushConfig.NoWrapper.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.PushConfig.NoWrapper
+                         * @static
+                         * @param {google.pubsub.v1.PushConfig.INoWrapper} message NoWrapper message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        NoWrapper.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a NoWrapper message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.PushConfig.NoWrapper
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.PushConfig.NoWrapper} NoWrapper
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        NoWrapper.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PushConfig.NoWrapper();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.writeMetadata = reader.bool();
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a NoWrapper message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.PushConfig.NoWrapper
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.PushConfig.NoWrapper} NoWrapper
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        NoWrapper.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a NoWrapper message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.PushConfig.NoWrapper
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        NoWrapper.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.writeMetadata != null && message.hasOwnProperty("writeMetadata"))
+                                if (typeof message.writeMetadata !== "boolean")
+                                    return "writeMetadata: boolean expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a NoWrapper message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.PushConfig.NoWrapper
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.PushConfig.NoWrapper} NoWrapper
+                         */
+                        NoWrapper.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.PushConfig.NoWrapper)
+                                return object;
+                            var message = new $root.google.pubsub.v1.PushConfig.NoWrapper();
+                            if (object.writeMetadata != null)
+                                message.writeMetadata = Boolean(object.writeMetadata);
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from a NoWrapper message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.PushConfig.NoWrapper
+                         * @static
+                         * @param {google.pubsub.v1.PushConfig.NoWrapper} message NoWrapper
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        NoWrapper.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults)
+                                object.writeMetadata = false;
+                            if (message.writeMetadata != null && message.hasOwnProperty("writeMetadata"))
+                                object.writeMetadata = message.writeMetadata;
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this NoWrapper to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.PushConfig.NoWrapper
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        NoWrapper.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for NoWrapper
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.PushConfig.NoWrapper
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        NoWrapper.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.PushConfig.NoWrapper";
+                        };
+    
+                        return NoWrapper;
                     })();
     
                     return PushConfig;
