@@ -307,20 +307,6 @@ describe('pubsub', () => {
           // eslint-disable-next-line @typescript-eslint/no-var-requires
         } = require('../../system-test/fixtures/ordered-messages.json');
 
-        const publishes = input.map(({key, message}: Input) => {
-          const options: MessageOptions = {
-            data: Buffer.from(message),
-          };
-
-          if (key) {
-            options.orderingKey = key;
-          }
-
-          return topic.publishMessage(options);
-        });
-
-        await Promise.all(publishes);
-
         const pending: Pending = {};
 
         expected.forEach(({key, messages}: Expected) => {
@@ -329,6 +315,7 @@ describe('pubsub', () => {
 
         const deferred = defer();
 
+        // Make sure we're listening when the lease manager throws the messages at us.
         subscription
           .on('error', deferred.reject)
           .on('message', (message: Message) => {
@@ -370,6 +357,19 @@ describe('pubsub', () => {
               deferred.resolve();
             }
           });
+
+        const publishes = input.map(({key, message}: Input) => {
+          const options: MessageOptions = {
+            data: Buffer.from(message),
+          };
+
+          if (key) {
+            options.orderingKey = key;
+          }
+
+          return topic.publishMessage(options);
+        });
+        await Promise.all(publishes);
 
         await deferred.promise;
         await Promise.all([topic.delete(), subscription.delete()]);
