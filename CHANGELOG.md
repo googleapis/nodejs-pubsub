@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.7.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.6.0...v3.7.0) (2023-05-26)
+
+
+### Features
+
+* Add push config wrapper fields ([#1730](https://github.com/googleapis/nodejs-pubsub/issues/1730)) ([a552719](https://github.com/googleapis/nodejs-pubsub/commit/a552719dfebda4c1263c352ea99bf8f9570290b7))
+
 ## [3.6.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.5.2...v3.6.0) (2023-05-12)
 
 
