@@ -227,4 +227,49 @@ describe('exponential retry class', () => {
     const leftovers = er.close();
     assert.strictEqual(leftovers.length, 1);
   });
+
+  it('updates settings (not running)', () => {
+    const er = new ExponentialRetry<TestItem>(
+      Duration.from({millis: 100}),
+      Duration.from({millis: 1000})
+    );
+    er.updateSettings(
+      Duration.from({millis: 200}),
+      Duration.from({millis: 2000})
+    );
+    const eri = introspect(er);
+    assert.strictEqual(eri._backoffMs, 200);
+    assert.strictEqual(eri._maxBackoffMs, 2000);
+    assert.ok(!eri._timer, 'timer was created, should not have been');
+  });
+
+  it('updates settings (running)', () => {
+    const er = new ExponentialRetry<TestItem>(
+      Duration.from({millis: 100}),
+      Duration.from({millis: 1000})
+    );
+
+    // Just disable the fuzz for this test.
+    sandbox.stub(global.Math, 'random').returns(0.5);
+
+    // We need to check the clock functions.
+    const eri = introspect(er);
+    const set = sandbox.stub(eri, 'setTimeout');
+    const clear = sandbox.stub(eri, 'clearTimeout');
+
+    const item = makeItem();
+    er.retryLater(item, () => {});
+
+    set.callsFake((...args: unknown[]) => {
+      const delayMs = args[1] as number;
+      assert.strictEqual(delayMs, 200);
+    });
+
+    er.updateSettings(
+      Duration.from({millis: 200}),
+      Duration.from({millis: 2000})
+    );
+    assert.strictEqual(set.callCount, 1);
+    assert.strictEqual(clear.callCount, 1);
+  });
 });

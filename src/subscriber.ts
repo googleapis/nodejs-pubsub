@@ -776,6 +776,11 @@ export class Subscriber extends EventEmitter {
         this.maxMessages
       );
     }
+
+    // Update our stream wrapper if it's already been opened.
+    if (this._stream && options.streamingOptions) {
+      this._stream.setOptions(options.streamingOptions);
+    }
   }
 
   /**

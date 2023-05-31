@@ -143,28 +143,72 @@ interface StreamTracked {
 export class MessageStream extends PassThrough {
   private _keepAliveHandle?: NodeJS.Timer;
   private _options: MessageStreamOptions;
-  private _retrier: ExponentialRetry<StreamTracked>;
+  private _retrier!: ExponentialRetry<StreamTracked>; // Set in constructor
 
   private _streams: StreamTracked[];
 
   private _subscriber: Subscriber;
   constructor(sub: Subscriber, options = {} as MessageStreamOptions) {
-    options = Object.assign({}, DEFAULT_OPTIONS, options);
+    super({
+      objectMode: true,
+      highWaterMark: options.highWaterMark ?? DEFAULT_OPTIONS.highWaterMark,
+    });
 
-    super({objectMode: true, highWaterMark: options.highWaterMark});
-
-    this._options = options;
-    this._retrier = new ExponentialRetry<{}>(
-      options.retryMinBackoff!, // Filled by DEFAULT_OPTIONS
-      options.retryMaxBackoff!
-    );
-
+    this._options = {};
     this._streams = [];
-    for (let i = 0; i < options.maxStreams!; i++) {
-      this._streams.push({});
-    }
+    this.setOptions(options);
 
     this._subscriber = sub;
+  }
+
+  /**
+   * Update the options for the message stream. If a different backoff or
+   * different stream count is needed, this will take care of adjusting.
+   *
+   * @private
+   */
+  setOptions(options: MessageStreamOptions) {
+    options = Object.assign({}, DEFAULT_OPTIONS, options);
+
+    if (!this._retrier) {
+      this._retrier = new ExponentialRetry<{}>(
+        options.retryMinBackoff!, // Filled by DEFAULT_OPTIONS
+        options.retryMaxBackoff!
+      );
+    } else {
+      this._retrier.updateSettings(
+        options.retryMinBackoff!, // Filled by DEFAULT_OPTIONS
+        options.retryMaxBackoff!
+      );
+    }
+
+    this._options = options;
+
+    // If the number of streams changed, we also need to deal with that.
+    if (this._options.maxStreams! < this._streams.length) {
+      // Removing streams.
+      const change = this._streams.length - this._options.maxStreams!;
+      for (let i = 0; i < change; i++) {
+        const tracker = this._streams.pop();
+
+        // If this tracker had a working stream, clean it up.
+        if (tracker && tracker.stream) {
+          this._cleanUpStream(tracker);
+        }
+      }
+    } else if (this._options.maxStreams! > this._streams.length) {
+      // Adding streams.
+      const change = this._options.maxStreams! - this._streams.length;
+      for (let i = 0; i < change; i++) {
+        this._streams.push({});
+      }
+
+      // If the stream has already been started, go ahead and fill the new
+      // trackers with streams as well.
+      if (this._keepAliveHandle) {
+        this._fillStreamPool();
+      }
+    }
   }
 
   /**
@@ -246,6 +290,26 @@ export class MessageStream extends PassThrough {
       .on('data', (data: PullResponse) => this._onData(index, data));
   }
 
+  /**
+   * Cleans up a removed stream from the combined stream.
+   *
+   * @private
+   *
+   * @param {StreamTracked} tracker The stream to clean up.
+   */
+  private _cleanUpStream(tracker: StreamTracked): void {
+    if (tracker.stream) {
+      tracker.stream.unpipe(this);
+      tracker.stream.cancel();
+      tracker.stream
+        .removeAllListeners('error')
+        .removeAllListeners('status')
+        .removeAllListeners('data');
+      tracker.stream = undefined;
+      tracker.receivedStatus = undefined;
+    }
+  }
+
   private _onData(index: number, data: PullResponse): void {
     // Mark this stream as alive again. (reset backoff)
     const tracker = this._streams[index];
@@ -280,7 +344,9 @@ export class MessageStream extends PassThrough {
 
     const all: Promise<void>[] = [];
     for (let i = 0; i < this._streams.length; i++) {
-      all.push(this._fillOne(i, client));
+      if (!this._streams[i].stream) {
+        all.push(this._fillOne(i, client));
+      }
     }
     await Promise.all(all);
 
@@ -467,12 +533,7 @@ export class MessageStream extends PassThrough {
    */
   private _removeStream(index: number): void {
     const tracker = this._streams[index];
-    if (tracker.stream) {
-      tracker.stream.unpipe(this);
-      tracker.stream.cancel();
-      tracker.stream = undefined;
-      tracker.receivedStatus = undefined;
-    }
+    this._cleanUpStream(tracker);
   }
 
   /**

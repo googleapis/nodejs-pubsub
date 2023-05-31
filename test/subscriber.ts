@@ -133,6 +133,7 @@ class FakeMessageStream extends PassThrough {
     this.options = options;
     stubs.set('messageStream', this);
   }
+  setOptions(): void {}
   setStreamAckDeadline(): void {}
   _destroy(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

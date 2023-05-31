@@ -278,6 +278,79 @@ describe('MessageStream', () => {
           await promisify(process.nextTick)();
           assert.strictEqual(client.deadline, now + timeout);
         });
+
+        it('should update from new options before starting', async () => {
+          const timeout = 12345;
+          const maxStreams = 10;
+
+          messageStream = new MessageStream(subscriber, {
+            timeout: 0,
+            maxStreams: 5,
+          });
+          messageStream.setOptions({
+            timeout,
+            maxStreams,
+          });
+          await messageStream.start();
+
+          await promisify(process.nextTick)();
+          assert.strictEqual(client.deadline, now + timeout);
+          assert.strictEqual(client.streams.length, maxStreams);
+        });
+
+        it('should update from new options after starting (decrease)', async () => {
+          const timeout = 12345;
+          const maxStreams = 2;
+
+          messageStream = new MessageStream(subscriber, {
+            timeout: 0,
+            maxStreams: 5,
+          });
+          messageStream.setOptions({
+            timeout,
+            maxStreams,
+          });
+          await messageStream.start();
+
+          await promisify(process.nextTick)();
+
+          messageStream.setOptions({
+            timeout,
+            maxStreams,
+          });
+
+          await promisify(process.nextTick)();
+
+          assert.strictEqual(client.deadline, now + timeout);
+          assert.strictEqual(client.streams.length, maxStreams);
+        });
+
+        it('should update from new options after starting (decrease)', async () => {
+          const timeout = 12345;
+          const maxStreams = 10;
+
+          messageStream = new MessageStream(subscriber, {
+            timeout: 0,
+            maxStreams: 5,
+          });
+          messageStream.setOptions({
+            timeout,
+            maxStreams,
+          });
+          await messageStream.start();
+
+          await promisify(process.nextTick)();
+
+          messageStream.setOptions({
+            timeout,
+            maxStreams,
+          });
+
+          await promisify(process.nextTick)();
+
+          assert.strictEqual(client.deadline, now + timeout);
+          assert.strictEqual(client.streams.length, maxStreams);
+        });
       });
     });
   });

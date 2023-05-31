@@ -72,13 +72,25 @@ export interface RetryCallback<T> {
  */
 export class ExponentialRetry<T> {
   private _items = new Heap<RetriedItem<T>>(comparator<T>);
-  private _backoffMs: number;
-  private _maxBackoffMs: number;
+  private _backoffMs!: number; // Set in constructor
+  private _maxBackoffMs!: number; // Set in constructor
   private _timer?: NodeJS.Timeout;
 
   constructor(backoff: Duration, maxBackoff: Duration) {
+    this.updateSettings(backoff, maxBackoff);
+  }
+
+  /**
+   * Update the backoff settings, and re-schedule any timers.
+   *
+   * @private
+   */
+  updateSettings(backoff: Duration, maxBackoff: Duration) {
     this._backoffMs = backoff.totalOf('millisecond');
     this._maxBackoffMs = maxBackoff.totalOf('millisecond');
+    if (this._timer) {
+      this.scheduleRetry();
+    }
   }
 
   /**
@@ -88,9 +100,7 @@ export class ExponentialRetry<T> {
    * @private
    */
   close(): T[] {
-    if (this._timer) {
-      clearTimeout(this._timer);
-    }
+    this.clearTimeout();
 
     const leftovers = this._items.toArray();
     this._items.clear();
@@ -193,12 +203,21 @@ export class ExponentialRetry<T> {
         delta = 0;
       }
 
-      if (this._timer) {
-        clearTimeout(this._timer);
-      }
-      this._timer = setTimeout(() => {
+      this.clearTimeout();
+      this.setTimeout(() => {
         this.doRetries();
       }, delta);
+    }
+  }
+
+  private setTimeout(callback: () => void, delayMs: number): void {
+    this._timer = setTimeout(callback, delayMs);
+  }
+
+  private clearTimeout(): void {
+    if (this._timer) {
+      clearTimeout(this._timer);
+      this._timer = undefined;
     }
   }
 }
