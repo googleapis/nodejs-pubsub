@@ -50,12 +50,10 @@ const {NodeTracerProvider} = otel;
 const {SimpleSpanProcessor} = require('@opentelemetry/sdk-trace-base');
 
 // To output to the console for testing, use the ConsoleSpanExporter.
-// import {ConsoleSpanExporter} from '@opentelemetry/sdk-trace-base';
+const {ConsoleSpanExporter} = require('@opentelemetry/sdk-trace-base');
 
 // To output to Cloud Trace, import the OpenTelemetry bridge library.
-const {
-  TraceExporter,
-} = require('@google-cloud/opentelemetry-cloud-trace-exporter');
+// import {TraceExporter} from '@google-cloud/opentelemetry-cloud-trace-exporter';
 
 const {Resource} = require('@opentelemetry/resources');
 const {
@@ -66,10 +64,10 @@ const {
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
 // Log spans out to the console, for testing.
-// const exporter = new ConsoleSpanExporter();
+const exporter = new ConsoleSpanExporter();
 
 // Log spans out to Cloud Trace, for production.
-const exporter = new TraceExporter();
+// const exporter = new TraceExporter();
 
 // Build a tracer provider and a span processor to do
 // something with the spans we're generating.
