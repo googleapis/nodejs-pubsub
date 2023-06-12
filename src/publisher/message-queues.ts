@@ -390,6 +390,14 @@ export class OrderedQueue extends MessageQueue {
    * @fires OrderedQueue#drain
    */
   async publish(): Promise<void> {
+    // If there's nothing to flush, don't try, just short-circuit to the drain event.
+    // This can happen if we get a publish() call after already being drained, in
+    // the case that topic.flush() pulls a reference to us before we get deleted.
+    if (!this.batches.length) {
+      this.emit('drain');
+      return;
+    }
+
     this.inFlight = true;
 
     if (this.pending) {

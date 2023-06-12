@@ -4,6 +4,20 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.7.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.0...v3.7.1) (2023-06-08)
+
+
+### Bug Fixes
+
+* Don't crash if an already-drained/removed queue gets flushed again ([#1747](https://github.com/googleapis/nodejs-pubsub/issues/1747)) ([52ea441](https://github.com/googleapis/nodejs-pubsub/commit/52ea441fee302aa6c400b58d4ecebbc96a2ea5ea))
+
+## [3.7.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.6.0...v3.7.0) (2023-05-26)
+
+
+### Features
+
+* Add push config wrapper fields ([#1730](https://github.com/googleapis/nodejs-pubsub/issues/1730)) ([a552719](https://github.com/googleapis/nodejs-pubsub/commit/a552719dfebda4c1263c352ea99bf8f9570290b7))
+
 ## [3.6.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.5.2...v3.6.0) (2023-05-12)
 
 

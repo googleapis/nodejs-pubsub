@@ -729,6 +729,17 @@ describe('Message Queues', () => {
 
         assert.strictEqual(spy.callCount, 1);
       });
+
+      it('should emit "drain" if already empty on publish', async () => {
+        const spy = sandbox.spy();
+        sandbox.stub(queue, '_publish').resolves();
+
+        queue.on('drain', spy);
+        await queue.publish();
+        await queue.publish();
+
+        assert.strictEqual(spy.callCount, 2);
+      });
     });
 
     describe('resumePublishing', () => {

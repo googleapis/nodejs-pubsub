@@ -916,6 +916,12 @@
                       "oneof": [
                         "oidcToken"
                       ]
+                    },
+                    "wrapper": {
+                      "oneof": [
+                        "pubsubWrapper",
+                        "noWrapper"
+                      ]
                     }
                   },
                   "fields": {
@@ -931,6 +937,14 @@
                     "oidcToken": {
                       "type": "OidcToken",
                       "id": 3
+                    },
+                    "pubsubWrapper": {
+                      "type": "PubsubWrapper",
+                      "id": 4
+                    },
+                    "noWrapper": {
+                      "type": "NoWrapper",
+                      "id": 5
                     }
                   },
                   "nested": {
@@ -943,6 +957,17 @@
                         "audience": {
                           "type": "string",
                           "id": 2
+                        }
+                      }
+                    },
+                    "PubsubWrapper": {
+                      "fields": {}
+                    },
+                    "NoWrapper": {
+                      "fields": {
+                        "writeMetadata": {
+                          "type": "bool",
+                          "id": 1
                         }
                       }
                     }
