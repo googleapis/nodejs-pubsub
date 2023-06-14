@@ -130,6 +130,9 @@ export class LeaseManager extends EventEmitter {
     const wasFull = this.isFull();
 
     this._pending = [];
+    this._messages.forEach(m => {
+      m.endTelemetrySpan();
+    });
     this._messages.clear();
     this.bytes = 0;
 
