@@ -81,8 +81,17 @@ describe('IAM', () => {
       assert.strictEqual(iam.request, fakeRequest);
     });
 
-    it('should localize the ID', () => {
+    it('should localize the ID string', () => {
       assert.strictEqual(iam.id, ID);
+    });
+
+    it('should localize the ID getter', () => {
+      iam = new IAM(PUBSUB, {
+        get name() {
+          return 'test';
+        },
+      });
+      assert.strictEqual(iam.id, 'test');
     });
 
     it('should promisify some of the things', () => {
