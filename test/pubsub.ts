@@ -27,8 +27,7 @@ import {Snapshot} from '../src/snapshot';
 import * as subby from '../src/subscription';
 import {Topic} from '../src/topic';
 import * as util from '../src/util';
-import {Schema, SchemaTypes} from '../src';
-import {ISchema, SchemaViews} from '../src/schema';
+import {Schema, SchemaTypes, ISchema, SchemaViews} from '../src/schema';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PKG = require('../../package.json');
 const sandbox = sinon.createSandbox();
