@@ -43,7 +43,8 @@ import {
 } from './snapshot';
 import {Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';
-import {camelToSnake, promisifySome} from './util';
+import {promisifySome} from './util';
+import snakeCase = require('lodash.snakecase');
 
 export {AckError, AckResponse, AckResponses} from './subscriber';
 
@@ -1099,7 +1100,7 @@ export class Subscription extends EventEmitter {
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const subscription = Subscription.formatMetadata_(metadata);
-    const fields = Object.keys(subscription).map(camelToSnake);
+    const fields = Object.keys(subscription).map(snakeCase);
     subscription.name = this.name;
     const reqOpts = {
       subscription,
