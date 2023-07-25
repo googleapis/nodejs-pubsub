@@ -83,3 +83,12 @@ export function addToBucket<T, U>(map: Map<T, U[]>, bucket: T, item: U) {
   items.push(item);
   map.set(bucket, items);
 }
+
+/**
+ * Converts a string from camelCase to snake_case.
+ *
+ * @private
+ */
+export function camelToSnake(input: string): string {
+  return input.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+}

@@ -17,7 +17,6 @@
 import {EventEmitter} from 'events';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
-import snakeCase = require('lodash.snakecase');
 
 import {google} from '../protos/protos';
 
@@ -44,7 +43,7 @@ import {
 } from './snapshot';
 import {Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';
-import {promisifySome} from './util';
+import {camelToSnake, promisifySome} from './util';
 
 export {AckError, AckResponse, AckResponses} from './subscriber';
 
@@ -1100,7 +1099,7 @@ export class Subscription extends EventEmitter {
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const subscription = Subscription.formatMetadata_(metadata);
-    const fields = Object.keys(subscription).map(snakeCase);
+    const fields = Object.keys(subscription).map(camelToSnake);
     subscription.name = this.name;
     const reqOpts = {
       subscription,
