@@ -17,6 +17,7 @@
 import {EventEmitter} from 'events';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
+import snakeCase = require('lodash.snakecase');
 
 import {google} from '../protos/protos';
 
@@ -44,7 +45,6 @@ import {
 import {Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';
 import {promisifySome} from './util';
-import snakeCase = require('lodash.snakecase');
 
 export {AckError, AckResponse, AckResponses} from './subscriber';
 
