@@ -48,6 +48,7 @@ import {
   SubscriptionOptions,
 } from './subscription';
 import {promisifySome} from './util';
+import snakeCase = require('lodash.snakecase');
 
 export type TopicMetadata = google.pubsub.v1.ITopic;
 
@@ -951,7 +952,7 @@ export class Topic {
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
     const topic = Object.assign({name: this.name}, options);
-    const updateMask = {paths: Object.keys(options)};
+    const updateMask = {paths: Object.keys(options).map(snakeCase)};
     const reqOpts = {topic, updateMask};
 
     this.request<TopicMetadata>(
