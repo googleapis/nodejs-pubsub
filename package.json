@@ -1,7 +1,7 @@
 {
   "name": "@google-cloud/pubsub",
   "description": "Cloud Pub/Sub Client Library for Node.js",
-  "version": "3.7.1",
+  "version": "3.7.3",
   "license": "Apache-2.0",
   "author": "Google Inc.",
   "engines": {
@@ -58,7 +58,7 @@
     "arrify": "^2.0.0",
     "extend": "^3.0.2",
     "google-auth-library": "^8.0.2",
-    "google-gax": "next",
+    "google-gax": "^4.0.0",
     "heap-js": "^2.2.0",
     "is-stream-ended": "^0.1.4",
     "lodash.snakecase": "^4.1.1",

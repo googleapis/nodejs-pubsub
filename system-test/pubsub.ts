@@ -307,6 +307,22 @@ describe('pubsub', () => {
       );
     });
 
+    it('should set metadata for a topic', async () => {
+      const threeDaysInSeconds = 3 * 24 * 60 * 60;
+
+      const topic = pubsub.topic(TOPIC_NAMES[0]);
+      await topic.setMetadata({
+        messageRetentionDuration: {
+          seconds: threeDaysInSeconds,
+        },
+      });
+      const [metadata] = await topic.getMetadata();
+      const {seconds, nanos} = metadata.messageRetentionDuration!;
+
+      assert.strictEqual(Number(seconds), threeDaysInSeconds);
+      assert.strictEqual(Number(nanos), 0);
+    });
+
     describe('ordered messages', () => {
       interface Expected {
         key: string;
