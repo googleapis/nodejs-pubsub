@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.7.3](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.2...v3.7.3) (2023-07-26)
+
+
+### Bug Fixes
+
+* Update masks for topic should be snake case ([#1778](https://github.com/googleapis/nodejs-pubsub/issues/1778)) ([ba72638](https://github.com/googleapis/nodejs-pubsub/commit/ba7263836e6951454f77f631c9d2eb0a4df98da5))
+
 ## [3.7.2](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.1...v3.7.2) (2023-07-24)
 
 
