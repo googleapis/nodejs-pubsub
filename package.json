@@ -29,7 +29,7 @@
   "scripts": {
     "presystem-test": "npm run compile",
     "system-test": "mocha build/system-test --timeout 600000",
-    "samples-test": "npm run pack && cd samples/ && npm install && npm test && cd ../",
+    "samples-test": "cd samples/ && npm install && npm test && cd ../",
     "test": "c8 mocha build/test --recursive",
     "lint": "gts check",
     "predocs": "npm run compile",
