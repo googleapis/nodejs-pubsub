@@ -45,7 +45,7 @@ export interface IamPermissionsMap {
 
 export type TestIamPermissionsResponse = [
   IamPermissionsMap,
-  IamProtos.google.iam.v1.ITestIamPermissionsResponse
+  IamProtos.google.iam.v1.ITestIamPermissionsResponse,
 ];
 export type TestIamPermissionsCallback = ResourceCallback<
   IamPermissionsMap,
@@ -387,10 +387,13 @@ export class IAM {
         const availablePermissions = arrify(resp!.permissions!);
         const permissionHash: IamPermissionsMap = (
           permissions as string[]
-        ).reduce((acc, permission) => {
-          acc[permission] = availablePermissions.indexOf(permission) > -1;
-          return acc;
-        }, {} as {[key: string]: boolean});
+        ).reduce(
+          (acc, permission) => {
+            acc[permission] = availablePermissions.indexOf(permission) > -1;
+            return acc;
+          },
+          {} as {[key: string]: boolean}
+        );
         callback!(null, permissionHash, resp!);
       }
     );
