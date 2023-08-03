@@ -81,6 +81,7 @@ class FakeSubscriber extends EventEmitter {
     super();
     // eslint-disable-next-line prefer-rest-params
     this.calledWith_ = arguments;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     subscriber = this;
   }
   open(): void {
