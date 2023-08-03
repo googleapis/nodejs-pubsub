@@ -438,7 +438,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.ITopic | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   createTopic(
@@ -476,7 +476,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.ITopic | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -525,7 +525,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IUpdateTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   updateTopic(
@@ -563,7 +563,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IUpdateTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -609,7 +609,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.IPublishResponse,
       protos.google.pubsub.v1.IPublishRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   publish(
@@ -647,7 +647,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.IPublishResponse,
       protos.google.pubsub.v1.IPublishRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -690,7 +690,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IGetTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   getTopic(
@@ -728,7 +728,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IGetTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -775,7 +775,7 @@ export class PublisherClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   deleteTopic(
@@ -813,7 +813,7 @@ export class PublisherClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -859,7 +859,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.IDetachSubscriptionResponse,
       protos.google.pubsub.v1.IDetachSubscriptionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   detachSubscription(
@@ -897,7 +897,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.IDetachSubscriptionResponse,
       protos.google.pubsub.v1.IDetachSubscriptionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -952,7 +952,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic[],
       protos.google.pubsub.v1.IListTopicsRequest | null,
-      protos.google.pubsub.v1.IListTopicsResponse
+      protos.google.pubsub.v1.IListTopicsResponse,
     ]
   >;
   listTopics(
@@ -990,7 +990,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic[],
       protos.google.pubsub.v1.IListTopicsRequest | null,
-      protos.google.pubsub.v1.IListTopicsResponse
+      protos.google.pubsub.v1.IListTopicsResponse,
     ]
   > | void {
     request = request || {};
@@ -1137,7 +1137,7 @@ export class PublisherClient {
     [
       string[],
       protos.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListTopicSubscriptionsResponse
+      protos.google.pubsub.v1.IListTopicSubscriptionsResponse,
     ]
   >;
   listTopicSubscriptions(
@@ -1183,7 +1183,7 @@ export class PublisherClient {
     [
       string[],
       protos.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListTopicSubscriptionsResponse
+      protos.google.pubsub.v1.IListTopicSubscriptionsResponse,
     ]
   > | void {
     request = request || {};
@@ -1338,7 +1338,7 @@ export class PublisherClient {
     [
       string[],
       protos.google.pubsub.v1.IListTopicSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse
+      protos.google.pubsub.v1.IListTopicSnapshotsResponse,
     ]
   >;
   listTopicSnapshots(
@@ -1378,7 +1378,7 @@ export class PublisherClient {
     [
       string[],
       protos.google.pubsub.v1.IListTopicSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse
+      protos.google.pubsub.v1.IListTopicSnapshotsResponse,
     ]
   > | void {
     request = request || {};

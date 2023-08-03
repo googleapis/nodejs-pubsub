@@ -55,6 +55,7 @@ async function createSubscriptionWithExactlyOnceDelivery(
   console.log(
     `Created subscription ${subscriptionNameOrId} with exactly-once delivery.`
   );
+
   console.log(
     'To process messages, remember to check the return value of ackWithResponse().'
   );
