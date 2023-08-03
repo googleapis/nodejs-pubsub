@@ -4,6 +4,22 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.0.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.3...v4.0.0) (2023-08-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* node 12 eos ([#1774](https://github.com/googleapis/nodejs-pubsub/issues/1774)) (#1784)
+
+### Features
+
+* Node 12 eos ([#1774](https://github.com/googleapis/nodejs-pubsub/issues/1774)) ([#1784](https://github.com/googleapis/nodejs-pubsub/issues/1784)) ([47b83c1](https://github.com/googleapis/nodejs-pubsub/commit/47b83c18c543a7c8763256f79927a7340db56568))
+
+
+### Bug Fixes
+
+* Fix typings for IAM methods ([#1785](https://github.com/googleapis/nodejs-pubsub/issues/1785)) ([9a6bdbc](https://github.com/googleapis/nodejs-pubsub/commit/9a6bdbce952c81cb1a43fecbce16a3e3ab0f1420))
+
 ## [3.7.3](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.2...v3.7.3) (2023-07-26)
 
 
