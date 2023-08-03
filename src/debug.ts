@@ -29,5 +29,8 @@
  * may be added or removed at any time, without warning.
  */
 export class DebugMessage {
-  constructor(public message: string, public error?: Error) {}
+  constructor(
+    public message: string,
+    public error?: Error
+  ) {}
 }
