@@ -4,6 +4,16 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.0.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.0...v4.0.1) (2023-08-11)
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @google-cloud/paginator to v5 ([#1799](https://github.com/googleapis/nodejs-pubsub/issues/1799)) ([3195d21](https://github.com/googleapis/nodejs-pubsub/commit/3195d21bf817cf10daa86b019532c9405dc42405))
+* **deps:** Update dependency @google-cloud/precise-date to v4 ([#1803](https://github.com/googleapis/nodejs-pubsub/issues/1803)) ([2c22d67](https://github.com/googleapis/nodejs-pubsub/commit/2c22d67b0fbaf3409101a830ee0c5be002ed6c7b))
+* **deps:** Update dependency @google-cloud/projectify to v4 ([#1800](https://github.com/googleapis/nodejs-pubsub/issues/1800)) ([5787d56](https://github.com/googleapis/nodejs-pubsub/commit/5787d56b95d46544bf8c59fe4bc4cb374bc53d0a))
+* **deps:** Update dependency @google-cloud/promisify to v4 ([#1798](https://github.com/googleapis/nodejs-pubsub/issues/1798)) ([093c46b](https://github.com/googleapis/nodejs-pubsub/commit/093c46bd0a4713ad9702bde03eaa5e8b0acedb28))
+
 ## [4.0.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.3...v4.0.0) (2023-08-03)
 
 
