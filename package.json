@@ -48,7 +48,7 @@
     "pack": "npm pack && mv google-cloud-pubsub*.tgz samples/pubsub-current.tgz"
   },
   "dependencies": {
-    "@google-cloud/paginator": "^4.0.1",
+    "@google-cloud/paginator": "^5.0.0",
     "@google-cloud/precise-date": "^3.0.1",
     "@google-cloud/projectify": "^3.0.0",
     "@google-cloud/promisify": "^4.0.0",
