@@ -29,7 +29,7 @@
   "scripts": {
     "presystem-test": "npm run compile",
     "system-test": "mocha build/system-test --timeout 600000",
-    "samples-test": "cd samples/ && npm install && npm test && cd ../",
+    "samples-test": "cd samples/ && npm link ../ && npm install && npm test && cd ../",
     "test": "c8 mocha build/test --recursive",
     "lint": "gts check",
     "predocs": "npm run compile",
@@ -43,9 +43,8 @@
     "docs-test": "linkinator docs",
     "predocs-test": "npm run docs",
     "benchwrapper": "node bin/benchwrapper.js",
-    "prelint": "npm run pack && cd samples; npm install",
-    "precompile": "gts clean",
-    "pack": "npm pack && mv google-cloud-pubsub*.tgz samples/pubsub-current.tgz"
+    "prelint": "cd samples; npm link ../; npm install",
+    "precompile": "gts clean"
   },
   "dependencies": {
     "@google-cloud/paginator": "^5.0.0",
