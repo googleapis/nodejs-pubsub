@@ -511,7 +511,8 @@ export interface SubscriberOptions {
   useLegacyFlowControl?: boolean;
   streamingOptions?: MessageStreamOptions;
 
-  /** @deprecated Unset and use context propagation. */
+  /** @deprecated Unset this and instantiate a tracer; support will be
+   *    enabled automatically. */
   enableOpenTelemetryTracing?: boolean;
 }
 
@@ -697,7 +698,10 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(message, true);
+    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(
+      message,
+      true
+    );
 
     // Ignore this in this version of the method (but hook catch
     // to avoid unhandled exceptions).
@@ -723,7 +727,10 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(message, true);
+    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(
+      message,
+      true
+    );
 
     await this._acks.add(message);
 
@@ -827,7 +834,10 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nack(message: Message): Promise<void> {
-    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(message, false);
+    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(
+      message,
+      false
+    );
 
     await this.modAck(message, 0);
 
@@ -846,7 +856,10 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nackWithResponse(message: Message): Promise<AckResponse> {
-    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(message, false);
+    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(
+      message,
+      false
+    );
     const response = await this.modAckWithResponse(message, 0);
     ackSpan?.end();
     return response;
