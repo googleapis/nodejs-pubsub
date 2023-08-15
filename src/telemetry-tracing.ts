@@ -120,11 +120,7 @@ export interface MessageWithAttributes {
  *
  * @private
  */
-export class PubsubMessageGetSet
-  implements
-    TextMapGetter<MessageWithAttributes>,
-    TextMapSetter<MessageWithAttributes>
-{
+export class PubsubMessageGetSet {
   static keyPrefix = 'googclient_';
 
   keys(carrier: MessageWithAttributes): string[] {
@@ -133,17 +129,27 @@ export class PubsubMessageGetSet
       .map(n => n.substring(PubsubMessageGetSet.keyPrefix.length));
   }
 
-  private attributeName(key: string): string {
+  protected attributeName(key: string): string {
     return `${PubsubMessageGetSet.keyPrefix}${key}`;
   }
+}
 
+export class PubsubMessageGet
+  extends PubsubMessageGetSet
+  implements TextMapGetter<MessageWithAttributes>
+{
   get(
     carrier: MessageWithAttributes,
     key: string
   ): string | string[] | undefined {
     return carrier?.attributes?.[this.attributeName(key)];
   }
+}
 
+export class PubsubMessageSet
+  extends PubsubMessageGetSet
+  implements TextMapSetter<MessageWithAttributes>
+{
   set(carrier: MessageWithAttributes, key: string, value: string): void {
     if (!carrier.attributes) {
       carrier.attributes = {};
@@ -157,14 +163,14 @@ export class PubsubMessageGetSet
  *
  * @private
  */
-export const pubsubGetter = new PubsubMessageGetSet();
+export const pubsubGetter = new PubsubMessageGet();
 
 /**
  * The setter to use when calling inject() on a Pub/Sub message.
  *
  * @private
  */
-export const pubsubSetter = pubsubGetter;
+export const pubsubSetter = new PubsubMessageSet();
 
 /**
  * Description of the data structure passed for span attributes.
