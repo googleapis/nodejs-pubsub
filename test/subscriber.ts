@@ -923,7 +923,7 @@ describe('Subscriber', () => {
       const msgStream = stubs.get('messageStream');
       msgStream.emit('data', pullResponse);
 
-      message.endTelemetrySpan();
+      message.endParentSpan();
 
       const spans = exporter.getFinishedSpans();
       assert.strictEqual(spans.length, 2);
@@ -959,7 +959,7 @@ describe('Subscriber', () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
       stream.emit('data', pullResponse);
 
-      message.endTelemetrySpan();
+      message.endParentSpan();
       assert.strictEqual(exporter.getFinishedSpans().length, 2);
     });
   });

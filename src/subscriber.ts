@@ -199,31 +199,32 @@ export class Message implements tracing.MessageWithAttributes {
   /**
    * @private
    *
-   * Tracks any telemetry span through the library, on the receive side. This will
-   * be the original publisher-side span if we have one.
+   * Tracks a telemetry tracing parent span through the receive process. This will
+   * be the original publisher-side span if we have one; otherwise we'll create
+   * a "publisher" span to hang new subscriber spans onto.
    *
    * This needs to be declared explicitly here, because having a public class
    * implement a private interface seems to confuse TypeScript. (And it's needed
    * in unit tests.)
    */
-  telemetrySpan?: tracing.Span;
+  parentSpan?: tracing.Span;
 
   /**
    * @private
    *
-   * Ends any open subscribe telemetry span.
+   * Ends any open subscribe telemetry tracing span.
    */
-  endTelemetrySpan() {
-    this.telemetrySpan?.end();
-    delete this.telemetrySpan;
+  endParentSpan() {
+    this.parentSpan?.end();
+    delete this.parentSpan;
   }
 
   /**
    * @private
    *
-   * Tracks subscriber-specific telemetry spans through the library.
+   * Tracks subscriber-specific telemetry objects through the library.
    */
-  telemetrySub: SubscriberTelemetry;
+  subSpans: SubscriberTelemetry;
 
   private _ackFailed?: AckError;
 
@@ -309,7 +310,7 @@ export class Message implements tracing.MessageWithAttributes {
      *
      * @private
      */
-    this.telemetrySub = new SubscriberTelemetry(this, sub);
+    this.subSpans = new SubscriberTelemetry(this, sub);
 
     this._handled = false;
     this._length = this.data.length;
@@ -975,7 +976,7 @@ export class Subscriber extends EventEmitter {
         if (this.isExactlyOnceDelivery) {
           // For exactly-once delivery, we must validate that we got a valid
           // lease on the message before actually leasing it.
-          message.telemetrySub.modAckStart(
+          message.subSpans.modAckStart(
             Duration.from({seconds: this.ackDeadline}),
             true
           );
@@ -990,15 +991,15 @@ export class Subscriber extends EventEmitter {
               this._discardMessage(message);
             })
             .finally(() => {
-              message.telemetrySub.modAckStop();
+              message.subSpans.modAckStop();
             });
         } else {
-          message.telemetrySub.modAckStart(
+          message.subSpans.modAckStart(
             Duration.from({seconds: this.ackDeadline}),
             true
           );
           message.modAck(this.ackDeadline);
-          message.telemetrySub.modAckStop();
+          message.subSpans.modAckStop();
           this._inventory.add(message);
         }
       } else {
