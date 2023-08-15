@@ -286,7 +286,10 @@ export class SpanMaker {
     return SpanMaker.createChildSpan(message, 'publish scheduler');
   }
 
-  static createPublishRpcSpan(message: PubsubMessage, messageCount: number): Span | undefined {
+  static createPublishRpcSpan(
+    message: PubsubMessage,
+    messageCount: number
+  ): Span | undefined {
     const span = SpanMaker.createChildSpan(message, 'publish');
     span?.setAttribute('messaging.pubsub.num_messages_in_batch', messageCount);
 
