@@ -118,7 +118,7 @@ export abstract class MessageQueue extends EventEmitter {
     }
 
     messages.forEach(m => {
-      const span = tracing.SpanMaker.createPublishRpcSpan(m);
+      const span = tracing.SpanMaker.createPublishRpcSpan(m, messages.length);
       if (span) {
         m.telemetryRpc = span;
       }
