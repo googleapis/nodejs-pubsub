@@ -63,12 +63,11 @@ export class AckError extends Error {
 }
 
 /**
- * Tracks the various spans in receive telemetry. This is a little
- * extra abstraction in case we want to allow more providers later.
+ * Tracks the various spans related to subscriber/receive tracing.
  *
  * @private
  */
-export class SubscriberTelemetry {
+export class SubscriberSpans {
   parent: Message;
   sub: Subscriber;
 
@@ -224,7 +223,7 @@ export class Message implements tracing.MessageWithAttributes {
    *
    * Tracks subscriber-specific telemetry objects through the library.
    */
-  subSpans: SubscriberTelemetry;
+  subSpans: SubscriberSpans;
 
   private _ackFailed?: AckError;
 
@@ -306,11 +305,11 @@ export class Message implements tracing.MessageWithAttributes {
     this.received = Date.now();
 
     /**
-     * Telemetry tracking objects.
+     * Telemetry tracing objects.
      *
      * @private
      */
-    this.subSpans = new SubscriberTelemetry(this, sub);
+    this.subSpans = new SubscriberSpans(this, sub);
 
     this._handled = false;
     this._length = this.data.length;
