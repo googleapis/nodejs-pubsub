@@ -81,7 +81,7 @@ export class SubscriberTelemetry {
   // Start a flow control span if needed.
   flowStart() {
     if (!this.flow) {
-      this.flow = tracing.SpanMaker.createReceiveFlowSpan(this.parent);
+      this.flow = tracing.PubsubSpans.createReceiveFlowSpan(this.parent);
     }
   }
 
@@ -96,7 +96,7 @@ export class SubscriberTelemetry {
   // Start a leasing modAck span if needed.
   modAckStart(deadline: Duration, isInitial: boolean) {
     if (!this.modAck) {
-      this.modAck = tracing.SpanMaker.createModAckSpan(
+      this.modAck = tracing.PubsubSpans.createModAckSpan(
         this.parent,
         deadline,
         isInitial
@@ -117,7 +117,7 @@ export class SubscriberTelemetry {
   // scheduler process, due to the way messages are delivered one at a time.
   schedulerStart() {
     if (!this.scheduler) {
-      this.scheduler = tracing.SpanMaker.createReceiveSchedulerSpan(
+      this.scheduler = tracing.PubsubSpans.createReceiveSchedulerSpan(
         this.parent
       );
     }
@@ -135,7 +135,7 @@ export class SubscriberTelemetry {
   // This is for user processing, during on('message') delivery.
   processingStart(subName: string) {
     if (!this.processing) {
-      this.processing = tracing.SpanMaker.createReceiveProcessSpan(
+      this.processing = tracing.PubsubSpans.createReceiveProcessSpan(
         this.parent,
         subName
       );
@@ -697,7 +697,7 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    const ackSpan = tracing.SpanMaker.createReceiveResponseSpan(message, true);
+    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(message, true);
 
     // Ignore this in this version of the method (but hook catch
     // to avoid unhandled exceptions).
@@ -723,7 +723,7 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    const ackSpan = tracing.SpanMaker.createReceiveResponseSpan(message, true);
+    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(message, true);
 
     await this._acks.add(message);
 
@@ -827,7 +827,7 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nack(message: Message): Promise<void> {
-    const ackSpan = tracing.SpanMaker.createReceiveResponseSpan(message, false);
+    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(message, false);
 
     await this.modAck(message, 0);
 
@@ -846,7 +846,7 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nackWithResponse(message: Message): Promise<AckResponse> {
-    const ackSpan = tracing.SpanMaker.createReceiveResponseSpan(message, false);
+    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(message, false);
     const response = await this.modAckWithResponse(message, 0);
     ackSpan?.end();
     return response;

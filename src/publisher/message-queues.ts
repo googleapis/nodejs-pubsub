@@ -110,7 +110,7 @@ export abstract class MessageQueue extends EventEmitter {
         await topic.pubsub.getClientConfig();
       }
       spanMessages.forEach(m => {
-        tracing.SpanMaker.updatePublisherTopicName(
+        tracing.PubsubSpans.updatePublisherTopicName(
           m.telemetrySpan!,
           topic.name
         );
@@ -118,7 +118,7 @@ export abstract class MessageQueue extends EventEmitter {
     }
 
     messages.forEach(m => {
-      const span = tracing.SpanMaker.createPublishRpcSpan(m, messages.length);
+      const span = tracing.PubsubSpans.createPublishRpcSpan(m, messages.length);
       if (span) {
         m.telemetryRpc = span;
       }
@@ -190,7 +190,7 @@ export class Queue extends MessageQueue {
     }
 
     message.telemetryBatching =
-      tracing.SpanMaker.createPublishBatchSpan(message);
+      tracing.PubsubSpans.createPublishBatchSpan(message);
 
     this.batch.add(message, callback);
 

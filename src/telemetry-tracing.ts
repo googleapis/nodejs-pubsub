@@ -211,7 +211,7 @@ export const modernAttributeName = 'googclient_traceparent';
  */
 export const legacyAttributeName = 'googclient_OpenTelemetrySpanContext';
 
-export class SpanMaker {
+export class PubsubSpans {
   static createPublisherSpan(message: PubsubMessage, topicName: string): Span {
     const spanAttributes = {
       // Add Opentelemetry semantic convention attributes to the span, based on:
@@ -285,18 +285,18 @@ export class SpanMaker {
   }
 
   static createPublishFlowSpan(message: PubsubMessage): Span | undefined {
-    return SpanMaker.createChildSpan(message, 'publisher flow control');
+    return PubsubSpans.createChildSpan(message, 'publisher flow control');
   }
 
   static createPublishBatchSpan(message: PubsubMessage): Span | undefined {
-    return SpanMaker.createChildSpan(message, 'publish scheduler');
+    return PubsubSpans.createChildSpan(message, 'publish scheduler');
   }
 
   static createPublishRpcSpan(
     message: PubsubMessage,
     messageCount: number
   ): Span | undefined {
-    const span = SpanMaker.createChildSpan(message, 'publish');
+    const span = PubsubSpans.createChildSpan(message, 'publish');
     span?.setAttribute('messaging.pubsub.num_messages_in_batch', messageCount);
 
     return span;
@@ -307,7 +307,7 @@ export class SpanMaker {
     deadline: Duration,
     initial: boolean
   ) {
-    const span = SpanMaker.createChildSpan(message, 'modify ack deadline');
+    const span = PubsubSpans.createChildSpan(message, 'modify ack deadline');
     if (span) {
       span.setAttributes({
         'messaging.pubsub.modack_deadline_seconds': deadline.totalOf('second'),
@@ -320,20 +320,20 @@ export class SpanMaker {
   static createReceiveFlowSpan(
     message: MessageWithAttributes
   ): Span | undefined {
-    return SpanMaker.createChildSpan(message, 'subscriber flow control');
+    return PubsubSpans.createChildSpan(message, 'subscriber flow control');
   }
 
   static createReceiveSchedulerSpan(
     message: MessageWithAttributes
   ): Span | undefined {
-    return SpanMaker.createChildSpan(message, 'subscribe scheduler');
+    return PubsubSpans.createChildSpan(message, 'subscribe scheduler');
   }
 
   static createReceiveProcessSpan(
     message: MessageWithAttributes,
     subName: string
   ): Span | undefined {
-    return SpanMaker.createChildSpan(message, `${subName} process`);
+    return PubsubSpans.createChildSpan(message, `${subName} process`);
   }
 
   static setReceiveProcessResult(span: Span, isAck: boolean) {
@@ -345,7 +345,7 @@ export class SpanMaker {
     deadline: Duration,
     isInitial: boolean
   ): Span | undefined {
-    const span = SpanMaker.createChildSpan(message, 'modify ack deadline');
+    const span = PubsubSpans.createChildSpan(message, 'modify ack deadline');
     span?.setAttribute(
       'messaging.pubsub.modack_deadline_seconds',
       deadline.totalOf('second')
@@ -359,7 +359,7 @@ export class SpanMaker {
     isAck: boolean
   ): Span | undefined {
     const name = isAck ? 'ack' : 'nack';
-    return SpanMaker.createChildSpan(message, name);
+    return PubsubSpans.createChildSpan(message, name);
   }
 }
 
@@ -473,7 +473,7 @@ export function extractSpan(
     }
   }
 
-  const span = SpanMaker.createReceiveSpan(message, subName, context);
+  const span = PubsubSpans.createReceiveSpan(message, subName, context);
   message.telemetrySpan = span;
   return span;
 }

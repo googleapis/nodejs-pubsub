@@ -361,7 +361,7 @@ export class Subscription extends WrappingEmitter {
     if (eventName !== 'message') {
       return listener(...args);
     } else {
-      const span = tracing.SpanMaker.createReceiveProcessSpan(
+      const span = tracing.PubsubSpans.createReceiveProcessSpan(
         args[0] as Message,
         this.name
       );

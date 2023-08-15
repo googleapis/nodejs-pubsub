@@ -343,7 +343,7 @@ export class Publisher {
       return message.telemetrySpan;
     }
 
-    const span = tracing.SpanMaker.createPublisherSpan(
+    const span = tracing.PubsubSpans.createPublisherSpan(
       message,
       this.topic.name
     );
