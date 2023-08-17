@@ -339,8 +339,8 @@ export class Publisher {
       return undefined;
     }
 
-    if (message.telemetrySpan) {
-      return message.telemetrySpan;
+    if (message.parentSpan) {
+      return message.parentSpan;
     }
 
     const span = tracing.PubsubSpans.createPublisherSpan(

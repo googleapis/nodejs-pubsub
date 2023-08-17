@@ -105,18 +105,19 @@ export function isEnabled(
  * object, which is one of several possible Message classes. (They're
  * different for publish and subscribe.)
  *
- * Also we add a telemetrySpan optional member for passing around the
- * actual Span object within the client library.
+ * Also we add a parentSpan optional member for passing around the
+ * actual Span object within the client library. This can be a publish
+ * or subscriber span, depending on the context.
  *
  * @private
  */
 export interface MessageWithAttributes {
   attributes?: Attributes | null | undefined;
-  telemetrySpan?: Span;
+  parentSpan?: Span;
 }
 
 /**
- * Implements the TextMap getter and setter interfaces for Pub/Sub messages.
+ * Implements common members for the TextMap getter and setter interfaces for Pub/Sub messages.
  *
  * @private
  */
@@ -134,6 +135,11 @@ export class PubsubMessageGetSet {
   }
 }
 
+/**
+ * Implements the TextMap getter interface for Pub/Sub messages.
+ *
+ * @private
+ */
 export class PubsubMessageGet
   extends PubsubMessageGetSet
   implements TextMapGetter<MessageWithAttributes>
@@ -146,6 +152,11 @@ export class PubsubMessageGet
   }
 }
 
+/**
+ * Implements the TextMap setter interface for Pub/Sub messages.
+ *
+ * @private
+ */
 export class PubsubMessageSet
   extends PubsubMessageGetSet
   implements TextMapSetter<MessageWithAttributes>
@@ -269,7 +280,7 @@ export class PubsubSpans {
     message: MessageWithAttributes,
     name: string
   ): Span | undefined {
-    const parent = message.telemetrySpan;
+    const parent = message.parentSpan;
     if (parent) {
       return getTracer().startSpan(
         name,
@@ -406,7 +417,7 @@ export function injectSpan(
 
   // Also put the direct reference to the Span object for while we're
   // passing it around in the client library.
-  message.telemetrySpan = span;
+  message.parentSpan = span;
 }
 
 /**
@@ -415,7 +426,7 @@ export function injectSpan(
  * @private
  */
 export function containsSpanContext(message: MessageWithAttributes): boolean {
-  if (message.telemetrySpan) {
+  if (message.parentSpan) {
     return true;
   }
 
@@ -443,8 +454,8 @@ export function extractSpan(
   subName: string,
   enabled: OpenTelemetryLevel
 ): Span | undefined {
-  if (message.telemetrySpan) {
-    return message.telemetrySpan;
+  if (message.parentSpan) {
+    return message.parentSpan;
   }
 
   const keys = Object.getOwnPropertyNames(message.attributes ?? {});
@@ -474,7 +485,7 @@ export function extractSpan(
   }
 
   const span = PubsubSpans.createReceiveSpan(message, subName, context);
-  message.telemetrySpan = span;
+  message.parentSpan = span;
   return span;
 }
 

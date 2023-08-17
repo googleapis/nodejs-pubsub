@@ -199,7 +199,7 @@ describe('Publisher', () => {
 
       // publishMessage is only the first part of the process now,
       // so we need to manually end the span.
-      msg.telemetrySpan?.end();
+      msg.parentSpan?.end();
 
       const spans = exporter.getFinishedSpans();
       assert.notStrictEqual(spans.length, 0, 'has span');
