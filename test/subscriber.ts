@@ -775,10 +775,10 @@ describe('Subscriber', () => {
         // OTel is enabled during tests, so we need to delete the baggage.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const [addMsgAny, msgAny] = [addMsg as any, message as any];
-        delete addMsgAny.telemetrySpan;
-        delete addMsgAny.telemetrySub;
-        delete msgAny.telemetrySpan;
-        delete msgAny.telemetrySub;
+        delete addMsgAny.parentSpan;
+        delete addMsgAny.subSpans;
+        delete msgAny.parentSpan;
+        delete msgAny.subSpans;
 
         assert.deepStrictEqual(addMsg, message);
 

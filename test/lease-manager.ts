@@ -61,7 +61,7 @@ class FakeSubscriberTelemetry {
 class FakeMessage {
   length = 20;
   received: number;
-  telemetrySub: FakeSubscriberTelemetry = new FakeSubscriberTelemetry();
+  subSpans: FakeSubscriberTelemetry = new FakeSubscriberTelemetry();
 
   constructor() {
     this.received = Date.now();
@@ -71,7 +71,7 @@ class FakeMessage {
     return AckResponses.Success;
   }
   ackFailed() {}
-  endTelemetrySpan() {}
+  endParentSpan() {}
 }
 
 interface LeaseManagerInternals {
