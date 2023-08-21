@@ -68,13 +68,11 @@ export class AckError extends Error {
  * @private
  */
 export class SubscriberSpans {
-  parent: Message;
-  sub: Subscriber;
+  parent: tracing.MessageWithAttributes;
 
-  // These are always attached to a message (and its subscriber).
-  constructor(parent: Message, sub: Subscriber) {
+  // These are always attached to a message.
+  constructor(parent: tracing.MessageWithAttributes) {
     this.parent = parent;
-    this.sub = sub;
   }
 
   // Start a flow control span if needed.
@@ -309,7 +307,7 @@ export class Message implements tracing.MessageWithAttributes {
      *
      * @private
      */
-    this.subSpans = new SubscriberSpans(this, sub);
+    this.subSpans = new SubscriberSpans(this);
 
     this._handled = false;
     this._length = this.data.length;

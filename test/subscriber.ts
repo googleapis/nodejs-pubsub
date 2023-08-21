@@ -35,6 +35,7 @@ import * as s from '../src/subscriber';
 import {Subscription} from '../src/subscription';
 import {SpanKind} from '@opentelemetry/api';
 import {Duration} from '../src';
+import * as tracing from '../src/telemetry-tracing';
 
 type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 
@@ -1169,6 +1170,110 @@ describe('Subscriber', () => {
 
         assert.strictEqual(stub.callCount, 0);
       });
+    });
+  });
+
+  describe('SubscriberSpans', () => {
+    const message: tracing.MessageWithAttributes = {
+      attributes: {},
+      parentSpan: undefined,
+    };
+    const spans = new s.SubscriberSpans(message);
+    const fakeSpan = {
+      end() {},
+    } as unknown as opentelemetry.Span;
+
+    it('starts a flow span', () => {
+      const stub = sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveFlowSpan')
+        .returns(fakeSpan);
+      spans.flowStart();
+      assert.strictEqual(stub.calledOnce, true);
+      assert.strictEqual(stub.args[0][0], message);
+      spans.flowStart();
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('ends a flow span', () => {
+      sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveFlowSpan')
+        .returns(fakeSpan);
+      spans.flowStart();
+      const spy = sandbox.spy(fakeSpan, 'end');
+      spans.flowEnd();
+      assert.strictEqual(spy.calledOnce, true);
+      spans.flowEnd();
+      assert.strictEqual(spy.calledOnce, true);
+    });
+
+    it('starts a modAck span', () => {
+      const stub = sandbox
+        .stub(tracing.PubsubSpans, 'createModAckSpan')
+        .returns(fakeSpan);
+      spans.modAckStart(Duration.from({seconds: 10}), true);
+      assert.strictEqual(stub.args[0][0], message);
+      assert.strictEqual(stub.args[0][1].totalOf('second'), 10);
+      assert.strictEqual(stub.args[0][2], true);
+      spans.modAckStart(Duration.from({seconds: 20}), false);
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('ends a modAck span', () => {
+      sandbox.stub(tracing.PubsubSpans, 'createModAckSpan').returns(fakeSpan);
+      spans.modAckStart(Duration.from({seconds: 10}), true);
+      const spy = sandbox.spy(fakeSpan, 'end');
+      spans.modAckStop();
+      assert.strictEqual(spy.calledOnce, true);
+      spans.modAckStop();
+      assert.strictEqual(spy.calledOnce, true);
+    });
+
+    it('starts a scheduler span', () => {
+      const stub = sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveSchedulerSpan')
+        .returns(fakeSpan);
+      spans.schedulerStart();
+      assert.strictEqual(stub.args[0][0], message);
+      assert.strictEqual(stub.calledOnce, true);
+      spans.schedulerStart();
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('ends a scheduler span', () => {
+      sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveSchedulerSpan')
+        .returns(fakeSpan);
+      spans.schedulerStart();
+      const spy = sandbox.spy(fakeSpan, 'end');
+      spans.schedulerEnd();
+      assert.strictEqual(spy.calledOnce, true);
+      spans.schedulerEnd();
+      assert.strictEqual(spy.calledOnce, true);
+    });
+
+    it('starts a processing span', () => {
+      const stub = sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveProcessSpan')
+        .returns(fakeSpan);
+      const subName = 'foozle';
+      spans.processingStart(subName);
+      assert.strictEqual(stub.args[0][0], message);
+      assert.strictEqual(stub.args[0][1], subName);
+      assert.strictEqual(stub.calledOnce, true);
+      spans.processingStart('boo');
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('ends a processing span', () => {
+      sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveSchedulerSpan')
+        .returns(fakeSpan);
+      spans.processingStart('foozle');
+      const spy = sandbox.spy(fakeSpan, 'end');
+      spans.processingEnd();
+      assert.strictEqual(spy.calledOnce, true);
+      spans.processingEnd();
+      assert.strictEqual(spy.calledOnce, true);
     });
   });
 });
