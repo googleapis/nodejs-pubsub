@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.0.2](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.1...v4.0.2) (2023-08-24)
+
+
+### Bug Fixes
+
+* Make retry policy back off more aggressively for RPCs that retry RESOURCE_EXHAUSTD ([#1806](https://github.com/googleapis/nodejs-pubsub/issues/1806)) ([e9969ba](https://github.com/googleapis/nodejs-pubsub/commit/e9969bab92c38f1509b157034fcdbe5d5ec63903))
+
 ## [4.0.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.0...v4.0.1) (2023-08-11)
 
 
