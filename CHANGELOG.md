@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.0.3](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.2...v4.0.3) (2023-08-31)
+
+
+### Bug Fixes
+
+* Simplify logic for HTTP/1.1 REST fallback option ([#1809](https://github.com/googleapis/nodejs-pubsub/issues/1809)) ([f26008d](https://github.com/googleapis/nodejs-pubsub/commit/f26008de84f201ec6e0180582d8a4bebc3d5ced0))
+
 ## [4.0.2](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.1...v4.0.2) (2023-08-24)
 
 
