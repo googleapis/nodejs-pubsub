@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.0.4](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.3...v4.0.4) (2023-09-05)
+
+
+### Bug Fixes
+
+* Set grpc keepalive time|outs by default ([#1814](https://github.com/googleapis/nodejs-pubsub/issues/1814)) ([13d89a2](https://github.com/googleapis/nodejs-pubsub/commit/13d89a2b4e25f340ef492d586bfa8cc3a9a6d6cf))
+
 ## [4.0.3](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.2...v4.0.3) (2023-08-31)
 
 
