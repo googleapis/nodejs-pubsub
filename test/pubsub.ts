@@ -191,11 +191,16 @@ describe('PubSub', () => {
 
   describe('instantiation', () => {
     const maxMetadataSizeKey = 'grpc.max_metadata_size';
+    const keepaliveTimeKey = 'grpc.keepalive_time_ms';
+    const keepaliveTimeoutKey = 'grpc.keepalive_timeout_ms';
+
     const DEFAULT_OPTIONS = {
       libName: 'gccl',
       libVersion: PKG.version,
       scopes: [],
       [maxMetadataSizeKey]: 4 * 1024 * 1024,
+      [keepaliveTimeKey]: 300000,
+      [keepaliveTimeoutKey]: 20000,
     };
 
     it('should extend the correct methods', () => {
@@ -216,18 +221,24 @@ describe('PubSub', () => {
       assert(new PubSub() instanceof PubSub);
     });
 
-    it('should augment the gRPC options for metadata size', () => {
+    it('should augment the gRPC options', () => {
       let pubsub = new PubSub();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let optionsAny: any = pubsub.options;
       assert.strictEqual(optionsAny[maxMetadataSizeKey], 4 * 1024 * 1024);
+      assert.strictEqual(optionsAny[keepaliveTimeKey], 300000);
+      assert.strictEqual(optionsAny[keepaliveTimeoutKey], 20000);
 
       optionsAny = {
         [maxMetadataSizeKey]: 1 * 1024 * 1024,
+        [keepaliveTimeKey]: 30,
+        [keepaliveTimeoutKey]: 100,
       };
       pubsub = new PubSub(optionsAny);
       optionsAny = pubsub.options;
       assert.strictEqual(optionsAny[maxMetadataSizeKey], 1 * 1024 * 1024);
+      assert.strictEqual(optionsAny[keepaliveTimeKey], 30);
+      assert.strictEqual(optionsAny[keepaliveTimeoutKey], 100);
     });
 
     it('should combine all required scopes', () => {
