@@ -272,16 +272,16 @@ export class PubSub {
   private schemaClient?: SchemaServiceClient;
 
   constructor(options?: ClientConfig) {
-    options = Object.assign({}, options || {});
-
-    // Needed for potentially large responses that may come from using exactly-once delivery.
-    // This will get passed down to grpc client objects.
-    const maxMetadataSize = 'grpc.max_metadata_size';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const optionsAny = options as any;
-    if (optionsAny[maxMetadataSize] === undefined) {
-      optionsAny[maxMetadataSize] = 4 * 1024 * 1024; // 4 MiB
-    }
+    // Needed for potentially large responses that may come from using exactly-once delivery,
+    // as well as trying to work around silent connection failures.
+    //
+    // These will get passed down to grpc client objects. User values will overwrite these.
+    const grpcDefaults = {
+      'grpc.max_metadata_size': 4 * 1024 * 1024, // 4 MiB
+      'grpc.keepalive_time_ms': 300000, // 5 minutes
+      'grpc.keepalive_timeout_ms': 20000, // 20 seconds
+    };
+    options = Object.assign(grpcDefaults, options || {});
 
     // Determine what scopes are needed.
     // It is the union of the scopes on both clients.
