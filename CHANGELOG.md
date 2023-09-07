@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.0.5](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.4...v4.0.5) (2023-09-07)
+
+
+### Bug Fixes
+
+* Always fill the topic and sub names when creating from a PubSub object ([#1816](https://github.com/googleapis/nodejs-pubsub/issues/1816)) ([be8ed53](https://github.com/googleapis/nodejs-pubsub/commit/be8ed530e327e2bd08a49200492f0a163b3b91d7))
+
 ## [4.0.4](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.3...v4.0.4) (2023-09-05)
 
 
