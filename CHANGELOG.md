@@ -4,6 +4,16 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.7.4](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.3...v3.7.4) (2023-09-08)
+
+
+### Bug Fixes
+
+* Always fill the topic and sub names when creating from a PubSub object ([#1816](https://github.com/googleapis/nodejs-pubsub/issues/1816)) ([ddf8b8a](https://github.com/googleapis/nodejs-pubsub/commit/ddf8b8ab288387e51db816df825594cb5190b837))
+* Make retry policy back off more aggressively for RPCs that retry RESOURCE_EXHAUSTD ([#1806](https://github.com/googleapis/nodejs-pubsub/issues/1806)) ([bfcf523](https://github.com/googleapis/nodejs-pubsub/commit/bfcf523da4786d44cc35560aa91962363f475fbb))
+* Set grpc keepalive time|outs by default ([#1814](https://github.com/googleapis/nodejs-pubsub/issues/1814)) ([dedfdea](https://github.com/googleapis/nodejs-pubsub/commit/dedfdea7a47fc19de981218a1d7502c75fdde488))
+* Simplify logic for HTTP/1.1 REST fallback option ([#1809](https://github.com/googleapis/nodejs-pubsub/issues/1809)) ([ee09b69](https://github.com/googleapis/nodejs-pubsub/commit/ee09b69092a16e2e12bc8e2647d48f627e013afd))
+
 ## [3.7.3](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.2...v3.7.3) (2023-07-26)
 
 
