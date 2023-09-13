@@ -33,7 +33,6 @@ const PKG = require('../../package.json');
 const sandbox = sinon.createSandbox();
 
 const fakeCreds = {} as gax.grpc.ChannelCredentials;
-sandbox.stub(gax.grpc.credentials, 'createInsecure').returns(fakeCreds);
 
 const subscriptionCached = subby.Subscription;
 
@@ -48,6 +47,11 @@ function Subscription(
   const overrideFn = subscriptionOverride || subscriptionCached;
   return new overrideFn(pubsub, name, options);
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(Subscription as any).formatName_ = (): string => {
+  return 'formatted';
+};
 
 let promisified = false;
 const fakeUtil = Object.assign({}, util, {
@@ -91,6 +95,10 @@ class FakeTopic {
   getSubscriptions?: Function;
   constructor(...args: Array<{}>) {
     this.calledWith_ = args;
+  }
+
+  static formatName_(): string {
+    return 'foo';
   }
 }
 
@@ -186,15 +194,26 @@ describe('PubSub', () => {
     v1ClientOverrides = {};
     googleAuthOverride = null;
     pubsub = new PubSub(OPTIONS);
+    pubsub.projectId = PROJECT_ID;
+    sandbox.stub(gax.grpc.credentials, 'createInsecure').returns(fakeCreds);
+  });
+
+  afterEach(() => {
+    sandbox.restore();
   });
 
   describe('instantiation', () => {
     const maxMetadataSizeKey = 'grpc.max_metadata_size';
+    const keepaliveTimeKey = 'grpc.keepalive_time_ms';
+    const keepaliveTimeoutKey = 'grpc.keepalive_timeout_ms';
+
     const DEFAULT_OPTIONS = {
       libName: 'gccl',
       libVersion: PKG.version,
       scopes: [],
       [maxMetadataSizeKey]: 4 * 1024 * 1024,
+      [keepaliveTimeKey]: 300000,
+      [keepaliveTimeoutKey]: 20000,
     };
 
     it('should extend the correct methods', () => {
@@ -215,18 +234,24 @@ describe('PubSub', () => {
       assert(new PubSub() instanceof PubSub);
     });
 
-    it('should augment the gRPC options for metadata size', () => {
+    it('should augment the gRPC options', () => {
       let pubsub = new PubSub();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let optionsAny: any = pubsub.options;
       assert.strictEqual(optionsAny[maxMetadataSizeKey], 4 * 1024 * 1024);
+      assert.strictEqual(optionsAny[keepaliveTimeKey], 300000);
+      assert.strictEqual(optionsAny[keepaliveTimeoutKey], 20000);
 
       optionsAny = {
         [maxMetadataSizeKey]: 1 * 1024 * 1024,
+        [keepaliveTimeKey]: 30,
+        [keepaliveTimeoutKey]: 100,
       };
       pubsub = new PubSub(optionsAny);
       optionsAny = pubsub.options;
       assert.strictEqual(optionsAny[maxMetadataSizeKey], 1 * 1024 * 1024);
+      assert.strictEqual(optionsAny[keepaliveTimeKey], 30);
+      assert.strictEqual(optionsAny[keepaliveTimeoutKey], 100);
     });
 
     it('should combine all required scopes', () => {
@@ -542,13 +567,15 @@ describe('PubSub', () => {
 
       it('should return Subscription & resp to the callback', done => {
         const subscription = {};
-        pubsub.subscription = () => {
+        sandbox.stub(pubsub, 'subscription').callsFake(() => {
           return subscription as subby.Subscription;
-        };
+        });
 
-        pubsub.request = (config, callback: Function) => {
-          callback(null, apiResponse);
-        };
+        sandbox
+          .stub(pubsub, 'request')
+          .callsFake((config, callback: Function) => {
+            callback(null, apiResponse);
+          });
 
         function callback(
           err?: Error | null,
@@ -562,6 +589,31 @@ describe('PubSub', () => {
         }
 
         pubsub.createSubscription?.(TOPIC_NAME, SUB_NAME, callback);
+      });
+
+      it('should fill the subscription object name if projectId was empty', async () => {
+        const subscription = {};
+        pubsub.projectId = undefined;
+        sandbox.stub(pubsub, 'subscription').callsFake(() => {
+          // Simulate the project ID not being resolved.
+          const sub = subscription as subby.Subscription;
+          sub.name = '{{projectId}}/foo/bar';
+          return sub;
+        });
+
+        sandbox
+          .stub(pubsub, 'request')
+          .callsFake((config, callback: Function) => {
+            callback(null, apiResponse);
+          });
+
+        const [sub, resp] = await pubsub.createSubscription!(
+          TOPIC_NAME,
+          SUB_NAME
+        )!;
+        assert.strictEqual(sub, subscription);
+        assert.strictEqual(sub.name.includes('{{'), false);
+        assert.strictEqual(resp, apiResponse);
       });
     });
   });
@@ -613,12 +665,17 @@ describe('PubSub', () => {
     });
 
     describe('success', () => {
-      const apiResponse = {};
+      const apiResponse = {
+        name: 'new-topic',
+      };
+      let requestStub: sinon.SinonStub<unknown[], unknown>;
 
       beforeEach(() => {
-        pubsub.request = (config, callback: Function) => {
-          callback(null, apiResponse);
-        };
+        requestStub = sandbox
+          .stub(pubsub, 'request')
+          .callsFake((config, callback: Function) => {
+            callback(null, apiResponse);
+          });
       });
 
       it('should return a Topic object', done => {
@@ -643,6 +700,33 @@ describe('PubSub', () => {
           assert.strictEqual(apiResponse_, apiResponse);
           done();
         });
+      });
+
+      it('should fill the topic object name if projectId was empty', async () => {
+        const topicName = 'new-topic';
+        const topicInstance = {};
+
+        sandbox.stub(pubsub, 'topic').callsFake(name => {
+          assert.strictEqual(name, topicName);
+
+          // Simulate the project ID not being resolved.
+          const topic = topicInstance as Topic;
+          topic.name = 'projects/{{projectId}}/topics/new-topic';
+          return topic;
+        });
+
+        requestStub.restore();
+        sandbox
+          .stub(pubsub, 'request')
+          .callsFake((config, callback: Function) => {
+            pubsub.projectId = 'projectId';
+            callback(null, apiResponse);
+          });
+
+        const [topic, resp] = await pubsub.createTopic!(topicName)!;
+        assert.strictEqual(topic, topicInstance);
+        assert.strictEqual(topic.name.includes('{{'), false);
+        assert.strictEqual(resp, apiResponse);
       });
     });
   });
