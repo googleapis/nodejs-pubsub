@@ -725,7 +725,6 @@ describe('PubSub', () => {
           });
 
         const [topic, resp] = await pubsub.createTopic!(topicName)!;
-        console.trace(topic);
         assert.strictEqual(topic.name.includes('{{'), false);
         assert.strictEqual(resp, apiResponse);
       });
