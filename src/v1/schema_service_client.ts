@@ -395,7 +395,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.ICreateSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   >;
   createSchema(
@@ -433,7 +433,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.ICreateSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   > | void {
     request = request || {};
@@ -480,7 +480,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IGetSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   >;
   getSchema(
@@ -518,7 +518,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IGetSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   > | void {
     request = request || {};
@@ -564,7 +564,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.ICommitSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   >;
   commitSchema(
@@ -602,7 +602,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.ICommitSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   > | void {
     request = request || {};
@@ -650,7 +650,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IRollbackSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   >;
   rollbackSchema(
@@ -688,7 +688,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IRollbackSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   > | void {
     request = request || {};
@@ -738,7 +738,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IDeleteSchemaRevisionRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   >;
   deleteSchemaRevision(
@@ -778,7 +778,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IDeleteSchemaRevisionRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   > | void {
     request = request || {};
@@ -822,7 +822,7 @@ export class SchemaServiceClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   >;
   deleteSchema(
@@ -860,7 +860,7 @@ export class SchemaServiceClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   > | void {
     request = request || {};
@@ -906,7 +906,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.IValidateSchemaResponse,
       protos.google.pubsub.v1.IValidateSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   >;
   validateSchema(
@@ -944,7 +944,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.IValidateSchemaResponse,
       protos.google.pubsub.v1.IValidateSchemaRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   > | void {
     request = request || {};
@@ -998,7 +998,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.IValidateMessageResponse,
       protos.google.pubsub.v1.IValidateMessageRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   >;
   validateMessage(
@@ -1036,7 +1036,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.IValidateMessageResponse,
       protos.google.pubsub.v1.IValidateMessageRequest | undefined,
-      {} | undefined,
+      {} | undefined
     ]
   > | void {
     request = request || {};
@@ -1096,7 +1096,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema[],
       protos.google.pubsub.v1.IListSchemasRequest | null,
-      protos.google.pubsub.v1.IListSchemasResponse,
+      protos.google.pubsub.v1.IListSchemasResponse
     ]
   >;
   listSchemas(
@@ -1134,7 +1134,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema[],
       protos.google.pubsub.v1.IListSchemasRequest | null,
-      protos.google.pubsub.v1.IListSchemasResponse,
+      protos.google.pubsub.v1.IListSchemasResponse
     ]
   > | void {
     request = request || {};
@@ -1294,7 +1294,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema[],
       protos.google.pubsub.v1.IListSchemaRevisionsRequest | null,
-      protos.google.pubsub.v1.IListSchemaRevisionsResponse,
+      protos.google.pubsub.v1.IListSchemaRevisionsResponse
     ]
   >;
   listSchemaRevisions(
@@ -1334,7 +1334,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema[],
       protos.google.pubsub.v1.IListSchemaRevisionsRequest | null,
-      protos.google.pubsub.v1.IListSchemaRevisionsResponse,
+      protos.google.pubsub.v1.IListSchemaRevisionsResponse
     ]
   > | void {
     request = request || {};

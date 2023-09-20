@@ -115,14 +115,14 @@ function allSettled<T, U>(
           ({
             status: 'fulfilled',
             value,
-          }) as AllSettledResult<T, U>
+          } as AllSettledResult<T, U>)
       )
       .catch(
         (error: U) =>
           ({
             status: 'rejected',
             reason: error,
-          }) as AllSettledResult<T, U>
+          } as AllSettledResult<T, U>)
       )
   );
 
