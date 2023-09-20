@@ -272,16 +272,16 @@ export class PubSub {
   private schemaClient?: SchemaServiceClient;
 
   constructor(options?: ClientConfig) {
-    options = Object.assign({}, options || {});
-
-    // Needed for potentially large responses that may come from using exactly-once delivery.
-    // This will get passed down to grpc client objects.
-    const maxMetadataSize = 'grpc.max_metadata_size';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const optionsAny = options as any;
-    if (optionsAny[maxMetadataSize] === undefined) {
-      optionsAny[maxMetadataSize] = 4 * 1024 * 1024; // 4 MiB
-    }
+    // Needed for potentially large responses that may come from using exactly-once delivery,
+    // as well as trying to work around silent connection failures.
+    //
+    // These will get passed down to grpc client objects. User values will overwrite these.
+    const grpcDefaults = {
+      'grpc.max_metadata_size': 4 * 1024 * 1024, // 4 MiB
+      'grpc.keepalive_time_ms': 300000, // 5 minutes
+      'grpc.keepalive_timeout_ms': 20000, // 20 seconds
+    };
+    options = Object.assign(grpcDefaults, options || {});
 
     // Determine what scopes are needed.
     // It is the union of the scopes on both clients.
@@ -561,6 +561,17 @@ export class PubSub {
           return;
         }
         subscription.metadata = resp!;
+
+        // If this is the first call we've made, the projectId might be empty still.
+        if (subscription.name?.includes(PROJECT_ID_PLACEHOLDER)) {
+          if (subscription.metadata && subscription.metadata.name) {
+            subscription.name = Subscription.formatName_(
+              this.projectId,
+              subscription.metadata.name
+            );
+          }
+        }
+
         callback!(null, subscription, resp!);
       }
     );
@@ -655,6 +666,14 @@ export class PubSub {
           return;
         }
         topic.metadata = resp!;
+
+        // If this is the first call we've made, the projectId might be empty still.
+        if (topic.name?.includes(PROJECT_ID_PLACEHOLDER)) {
+          if (topic.metadata && topic.metadata.name) {
+            topic.name = Topic.formatName_(this.projectId, topic.metadata.name);
+          }
+        }
+
         callback!(null, topic, resp!);
       }
     );
