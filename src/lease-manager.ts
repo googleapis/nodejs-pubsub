@@ -104,6 +104,8 @@ export class LeaseManager extends EventEmitter {
     this._messages.add(message);
     this.bytes += message.length;
 
+    message.telemetrySub.flowStart();
+
     if (allowExcessMessages! || !wasFull) {
       this._dispense(message);
     } else {
@@ -240,7 +242,10 @@ export class LeaseManager extends EventEmitter {
    */
   private _dispense(message: Message): void {
     if (this._subscriber.isOpen) {
-      process.nextTick(() => this._subscriber.emit('message', message));
+      message.telemetrySub.flowEnd();
+      process.nextTick(() => {
+        this._subscriber.emit('message', message);
+      });
     }
   }
   /**

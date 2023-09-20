@@ -21,7 +21,8 @@ import {BatchPublishOptions, MessageBatch} from './message-batch';
 import {PublishError} from './publish-error';
 import {Publisher, PubsubMessage, PublishCallback} from './';
 import {google} from '../../protos/protos';
-
+import * as tracing from '../telemetry-tracing';
+import {filterMessage} from './pubsub-message';
 import {promisify} from 'util';
 
 /**
@@ -94,11 +95,34 @@ export abstract class MessageQueue extends EventEmitter {
     const {topic, settings} = this.publisher;
     const reqOpts = {
       topic: topic.name,
-      messages,
+      messages: messages.map(filterMessage),
     };
     if (messages.length === 0) {
       return;
     }
+
+    // Make sure we have a projectId filled in to update telemetry spans.
+    // The overall spans may not have the correct projectId because it wasn't
+    // known at the time publishMessage was called.
+    const spanMessages = messages.filter(m => !!m.telemetrySpan);
+    if (spanMessages.length) {
+      if (!topic.pubsub.isIdResolved) {
+        await topic.pubsub.getClientConfig();
+      }
+      spanMessages.forEach(m => {
+        tracing.SpanMaker.updatePublisherTopicName(
+          m.telemetrySpan!,
+          topic.name
+        );
+      });
+    }
+
+    messages.forEach(m => {
+      const span = tracing.SpanMaker.createPublishRpcSpan(m);
+      if (span) {
+        m.telemetryRpc = span;
+      }
+    });
 
     const requestCallback = topic.request<google.pubsub.v1.IPublishResponse>;
     const request = promisify(requestCallback.bind(topic));
@@ -119,6 +143,11 @@ export abstract class MessageQueue extends EventEmitter {
       callbacks.forEach(callback => callback(err));
 
       throw e;
+    } finally {
+      messages.forEach(m => {
+        m.telemetryRpc?.end();
+        m.telemetrySpan?.end();
+      });
     }
   }
 }
@@ -157,6 +186,9 @@ export class Queue extends MessageQueue {
       // for a bit.
       this.publish().catch(() => {});
     }
+
+    message.telemetryBatching =
+      tracing.SpanMaker.createPublishBatchSpan(message);
 
     this.batch.add(message, callback);
 

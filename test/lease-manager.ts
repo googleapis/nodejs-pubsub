@@ -47,9 +47,20 @@ class FakeSubscriber extends EventEmitter {
   isExactlyOnceDelivery = false;
 }
 
+class FakeSubscriberTelemetry {
+  flowStart() {}
+  flowEnd() {}
+  schedulerStart() {}
+  schedulerEnd() {}
+  processingStart() {}
+  processingEnd() {}
+}
+
 class FakeMessage {
   length = 20;
   received: number;
+  telemetrySub: FakeSubscriberTelemetry = new FakeSubscriberTelemetry();
+
   constructor() {
     this.received = Date.now();
   }
