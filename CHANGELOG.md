@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [3.7.5](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.4...v3.7.5) (2023-09-20)
+
+
+### Bug Fixes
+
+* Bump to activate release-please ([#1819](https://github.com/googleapis/nodejs-pubsub/issues/1819)) ([83f3813](https://github.com/googleapis/nodejs-pubsub/commit/83f3813c2b636e2e6dea6ce8ccc87bba316b5687))
+
 ## [3.7.4](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.3...v3.7.4) (2023-09-08)
 
 
