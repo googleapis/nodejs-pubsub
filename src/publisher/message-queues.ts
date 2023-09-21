@@ -104,23 +104,20 @@ export abstract class MessageQueue extends EventEmitter {
     // Make sure we have a projectId filled in to update telemetry spans.
     // The overall spans may not have the correct projectId because it wasn't
     // known at the time publishMessage was called.
-    const spanMessages = messages.filter(m => !!m.telemetrySpan);
+    const spanMessages = messages.filter(m => !!m.parentSpan);
     if (spanMessages.length) {
       if (!topic.pubsub.isIdResolved) {
         await topic.pubsub.getClientConfig();
       }
       spanMessages.forEach(m => {
-        tracing.SpanMaker.updatePublisherTopicName(
-          m.telemetrySpan!,
-          topic.name
-        );
+        tracing.PubsubSpans.updatePublisherTopicName(m.parentSpan!, topic.name);
       });
     }
 
     messages.forEach(m => {
-      const span = tracing.SpanMaker.createPublishRpcSpan(m);
+      const span = tracing.PubsubSpans.createPublishRpcSpan(m, messages.length);
       if (span) {
-        m.telemetryRpc = span;
+        m.rpcSpan = span;
       }
     });
 
@@ -145,8 +142,10 @@ export abstract class MessageQueue extends EventEmitter {
       throw e;
     } finally {
       messages.forEach(m => {
-        m.telemetryRpc?.end();
-        m.telemetrySpan?.end();
+        // We're finished with both the RPC and the whole publish operation,
+        // so close out all of the related spans.
+        m.rpcSpan?.end();
+        m.parentSpan?.end();
       });
     }
   }
@@ -187,8 +186,7 @@ export class Queue extends MessageQueue {
       this.publish().catch(() => {});
     }
 
-    message.telemetryBatching =
-      tracing.SpanMaker.createPublishBatchSpan(message);
+    message.batchingSpan = tracing.PubsubSpans.createPublishBatchSpan(message);
 
     this.batch.add(message, callback);
 
@@ -240,6 +238,8 @@ export class Queue extends MessageQueue {
       clearTimeout(this.pending);
       delete this.pending;
     }
+
+    messages.forEach(m => m.batchingSpan?.end());
 
     await this._publish(messages, callbacks);
     if (this.batch.messages.length) {

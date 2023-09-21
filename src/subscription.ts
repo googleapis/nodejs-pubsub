@@ -267,6 +267,8 @@ export declare interface Subscription {
  * ```
  */
 export class Subscription extends WrappingEmitter {
+  // Note: WrappingEmitter is used here to wrap user processing callbacks.
+  // We do this to be able to build telemetry spans around them.
   pubsub: PubSub;
   iam: IAM;
   topic?: Topic | string;
@@ -357,7 +359,7 @@ export class Subscription extends WrappingEmitter {
     if (eventName !== 'message') {
       return listener(...args);
     } else {
-      const span = tracing.SpanMaker.createReceiveProcessSpan(
+      const span = tracing.PubsubSpans.createReceiveProcessSpan(
         args[0] as Message,
         this.name
       );
@@ -366,7 +368,7 @@ export class Subscription extends WrappingEmitter {
       // In that case, we need to tag on to their Promise to end the span.
       // Otherwise, the listener chain is sync, and we can close out sync.
       const result = listener(...args) as unknown as Promise<void>;
-      if (!!result && typeof result.then === 'function') {
+      if (result && typeof result.then === 'function') {
         result.then(() => span?.end());
       } else {
         span?.end();

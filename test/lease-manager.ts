@@ -52,6 +52,8 @@ class FakeSubscriberTelemetry {
   flowEnd() {}
   schedulerStart() {}
   schedulerEnd() {}
+  modAckStart() {}
+  modAckStop() {}
   processingStart() {}
   processingEnd() {}
 }
@@ -59,7 +61,7 @@ class FakeSubscriberTelemetry {
 class FakeMessage {
   length = 20;
   received: number;
-  telemetrySub: FakeSubscriberTelemetry = new FakeSubscriberTelemetry();
+  subSpans: FakeSubscriberTelemetry = new FakeSubscriberTelemetry();
 
   constructor() {
     this.received = Date.now();
@@ -69,6 +71,7 @@ class FakeMessage {
     return AckResponses.Success;
   }
   ackFailed() {}
+  endParentSpan() {}
 }
 
 interface LeaseManagerInternals {
@@ -143,6 +146,15 @@ describe('LeaseManager', () => {
   });
 
   describe('add', () => {
+    it('should start a flow span', () => {
+      const message = new FakeMessage() as {} as Message;
+      const stub = sandbox.spy(message.subSpans, 'flowStart');
+
+      leaseManager.add(message);
+
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
     it('should update the bytes/size values', () => {
       const message = new FakeMessage() as {} as Message;
 
@@ -376,6 +388,14 @@ describe('LeaseManager', () => {
       assert.strictEqual(leaseManager.size, 0);
     });
 
+    it('should end all parent spans', () => {
+      const messages = [new FakeMessage(), new FakeMessage()];
+      const spies = messages.map(m => sandbox.spy(m, 'endParentSpan'));
+      messages.forEach(m => leaseManager.add(m as {} as Message));
+      leaseManager.clear();
+      spies.forEach(s => assert.strictEqual(s.calledOnce, true));
+    });
+
     it('should emit the free event if it was full', done => {
       leaseManager.setOptions({maxMessages: 1});
       leaseManager.add(new FakeMessage() as {} as Message);
@@ -432,6 +452,16 @@ describe('LeaseManager', () => {
   });
 
   describe('remove', () => {
+    it('should end the span', () => {
+      const message = new FakeMessage();
+      const spy = sandbox.spy(message, 'endParentSpan');
+
+      leaseManager.add(message as {} as Message);
+      leaseManager.remove(message as {} as Message);
+
+      assert.strictEqual(spy.calledOnce, true);
+    });
+
     it('should noop for unknown messages', () => {
       const message = new FakeMessage();
 

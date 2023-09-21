@@ -43,18 +43,18 @@ export interface PubsubMessage
   // don't get to control what these objects are. They come from grpc.
 
   /**
-   * If telemetry is enabled, track the batch span.
+   * If tracing is enabled, track the batch span.
    *
    * @private
    */
-  telemetryBatching?: tracing.Span;
+  batchingSpan?: tracing.Span;
 
   /**
-   * If telemetry is enabled, track the RPC send time span.
+   * If tracing is enabled, track the RPC send time span.
    *
    * @private
    */
-  telemetryRpc?: tracing.Span;
+  rpcSpan?: tracing.Span;
 }
 
 /**

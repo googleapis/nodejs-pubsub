@@ -31,7 +31,7 @@ describe('OpenTelemetryTracer', () => {
 
   it('creates a span', () => {
     const message: PubsubMessage = {};
-    const span = otel.SpanMaker.createPublisherSpan(
+    const span = otel.PubsubSpans.createPublisherSpan(
       message,
       'test topic'
     ) as trace.Span;
@@ -49,7 +49,7 @@ describe('OpenTelemetryTracer', () => {
     const message: PubsubMessage = {
       attributes: {},
     };
-    const span = otel.SpanMaker.createPublisherSpan(
+    const span = otel.PubsubSpans.createPublisherSpan(
       message,
       'test topic'
     ) as trace.Span;
@@ -68,7 +68,7 @@ describe('OpenTelemetryTracer', () => {
     const message: PubsubMessage = {
       attributes: {},
     };
-    const span = otel.SpanMaker.createPublisherSpan(message, 'test topic');
+    const span = otel.PubsubSpans.createPublisherSpan(message, 'test topic');
 
     otel.injectSpan(span, message, otel.OpenTelemetryLevel.Legacy);
 
@@ -93,7 +93,7 @@ describe('OpenTelemetryTracer', () => {
         [otel.modernAttributeName]: 'bazbar',
       },
     };
-    const span = otel.SpanMaker.createPublisherSpan(message, 'test topic');
+    const span = otel.PubsubSpans.createPublisherSpan(message, 'test topic');
 
     const warnSpy = sinon.spy(console, 'warn');
     try {

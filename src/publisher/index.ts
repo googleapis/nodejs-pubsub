@@ -210,6 +210,8 @@ export class Publisher {
       }
     }
 
+    // Ensure that there's a parent span for subsequent publishes
+    // to hang off of.
     this.getParentSpan(message);
 
     if (!message.orderingKey) {
@@ -337,11 +339,11 @@ export class Publisher {
       return undefined;
     }
 
-    if (message.telemetrySpan) {
-      return message.telemetrySpan;
+    if (message.parentSpan) {
+      return message.parentSpan;
     }
 
-    const span = tracing.SpanMaker.createPublisherSpan(
+    const span = tracing.PubsubSpans.createPublisherSpan(
       message,
       this.topic.name
     );

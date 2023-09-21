@@ -105,26 +105,23 @@ export function isEnabled(
  * object, which is one of several possible Message classes. (They're
  * different for publish and subscribe.)
  *
- * Also we add a telemetrySpan optional member for passing around the
- * actual Span object within the client library.
+ * Also we add a parentSpan optional member for passing around the
+ * actual Span object within the client library. This can be a publish
+ * or subscriber span, depending on the context.
  *
  * @private
  */
 export interface MessageWithAttributes {
   attributes?: Attributes | null | undefined;
-  telemetrySpan?: Span;
+  parentSpan?: Span;
 }
 
 /**
- * Implements the TextMap getter and setter interfaces for Pub/Sub messages.
+ * Implements common members for the TextMap getter and setter interfaces for Pub/Sub messages.
  *
  * @private
  */
-export class PubsubMessageGetSet
-  implements
-    TextMapGetter<MessageWithAttributes>,
-    TextMapSetter<MessageWithAttributes>
-{
+export class PubsubMessageGetSet {
   static keyPrefix = 'googclient_';
 
   keys(carrier: MessageWithAttributes): string[] {
@@ -133,17 +130,37 @@ export class PubsubMessageGetSet
       .map(n => n.substring(PubsubMessageGetSet.keyPrefix.length));
   }
 
-  private attributeName(key: string): string {
+  protected attributeName(key: string): string {
     return `${PubsubMessageGetSet.keyPrefix}${key}`;
   }
+}
 
+/**
+ * Implements the TextMap getter interface for Pub/Sub messages.
+ *
+ * @private
+ */
+export class PubsubMessageGet
+  extends PubsubMessageGetSet
+  implements TextMapGetter<MessageWithAttributes>
+{
   get(
     carrier: MessageWithAttributes,
     key: string
   ): string | string[] | undefined {
     return carrier?.attributes?.[this.attributeName(key)];
   }
+}
 
+/**
+ * Implements the TextMap setter interface for Pub/Sub messages.
+ *
+ * @private
+ */
+export class PubsubMessageSet
+  extends PubsubMessageGetSet
+  implements TextMapSetter<MessageWithAttributes>
+{
   set(carrier: MessageWithAttributes, key: string, value: string): void {
     if (!carrier.attributes) {
       carrier.attributes = {};
@@ -157,14 +174,14 @@ export class PubsubMessageGetSet
  *
  * @private
  */
-export const pubsubGetter = new PubsubMessageGetSet();
+export const pubsubGetter = new PubsubMessageGet();
 
 /**
  * The setter to use when calling inject() on a Pub/Sub message.
  *
  * @private
  */
-export const pubsubSetter = pubsubGetter;
+export const pubsubSetter = new PubsubMessageSet();
 
 /**
  * Description of the data structure passed for span attributes.
@@ -205,7 +222,7 @@ export const modernAttributeName = 'googclient_traceparent';
  */
 export const legacyAttributeName = 'googclient_OpenTelemetrySpanContext';
 
-export class SpanMaker {
+export class PubsubSpans {
   static createPublisherSpan(message: PubsubMessage, topicName: string): Span {
     const spanAttributes = {
       // Add Opentelemetry semantic convention attributes to the span, based on:
@@ -263,7 +280,7 @@ export class SpanMaker {
     message: MessageWithAttributes,
     name: string
   ): Span | undefined {
-    const parent = message.telemetrySpan;
+    const parent = message.parentSpan;
     if (parent) {
       return getTracer().startSpan(
         name,
@@ -279,34 +296,55 @@ export class SpanMaker {
   }
 
   static createPublishFlowSpan(message: PubsubMessage): Span | undefined {
-    return SpanMaker.createChildSpan(message, 'publisher flow control');
+    return PubsubSpans.createChildSpan(message, 'publisher flow control');
   }
 
   static createPublishBatchSpan(message: PubsubMessage): Span | undefined {
-    return SpanMaker.createChildSpan(message, 'publish scheduler');
+    return PubsubSpans.createChildSpan(message, 'publish scheduler');
   }
 
-  static createPublishRpcSpan(message: PubsubMessage): Span | undefined {
-    return SpanMaker.createChildSpan(message, 'publish');
+  static createPublishRpcSpan(
+    message: PubsubMessage,
+    messageCount: number
+  ): Span | undefined {
+    const span = PubsubSpans.createChildSpan(message, 'publish');
+    span?.setAttribute('messaging.pubsub.num_messages_in_batch', messageCount);
+
+    return span;
+  }
+
+  static createModAckSpan(
+    message: MessageWithAttributes,
+    deadline: Duration,
+    initial: boolean
+  ) {
+    const span = PubsubSpans.createChildSpan(message, 'modify ack deadline');
+    if (span) {
+      span.setAttributes({
+        'messaging.pubsub.modack_deadline_seconds': deadline.totalOf('second'),
+        'messaging.pubsub.is_receipt_modack': initial ? 'true' : 'false',
+      } as unknown as Attributes);
+    }
+    return span;
   }
 
   static createReceiveFlowSpan(
     message: MessageWithAttributes
   ): Span | undefined {
-    return SpanMaker.createChildSpan(message, 'subscriber flow control');
+    return PubsubSpans.createChildSpan(message, 'subscriber flow control');
   }
 
   static createReceiveSchedulerSpan(
     message: MessageWithAttributes
   ): Span | undefined {
-    return SpanMaker.createChildSpan(message, 'subscribe scheduler');
+    return PubsubSpans.createChildSpan(message, 'subscribe scheduler');
   }
 
   static createReceiveProcessSpan(
     message: MessageWithAttributes,
     subName: string
   ): Span | undefined {
-    return SpanMaker.createChildSpan(message, `${subName} process`);
+    return PubsubSpans.createChildSpan(message, `${subName} process`);
   }
 
   static setReceiveProcessResult(span: Span, isAck: boolean) {
@@ -318,7 +356,7 @@ export class SpanMaker {
     deadline: Duration,
     isInitial: boolean
   ): Span | undefined {
-    const span = SpanMaker.createChildSpan(message, 'modify ack deadline');
+    const span = PubsubSpans.createChildSpan(message, 'modify ack deadline');
     span?.setAttribute(
       'messaging.pubsub.modack_deadline_seconds',
       deadline.totalOf('second')
@@ -332,13 +370,15 @@ export class SpanMaker {
     isAck: boolean
   ): Span | undefined {
     const name = isAck ? 'ack' : 'nack';
-    return SpanMaker.createChildSpan(message, name);
+    return PubsubSpans.createChildSpan(message, name);
   }
 }
 
 /**
  * Injects the trace context into a Pub/Sub message (or other object with
  * an 'attributes' object) for propagation.
+ *
+ * This is for the publish side.
  *
  * @private
  */
@@ -377,7 +417,7 @@ export function injectSpan(
 
   // Also put the direct reference to the Span object for while we're
   // passing it around in the client library.
-  message.telemetrySpan = span;
+  message.parentSpan = span;
 }
 
 /**
@@ -386,7 +426,7 @@ export function injectSpan(
  * @private
  */
 export function containsSpanContext(message: MessageWithAttributes): boolean {
-  if (message.telemetrySpan) {
+  if (message.parentSpan) {
     return true;
   }
 
@@ -405,6 +445,8 @@ export function containsSpanContext(message: MessageWithAttributes): boolean {
  * an 'attributes' object) from a propagation, for receive processing. If no
  * context was present, create a new parent span.
  *
+ * This is for the receive side.
+ *
  * @private
  */
 export function extractSpan(
@@ -412,8 +454,8 @@ export function extractSpan(
   subName: string,
   enabled: OpenTelemetryLevel
 ): Span | undefined {
-  if (message.telemetrySpan) {
-    return message.telemetrySpan;
+  if (message.parentSpan) {
+    return message.parentSpan;
   }
 
   const keys = Object.getOwnPropertyNames(message.attributes ?? {});
@@ -442,8 +484,8 @@ export function extractSpan(
     }
   }
 
-  const span = SpanMaker.createReceiveSpan(message, subName, context);
-  message.telemetrySpan = span;
+  const span = PubsubSpans.createReceiveSpan(message, subName, context);
+  message.parentSpan = span;
   return span;
 }
 

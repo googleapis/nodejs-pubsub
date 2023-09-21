@@ -77,8 +77,8 @@ export class FlowControlledPublisher {
    * ```
    */
   publish(message: PubsubMessage): Promise<void> | null {
-    const flowSpan = message.telemetrySpan
-      ? tracing.SpanMaker.createPublishFlowSpan(message)
+    const flowSpan = message.parentSpan
+      ? tracing.PubsubSpans.createPublishFlowSpan(message)
       : undefined;
     const doPublish = () => {
       flowSpan?.end();

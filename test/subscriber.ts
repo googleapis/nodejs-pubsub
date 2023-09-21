@@ -35,6 +35,7 @@ import * as s from '../src/subscriber';
 import {Subscription} from '../src/subscription';
 import {SpanKind} from '@opentelemetry/api';
 import {Duration} from '../src';
+import * as tracing from '../src/telemetry-tracing';
 
 type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 
@@ -759,6 +760,8 @@ describe('Subscriber', () => {
     });
 
     it('should add messages to the inventory', done => {
+      const message = new Message(subscriber, RECEIVED_MESSAGE);
+
       subscriber.open();
 
       const modAckStub = sandbox.stub(subscriber, 'modAck');
@@ -772,7 +775,11 @@ describe('Subscriber', () => {
 
         // OTel is enabled during tests, so we need to delete the baggage.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        delete (addMsg as any).telemetrySpan;
+        const [addMsgAny, msgAny] = [addMsg as any, message as any];
+        delete addMsgAny.parentSpan;
+        delete addMsgAny.subSpans;
+        delete msgAny.parentSpan;
+        delete msgAny.subSpans;
 
         assert.deepStrictEqual(addMsg, message);
 
@@ -917,11 +924,11 @@ describe('Subscriber', () => {
       const msgStream = stubs.get('messageStream');
       msgStream.emit('data', pullResponse);
 
-      message.telemetrySpan?.end();
+      message.endParentSpan();
 
       const spans = exporter.getFinishedSpans();
-      assert.strictEqual(spans.length, 1);
-      const firstSpan = spans.concat().shift();
+      assert.strictEqual(spans.length, 2);
+      const firstSpan = spans.pop();
       assert.ok(firstSpan);
       assert.strictEqual(firstSpan.parentSpanId, parentSpanContext.spanId);
       assert.strictEqual(
@@ -953,8 +960,8 @@ describe('Subscriber', () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
       stream.emit('data', pullResponse);
 
-      message.telemetrySpan?.end();
-      assert.strictEqual(exporter.getFinishedSpans().length, 1);
+      message.endParentSpan();
+      assert.strictEqual(exporter.getFinishedSpans().length, 2);
     });
   });
 
@@ -1163,6 +1170,110 @@ describe('Subscriber', () => {
 
         assert.strictEqual(stub.callCount, 0);
       });
+    });
+  });
+
+  describe('SubscriberSpans', () => {
+    const message: tracing.MessageWithAttributes = {
+      attributes: {},
+      parentSpan: undefined,
+    };
+    const spans = new s.SubscriberSpans(message);
+    const fakeSpan = {
+      end() {},
+    } as unknown as opentelemetry.Span;
+
+    it('starts a flow span', () => {
+      const stub = sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveFlowSpan')
+        .returns(fakeSpan);
+      spans.flowStart();
+      assert.strictEqual(stub.calledOnce, true);
+      assert.strictEqual(stub.args[0][0], message);
+      spans.flowStart();
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('ends a flow span', () => {
+      sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveFlowSpan')
+        .returns(fakeSpan);
+      spans.flowStart();
+      const spy = sandbox.spy(fakeSpan, 'end');
+      spans.flowEnd();
+      assert.strictEqual(spy.calledOnce, true);
+      spans.flowEnd();
+      assert.strictEqual(spy.calledOnce, true);
+    });
+
+    it('starts a modAck span', () => {
+      const stub = sandbox
+        .stub(tracing.PubsubSpans, 'createModAckSpan')
+        .returns(fakeSpan);
+      spans.modAckStart(Duration.from({seconds: 10}), true);
+      assert.strictEqual(stub.args[0][0], message);
+      assert.strictEqual(stub.args[0][1].totalOf('second'), 10);
+      assert.strictEqual(stub.args[0][2], true);
+      spans.modAckStart(Duration.from({seconds: 20}), false);
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('ends a modAck span', () => {
+      sandbox.stub(tracing.PubsubSpans, 'createModAckSpan').returns(fakeSpan);
+      spans.modAckStart(Duration.from({seconds: 10}), true);
+      const spy = sandbox.spy(fakeSpan, 'end');
+      spans.modAckStop();
+      assert.strictEqual(spy.calledOnce, true);
+      spans.modAckStop();
+      assert.strictEqual(spy.calledOnce, true);
+    });
+
+    it('starts a scheduler span', () => {
+      const stub = sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveSchedulerSpan')
+        .returns(fakeSpan);
+      spans.schedulerStart();
+      assert.strictEqual(stub.args[0][0], message);
+      assert.strictEqual(stub.calledOnce, true);
+      spans.schedulerStart();
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('ends a scheduler span', () => {
+      sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveSchedulerSpan')
+        .returns(fakeSpan);
+      spans.schedulerStart();
+      const spy = sandbox.spy(fakeSpan, 'end');
+      spans.schedulerEnd();
+      assert.strictEqual(spy.calledOnce, true);
+      spans.schedulerEnd();
+      assert.strictEqual(spy.calledOnce, true);
+    });
+
+    it('starts a processing span', () => {
+      const stub = sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveProcessSpan')
+        .returns(fakeSpan);
+      const subName = 'foozle';
+      spans.processingStart(subName);
+      assert.strictEqual(stub.args[0][0], message);
+      assert.strictEqual(stub.args[0][1], subName);
+      assert.strictEqual(stub.calledOnce, true);
+      spans.processingStart('boo');
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('ends a processing span', () => {
+      sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveSchedulerSpan')
+        .returns(fakeSpan);
+      spans.processingStart('foozle');
+      const spy = sandbox.spy(fakeSpan, 'end');
+      spans.processingEnd();
+      assert.strictEqual(spy.calledOnce, true);
+      spans.processingEnd();
+      assert.strictEqual(spy.calledOnce, true);
     });
   });
 });

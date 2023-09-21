@@ -27,10 +27,11 @@ import {
 } from '../../src/publisher';
 import {FlowControl} from '../../src/publisher/flow-control';
 import * as fp from '../../src/publisher/flow-publisher';
+import * as tracing from '../../src/telemetry-tracing';
 
 class FakePublisher {
   flowControl!: FlowControl;
-  publishMessage() {}
+  async publishMessage() {}
   setOptions(options: PublishOptions) {
     this.flowControl.setOptions(options.flowControlOptions!);
   }
@@ -47,6 +48,23 @@ describe('Flow control publisher', () => {
 
   afterEach(() => {
     sandbox.restore();
+  });
+
+  it('should create a flow span if a parent exists', async () => {
+    const fcp = new fp.FlowControlledPublisher(publisher);
+    const message = {
+      data: Buffer.from('foo'),
+      parentSpan: tracing.PubsubSpans.createPublisherSpan({}, 'topic'),
+    };
+    fcp.publish(message as unknown as PubsubMessage);
+    assert.strictEqual(!!message.parentSpan, true);
+  });
+
+  it('should not create a flow span if no parent exists', async () => {
+    const fcp = new fp.FlowControlledPublisher(publisher);
+    const message = {data: Buffer.from('foo'), parentSpan: undefined};
+    fcp.publish(message as unknown as PubsubMessage);
+    assert.strictEqual(!message.parentSpan, true);
   });
 
   it('should get no promise if there is flow control space left', async () => {
