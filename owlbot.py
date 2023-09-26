@@ -38,7 +38,7 @@ shell.run(
 )
 logger.debug("Running fix...")
 shell.run(
-    [f"/synthtool/node_modules/.bin/gts", "fix"],
+    ["npm", "run", "fix"],
     check=False,
 )
 
