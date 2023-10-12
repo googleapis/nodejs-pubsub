@@ -45,6 +45,7 @@ const {v1} = require('@google-cloud/pubsub');
 const publisherClient = new v1.PublisherClient({
   // optional auth parameters
 });
+
 async function publishWithRetrySettings(projectId, topicNameOrId, data) {
   const formattedTopic = publisherClient.projectTopicPath(
     projectId,
