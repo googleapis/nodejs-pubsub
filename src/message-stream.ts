@@ -141,7 +141,7 @@ interface StreamTracked {
  * @param {MessageStreamOptions} [options] The message stream options.
  */
 export class MessageStream extends PassThrough {
-  private _keepAliveHandle?: NodeJS.Timer;
+  private _keepAliveHandle?: NodeJS.Timeout;
   private _options: MessageStreamOptions;
   private _retrier: ExponentialRetry<StreamTracked>;
 
