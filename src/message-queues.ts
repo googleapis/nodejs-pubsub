@@ -112,7 +112,7 @@ export abstract class MessageQueue {
   protected _options!: BatchOptions;
   protected _requests: QueuedMessages;
   protected _subscriber: Subscriber;
-  protected _timer?: NodeJS.Timer;
+  protected _timer?: NodeJS.Timeout;
   protected _retrier: ExponentialRetry<QueuedMessage>;
   protected _closed = false;
   protected abstract _sendBatch(batch: QueuedMessages): Promise<QueuedMessages>;
