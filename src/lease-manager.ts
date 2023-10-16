@@ -65,7 +65,7 @@ export class LeaseManager extends EventEmitter {
   private _options!: FlowControlOptions;
   private _pending: Message[];
   private _subscriber: Subscriber;
-  private _timer?: NodeJS.Timer;
+  private _timer?: NodeJS.Timeout;
   constructor(sub: Subscriber, options = {}) {
     super();
 
