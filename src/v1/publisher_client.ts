@@ -94,8 +94,7 @@ export class PublisherClient {
    *     API remote host.
    * @param {gax.ClientConfig} [options.clientConfig] - Client configuration override.
    *     Follows the structure of {@link gapicConfig}.
-   * @param {boolean | "rest"} [options.fallback] - Use HTTP fallback mode.
-   *     Pass "rest" to use HTTP/1.1 REST API instead of gRPC.
+   * @param {boolean} [options.fallback] - Use HTTP/1.1 REST mode.
    *     For more information, please check the
    *     {@link https://github.com/googleapis/gax-nodejs/blob/main/client-libraries.md#http11-rest-api-mode documentation}.
    * @param {gax} [gaxInstance]: loaded instance of `google-gax`. Useful if you
@@ -103,7 +102,7 @@ export class PublisherClient {
    *     HTTP implementation. Load only fallback version and pass it to the constructor:
    *     ```
    *     const gax = require('google-gax/build/src/fallback'); // avoids loading google-gax with gRPC
-   *     const client = new PublisherClient({fallback: 'rest'}, gax);
+   *     const client = new PublisherClient({fallback: true}, gax);
    *     ```
    */
   constructor(
@@ -170,7 +169,7 @@ export class PublisherClient {
     }
     if (!opts.fallback) {
       clientHeader.push(`grpc/${this._gaxGrpc.grpcVersion}`);
-    } else if (opts.fallback === 'rest') {
+    } else {
       clientHeader.push(`rest/${this._gaxGrpc.grpcVersion}`);
     }
     if (opts.libName && opts.libVersion) {
@@ -387,7 +386,7 @@ export class PublisherClient {
   // -------------------
   /**
    * Creates the given topic with the given name. See the [resource name rules]
-   * (https://cloud.google.com/pubsub/docs/admin#resource_names).
+   * (https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names).
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -423,13 +422,12 @@ export class PublisherClient {
    *   timestamp](https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time)
    *   that is up to `message_retention_duration` in the past. If this field is
    *   not set, message retention is controlled by settings on individual
-   *   subscriptions. Cannot be more than 7 days or less than 10 minutes.
+   *   subscriptions. Cannot be more than 31 days or less than 10 minutes.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Topic]{@link google.pubsub.v1.Topic}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Topic|Topic}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   createTopic(
@@ -439,7 +437,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.ITopic | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   createTopic(
@@ -477,7 +475,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.ITopic | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -515,9 +513,8 @@ export class PublisherClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Topic]{@link google.pubsub.v1.Topic}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Topic|Topic}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   updateTopic(
@@ -527,7 +524,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IUpdateTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   updateTopic(
@@ -565,7 +562,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IUpdateTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -600,9 +597,8 @@ export class PublisherClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [PublishResponse]{@link google.pubsub.v1.PublishResponse}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.PublishResponse|PublishResponse}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   publish(
@@ -612,7 +608,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.IPublishResponse,
       protos.google.pubsub.v1.IPublishRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   publish(
@@ -650,7 +646,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.IPublishResponse,
       protos.google.pubsub.v1.IPublishRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -682,9 +678,8 @@ export class PublisherClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Topic]{@link google.pubsub.v1.Topic}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Topic|Topic}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   getTopic(
@@ -694,7 +689,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IGetTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   getTopic(
@@ -732,7 +727,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IGetTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -768,9 +763,8 @@ export class PublisherClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   deleteTopic(
@@ -780,7 +774,7 @@ export class PublisherClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   deleteTopic(
@@ -818,7 +812,7 @@ export class PublisherClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteTopicRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -853,9 +847,8 @@ export class PublisherClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [DetachSubscriptionResponse]{@link google.pubsub.v1.DetachSubscriptionResponse}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.DetachSubscriptionResponse|DetachSubscriptionResponse}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   detachSubscription(
@@ -865,7 +858,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.IDetachSubscriptionResponse,
       protos.google.pubsub.v1.IDetachSubscriptionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   detachSubscription(
@@ -903,7 +896,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.IDetachSubscriptionResponse,
       protos.google.pubsub.v1.IDetachSubscriptionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -942,14 +935,13 @@ export class PublisherClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is Array of [Topic]{@link google.pubsub.v1.Topic}.
+   *   The first element of the array is Array of {@link protos.google.pubsub.v1.Topic|Topic}.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed and will merge results from all the pages into this array.
    *   Note that it can affect your quota.
    *   We recommend using `listTopicsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listTopics(
@@ -959,7 +951,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic[],
       protos.google.pubsub.v1.IListTopicsRequest | null,
-      protos.google.pubsub.v1.IListTopicsResponse
+      protos.google.pubsub.v1.IListTopicsResponse,
     ]
   >;
   listTopics(
@@ -997,7 +989,7 @@ export class PublisherClient {
     [
       protos.google.pubsub.v1.ITopic[],
       protos.google.pubsub.v1.IListTopicsRequest | null,
-      protos.google.pubsub.v1.IListTopicsResponse
+      protos.google.pubsub.v1.IListTopicsResponse,
     ]
   > | void {
     request = request || {};
@@ -1035,13 +1027,12 @@ export class PublisherClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
-   *   An object stream which emits an object representing [Topic]{@link google.pubsub.v1.Topic} on 'data' event.
+   *   An object stream which emits an object representing {@link protos.google.pubsub.v1.Topic|Topic} on 'data' event.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed. Note that it can affect your quota.
    *   We recommend using `listTopicsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listTopicsStream(
@@ -1084,12 +1075,11 @@ export class PublisherClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
-   *   An iterable Object that allows [async iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols).
+   *   An iterable Object that allows {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols | async iteration }.
    *   When you iterate the returned iterable, each element will be an object representing
-   *   [Topic]{@link google.pubsub.v1.Topic}. The API will be called under the hood as needed, once per the page,
+   *   {@link protos.google.pubsub.v1.Topic|Topic}. The API will be called under the hood as needed, once per the page,
    *   so you can stop the iteration when you don't need more results.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listTopicsAsync(
@@ -1136,8 +1126,7 @@ export class PublisherClient {
    *   Note that it can affect your quota.
    *   We recommend using `listTopicSubscriptionsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listTopicSubscriptions(
@@ -1147,7 +1136,7 @@ export class PublisherClient {
     [
       string[],
       protos.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListTopicSubscriptionsResponse
+      protos.google.pubsub.v1.IListTopicSubscriptionsResponse,
     ]
   >;
   listTopicSubscriptions(
@@ -1193,7 +1182,7 @@ export class PublisherClient {
     [
       string[],
       protos.google.pubsub.v1.IListTopicSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListTopicSubscriptionsResponse
+      protos.google.pubsub.v1.IListTopicSubscriptionsResponse,
     ]
   > | void {
     request = request || {};
@@ -1240,8 +1229,7 @@ export class PublisherClient {
    *   times as needed. Note that it can affect your quota.
    *   We recommend using `listTopicSubscriptionsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listTopicSubscriptionsStream(
@@ -1284,12 +1272,11 @@ export class PublisherClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
-   *   An iterable Object that allows [async iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols).
+   *   An iterable Object that allows {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols | async iteration }.
    *   When you iterate the returned iterable, each element will be an object representing
    *   string. The API will be called under the hood as needed, once per the page,
    *   so you can stop the iteration when you don't need more results.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listTopicSubscriptionsAsync(
@@ -1340,8 +1327,7 @@ export class PublisherClient {
    *   Note that it can affect your quota.
    *   We recommend using `listTopicSnapshotsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listTopicSnapshots(
@@ -1351,7 +1337,7 @@ export class PublisherClient {
     [
       string[],
       protos.google.pubsub.v1.IListTopicSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse
+      protos.google.pubsub.v1.IListTopicSnapshotsResponse,
     ]
   >;
   listTopicSnapshots(
@@ -1391,7 +1377,7 @@ export class PublisherClient {
     [
       string[],
       protos.google.pubsub.v1.IListTopicSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListTopicSnapshotsResponse
+      protos.google.pubsub.v1.IListTopicSnapshotsResponse,
     ]
   > | void {
     request = request || {};
@@ -1434,8 +1420,7 @@ export class PublisherClient {
    *   times as needed. Note that it can affect your quota.
    *   We recommend using `listTopicSnapshotsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listTopicSnapshotsStream(
@@ -1478,12 +1463,11 @@ export class PublisherClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
-   *   An iterable Object that allows [async iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols).
+   *   An iterable Object that allows {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols | async iteration }.
    *   When you iterate the returned iterable, each element will be an object representing
    *   string. The API will be called under the hood as needed, once per the page,
    *   so you can stop the iteration when you don't need more results.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listTopicSnapshotsAsync(
@@ -1520,16 +1504,16 @@ export class PublisherClient {
    *   OPTIONAL: A `GetPolicyOptions` object for specifying options to
    *   `GetIamPolicy`. This field is only used by Cloud IAM.
    *
-   *   This object should have the same structure as [GetPolicyOptions]{@link google.iam.v1.GetPolicyOptions}
+   *   This object should have the same structure as {@link google.iam.v1.GetPolicyOptions | GetPolicyOptions}.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
-   *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
+   *   retries, paginations, etc. See {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html | gax.CallOptions} for the details.
    * @param {function(?Error, ?Object)} [callback]
    *   The function which will be called with the result of the API call.
    *
-   *   The second parameter to the callback is an object representing [Policy]{@link google.iam.v1.Policy}.
+   *   The second parameter to the callback is an object representing {@link google.iam.v1.Policy | Policy}.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Policy]{@link google.iam.v1.Policy}.
+   *   The first element of the array is an object representing {@link google.iam.v1.Policy | Policy}.
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   getIamPolicy(
@@ -1546,7 +1530,7 @@ export class PublisherClient {
       IamProtos.google.iam.v1.GetIamPolicyRequest | null | undefined,
       {} | null | undefined
     >
-  ): Promise<IamProtos.google.iam.v1.Policy> {
+  ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.getIamPolicy(request, options, callback);
   }
 
@@ -1567,17 +1551,16 @@ export class PublisherClient {
    * @param {string[]} request.permissions
    *   The set of permissions to check for the `resource`. Permissions with
    *   wildcards (such as '*' or 'storage.*') are not allowed. For more
-   *   information see
-   *   [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).
+   *   information see {@link https://cloud.google.com/iam/docs/overview#permissions | IAM Overview }.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
-   *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
+   *   retries, paginations, etc. See {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html | gax.CallOptions} for the details.
    * @param {function(?Error, ?Object)} [callback]
    *   The function which will be called with the result of the API call.
    *
-   *   The second parameter to the callback is an object representing [TestIamPermissionsResponse]{@link google.iam.v1.TestIamPermissionsResponse}.
+   *   The second parameter to the callback is an object representing {@link google.iam.v1.TestIamPermissionsResponse | TestIamPermissionsResponse}.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [TestIamPermissionsResponse]{@link google.iam.v1.TestIamPermissionsResponse}.
+   *   The first element of the array is an object representing {@link google.iam.v1.TestIamPermissionsResponse | TestIamPermissionsResponse}.
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   setIamPolicy(
@@ -1594,7 +1577,7 @@ export class PublisherClient {
       IamProtos.google.iam.v1.SetIamPolicyRequest | null | undefined,
       {} | null | undefined
     >
-  ): Promise<IamProtos.google.iam.v1.Policy> {
+  ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.setIamPolicy(request, options, callback);
   }
 
@@ -1615,17 +1598,16 @@ export class PublisherClient {
    * @param {string[]} request.permissions
    *   The set of permissions to check for the `resource`. Permissions with
    *   wildcards (such as '*' or 'storage.*') are not allowed. For more
-   *   information see
-   *   [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).
+   *   information see {@link https://cloud.google.com/iam/docs/overview#permissions | IAM Overview }.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
-   *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
+   *   retries, paginations, etc. See {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html | gax.CallOptions} for the details.
    * @param {function(?Error, ?Object)} [callback]
    *   The function which will be called with the result of the API call.
    *
-   *   The second parameter to the callback is an object representing [TestIamPermissionsResponse]{@link google.iam.v1.TestIamPermissionsResponse}.
+   *   The second parameter to the callback is an object representing {@link google.iam.v1.TestIamPermissionsResponse | TestIamPermissionsResponse}.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [TestIamPermissionsResponse]{@link google.iam.v1.TestIamPermissionsResponse}.
+   *   The first element of the array is an object representing {@link google.iam.v1.TestIamPermissionsResponse | TestIamPermissionsResponse}.
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    *
    */
@@ -1643,7 +1625,7 @@ export class PublisherClient {
       IamProtos.google.iam.v1.TestIamPermissionsRequest | null | undefined,
       {} | null | undefined
     >
-  ): Promise<IamProtos.google.iam.v1.TestIamPermissionsResponse> {
+  ): Promise<[IamProtos.google.iam.v1.TestIamPermissionsResponse]> {
     return this.iamClient.testIamPermissions(request, options, callback);
   }
 

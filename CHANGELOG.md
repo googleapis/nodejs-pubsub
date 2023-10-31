@@ -4,6 +4,145 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.0.6](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.5...v4.0.6) (2023-09-15)
+
+
+### Bug Fixes
+
+* Bump the minimum gax up to 4.0.4 to get grpc-js fixes ([#1829](https://github.com/googleapis/nodejs-pubsub/issues/1829)) ([cc86e2b](https://github.com/googleapis/nodejs-pubsub/commit/cc86e2b4f3593d3d6046dc5baee76e1431832acb))
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.17.0 ([#1824](https://github.com/googleapis/nodejs-pubsub/issues/1824)) ([679c6b8](https://github.com/googleapis/nodejs-pubsub/commit/679c6b82bdb6fe28c3bc8c31db2e10de1ee7e089))
+
+## [4.0.5](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.4...v4.0.5) (2023-09-07)
+
+
+### Bug Fixes
+
+* Always fill the topic and sub names when creating from a PubSub object ([#1816](https://github.com/googleapis/nodejs-pubsub/issues/1816)) ([be8ed53](https://github.com/googleapis/nodejs-pubsub/commit/be8ed530e327e2bd08a49200492f0a163b3b91d7))
+
+## [4.0.4](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.3...v4.0.4) (2023-09-05)
+
+
+### Bug Fixes
+
+* Set grpc keepalive time|outs by default ([#1814](https://github.com/googleapis/nodejs-pubsub/issues/1814)) ([13d89a2](https://github.com/googleapis/nodejs-pubsub/commit/13d89a2b4e25f340ef492d586bfa8cc3a9a6d6cf))
+
+## [4.0.3](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.2...v4.0.3) (2023-08-31)
+
+
+### Bug Fixes
+
+* Simplify logic for HTTP/1.1 REST fallback option ([#1809](https://github.com/googleapis/nodejs-pubsub/issues/1809)) ([f26008d](https://github.com/googleapis/nodejs-pubsub/commit/f26008de84f201ec6e0180582d8a4bebc3d5ced0))
+
+## [4.0.2](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.1...v4.0.2) (2023-08-24)
+
+
+### Bug Fixes
+
+* Make retry policy back off more aggressively for RPCs that retry RESOURCE_EXHAUSTD ([#1806](https://github.com/googleapis/nodejs-pubsub/issues/1806)) ([e9969ba](https://github.com/googleapis/nodejs-pubsub/commit/e9969bab92c38f1509b157034fcdbe5d5ec63903))
+
+## [4.0.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.0...v4.0.1) (2023-08-11)
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @google-cloud/paginator to v5 ([#1799](https://github.com/googleapis/nodejs-pubsub/issues/1799)) ([3195d21](https://github.com/googleapis/nodejs-pubsub/commit/3195d21bf817cf10daa86b019532c9405dc42405))
+* **deps:** Update dependency @google-cloud/precise-date to v4 ([#1803](https://github.com/googleapis/nodejs-pubsub/issues/1803)) ([2c22d67](https://github.com/googleapis/nodejs-pubsub/commit/2c22d67b0fbaf3409101a830ee0c5be002ed6c7b))
+* **deps:** Update dependency @google-cloud/projectify to v4 ([#1800](https://github.com/googleapis/nodejs-pubsub/issues/1800)) ([5787d56](https://github.com/googleapis/nodejs-pubsub/commit/5787d56b95d46544bf8c59fe4bc4cb374bc53d0a))
+* **deps:** Update dependency @google-cloud/promisify to v4 ([#1798](https://github.com/googleapis/nodejs-pubsub/issues/1798)) ([093c46b](https://github.com/googleapis/nodejs-pubsub/commit/093c46bd0a4713ad9702bde03eaa5e8b0acedb28))
+
+## [4.0.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.3...v4.0.0) (2023-08-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* node 12 eos ([#1774](https://github.com/googleapis/nodejs-pubsub/issues/1774)) (#1784)
+
+### Features
+
+* Node 12 eos ([#1774](https://github.com/googleapis/nodejs-pubsub/issues/1774)) ([#1784](https://github.com/googleapis/nodejs-pubsub/issues/1784)) ([47b83c1](https://github.com/googleapis/nodejs-pubsub/commit/47b83c18c543a7c8763256f79927a7340db56568))
+
+
+### Bug Fixes
+
+* Fix typings for IAM methods ([#1785](https://github.com/googleapis/nodejs-pubsub/issues/1785)) ([9a6bdbc](https://github.com/googleapis/nodejs-pubsub/commit/9a6bdbce952c81cb1a43fecbce16a3e3ab0f1420))
+
+## [3.7.3](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.2...v3.7.3) (2023-07-26)
+
+
+### Bug Fixes
+
+* Update masks for topic should be snake case ([#1778](https://github.com/googleapis/nodejs-pubsub/issues/1778)) ([ba72638](https://github.com/googleapis/nodejs-pubsub/commit/ba7263836e6951454f77f631c9d2eb0a4df98da5))
+
+## [3.7.2](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.1...v3.7.2) (2023-07-24)
+
+
+### Bug Fixes
+
+* Update to gax 3.6.1 for vuln fix ([#1775](https://github.com/googleapis/nodejs-pubsub/issues/1775)) ([98460db](https://github.com/googleapis/nodejs-pubsub/commit/98460dbd1f31e4ee06356e88fec676a04a68ac88))
+
+## [3.7.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.7.0...v3.7.1) (2023-06-08)
+
+
+### Bug Fixes
+
+* Don't crash if an already-drained/removed queue gets flushed again ([#1747](https://github.com/googleapis/nodejs-pubsub/issues/1747)) ([52ea441](https://github.com/googleapis/nodejs-pubsub/commit/52ea441fee302aa6c400b58d4ecebbc96a2ea5ea))
+
+## [3.7.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.6.0...v3.7.0) (2023-05-26)
+
+
+### Features
+
+* Add push config wrapper fields ([#1730](https://github.com/googleapis/nodejs-pubsub/issues/1730)) ([a552719](https://github.com/googleapis/nodejs-pubsub/commit/a552719dfebda4c1263c352ea99bf8f9570290b7))
+
+## [3.6.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.5.2...v3.6.0) (2023-05-12)
+
+
+### Features
+
+* Add cloud storage subscription fields ([#1724](https://github.com/googleapis/nodejs-pubsub/issues/1724)) ([f61a64a](https://github.com/googleapis/nodejs-pubsub/commit/f61a64a2daffdfbf4c7b18d50434899c572d108c))
+
+## [3.5.2](https://github.com/googleapis/nodejs-pubsub/compare/v3.5.1...v3.5.2) (2023-04-26)
+
+
+### Bug Fixes
+
+* Avoid zalgo when calling down to publish messages ([#1710](https://github.com/googleapis/nodejs-pubsub/issues/1710)) ([dedae1e](https://github.com/googleapis/nodejs-pubsub/commit/dedae1e46cb3214abc33578a878a2298cdae6cac))
+
+## [3.5.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.5.0...v3.5.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* Handle receipt modAck and lease extensions with exactly-once delivery correctly ([#1709](https://github.com/googleapis/nodejs-pubsub/issues/1709)) ([d786d22](https://github.com/googleapis/nodejs-pubsub/commit/d786d22bfec61b91891e5049f1b5ae2d9a81d788))
+
+## [3.5.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.4.1...v3.5.0) (2023-04-16)
+
+
+### Features
+
+* Rework low level message stream retries, add debugging ([#1713](https://github.com/googleapis/nodejs-pubsub/issues/1713)) ([c1cc6e0](https://github.com/googleapis/nodejs-pubsub/commit/c1cc6e043ab2e532f9c8c9f9158c46e9a424d3dd))
+
+## [3.4.1](https://github.com/googleapis/nodejs-pubsub/compare/v3.4.0...v3.4.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* Update minimum google-gax to avoid taffydb vulnerabilities ([#1695](https://github.com/googleapis/nodejs-pubsub/issues/1695)) ([11372e6](https://github.com/googleapis/nodejs-pubsub/commit/11372e6d40577704a8a22b6c010623be7e36b34a))
+
+## [3.4.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.3.0...v3.4.0) (2023-03-06)
+
+
+### Features
+
+* Add google.api.method.signature to update methods ([1e28405](https://github.com/googleapis/nodejs-pubsub/commit/1e2840529a8451c94d5d845062da84729b7843db))
+* Add temporary_failed_ack_ids to ModifyAckDeadlineConfirmation ([1e28405](https://github.com/googleapis/nodejs-pubsub/commit/1e2840529a8451c94d5d845062da84729b7843db))
+* Make INTERNAL a retryable error for Pull ([#1681](https://github.com/googleapis/nodejs-pubsub/issues/1681)) ([1e28405](https://github.com/googleapis/nodejs-pubsub/commit/1e2840529a8451c94d5d845062da84729b7843db))
+
+
+### Bug Fixes
+
+* Don't do multiple drains per publish() in message queues unless requested ([#1691](https://github.com/googleapis/nodejs-pubsub/issues/1691)) ([d9b3a63](https://github.com/googleapis/nodejs-pubsub/commit/d9b3a63ddbfec0581a0e05fdbfcf9e9326b3dcf9))
+
 ## [3.3.0](https://github.com/googleapis/nodejs-pubsub/compare/v3.2.1...v3.3.0) (2023-01-23)
 
 

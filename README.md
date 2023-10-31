@@ -13,7 +13,7 @@
 [Cloud Pub/Sub](https://cloud.google.com/pubsub/docs) is a fully-managed real-time messaging service that allows
 you to send and receive messages between independent applications.
 
-This document contains links to an [API reference](https://googleapis.dev/nodejs/pubsub/latest/index.html#reference), samples,
+This document contains links to an [API reference](https://cloud.google.com/nodejs/docs/reference/pubsub/latest/overview), samples,
 and other resources useful to developing Node.js applications.
 For additional help developing Pub/Sub applications, in Node.js and other languages, see our
 [Pub/Sub quickstart](https://cloud.google.com/pubsub/docs/quickstart-client-libraries),
@@ -96,7 +96,7 @@ async function quickstart(
   });
 
   // Send a message to the topic
-  topic.publish(Buffer.from('Test message!'));
+  topic.publishMessage({data: Buffer.from('Test message!')});
 }
 
 ```
@@ -132,6 +132,7 @@ Samples are in the [`samples/`](https://github.com/googleapis/nodejs-pubsub/tree
 | Create an exactly-once delivery subscription | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/createSubscriptionWithExactlyOnceDelivery.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createSubscriptionWithExactlyOnceDelivery.js,samples/README.md) |
 | Create Subscription With Filtering | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/createSubscriptionWithFiltering.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createSubscriptionWithFiltering.js,samples/README.md) |
 | Create Subscription with ordering enabled | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/createSubscriptionWithOrdering.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createSubscriptionWithOrdering.js,samples/README.md) |
+| Create Subscription With Retry Policy | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/createSubscriptionWithRetryPolicy.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createSubscriptionWithRetryPolicy.js,samples/README.md) |
 | Create Topic | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/createTopic.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createTopic.js,samples/README.md) |
 | Create Topic With Schema | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/createTopicWithSchema.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createTopicWithSchema.js,samples/README.md) |
 | Delete a previously created schema | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/deleteSchema.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/deleteSchema.js,samples/README.md) |
@@ -174,6 +175,7 @@ Samples are in the [`samples/`](https://github.com/googleapis/nodejs-pubsub/tree
 | Test Subscription Permissions | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/testSubscriptionPermissions.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/testSubscriptionPermissions.js,samples/README.md) |
 | Test Topic Permissions | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/testTopicPermissions.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/testTopicPermissions.js,samples/README.md) |
 | Update Dead Letter Policy | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/updateDeadLetterPolicy.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/updateDeadLetterPolicy.js,samples/README.md) |
+| Validate a schema definition | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/validateSchema.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/validateSchema.js,samples/README.md) |
 
 
 
@@ -182,7 +184,7 @@ also contains samples.
 
 ## Supported Node.js Versions
 
-Our client libraries follow the [Node.js release schedule](https://nodejs.org/en/about/releases/).
+Our client libraries follow the [Node.js release schedule](https://github.com/nodejs/release#release-schedule).
 Libraries are compatible with all current _active_ and _maintenance_ versions of
 Node.js.
 If you are using an end-of-life version of Node.js, we recommend that you update

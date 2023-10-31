@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {promisify} from '@google-cloud/promisify';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
@@ -119,18 +118,16 @@ export class Publisher {
             const flushResolver = () => {
               resolve();
 
-              // flush() maybe called more than once, so remove these
+              // flush() may be called more than once, so remove these
               // event listeners after we've completed flush().
               q.removeListener('drain', flushResolver);
             };
-            return q.on('drain', flushResolver);
+            q.on('drain', flushResolver);
           })
       )
     );
 
-    const allPublishes = Promise.all(
-      toDrain.map(q => promisify(q.publish).bind(q)())
-    );
+    const allPublishes = Promise.all(toDrain.map(q => q.publishDrain()));
 
     allPublishes
       .then(() => allDrains)
@@ -139,6 +136,7 @@ export class Publisher {
       })
       .catch(definedCallback);
   }
+
   /**
    * Publish the provided message.
    *

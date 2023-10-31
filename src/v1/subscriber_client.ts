@@ -95,8 +95,7 @@ export class SubscriberClient {
    *     API remote host.
    * @param {gax.ClientConfig} [options.clientConfig] - Client configuration override.
    *     Follows the structure of {@link gapicConfig}.
-   * @param {boolean | "rest"} [options.fallback] - Use HTTP fallback mode.
-   *     Pass "rest" to use HTTP/1.1 REST API instead of gRPC.
+   * @param {boolean} [options.fallback] - Use HTTP/1.1 REST mode.
    *     For more information, please check the
    *     {@link https://github.com/googleapis/gax-nodejs/blob/main/client-libraries.md#http11-rest-api-mode documentation}.
    * @param {gax} [gaxInstance]: loaded instance of `google-gax`. Useful if you
@@ -104,7 +103,7 @@ export class SubscriberClient {
    *     HTTP implementation. Load only fallback version and pass it to the constructor:
    *     ```
    *     const gax = require('google-gax/build/src/fallback'); // avoids loading google-gax with gRPC
-   *     const client = new SubscriberClient({fallback: 'rest'}, gax);
+   *     const client = new SubscriberClient({fallback: true}, gax);
    *     ```
    */
   constructor(
@@ -171,7 +170,7 @@ export class SubscriberClient {
     }
     if (!opts.fallback) {
       clientHeader.push(`grpc/${this._gaxGrpc.grpcVersion}`);
-    } else if (opts.fallback === 'rest') {
+    } else {
       clientHeader.push(`rest/${this._gaxGrpc.grpcVersion}`);
     }
     if (opts.libName && opts.libVersion) {
@@ -222,7 +221,7 @@ export class SubscriberClient {
     this.descriptors.stream = {
       streamingPull: new this._gaxModule.StreamDescriptor(
         this._gaxModule.StreamType.BIDI_STREAMING,
-        opts.fallback === 'rest'
+        !!opts.fallback
       ),
     };
 
@@ -395,16 +394,16 @@ export class SubscriberClient {
   // -------------------
   /**
    * Creates a subscription to a given topic. See the [resource name rules]
-   * (https://cloud.google.com/pubsub/docs/admin#resource_names).
+   * (https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names).
    * If the subscription already exists, returns `ALREADY_EXISTS`.
    * If the corresponding topic doesn't exist, returns `NOT_FOUND`.
    *
    * If the name is not provided in the request, the server will assign a random
    * name for this subscription on the same project as the topic, conforming
    * to the [resource name format]
-   * (https://cloud.google.com/pubsub/docs/admin#resource_names). The generated
-   * name is populated in the returned Subscription object. Note that for REST
-   * API requests, you must specify a name in the request.
+   * (https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names). The
+   * generated name is populated in the returned Subscription object. Note that
+   * for REST API requests, you must specify a name in the request.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -421,19 +420,18 @@ export class SubscriberClient {
    *   field will be `_deleted-topic_` if the topic has been deleted.
    * @param {google.pubsub.v1.PushConfig} request.pushConfig
    *   If push delivery is used with this subscription, this field is
-   *   used to configure it. Either `pushConfig` or `bigQueryConfig` can be set,
-   *   but not both. If both are empty, then the subscriber will pull and ack
-   *   messages using API methods.
+   *   used to configure it.
    * @param {google.pubsub.v1.BigQueryConfig} request.bigqueryConfig
    *   If delivery to BigQuery is used with this subscription, this field is
-   *   used to configure it. Either `pushConfig` or `bigQueryConfig` can be set,
-   *   but not both. If both are empty, then the subscriber will pull and ack
-   *   messages using API methods.
+   *   used to configure it.
+   * @param {google.pubsub.v1.CloudStorageConfig} request.cloudStorageConfig
+   *   If delivery to Google Cloud Storage is used with this subscription, this
+   *   field is used to configure it.
    * @param {number} request.ackDeadlineSeconds
    *   The approximate amount of time (on a best-effort basis) Pub/Sub waits for
    *   the subscriber to acknowledge receipt before resending the message. In the
    *   interval after the message is delivered and before it is acknowledged, it
-   *   is considered to be <i>outstanding</i>. During that time period, the
+   *   is considered to be _outstanding_. During that time period, the
    *   message will not be redelivered (on a best-effort basis).
    *
    *   For pull subscriptions, this value is used as the initial value for the ack
@@ -465,8 +463,8 @@ export class SubscriberClient {
    *   can be done. Defaults to 7 days. Cannot be more than 7 days or less than 10
    *   minutes.
    * @param {number[]} request.labels
-   *   See <a href="https://cloud.google.com/pubsub/docs/labels"> Creating and
-   *   managing labels</a>.
+   *   See [Creating and managing
+   *   labels](https://cloud.google.com/pubsub/docs/labels).
    * @param {boolean} request.enableMessageOrdering
    *   If true, messages published with the same `ordering_key` in `PubsubMessage`
    *   will be delivered to the subscribers in the order in which they
@@ -478,7 +476,8 @@ export class SubscriberClient {
    *   successfully consuming messages from the subscription or is issuing
    *   operations on the subscription. If `expiration_policy` is not set, a
    *   *default policy* with `ttl` of 31 days will be used. The minimum allowed
-   *   value for `expiration_policy.ttl` is 1 day.
+   *   value for `expiration_policy.ttl` is 1 day. If `expiration_policy` is set,
+   *   but `expiration_policy.ttl` is not set, the subscription never expires.
    * @param {string} request.filter
    *   An expression written in the Pub/Sub [filter
    *   language](https://cloud.google.com/pubsub/docs/filtering). If non-empty,
@@ -533,9 +532,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Subscription]{@link google.pubsub.v1.Subscription}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Subscription|Subscription}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   createSubscription(
@@ -545,7 +543,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.ISubscription | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   createSubscription(
@@ -583,7 +581,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.ISubscription | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -615,9 +613,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Subscription]{@link google.pubsub.v1.Subscription}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Subscription|Subscription}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   getSubscription(
@@ -627,7 +624,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IGetSubscriptionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   getSubscription(
@@ -665,7 +662,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IGetSubscriptionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -700,9 +697,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Subscription]{@link google.pubsub.v1.Subscription}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Subscription|Subscription}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   updateSubscription(
@@ -712,7 +708,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IUpdateSubscriptionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   updateSubscription(
@@ -750,7 +746,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IUpdateSubscriptionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -786,9 +782,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   deleteSubscription(
@@ -798,7 +793,7 @@ export class SubscriberClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSubscriptionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   deleteSubscription(
@@ -836,7 +831,7 @@ export class SubscriberClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSubscriptionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -883,9 +878,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   modifyAckDeadline(
@@ -895,7 +889,7 @@ export class SubscriberClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyAckDeadlineRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   modifyAckDeadline(
@@ -933,7 +927,7 @@ export class SubscriberClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyAckDeadlineRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -975,9 +969,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   acknowledge(
@@ -987,7 +980,7 @@ export class SubscriberClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IAcknowledgeRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   acknowledge(
@@ -1025,7 +1018,7 @@ export class SubscriberClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IAcknowledgeRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -1047,9 +1040,7 @@ export class SubscriberClient {
     return this.innerApiCalls.acknowledge(request, options, callback);
   }
   /**
-   * Pulls messages from the server. The server may return `UNAVAILABLE` if
-   * there are too many concurrent pull requests pending for the given
-   * subscription.
+   * Pulls messages from the server.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1071,9 +1062,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [PullResponse]{@link google.pubsub.v1.PullResponse}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.PullResponse|PullResponse}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   pull(
@@ -1083,7 +1073,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.IPullResponse,
       protos.google.pubsub.v1.IPullRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   pull(
@@ -1121,7 +1111,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.IPullResponse,
       protos.google.pubsub.v1.IPullRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -1165,9 +1155,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   modifyPushConfig(
@@ -1177,7 +1166,7 @@ export class SubscriberClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyPushConfigRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   modifyPushConfig(
@@ -1215,7 +1204,7 @@ export class SubscriberClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyPushConfigRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -1238,10 +1227,10 @@ export class SubscriberClient {
   }
   /**
    * Gets the configuration details of a snapshot. Snapshots are used in
-   * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
-   * operations, which allow you to manage message acknowledgments in bulk. That
-   * is, you can set the acknowledgment state of messages in an existing
-   * subscription to the state captured by a snapshot.
+   * [Seek](https://cloud.google.com/pubsub/docs/replay-overview) operations,
+   * which allow you to manage message acknowledgments in bulk. That is, you can
+   * set the acknowledgment state of messages in an existing subscription to the
+   * state captured by a snapshot.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1251,9 +1240,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Snapshot]{@link google.pubsub.v1.Snapshot}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Snapshot|Snapshot}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   getSnapshot(
@@ -1263,7 +1251,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IGetSnapshotRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   getSnapshot(
@@ -1301,7 +1289,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IGetSnapshotRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -1336,7 +1324,7 @@ export class SubscriberClient {
    * the request, the server will assign a random
    * name for this snapshot on the same project as the subscription, conforming
    * to the [resource name format]
-   * (https://cloud.google.com/pubsub/docs/admin#resource_names). The
+   * (https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names). The
    * generated name is populated in the returned Snapshot object. Note that for
    * REST API requests, you must specify a name in the request.
    *
@@ -1346,9 +1334,9 @@ export class SubscriberClient {
    *   Required. User-provided name for this snapshot. If the name is not provided
    *   in the request, the server will assign a random name for this snapshot on
    *   the same project as the subscription. Note that for REST API requests, you
-   *   must specify a name.  See the <a
-   *   href="https://cloud.google.com/pubsub/docs/admin#resource_names"> resource
-   *   name rules</a>. Format is `projects/{project}/snapshots/{snap}`.
+   *   must specify a name.  See the [resource name
+   *   rules](https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names).
+   *   Format is `projects/{project}/snapshots/{snap}`.
    * @param {string} request.subscription
    *   Required. The subscription whose backlog the snapshot retains.
    *   Specifically, the created snapshot is guaranteed to retain:
@@ -1360,14 +1348,13 @@ export class SubscriberClient {
    *        successful completion of the CreateSnapshot request.
    *   Format is `projects/{project}/subscriptions/{sub}`.
    * @param {number[]} request.labels
-   *   See <a href="https://cloud.google.com/pubsub/docs/labels"> Creating and
-   *   managing labels</a>.
+   *   See [Creating and managing
+   *   labels](https://cloud.google.com/pubsub/docs/labels).
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Snapshot]{@link google.pubsub.v1.Snapshot}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Snapshot|Snapshot}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   createSnapshot(
@@ -1377,7 +1364,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.ICreateSnapshotRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   createSnapshot(
@@ -1415,7 +1402,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.ICreateSnapshotRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -1438,11 +1425,10 @@ export class SubscriberClient {
   }
   /**
    * Updates an existing snapshot. Snapshots are used in
-   * <a href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
-   * operations, which allow
-   * you to manage message acknowledgments in bulk. That is, you can set the
-   * acknowledgment state of messages in an existing subscription to the state
-   * captured by a snapshot.
+   * [Seek](https://cloud.google.com/pubsub/docs/replay-overview) operations,
+   * which allow you to manage message acknowledgments in bulk. That is, you can
+   * set the acknowledgment state of messages in an existing subscription to the
+   * state captured by a snapshot.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -1454,9 +1440,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Snapshot]{@link google.pubsub.v1.Snapshot}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Snapshot|Snapshot}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   updateSnapshot(
@@ -1466,7 +1451,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IUpdateSnapshotRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   updateSnapshot(
@@ -1504,7 +1489,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IUpdateSnapshotRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -1544,9 +1529,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Empty]{@link google.protobuf.Empty}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   deleteSnapshot(
@@ -1556,7 +1540,7 @@ export class SubscriberClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSnapshotRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   deleteSnapshot(
@@ -1594,7 +1578,7 @@ export class SubscriberClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSnapshotRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -1647,9 +1631,8 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [SeekResponse]{@link google.pubsub.v1.SeekResponse}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.SeekResponse|SeekResponse}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   seek(
@@ -1659,7 +1642,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISeekResponse,
       protos.google.pubsub.v1.ISeekRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   seek(
@@ -1697,7 +1680,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISeekResponse,
       protos.google.pubsub.v1.ISeekRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -1732,10 +1715,9 @@ export class SubscriberClient {
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
    *   An object stream which is both readable and writable. It accepts objects
-   *   representing [StreamingPullRequest]{@link google.pubsub.v1.StreamingPullRequest} for write() method, and
-   *   will emit objects representing [StreamingPullResponse]{@link google.pubsub.v1.StreamingPullResponse} on 'data' event asynchronously.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#bi-directional-streaming)
+   *   representing {@link protos.google.pubsub.v1.StreamingPullRequest|StreamingPullRequest} for write() method, and
+   *   will emit objects representing {@link protos.google.pubsub.v1.StreamingPullResponse|StreamingPullResponse} on 'data' event asynchronously.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#bi-directional-streaming | documentation }
    *   for more details and examples.
    */
   streamingPull(options?: CallOptions): gax.CancellableStream {
@@ -1760,14 +1742,13 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is Array of [Subscription]{@link google.pubsub.v1.Subscription}.
+   *   The first element of the array is Array of {@link protos.google.pubsub.v1.Subscription|Subscription}.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed and will merge results from all the pages into this array.
    *   Note that it can affect your quota.
    *   We recommend using `listSubscriptionsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSubscriptions(
@@ -1777,7 +1758,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISubscription[],
       protos.google.pubsub.v1.IListSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListSubscriptionsResponse
+      protos.google.pubsub.v1.IListSubscriptionsResponse,
     ]
   >;
   listSubscriptions(
@@ -1815,7 +1796,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISubscription[],
       protos.google.pubsub.v1.IListSubscriptionsRequest | null,
-      protos.google.pubsub.v1.IListSubscriptionsResponse
+      protos.google.pubsub.v1.IListSubscriptionsResponse,
     ]
   > | void {
     request = request || {};
@@ -1853,13 +1834,12 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
-   *   An object stream which emits an object representing [Subscription]{@link google.pubsub.v1.Subscription} on 'data' event.
+   *   An object stream which emits an object representing {@link protos.google.pubsub.v1.Subscription|Subscription} on 'data' event.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed. Note that it can affect your quota.
    *   We recommend using `listSubscriptionsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSubscriptionsStream(
@@ -1902,12 +1882,11 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
-   *   An iterable Object that allows [async iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols).
+   *   An iterable Object that allows {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols | async iteration }.
    *   When you iterate the returned iterable, each element will be an object representing
-   *   [Subscription]{@link google.pubsub.v1.Subscription}. The API will be called under the hood as needed, once per the page,
+   *   {@link protos.google.pubsub.v1.Subscription|Subscription}. The API will be called under the hood as needed, once per the page,
    *   so you can stop the iteration when you don't need more results.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSubscriptionsAsync(
@@ -1952,14 +1931,13 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is Array of [Snapshot]{@link google.pubsub.v1.Snapshot}.
+   *   The first element of the array is Array of {@link protos.google.pubsub.v1.Snapshot|Snapshot}.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed and will merge results from all the pages into this array.
    *   Note that it can affect your quota.
    *   We recommend using `listSnapshotsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSnapshots(
@@ -1969,7 +1947,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISnapshot[],
       protos.google.pubsub.v1.IListSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListSnapshotsResponse
+      protos.google.pubsub.v1.IListSnapshotsResponse,
     ]
   >;
   listSnapshots(
@@ -2007,7 +1985,7 @@ export class SubscriberClient {
     [
       protos.google.pubsub.v1.ISnapshot[],
       protos.google.pubsub.v1.IListSnapshotsRequest | null,
-      protos.google.pubsub.v1.IListSnapshotsResponse
+      protos.google.pubsub.v1.IListSnapshotsResponse,
     ]
   > | void {
     request = request || {};
@@ -2045,13 +2023,12 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
-   *   An object stream which emits an object representing [Snapshot]{@link google.pubsub.v1.Snapshot} on 'data' event.
+   *   An object stream which emits an object representing {@link protos.google.pubsub.v1.Snapshot|Snapshot} on 'data' event.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed. Note that it can affect your quota.
    *   We recommend using `listSnapshotsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSnapshotsStream(
@@ -2094,12 +2071,11 @@ export class SubscriberClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
-   *   An iterable Object that allows [async iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols).
+   *   An iterable Object that allows {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols | async iteration }.
    *   When you iterate the returned iterable, each element will be an object representing
-   *   [Snapshot]{@link google.pubsub.v1.Snapshot}. The API will be called under the hood as needed, once per the page,
+   *   {@link protos.google.pubsub.v1.Snapshot|Snapshot}. The API will be called under the hood as needed, once per the page,
    *   so you can stop the iteration when you don't need more results.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSnapshotsAsync(
@@ -2136,16 +2112,16 @@ export class SubscriberClient {
    *   OPTIONAL: A `GetPolicyOptions` object for specifying options to
    *   `GetIamPolicy`. This field is only used by Cloud IAM.
    *
-   *   This object should have the same structure as [GetPolicyOptions]{@link google.iam.v1.GetPolicyOptions}
+   *   This object should have the same structure as {@link google.iam.v1.GetPolicyOptions | GetPolicyOptions}.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
-   *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
+   *   retries, paginations, etc. See {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html | gax.CallOptions} for the details.
    * @param {function(?Error, ?Object)} [callback]
    *   The function which will be called with the result of the API call.
    *
-   *   The second parameter to the callback is an object representing [Policy]{@link google.iam.v1.Policy}.
+   *   The second parameter to the callback is an object representing {@link google.iam.v1.Policy | Policy}.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [Policy]{@link google.iam.v1.Policy}.
+   *   The first element of the array is an object representing {@link google.iam.v1.Policy | Policy}.
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   getIamPolicy(
@@ -2162,7 +2138,7 @@ export class SubscriberClient {
       IamProtos.google.iam.v1.GetIamPolicyRequest | null | undefined,
       {} | null | undefined
     >
-  ): Promise<IamProtos.google.iam.v1.Policy> {
+  ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.getIamPolicy(request, options, callback);
   }
 
@@ -2183,17 +2159,16 @@ export class SubscriberClient {
    * @param {string[]} request.permissions
    *   The set of permissions to check for the `resource`. Permissions with
    *   wildcards (such as '*' or 'storage.*') are not allowed. For more
-   *   information see
-   *   [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).
+   *   information see {@link https://cloud.google.com/iam/docs/overview#permissions | IAM Overview }.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
-   *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
+   *   retries, paginations, etc. See {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html | gax.CallOptions} for the details.
    * @param {function(?Error, ?Object)} [callback]
    *   The function which will be called with the result of the API call.
    *
-   *   The second parameter to the callback is an object representing [TestIamPermissionsResponse]{@link google.iam.v1.TestIamPermissionsResponse}.
+   *   The second parameter to the callback is an object representing {@link google.iam.v1.TestIamPermissionsResponse | TestIamPermissionsResponse}.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [TestIamPermissionsResponse]{@link google.iam.v1.TestIamPermissionsResponse}.
+   *   The first element of the array is an object representing {@link google.iam.v1.TestIamPermissionsResponse | TestIamPermissionsResponse}.
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    */
   setIamPolicy(
@@ -2210,7 +2185,7 @@ export class SubscriberClient {
       IamProtos.google.iam.v1.SetIamPolicyRequest | null | undefined,
       {} | null | undefined
     >
-  ): Promise<IamProtos.google.iam.v1.Policy> {
+  ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.setIamPolicy(request, options, callback);
   }
 
@@ -2231,17 +2206,16 @@ export class SubscriberClient {
    * @param {string[]} request.permissions
    *   The set of permissions to check for the `resource`. Permissions with
    *   wildcards (such as '*' or 'storage.*') are not allowed. For more
-   *   information see
-   *   [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).
+   *   information see {@link https://cloud.google.com/iam/docs/overview#permissions | IAM Overview }.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
-   *   retries, paginations, etc. See [gax.CallOptions]{@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html} for the details.
+   *   retries, paginations, etc. See {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html | gax.CallOptions} for the details.
    * @param {function(?Error, ?Object)} [callback]
    *   The function which will be called with the result of the API call.
    *
-   *   The second parameter to the callback is an object representing [TestIamPermissionsResponse]{@link google.iam.v1.TestIamPermissionsResponse}.
+   *   The second parameter to the callback is an object representing {@link google.iam.v1.TestIamPermissionsResponse | TestIamPermissionsResponse}.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing [TestIamPermissionsResponse]{@link google.iam.v1.TestIamPermissionsResponse}.
+   *   The first element of the array is an object representing {@link google.iam.v1.TestIamPermissionsResponse | TestIamPermissionsResponse}.
    *   The promise has a method named "cancel" which cancels the ongoing API call.
    *
    */
@@ -2259,7 +2233,7 @@ export class SubscriberClient {
       IamProtos.google.iam.v1.TestIamPermissionsRequest | null | undefined,
       {} | null | undefined
     >
-  ): Promise<IamProtos.google.iam.v1.TestIamPermissionsResponse> {
+  ): Promise<[IamProtos.google.iam.v1.TestIamPermissionsResponse]> {
     return this.iamClient.testIamPermissions(request, options, callback);
   }
 

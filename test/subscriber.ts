@@ -24,6 +24,8 @@ import * as sinon from 'sinon';
 import {PassThrough} from 'stream';
 import * as uuid from 'uuid';
 import * as opentelemetry from '@opentelemetry/api';
+import {google} from '../protos/protos';
+import * as defer from 'p-defer';
 
 import {HistogramOptions} from '../src/histogram';
 import {FlowControlOptions} from '../src/lease-manager';
@@ -34,6 +36,8 @@ import {Subscription} from '../src/subscription';
 import {SpanKind} from '@opentelemetry/api';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 import {Duration} from '../src';
+
+type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 
 const stubs = new Map();
 
@@ -129,12 +133,14 @@ class FakeMessageStream extends PassThrough {
     this.options = options;
     stubs.set('messageStream', this);
   }
+  setStreamAckDeadline(): void {}
   _destroy(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _error: Error | null,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _callback: (error: Error | null) => void
   ): void {}
+  async start() {}
 }
 
 class FakePreciseDate {
@@ -154,6 +160,17 @@ const RECEIVED_MESSAGE = {
     publishTime: {seconds: 12, nanos: 32},
   },
 };
+
+interface SubInternals {
+  _stream: FakeMessageStream;
+  _inventory: FakeLeaseManager;
+  _onData(response: PullResponse): void;
+  _discardMessage(message: s.Message): void;
+}
+
+function getSubInternals(sub: s.Subscriber) {
+  return sub as unknown as SubInternals;
+}
 
 describe('Subscriber', () => {
   let sandbox: sinon.SinonSandbox;
@@ -229,6 +246,106 @@ describe('Subscriber', () => {
 
       const [options] = stub.lastCall.args;
       assert.strictEqual(options, fakeOptions);
+    });
+  });
+
+  describe('receive', () => {
+    it('should add incoming messages to inventory w/o exactly-once', () => {
+      const sub = new Subscriber(subscription);
+      sub.isOpen = true;
+      const subint = getSubInternals(sub);
+      const modAckStub = sandbox.stub(sub, 'modAck');
+      subint._inventory = new FakeLeaseManager(sub, {});
+      const addStub = sandbox.stub(subint._inventory, 'add');
+      subint._onData({
+        subscriptionProperties: {
+          exactlyOnceDeliveryEnabled: false,
+          messageOrderingEnabled: false,
+        },
+        receivedMessages: [
+          {
+            ackId: 'ackack',
+            message: {
+              data: 'foo',
+              attributes: {},
+            },
+          },
+        ],
+      });
+
+      assert.ok(modAckStub.calledOnce);
+      assert.ok(addStub.calledOnce);
+    });
+
+    it('should add incoming messages to inventory w/exactly-once, success', async () => {
+      const sub = new Subscriber(subscription);
+      sub.isOpen = true;
+      const subint = getSubInternals(sub);
+      subint._stream = new FakeMessageStream(sub, {});
+      subint._inventory = new FakeLeaseManager(sub, {});
+      const modAckStub = sandbox.stub(sub, 'modAckWithResponse');
+      modAckStub.callsFake(async () => s.AckResponses.Success);
+      const addStub = sandbox.stub(subint._inventory, 'add');
+      const done = defer();
+      addStub.callsFake(() => {
+        assert.ok(modAckStub.calledOnce);
+        done.resolve();
+      });
+      subint._onData({
+        subscriptionProperties: {
+          exactlyOnceDeliveryEnabled: true,
+          messageOrderingEnabled: false,
+        },
+        receivedMessages: [
+          {
+            ackId: 'ackack',
+            message: {
+              data: 'foo',
+              attributes: {},
+            },
+          },
+        ],
+      });
+
+      await done.promise;
+    });
+
+    it('should add incoming messages to inventory w/exactly-once, permanent failure', async () => {
+      const sub = new Subscriber(subscription);
+      sub.isOpen = true;
+      const subint = getSubInternals(sub);
+      subint._stream = new FakeMessageStream(sub, {});
+      subint._inventory = new FakeLeaseManager(sub, {});
+
+      const done = defer();
+
+      const modAckStub = sandbox.stub(sub, 'modAckWithResponse');
+      modAckStub.rejects(new s.AckError(s.AckResponses.Invalid));
+      const addStub = sandbox.stub(subint._inventory, 'add');
+      const discardStub = sandbox.stub(subint, '_discardMessage');
+      discardStub.callsFake(() => {
+        assert.ok(modAckStub.calledOnce);
+        assert.ok(addStub.notCalled);
+        done.resolve();
+      });
+
+      subint._onData({
+        subscriptionProperties: {
+          exactlyOnceDeliveryEnabled: true,
+          messageOrderingEnabled: false,
+        },
+        receivedMessages: [
+          {
+            ackId: 'ackack',
+            message: {
+              data: 'foo',
+              attributes: {},
+            },
+          },
+        ],
+      });
+
+      await done.promise;
     });
   });
 
@@ -931,6 +1048,27 @@ describe('Subscriber', () => {
         assert.strictEqual(msg, message);
       });
 
+      it('should ack the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'ackWithResponse');
+
+        stub.resolves(s.AckResponses.Success);
+        const response = await message.ackWithResponse();
+        assert.strictEqual(response, s.AckResponses.Success);
+      });
+
+      it('should fail to ack the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'ackWithResponse');
+
+        stub.rejects(new s.AckError(s.AckResponses.Invalid));
+        await assert.rejects(message.ackWithResponse());
+
+        // Should cache the result also.
+        await assert.rejects(message.ackWithResponse());
+        assert.strictEqual(stub.callCount, 1);
+      });
+
       it('should not ack the message if its been handled', () => {
         const stub = sandbox.stub(subscriber, 'ack');
 
@@ -953,6 +1091,27 @@ describe('Subscriber', () => {
         assert.strictEqual(deadline, fakeDeadline);
       });
 
+      it('should modAck the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'modAckWithResponse');
+
+        stub.resolves(s.AckResponses.Success);
+        const response = await message.modAckWithResponse(0);
+        assert.strictEqual(response, s.AckResponses.Success);
+      });
+
+      it('should fail to modAck the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'modAckWithResponse');
+
+        stub.rejects(new s.AckError(s.AckResponses.Invalid));
+        await assert.rejects(message.modAckWithResponse(0));
+
+        // Should cache the result also.
+        await assert.rejects(message.modAckWithResponse(0));
+        assert.strictEqual(stub.callCount, 1);
+      });
+
       it('should not modAck the message if its been handled', () => {
         const deadline = 10;
         const stub = sandbox.stub(subscriber, 'modAck');
@@ -973,6 +1132,27 @@ describe('Subscriber', () => {
         const [msg, delay] = stub.lastCall.args;
         assert.strictEqual(msg, message);
         assert.strictEqual(delay, 0);
+      });
+
+      it('should nack the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'nackWithResponse');
+
+        stub.resolves(s.AckResponses.Success);
+        const response = await message.nackWithResponse();
+        assert.strictEqual(response, s.AckResponses.Success);
+      });
+
+      it('should fail to nack the message with response', async () => {
+        subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+        const stub = sandbox.stub(subscriber, 'nackWithResponse');
+
+        stub.rejects(new s.AckError(s.AckResponses.Invalid));
+        await assert.rejects(message.nackWithResponse());
+
+        // Should cache the result also.
+        await assert.rejects(message.nackWithResponse());
+        assert.strictEqual(stub.callCount, 1);
       });
 
       it('should not nack the message if its been handled', () => {

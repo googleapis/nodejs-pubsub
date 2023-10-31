@@ -9,7 +9,7 @@
 [Cloud Pub/Sub](https://cloud.google.com/pubsub/docs) is a fully-managed real-time messaging service that allows
 you to send and receive messages between independent applications.
 
-This document contains links to an [API reference](https://googleapis.dev/nodejs/pubsub/latest/index.html#reference), samples,
+This document contains links to an [API reference](https://cloud.google.com/nodejs/docs/reference/pubsub/latest/overview), samples,
 and other resources useful to developing Node.js applications.
 For additional help developing Pub/Sub applications, in Node.js and other languages, see our
 [Pub/Sub quickstart](https://cloud.google.com/pubsub/docs/quickstart-client-libraries),
@@ -29,6 +29,7 @@ guides.
   * [Create an exactly-once delivery subscription](#create-an-exactly-once-delivery-subscription)
   * [Create Subscription With Filtering](#create-subscription-with-filtering)
   * [Create Subscription with ordering enabled](#create-subscription-with-ordering-enabled)
+  * [Create Subscription With Retry Policy](#create-subscription-with-retry-policy)
   * [Create Topic](#create-topic)
   * [Create Topic With Schema](#create-topic-with-schema)
   * [Delete a previously created schema](#delete-a-previously-created-schema)
@@ -71,6 +72,7 @@ guides.
   * [Test Subscription Permissions](#test-subscription-permissions)
   * [Test Topic Permissions](#test-topic-permissions)
   * [Update Dead Letter Policy](#update-dead-letter-policy)
+  * [Validate a schema definition](#validate-a-schema-definition)
 
 ## Before you begin
 
@@ -251,6 +253,25 @@ __Usage:__
 
 
 `node createSubscriptionWithOrdering.js <topic-name-or-id> <subscription-name-or-id>`
+
+
+-----
+
+
+
+
+### Create Subscription With Retry Policy
+
+Creates a new subscription with a retry policy.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/createSubscriptionWithRetryPolicy.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createSubscriptionWithRetryPolicy.js,samples/README.md)
+
+__Usage:__
+
+
+`node createSubscriptionWithRetryPolicy.js <topic-name-or-id> <subscription-name-or-id>`
 
 
 -----
@@ -1049,6 +1070,25 @@ __Usage:__
 
 
 `node updateDeadLetterPolicy.js <topic-name-or-id> <subscription-name-or-id>`
+
+
+-----
+
+
+
+
+### Validate a schema definition
+
+Validates an Avro-based schema definition before creation (or other use).
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/validateSchema.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/validateSchema.js,samples/README.md)
+
+__Usage:__
+
+
+`node validateSchema.js <schema-text>`
 
 
 

@@ -21,30 +21,10 @@ import {PullRetry} from '../src/pull-retry';
 describe('PullRetry', () => {
   const sandbox = sinon.createSandbox();
 
-  let retrier: PullRetry;
-
-  beforeEach(() => {
-    retrier = new PullRetry();
-  });
+  beforeEach(() => {});
 
   afterEach(() => {
     sandbox.restore();
-  });
-
-  describe('createTimeout', () => {
-    it('should return 0 when no failures have occurred', () => {
-      assert.strictEqual(retrier.createTimeout(), 0);
-    });
-
-    it('should use a backoff factoring in the failure count', () => {
-      const random = Math.random();
-      const expected = Math.pow(2, 1) * 1000 + Math.floor(random * 1000);
-
-      sandbox.stub(global.Math, 'random').returns(random);
-
-      retrier.retry({code: grpc.status.CANCELLED} as grpc.StatusObject);
-      assert.strictEqual(retrier.createTimeout(), expected);
-    });
   });
 
   describe('retry', () => {
@@ -56,11 +36,11 @@ describe('PullRetry', () => {
         grpc.status.INTERNAL,
         grpc.status.UNAVAILABLE,
       ].forEach((code: grpc.status) => {
-        const shouldRetry = retrier.retry({code} as grpc.StatusObject);
+        const shouldRetry = PullRetry.retry({code} as grpc.StatusObject);
         assert.strictEqual(shouldRetry, true);
       });
 
-      const serverShutdown = retrier.retry({
+      const serverShutdown = PullRetry.retry({
         code: grpc.status.UNAVAILABLE,
         details: 'Server shutdownNow invoked',
       } as grpc.StatusObject);
@@ -76,23 +56,25 @@ describe('PullRetry', () => {
         grpc.status.OUT_OF_RANGE,
         grpc.status.UNIMPLEMENTED,
       ].forEach((code: grpc.status) => {
-        const shouldRetry = retrier.retry({code} as grpc.StatusObject);
+        const shouldRetry = PullRetry.retry({code} as grpc.StatusObject);
         assert.strictEqual(shouldRetry, false);
       });
     });
 
     it('should reset the failure count on OK', () => {
-      retrier.retry({code: grpc.status.CANCELLED} as grpc.StatusObject);
-      retrier.retry({code: grpc.status.OK} as grpc.StatusObject);
-
-      assert.strictEqual(retrier.createTimeout(), 0);
+      assert.ok(
+        PullRetry.resetFailures({
+          code: grpc.status.OK,
+        } as grpc.StatusObject)
+      );
     });
 
     it('should reset the failure count on DEADLINE_EXCEEDED', () => {
-      retrier.retry({code: grpc.status.CANCELLED} as grpc.StatusObject);
-      retrier.retry({code: grpc.status.DEADLINE_EXCEEDED} as grpc.StatusObject);
-
-      assert.strictEqual(retrier.createTimeout(), 0);
+      assert.ok(
+        PullRetry.resetFailures({
+          code: grpc.status.DEADLINE_EXCEEDED,
+        } as grpc.StatusObject)
+      );
     });
   });
 });
