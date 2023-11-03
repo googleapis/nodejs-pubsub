@@ -16,7 +16,7 @@
     "@google-cloud/pubsub": "file:./pubsub.tgz"
   },
   "devDependencies": {
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.0.0",
     "typescript": "^4.6.4",
     "gts": "^3.1.0"
   }
