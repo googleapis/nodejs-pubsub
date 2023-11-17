@@ -17,6 +17,7 @@
 import {EventEmitter} from 'events';
 import {AckError, Message, Subscriber} from './subscriber';
 import {defaultOptions} from './default-options';
+import defer = require('p-defer');
 
 export interface FlowControlOptions {
   allowExcessMessages?: boolean;
@@ -65,6 +66,7 @@ export class LeaseManager extends EventEmitter {
   private _pending: Message[];
   private _subscriber: Subscriber;
   private _timer?: NodeJS.Timeout;
+  private _onDrain?: defer.DeferredPromise<void>;
   constructor(sub: Subscriber, options = {}) {
     super();
 
@@ -119,6 +121,18 @@ export class LeaseManager extends EventEmitter {
       this.emit('full');
     }
   }
+
+  /**
+   * Only clear the messages that are not currently in-flight, helps with
+   * graceful shutdown.
+   */
+  clearNonDispensedMessages(): void {
+    for (const message of this._messages) {
+      if (!message.dispensed) {
+        this.remove(message);
+      }
+    }
+  }
   /**
    * Removes ALL messages from inventory.
    * @private
@@ -145,6 +159,15 @@ export class LeaseManager extends EventEmitter {
   isFull(): boolean {
     const {maxBytes, maxMessages} = this._options;
     return this.size >= maxMessages! || this.bytes >= maxBytes!;
+  }
+  /**
+   * Returns a promise that resolves when all messages have drained.
+   */
+  onDrain(): Promise<void> {
+    if (!this._onDrain) {
+      this._onDrain = defer();
+    }
+    return this._onDrain.promise;
   }
   /**
    * Removes a message from the inventory. Stopping the deadline extender if no
@@ -174,8 +197,15 @@ export class LeaseManager extends EventEmitter {
       this._dispense(this._pending.shift()!);
     }
 
-    if (this.size === 0 && this._isLeasing) {
-      this._cancelExtension();
+    if (this.size === 0) {
+      if (this._isLeasing) {
+        this._cancelExtension();
+      }
+
+      if (this._onDrain) {
+        this._onDrain.resolve();
+        delete this._onDrain;
+      }
     }
   }
   /**
@@ -240,7 +270,11 @@ export class LeaseManager extends EventEmitter {
    */
   private _dispense(message: Message): void {
     if (this._subscriber.isOpen) {
-      process.nextTick(() => this._subscriber.emit('message', message));
+      process.nextTick(() => {
+        // Tell the message its dispensed, make sure you do this first as emit blocks
+        message.dispensed = true;
+        this._subscriber.emit('message', message);
+      });
     }
   }
   /**

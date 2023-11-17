@@ -50,6 +50,7 @@ class FakeSubscriber extends EventEmitter {
 class FakeMessage {
   length = 20;
   received: number;
+  dispensed = false;
   constructor() {
     this.received = Date.now();
   }
@@ -167,6 +168,18 @@ describe('LeaseManager', () => {
       });
 
       leaseManager.add(fakeMessage);
+    });
+
+    it('should set dispensed to true after dispatching message', done => {
+      const fakeMessage = new FakeMessage() as {} as Message;
+
+      leaseManager.setOptions({allowExcessMessages: false});
+      leaseManager.add(fakeMessage);
+
+      subscriber.on('message', message => {
+        assert.strictEqual(message.dispensed, true);
+        done();
+      });
     });
 
     it('should not dispatch the message if the inventory is full', done => {
@@ -387,6 +400,20 @@ describe('LeaseManager', () => {
     });
   });
 
+  describe('clearNonDispensedMessages', () => {
+    it('should only clear messages with dispensed=false', () => {
+      const message = new FakeMessage();
+      const message2 = new FakeMessage();
+      message.dispensed = true;
+      message2.dispensed = false;
+      leaseManager.add(message as {} as Message);
+      leaseManager.add(message2 as {} as Message);
+      leaseManager.clearNonDispensedMessages();
+      assert.strictEqual(leaseManager.size, 1);
+      assert.strictEqual(leaseManager.bytes, message.length);
+    });
+  });
+
   describe('isFull', () => {
     it('should return true if the maxMessages threshold is hit', () => {
       const maxMessages = 1;
@@ -505,6 +532,19 @@ describe('LeaseManager', () => {
       clock.tick(subscriber.ackDeadline * 1000 * 2);
 
       assert.strictEqual(stub.callCount, 0);
+    });
+
+    it('should resolve onDrain if no messages are left', done => {
+      const message = new FakeMessage() as {} as Message;
+
+      const onDrain = leaseManager.onDrain();
+
+      onDrain.then(() => {
+        done();
+      });
+
+      leaseManager.add(message);
+      leaseManager.remove(message);
     });
   });
 

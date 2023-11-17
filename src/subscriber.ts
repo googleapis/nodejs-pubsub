@@ -100,6 +100,7 @@ export class Message {
   orderingKey?: string;
   publishTime: PreciseDate;
   received: number;
+  dispensed: boolean;
   private _handled: boolean;
   private _length: number;
   private _subscriber: Subscriber;
@@ -181,6 +182,11 @@ export class Message {
      * @type {number}
      */
     this.received = Date.now();
+
+    /**
+     * Indicates that a message is currently being processed by user code.
+     */
+    this.dispensed = false;
 
     this._handled = false;
     this._length = this.data.length;
@@ -401,6 +407,8 @@ export class Subscriber extends EventEmitter {
   useLegacyFlowControl: boolean;
   isOpen: boolean;
   private _acks!: AckQueue;
+  // TODO: Need to find a way to wait on dispensed messages that haven't starting ACKing yet
+  //private _dispensed: Set<Messages>;
   private _histogram: Histogram;
   private _inventory!: LeaseManager;
   private _useOpentelemetry: boolean;
@@ -563,6 +571,7 @@ export class Subscriber extends EventEmitter {
    */
   async ack(message: Message): Promise<void> {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
+
     this.updateAckDeadline(ackTimeSeconds);
 
     // Ignore this in this version of the method (but hook catch
@@ -607,7 +616,9 @@ export class Subscriber extends EventEmitter {
 
     this.isOpen = false;
     this._stream.destroy();
-    this._inventory.clear();
+
+    // Clear only the messages that have not begun processing
+    this._inventory.clearNonDispensedMessages();
 
     await this._waitForFlush();
 
@@ -902,8 +913,16 @@ export class Subscriber extends EventEmitter {
    * @returns {Promise}
    */
   private async _waitForFlush(): Promise<void> {
-    const promises: Array<Promise<void>> = [];
+    // If there are messages in flight, lets wait for them to drain so that we can then
+    // wait on their ACKs.
 
+    console.log('inventory size: ', this._inventory.size);
+    if (this._inventory.size) {
+      // First wait for messages to drain
+      await this._inventory.onDrain();
+    }
+
+    const promises: Array<Promise<void>> = [];
     if (this._acks.numPendingRequests) {
       promises.push(this._acks.onFlush());
       this._acks.flush();
