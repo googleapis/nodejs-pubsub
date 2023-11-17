@@ -407,8 +407,6 @@ export class Subscriber extends EventEmitter {
   useLegacyFlowControl: boolean;
   isOpen: boolean;
   private _acks!: AckQueue;
-  // TODO: Need to find a way to wait on dispensed messages that haven't starting ACKing yet
-  //private _dispensed: Set<Messages>;
   private _histogram: Histogram;
   private _inventory!: LeaseManager;
   private _useOpentelemetry: boolean;
@@ -915,10 +913,7 @@ export class Subscriber extends EventEmitter {
   private async _waitForFlush(): Promise<void> {
     // If there are messages in flight, lets wait for them to drain so that we can then
     // wait on their ACKs.
-
-    console.log('inventory size: ', this._inventory.size);
     if (this._inventory.size) {
-      // First wait for messages to drain
       await this._inventory.onDrain();
     }
 
