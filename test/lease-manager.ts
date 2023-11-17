@@ -402,12 +402,20 @@ describe('LeaseManager', () => {
 
   describe('clearNonDispensedMessages', () => {
     it('should only clear messages with dispensed=false', () => {
+      leaseManager.setOptions({
+        maxMessages: 2,
+        maxBytes: 10,
+        allowExcessMessages: false,
+      });
+
       const message = new FakeMessage();
       const message2 = new FakeMessage();
+
       message.dispensed = true;
       message2.dispensed = false;
       leaseManager.add(message as {} as Message);
       leaseManager.add(message2 as {} as Message);
+
       leaseManager.clearNonDispensedMessages();
       assert.strictEqual(leaseManager.size, 1);
       assert.strictEqual(leaseManager.bytes, message.length);

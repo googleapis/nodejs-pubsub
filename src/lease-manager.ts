@@ -270,9 +270,8 @@ export class LeaseManager extends EventEmitter {
    */
   private _dispense(message: Message): void {
     if (this._subscriber.isOpen) {
+      message.dispensed = true;
       process.nextTick(() => {
-        // Tell the message its dispensed, make sure you do this first as emit blocks
-        message.dispensed = true;
         this._subscriber.emit('message', message);
       });
     }
