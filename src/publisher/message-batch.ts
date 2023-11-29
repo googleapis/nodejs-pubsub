@@ -52,8 +52,8 @@ export class MessageBatch {
   bytes: number;
 
   constructor(
-    private options: BatchPublishOptions,
-    private topicName: string
+    public options: BatchPublishOptions,
+    public topicName: string
   ) {
     this.messages = [];
     this.callbacks = [];
