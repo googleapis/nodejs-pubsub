@@ -269,7 +269,8 @@ export class LeaseManager extends EventEmitter {
       const lifespan = (Date.now() - message.received) / (60 * 1000);
 
       if (lifespan < this._options.maxExtensionMinutes!) {
-        message.subSpans.modAckStart(Duration.from({seconds: deadline}), false);
+        const deadlineDuration = Duration.from({seconds: deadline});
+        message.subSpans.modAckStart(deadlineDuration, false);
 
         if (this._subscriber.isExactlyOnceDelivery) {
           message
@@ -281,11 +282,11 @@ export class LeaseManager extends EventEmitter {
               this.remove(message);
             })
             .finally(() => {
-              message.subSpans.modAckStop();
+              message.subSpans.modAckEnd();
             });
         } else {
           message.modAck(deadline);
-          message.subSpans.modAckStop();
+          message.subSpans.modAckStart(deadlineDuration, false);
         }
       } else {
         this.remove(message);

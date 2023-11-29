@@ -90,23 +90,32 @@ export class SubscriberSpans {
     }
   }
 
+  ackStart() {
+    tracing.PubsubEvents.ackStart(this.parent);
+  }
+
+  ackEnd() {
+    tracing.PubsubEvents.ackEnd(this.parent);
+  }
+
+  // Start a leasing nack span if needed.
+  nackStart() {
+    tracing.PubsubEvents.nackStart(this.parent);
+  }
+
+  // End any leasing nack span.
+  nackEnd() {
+    tracing.PubsubEvents.nackEnd(this.parent);
+  }
+
   // Start a leasing modAck span if needed.
   modAckStart(deadline: Duration, isInitial: boolean) {
-    if (!this.modAck) {
-      this.modAck = tracing.PubsubSpans.createModAckSpan(
-        this.parent,
-        deadline,
-        isInitial
-      );
-    }
+    tracing.PubsubEvents.modAckStart(this.parent, deadline, isInitial);
   }
 
   // End any leasing modAck span.
-  modAckStop() {
-    if (this.modAck) {
-      this.modAck.end();
-      this.modAck = undefined;
-    }
+  modAckEnd() {
+    tracing.PubsubEvents.modAckEnd(this.parent);
   }
 
   // Start a scheduler span if needed.
@@ -147,7 +156,6 @@ export class SubscriberSpans {
     }
   }
 
-  private modAck?: tracing.Span;
   private flow?: tracing.Span;
   private scheduler?: tracing.Span;
   private processing?: tracing.Span;
@@ -694,10 +702,7 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(
-      message,
-      true
-    );
+    tracing.PubsubEvents.ackStart(message);
 
     // Ignore this in this version of the method (but hook catch
     // to avoid unhandled exceptions).
@@ -706,7 +711,7 @@ export class Subscriber extends EventEmitter {
 
     await this._acks.onFlush();
 
-    ackSpan?.end();
+    tracing.PubsubEvents.ackEnd(message);
 
     this._inventory.remove(message);
   }
@@ -723,14 +728,11 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
-    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(
-      message,
-      true
-    );
+    tracing.PubsubEvents.ackStart(message);
 
     await this._acks.add(message);
 
-    ackSpan?.end();
+    tracing.PubsubEvents.ackEnd(message);
 
     this._inventory.remove(message);
 
@@ -830,15 +832,9 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nack(message: Message): Promise<void> {
-    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(
-      message,
-      false
-    );
-
+    message.subSpans.nackStart();
     await this.modAck(message, 0);
-
-    ackSpan?.end();
-
+    message.subSpans.nackEnd();
     this._inventory.remove(message);
   }
 
@@ -852,12 +848,9 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nackWithResponse(message: Message): Promise<AckResponse> {
-    const ackSpan = tracing.PubsubSpans.createReceiveResponseSpan(
-      message,
-      false
-    );
+    message.subSpans.nackStart();
     const response = await this.modAckWithResponse(message, 0);
-    ackSpan?.end();
+    message.subSpans.nackEnd();
     return response;
   }
 
@@ -1000,7 +993,7 @@ export class Subscriber extends EventEmitter {
               this._discardMessage(message);
             })
             .finally(() => {
-              message.subSpans.modAckStop();
+              message.subSpans.modAckEnd();
             });
         } else {
           message.subSpans.modAckStart(
@@ -1008,7 +1001,7 @@ export class Subscriber extends EventEmitter {
             true
           );
           message.modAck(this.ackDeadline);
-          message.subSpans.modAckStop();
+          message.subSpans.modAckEnd();
           this._inventory.add(message);
         }
       } else {

@@ -354,21 +354,6 @@ export class PubsubSpans {
     return span;
   }
 
-  static createModAckSpan(
-    message: MessageWithAttributes,
-    deadline: Duration,
-    initial: boolean
-  ) {
-    const span = PubsubSpans.createChildSpan('modify ack deadline', message);
-    if (span) {
-      span.setAttributes({
-        'messaging.pubsub.modack_deadline_seconds': deadline.totalOf('second'),
-        'messaging.pubsub.is_receipt_modack': initial ? 'true' : 'false',
-      } as unknown as Attributes);
-    }
-    return span;
-  }
-
   static createReceiveFlowSpan(
     message: MessageWithAttributes
   ): Span | undefined {
@@ -405,27 +390,23 @@ export class PubsubSpans {
     span?.setAttribute('messaging.pubsub.is_receipt_modack', isInitial);
     return span;
   }
-
-  static createReceiveResponseSpan(
-    message: MessageWithAttributes,
-    isAck: boolean
-  ): Span | undefined {
-    const name = isAck ? 'ack' : 'nack';
-    return PubsubSpans.createChildSpan(name, message);
-  }
 }
 
 /**
  * Creates and manipulates Pub/Sub-related events on spans.
  */
 export class PubsubEvents {
-  static addEvent(text: string, message: MessageWithAttributes) {
+  static addEvent(
+    text: string,
+    message: MessageWithAttributes,
+    attributes?: Attributes
+  ): void {
     const parent = message.parentSpan;
     if (!parent) {
       return;
     }
 
-    parent.addEvent(text);
+    parent.addEvent(text, attributes);
   }
 
   static publishStart(message: MessageWithAttributes) {
@@ -437,19 +418,36 @@ export class PubsubEvents {
   }
 
   static ackStart(message: MessageWithAttributes) {
-    PubsubEvents.addEvent('ack start', message);
+    PubsubEvents.addEvent('ack', message);
   }
 
   static ackEnd(message: MessageWithAttributes) {
     PubsubEvents.addEvent('ack end', message);
   }
 
-  static modAckStart(message: MessageWithAttributes) {
-    PubsubEvents.addEvent('modack start', message);
+  static nackStart(message: MessageWithAttributes) {
+    PubsubEvents.addEvent('nack start', message);
+  }
+
+  static nackEnd(message: MessageWithAttributes) {
+    PubsubEvents.addEvent('nack end', message);
+  }
+
+  static modAckStart(
+    message: MessageWithAttributes,
+    deadline: Duration,
+    isInitial: boolean
+  ) {
+    PubsubEvents.addEvent('modify ack deadline start', message, {
+      'messaging.pubsub.modack_deadline_seconds': `${deadline.totalOf(
+        'second'
+      )}`,
+      'messaging.pubsub.is_receipt_modack': isInitial ? 'true' : 'false',
+    });
   }
 
   static modAckEnd(message: MessageWithAttributes) {
-    PubsubEvents.addEvent('modack end', message);
+    PubsubEvents.addEvent('modify ack deadline end', message);
   }
 }
 
