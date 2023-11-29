@@ -124,7 +124,6 @@ export class Topic {
      * @type {string}
      */
     this.id_ = name;
-    this.publisher = new Publisher(this, options);
     /**
      * The parent {@link PubSub} instance of this topic instance.
      * @name Topic#pubsub
@@ -136,6 +135,7 @@ export class Topic {
      * @type {PubSub}
      */
     this.parent = this.pubsub = pubsub;
+    this.publisher = new Publisher(this, options);
     this.request = pubsub.request.bind(pubsub);
     /**
      * [IAM (Identity and Access

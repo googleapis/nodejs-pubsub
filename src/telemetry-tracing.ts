@@ -418,7 +418,7 @@ export class PubsubEvents {
   }
 
   static ackStart(message: MessageWithAttributes) {
-    PubsubEvents.addEvent('ack', message);
+    PubsubEvents.addEvent('ack start', message);
   }
 
   static ackEnd(message: MessageWithAttributes) {
