@@ -114,12 +114,10 @@ export abstract class MessageQueue extends EventEmitter {
       });
     }
 
-    messages.forEach(m => {
-      const span = tracing.PubsubSpans.createPublishRpcSpan(m, messages.length);
-      if (span) {
-        m.rpcSpan = span;
-      }
-    });
+    const rpcSpan = tracing.PubsubSpans.createPublishRpcSpan(
+      spanMessages,
+      topic.name
+    );
 
     const requestCallback = topic.request<google.pubsub.v1.IPublishResponse>;
     const request = promisify(requestCallback.bind(topic));
@@ -144,7 +142,7 @@ export abstract class MessageQueue extends EventEmitter {
       messages.forEach(m => {
         // We're finished with both the RPC and the whole publish operation,
         // so close out all of the related spans.
-        m.rpcSpan?.end();
+        rpcSpan?.end();
         m.parentSpan?.end();
       });
     }
@@ -163,7 +161,7 @@ export class Queue extends MessageQueue {
   batch: MessageBatch;
   constructor(publisher: Publisher) {
     super(publisher);
-    this.batch = new MessageBatch(this.batchOptions);
+    this.batch = new MessageBatch(this.batchOptions, this.publisher.topic.name);
   }
 
   // This needs to update our existing message batch.
@@ -185,8 +183,6 @@ export class Queue extends MessageQueue {
       // for a bit.
       this.publish().catch(() => {});
     }
-
-    message.batchingSpan = tracing.PubsubSpans.createPublishBatchSpan(message);
 
     this.batch.add(message, callback);
 
@@ -230,16 +226,14 @@ export class Queue extends MessageQueue {
    * @emits Queue#drain when all messages are sent.
    */
   async _publishInternal(fullyDrain: boolean): Promise<void> {
-    const {messages, callbacks} = this.batch;
+    const {messages, callbacks} = this.batch.end();
 
-    this.batch = new MessageBatch(this.batchOptions);
+    this.batch = new MessageBatch(this.batchOptions, this.publisher.topic.name);
 
     if (this.pending) {
       clearTimeout(this.pending);
       delete this.pending;
     }
-
-    messages.forEach(m => m.batchingSpan?.end());
 
     await this._publish(messages, callbacks);
     if (this.batch.messages.length) {
@@ -358,7 +352,7 @@ export class OrderedQueue extends MessageQueue {
    * @returns {MessageBatch}
    */
   createBatch(): MessageBatch {
-    return new MessageBatch(this.batchOptions);
+    return new MessageBatch(this.batchOptions, this.publisher.topic.name);
   }
   /**
    * In the event of a publish failure, we need to cache the error in question
@@ -401,7 +395,7 @@ export class OrderedQueue extends MessageQueue {
       delete this.pending;
     }
 
-    const {messages, callbacks} = this.batches.pop()!;
+    const {messages, callbacks} = this.batches.pop()!.end();
 
     try {
       await this._publish(messages, callbacks);

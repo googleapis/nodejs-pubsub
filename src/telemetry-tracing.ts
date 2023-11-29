@@ -25,6 +25,7 @@ import {
   TextMapSetter,
   ROOT_CONTEXT,
   Context,
+  Link,
 } from '@opentelemetry/api';
 import {Attributes, PubsubMessage} from './publisher/pubsub-message';
 import {PublishOptions} from './publisher/index';
@@ -223,7 +224,10 @@ export const modernAttributeName = 'googclient_traceparent';
 export const legacyAttributeName = 'googclient_OpenTelemetrySpanContext';
 
 export class PubsubSpans {
-  static createPublisherSpan(message: PubsubMessage, topicName: string): Span {
+  static createAttributes(
+    topicName: string,
+    message?: PubsubMessage
+  ): SpanAttributes {
     const spanAttributes = {
       // Add Opentelemetry semantic convention attributes to the span, based on:
       // https://github.com/open-telemetry/opentelemetry-specification/blob/v1.1.0/specification/trace/semantic_conventions/messaging.md
@@ -233,14 +237,26 @@ export class PubsubSpans {
       [SemanticAttributes.MESSAGING_DESTINATION]: topicName,
       [SemanticAttributes.MESSAGING_DESTINATION_KIND]: 'topic',
       [SemanticAttributes.MESSAGING_PROTOCOL]: 'pubsub',
-      [SemanticAttributes.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]:
-        message.data?.length,
-      'messaging.pubsub.ordering_key': message.orderingKey,
     } as SpanAttributes;
 
+    if (message) {
+      if (message.data?.length) {
+        spanAttributes[
+          SemanticAttributes.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES
+        ] = message.data?.length;
+      }
+      if (message.orderingKey) {
+        spanAttributes['messaging.pubsub.ordering_key'] = message.orderingKey;
+      }
+    }
+
+    return spanAttributes;
+  }
+
+  static createPublisherSpan(message: PubsubMessage, topicName: string): Span {
     const span: Span = getTracer().startSpan(`${topicName} send`, {
       kind: SpanKind.PRODUCER,
-      attributes: spanAttributes,
+      attributes: PubsubSpans.createAttributes(topicName, message),
     });
 
     return span;
@@ -251,11 +267,7 @@ export class PubsubSpans {
     span.setAttribute(SemanticAttributes.MESSAGING_DESTINATION, topicName);
   }
 
-  static createReceiveSpan(
-    message: MessageWithAttributes,
-    subName: string,
-    parent: Context | undefined
-  ): Span {
+  static createReceiveSpan(subName: string, parent: Context | undefined): Span {
     const name = `${subName} receive`;
 
     // Mostly we want to keep the context IDs; the attributes and such
@@ -277,10 +289,11 @@ export class PubsubSpans {
   }
 
   static createChildSpan(
-    message: MessageWithAttributes,
-    name: string
+    name: string,
+    message?: MessageWithAttributes,
+    parentSpan?: Span
   ): Span | undefined {
-    const parent = message.parentSpan;
+    const parent = message?.parentSpan ?? parentSpan;
     if (parent) {
       return getTracer().startSpan(
         name,
@@ -296,19 +309,47 @@ export class PubsubSpans {
   }
 
   static createPublishFlowSpan(message: PubsubMessage): Span | undefined {
-    return PubsubSpans.createChildSpan(message, 'publisher flow control');
+    return PubsubSpans.createChildSpan('publisher flow control', message);
   }
 
-  static createPublishBatchSpan(message: PubsubMessage): Span | undefined {
-    return PubsubSpans.createChildSpan(message, 'publish scheduler');
+  static createPublishSchedulerSpan(message: PubsubMessage): Span | undefined {
+    return PubsubSpans.createChildSpan('publisher scheduler', message);
   }
 
   static createPublishRpcSpan(
-    message: PubsubMessage,
-    messageCount: number
-  ): Span | undefined {
-    const span = PubsubSpans.createChildSpan(message, 'publish');
-    span?.setAttribute('messaging.pubsub.num_messages_in_batch', messageCount);
+    messages: MessageWithAttributes[],
+    topicName: string
+  ): Span {
+    const spanAttributes = PubsubSpans.createAttributes(topicName);
+    const links: Link[] = messages
+      .map(m => ({context: m.parentSpan?.spanContext()}) as Link)
+      .filter(l => l.context);
+    const span: Span = getTracer().startSpan(
+      `${topicName} send`,
+      {
+        kind: SpanKind.PRODUCER,
+        attributes: spanAttributes,
+        links,
+      },
+      ROOT_CONTEXT
+    );
+    span?.setAttribute(
+      'messaging.pubsub.num_messages_in_batch',
+      messages.length
+    );
+    messages.forEach(m => {
+      // Workaround until the JS API properly supports adding links later.
+      if (m.parentSpan) {
+        m.parentSpan.setAttribute(
+          'gcp_pubsub.publish.trace_id',
+          span.spanContext().traceId
+        );
+        m.parentSpan.setAttribute(
+          'gcp_pubsub.publish.span_id',
+          span.spanContext().spanId
+        );
+      }
+    });
 
     return span;
   }
@@ -318,7 +359,7 @@ export class PubsubSpans {
     deadline: Duration,
     initial: boolean
   ) {
-    const span = PubsubSpans.createChildSpan(message, 'modify ack deadline');
+    const span = PubsubSpans.createChildSpan('modify ack deadline', message);
     if (span) {
       span.setAttributes({
         'messaging.pubsub.modack_deadline_seconds': deadline.totalOf('second'),
@@ -331,20 +372,20 @@ export class PubsubSpans {
   static createReceiveFlowSpan(
     message: MessageWithAttributes
   ): Span | undefined {
-    return PubsubSpans.createChildSpan(message, 'subscriber flow control');
+    return PubsubSpans.createChildSpan('subscriber flow control', message);
   }
 
   static createReceiveSchedulerSpan(
     message: MessageWithAttributes
   ): Span | undefined {
-    return PubsubSpans.createChildSpan(message, 'subscribe scheduler');
+    return PubsubSpans.createChildSpan('subscribe scheduler', message);
   }
 
   static createReceiveProcessSpan(
     message: MessageWithAttributes,
     subName: string
   ): Span | undefined {
-    return PubsubSpans.createChildSpan(message, `${subName} process`);
+    return PubsubSpans.createChildSpan(`${subName} process`, message);
   }
 
   static setReceiveProcessResult(span: Span, isAck: boolean) {
@@ -356,7 +397,7 @@ export class PubsubSpans {
     deadline: Duration,
     isInitial: boolean
   ): Span | undefined {
-    const span = PubsubSpans.createChildSpan(message, 'modify ack deadline');
+    const span = PubsubSpans.createChildSpan('modify ack deadline', message);
     span?.setAttribute(
       'messaging.pubsub.modack_deadline_seconds',
       deadline.totalOf('second')
@@ -370,7 +411,45 @@ export class PubsubSpans {
     isAck: boolean
   ): Span | undefined {
     const name = isAck ? 'ack' : 'nack';
-    return PubsubSpans.createChildSpan(message, name);
+    return PubsubSpans.createChildSpan(name, message);
+  }
+}
+
+/**
+ * Creates and manipulates Pub/Sub-related events on spans.
+ */
+export class PubsubEvents {
+  static addEvent(text: string, message: MessageWithAttributes) {
+    const parent = message.parentSpan;
+    if (!parent) {
+      return;
+    }
+
+    parent.addEvent(text);
+  }
+
+  static publishStart(message: MessageWithAttributes) {
+    PubsubEvents.addEvent('publish start', message);
+  }
+
+  static publishEnd(message: MessageWithAttributes) {
+    PubsubEvents.addEvent('publish end', message);
+  }
+
+  static ackStart(message: MessageWithAttributes) {
+    PubsubEvents.addEvent('ack start', message);
+  }
+
+  static ackEnd(message: MessageWithAttributes) {
+    PubsubEvents.addEvent('ack end', message);
+  }
+
+  static modAckStart(message: MessageWithAttributes) {
+    PubsubEvents.addEvent('modack start', message);
+  }
+
+  static modAckEnd(message: MessageWithAttributes) {
+    PubsubEvents.addEvent('modack end', message);
   }
 }
 
@@ -484,7 +563,7 @@ export function extractSpan(
     }
   }
 
-  const span = PubsubSpans.createReceiveSpan(message, subName, context);
+  const span = PubsubSpans.createReceiveSpan(subName, context);
   message.parentSpan = span;
   return span;
 }

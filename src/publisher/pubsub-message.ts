@@ -43,18 +43,18 @@ export interface PubsubMessage
   // don't get to control what these objects are. They come from grpc.
 
   /**
-   * If tracing is enabled, track the batch span.
+   * If tracing is enabled, track the message span.
    *
    * @private
    */
-  batchingSpan?: tracing.Span;
+  messageSpan?: tracing.Span;
 
   /**
-   * If tracing is enabled, track the RPC send time span.
+   * If tracing is enabled, track the batching (publish scheduling) period.
    *
    * @private
    */
-  rpcSpan?: tracing.Span;
+  publishSchedulerSpan?: tracing.Span;
 }
 
 /**
