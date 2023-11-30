@@ -4,6 +4,14 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.0.7](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.6...v4.0.7) (2023-11-09)
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.18.0 ([#1852](https://github.com/googleapis/nodejs-pubsub/issues/1852)) ([d9a0432](https://github.com/googleapis/nodejs-pubsub/commit/d9a0432a37c6d741c9694a5bcff047f4c85b2feb))
+* Set x-goog-request-params for streaming pull request ([#1849](https://github.com/googleapis/nodejs-pubsub/issues/1849)) ([7b82ff0](https://github.com/googleapis/nodejs-pubsub/commit/7b82ff01e5c654b3e339dfdec5b3da8bf45da049))
+
 ## [4.0.6](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.5...v4.0.6) (2023-09-15)
 
 
