@@ -388,14 +388,6 @@ describe('LeaseManager', () => {
       assert.strictEqual(leaseManager.size, 0);
     });
 
-    it('should end all parent spans', () => {
-      const messages = [new FakeMessage(), new FakeMessage()];
-      const spies = messages.map(m => sandbox.spy(m, 'endParentSpan'));
-      messages.forEach(m => leaseManager.add(m as {} as Message));
-      leaseManager.clear();
-      spies.forEach(s => assert.strictEqual(s.calledOnce, true));
-    });
-
     it('should emit the free event if it was full', done => {
       leaseManager.setOptions({maxMessages: 1});
       leaseManager.add(new FakeMessage() as {} as Message);
@@ -452,16 +444,6 @@ describe('LeaseManager', () => {
   });
 
   describe('remove', () => {
-    it('should end the span', () => {
-      const message = new FakeMessage();
-      const spy = sandbox.spy(message, 'endParentSpan');
-
-      leaseManager.add(message as {} as Message);
-      leaseManager.remove(message as {} as Message);
-
-      assert.strictEqual(spy.calledOnce, true);
-    });
-
     it('should noop for unknown messages', () => {
       const message = new FakeMessage();
 

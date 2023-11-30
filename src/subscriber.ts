@@ -712,6 +712,7 @@ export class Subscriber extends EventEmitter {
     await this._acks.onFlush();
 
     tracing.PubsubEvents.ackEnd(message);
+    message.endParentSpan();
 
     this._inventory.remove(message);
   }
@@ -733,6 +734,7 @@ export class Subscriber extends EventEmitter {
     await this._acks.add(message);
 
     tracing.PubsubEvents.ackEnd(message);
+    message.endParentSpan();
 
     this._inventory.remove(message);
 
@@ -754,9 +756,11 @@ export class Subscriber extends EventEmitter {
 
     this.isOpen = false;
     this._stream.destroy();
-    this._inventory.clear();
+    const remaining = this._inventory.clear();
 
     await this._waitForFlush();
+
+    remaining.forEach(m => m.endParentSpan());
 
     this.emit('close');
 
@@ -835,6 +839,7 @@ export class Subscriber extends EventEmitter {
     message.subSpans.nackStart();
     await this.modAck(message, 0);
     message.subSpans.nackEnd();
+    message.endParentSpan();
     this._inventory.remove(message);
   }
 
@@ -851,6 +856,7 @@ export class Subscriber extends EventEmitter {
     message.subSpans.nackStart();
     const response = await this.modAckWithResponse(message, 0);
     message.subSpans.nackEnd();
+    message.endParentSpan();
     return response;
   }
 

@@ -93,7 +93,9 @@ class FakeLeaseManager extends EventEmitter {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: s.Message): void {}
-  clear(): void {}
+  clear(): s.Message[] {
+    return [];
+  }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   remove(message: s.Message): void {}
 }
