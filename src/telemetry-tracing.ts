@@ -246,7 +246,8 @@ export class PubsubSpans {
         ] = message.data?.length;
       }
       if (message.orderingKey) {
-        spanAttributes['messaging.pubsub.ordering_key'] = message.orderingKey;
+        spanAttributes['messaging.gcp.pubsub.ordering_key'] =
+          message.orderingKey;
       }
     }
 
@@ -334,18 +335,18 @@ export class PubsubSpans {
       ROOT_CONTEXT
     );
     span?.setAttribute(
-      'messaging.pubsub.num_messages_in_batch',
+      'messaging.gcp.pubsub.num_messages_in_batch',
       messages.length
     );
     messages.forEach(m => {
       // Workaround until the JS API properly supports adding links later.
       if (m.parentSpan) {
         m.parentSpan.setAttribute(
-          'gcp_pubsub.publish.trace_id',
+          'messaging.gcp.pubsub.publish.trace_id',
           span.spanContext().traceId
         );
         m.parentSpan.setAttribute(
-          'gcp_pubsub.publish.span_id',
+          'messaging.gcp.pubsub.publish.span_id',
           span.spanContext().spanId
         );
       }
@@ -374,7 +375,7 @@ export class PubsubSpans {
   }
 
   static setReceiveProcessResult(span: Span, isAck: boolean) {
-    span.setAttribute('messaging.pubsub.result', isAck ? 'ack' : 'nack');
+    span.setAttribute('messaging.gcp.pubsub.result', isAck ? 'ack' : 'nack');
   }
 
   static createReceiveLeaseSpan(
@@ -384,10 +385,10 @@ export class PubsubSpans {
   ): Span | undefined {
     const span = PubsubSpans.createChildSpan('modify ack deadline', message);
     span?.setAttribute(
-      'messaging.pubsub.modack_deadline_seconds',
+      'messaging.gcp.pubsub.modack_deadline_seconds',
       deadline.totalOf('second')
     );
-    span?.setAttribute('messaging.pubsub.is_receipt_modack', isInitial);
+    span?.setAttribute('messaging.gcp.pubsub.is_receipt_modack', isInitial);
     return span;
   }
 }
@@ -439,10 +440,10 @@ export class PubsubEvents {
     isInitial: boolean
   ) {
     PubsubEvents.addEvent('modify ack deadline start', message, {
-      'messaging.pubsub.modack_deadline_seconds': `${deadline.totalOf(
+      'messaging.gcp.pubsub.modack_deadline_seconds': `${deadline.totalOf(
         'second'
       )}`,
-      'messaging.pubsub.is_receipt_modack': isInitial ? 'true' : 'false',
+      'messaging.gcp.pubsub.is_receipt_modack': isInitial ? 'true' : 'false',
     });
   }
 
