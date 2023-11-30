@@ -450,6 +450,12 @@ export class PubsubEvents {
   static modAckEnd(message: MessageWithAttributes) {
     PubsubEvents.addEvent('modify ack deadline end', message);
   }
+
+  // Add this event any time the process is shut down before processing
+  // of the message can complete.
+  static shutdown(message: MessageWithAttributes) {
+    PubsubEvents.addEvent('shutdown', message);
+  }
 }
 
 /**

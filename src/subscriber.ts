@@ -158,6 +158,11 @@ export class SubscriberSpans {
     }
   }
 
+  // If we shut down before processing can finish.
+  shutdown() {
+    tracing.PubsubEvents.shutdown(this.parent);
+  }
+
   private flow?: tracing.Span;
   private scheduler?: tracing.Span;
   private processing?: tracing.Span;
@@ -762,7 +767,10 @@ export class Subscriber extends EventEmitter {
 
     await this._waitForFlush();
 
-    remaining.forEach(m => m.endParentSpan());
+    remaining.forEach(m => {
+      m.subSpans.shutdown();
+      m.endParentSpan();
+    });
 
     this.emit('close');
 
@@ -1013,6 +1021,7 @@ export class Subscriber extends EventEmitter {
           this._inventory.add(message);
         }
       } else {
+        message.subSpans.shutdown();
         message.nack();
       }
     }
