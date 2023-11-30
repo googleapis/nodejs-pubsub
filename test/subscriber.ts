@@ -549,12 +549,15 @@ describe('Subscriber', () => {
       assert.strictEqual(stub.callCount, 1);
     });
 
-    it('should clear the inventory', () => {
+    it('should clear the inventory', async () => {
+      const message = new Message(subscriber, RECEIVED_MESSAGE);
+      const shutdownStub = sandbox.stub(tracing.PubsubEvents, 'shutdown');
       const inventory: FakeLeaseManager = stubs.get('inventory');
-      const stub = sandbox.stub(inventory, 'clear');
+      const stub = sandbox.stub(inventory, 'clear').returns([message]);
 
-      subscriber.close();
+      await subscriber.close();
       assert.strictEqual(stub.callCount, 1);
+      assert.strictEqual(shutdownStub.callCount, 1);
     });
 
     it('should emit a close event', done => {
@@ -565,6 +568,7 @@ describe('Subscriber', () => {
     it('should nack any messages that come in after', () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
       const stub = sandbox.stub(subscriber, 'nack');
+      const shutdownStub = sandbox.stub(tracing.PubsubEvents, 'shutdown');
       const pullResponse = {receivedMessages: [RECEIVED_MESSAGE]};
 
       subscriber.close();
@@ -572,6 +576,7 @@ describe('Subscriber', () => {
 
       const [{ackId}] = stub.lastCall.args;
       assert.strictEqual(ackId, RECEIVED_MESSAGE.ackId);
+      assert.strictEqual(shutdownStub.callCount, 1);
     });
 
     describe('flushing the queues', () => {
