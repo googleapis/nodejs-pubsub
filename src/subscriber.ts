@@ -90,30 +90,32 @@ export class SubscriberSpans {
     }
   }
 
+  // Emit an event for starting to send an ack.
   ackStart() {
     tracing.PubsubEvents.ackStart(this.parent);
   }
 
+  // Emit an event for the ack having been sent.
   ackEnd() {
     tracing.PubsubEvents.ackEnd(this.parent);
   }
 
-  // Start a leasing nack span if needed.
+  // Emit an event for starting to send a nack.
   nackStart() {
     tracing.PubsubEvents.nackStart(this.parent);
   }
 
-  // End any leasing nack span.
+  // Emit an event for the nack having been sent.
   nackEnd() {
     tracing.PubsubEvents.nackEnd(this.parent);
   }
 
-  // Start a leasing modAck span if needed.
+  // Emit an event for starting to send a modAck.
   modAckStart(deadline: Duration, isInitial: boolean) {
     tracing.PubsubEvents.modAckStart(this.parent, deadline, isInitial);
   }
 
-  // End any leasing modAck span.
+  // Emit an event for the modAck having been sent.
   modAckEnd() {
     tracing.PubsubEvents.modAckEnd(this.parent);
   }
@@ -129,7 +131,7 @@ export class SubscriberSpans {
     }
   }
 
-  // End any schedular span.
+  // End any scheduler span.
   schedulerEnd() {
     if (this.scheduler) {
       this.scheduler.end();
