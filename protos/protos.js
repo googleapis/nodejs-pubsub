@@ -7567,6 +7567,7 @@
                      * @property {boolean|null} [writeMetadata] BigQueryConfig writeMetadata
                      * @property {boolean|null} [dropUnknownFields] BigQueryConfig dropUnknownFields
                      * @property {google.pubsub.v1.BigQueryConfig.State|null} [state] BigQueryConfig state
+                     * @property {boolean|null} [useTableSchema] BigQueryConfig useTableSchema
                      */
     
                     /**
@@ -7625,6 +7626,14 @@
                     BigQueryConfig.prototype.state = 0;
     
                     /**
+                     * BigQueryConfig useTableSchema.
+                     * @member {boolean} useTableSchema
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @instance
+                     */
+                    BigQueryConfig.prototype.useTableSchema = false;
+    
+                    /**
                      * Creates a new BigQueryConfig instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.BigQueryConfig
@@ -7658,6 +7667,8 @@
                             writer.uint32(/* id 4, wireType 0 =*/32).bool(message.dropUnknownFields);
                         if (message.state != null && Object.hasOwnProperty.call(message, "state"))
                             writer.uint32(/* id 5, wireType 0 =*/40).int32(message.state);
+                        if (message.useTableSchema != null && Object.hasOwnProperty.call(message, "useTableSchema"))
+                            writer.uint32(/* id 6, wireType 0 =*/48).bool(message.useTableSchema);
                         return writer;
                     };
     
@@ -7710,6 +7721,10 @@
                                 }
                             case 5: {
                                     message.state = reader.int32();
+                                    break;
+                                }
+                            case 6: {
+                                    message.useTableSchema = reader.bool();
                                     break;
                                 }
                             default:
@@ -7770,6 +7785,9 @@
                             case 4:
                                 break;
                             }
+                        if (message.useTableSchema != null && message.hasOwnProperty("useTableSchema"))
+                            if (typeof message.useTableSchema !== "boolean")
+                                return "useTableSchema: boolean expected";
                         return null;
                     };
     
@@ -7821,6 +7839,8 @@
                             message.state = 4;
                             break;
                         }
+                        if (object.useTableSchema != null)
+                            message.useTableSchema = Boolean(object.useTableSchema);
                         return message;
                     };
     
@@ -7843,6 +7863,7 @@
                             object.writeMetadata = false;
                             object.dropUnknownFields = false;
                             object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                            object.useTableSchema = false;
                         }
                         if (message.table != null && message.hasOwnProperty("table"))
                             object.table = message.table;
@@ -7854,6 +7875,8 @@
                             object.dropUnknownFields = message.dropUnknownFields;
                         if (message.state != null && message.hasOwnProperty("state"))
                             object.state = options.enums === String ? $root.google.pubsub.v1.BigQueryConfig.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.BigQueryConfig.State[message.state] : message.state;
+                        if (message.useTableSchema != null && message.hasOwnProperty("useTableSchema"))
+                            object.useTableSchema = message.useTableSchema;
                         return object;
                     };
     

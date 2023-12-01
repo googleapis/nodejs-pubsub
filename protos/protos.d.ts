@@ -3333,6 +3333,9 @@ export namespace google {
 
                 /** BigQueryConfig state */
                 state?: (google.pubsub.v1.BigQueryConfig.State|keyof typeof google.pubsub.v1.BigQueryConfig.State|null);
+
+                /** BigQueryConfig useTableSchema */
+                useTableSchema?: (boolean|null);
             }
 
             /** Represents a BigQueryConfig. */
@@ -3358,6 +3361,9 @@ export namespace google {
 
                 /** BigQueryConfig state. */
                 public state: (google.pubsub.v1.BigQueryConfig.State|keyof typeof google.pubsub.v1.BigQueryConfig.State);
+
+                /** BigQueryConfig useTableSchema. */
+                public useTableSchema: boolean;
 
                 /**
                  * Creates a new BigQueryConfig instance using the specified properties.
