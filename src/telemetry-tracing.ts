@@ -246,7 +246,7 @@ export class PubsubSpans {
         ] = message.data?.length;
       }
       if (message.orderingKey) {
-        spanAttributes['messaging.gcp.pubsub.ordering_key'] =
+        spanAttributes['messaging.gcp_pubsub.message.ordering_key'] =
           message.orderingKey;
       }
     }
