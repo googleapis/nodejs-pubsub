@@ -325,7 +325,7 @@ export class PubsubSpans {
   }
 
   static createPublishSchedulerSpan(message: PubsubMessage): Span | undefined {
-    return PubsubSpans.createChildSpan('publisher scheduler', message);
+    return PubsubSpans.createChildSpan('publish scheduler', message);
   }
 
   static createPublishRpcSpan(
