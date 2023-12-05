@@ -477,6 +477,24 @@ export class PubsubEvents {
     PubsubEvents.addEvent('nack end', message);
   }
 
+  static ackCalled(span: Span) {
+    span.addEvent('ack called');
+  }
+
+  static nackCalled(span: Span) {
+    span.addEvent('nack called');
+  }
+
+  static modAckCalled(span: Span, deadline: Duration) {
+    // User-called modAcks are never initial ones.
+    span.addEvent('modack called', {
+      'messaging.gcp_pubsub.modack_deadline_seconds': `${deadline.totalOf(
+        'second'
+      )}`,
+      'messaging.gcp_pubsub.is_receipt_modack': 'false',
+    });
+  }
+
   static modAckStart(
     message: MessageWithAttributes,
     deadline: Duration,

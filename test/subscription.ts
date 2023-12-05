@@ -200,7 +200,12 @@ describe('Subscription', () => {
     });
 
     it('should emit messages', done => {
-      const message = {};
+      const message = {
+        subSpans: {
+          processingStart() {},
+          processingEnd() {},
+        },
+      };
 
       subscription.on?.('message', (msg: Message) => {
         assert.strictEqual(msg, message);
