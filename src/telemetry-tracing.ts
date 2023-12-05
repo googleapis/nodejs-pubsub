@@ -334,19 +334,16 @@ export class PubsubSpans {
       },
       ROOT_CONTEXT
     );
-    span?.setAttribute(
-      'messaging.gcp.pubsub.num_messages_in_batch',
-      messages.length
-    );
+    span?.setAttribute('messaging.batch.message_count', messages.length);
     messages.forEach(m => {
       // Workaround until the JS API properly supports adding links later.
       if (m.parentSpan) {
         m.parentSpan.setAttribute(
-          'messaging.gcp.pubsub.publish.trace_id',
+          'messaging.gcp_pubsub.publish.trace_id',
           span.spanContext().traceId
         );
         m.parentSpan.setAttribute(
-          'messaging.gcp.pubsub.publish.span_id',
+          'messaging.gcp_pubsub.publish.span_id',
           span.spanContext().spanId
         );
       }
@@ -375,7 +372,7 @@ export class PubsubSpans {
   }
 
   static setReceiveProcessResult(span: Span, isAck: boolean) {
-    span.setAttribute('messaging.gcp.pubsub.result', isAck ? 'ack' : 'nack');
+    span.setAttribute('messaging.gcp_pubsub.result', isAck ? 'ack' : 'nack');
   }
 
   static createReceiveLeaseSpan(
@@ -385,10 +382,10 @@ export class PubsubSpans {
   ): Span | undefined {
     const span = PubsubSpans.createChildSpan('modify ack deadline', message);
     span?.setAttribute(
-      'messaging.gcp.pubsub.modack_deadline_seconds',
+      'messaging.gcp_pubsub.modack_deadline_seconds',
       deadline.totalOf('second')
     );
-    span?.setAttribute('messaging.gcp.pubsub.is_receipt_modack', isInitial);
+    span?.setAttribute('messaging.gcp_pubsub.is_receipt_modack', isInitial);
     return span;
   }
 }
@@ -440,10 +437,10 @@ export class PubsubEvents {
     isInitial: boolean
   ) {
     PubsubEvents.addEvent('modify ack deadline start', message, {
-      'messaging.gcp.pubsub.modack_deadline_seconds': `${deadline.totalOf(
+      'messaging.gcp_pubsub.modack_deadline_seconds': `${deadline.totalOf(
         'second'
       )}`,
-      'messaging.gcp.pubsub.is_receipt_modack': isInitial ? 'true' : 'false',
+      'messaging.gcp_pubsub.is_receipt_modack': isInitial ? 'true' : 'false',
     });
   }
 
