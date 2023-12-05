@@ -223,19 +223,30 @@ export const modernAttributeName = 'googclient_traceparent';
  */
 export const legacyAttributeName = 'googclient_OpenTelemetrySpanContext';
 
+export interface AttributeParams {
+  topicName?: string;
+  subName?: string;
+}
+
 export class PubsubSpans {
   static createAttributes(
-    topicName: string,
+    params: AttributeParams,
     message?: PubsubMessage
   ): SpanAttributes {
+    const destinationName = params.topicName ?? params.subName;
+    if (!destinationName || (params.topicName && params.subName)) {
+      throw new Error('One of topicName or subName must be specified');
+    }
+    const destinationKind = params.topicName ? 'topic' : 'subscription';
+
     const spanAttributes = {
       // Add Opentelemetry semantic convention attributes to the span, based on:
       // https://github.com/open-telemetry/opentelemetry-specification/blob/v1.1.0/specification/trace/semantic_conventions/messaging.md
       [SemanticAttributes.MESSAGING_TEMP_DESTINATION]: false,
       [SemanticAttributes.MESSAGING_SYSTEM]: 'pubsub',
       [SemanticAttributes.MESSAGING_OPERATION]: 'send',
-      [SemanticAttributes.MESSAGING_DESTINATION]: topicName,
-      [SemanticAttributes.MESSAGING_DESTINATION_KIND]: 'topic',
+      [SemanticAttributes.MESSAGING_DESTINATION]: destinationName,
+      [SemanticAttributes.MESSAGING_DESTINATION_KIND]: destinationKind,
       [SemanticAttributes.MESSAGING_PROTOCOL]: 'pubsub',
     } as SpanAttributes;
 
@@ -257,7 +268,7 @@ export class PubsubSpans {
   static createPublisherSpan(message: PubsubMessage, topicName: string): Span {
     const span: Span = getTracer().startSpan(`${topicName} send`, {
       kind: SpanKind.PRODUCER,
-      attributes: PubsubSpans.createAttributes(topicName, message),
+      attributes: PubsubSpans.createAttributes({topicName}, message),
     });
 
     return span;
@@ -321,7 +332,7 @@ export class PubsubSpans {
     messages: MessageWithAttributes[],
     topicName: string
   ): Span {
-    const spanAttributes = PubsubSpans.createAttributes(topicName);
+    const spanAttributes = PubsubSpans.createAttributes({topicName});
     const links: Link[] = messages
       .map(m => ({context: m.parentSpan?.spanContext()}) as Link)
       .filter(l => l.context);
@@ -344,6 +355,41 @@ export class PubsubSpans {
         );
         m.parentSpan.setAttribute(
           'messaging.gcp_pubsub.publish.span_id',
+          span.spanContext().spanId
+        );
+      }
+    });
+
+    return span;
+  }
+
+  static createReceiveResponseRpcSpan(
+    messageSpans: (Span | undefined)[],
+    subName: string
+  ): Span {
+    const spanAttributes = PubsubSpans.createAttributes({subName});
+    const links: Link[] = messageSpans
+      .map(m => ({context: m?.spanContext()}) as Link)
+      .filter(l => l.context);
+    const span: Span = getTracer().startSpan(
+      `${subName} response batch`,
+      {
+        kind: SpanKind.CONSUMER,
+        attributes: spanAttributes,
+        links,
+      },
+      ROOT_CONTEXT
+    );
+    span?.setAttribute('messaging.batch.message_count', messageSpans.length);
+    messageSpans.forEach(m => {
+      // Workaround until the JS API properly supports adding links later.
+      if (m) {
+        m.setAttribute(
+          'messaging.gcp_pubsub.receive.trace_id',
+          span.spanContext().traceId
+        );
+        m.setAttribute(
+          'messaging.gcp_pubsub.receive.span_id',
           span.spanContext().spanId
         );
       }

@@ -33,12 +33,18 @@ import {
 import {Duration} from './temporal';
 import {addToBucket} from './util';
 import {DebugMessage} from './debug';
+import * as tracing from './telemetry-tracing';
+
+export interface ReducedMessage {
+  ackId: string;
+  tracingSpan?: tracing.Span;
+}
 
 /**
  * @private
  */
 export interface QueuedMessage {
-  ackId: string;
+  message: ReducedMessage;
   deadline?: number;
   responsePromise?: defer.DeferredPromise<void>;
   retryCount: number;
@@ -179,7 +185,7 @@ export abstract class MessageQueue {
    * @param {number} [deadline] The deadline.
    * @private
    */
-  add({ackId}: Message, deadline?: number): Promise<void> {
+  add(message: Message, deadline?: number): Promise<void> {
     if (this._closed) {
       if (this._subscriber.isExactlyOnceDelivery) {
         throw new AckError(AckResponses.Invalid, 'Subscriber closed');
@@ -192,7 +198,10 @@ export abstract class MessageQueue {
 
     const responsePromise = defer<void>();
     this._requests.push({
-      ackId,
+      message: {
+        ackId: message.ackId,
+        tracingSpan: message.parentSpan,
+      },
       deadline,
       responsePromise,
       retryCount: 0,
@@ -379,9 +388,9 @@ export abstract class MessageQueue {
     const codes: AckErrorCodes = processAckErrorInfo(rpcError);
 
     for (const m of batch) {
-      if (codes.has(m.ackId)) {
+      if (codes.has(m.message.ackId)) {
         // This ack has an ErrorInfo entry, so use that to route it.
-        const code = codes.get(m.ackId)!;
+        const code = codes.get(m.message.ackId)!;
         if (code.transient) {
           // Transient errors get retried.
           toRetry.push(m);
@@ -407,7 +416,7 @@ export abstract class MessageQueue {
     // stream message if an unknown error happens during ack.
     const others = toError.get(AckResponses.Other);
     if (others?.length) {
-      const otherIds = others.map(e => e.ackId);
+      const otherIds = others.map(e => e.message.ackId);
       const debugMsg = new BatchError(rpcError, otherIds, operation);
       this._subscriber.emit('debug', debugMsg);
     }
@@ -468,8 +477,12 @@ export class AckQueue extends MessageQueue {
    * @return {Promise}
    */
   protected async _sendBatch(batch: QueuedMessages): Promise<QueuedMessages> {
+    const responseSpan = tracing.PubsubSpans.createReceiveResponseRpcSpan(
+      batch.map(b => b.message.tracingSpan),
+      this._subscriber.name
+    );
     const client = await this._subscriber.getClient();
-    const ackIds = batch.map(({ackId}) => ackId);
+    const ackIds = batch.map(({message}) => message.ackId);
     const reqOpts = {subscription: this._subscriber.name, ackIds};
 
     try {
@@ -477,6 +490,7 @@ export class AckQueue extends MessageQueue {
 
       // It's okay if these pass through since they're successful anyway.
       this.handleAckSuccesses(batch);
+      responseSpan?.end();
       return [];
     } catch (e) {
       // If exactly-once delivery isn't enabled, don't do error processing. We'll
@@ -500,6 +514,7 @@ export class AckQueue extends MessageQueue {
           batch.forEach(m => {
             m.responsePromise?.reject(exc);
           });
+          responseSpan?.end();
           return [];
         }
       }
@@ -524,6 +539,10 @@ export class ModAckQueue extends MessageQueue {
    * @return {Promise}
    */
   protected async _sendBatch(batch: QueuedMessages): Promise<QueuedMessages> {
+    const responseSpan = tracing.PubsubSpans.createReceiveResponseRpcSpan(
+      batch.map(b => b.message.tracingSpan),
+      this._subscriber.name
+    );
     const client = await this._subscriber.getClient();
     const subscription = this._subscriber.name;
     const modAckTable: {[index: string]: QueuedMessages} = batch.reduce(
@@ -541,7 +560,7 @@ export class ModAckQueue extends MessageQueue {
     const callOptions = this.getCallOptions();
     const modAckRequests = Object.keys(modAckTable).map(async deadline => {
       const messages = modAckTable[deadline];
-      const ackIds = messages.map(m => m.ackId);
+      const ackIds = messages.map(m => m.message.ackId);
       const ackDeadlineSeconds = Number(deadline);
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};
 
@@ -575,6 +594,7 @@ export class ModAckQueue extends MessageQueue {
 
     // This catches the sub-failures and bubbles up anything we need to bubble.
     const allNewBatches: QueuedMessages[] = await Promise.all(modAckRequests);
+    responseSpan?.end();
     return allNewBatches.reduce((p: QueuedMessage[], c: QueuedMessage[]) => [
       ...(p ?? []),
       ...c,
