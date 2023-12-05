@@ -100,6 +100,13 @@ export class SubscriberSpans {
     tracing.PubsubEvents.ackEnd(this.parent);
   }
 
+  // Emit an event for calling ack.
+  ackCall() {
+    if (this.processing) {
+      tracing.PubsubEvents.ackCalled(this.processing);
+    }
+  }
+
   // Emit an event for starting to send a nack.
   nackStart() {
     tracing.PubsubEvents.nackStart(this.parent);
@@ -110,6 +117,13 @@ export class SubscriberSpans {
     tracing.PubsubEvents.nackEnd(this.parent);
   }
 
+  // Emit an event for calling nack.
+  nackCall() {
+    if (this.processing) {
+      tracing.PubsubEvents.nackCalled(this.processing);
+    }
+  }
+
   // Emit an event for starting to send a modAck.
   modAckStart(deadline: Duration, isInitial: boolean) {
     tracing.PubsubEvents.modAckStart(this.parent, deadline, isInitial);
@@ -118,6 +132,13 @@ export class SubscriberSpans {
   // Emit an event for the modAck having been sent.
   modAckEnd() {
     tracing.PubsubEvents.modAckEnd(this.parent);
+  }
+
+  // Emit an event for calling modAck.
+  modAckCall(deadline: Duration) {
+    if (this.processing) {
+      tracing.PubsubEvents.modAckCalled(this.processing, deadline);
+    }
   }
 
   // Start a scheduler span if needed.
@@ -360,6 +381,7 @@ export class Message implements tracing.MessageWithAttributes {
   ack(): void {
     if (!this._handled) {
       this._handled = true;
+      this.subSpans.ackCall();
       this._subscriber.ack(this);
     }
   }
@@ -387,6 +409,7 @@ export class Message implements tracing.MessageWithAttributes {
 
     if (!this._handled) {
       this._handled = true;
+      this.subSpans.ackCall();
       try {
         return await this._subscriber.ackWithResponse(this);
       } catch (e) {
@@ -406,6 +429,7 @@ export class Message implements tracing.MessageWithAttributes {
    */
   modAck(deadline: number): void {
     if (!this._handled) {
+      this.subSpans.modAckCall(Duration.from({seconds: deadline}));
       this._subscriber.modAck(this, deadline);
     }
   }
@@ -428,6 +452,7 @@ export class Message implements tracing.MessageWithAttributes {
     }
 
     if (!this._handled) {
+      this.subSpans.modAckCall(Duration.from({seconds: deadline}));
       try {
         return await this._subscriber.modAckWithResponse(this, deadline);
       } catch (e) {
@@ -452,6 +477,7 @@ export class Message implements tracing.MessageWithAttributes {
   nack(): void {
     if (!this._handled) {
       this._handled = true;
+      this.subSpans.nackCall();
       this._subscriber.nack(this);
     }
   }
@@ -480,6 +506,7 @@ export class Message implements tracing.MessageWithAttributes {
 
     if (!this._handled) {
       this._handled = true;
+      this.subSpans.nackCall();
       try {
         return await this._subscriber.nackWithResponse(this);
       } catch (e) {
@@ -797,7 +824,7 @@ export class Subscriber extends EventEmitter {
    * Modifies the acknowledge deadline for the provided message.
    *
    * @param {Message} message The message to modify.
-   * @param {number} deadline The deadline.
+   * @param {number} deadline The deadline in seconds.
    * @returns {Promise<void>}
    * @private
    */

@@ -45,7 +45,7 @@ export interface ReducedMessage {
  */
 export interface QueuedMessage {
   message: ReducedMessage;
-  deadline?: number;
+  deadline?: number; // seconds
   responsePromise?: defer.DeferredPromise<void>;
   retryCount: number;
 }
@@ -182,7 +182,7 @@ export abstract class MessageQueue {
    * Adds a message to the queue.
    *
    * @param {Message} message The message to add.
-   * @param {number} [deadline] The deadline.
+   * @param {number} [deadline] The deadline in seconds.
    * @private
    */
   add(message: Message, deadline?: number): Promise<void> {
