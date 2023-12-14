@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.1.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.7...v4.1.0) (2023-12-04)
+
+
+### Features
+
+* Add `use_table_schema` field to BigQueryConfig ([#1858](https://github.com/googleapis/nodejs-pubsub/issues/1858)) ([2875d83](https://github.com/googleapis/nodejs-pubsub/commit/2875d8383831563e5b748e96094faa94bf25fc15))
+
 ## [4.0.7](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.6...v4.0.7) (2023-11-09)
 
 
