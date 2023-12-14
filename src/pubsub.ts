@@ -70,6 +70,7 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 export interface ClientConfig extends gax.GrpcClientOptions {
   apiEndpoint?: string;
+  useFakeCredentials?: boolean;
   servicePath?: string;
   port?: string | number;
   sslCreds?: gax.grpc.ChannelCredentials;
@@ -798,9 +799,15 @@ export class PubSub {
     // If this looks like a GCP URL of some kind, don't go into emulator
     // mode. Otherwise, supply a fake SSL provider so a real cert isn't
     // required for running the emulator.
+    //
+    // Note that users can provide their own URL here, especially with
+    // TPC, so the useFakeCredentials flag lets them override this behaviour.
     const officialUrlMatch =
       this.options.servicePath!.endsWith('.googleapis.com');
-    if (!officialUrlMatch) {
+    if (
+      (!officialUrlMatch && this.options.useFakeCredentials !== false) ||
+      this.options.useFakeCredentials === true
+    ) {
       const grpcInstance = this.options.grpc || gax.grpc;
       this.options.sslCreds = grpcInstance.credentials.createInsecure();
       this.isEmulator = true;
