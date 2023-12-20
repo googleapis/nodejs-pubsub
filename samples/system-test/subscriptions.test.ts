@@ -186,6 +186,25 @@ describe('subscriptions', () => {
     assert(subscriptions.some(s => s.name === fullSubName(subName)));
   });
 
+  it('should create a push subscription w/no wrapper', async () => {
+    const testId = 'push_sub_nw';
+    const topic = await createTopic(testId);
+    const subName = reserveSub(testId);
+    const output = execSync(
+      `${commandFor('createPushSubscriptionNoWrapper')} ${
+        topic.name
+      } ${subName}`
+    );
+    assert.include(output, `Subscription ${subName} created.`);
+    const sub = await pubsub.subscription(subName);
+    const [subInfo] = await sub.get();
+    assert(subInfo.name === fullSubName(subName));
+    const [meta] = await subInfo.getMetadata();
+    assert(meta.pushConfig!.noWrapper!.writeMetadata === true);
+    /*const [subscriptions] = await pubsub.topic(topic.name).getSubscriptions();
+    assert(subscriptions.some(s => s.name === fullSubName(subName)));*/
+  });
+
   it('should create a BigQuery subscription', async () => {
     const testId = 'bigquery_sub';
     const topic = await createTopic(testId);
