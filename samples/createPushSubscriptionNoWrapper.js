@@ -29,7 +29,7 @@
 //   description: Creates a new push subscription, but disables metadata wrapping.
 //   usage: node createPushSubscriptionNoWrapper.js <topic-name-or-id> <subscription-name-or-id>
 
-// [START pubsub_create_push_no_wrapper_subscription]
+// [START pubsub_create_unwrapped_push_subscription]
 /**
  * TODO(developer): Uncomment these variables before running the sample.
  */
