@@ -62,7 +62,7 @@ async function createPushSubscriptionNoWrapper(
     .createSubscription(subscriptionNameOrId, options);
   console.log(`Subscription ${subscriptionNameOrId} created.`);
 }
-// [END pubsub_create_push_no_wrapper_subscription]
+// [END pubsub_create_unwrapped_push_subscription]
 
 function main(
   topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
