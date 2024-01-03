@@ -981,7 +981,10 @@
                     },
                     "useTopicSchema": {
                       "type": "bool",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "writeMetadata": {
                       "type": "bool",
@@ -996,6 +999,13 @@
                       "id": 5,
                       "options": {
                         "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
+                    },
+                    "useTableSchema": {
+                      "type": "bool",
+                      "id": 6,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
                       }
                     }
                   },
