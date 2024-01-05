@@ -129,6 +129,52 @@ export class Schema {
   }
 
   /**
+   * Commits a new revision of a schema.
+   *
+   * @see [Schemas: commit API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/commit}
+   *
+   * @throws {Error} if the schema type is incorrect.
+   * @throws {Error} if the definition is invalid.
+   *
+   * @param {SchemaType} type The type of the schema (Protobuf, Avro, etc). This must match the existing schema.
+   * @param {string} definition The text describing the schema in terms of the type.
+   * @param {object} [options] Request configuration options, outlined
+   *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
+   * @returns {Promise<void>}
+   *
+   * @example Commit a new schema revision.
+   * ```
+   * const {PubSub} = require('@google-cloud/pubsub');
+   * const pubsub = new PubSub();
+   *
+   * const schema = pubsub.schema('messageType');
+   * await schema.commitSchema(
+   *   SchemaTypes.Avro,
+   *   '{...avro definition...}'
+   * );
+   * ```
+   */
+  async commitSchema(
+    type: SchemaType,
+    definition: string,
+    gaxOpts?: CallOptions
+  ): Promise<void> {
+    const client = await this.pubsub.getSchemaClient_();
+    const name = await this.getName();
+    await client.commitSchema(
+      {
+        name,
+        schema: {
+          name,
+          type,
+          definition,
+        },
+      },
+      gaxOpts
+    );
+  }
+
+  /**
    * Get full information about the schema from the service.
    *
    * @see [Schemas: getSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/get}
@@ -170,6 +216,51 @@ export class Schema {
     const client = await this.pubsub.getSchemaClient_();
     const name = await this.getName();
     await client.deleteSchema(
+      {
+        name,
+      },
+      gaxOpts
+    );
+  }
+
+  /**
+   * Delete a revision from the schema.
+   *
+   * @see [Schemas: deleteSchemaRevision API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/deleteRevision}
+   *
+   * @param {string} [revisionId] The ID of the revision to be deleted
+   * @param {object} [gaxOpts] Request configuration options, outlined
+   *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
+   * @returns {Promise<void>}
+   */
+  async deleteSchemaRevision(
+    revisionId: string,
+    gaxOpts?: CallOptions
+  ): Promise<void> {
+    const client = await this.pubsub.getSchemaClient_();
+    const name = await this.getName();
+    await client.deleteSchemaRevision(
+      {
+        name,
+        revisionId,
+      },
+      gaxOpts
+    );
+  }
+
+  /**
+   * Rollback a schema.
+   *
+   * @see [Schemas: rollbackSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/rollback}
+   *
+   * @param {object} [gaxOpts] Request configuration options, outlined
+   *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
+   * @returns {Promise<void>}
+   */
+  async rollbackSchema(gaxOpts?: CallOptions): Promise<void> {
+    const client = await this.pubsub.getSchemaClient_();
+    const name = await this.getName();
+    await client.rollbackSchema(
       {
         name,
       },
