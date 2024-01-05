@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -3333,6 +3333,9 @@ export namespace google {
 
                 /** BigQueryConfig state */
                 state?: (google.pubsub.v1.BigQueryConfig.State|keyof typeof google.pubsub.v1.BigQueryConfig.State|null);
+
+                /** BigQueryConfig useTableSchema */
+                useTableSchema?: (boolean|null);
             }
 
             /** Represents a BigQueryConfig. */
@@ -3358,6 +3361,9 @@ export namespace google {
 
                 /** BigQueryConfig state. */
                 public state: (google.pubsub.v1.BigQueryConfig.State|keyof typeof google.pubsub.v1.BigQueryConfig.State);
+
+                /** BigQueryConfig useTableSchema. */
+                public useTableSchema: boolean;
 
                 /**
                  * Creates a new BigQueryConfig instance using the specified properties.
