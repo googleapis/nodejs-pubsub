@@ -175,11 +175,12 @@ describe('Schema', () => {
       .stub(schemaClient, 'rollbackSchema')
       .callsFake(async (params, gaxOpts) => {
         assert.strictEqual(params.name, schemaName);
+        assert.strictEqual(params.revisionId, 'revisionId');
         assert.ok(gaxOpts);
         called = true;
       });
 
-    await schema.rollbackSchema({});
+    await schema.rollbackSchema('revisionId', {});
     assert.ok(called);
   });
 

@@ -253,16 +253,21 @@ export class Schema {
    *
    * @see [Schemas: rollbackSchema API Documentation]{@link https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.schemas/rollback}
    *
+   * @param {string} [revisionId] The ID of the revision to be rolled back
    * @param {object} [gaxOpts] Request configuration options, outlined
    *   here: https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html.
    * @returns {Promise<void>}
    */
-  async rollbackSchema(gaxOpts?: CallOptions): Promise<void> {
+  async rollbackSchema(
+    revisionId: string,
+    gaxOpts?: CallOptions
+  ): Promise<void> {
     const client = await this.pubsub.getSchemaClient_();
     const name = await this.getName();
     await client.rollbackSchema(
       {
         name,
+        revisionId,
       },
       gaxOpts
     );
