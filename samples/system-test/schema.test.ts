@@ -126,6 +126,22 @@ describe('schema', () => {
     return schema;
   }
 
+  async function commitSchema(
+    testName: string,
+    type: 'avro' | 'proto'
+  ): Promise<void> {
+    const suffix = type === 'avro' ? 'avsc' : 'proto';
+    const encoding =
+      type === 'avro' ? SchemaTypes.Avro : SchemaTypes.ProtocolBuffer;
+    const def = (
+      await fs.readFile(fixturePath(`provinces.${suffix}`))
+    ).toString();
+    const schemaId = getSchemaId(testName);
+
+    const schema = pubsub.schema(schemaId);
+    //await schema.commitSchema(encoding, def);
+  }
+
   async function createTopicWithSchema(
     testName: string,
     schemaName: string,
@@ -137,6 +153,28 @@ describe('schema', () => {
       schemaSettings: {
         schema: fullSchemaName(schemaName),
         encoding: encodingType,
+      },
+    });
+    assert.ok(topic);
+
+    return topic;
+  }
+
+  async function createTopicWithSchemaRevisions(
+    testName: string,
+    schemaName: string,
+    encodingType: SchemaEncoding,
+    firstRevisionId: string,
+    lastRevisionId: string
+  ): Promise<Topic> {
+    const topicId = getTopicId(testName);
+    const [topic] = await pubsub.createTopic({
+      name: topicId,
+      schemaSettings: {
+        schema: fullSchemaName(schemaName),
+        encoding: encodingType,
+        firstRevisionId,
+        lastRevisionId,
       },
     });
     assert.ok(topic);
@@ -203,6 +241,23 @@ describe('schema', () => {
     const topicId = getTopicId(id);
     const output = execSync(
       `${commandFor('createTopicWithSchema')} ${topicId} ${schema.id} BINARY`
+    );
+    assert.include(output, topicId);
+    assert.include(output, schema.id);
+    assert.include(output, 'created with');
+
+    const [topic] = await pubsub.topic(topicId).get();
+    assert.include(topic.metadata?.schemaSettings?.schema, schema.id);
+  });
+
+  it('should create a topic with schema revisions', async () => {
+    const id = 'create_topic_rev';
+    const schema = await createSchema(id, 'proto');
+    const topicId = getTopicId(id);
+    const output = execSync(
+      `${commandFor('createTopicWithSchemaRevisions')} ${topicId} ${
+        schema.id
+      } BINARY`
     );
     assert.include(output, topicId);
     assert.include(output, schema.id);
