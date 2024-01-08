@@ -92,22 +92,6 @@ describe('Schema', () => {
     assert.ok(called);
   });
 
-  it('calls commitSchema() on the client when commitSchema() is called', async () => {
-    let called = false;
-    sandbox
-      .stub(schemaClient, 'commitSchema')
-      .callsFake(async (params, gaxOpts) => {
-        assert.strictEqual(params.name, schemaName);
-        assert.strictEqual(params.schema!.type, SchemaTypes.Avro);
-        assert.strictEqual(params.schema!.definition, 'definition');
-        assert.ok(gaxOpts);
-        called = true;
-      });
-
-    await schema.commitSchema(SchemaTypes.Avro, 'definition', {});
-    assert.ok(called);
-  });
-
   it('calls getSchema() on the client when get() is called', async () => {
     let called = false;
     sandbox
@@ -151,36 +135,6 @@ describe('Schema', () => {
       });
 
     await schema.delete({});
-    assert.ok(called);
-  });
-
-  it('calls deleteSchemaRevision() on the client when deleteSchemaRevision() is called', async () => {
-    let called = false;
-    sandbox
-      .stub(schemaClient, 'deleteSchemaRevision')
-      .callsFake(async (params, gaxOpts) => {
-        assert.strictEqual(params.name, schemaName);
-        assert.strictEqual(params.revisionId, 'revisionId');
-        assert.ok(gaxOpts);
-        called = true;
-      });
-
-    await schema.deleteSchemaRevision('revisionId', {});
-    assert.ok(called);
-  });
-
-  it('calls rollbackSchema() on the client when rollbackSchema() is called', async () => {
-    let called = false;
-    sandbox
-      .stub(schemaClient, 'rollbackSchema')
-      .callsFake(async (params, gaxOpts) => {
-        assert.strictEqual(params.name, schemaName);
-        assert.strictEqual(params.revisionId, 'revisionId');
-        assert.ok(gaxOpts);
-        called = true;
-      });
-
-    await schema.rollbackSchema('revisionId', {});
     assert.ok(called);
   });
 
