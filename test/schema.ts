@@ -49,7 +49,7 @@ describe('Schema', () => {
 
     // These depend on the create-on-first-call structure in PubSub.
     // If that changes, this will also need to be updated.
-    schemaClient = await pubsub.getSchemaClient_();
+    schemaClient = await pubsub.getSchemaClient();
     schema = pubsub.schema(schemaName);
   });
 
