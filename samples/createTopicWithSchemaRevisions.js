@@ -75,8 +75,8 @@ function main(
   topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
   schemaNameOrId = 'YOUR_SCHEMA_NAME_OR_ID',
   encodingType = 'BINARY',
-  firstRevisionId,
-  lastRevisionId
+  firstRevisionId = 'YOUR_REVISION_ID',
+  lastRevisionId = 'YOUR_REVISION_ID'
 ) {
   createTopicWithSchemaRevisions(
     topicNameOrId,

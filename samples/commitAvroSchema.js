@@ -45,12 +45,24 @@ const fs = require('fs');
 const pubSubClient = new PubSub();
 
 async function commitAvroSchema(schemaNameOrId, avscFile) {
-  const definition = fs.readFileSync(avscFile).toString();
+  // Get the fully qualified schema name.
   const schema = pubSubClient.schema(schemaNameOrId);
-  await schema.commitSchema(SchemaTypes.Avro, definition);
-
   const name = await schema.getName();
-  console.log(`Schema ${name} commited.`);
+
+  // Read the new schema definition from storage.
+  const definition = fs.readFileSync(avscFile).toString();
+
+  // Use the gapic client to commit the new definition.
+  const schemaClient = await pubSubClient.getSchemaClient();
+  const [result] = await schemaClient.commitSchema({
+    name,
+    schema: {
+      type: SchemaTypes.Avro,
+      definition,
+    },
+  });
+
+  console.log(`Schema ${name} committed with revision ${result.revisionId}.`);
 }
 // [END pubsub_create_avro_schema]
 

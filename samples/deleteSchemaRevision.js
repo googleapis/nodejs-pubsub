@@ -43,10 +43,18 @@ const {PubSub} = require('@google-cloud/pubsub');
 const pubSubClient = new PubSub();
 
 async function deleteSchemaRevision(schemaNameOrId, revisionId) {
+  // Get the fully qualified schema name.
   const schema = pubSubClient.schema(schemaNameOrId);
-  await schema.deleteSchemaRevision(revisionId);
+  const name = await schema.getName();
 
-  console.log(`Schema ${schemaNameOrId} revision ${revisionId} deleted.`);
+  // Use the gapic client to delete the schema revision.
+  const schemaClient = await pubSubClient.getSchemaClient();
+  await schemaClient.deleteSchemaRevision({
+    name,
+    revisionId,
+  });
+
+  console.log(`Schema ${name} revision ${revisionId} deleted.`);
 }
 // [END pubsub_delete_schema_revision]
 

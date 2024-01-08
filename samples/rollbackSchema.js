@@ -43,10 +43,18 @@ const {PubSub} = require('@google-cloud/pubsub');
 const pubSubClient = new PubSub();
 
 async function rollbackSchema(schemaNameOrId, revisionId) {
+  // Get the fully qualified schema name.
   const schema = pubSubClient.schema(schemaNameOrId);
-  await schema.rollbackSchema(revisionId);
+  const name = await schema.getName();
 
-  console.log(`Schema ${schemaNameOrId} revision ${revisionId} rolled back.`);
+  // Use the gapic client to roll back the schema revision.
+  const schemaClient = await pubSubClient.getSchemaClient();
+  await schemaClient.rollbackSchema({
+    name,
+    revisionId,
+  });
+
+  console.log(`Schema ${name} revision ${revisionId} rolled back.`);
 }
 // [END pubsub_rollback_schema]
 
