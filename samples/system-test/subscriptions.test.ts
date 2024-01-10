@@ -179,7 +179,9 @@ describe('subscriptions', () => {
     const topic = await createTopic(testId);
     const subName = reserveSub(testId);
     const output = execSync(
-      `${commandFor('createPushSubscription')} ${topic.name} ${subName}`
+      `${commandFor('createPushSubscription')} http://url-fake./ ${
+        topic.name
+      } ${subName}`
     );
     assert.include(output, `Subscription ${subName} created.`);
     const [subscriptions] = await pubsub.topic(topic.name).getSubscriptions();
@@ -191,7 +193,7 @@ describe('subscriptions', () => {
     const topic = await createTopic(testId);
     const subName = reserveSub(testId);
     const output = execSync(
-      `${commandFor('createPushSubscriptionNoWrapper')} ${
+      `${commandFor('createPushSubscriptionNoWrapper')} http://url-fake./ ${
         topic.name
       } ${subName}`
     );

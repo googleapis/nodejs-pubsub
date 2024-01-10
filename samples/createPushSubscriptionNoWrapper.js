@@ -33,6 +33,7 @@
 /**
  * TODO(developer): Uncomment these variables before running the sample.
  */
+// const pushEndpoint = 'YOUR_ENDPOINT_URL';
 // const topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID';
 // const subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID';
 
@@ -43,6 +44,7 @@ const {PubSub} = require('@google-cloud/pubsub');
 const pubSubClient = new PubSub();
 
 async function createPushSubscriptionNoWrapper(
+  pushEndpoint,
   topicNameOrId,
   subscriptionNameOrId
 ) {
@@ -50,7 +52,7 @@ async function createPushSubscriptionNoWrapper(
     pushConfig: {
       // Set to an HTTPS endpoint of your choice. If necessary, register
       // (authorize) the domain on which the server is hosted.
-      pushEndpoint: `https://${pubSubClient.projectId}.appspot.com/push`,
+      pushEndpoint,
       // When true, writes the Pub/Sub message metadata to
       // `x-goog-pubsub-<KEY>:<VAL>` headers of the HTTP request. Writes the
       // Pub/Sub message attributes to `<KEY>:<VAL>` headers of the HTTP request.
@@ -68,15 +70,18 @@ async function createPushSubscriptionNoWrapper(
 // [END pubsub_create_unwrapped_push_subscription]
 
 function main(
+  pushEndpoint = 'YOUR_ENDPOINT_URL',
   topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
   subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID'
 ) {
-  createPushSubscriptionNoWrapper(topicNameOrId, subscriptionNameOrId).catch(
-    err => {
-      console.error(err.message);
-      process.exitCode = 1;
-    }
-  );
+  createPushSubscriptionNoWrapper(
+    pushEndpoint,
+    topicNameOrId,
+    subscriptionNameOrId
+  ).catch(err => {
+    console.error(err.message);
+    process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));

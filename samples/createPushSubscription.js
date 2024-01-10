@@ -33,6 +33,7 @@
 /**
  * TODO(developer): Uncomment these variables before running the sample.
  */
+// const pushEndpoint = 'YOUR_ENDPOINT_URL';
 // const topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID';
 // const subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID';
 
@@ -42,12 +43,16 @@ const {PubSub} = require('@google-cloud/pubsub');
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function createPushSubscription(topicNameOrId, subscriptionNameOrId) {
+async function createPushSubscription(
+  pushEndpoint,
+  topicNameOrId,
+  subscriptionNameOrId
+) {
   const options = {
     pushConfig: {
       // Set to an HTTPS endpoint of your choice. If necessary, register
       // (authorize) the domain on which the server is hosted.
-      pushEndpoint: `https://${pubSubClient.projectId}.appspot.com/push`,
+      pushEndpoint,
     },
   };
 
@@ -59,10 +64,15 @@ async function createPushSubscription(topicNameOrId, subscriptionNameOrId) {
 // [END pubsub_create_push_subscription]
 
 function main(
+  pushEndpoint = 'YOUR_ENDPOINT_URL',
   topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
   subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID'
 ) {
-  createPushSubscription(topicNameOrId, subscriptionNameOrId).catch(err => {
+  createPushSubscription(
+    pushEndpoint,
+    topicNameOrId,
+    subscriptionNameOrId
+  ).catch(err => {
     console.error(err.message);
     process.exitCode = 1;
   });
