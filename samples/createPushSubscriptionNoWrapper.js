@@ -26,7 +26,7 @@
 
 // sample-metadata:
 //   title: Create Push Subscription With No Wrapper
-//   description: Creates a new push subscription, but disables metadata wrapping.
+//   description: Creates a new push subscription, but disables wrapping for payloads.
 //   usage: node createPushSubscriptionNoWrapper.js <topic-name-or-id> <subscription-name-or-id>
 
 // [START pubsub_create_push_no_wrapper_subscription]
@@ -51,6 +51,9 @@ async function createPushSubscriptionNoWrapper(
       // Set to an HTTPS endpoint of your choice. If necessary, register
       // (authorize) the domain on which the server is hosted.
       pushEndpoint: `https://${pubSubClient.projectId}.appspot.com/push`,
+      // When true, writes the Pub/Sub message metadata to
+      // `x-goog-pubsub-<KEY>:<VAL>` headers of the HTTP request. Writes the
+      // Pub/Sub message attributes to `<KEY>:<VAL>` headers of the HTTP request.
       noWrapper: {
         writeMetadata: true,
       },
