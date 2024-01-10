@@ -315,6 +315,23 @@ describe('schema', () => {
     assert.include(output, 'rolled back.');
   });
 
+  it("should list a schema's revisions", async () => {
+    const id = 'list_rev';
+    const schema = await createSchema(id, 'proto');
+    const committed = await commitSchema(await schema.getName(), 'proto');
+    const revId = committed.revisionId!;
+    const committed2 = await commitSchema(await schema.getName(), 'proto');
+    const revId2 = committed2.revisionId!;
+
+    const output = execSync(
+      `${commandFor('listSchemaRevisions')} ${schema.id}`
+    );
+    assert.include(output, schema.id);
+    assert.include(output, revId);
+    assert.include(output, revId2);
+    assert.include(output, 'Listed revisions');
+  });
+
   it('should get a schema', async () => {
     const schema = await createSchema('get', 'proto');
 
