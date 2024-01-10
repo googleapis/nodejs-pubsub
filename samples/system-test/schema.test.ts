@@ -40,6 +40,7 @@ const execSync = (cmd: string) => cp.execSync(cmd, {encoding: 'utf-8'});
 describe('schema', () => {
   const projectId = process.env.GCLOUD_PROJECT;
   const pubsub = new PubSub({projectId});
+  const clientPromise = pubsub.getSchemaClient();
 
   const resources = new TestResources('schema');
 
@@ -127,19 +128,28 @@ describe('schema', () => {
   }
 
   async function commitSchema(
-    testName: string,
+    schemaId: string,
     type: 'avro' | 'proto'
-  ): Promise<void> {
+  ): Promise<ISchema> {
     const suffix = type === 'avro' ? 'avsc' : 'proto';
-    const encoding =
+    const typeId =
       type === 'avro' ? SchemaTypes.Avro : SchemaTypes.ProtocolBuffer;
-    const def = (
+    const definition = (
       await fs.readFile(fixturePath(`provinces.${suffix}`))
     ).toString();
-    const schemaId = getSchemaId(testName);
 
     const schema = pubsub.schema(schemaId);
-    //await schema.commitSchema(encoding, def);
+    const schemaName = await schema.getName();
+    const schemaClient = await clientPromise;
+    const [result] = await schemaClient.commitSchema({
+      name: schemaName,
+      schema: {
+        type: typeId,
+        definition,
+      },
+    });
+
+    return result;
   }
 
   async function createTopicWithSchema(
@@ -160,28 +170,6 @@ describe('schema', () => {
     return topic;
   }
 
-  async function createTopicWithSchemaRevisions(
-    testName: string,
-    schemaName: string,
-    encodingType: SchemaEncoding,
-    firstRevisionId: string,
-    lastRevisionId: string
-  ): Promise<Topic> {
-    const topicId = getTopicId(testName);
-    const [topic] = await pubsub.createTopic({
-      name: topicId,
-      schemaSettings: {
-        schema: fullSchemaName(schemaName),
-        encoding: encodingType,
-        firstRevisionId,
-        lastRevisionId,
-      },
-    });
-    assert.ok(topic);
-
-    return topic;
-  }
-
   async function createSub(
     testName: string,
     topicName: string
@@ -192,6 +180,18 @@ describe('schema', () => {
 
     return sub;
   }
+
+  it('should commit an avro schema', async () => {
+    const schema = await createSchema('commit_schema', 'avro');
+    const name = await schema.getName();
+    const output = execSync(
+      `${commandFor('commitAvroSchema')} ${name} ${fixturePath(
+        'provinces.avsc'
+      )}`
+    );
+    assert.include(output, name);
+    assert.include(output, 'committed');
+  });
 
   it('should create an avro schema', async () => {
     const schemaId = getSchemaId('create_avro');
@@ -253,6 +253,9 @@ describe('schema', () => {
   it('should create a topic with schema revisions', async () => {
     const id = 'create_topic_rev';
     const schema = await createSchema(id, 'proto');
+    const committed = await commitSchema(await schema.getName(), 'proto');
+    const revId = committed.revisionId!;
+
     const topicId = getTopicId(id);
     const output = execSync(
       `${commandFor('createTopicWithSchemaRevisions')} ${topicId} ${
@@ -265,6 +268,8 @@ describe('schema', () => {
 
     const [topic] = await pubsub.topic(topicId).get();
     assert.include(topic.metadata?.schemaSettings?.schema, schema.id);
+    assert.strictEqual(topic.metadata?.schemaSettings?.firstRevisionId, revId);
+    assert.strictEqual(topic.metadata?.schemaSettings?.lastRevisionId, revId);
   });
 
   it('should delete a schema', async () => {
@@ -281,6 +286,33 @@ describe('schema', () => {
     } catch (e) {
       // This is expected.
     }*/
+  });
+
+  it('should delete a schema revision', async () => {
+    const id = 'delete_rev';
+    const schema = await createSchema(id, 'proto');
+    const committed = await commitSchema(await schema.getName(), 'proto');
+    const revId = committed.revisionId!;
+
+    const output = execSync(
+      `${commandFor('deleteSchemaRevision')} ${schema.id} ${revId}`
+    );
+    assert.include(output, schema.id);
+    assert.include(output, 'deleted.');
+  });
+
+  it('should rollback a schema revision', async () => {
+    const id = 'rollback_rev';
+    const schema = await createSchema(id, 'proto');
+    const committed = await commitSchema(await schema.getName(), 'proto');
+    const revId = committed.revisionId!;
+    await commitSchema(await schema.getName(), 'proto');
+
+    const output = execSync(
+      `${commandFor('rollbackSchema')} ${schema.id} ${revId}`
+    );
+    assert.include(output, schema.id);
+    assert.include(output, 'rolled back.');
   });
 
   it('should get a schema', async () => {
