@@ -201,8 +201,6 @@ describe('subscriptions', () => {
     assert(subInfo.name === fullSubName(subName));
     const [meta] = await subInfo.getMetadata();
     assert(meta.pushConfig!.noWrapper!.writeMetadata === true);
-    /*const [subscriptions] = await pubsub.topic(topic.name).getSubscriptions();
-    assert(subscriptions.some(s => s.name === fullSubName(subName)));*/
   });
 
   it('should create a BigQuery subscription', async () => {
