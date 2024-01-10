@@ -4,6 +4,29 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.1.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.1.0...v4.1.1) (2024-01-05)
+
+
+### Bug Fixes
+
+* Correct long audio synthesis HTTP binding ([#1867](https://github.com/googleapis/nodejs-pubsub/issues/1867)) ([65940a4](https://github.com/googleapis/nodejs-pubsub/commit/65940a40fe8f2301690d26f769571a198f747dd3))
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.19.0 ([#1862](https://github.com/googleapis/nodejs-pubsub/issues/1862)) ([92259f5](https://github.com/googleapis/nodejs-pubsub/commit/92259f5bffee05036f1746990b021299ea3ea4e7))
+
+## [4.1.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.7...v4.1.0) (2023-12-04)
+
+
+### Features
+
+* Add `use_table_schema` field to BigQueryConfig ([#1858](https://github.com/googleapis/nodejs-pubsub/issues/1858)) ([2875d83](https://github.com/googleapis/nodejs-pubsub/commit/2875d8383831563e5b748e96094faa94bf25fc15))
+
+## [4.0.7](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.6...v4.0.7) (2023-11-09)
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.18.0 ([#1852](https://github.com/googleapis/nodejs-pubsub/issues/1852)) ([d9a0432](https://github.com/googleapis/nodejs-pubsub/commit/d9a0432a37c6d741c9694a5bcff047f4c85b2feb))
+* Set x-goog-request-params for streaming pull request ([#1849](https://github.com/googleapis/nodejs-pubsub/issues/1849)) ([7b82ff0](https://github.com/googleapis/nodejs-pubsub/commit/7b82ff01e5c654b3e339dfdec5b3da8bf45da049))
+
 ## [4.0.6](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.5...v4.0.6) (2023-09-15)
 
 
