@@ -64,7 +64,7 @@ async function commitAvroSchema(schemaNameOrId, avscFile) {
 
   console.log(`Schema ${name} committed with revision ${result.revisionId}.`);
 }
-// [END pubsub_create_avro_schema]
+// [END pubsub_commit_avro_schema]
 
 function main(
   schemaNameOrId = 'YOUR_SCHEMA_NAME_OR_ID',

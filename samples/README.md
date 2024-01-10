@@ -44,6 +44,7 @@ guides.
   * [Get Subscription Policy](#get-subscription-policy)
   * [Get Topic Policy](#get-topic-policy)
   * [List All Topics](#list-all-topics)
+  * [List Revisions on a Schema](#list-revisions-on-a-schema)
   * [List schemas on a project](#list-schemas-on-a-project)
   * [List Subscriptions](#list-subscriptions)
   * [List Subscriptions On a Topic](#list-subscriptions-on-a-topic)
@@ -543,6 +544,25 @@ __Usage:__
 
 
 `node listAllTopics.js`
+
+
+-----
+
+
+
+
+### List Revisions on a Schema
+
+Gets a list of revisions on a schema which was previously created in the project.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/listSchemaRevisions.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listSchemaRevisions.js,samples/README.md)
+
+__Usage:__
+
+
+`node listSchemaRevisions.js <schema-name>`
 
 
 -----
