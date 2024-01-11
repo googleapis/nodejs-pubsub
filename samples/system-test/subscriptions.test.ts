@@ -178,10 +178,9 @@ describe('subscriptions', () => {
     const testId = 'push_sub';
     const topic = await createTopic(testId);
     const subName = reserveSub(testId);
+    const url = `https://${pubsub.projectId}.appspot.com/push`;
     const output = execSync(
-      `${commandFor('createPushSubscription')} http://url-fake./ ${
-        topic.name
-      } ${subName}`
+      `${commandFor('createPushSubscription')} ${url} ${topic.name} ${subName}`
     );
     assert.include(output, `Subscription ${subName} created.`);
     const [subscriptions] = await pubsub.topic(topic.name).getSubscriptions();
@@ -192,8 +191,9 @@ describe('subscriptions', () => {
     const testId = 'push_sub_nw';
     const topic = await createTopic(testId);
     const subName = reserveSub(testId);
+    const url = `https://${pubsub.projectId}.appspot.com/push`;
     const output = execSync(
-      `${commandFor('createPushSubscriptionNoWrapper')} http://url-fake./ ${
+      `${commandFor('createPushSubscriptionNoWrapper')} ${url} ${
         topic.name
       } ${subName}`
     );
