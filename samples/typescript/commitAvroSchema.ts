@@ -53,6 +53,7 @@ async function commitAvroSchema(schemaNameOrId: string, avscFile: string) {
   const [result] = await schemaClient.commitSchema({
     name,
     schema: {
+      name,
       type: SchemaTypes.Avro,
       definition,
     },

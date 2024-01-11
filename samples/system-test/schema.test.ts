@@ -144,6 +144,7 @@ describe('schema', () => {
     const [result] = await schemaClient.commitSchema({
       name: schemaName,
       schema: {
+        name: schemaName,
         type: typeId,
         definition,
       },
@@ -260,7 +261,7 @@ describe('schema', () => {
     const output = execSync(
       `${commandFor('createTopicWithSchemaRevisions')} ${topicId} ${
         schema.id
-      } BINARY`
+      } BINARY ${revId} ${revId}`
     );
     assert.include(output, topicId);
     assert.include(output, schema.id);
@@ -304,9 +305,10 @@ describe('schema', () => {
   it('should rollback a schema revision', async () => {
     const id = 'rollback_rev';
     const schema = await createSchema(id, 'proto');
-    const committed = await commitSchema(await schema.getName(), 'proto');
+    const name = await schema.getName();
+    const committed = await commitSchema(name, 'proto');
     const revId = committed.revisionId!;
-    await commitSchema(await schema.getName(), 'proto');
+    await commitSchema(name, 'proto');
 
     const output = execSync(
       `${commandFor('rollbackSchema')} ${schema.id} ${revId}`
