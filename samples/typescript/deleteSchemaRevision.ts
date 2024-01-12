@@ -49,8 +49,7 @@ async function deleteSchemaRevision(
   // Use the gapic client to delete the schema revision.
   const schemaClient = await pubSubClient.getSchemaClient();
   await schemaClient.deleteSchemaRevision({
-    name,
-    revisionId,
+    name: `${name}@${revisionId}`,
   });
 
   console.log(`Schema ${name} revision ${revisionId} deleted.`);

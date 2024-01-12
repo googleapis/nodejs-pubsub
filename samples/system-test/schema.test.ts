@@ -292,8 +292,10 @@ describe('schema', () => {
   it('should delete a schema revision', async () => {
     const id = 'delete_rev';
     const schema = await createSchema(id, 'proto');
-    const committed = await commitSchema(await schema.getName(), 'proto');
-    const revId = committed.revisionId!;
+    const name = await schema.getName();
+    await commitSchema(name, 'proto');
+    const committed2 = await commitSchema(name, 'proto');
+    const revId = committed2.revisionId!;
 
     const output = execSync(
       `${commandFor('deleteSchemaRevision')} ${schema.id} ${revId}`
