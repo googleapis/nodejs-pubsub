@@ -26,7 +26,7 @@
 
 // sample-metadata:
 //   title: Delete a Schema Revision
-//   description: Deletes a new schema revision on a project
+//   description: Deletes a schema revision on a project
 //   usage: node deleteSchemaRevision.js <schema-name> <revision-id>
 
 // [START pubsub_delete_schema_revision]
