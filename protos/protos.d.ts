@@ -448,6 +448,243 @@ export namespace google {
                 public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
+            /** Properties of an IngestionDataSourceSettings. */
+            interface IIngestionDataSourceSettings {
+
+                /** IngestionDataSourceSettings awsKinesis */
+                awsKinesis?: (google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null);
+            }
+
+            /** Represents an IngestionDataSourceSettings. */
+            class IngestionDataSourceSettings implements IIngestionDataSourceSettings {
+
+                /**
+                 * Constructs a new IngestionDataSourceSettings.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IIngestionDataSourceSettings);
+
+                /** IngestionDataSourceSettings awsKinesis. */
+                public awsKinesis?: (google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null);
+
+                /** IngestionDataSourceSettings source. */
+                public source?: "awsKinesis";
+
+                /**
+                 * Creates a new IngestionDataSourceSettings instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns IngestionDataSourceSettings instance
+                 */
+                public static create(properties?: google.pubsub.v1.IIngestionDataSourceSettings): google.pubsub.v1.IngestionDataSourceSettings;
+
+                /**
+                 * Encodes the specified IngestionDataSourceSettings message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.verify|verify} messages.
+                 * @param message IngestionDataSourceSettings message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IIngestionDataSourceSettings, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified IngestionDataSourceSettings message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.verify|verify} messages.
+                 * @param message IngestionDataSourceSettings message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IIngestionDataSourceSettings, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an IngestionDataSourceSettings message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns IngestionDataSourceSettings
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionDataSourceSettings;
+
+                /**
+                 * Decodes an IngestionDataSourceSettings message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns IngestionDataSourceSettings
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionDataSourceSettings;
+
+                /**
+                 * Verifies an IngestionDataSourceSettings message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates an IngestionDataSourceSettings message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns IngestionDataSourceSettings
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionDataSourceSettings;
+
+                /**
+                 * Creates a plain object from an IngestionDataSourceSettings message. Also converts values to other types if specified.
+                 * @param message IngestionDataSourceSettings
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.IngestionDataSourceSettings, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this IngestionDataSourceSettings to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for IngestionDataSourceSettings
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            namespace IngestionDataSourceSettings {
+
+                /** Properties of an AwsKinesis. */
+                interface IAwsKinesis {
+
+                    /** AwsKinesis state */
+                    state?: (google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State|keyof typeof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State|null);
+
+                    /** AwsKinesis streamArn */
+                    streamArn?: (string|null);
+
+                    /** AwsKinesis consumerArn */
+                    consumerArn?: (string|null);
+
+                    /** AwsKinesis awsRoleArn */
+                    awsRoleArn?: (string|null);
+
+                    /** AwsKinesis gcpServiceAccount */
+                    gcpServiceAccount?: (string|null);
+                }
+
+                /** Represents an AwsKinesis. */
+                class AwsKinesis implements IAwsKinesis {
+
+                    /**
+                     * Constructs a new AwsKinesis.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis);
+
+                    /** AwsKinesis state. */
+                    public state: (google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State|keyof typeof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State);
+
+                    /** AwsKinesis streamArn. */
+                    public streamArn: string;
+
+                    /** AwsKinesis consumerArn. */
+                    public consumerArn: string;
+
+                    /** AwsKinesis awsRoleArn. */
+                    public awsRoleArn: string;
+
+                    /** AwsKinesis gcpServiceAccount. */
+                    public gcpServiceAccount: string;
+
+                    /**
+                     * Creates a new AwsKinesis instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns AwsKinesis instance
+                     */
+                    public static create(properties?: google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis): google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis;
+
+                    /**
+                     * Encodes the specified AwsKinesis message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.verify|verify} messages.
+                     * @param message AwsKinesis message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified AwsKinesis message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.verify|verify} messages.
+                     * @param message AwsKinesis message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes an AwsKinesis message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns AwsKinesis
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis;
+
+                    /**
+                     * Decodes an AwsKinesis message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns AwsKinesis
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis;
+
+                    /**
+                     * Verifies an AwsKinesis message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates an AwsKinesis message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns AwsKinesis
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis;
+
+                    /**
+                     * Creates a plain object from an AwsKinesis message. Also converts values to other types if specified.
+                     * @param message AwsKinesis
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this AwsKinesis to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for AwsKinesis
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
+                namespace AwsKinesis {
+
+                    /** State enum. */
+                    enum State {
+                        STATE_UNSPECIFIED = 0,
+                        ACTIVE = 1,
+                        KINESIS_PERMISSION_DENIED = 2,
+                        PUBLISH_PERMISSION_DENIED = 3,
+                        STREAM_NOT_FOUND = 4,
+                        CONSUMER_NOT_FOUND = 5
+                    }
+                }
+            }
+
             /** Properties of a Topic. */
             interface ITopic {
 
@@ -471,6 +708,12 @@ export namespace google {
 
                 /** Topic messageRetentionDuration */
                 messageRetentionDuration?: (google.protobuf.IDuration|null);
+
+                /** Topic state */
+                state?: (google.pubsub.v1.Topic.State|keyof typeof google.pubsub.v1.Topic.State|null);
+
+                /** Topic ingestionDataSourceSettings */
+                ingestionDataSourceSettings?: (google.pubsub.v1.IIngestionDataSourceSettings|null);
             }
 
             /** Represents a Topic. */
@@ -502,6 +745,12 @@ export namespace google {
 
                 /** Topic messageRetentionDuration. */
                 public messageRetentionDuration?: (google.protobuf.IDuration|null);
+
+                /** Topic state. */
+                public state: (google.pubsub.v1.Topic.State|keyof typeof google.pubsub.v1.Topic.State);
+
+                /** Topic ingestionDataSourceSettings. */
+                public ingestionDataSourceSettings?: (google.pubsub.v1.IIngestionDataSourceSettings|null);
 
                 /**
                  * Creates a new Topic instance using the specified properties.
@@ -579,6 +828,16 @@ export namespace google {
                  * @returns The default type url
                  */
                 public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            namespace Topic {
+
+                /** State enum. */
+                enum State {
+                    STATE_UNSPECIFIED = 0,
+                    ACTIVE = 1,
+                    INGESTION_RESOURCE_ERROR = 2
+                }
             }
 
             /** Properties of a PubsubMessage. */

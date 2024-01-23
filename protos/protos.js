@@ -905,6 +905,590 @@
                     return SchemaSettings;
                 })();
     
+                v1.IngestionDataSourceSettings = (function() {
+    
+                    /**
+                     * Properties of an IngestionDataSourceSettings.
+                     * @memberof google.pubsub.v1
+                     * @interface IIngestionDataSourceSettings
+                     * @property {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null} [awsKinesis] IngestionDataSourceSettings awsKinesis
+                     */
+    
+                    /**
+                     * Constructs a new IngestionDataSourceSettings.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents an IngestionDataSourceSettings.
+                     * @implements IIngestionDataSourceSettings
+                     * @constructor
+                     * @param {google.pubsub.v1.IIngestionDataSourceSettings=} [properties] Properties to set
+                     */
+                    function IngestionDataSourceSettings(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * IngestionDataSourceSettings awsKinesis.
+                     * @member {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null|undefined} awsKinesis
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     */
+                    IngestionDataSourceSettings.prototype.awsKinesis = null;
+    
+                    // OneOf field names bound to virtual getters and setters
+                    var $oneOfFields;
+    
+                    /**
+                     * IngestionDataSourceSettings source.
+                     * @member {"awsKinesis"|undefined} source
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     */
+                    Object.defineProperty(IngestionDataSourceSettings.prototype, "source", {
+                        get: $util.oneOfGetter($oneOfFields = ["awsKinesis"]),
+                        set: $util.oneOfSetter($oneOfFields)
+                    });
+    
+                    /**
+                     * Creates a new IngestionDataSourceSettings instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionDataSourceSettings=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.IngestionDataSourceSettings} IngestionDataSourceSettings instance
+                     */
+                    IngestionDataSourceSettings.create = function create(properties) {
+                        return new IngestionDataSourceSettings(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified IngestionDataSourceSettings message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionDataSourceSettings} message IngestionDataSourceSettings message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    IngestionDataSourceSettings.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.awsKinesis != null && Object.hasOwnProperty.call(message, "awsKinesis"))
+                            $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.encode(message.awsKinesis, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified IngestionDataSourceSettings message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionDataSourceSettings} message IngestionDataSourceSettings message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    IngestionDataSourceSettings.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes an IngestionDataSourceSettings message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.IngestionDataSourceSettings} IngestionDataSourceSettings
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    IngestionDataSourceSettings.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1: {
+                                    message.awsKinesis = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes an IngestionDataSourceSettings message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.IngestionDataSourceSettings} IngestionDataSourceSettings
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    IngestionDataSourceSettings.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies an IngestionDataSourceSettings message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    IngestionDataSourceSettings.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        var properties = {};
+                        if (message.awsKinesis != null && message.hasOwnProperty("awsKinesis")) {
+                            properties.source = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.verify(message.awsKinesis);
+                                if (error)
+                                    return "awsKinesis." + error;
+                            }
+                        }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates an IngestionDataSourceSettings message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.IngestionDataSourceSettings} IngestionDataSourceSettings
+                     */
+                    IngestionDataSourceSettings.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.IngestionDataSourceSettings)
+                            return object;
+                        var message = new $root.google.pubsub.v1.IngestionDataSourceSettings();
+                        if (object.awsKinesis != null) {
+                            if (typeof object.awsKinesis !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionDataSourceSettings.awsKinesis: object expected");
+                            message.awsKinesis = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.fromObject(object.awsKinesis);
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from an IngestionDataSourceSettings message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {google.pubsub.v1.IngestionDataSourceSettings} message IngestionDataSourceSettings
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    IngestionDataSourceSettings.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (message.awsKinesis != null && message.hasOwnProperty("awsKinesis")) {
+                            object.awsKinesis = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.toObject(message.awsKinesis, options);
+                            if (options.oneofs)
+                                object.source = "awsKinesis";
+                        }
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this IngestionDataSourceSettings to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    IngestionDataSourceSettings.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * Gets the default type url for IngestionDataSourceSettings
+                     * @function getTypeUrl
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    IngestionDataSourceSettings.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/google.pubsub.v1.IngestionDataSourceSettings";
+                    };
+    
+                    IngestionDataSourceSettings.AwsKinesis = (function() {
+    
+                        /**
+                         * Properties of an AwsKinesis.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @interface IAwsKinesis
+                         * @property {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State|null} [state] AwsKinesis state
+                         * @property {string|null} [streamArn] AwsKinesis streamArn
+                         * @property {string|null} [consumerArn] AwsKinesis consumerArn
+                         * @property {string|null} [awsRoleArn] AwsKinesis awsRoleArn
+                         * @property {string|null} [gcpServiceAccount] AwsKinesis gcpServiceAccount
+                         */
+    
+                        /**
+                         * Constructs a new AwsKinesis.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @classdesc Represents an AwsKinesis.
+                         * @implements IAwsKinesis
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis=} [properties] Properties to set
+                         */
+                        function AwsKinesis(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AwsKinesis state.
+                         * @member {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State} state
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         */
+                        AwsKinesis.prototype.state = 0;
+    
+                        /**
+                         * AwsKinesis streamArn.
+                         * @member {string} streamArn
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         */
+                        AwsKinesis.prototype.streamArn = "";
+    
+                        /**
+                         * AwsKinesis consumerArn.
+                         * @member {string} consumerArn
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         */
+                        AwsKinesis.prototype.consumerArn = "";
+    
+                        /**
+                         * AwsKinesis awsRoleArn.
+                         * @member {string} awsRoleArn
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         */
+                        AwsKinesis.prototype.awsRoleArn = "";
+    
+                        /**
+                         * AwsKinesis gcpServiceAccount.
+                         * @member {string} gcpServiceAccount
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         */
+                        AwsKinesis.prototype.gcpServiceAccount = "";
+    
+                        /**
+                         * Creates a new AwsKinesis instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis} AwsKinesis instance
+                         */
+                        AwsKinesis.create = function create(properties) {
+                            return new AwsKinesis(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AwsKinesis message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis} message AwsKinesis message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsKinesis.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.state);
+                            if (message.streamArn != null && Object.hasOwnProperty.call(message, "streamArn"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.streamArn);
+                            if (message.consumerArn != null && Object.hasOwnProperty.call(message, "consumerArn"))
+                                writer.uint32(/* id 3, wireType 2 =*/26).string(message.consumerArn);
+                            if (message.awsRoleArn != null && Object.hasOwnProperty.call(message, "awsRoleArn"))
+                                writer.uint32(/* id 4, wireType 2 =*/34).string(message.awsRoleArn);
+                            if (message.gcpServiceAccount != null && Object.hasOwnProperty.call(message, "gcpServiceAccount"))
+                                writer.uint32(/* id 5, wireType 2 =*/42).string(message.gcpServiceAccount);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AwsKinesis message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis} message AwsKinesis message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsKinesis.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AwsKinesis message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis} AwsKinesis
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsKinesis.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.state = reader.int32();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.streamArn = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.consumerArn = reader.string();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.awsRoleArn = reader.string();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.gcpServiceAccount = reader.string();
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AwsKinesis message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis} AwsKinesis
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsKinesis.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AwsKinesis message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AwsKinesis.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                switch (message.state) {
+                                default:
+                                    return "state: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                case 5:
+                                    break;
+                                }
+                            if (message.streamArn != null && message.hasOwnProperty("streamArn"))
+                                if (!$util.isString(message.streamArn))
+                                    return "streamArn: string expected";
+                            if (message.consumerArn != null && message.hasOwnProperty("consumerArn"))
+                                if (!$util.isString(message.consumerArn))
+                                    return "consumerArn: string expected";
+                            if (message.awsRoleArn != null && message.hasOwnProperty("awsRoleArn"))
+                                if (!$util.isString(message.awsRoleArn))
+                                    return "awsRoleArn: string expected";
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                if (!$util.isString(message.gcpServiceAccount))
+                                    return "gcpServiceAccount: string expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AwsKinesis message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis} AwsKinesis
+                         */
+                        AwsKinesis.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis();
+                            switch (object.state) {
+                            default:
+                                if (typeof object.state === "number") {
+                                    message.state = object.state;
+                                    break;
+                                }
+                                break;
+                            case "STATE_UNSPECIFIED":
+                            case 0:
+                                message.state = 0;
+                                break;
+                            case "ACTIVE":
+                            case 1:
+                                message.state = 1;
+                                break;
+                            case "KINESIS_PERMISSION_DENIED":
+                            case 2:
+                                message.state = 2;
+                                break;
+                            case "PUBLISH_PERMISSION_DENIED":
+                            case 3:
+                                message.state = 3;
+                                break;
+                            case "STREAM_NOT_FOUND":
+                            case 4:
+                                message.state = 4;
+                                break;
+                            case "CONSUMER_NOT_FOUND":
+                            case 5:
+                                message.state = 5;
+                                break;
+                            }
+                            if (object.streamArn != null)
+                                message.streamArn = String(object.streamArn);
+                            if (object.consumerArn != null)
+                                message.consumerArn = String(object.consumerArn);
+                            if (object.awsRoleArn != null)
+                                message.awsRoleArn = String(object.awsRoleArn);
+                            if (object.gcpServiceAccount != null)
+                                message.gcpServiceAccount = String(object.gcpServiceAccount);
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AwsKinesis message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis} message AwsKinesis
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AwsKinesis.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                                object.streamArn = "";
+                                object.consumerArn = "";
+                                object.awsRoleArn = "";
+                                object.gcpServiceAccount = "";
+                            }
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                object.state = options.enums === String ? $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State[message.state] : message.state;
+                            if (message.streamArn != null && message.hasOwnProperty("streamArn"))
+                                object.streamArn = message.streamArn;
+                            if (message.consumerArn != null && message.hasOwnProperty("consumerArn"))
+                                object.consumerArn = message.consumerArn;
+                            if (message.awsRoleArn != null && message.hasOwnProperty("awsRoleArn"))
+                                object.awsRoleArn = message.awsRoleArn;
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                object.gcpServiceAccount = message.gcpServiceAccount;
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AwsKinesis to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AwsKinesis.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AwsKinesis
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AwsKinesis.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis";
+                        };
+    
+                        /**
+                         * State enum.
+                         * @name google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State
+                         * @enum {number}
+                         * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                         * @property {number} ACTIVE=1 ACTIVE value
+                         * @property {number} KINESIS_PERMISSION_DENIED=2 KINESIS_PERMISSION_DENIED value
+                         * @property {number} PUBLISH_PERMISSION_DENIED=3 PUBLISH_PERMISSION_DENIED value
+                         * @property {number} STREAM_NOT_FOUND=4 STREAM_NOT_FOUND value
+                         * @property {number} CONSUMER_NOT_FOUND=5 CONSUMER_NOT_FOUND value
+                         */
+                        AwsKinesis.State = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                            values[valuesById[1] = "ACTIVE"] = 1;
+                            values[valuesById[2] = "KINESIS_PERMISSION_DENIED"] = 2;
+                            values[valuesById[3] = "PUBLISH_PERMISSION_DENIED"] = 3;
+                            values[valuesById[4] = "STREAM_NOT_FOUND"] = 4;
+                            values[valuesById[5] = "CONSUMER_NOT_FOUND"] = 5;
+                            return values;
+                        })();
+    
+                        return AwsKinesis;
+                    })();
+    
+                    return IngestionDataSourceSettings;
+                })();
+    
                 v1.Topic = (function() {
     
                     /**
@@ -918,6 +1502,8 @@
                      * @property {google.pubsub.v1.ISchemaSettings|null} [schemaSettings] Topic schemaSettings
                      * @property {boolean|null} [satisfiesPzs] Topic satisfiesPzs
                      * @property {google.protobuf.IDuration|null} [messageRetentionDuration] Topic messageRetentionDuration
+                     * @property {google.pubsub.v1.Topic.State|null} [state] Topic state
+                     * @property {google.pubsub.v1.IIngestionDataSourceSettings|null} [ingestionDataSourceSettings] Topic ingestionDataSourceSettings
                      */
     
                     /**
@@ -993,6 +1579,22 @@
                     Topic.prototype.messageRetentionDuration = null;
     
                     /**
+                     * Topic state.
+                     * @member {google.pubsub.v1.Topic.State} state
+                     * @memberof google.pubsub.v1.Topic
+                     * @instance
+                     */
+                    Topic.prototype.state = 0;
+    
+                    /**
+                     * Topic ingestionDataSourceSettings.
+                     * @member {google.pubsub.v1.IIngestionDataSourceSettings|null|undefined} ingestionDataSourceSettings
+                     * @memberof google.pubsub.v1.Topic
+                     * @instance
+                     */
+                    Topic.prototype.ingestionDataSourceSettings = null;
+    
+                    /**
                      * Creates a new Topic instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Topic
@@ -1031,6 +1633,10 @@
                             writer.uint32(/* id 7, wireType 0 =*/56).bool(message.satisfiesPzs);
                         if (message.messageRetentionDuration != null && Object.hasOwnProperty.call(message, "messageRetentionDuration"))
                             $root.google.protobuf.Duration.encode(message.messageRetentionDuration, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
+                        if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                            writer.uint32(/* id 9, wireType 0 =*/72).int32(message.state);
+                        if (message.ingestionDataSourceSettings != null && Object.hasOwnProperty.call(message, "ingestionDataSourceSettings"))
+                            $root.google.pubsub.v1.IngestionDataSourceSettings.encode(message.ingestionDataSourceSettings, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
                         return writer;
                     };
     
@@ -1112,6 +1718,14 @@
                                     message.messageRetentionDuration = $root.google.protobuf.Duration.decode(reader, reader.uint32());
                                     break;
                                 }
+                            case 9: {
+                                    message.state = reader.int32();
+                                    break;
+                                }
+                            case 10: {
+                                    message.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.decode(reader, reader.uint32());
+                                    break;
+                                }
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -1179,6 +1793,20 @@
                             if (error)
                                 return "messageRetentionDuration." + error;
                         }
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            switch (message.state) {
+                            default:
+                                return "state: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                                break;
+                            }
+                        if (message.ingestionDataSourceSettings != null && message.hasOwnProperty("ingestionDataSourceSettings")) {
+                            var error = $root.google.pubsub.v1.IngestionDataSourceSettings.verify(message.ingestionDataSourceSettings);
+                            if (error)
+                                return "ingestionDataSourceSettings." + error;
+                        }
                         return null;
                     };
     
@@ -1222,6 +1850,31 @@
                                 throw TypeError(".google.pubsub.v1.Topic.messageRetentionDuration: object expected");
                             message.messageRetentionDuration = $root.google.protobuf.Duration.fromObject(object.messageRetentionDuration);
                         }
+                        switch (object.state) {
+                        default:
+                            if (typeof object.state === "number") {
+                                message.state = object.state;
+                                break;
+                            }
+                            break;
+                        case "STATE_UNSPECIFIED":
+                        case 0:
+                            message.state = 0;
+                            break;
+                        case "ACTIVE":
+                        case 1:
+                            message.state = 1;
+                            break;
+                        case "INGESTION_RESOURCE_ERROR":
+                        case 2:
+                            message.state = 2;
+                            break;
+                        }
+                        if (object.ingestionDataSourceSettings != null) {
+                            if (typeof object.ingestionDataSourceSettings !== "object")
+                                throw TypeError(".google.pubsub.v1.Topic.ingestionDataSourceSettings: object expected");
+                            message.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.fromObject(object.ingestionDataSourceSettings);
+                        }
                         return message;
                     };
     
@@ -1247,6 +1900,8 @@
                             object.schemaSettings = null;
                             object.satisfiesPzs = false;
                             object.messageRetentionDuration = null;
+                            object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                            object.ingestionDataSourceSettings = null;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
                             object.name = message.name;
@@ -1266,6 +1921,10 @@
                             object.satisfiesPzs = message.satisfiesPzs;
                         if (message.messageRetentionDuration != null && message.hasOwnProperty("messageRetentionDuration"))
                             object.messageRetentionDuration = $root.google.protobuf.Duration.toObject(message.messageRetentionDuration, options);
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            object.state = options.enums === String ? $root.google.pubsub.v1.Topic.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.Topic.State[message.state] : message.state;
+                        if (message.ingestionDataSourceSettings != null && message.hasOwnProperty("ingestionDataSourceSettings"))
+                            object.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.toObject(message.ingestionDataSourceSettings, options);
                         return object;
                     };
     
@@ -1294,6 +1953,22 @@
                         }
                         return typeUrlPrefix + "/google.pubsub.v1.Topic";
                     };
+    
+                    /**
+                     * State enum.
+                     * @name google.pubsub.v1.Topic.State
+                     * @enum {number}
+                     * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                     * @property {number} ACTIVE=1 ACTIVE value
+                     * @property {number} INGESTION_RESOURCE_ERROR=2 INGESTION_RESOURCE_ERROR value
+                     */
+                    Topic.State = (function() {
+                        var valuesById = {}, values = Object.create(valuesById);
+                        values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                        values[valuesById[1] = "ACTIVE"] = 1;
+                        values[valuesById[2] = "INGESTION_RESOURCE_ERROR"] = 2;
+                        return values;
+                    })();
     
                     return Topic;
                 })();

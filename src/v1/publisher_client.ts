@@ -423,6 +423,11 @@ export class PublisherClient {
    *   that is up to `message_retention_duration` in the past. If this field is
    *   not set, message retention is controlled by settings on individual
    *   subscriptions. Cannot be more than 31 days or less than 10 minutes.
+   * @param {google.pubsub.v1.Topic.State} request.state
+   *   Output only. An output-only field indicating the state of the topic.
+   * @param {google.pubsub.v1.IngestionDataSourceSettings} [request.ingestionDataSourceSettings]
+   *   Optional. Settings for managed ingestion from a data source into this
+   *   topic.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.

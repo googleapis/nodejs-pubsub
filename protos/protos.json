@@ -221,6 +221,77 @@
                     }
                   }
                 },
+                "IngestionDataSourceSettings": {
+                  "oneofs": {
+                    "source": {
+                      "oneof": [
+                        "awsKinesis"
+                      ]
+                    }
+                  },
+                  "fields": {
+                    "awsKinesis": {
+                      "type": "AwsKinesis",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    }
+                  },
+                  "nested": {
+                    "AwsKinesis": {
+                      "fields": {
+                        "state": {
+                          "type": "State",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OUTPUT_ONLY"
+                          }
+                        },
+                        "streamArn": {
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "consumerArn": {
+                          "type": "string",
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "awsRoleArn": {
+                          "type": "string",
+                          "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "gcpServiceAccount": {
+                          "type": "string",
+                          "id": 5,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        }
+                      },
+                      "nested": {
+                        "State": {
+                          "values": {
+                            "STATE_UNSPECIFIED": 0,
+                            "ACTIVE": 1,
+                            "KINESIS_PERMISSION_DENIED": 2,
+                            "PUBLISH_PERMISSION_DENIED": 3,
+                            "STREAM_NOT_FOUND": 4,
+                            "CONSUMER_NOT_FOUND": 5
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
                 "Topic": {
                   "options": {
                     "(google.api.resource).type": "pubsub.googleapis.com/Topic",
@@ -258,6 +329,29 @@
                     "messageRetentionDuration": {
                       "type": "google.protobuf.Duration",
                       "id": 8
+                    },
+                    "state": {
+                      "type": "State",
+                      "id": 9,
+                      "options": {
+                        "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
+                    },
+                    "ingestionDataSourceSettings": {
+                      "type": "IngestionDataSourceSettings",
+                      "id": 10,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    }
+                  },
+                  "nested": {
+                    "State": {
+                      "values": {
+                        "STATE_UNSPECIFIED": 0,
+                        "ACTIVE": 1,
+                        "INGESTION_RESOURCE_ERROR": 2
+                      }
                     }
                   }
                 },
