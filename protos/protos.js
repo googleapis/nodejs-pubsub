@@ -396,6 +396,7 @@
                      * @memberof google.pubsub.v1
                      * @interface IMessageStoragePolicy
                      * @property {Array.<string>|null} [allowedPersistenceRegions] MessageStoragePolicy allowedPersistenceRegions
+                     * @property {boolean|null} [enforceInTransit] MessageStoragePolicy enforceInTransit
                      */
     
                     /**
@@ -421,6 +422,14 @@
                      * @instance
                      */
                     MessageStoragePolicy.prototype.allowedPersistenceRegions = $util.emptyArray;
+    
+                    /**
+                     * MessageStoragePolicy enforceInTransit.
+                     * @member {boolean} enforceInTransit
+                     * @memberof google.pubsub.v1.MessageStoragePolicy
+                     * @instance
+                     */
+                    MessageStoragePolicy.prototype.enforceInTransit = false;
     
                     /**
                      * Creates a new MessageStoragePolicy instance using the specified properties.
@@ -449,6 +458,8 @@
                         if (message.allowedPersistenceRegions != null && message.allowedPersistenceRegions.length)
                             for (var i = 0; i < message.allowedPersistenceRegions.length; ++i)
                                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.allowedPersistenceRegions[i]);
+                        if (message.enforceInTransit != null && Object.hasOwnProperty.call(message, "enforceInTransit"))
+                            writer.uint32(/* id 2, wireType 0 =*/16).bool(message.enforceInTransit);
                         return writer;
                     };
     
@@ -487,6 +498,10 @@
                                     if (!(message.allowedPersistenceRegions && message.allowedPersistenceRegions.length))
                                         message.allowedPersistenceRegions = [];
                                     message.allowedPersistenceRegions.push(reader.string());
+                                    break;
+                                }
+                            case 2: {
+                                    message.enforceInTransit = reader.bool();
                                     break;
                                 }
                             default:
@@ -531,6 +546,9 @@
                                 if (!$util.isString(message.allowedPersistenceRegions[i]))
                                     return "allowedPersistenceRegions: string[] expected";
                         }
+                        if (message.enforceInTransit != null && message.hasOwnProperty("enforceInTransit"))
+                            if (typeof message.enforceInTransit !== "boolean")
+                                return "enforceInTransit: boolean expected";
                         return null;
                     };
     
@@ -553,6 +571,8 @@
                             for (var i = 0; i < object.allowedPersistenceRegions.length; ++i)
                                 message.allowedPersistenceRegions[i] = String(object.allowedPersistenceRegions[i]);
                         }
+                        if (object.enforceInTransit != null)
+                            message.enforceInTransit = Boolean(object.enforceInTransit);
                         return message;
                     };
     
@@ -571,11 +591,15 @@
                         var object = {};
                         if (options.arrays || options.defaults)
                             object.allowedPersistenceRegions = [];
+                        if (options.defaults)
+                            object.enforceInTransit = false;
                         if (message.allowedPersistenceRegions && message.allowedPersistenceRegions.length) {
                             object.allowedPersistenceRegions = [];
                             for (var j = 0; j < message.allowedPersistenceRegions.length; ++j)
                                 object.allowedPersistenceRegions[j] = message.allowedPersistenceRegions[j];
                         }
+                        if (message.enforceInTransit != null && message.hasOwnProperty("enforceInTransit"))
+                            object.enforceInTransit = message.enforceInTransit;
                         return object;
                     };
     
@@ -8458,6 +8482,7 @@
                             case 2:
                             case 3:
                             case 4:
+                            case 5:
                                 break;
                             }
                         if (message.useTableSchema != null && message.hasOwnProperty("useTableSchema"))
@@ -8512,6 +8537,10 @@
                         case "SCHEMA_MISMATCH":
                         case 4:
                             message.state = 4;
+                            break;
+                        case "IN_TRANSIT_LOCATION_RESTRICTION":
+                        case 5:
+                            message.state = 5;
                             break;
                         }
                         if (object.useTableSchema != null)
@@ -8590,6 +8619,7 @@
                      * @property {number} PERMISSION_DENIED=2 PERMISSION_DENIED value
                      * @property {number} NOT_FOUND=3 NOT_FOUND value
                      * @property {number} SCHEMA_MISMATCH=4 SCHEMA_MISMATCH value
+                     * @property {number} IN_TRANSIT_LOCATION_RESTRICTION=5 IN_TRANSIT_LOCATION_RESTRICTION value
                      */
                     BigQueryConfig.State = (function() {
                         var valuesById = {}, values = Object.create(valuesById);
@@ -8598,6 +8628,7 @@
                         values[valuesById[2] = "PERMISSION_DENIED"] = 2;
                         values[valuesById[3] = "NOT_FOUND"] = 3;
                         values[valuesById[4] = "SCHEMA_MISMATCH"] = 4;
+                        values[valuesById[5] = "IN_TRANSIT_LOCATION_RESTRICTION"] = 5;
                         return values;
                     })();
     
@@ -8898,6 +8929,7 @@
                             case 1:
                             case 2:
                             case 3:
+                            case 4:
                                 break;
                             }
                         return null;
@@ -8967,6 +8999,10 @@
                         case "NOT_FOUND":
                         case 3:
                             message.state = 3;
+                            break;
+                        case "IN_TRANSIT_LOCATION_RESTRICTION":
+                        case 4:
+                            message.state = 4;
                             break;
                         }
                         return message;
@@ -9437,6 +9473,7 @@
                      * @property {number} ACTIVE=1 ACTIVE value
                      * @property {number} PERMISSION_DENIED=2 PERMISSION_DENIED value
                      * @property {number} NOT_FOUND=3 NOT_FOUND value
+                     * @property {number} IN_TRANSIT_LOCATION_RESTRICTION=4 IN_TRANSIT_LOCATION_RESTRICTION value
                      */
                     CloudStorageConfig.State = (function() {
                         var valuesById = {}, values = Object.create(valuesById);
@@ -9444,6 +9481,7 @@
                         values[valuesById[1] = "ACTIVE"] = 1;
                         values[valuesById[2] = "PERMISSION_DENIED"] = 2;
                         values[valuesById[3] = "NOT_FOUND"] = 3;
+                        values[valuesById[4] = "IN_TRANSIT_LOCATION_RESTRICTION"] = 4;
                         return values;
                     })();
     

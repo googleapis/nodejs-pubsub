@@ -378,8 +378,8 @@ export class SchemaServiceClient {
    *   The ID to use for the schema, which will become the final component of
    *   the schema's resource name.
    *
-   *   See https://cloud.google.com/pubsub/docs/admin#resource_names for resource
-   *   name constraints.
+   *   See https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names for
+   *   resource name constraints.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.

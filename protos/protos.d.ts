@@ -241,6 +241,9 @@ export namespace google {
 
                 /** MessageStoragePolicy allowedPersistenceRegions */
                 allowedPersistenceRegions?: (string[]|null);
+
+                /** MessageStoragePolicy enforceInTransit */
+                enforceInTransit?: (boolean|null);
             }
 
             /** Represents a MessageStoragePolicy. */
@@ -254,6 +257,9 @@ export namespace google {
 
                 /** MessageStoragePolicy allowedPersistenceRegions. */
                 public allowedPersistenceRegions: string[];
+
+                /** MessageStoragePolicy enforceInTransit. */
+                public enforceInTransit: boolean;
 
                 /**
                  * Creates a new MessageStoragePolicy instance using the specified properties.
@@ -3710,7 +3716,8 @@ export namespace google {
                     ACTIVE = 1,
                     PERMISSION_DENIED = 2,
                     NOT_FOUND = 3,
-                    SCHEMA_MISMATCH = 4
+                    SCHEMA_MISMATCH = 4,
+                    IN_TRANSIT_LOCATION_RESTRICTION = 5
                 }
             }
 
@@ -4051,7 +4058,8 @@ export namespace google {
                     STATE_UNSPECIFIED = 0,
                     ACTIVE = 1,
                     PERMISSION_DENIED = 2,
-                    NOT_FOUND = 3
+                    NOT_FOUND = 3,
+                    IN_TRANSIT_LOCATION_RESTRICTION = 4
                 }
             }
 
