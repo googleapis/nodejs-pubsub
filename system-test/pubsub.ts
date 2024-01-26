@@ -104,14 +104,14 @@ describe('pubsub', () => {
     }
 
     const createdAt = Number(resource.name.split('-').pop());
-    const timeDiff = (Date.now() - createdAt) / (1000 * 60 * 60);
+    const timeDiff = (Date.now() - createdAt) / (2 * 1000 * 60 * 60);
 
     if (timeDiff > 1) {
       resource.delete();
     }
   }
 
-  async function deleteTestResources(): Promise<Resource[]> {
+  async function deleteTestResources(): Promise<void> {
     const topicStream = pubsub.getTopicsStream().on('data', deleteTestResource);
     const subscriptionStream = pubsub
       .getSubscriptionsStream()
@@ -129,7 +129,36 @@ describe('pubsub', () => {
       }
     );
 
-    return Promise.all(streams);
+    // Schemas might be dependencies on topics, so wait for these first.
+    await Promise.all(streams);
+
+    const allSchemas: Promise<void>[] = [];
+    for await (const s of pubsub.listSchemas()) {
+      let deleteSchema = false;
+      const name = s.name;
+      if (!name) {
+        continue;
+      }
+
+      // Delete resource from current test run.
+      if (name.includes(CURRENT_TIME.toString())) {
+        deleteSchema = true;
+      } else if (name.includes(PREFIX)) {
+        // Delete left over resources which are older then 1 hour.
+        const createdAt = Number(s.name?.split('-').pop());
+        const timeDiff = (Date.now() - createdAt) / (2 * 1000 * 60 * 60);
+
+        if (timeDiff > 1) {
+          deleteSchema = true;
+        }
+      }
+
+      if (deleteSchema) {
+        const wrapped = pubsub.schema(name);
+        allSchemas.push(wrapped.delete());
+      }
+    }
+    await Promise.all(allSchemas);
   }
 
   async function publishPop(message: MessageOptions) {
@@ -276,6 +305,22 @@ describe('pubsub', () => {
           done();
         }
       );
+    });
+
+    it('should set metadata for a topic', async () => {
+      const threeDaysInSeconds = 3 * 24 * 60 * 60;
+
+      const topic = pubsub.topic(TOPIC_NAMES[0]);
+      await topic.setMetadata({
+        messageRetentionDuration: {
+          seconds: threeDaysInSeconds,
+        },
+      });
+      const [metadata] = await topic.getMetadata();
+      const {seconds, nanos} = metadata.messageRetentionDuration!;
+
+      assert.strictEqual(Number(seconds), threeDaysInSeconds);
+      assert.strictEqual(Number(nanos), 0);
     });
 
     describe('ordered messages', () => {

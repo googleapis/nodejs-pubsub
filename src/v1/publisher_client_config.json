@@ -34,6 +34,15 @@
           "rpc_timeout_multiplier": 1,
           "max_rpc_timeout_millis": 60000,
           "total_timeout_millis": 600000
+        },
+        "693222d32e887d96c8faeadca469f7763ccda85a": {
+          "initial_retry_delay_millis": 100,
+          "retry_delay_multiplier": 4,
+          "max_retry_delay_millis": 60000,
+          "initial_rpc_timeout_millis": 60000,
+          "rpc_timeout_multiplier": 1,
+          "max_rpc_timeout_millis": 60000,
+          "total_timeout_millis": 600000
         }
       },
       "methods": {
@@ -50,7 +59,7 @@
         "Publish": {
           "timeout_millis": 60000,
           "retry_codes_name": "cancelled_unknown_deadline_exceeded_resource_exhausted_aborted_internal_unavailable",
-          "retry_params_name": "default",
+          "retry_params_name": "693222d32e887d96c8faeadca469f7763ccda85a",
           "bundling": {
             "element_count_threshold": 100,
             "request_byte_threshold": 1048576,

@@ -141,7 +141,7 @@ interface StreamTracked {
  * @param {MessageStreamOptions} [options] The message stream options.
  */
 export class MessageStream extends PassThrough {
-  private _keepAliveHandle?: NodeJS.Timer;
+  private _keepAliveHandle?: NodeJS.Timeout;
   private _options: MessageStreamOptions;
   private _retrier: ExponentialRetry<StreamTracked>;
 
@@ -323,8 +323,13 @@ export class MessageStream extends PassThrough {
         ? 0
         : this._subscriber.maxBytes,
     };
+    const otherArgs = {
+      headers: {
+        'x-goog-request-params': 'subscription=' + this._subscriber.name,
+      },
+    };
 
-    const stream: PullStream = client.streamingPull({deadline});
+    const stream: PullStream = client.streamingPull({deadline, otherArgs});
     this._replaceStream(index, stream);
     stream.write(request);
   }

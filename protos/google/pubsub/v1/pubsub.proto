@@ -44,7 +44,7 @@ service Publisher {
       "https://www.googleapis.com/auth/pubsub";
 
   // Creates the given topic with the given name. See the [resource name rules]
-  // (https://cloud.google.com/pubsub/docs/admin#resource_names).
+  // (https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names).
   rpc CreateTopic(Topic) returns (Topic) {
     option (google.api.http) = {
       put: "/v1/{name=projects/*/topics/*}"
@@ -137,11 +137,12 @@ service Publisher {
 
 // A policy constraining the storage of messages published to the topic.
 message MessageStoragePolicy {
-  // A list of IDs of GCP regions where messages that are published to the topic
-  // may be persisted in storage. Messages published by publishers running in
-  // non-allowed GCP regions (or running outside of GCP altogether) will be
-  // routed for storage in one of the allowed regions. An empty list means that
-  // no regions are allowed, and is not a valid configuration.
+  // A list of IDs of Google Cloud regions where messages that are published
+  // to the topic may be persisted in storage. Messages published by publishers
+  // running in non-allowed Google Cloud regions (or running outside of Google
+  // Cloud altogether) are routed for storage in one of the allowed regions.
+  // An empty list means that no regions are allowed, and is not a valid
+  // configuration.
   repeated string allowed_persistence_regions = 1;
 }
 
@@ -430,16 +431,16 @@ service Subscriber {
       "https://www.googleapis.com/auth/pubsub";
 
   // Creates a subscription to a given topic. See the [resource name rules]
-  // (https://cloud.google.com/pubsub/docs/admin#resource_names).
+  // (https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names).
   // If the subscription already exists, returns `ALREADY_EXISTS`.
   // If the corresponding topic doesn't exist, returns `NOT_FOUND`.
   //
   // If the name is not provided in the request, the server will assign a random
   // name for this subscription on the same project as the topic, conforming
   // to the [resource name format]
-  // (https://cloud.google.com/pubsub/docs/admin#resource_names). The generated
-  // name is populated in the returned Subscription object. Note that for REST
-  // API requests, you must specify a name in the request.
+  // (https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names). The
+  // generated name is populated in the returned Subscription object. Note that
+  // for REST API requests, you must specify a name in the request.
   rpc CreateSubscription(Subscription) returns (Subscription) {
     option (google.api.http) = {
       put: "/v1/{name=projects/*/subscriptions/*}"
@@ -592,7 +593,7 @@ service Subscriber {
   // the request, the server will assign a random
   // name for this snapshot on the same project as the subscription, conforming
   // to the [resource name format]
-  // (https://cloud.google.com/pubsub/docs/admin#resource_names). The
+  // (https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names). The
   // generated name is populated in the returned Snapshot object. Note that for
   // REST API requests, you must specify a name in the request.
   rpc CreateSnapshot(CreateSnapshotRequest) returns (Snapshot) {
@@ -996,9 +997,10 @@ message BigQueryConfig {
   // {projectId}.{datasetId}.{tableId}
   string table = 1;
 
-  // When true, use the topic's schema as the columns to write to in BigQuery,
-  // if it exists.
-  bool use_topic_schema = 2;
+  // Optional. When true, use the topic's schema as the columns to write to in
+  // BigQuery, if it exists. `use_topic_schema` and `use_table_schema` cannot be
+  // enabled at the same time.
+  bool use_topic_schema = 2 [(google.api.field_behavior) = OPTIONAL];
 
   // When true, write the subscription name, message_id, publish_time,
   // attributes, and ordering_key to additional columns in the table. The
@@ -1017,6 +1019,11 @@ message BigQueryConfig {
   // Output only. An output-only field that indicates whether or not the
   // subscription can receive messages.
   State state = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Optional. When true, use the BigQuery table's schema as the columns to
+  // write to in BigQuery. `use_table_schema` and `use_topic_schema` cannot be
+  // enabled at the same time.
+  bool use_table_schema = 6 [(google.api.field_behavior) = OPTIONAL];
 }
 
 // Configuration for a Cloud Storage subscription.
@@ -1030,7 +1037,11 @@ message CloudStorageConfig {
   // Message payloads and metadata will be written to files as an Avro binary.
   message AvroConfig {
     // When true, write the subscription name, message_id, publish_time,
-    // attributes, and ordering_key as additional fields in the output.
+    // attributes, and ordering_key as additional fields in the output. The
+    // subscription name, message_id, and publish_time fields are put in their
+    // own fields while all other message properties other than data (for
+    // example, an ordering_key, if present) are added as entries in the
+    // attributes map.
     bool write_metadata = 1;
   }
 
@@ -1061,7 +1072,8 @@ message CloudStorageConfig {
   string filename_prefix = 2;
 
   // User-provided suffix for Cloud Storage filename. See the [object naming
-  // requirements](https://cloud.google.com/storage/docs/objects#naming).
+  // requirements](https://cloud.google.com/storage/docs/objects#naming). Must
+  // not end in "/".
   string filename_suffix = 3;
 
   // Defaults to text format.
@@ -1424,8 +1436,8 @@ message CreateSnapshotRequest {
   // in the request, the server will assign a random name for this snapshot on
   // the same project as the subscription. Note that for REST API requests, you
   // must specify a name.  See the [resource name
-  // rules](https://cloud.google.com/pubsub/docs/admin#resource_names). Format
-  // is `projects/{project}/snapshots/{snap}`.
+  // rules](https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names).
+  // Format is `projects/{project}/snapshots/{snap}`.
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = { type: "pubsub.googleapis.com/Snapshot" }

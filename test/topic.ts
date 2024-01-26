@@ -671,6 +671,7 @@ describe('Topic', () => {
   describe('setMetadata', () => {
     const METADATA = {
       labels: {yee: 'haw'},
+      messageRetentionDuration: {moo: 'cows'},
     };
 
     let requestStub: sinon.SinonStub;
@@ -691,7 +692,9 @@ describe('Topic', () => {
       topic.setMetadata(METADATA, assert.ifError);
 
       const expectedTopic = Object.assign({name: topic.name}, METADATA);
-      const expectedUpdateMask = {paths: ['labels']};
+      const expectedUpdateMask = {
+        paths: ['labels', 'message_retention_duration'],
+      };
 
       const [{reqOpts}] = requestStub.lastCall.args;
       assert.deepStrictEqual(reqOpts.topic, expectedTopic);

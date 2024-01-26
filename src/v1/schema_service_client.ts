@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,8 +93,7 @@ export class SchemaServiceClient {
    *     API remote host.
    * @param {gax.ClientConfig} [options.clientConfig] - Client configuration override.
    *     Follows the structure of {@link gapicConfig}.
-   * @param {boolean | "rest"} [options.fallback] - Use HTTP fallback mode.
-   *     Pass "rest" to use HTTP/1.1 REST API instead of gRPC.
+   * @param {boolean} [options.fallback] - Use HTTP/1.1 REST mode.
    *     For more information, please check the
    *     {@link https://github.com/googleapis/gax-nodejs/blob/main/client-libraries.md#http11-rest-api-mode documentation}.
    * @param {gax} [gaxInstance]: loaded instance of `google-gax`. Useful if you
@@ -102,7 +101,7 @@ export class SchemaServiceClient {
    *     HTTP implementation. Load only fallback version and pass it to the constructor:
    *     ```
    *     const gax = require('google-gax/build/src/fallback'); // avoids loading google-gax with gRPC
-   *     const client = new SchemaServiceClient({fallback: 'rest'}, gax);
+   *     const client = new SchemaServiceClient({fallback: true}, gax);
    *     ```
    */
   constructor(
@@ -169,7 +168,7 @@ export class SchemaServiceClient {
     }
     if (!opts.fallback) {
       clientHeader.push(`grpc/${this._gaxGrpc.grpcVersion}`);
-    } else if (opts.fallback === 'rest') {
+    } else {
       clientHeader.push(`rest/${this._gaxGrpc.grpcVersion}`);
     }
     if (opts.libName && opts.libVersion) {
@@ -384,9 +383,8 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing {@link google.pubsub.v1.Schema | Schema}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Schema|Schema}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   createSchema(
@@ -396,7 +394,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.ICreateSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   createSchema(
@@ -434,7 +432,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.ICreateSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -469,9 +467,8 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing {@link google.pubsub.v1.Schema | Schema}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Schema|Schema}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   getSchema(
@@ -481,7 +478,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IGetSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   getSchema(
@@ -519,7 +516,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IGetSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -553,9 +550,8 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing {@link google.pubsub.v1.Schema | Schema}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Schema|Schema}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   commitSchema(
@@ -565,7 +561,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.ICommitSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   commitSchema(
@@ -603,7 +599,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.ICommitSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -639,9 +635,8 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing {@link google.pubsub.v1.Schema | Schema}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Schema|Schema}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   rollbackSchema(
@@ -651,7 +646,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IRollbackSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   rollbackSchema(
@@ -689,7 +684,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IRollbackSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -727,9 +722,8 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing {@link google.pubsub.v1.Schema | Schema}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Schema|Schema}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   deleteSchemaRevision(
@@ -739,7 +733,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IDeleteSchemaRevisionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   deleteSchemaRevision(
@@ -779,7 +773,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema,
       protos.google.pubsub.v1.IDeleteSchemaRevisionRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -811,9 +805,8 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing {@link google.protobuf.Empty | Empty}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   deleteSchema(
@@ -823,7 +816,7 @@ export class SchemaServiceClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   deleteSchema(
@@ -861,7 +854,7 @@ export class SchemaServiceClient {
     [
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -895,9 +888,8 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing {@link google.pubsub.v1.ValidateSchemaResponse | ValidateSchemaResponse}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.ValidateSchemaResponse|ValidateSchemaResponse}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   validateSchema(
@@ -907,7 +899,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.IValidateSchemaResponse,
       protos.google.pubsub.v1.IValidateSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   validateSchema(
@@ -945,7 +937,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.IValidateSchemaResponse,
       protos.google.pubsub.v1.IValidateSchemaRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -987,9 +979,8 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is an object representing {@link google.pubsub.v1.ValidateMessageResponse | ValidateMessageResponse}.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods)
+   *   The first element of the array is an object representing {@link protos.google.pubsub.v1.ValidateMessageResponse|ValidateMessageResponse}.
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
    */
   validateMessage(
@@ -999,7 +990,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.IValidateMessageResponse,
       protos.google.pubsub.v1.IValidateMessageRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   >;
   validateMessage(
@@ -1037,7 +1028,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.IValidateMessageResponse,
       protos.google.pubsub.v1.IValidateMessageRequest | undefined,
-      {} | undefined
+      {} | undefined,
     ]
   > | void {
     request = request || {};
@@ -1080,14 +1071,13 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is Array of {@link google.pubsub.v1.Schema | Schema}.
+   *   The first element of the array is Array of {@link protos.google.pubsub.v1.Schema|Schema}.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed and will merge results from all the pages into this array.
    *   Note that it can affect your quota.
    *   We recommend using `listSchemasAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSchemas(
@@ -1097,7 +1087,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema[],
       protos.google.pubsub.v1.IListSchemasRequest | null,
-      protos.google.pubsub.v1.IListSchemasResponse
+      protos.google.pubsub.v1.IListSchemasResponse,
     ]
   >;
   listSchemas(
@@ -1135,7 +1125,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema[],
       protos.google.pubsub.v1.IListSchemasRequest | null,
-      protos.google.pubsub.v1.IListSchemasResponse
+      protos.google.pubsub.v1.IListSchemasResponse,
     ]
   > | void {
     request = request || {};
@@ -1177,13 +1167,12 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
-   *   An object stream which emits an object representing {@link google.pubsub.v1.Schema | Schema} on 'data' event.
+   *   An object stream which emits an object representing {@link protos.google.pubsub.v1.Schema|Schema} on 'data' event.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed. Note that it can affect your quota.
    *   We recommend using `listSchemasAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSchemasStream(
@@ -1230,12 +1219,11 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
-   *   An iterable Object that allows [async iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols).
+   *   An iterable Object that allows {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols | async iteration }.
    *   When you iterate the returned iterable, each element will be an object representing
-   *   {@link google.pubsub.v1.Schema | Schema}. The API will be called under the hood as needed, once per the page,
+   *   {@link protos.google.pubsub.v1.Schema|Schema}. The API will be called under the hood as needed, once per the page,
    *   so you can stop the iteration when you don't need more results.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSchemasAsync(
@@ -1278,14 +1266,13 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
-   *   The first element of the array is Array of {@link google.pubsub.v1.Schema | Schema}.
+   *   The first element of the array is Array of {@link protos.google.pubsub.v1.Schema|Schema}.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed and will merge results from all the pages into this array.
    *   Note that it can affect your quota.
    *   We recommend using `listSchemaRevisionsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSchemaRevisions(
@@ -1295,7 +1282,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema[],
       protos.google.pubsub.v1.IListSchemaRevisionsRequest | null,
-      protos.google.pubsub.v1.IListSchemaRevisionsResponse
+      protos.google.pubsub.v1.IListSchemaRevisionsResponse,
     ]
   >;
   listSchemaRevisions(
@@ -1335,7 +1322,7 @@ export class SchemaServiceClient {
     [
       protos.google.pubsub.v1.ISchema[],
       protos.google.pubsub.v1.IListSchemaRevisionsRequest | null,
-      protos.google.pubsub.v1.IListSchemaRevisionsResponse
+      protos.google.pubsub.v1.IListSchemaRevisionsResponse,
     ]
   > | void {
     request = request || {};
@@ -1375,13 +1362,12 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
-   *   An object stream which emits an object representing {@link google.pubsub.v1.Schema | Schema} on 'data' event.
+   *   An object stream which emits an object representing {@link protos.google.pubsub.v1.Schema|Schema} on 'data' event.
    *   The client library will perform auto-pagination by default: it will call the API as many
    *   times as needed. Note that it can affect your quota.
    *   We recommend using `listSchemaRevisionsAsync()`
    *   method described below for async iteration which you can stop as needed.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSchemaRevisionsStream(
@@ -1426,12 +1412,11 @@ export class SchemaServiceClient {
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
-   *   An iterable Object that allows [async iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols).
+   *   An iterable Object that allows {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols | async iteration }.
    *   When you iterate the returned iterable, each element will be an object representing
-   *   {@link google.pubsub.v1.Schema | Schema}. The API will be called under the hood as needed, once per the page,
+   *   {@link protos.google.pubsub.v1.Schema|Schema}. The API will be called under the hood as needed, once per the page,
    *   so you can stop the iteration when you don't need more results.
-   *   Please see the
-   *   [documentation](https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination)
+   *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
    */
   listSchemaRevisionsAsync(
@@ -1494,7 +1479,7 @@ export class SchemaServiceClient {
       IamProtos.google.iam.v1.GetIamPolicyRequest | null | undefined,
       {} | null | undefined
     >
-  ): Promise<IamProtos.google.iam.v1.Policy> {
+  ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.getIamPolicy(request, options, callback);
   }
 
@@ -1515,8 +1500,7 @@ export class SchemaServiceClient {
    * @param {string[]} request.permissions
    *   The set of permissions to check for the `resource`. Permissions with
    *   wildcards (such as '*' or 'storage.*') are not allowed. For more
-   *   information see
-   *   [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).
+   *   information see {@link https://cloud.google.com/iam/docs/overview#permissions | IAM Overview }.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html | gax.CallOptions} for the details.
@@ -1542,7 +1526,7 @@ export class SchemaServiceClient {
       IamProtos.google.iam.v1.SetIamPolicyRequest | null | undefined,
       {} | null | undefined
     >
-  ): Promise<IamProtos.google.iam.v1.Policy> {
+  ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.setIamPolicy(request, options, callback);
   }
 
@@ -1563,8 +1547,7 @@ export class SchemaServiceClient {
    * @param {string[]} request.permissions
    *   The set of permissions to check for the `resource`. Permissions with
    *   wildcards (such as '*' or 'storage.*') are not allowed. For more
-   *   information see
-   *   [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).
+   *   information see {@link https://cloud.google.com/iam/docs/overview#permissions | IAM Overview }.
    * @param {Object} [options]
    *   Optional parameters. You can override the default settings for this call, e.g, timeout,
    *   retries, paginations, etc. See {@link https://googleapis.github.io/gax-nodejs/interfaces/CallOptions.html | gax.CallOptions} for the details.
@@ -1591,7 +1574,7 @@ export class SchemaServiceClient {
       IamProtos.google.iam.v1.TestIamPermissionsRequest | null | undefined,
       {} | null | undefined
     >
-  ): Promise<IamProtos.google.iam.v1.TestIamPermissionsResponse> {
+  ): Promise<[IamProtos.google.iam.v1.TestIamPermissionsResponse]> {
     return this.iamClient.testIamPermissions(request, options, callback);
   }
 

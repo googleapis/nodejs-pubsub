@@ -290,7 +290,7 @@ describe('Message Queues', () => {
         const maxMilliseconds = 1234;
 
         queue.batchOptions = {maxMilliseconds};
-        queue.pending = 1234 as unknown as NodeJS.Timer;
+        queue.pending = 1234 as unknown as NodeJS.Timeout;
         queue.add(fakeMessage, spy);
 
         clock.tick(maxMilliseconds);
@@ -560,7 +560,7 @@ describe('Message Queues', () => {
         it('should noop after adding if a publish is already pending', () => {
           const stub = sandbox.stub(queue, 'beginNextPublish');
 
-          queue.pending = 1234 as unknown as NodeJS.Timer;
+          queue.pending = 1234 as unknown as NodeJS.Timeout;
           queue.add(fakeMessage, spy);
 
           assert.strictEqual(stub.callCount, 0);
@@ -657,7 +657,7 @@ describe('Message Queues', () => {
       });
 
       it('should cancel any pending publishes', () => {
-        const fakeHandle = 1234 as unknown as NodeJS.Timer;
+        const fakeHandle = 1234 as unknown as NodeJS.Timeout;
         const stub = sandbox.stub(global, 'clearTimeout');
 
         queue.pending = fakeHandle;
@@ -728,6 +728,17 @@ describe('Message Queues', () => {
         await queue.publish();
 
         assert.strictEqual(spy.callCount, 1);
+      });
+
+      it('should emit "drain" if already empty on publish', async () => {
+        const spy = sandbox.spy();
+        sandbox.stub(queue, '_publish').resolves();
+
+        queue.on('drain', spy);
+        await queue.publish();
+        await queue.publish();
+
+        assert.strictEqual(spy.callCount, 2);
       });
     });
 

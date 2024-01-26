@@ -42,9 +42,11 @@ import {
   SeekResponse,
   Snapshot,
 } from './snapshot';
-import {Subscriber, SubscriberOptions} from './subscriber';
+import {Message, Subscriber, SubscriberOptions} from './subscriber';
 import {Topic} from './topic';
 import {promisifySome} from './util';
+import {StatusError} from './message-stream';
+import {DebugMessage} from './debug';
 
 export {AckError, AckResponse, AckResponses} from './subscriber';
 
@@ -92,30 +94,26 @@ export type DetachSubscriptionResponse = EmptyResponse;
 
 // JSDoc won't see these, so this is just to let you get typings
 // in your editor of choice.
-//
-// NOTE: These are commented out for now because we don't want to
-// break any existing clients that rely on not-entirely-correct
-// typings. We'll re-enable on the next major.
-/* export declare interface Subscription {
-  on(
-    event: 'message',
-    listener: (message: Message) => void
-  ): this;
-  on(
-    event: 'error',
-    listener: (error: StatusError) => void
-  ): this;
+export declare interface Subscription {
+  on(event: 'message', listener: (message: Message) => void): this;
+  on(event: 'error', listener: (error: StatusError) => void): this;
   on(event: 'close', listener: () => void): this;
-  on(event: 'debug', listener: (msg: DebugMessage) => void); this;
+  on(event: 'debug', listener: (msg: DebugMessage) => void): this;
 
   // Only used internally.
-  on(event: 'newListener', listener: Function): this;
-  on(event: 'removeListener', listener: Function): this;
+  on(
+    event: 'newListener',
+    listener: (event: string | symbol, listener: Function) => void
+  ): this;
+  on(
+    event: 'removeListener',
+    listener: (event: string | symbol, listener: Function) => void
+  ): this;
 
   // Catch-all. If you get an error about this line, it means you're
   // using an unsupported event type or listener type.
   on(event: string, listener: void): this;
-} */
+}
 
 /**
  * @typedef {object} ExpirationPolicy
