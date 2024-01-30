@@ -100,7 +100,8 @@ function main(
 
   try {
     listenForAvroRecords(subscriptionNameOrId, timeout);
-  } catch (err) {
+  } catch (e) {
+    const err = e as Error;
     console.error(err.message);
     process.exitCode = 1;
   }
