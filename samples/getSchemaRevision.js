@@ -17,7 +17,7 @@
 'use strict';
 
 /**
- * This application demonstrates how to perform basic operations on
+ * This snippet demonstrates how to perform basic operations on
  * schemas with the Google Cloud Pub/Sub API.
  *
  * For more information, see the README.md under /pubsub and the documentation
@@ -25,13 +25,13 @@
  */
 
 // sample-metadata:
-//   title: Delete a Schema Revision
-//   description: Deletes a schema revision on a project
-//   usage: node deleteSchemaRevision.js <schema-name> <revision-id>
+//   title: Get a previously created schema revision
+//   description: Gets information about a schema revision which was previously created in the project.
+//   usage: node getSchemaRevision.js <schema-name>
 
-// [START pubsub_delete_schema_revision]
+// [START pubsub_get_schema_revision]
 /**
- * TODO(developer): Uncomment these variables before running the sample.
+ * TODO(developer): Uncomment this variable before running the sample.
  */
 // const schemaNameOrId = 'YOUR_SCHEMA_NAME_OR_ID';
 // const revisionId = 'YOUR_REVISION_ID';
@@ -42,26 +42,27 @@ const {PubSub} = require('@google-cloud/pubsub');
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function deleteSchemaRevision(schemaNameOrId, revisionId) {
-  // Get the fully qualified schema name.
+async function getSchemaRevision(schemaNameOrId, revisionId) {
   const schema = pubSubClient.schema(schemaNameOrId);
   const name = await schema.getName();
 
   // Use the gapic client to delete the schema revision.
   const schemaClient = await pubSubClient.getSchemaClient();
-  await schemaClient.deleteSchemaRevision({
+  const schemaInfo = await schemaClient.getSchema({
     name: `${name}@${revisionId}`,
   });
 
-  console.log(`Schema ${name} revision ${revisionId} deleted.`);
+  console.log(
+    `Schema ${name}@${revisionId} info: ${JSON.stringify(schemaInfo, null, 4)}.`
+  );
 }
-// [END pubsub_delete_schema_revision]
+// [END pubsub_get_schema_revision]
 
 function main(
   schemaNameOrId = 'YOUR_SCHEMA_NAME_OR_ID',
   revisionId = 'YOUR_REVISION_ID'
 ) {
-  deleteSchemaRevision(schemaNameOrId, revisionId).catch(err => {
+  getSchemaRevision(schemaNameOrId, revisionId).catch(err => {
     console.error(err.message);
     process.exitCode = 1;
   });

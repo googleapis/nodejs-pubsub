@@ -57,7 +57,11 @@ describe('schema', () => {
   }
 
   function fullSchemaName(base: string) {
-    return `projects/${projectId}/schemas/${base}`;
+    if (base.includes('/')) {
+      return base;
+    } else {
+      return `projects/${projectId}/schemas/${base}`;
+    }
   }
 
   async function cleanAllSchemas() {
@@ -156,13 +160,17 @@ describe('schema', () => {
   async function createTopicWithSchema(
     testName: string,
     schemaName: string,
-    encodingType: SchemaEncoding
+    encodingType: SchemaEncoding,
+    firstRevisionId?: string,
+    lastRevisionId?: string
   ): Promise<Topic> {
     const topicId = getTopicId(testName);
     const [topic] = await pubsub.createTopic({
       name: topicId,
       schemaSettings: {
         schema: fullSchemaName(schemaName),
+        firstRevisionId,
+        lastRevisionId,
         encoding: encodingType,
       },
     });
@@ -183,11 +191,23 @@ describe('schema', () => {
   }
 
   it('should commit an avro schema', async () => {
-    const schema = await createSchema('commit_schema', 'avro');
+    const schema = await createSchema('commit_schema_avro', 'avro');
     const name = await schema.getName();
     const output = execSync(
       `${commandFor('commitAvroSchema')} ${name} ${fixturePath(
         'provinces.avsc'
+      )}`
+    );
+    assert.include(output, name);
+    assert.include(output, 'committed');
+  });
+
+  it('should commit an proto schema', async () => {
+    const schema = await createSchema('commit_schema_proto', 'proto');
+    const name = await schema.getName();
+    const output = execSync(
+      `${commandFor('commitProtoSchema')} ${name} ${fixturePath(
+        'provinces.proto'
       )}`
     );
     assert.include(output, name);
@@ -345,6 +365,20 @@ describe('schema', () => {
     assert.include(output, 'PROTO');
   });
 
+  it('should get a schema revision', async () => {
+    const schema = await createSchema('get_rev', 'proto');
+    const committed = await commitSchema(await schema.getName(), 'proto');
+    const revId = committed.revisionId!;
+
+    const output = execSync(
+      `${commandFor('getSchemaRevision')} ${schema.id} ${revId}`
+    );
+    assert.include(output, schema.id);
+    assert.include(output, revId);
+    assert.include(output, 'info:');
+    assert.include(output, 'PROTO');
+  });
+
   it('should listen for avro records', async () => {
     const id = 'listen_avro';
     const schema = await createSchema(id, 'avro');
@@ -363,6 +397,42 @@ describe('schema', () => {
 
     const output = execSync(
       `${commandFor('listenForAvroRecords')} ${sub.name} 10`
+    );
+    assert.include(output, 'Received message');
+    assert.include(output, 'Alberta');
+    assert.include(output, 'AB');
+  });
+
+  it('should listen for avro records with revisions', async () => {
+    const id = 'listen_avro_rev';
+    const schema = await createSchema(id, 'avro');
+    const schemaName = await schema.getName();
+    const rev1 = await commitSchema(schemaName, 'avro');
+    const rev2 = await commitSchema(schemaName, 'avro');
+    if (!rev1.name || !rev2.name) {
+      assert.ok(false, 'revisions could not be committed');
+    }
+    const topic = await createTopicWithSchema(
+      id,
+      schema.id,
+      Encodings.Json,
+      rev1.name ?? undefined,
+      rev2.name ?? undefined
+    );
+    const sub = await createSub(id, topic.name);
+
+    topic.publishMessage({
+      data: Buffer.from(
+        JSON.stringify({
+          name: 'Alberta',
+          post_abbr: 'AB',
+        })
+      ),
+    });
+    await topic.flush();
+
+    const output = execSync(
+      `${commandFor('listenForAvroRecordsWithRevisions')} ${sub.name} 10`
     );
     assert.include(output, 'Received message');
     assert.include(output, 'Alberta');

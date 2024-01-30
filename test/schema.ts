@@ -175,11 +175,13 @@ describe('Schema', () => {
   it('loads metadata from a received message', () => {
     const testAttrs = {
       googclient_schemaencoding: 'JSON',
+      googclient_schemarevisionid: 'revision',
       googclient_schemaname: 'foobar',
     };
     const metadata = Schema.metadataFromMessage(testAttrs);
     assert.deepStrictEqual(metadata, {
       name: 'foobar',
+      revision: 'revision',
       encoding: 'JSON',
     });
   });

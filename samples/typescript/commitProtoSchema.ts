@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This is a generated sample, using the typeless sample bot. Please
-// look for the source TypeScript sample (.ts) for modifications.
-'use strict';
-
 /**
  * This application demonstrates how to perform basic operations on
  * schemas with the Google Cloud Pub/Sub API.
@@ -25,43 +21,53 @@
  */
 
 // sample-metadata:
-//   title: Delete a Schema Revision
-//   description: Deletes a schema revision on a project
-//   usage: node deleteSchemaRevision.js <schema-name> <revision-id>
+//   title: Commit an Proto-Based Schema
+//   description: Commits a new schema definition revision on a project, using Protos
+//   usage: node commitProtoSchema.js <schema-name> <proto-filename>
 
-// [START pubsub_delete_schema_revision]
+// [START pubsub_commit_proto_schema]
 /**
  * TODO(developer): Uncomment these variables before running the sample.
  */
 // const schemaNameOrId = 'YOUR_SCHEMA_NAME_OR_ID';
-// const revisionId = 'YOUR_REVISION_ID';
+// const protoFile = 'path/to/a/proto/schema/file/(.proto)/formatted/in/protcol/buffers';
 
 // Imports the Google Cloud client library
-const {PubSub} = require('@google-cloud/pubsub');
+import {PubSub, SchemaTypes} from '@google-cloud/pubsub';
+
+import * as fs from 'fs';
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function deleteSchemaRevision(schemaNameOrId, revisionId) {
+async function commitProtoSchema(schemaNameOrId: string, protoFile: string) {
   // Get the fully qualified schema name.
   const schema = pubSubClient.schema(schemaNameOrId);
   const name = await schema.getName();
 
-  // Use the gapic client to delete the schema revision.
+  // Read the new schema definition from storage.
+  const definition: string = fs.readFileSync(protoFile).toString();
+
+  // Use the gapic client to commit the new definition.
   const schemaClient = await pubSubClient.getSchemaClient();
-  await schemaClient.deleteSchemaRevision({
-    name: `${name}@${revisionId}`,
+  const [result] = await schemaClient.commitSchema({
+    name,
+    schema: {
+      name,
+      type: SchemaTypes.ProtocolBuffer,
+      definition,
+    },
   });
 
-  console.log(`Schema ${name} revision ${revisionId} deleted.`);
+  console.log(`Schema ${name} committed with revision ${result.revisionId}.`);
 }
-// [END pubsub_delete_schema_revision]
+// [END pubsub_commit_proto_schema]
 
 function main(
   schemaNameOrId = 'YOUR_SCHEMA_NAME_OR_ID',
-  revisionId = 'YOUR_REVISION_ID'
+  protoFile = 'path/to/a/proto/schema/file/(.proto)/formatted/in/protcol/buffers'
 ) {
-  deleteSchemaRevision(schemaNameOrId, revisionId).catch(err => {
+  commitProtoSchema(schemaNameOrId, protoFile).catch(err => {
     console.error(err.message);
     process.exitCode = 1;
   });
