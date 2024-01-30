@@ -402,7 +402,7 @@ __Usage:__
 
 ### Delete a Schema Revision
 
-Deletes a new schema revision on a project
+Deletes a schema revision on a project
 
 View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/deleteSchemaRevision.js).
 
