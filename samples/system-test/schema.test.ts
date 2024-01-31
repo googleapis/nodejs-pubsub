@@ -409,15 +409,15 @@ describe('schema', () => {
     const schemaName = await schema.getName();
     const rev1 = await commitSchema(schemaName, 'avro');
     const rev2 = await commitSchema(schemaName, 'avro');
-    if (!rev1.name || !rev2.name) {
+    if (!rev1.revisionId || !rev2.revisionId) {
       assert.ok(false, 'revisions could not be committed');
     }
     const topic = await createTopicWithSchema(
       id,
       schema.id,
       Encodings.Json,
-      rev1.name ?? undefined,
-      rev2.name ?? undefined
+      rev1.revisionId ?? undefined,
+      rev2.revisionId ?? undefined
     );
     const sub = await createSub(id, topic.name);
 
