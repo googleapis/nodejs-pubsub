@@ -2407,6 +2407,11 @@
                 "longRunning": {
                   "type": "LongRunning",
                   "id": 2
+                },
+                "autoPopulatedFields": {
+                  "rule": "repeated",
+                  "type": "string",
+                  "id": 3
                 }
               },
               "nested": {
@@ -2478,7 +2483,8 @@
                 "INPUT_ONLY": 4,
                 "IMMUTABLE": 5,
                 "UNORDERED_LIST": 6,
-                "NON_EMPTY_DEFAULT": 7
+                "NON_EMPTY_DEFAULT": 7,
+                "IDENTIFIER": 8
               }
             },
             "resourceReference": {
@@ -2580,6 +2586,21 @@
                 }
               }
             },
+            "Edition": {
+              "values": {
+                "EDITION_UNKNOWN": 0,
+                "EDITION_PROTO2": 998,
+                "EDITION_PROTO3": 999,
+                "EDITION_2023": 1000,
+                "EDITION_2024": 1001,
+                "EDITION_1_TEST_ONLY": 1,
+                "EDITION_2_TEST_ONLY": 2,
+                "EDITION_99997_TEST_ONLY": 99997,
+                "EDITION_99998_TEST_ONLY": 99998,
+                "EDITION_99999_TEST_ONLY": 99999,
+                "EDITION_MAX": 2147483647
+              }
+            },
             "FileDescriptorProto": {
               "fields": {
                 "name": {
@@ -2644,8 +2665,8 @@
                   "id": 12
                 },
                 "edition": {
-                  "type": "string",
-                  "id": 13
+                  "type": "Edition",
+                  "id": 14
                 }
               }
             },
@@ -2754,7 +2775,8 @@
                   "type": "VerificationState",
                   "id": 3,
                   "options": {
-                    "default": "UNVERIFIED"
+                    "default": "UNVERIFIED",
+                    "retention": "RETENTION_SOURCE"
                   }
                 }
               },
@@ -2876,8 +2898,8 @@
                 "Label": {
                   "values": {
                     "LABEL_OPTIONAL": 1,
-                    "LABEL_REQUIRED": 2,
-                    "LABEL_REPEATED": 3
+                    "LABEL_REPEATED": 3,
+                    "LABEL_REQUIRED": 2
                   }
                 }
               }
@@ -3065,13 +3087,6 @@
                     "default": false
                   }
                 },
-                "phpGenericServices": {
-                  "type": "bool",
-                  "id": 42,
-                  "options": {
-                    "default": false
-                  }
-                },
                 "deprecated": {
                   "type": "bool",
                   "id": 23,
@@ -3131,6 +3146,10 @@
                 ]
               ],
               "reserved": [
+                [
+                  42,
+                  42
+                ],
                 [
                   38,
                   38
@@ -3356,8 +3375,8 @@
                 "EditionDefault": {
                   "fields": {
                     "edition": {
-                      "type": "string",
-                      "id": 1
+                      "type": "Edition",
+                      "id": 3
                     },
                     "value": {
                       "type": "string",
@@ -3587,7 +3606,7 @@
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
+                    "edition_defaults.edition": "EDITION_2023",
                     "edition_defaults.value": "EXPLICIT"
                   }
                 },
@@ -3597,7 +3616,7 @@
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
+                    "edition_defaults.edition": "EDITION_PROTO3",
                     "edition_defaults.value": "OPEN"
                   }
                 },
@@ -3607,18 +3626,18 @@
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
+                    "edition_defaults.edition": "EDITION_PROTO3",
                     "edition_defaults.value": "PACKED"
                   }
                 },
-                "stringFieldValidation": {
-                  "type": "StringFieldValidation",
+                "utf8Validation": {
+                  "type": "Utf8Validation",
                   "id": 4,
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
-                    "edition_defaults.value": "MANDATORY"
+                    "edition_defaults.edition": "EDITION_PROTO3",
+                    "edition_defaults.value": "VERIFY"
                   }
                 },
                 "messageEncoding": {
@@ -3627,7 +3646,7 @@
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
+                    "edition_defaults.edition": "EDITION_PROTO2",
                     "edition_defaults.value": "LENGTH_PREFIXED"
                   }
                 },
@@ -3637,15 +3656,8 @@
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
+                    "edition_defaults.edition": "EDITION_PROTO3",
                     "edition_defaults.value": "ALLOW"
-                  }
-                },
-                "rawFeatures": {
-                  "type": "FeatureSet",
-                  "id": 999,
-                  "options": {
-                    "targets": "TARGET_TYPE_UNKNOWN"
                   }
                 }
               },
@@ -3661,6 +3673,12 @@
                 [
                   9995,
                   9999
+                ]
+              ],
+              "reserved": [
+                [
+                  999,
+                  999
                 ]
               ],
               "nested": {
@@ -3686,11 +3704,10 @@
                     "EXPANDED": 2
                   }
                 },
-                "StringFieldValidation": {
+                "Utf8Validation": {
                   "values": {
-                    "STRING_FIELD_VALIDATION_UNKNOWN": 0,
-                    "MANDATORY": 1,
-                    "HINT": 2,
+                    "UTF8_VALIDATION_UNKNOWN": 0,
+                    "VERIFY": 2,
                     "NONE": 3
                   }
                 },
@@ -3706,6 +3723,37 @@
                     "JSON_FORMAT_UNKNOWN": 0,
                     "ALLOW": 1,
                     "LEGACY_BEST_EFFORT": 2
+                  }
+                }
+              }
+            },
+            "FeatureSetDefaults": {
+              "fields": {
+                "defaults": {
+                  "rule": "repeated",
+                  "type": "FeatureSetEditionDefault",
+                  "id": 1
+                },
+                "minimumEdition": {
+                  "type": "Edition",
+                  "id": 4
+                },
+                "maximumEdition": {
+                  "type": "Edition",
+                  "id": 5
+                }
+              },
+              "nested": {
+                "FeatureSetEditionDefault": {
+                  "fields": {
+                    "edition": {
+                      "type": "Edition",
+                      "id": 3
+                    },
+                    "features": {
+                      "type": "FeatureSet",
+                      "id": 2
+                    }
                   }
                 }
               }
