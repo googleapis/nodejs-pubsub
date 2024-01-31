@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -241,6 +241,9 @@ export namespace google {
 
                 /** MessageStoragePolicy allowedPersistenceRegions */
                 allowedPersistenceRegions?: (string[]|null);
+
+                /** MessageStoragePolicy enforceInTransit */
+                enforceInTransit?: (boolean|null);
             }
 
             /** Represents a MessageStoragePolicy. */
@@ -254,6 +257,9 @@ export namespace google {
 
                 /** MessageStoragePolicy allowedPersistenceRegions. */
                 public allowedPersistenceRegions: string[];
+
+                /** MessageStoragePolicy enforceInTransit. */
+                public enforceInTransit: boolean;
 
                 /**
                  * Creates a new MessageStoragePolicy instance using the specified properties.
@@ -448,6 +454,243 @@ export namespace google {
                 public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
+            /** Properties of an IngestionDataSourceSettings. */
+            interface IIngestionDataSourceSettings {
+
+                /** IngestionDataSourceSettings awsKinesis */
+                awsKinesis?: (google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null);
+            }
+
+            /** Represents an IngestionDataSourceSettings. */
+            class IngestionDataSourceSettings implements IIngestionDataSourceSettings {
+
+                /**
+                 * Constructs a new IngestionDataSourceSettings.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IIngestionDataSourceSettings);
+
+                /** IngestionDataSourceSettings awsKinesis. */
+                public awsKinesis?: (google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null);
+
+                /** IngestionDataSourceSettings source. */
+                public source?: "awsKinesis";
+
+                /**
+                 * Creates a new IngestionDataSourceSettings instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns IngestionDataSourceSettings instance
+                 */
+                public static create(properties?: google.pubsub.v1.IIngestionDataSourceSettings): google.pubsub.v1.IngestionDataSourceSettings;
+
+                /**
+                 * Encodes the specified IngestionDataSourceSettings message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.verify|verify} messages.
+                 * @param message IngestionDataSourceSettings message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IIngestionDataSourceSettings, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified IngestionDataSourceSettings message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.verify|verify} messages.
+                 * @param message IngestionDataSourceSettings message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IIngestionDataSourceSettings, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an IngestionDataSourceSettings message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns IngestionDataSourceSettings
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionDataSourceSettings;
+
+                /**
+                 * Decodes an IngestionDataSourceSettings message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns IngestionDataSourceSettings
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionDataSourceSettings;
+
+                /**
+                 * Verifies an IngestionDataSourceSettings message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates an IngestionDataSourceSettings message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns IngestionDataSourceSettings
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionDataSourceSettings;
+
+                /**
+                 * Creates a plain object from an IngestionDataSourceSettings message. Also converts values to other types if specified.
+                 * @param message IngestionDataSourceSettings
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.IngestionDataSourceSettings, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this IngestionDataSourceSettings to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for IngestionDataSourceSettings
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            namespace IngestionDataSourceSettings {
+
+                /** Properties of an AwsKinesis. */
+                interface IAwsKinesis {
+
+                    /** AwsKinesis state */
+                    state?: (google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State|keyof typeof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State|null);
+
+                    /** AwsKinesis streamArn */
+                    streamArn?: (string|null);
+
+                    /** AwsKinesis consumerArn */
+                    consumerArn?: (string|null);
+
+                    /** AwsKinesis awsRoleArn */
+                    awsRoleArn?: (string|null);
+
+                    /** AwsKinesis gcpServiceAccount */
+                    gcpServiceAccount?: (string|null);
+                }
+
+                /** Represents an AwsKinesis. */
+                class AwsKinesis implements IAwsKinesis {
+
+                    /**
+                     * Constructs a new AwsKinesis.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis);
+
+                    /** AwsKinesis state. */
+                    public state: (google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State|keyof typeof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State);
+
+                    /** AwsKinesis streamArn. */
+                    public streamArn: string;
+
+                    /** AwsKinesis consumerArn. */
+                    public consumerArn: string;
+
+                    /** AwsKinesis awsRoleArn. */
+                    public awsRoleArn: string;
+
+                    /** AwsKinesis gcpServiceAccount. */
+                    public gcpServiceAccount: string;
+
+                    /**
+                     * Creates a new AwsKinesis instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns AwsKinesis instance
+                     */
+                    public static create(properties?: google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis): google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis;
+
+                    /**
+                     * Encodes the specified AwsKinesis message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.verify|verify} messages.
+                     * @param message AwsKinesis message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified AwsKinesis message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.verify|verify} messages.
+                     * @param message AwsKinesis message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes an AwsKinesis message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns AwsKinesis
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis;
+
+                    /**
+                     * Decodes an AwsKinesis message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns AwsKinesis
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis;
+
+                    /**
+                     * Verifies an AwsKinesis message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates an AwsKinesis message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns AwsKinesis
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis;
+
+                    /**
+                     * Creates a plain object from an AwsKinesis message. Also converts values to other types if specified.
+                     * @param message AwsKinesis
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this AwsKinesis to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for AwsKinesis
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
+                namespace AwsKinesis {
+
+                    /** State enum. */
+                    enum State {
+                        STATE_UNSPECIFIED = 0,
+                        ACTIVE = 1,
+                        KINESIS_PERMISSION_DENIED = 2,
+                        PUBLISH_PERMISSION_DENIED = 3,
+                        STREAM_NOT_FOUND = 4,
+                        CONSUMER_NOT_FOUND = 5
+                    }
+                }
+            }
+
             /** Properties of a Topic. */
             interface ITopic {
 
@@ -471,6 +714,12 @@ export namespace google {
 
                 /** Topic messageRetentionDuration */
                 messageRetentionDuration?: (google.protobuf.IDuration|null);
+
+                /** Topic state */
+                state?: (google.pubsub.v1.Topic.State|keyof typeof google.pubsub.v1.Topic.State|null);
+
+                /** Topic ingestionDataSourceSettings */
+                ingestionDataSourceSettings?: (google.pubsub.v1.IIngestionDataSourceSettings|null);
             }
 
             /** Represents a Topic. */
@@ -502,6 +751,12 @@ export namespace google {
 
                 /** Topic messageRetentionDuration. */
                 public messageRetentionDuration?: (google.protobuf.IDuration|null);
+
+                /** Topic state. */
+                public state: (google.pubsub.v1.Topic.State|keyof typeof google.pubsub.v1.Topic.State);
+
+                /** Topic ingestionDataSourceSettings. */
+                public ingestionDataSourceSettings?: (google.pubsub.v1.IIngestionDataSourceSettings|null);
 
                 /**
                  * Creates a new Topic instance using the specified properties.
@@ -579,6 +834,16 @@ export namespace google {
                  * @returns The default type url
                  */
                 public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            namespace Topic {
+
+                /** State enum. */
+                enum State {
+                    STATE_UNSPECIFIED = 0,
+                    ACTIVE = 1,
+                    INGESTION_RESOURCE_ERROR = 2
+                }
             }
 
             /** Properties of a PubsubMessage. */
@@ -3333,6 +3598,9 @@ export namespace google {
 
                 /** BigQueryConfig state */
                 state?: (google.pubsub.v1.BigQueryConfig.State|keyof typeof google.pubsub.v1.BigQueryConfig.State|null);
+
+                /** BigQueryConfig useTableSchema */
+                useTableSchema?: (boolean|null);
             }
 
             /** Represents a BigQueryConfig. */
@@ -3358,6 +3626,9 @@ export namespace google {
 
                 /** BigQueryConfig state. */
                 public state: (google.pubsub.v1.BigQueryConfig.State|keyof typeof google.pubsub.v1.BigQueryConfig.State);
+
+                /** BigQueryConfig useTableSchema. */
+                public useTableSchema: boolean;
 
                 /**
                  * Creates a new BigQueryConfig instance using the specified properties.
@@ -3445,7 +3716,8 @@ export namespace google {
                     ACTIVE = 1,
                     PERMISSION_DENIED = 2,
                     NOT_FOUND = 3,
-                    SCHEMA_MISMATCH = 4
+                    SCHEMA_MISMATCH = 4,
+                    IN_TRANSIT_LOCATION_RESTRICTION = 5
                 }
             }
 
@@ -3786,7 +4058,8 @@ export namespace google {
                     STATE_UNSPECIFIED = 0,
                     ACTIVE = 1,
                     PERMISSION_DENIED = 2,
-                    NOT_FOUND = 3
+                    NOT_FOUND = 3,
+                    IN_TRANSIT_LOCATION_RESTRICTION = 4
                 }
             }
 
@@ -9893,6 +10166,9 @@ export namespace google {
 
             /** MethodSettings longRunning */
             longRunning?: (google.api.MethodSettings.ILongRunning|null);
+
+            /** MethodSettings autoPopulatedFields */
+            autoPopulatedFields?: (string[]|null);
         }
 
         /** Represents a MethodSettings. */
@@ -9909,6 +10185,9 @@ export namespace google {
 
             /** MethodSettings longRunning. */
             public longRunning?: (google.api.MethodSettings.ILongRunning|null);
+
+            /** MethodSettings autoPopulatedFields. */
+            public autoPopulatedFields: string[];
 
             /**
              * Creates a new MethodSettings instance using the specified properties.
@@ -10146,7 +10425,8 @@ export namespace google {
             INPUT_ONLY = 4,
             IMMUTABLE = 5,
             UNORDERED_LIST = 6,
-            NON_EMPTY_DEFAULT = 7
+            NON_EMPTY_DEFAULT = 7,
+            IDENTIFIER = 8
         }
 
         /** Properties of a ResourceDescriptor. */
@@ -10502,6 +10782,21 @@ export namespace google {
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
+        /** Edition enum. */
+        enum Edition {
+            EDITION_UNKNOWN = 0,
+            EDITION_PROTO2 = 998,
+            EDITION_PROTO3 = 999,
+            EDITION_2023 = 1000,
+            EDITION_2024 = 1001,
+            EDITION_1_TEST_ONLY = 1,
+            EDITION_2_TEST_ONLY = 2,
+            EDITION_99997_TEST_ONLY = 99997,
+            EDITION_99998_TEST_ONLY = 99998,
+            EDITION_99999_TEST_ONLY = 99999,
+            EDITION_MAX = 2147483647
+        }
+
         /** Properties of a FileDescriptorProto. */
         interface IFileDescriptorProto {
 
@@ -10542,7 +10837,7 @@ export namespace google {
             syntax?: (string|null);
 
             /** FileDescriptorProto edition */
-            edition?: (string|null);
+            edition?: (google.protobuf.Edition|keyof typeof google.protobuf.Edition|null);
         }
 
         /** Represents a FileDescriptorProto. */
@@ -10591,7 +10886,7 @@ export namespace google {
             public syntax: string;
 
             /** FileDescriptorProto edition. */
-            public edition: string;
+            public edition: (google.protobuf.Edition|keyof typeof google.protobuf.Edition);
 
             /**
              * Creates a new FileDescriptorProto instance using the specified properties.
@@ -11466,8 +11761,8 @@ export namespace google {
             /** Label enum. */
             enum Label {
                 LABEL_OPTIONAL = 1,
-                LABEL_REQUIRED = 2,
-                LABEL_REPEATED = 3
+                LABEL_REPEATED = 3,
+                LABEL_REQUIRED = 2
             }
         }
 
@@ -12179,9 +12474,6 @@ export namespace google {
             /** FileOptions pyGenericServices */
             pyGenericServices?: (boolean|null);
 
-            /** FileOptions phpGenericServices */
-            phpGenericServices?: (boolean|null);
-
             /** FileOptions deprecated */
             deprecated?: (boolean|null);
 
@@ -12257,9 +12549,6 @@ export namespace google {
 
             /** FileOptions pyGenericServices. */
             public pyGenericServices: boolean;
-
-            /** FileOptions phpGenericServices. */
-            public phpGenericServices: boolean;
 
             /** FileOptions deprecated. */
             public deprecated: boolean;
@@ -12734,7 +13023,7 @@ export namespace google {
             interface IEditionDefault {
 
                 /** EditionDefault edition */
-                edition?: (string|null);
+                edition?: (google.protobuf.Edition|keyof typeof google.protobuf.Edition|null);
 
                 /** EditionDefault value */
                 value?: (string|null);
@@ -12750,7 +13039,7 @@ export namespace google {
                 constructor(properties?: google.protobuf.FieldOptions.IEditionDefault);
 
                 /** EditionDefault edition. */
-                public edition: string;
+                public edition: (google.protobuf.Edition|keyof typeof google.protobuf.Edition);
 
                 /** EditionDefault value. */
                 public value: string;
@@ -13670,17 +13959,14 @@ export namespace google {
             /** FeatureSet repeatedFieldEncoding */
             repeatedFieldEncoding?: (google.protobuf.FeatureSet.RepeatedFieldEncoding|keyof typeof google.protobuf.FeatureSet.RepeatedFieldEncoding|null);
 
-            /** FeatureSet stringFieldValidation */
-            stringFieldValidation?: (google.protobuf.FeatureSet.StringFieldValidation|keyof typeof google.protobuf.FeatureSet.StringFieldValidation|null);
+            /** FeatureSet utf8Validation */
+            utf8Validation?: (google.protobuf.FeatureSet.Utf8Validation|keyof typeof google.protobuf.FeatureSet.Utf8Validation|null);
 
             /** FeatureSet messageEncoding */
             messageEncoding?: (google.protobuf.FeatureSet.MessageEncoding|keyof typeof google.protobuf.FeatureSet.MessageEncoding|null);
 
             /** FeatureSet jsonFormat */
             jsonFormat?: (google.protobuf.FeatureSet.JsonFormat|keyof typeof google.protobuf.FeatureSet.JsonFormat|null);
-
-            /** FeatureSet rawFeatures */
-            rawFeatures?: (google.protobuf.IFeatureSet|null);
         }
 
         /** Represents a FeatureSet. */
@@ -13701,17 +13987,14 @@ export namespace google {
             /** FeatureSet repeatedFieldEncoding. */
             public repeatedFieldEncoding: (google.protobuf.FeatureSet.RepeatedFieldEncoding|keyof typeof google.protobuf.FeatureSet.RepeatedFieldEncoding);
 
-            /** FeatureSet stringFieldValidation. */
-            public stringFieldValidation: (google.protobuf.FeatureSet.StringFieldValidation|keyof typeof google.protobuf.FeatureSet.StringFieldValidation);
+            /** FeatureSet utf8Validation. */
+            public utf8Validation: (google.protobuf.FeatureSet.Utf8Validation|keyof typeof google.protobuf.FeatureSet.Utf8Validation);
 
             /** FeatureSet messageEncoding. */
             public messageEncoding: (google.protobuf.FeatureSet.MessageEncoding|keyof typeof google.protobuf.FeatureSet.MessageEncoding);
 
             /** FeatureSet jsonFormat. */
             public jsonFormat: (google.protobuf.FeatureSet.JsonFormat|keyof typeof google.protobuf.FeatureSet.JsonFormat);
-
-            /** FeatureSet rawFeatures. */
-            public rawFeatures?: (google.protobuf.IFeatureSet|null);
 
             /**
              * Creates a new FeatureSet instance using the specified properties.
@@ -13815,11 +14098,10 @@ export namespace google {
                 EXPANDED = 2
             }
 
-            /** StringFieldValidation enum. */
-            enum StringFieldValidation {
-                STRING_FIELD_VALIDATION_UNKNOWN = 0,
-                MANDATORY = 1,
-                HINT = 2,
+            /** Utf8Validation enum. */
+            enum Utf8Validation {
+                UTF8_VALIDATION_UNKNOWN = 0,
+                VERIFY = 2,
                 NONE = 3
             }
 
@@ -13835,6 +14117,221 @@ export namespace google {
                 JSON_FORMAT_UNKNOWN = 0,
                 ALLOW = 1,
                 LEGACY_BEST_EFFORT = 2
+            }
+        }
+
+        /** Properties of a FeatureSetDefaults. */
+        interface IFeatureSetDefaults {
+
+            /** FeatureSetDefaults defaults */
+            defaults?: (google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault[]|null);
+
+            /** FeatureSetDefaults minimumEdition */
+            minimumEdition?: (google.protobuf.Edition|keyof typeof google.protobuf.Edition|null);
+
+            /** FeatureSetDefaults maximumEdition */
+            maximumEdition?: (google.protobuf.Edition|keyof typeof google.protobuf.Edition|null);
+        }
+
+        /** Represents a FeatureSetDefaults. */
+        class FeatureSetDefaults implements IFeatureSetDefaults {
+
+            /**
+             * Constructs a new FeatureSetDefaults.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: google.protobuf.IFeatureSetDefaults);
+
+            /** FeatureSetDefaults defaults. */
+            public defaults: google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault[];
+
+            /** FeatureSetDefaults minimumEdition. */
+            public minimumEdition: (google.protobuf.Edition|keyof typeof google.protobuf.Edition);
+
+            /** FeatureSetDefaults maximumEdition. */
+            public maximumEdition: (google.protobuf.Edition|keyof typeof google.protobuf.Edition);
+
+            /**
+             * Creates a new FeatureSetDefaults instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns FeatureSetDefaults instance
+             */
+            public static create(properties?: google.protobuf.IFeatureSetDefaults): google.protobuf.FeatureSetDefaults;
+
+            /**
+             * Encodes the specified FeatureSetDefaults message. Does not implicitly {@link google.protobuf.FeatureSetDefaults.verify|verify} messages.
+             * @param message FeatureSetDefaults message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: google.protobuf.IFeatureSetDefaults, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified FeatureSetDefaults message, length delimited. Does not implicitly {@link google.protobuf.FeatureSetDefaults.verify|verify} messages.
+             * @param message FeatureSetDefaults message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: google.protobuf.IFeatureSetDefaults, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a FeatureSetDefaults message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns FeatureSetDefaults
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.protobuf.FeatureSetDefaults;
+
+            /**
+             * Decodes a FeatureSetDefaults message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns FeatureSetDefaults
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.protobuf.FeatureSetDefaults;
+
+            /**
+             * Verifies a FeatureSetDefaults message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a FeatureSetDefaults message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns FeatureSetDefaults
+             */
+            public static fromObject(object: { [k: string]: any }): google.protobuf.FeatureSetDefaults;
+
+            /**
+             * Creates a plain object from a FeatureSetDefaults message. Also converts values to other types if specified.
+             * @param message FeatureSetDefaults
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: google.protobuf.FeatureSetDefaults, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this FeatureSetDefaults to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for FeatureSetDefaults
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        namespace FeatureSetDefaults {
+
+            /** Properties of a FeatureSetEditionDefault. */
+            interface IFeatureSetEditionDefault {
+
+                /** FeatureSetEditionDefault edition */
+                edition?: (google.protobuf.Edition|keyof typeof google.protobuf.Edition|null);
+
+                /** FeatureSetEditionDefault features */
+                features?: (google.protobuf.IFeatureSet|null);
+            }
+
+            /** Represents a FeatureSetEditionDefault. */
+            class FeatureSetEditionDefault implements IFeatureSetEditionDefault {
+
+                /**
+                 * Constructs a new FeatureSetEditionDefault.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault);
+
+                /** FeatureSetEditionDefault edition. */
+                public edition: (google.protobuf.Edition|keyof typeof google.protobuf.Edition);
+
+                /** FeatureSetEditionDefault features. */
+                public features?: (google.protobuf.IFeatureSet|null);
+
+                /**
+                 * Creates a new FeatureSetEditionDefault instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns FeatureSetEditionDefault instance
+                 */
+                public static create(properties?: google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault): google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault;
+
+                /**
+                 * Encodes the specified FeatureSetEditionDefault message. Does not implicitly {@link google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault.verify|verify} messages.
+                 * @param message FeatureSetEditionDefault message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified FeatureSetEditionDefault message, length delimited. Does not implicitly {@link google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault.verify|verify} messages.
+                 * @param message FeatureSetEditionDefault message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a FeatureSetEditionDefault message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns FeatureSetEditionDefault
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault;
+
+                /**
+                 * Decodes a FeatureSetEditionDefault message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns FeatureSetEditionDefault
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault;
+
+                /**
+                 * Verifies a FeatureSetEditionDefault message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a FeatureSetEditionDefault message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns FeatureSetEditionDefault
+                 */
+                public static fromObject(object: { [k: string]: any }): google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault;
+
+                /**
+                 * Creates a plain object from a FeatureSetEditionDefault message. Also converts values to other types if specified.
+                 * @param message FeatureSetEditionDefault
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this FeatureSetEditionDefault to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for FeatureSetEditionDefault
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
         }
 

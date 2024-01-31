@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -378,8 +378,8 @@ export class SchemaServiceClient {
    *   The ID to use for the schema, which will become the final component of
    *   the schema's resource name.
    *
-   *   See https://cloud.google.com/pubsub/docs/admin#resource_names for resource
-   *   name constraints.
+   *   See https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names for
+   *   resource name constraints.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.

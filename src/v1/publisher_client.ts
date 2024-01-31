@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -397,32 +397,38 @@ export class PublisherClient {
    *   underscores (`_`), periods (`.`), tildes (`~`), plus (`+`) or percent
    *   signs (`%`). It must be between 3 and 255 characters in length, and it
    *   must not start with `"goog"`.
-   * @param {number[]} request.labels
-   *   See [Creating and managing labels]
+   * @param {number[]} [request.labels]
+   *   Optional. See [Creating and managing labels]
    *   (https://cloud.google.com/pubsub/docs/labels).
-   * @param {google.pubsub.v1.MessageStoragePolicy} request.messageStoragePolicy
-   *   Policy constraining the set of Google Cloud Platform regions where messages
-   *   published to the topic may be stored. If not present, then no constraints
-   *   are in effect.
-   * @param {string} request.kmsKeyName
-   *   The resource name of the Cloud KMS CryptoKey to be used to protect access
-   *   to messages published on this topic.
+   * @param {google.pubsub.v1.MessageStoragePolicy} [request.messageStoragePolicy]
+   *   Optional. Policy constraining the set of Google Cloud Platform regions
+   *   where messages published to the topic may be stored. If not present, then
+   *   no constraints are in effect.
+   * @param {string} [request.kmsKeyName]
+   *   Optional. The resource name of the Cloud KMS CryptoKey to be used to
+   *   protect access to messages published on this topic.
    *
    *   The expected format is `projects/* /locations/* /keyRings/* /cryptoKeys/*`.
-   * @param {google.pubsub.v1.SchemaSettings} request.schemaSettings
-   *   Settings for validating messages published against a schema.
-   * @param {boolean} request.satisfiesPzs
-   *   Reserved for future use. This field is set only in responses from the
-   *   server; it is ignored if it is set in any requests.
-   * @param {google.protobuf.Duration} request.messageRetentionDuration
-   *   Indicates the minimum duration to retain a message after it is published to
-   *   the topic. If this field is set, messages published to the topic in the
-   *   last `message_retention_duration` are always available to subscribers. For
-   *   instance, it allows any attached subscription to [seek to a
+   * @param {google.pubsub.v1.SchemaSettings} [request.schemaSettings]
+   *   Optional. Settings for validating messages published against a schema.
+   * @param {boolean} [request.satisfiesPzs]
+   *   Optional. Reserved for future use. This field is set only in responses from
+   *   the server; it is ignored if it is set in any requests.
+   * @param {google.protobuf.Duration} [request.messageRetentionDuration]
+   *   Optional. Indicates the minimum duration to retain a message after it is
+   *   published to the topic. If this field is set, messages published to the
+   *   topic in the last `message_retention_duration` are always available to
+   *   subscribers. For instance, it allows any attached subscription to [seek to
+   *   a
    *   timestamp](https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time)
    *   that is up to `message_retention_duration` in the past. If this field is
    *   not set, message retention is controlled by settings on individual
    *   subscriptions. Cannot be more than 31 days or less than 10 minutes.
+   * @param {google.pubsub.v1.Topic.State} request.state
+   *   Output only. An output-only field indicating the state of the topic.
+   * @param {google.pubsub.v1.IngestionDataSourceSettings} [request.ingestionDataSourceSettings]
+   *   Optional. Settings for managed ingestion from a data source into this
+   *   topic.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -497,8 +503,8 @@ export class PublisherClient {
     return this.innerApiCalls.createTopic(request, options, callback);
   }
   /**
-   * Updates an existing topic. Note that certain properties of a
-   * topic are not modifiable.
+   * Updates an existing topic by updating the fields specified in the update
+   * mask. Note that certain properties of a topic are not modifiable.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -926,12 +932,12 @@ export class PublisherClient {
    * @param {string} request.project
    *   Required. The name of the project in which to list topics.
    *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of topics to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicsResponse`; indicates that this is
-   *   a continuation of a prior `ListTopics` call, and that the system should
-   *   return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of topics to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListTopicsResponse`; indicates
+   *   that this is a continuation of a prior `ListTopics` call, and that the
+   *   system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -1018,12 +1024,12 @@ export class PublisherClient {
    * @param {string} request.project
    *   Required. The name of the project in which to list topics.
    *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of topics to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicsResponse`; indicates that this is
-   *   a continuation of a prior `ListTopics` call, and that the system should
-   *   return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of topics to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListTopicsResponse`; indicates
+   *   that this is a continuation of a prior `ListTopics` call, and that the
+   *   system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
@@ -1066,12 +1072,12 @@ export class PublisherClient {
    * @param {string} request.project
    *   Required. The name of the project in which to list topics.
    *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of topics to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicsResponse`; indicates that this is
-   *   a continuation of a prior `ListTopics` call, and that the system should
-   *   return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of topics to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListTopicsResponse`; indicates
+   *   that this is a continuation of a prior `ListTopics` call, and that the
+   *   system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
@@ -1111,12 +1117,12 @@ export class PublisherClient {
    * @param {string} request.topic
    *   Required. The name of the topic that subscriptions are attached to.
    *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number} request.pageSize
-   *   Maximum number of subscription names to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSubscriptionsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSubscriptions` call, and
-   *   that the system should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of subscription names to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListTopicSubscriptionsResponse`;
+   *   indicates that this is a continuation of a prior `ListTopicSubscriptions`
+   *   call, and that the system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -1215,12 +1221,12 @@ export class PublisherClient {
    * @param {string} request.topic
    *   Required. The name of the topic that subscriptions are attached to.
    *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number} request.pageSize
-   *   Maximum number of subscription names to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSubscriptionsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSubscriptions` call, and
-   *   that the system should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of subscription names to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListTopicSubscriptionsResponse`;
+   *   indicates that this is a continuation of a prior `ListTopicSubscriptions`
+   *   call, and that the system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
@@ -1263,12 +1269,12 @@ export class PublisherClient {
    * @param {string} request.topic
    *   Required. The name of the topic that subscriptions are attached to.
    *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number} request.pageSize
-   *   Maximum number of subscription names to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSubscriptionsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSubscriptions` call, and
-   *   that the system should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of subscription names to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListTopicSubscriptionsResponse`;
+   *   indicates that this is a continuation of a prior `ListTopicSubscriptions`
+   *   call, and that the system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
@@ -1312,12 +1318,12 @@ export class PublisherClient {
    * @param {string} request.topic
    *   Required. The name of the topic that snapshots are attached to.
    *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshot names to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSnapshotsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSnapshots` call, and
-   *   that the system should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of snapshot names to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListTopicSnapshotsResponse`;
+   *   indicates that this is a continuation of a prior `ListTopicSnapshots` call,
+   *   and that the system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -1406,12 +1412,12 @@ export class PublisherClient {
    * @param {string} request.topic
    *   Required. The name of the topic that snapshots are attached to.
    *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshot names to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSnapshotsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSnapshots` call, and
-   *   that the system should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of snapshot names to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListTopicSnapshotsResponse`;
+   *   indicates that this is a continuation of a prior `ListTopicSnapshots` call,
+   *   and that the system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
@@ -1454,12 +1460,12 @@ export class PublisherClient {
    * @param {string} request.topic
    *   Required. The name of the topic that snapshots are attached to.
    *   Format is `projects/{project}/topics/{topic}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshot names to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListTopicSnapshotsResponse`; indicates
-   *   that this is a continuation of a prior `ListTopicSnapshots` call, and
-   *   that the system should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of snapshot names to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListTopicSnapshotsResponse`;
+   *   indicates that this is a continuation of a prior `ListTopicSnapshots` call,
+   *   and that the system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}

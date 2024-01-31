@@ -193,7 +193,17 @@
                     "allowedPersistenceRegions": {
                       "rule": "repeated",
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "enforceInTransit": {
+                      "type": "bool",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -209,15 +219,95 @@
                     },
                     "encoding": {
                       "type": "Encoding",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "firstRevisionId": {
                       "type": "string",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "lastRevisionId": {
                       "type": "string",
-                      "id": 4
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    }
+                  }
+                },
+                "IngestionDataSourceSettings": {
+                  "oneofs": {
+                    "source": {
+                      "oneof": [
+                        "awsKinesis"
+                      ]
+                    }
+                  },
+                  "fields": {
+                    "awsKinesis": {
+                      "type": "AwsKinesis",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    }
+                  },
+                  "nested": {
+                    "AwsKinesis": {
+                      "fields": {
+                        "state": {
+                          "type": "State",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OUTPUT_ONLY"
+                          }
+                        },
+                        "streamArn": {
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "consumerArn": {
+                          "type": "string",
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "awsRoleArn": {
+                          "type": "string",
+                          "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "gcpServiceAccount": {
+                          "type": "string",
+                          "id": 5,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        }
+                      },
+                      "nested": {
+                        "State": {
+                          "values": {
+                            "STATE_UNSPECIFIED": 0,
+                            "ACTIVE": 1,
+                            "KINESIS_PERMISSION_DENIED": 2,
+                            "PUBLISH_PERMISSION_DENIED": 3,
+                            "STREAM_NOT_FOUND": 4,
+                            "CONSUMER_NOT_FOUND": 5
+                          }
+                        }
+                      }
                     }
                   }
                 },
@@ -237,27 +327,68 @@
                     "labels": {
                       "keyType": "string",
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "messageStoragePolicy": {
                       "type": "MessageStoragePolicy",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "kmsKeyName": {
                       "type": "string",
-                      "id": 5
+                      "id": 5,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "schemaSettings": {
                       "type": "SchemaSettings",
-                      "id": 6
+                      "id": 6,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "satisfiesPzs": {
                       "type": "bool",
-                      "id": 7
+                      "id": 7,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "messageRetentionDuration": {
                       "type": "google.protobuf.Duration",
-                      "id": 8
+                      "id": 8,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "state": {
+                      "type": "State",
+                      "id": 9,
+                      "options": {
+                        "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
+                    },
+                    "ingestionDataSourceSettings": {
+                      "type": "IngestionDataSourceSettings",
+                      "id": 10,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    }
+                  },
+                  "nested": {
+                    "State": {
+                      "values": {
+                        "STATE_UNSPECIFIED": 0,
+                        "ACTIVE": 1,
+                        "INGESTION_RESOURCE_ERROR": 2
+                      }
                     }
                   }
                 },
@@ -265,12 +396,18 @@
                   "fields": {
                     "data": {
                       "type": "bytes",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "attributes": {
                       "keyType": "string",
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "messageId": {
                       "type": "string",
@@ -282,7 +419,10 @@
                     },
                     "orderingKey": {
                       "type": "string",
-                      "id": 5
+                      "id": 5,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -341,7 +481,10 @@
                     "messageIds": {
                       "rule": "repeated",
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -357,11 +500,17 @@
                     },
                     "pageSize": {
                       "type": "int32",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "pageToken": {
                       "type": "string",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -370,11 +519,17 @@
                     "topics": {
                       "rule": "repeated",
                       "type": "Topic",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "nextPageToken": {
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -390,11 +545,17 @@
                     },
                     "pageSize": {
                       "type": "int32",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "pageToken": {
                       "type": "string",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -405,12 +566,16 @@
                       "type": "string",
                       "id": 1,
                       "options": {
+                        "(google.api.field_behavior)": "OPTIONAL",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
                       }
                     },
                     "nextPageToken": {
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -426,11 +591,17 @@
                     },
                     "pageSize": {
                       "type": "int32",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "pageToken": {
                       "type": "string",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -439,11 +610,17 @@
                     "snapshots": {
                       "rule": "repeated",
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "nextPageToken": {
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -798,60 +975,102 @@
                     },
                     "pushConfig": {
                       "type": "PushConfig",
-                      "id": 4
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "bigqueryConfig": {
                       "type": "BigQueryConfig",
-                      "id": 18
+                      "id": 18,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "cloudStorageConfig": {
                       "type": "CloudStorageConfig",
-                      "id": 22
+                      "id": 22,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "ackDeadlineSeconds": {
                       "type": "int32",
-                      "id": 5
+                      "id": 5,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "retainAckedMessages": {
                       "type": "bool",
-                      "id": 7
+                      "id": 7,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "messageRetentionDuration": {
                       "type": "google.protobuf.Duration",
-                      "id": 8
+                      "id": 8,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "labels": {
                       "keyType": "string",
                       "type": "string",
-                      "id": 9
+                      "id": 9,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "enableMessageOrdering": {
                       "type": "bool",
-                      "id": 10
+                      "id": 10,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "expirationPolicy": {
                       "type": "ExpirationPolicy",
-                      "id": 11
+                      "id": 11,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "filter": {
                       "type": "string",
-                      "id": 12
+                      "id": 12,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "deadLetterPolicy": {
                       "type": "DeadLetterPolicy",
-                      "id": 13
+                      "id": 13,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "retryPolicy": {
                       "type": "RetryPolicy",
-                      "id": 14
+                      "id": 14,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "detached": {
                       "type": "bool",
-                      "id": 15
+                      "id": 15,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "enableExactlyOnceDelivery": {
                       "type": "bool",
-                      "id": 16
+                      "id": 16,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "topicMessageRetentionDuration": {
                       "type": "google.protobuf.Duration",
@@ -882,11 +1101,17 @@
                   "fields": {
                     "minimumBackoff": {
                       "type": "google.protobuf.Duration",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "maximumBackoff": {
                       "type": "google.protobuf.Duration",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -894,11 +1119,17 @@
                   "fields": {
                     "deadLetterTopic": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "maxDeliveryAttempts": {
                       "type": "int32",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -906,7 +1137,10 @@
                   "fields": {
                     "ttl": {
                       "type": "google.protobuf.Duration",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -927,24 +1161,39 @@
                   "fields": {
                     "pushEndpoint": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "attributes": {
                       "keyType": "string",
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "oidcToken": {
                       "type": "OidcToken",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "pubsubWrapper": {
                       "type": "PubsubWrapper",
-                      "id": 4
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "noWrapper": {
                       "type": "NoWrapper",
-                      "id": 5
+                      "id": 5,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   },
                   "nested": {
@@ -952,11 +1201,17 @@
                       "fields": {
                         "serviceAccountEmail": {
                           "type": "string",
-                          "id": 1
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         },
                         "audience": {
                           "type": "string",
-                          "id": 2
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -967,7 +1222,10 @@
                       "fields": {
                         "writeMetadata": {
                           "type": "bool",
-                          "id": 1
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     }
@@ -977,25 +1235,44 @@
                   "fields": {
                     "table": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "useTopicSchema": {
                       "type": "bool",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "writeMetadata": {
                       "type": "bool",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "dropUnknownFields": {
                       "type": "bool",
-                      "id": 4
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "state": {
                       "type": "State",
                       "id": 5,
                       "options": {
                         "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
+                    },
+                    "useTableSchema": {
+                      "type": "bool",
+                      "id": 6,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
                       }
                     }
                   },
@@ -1006,7 +1283,8 @@
                         "ACTIVE": 1,
                         "PERMISSION_DENIED": 2,
                         "NOT_FOUND": 3,
-                        "SCHEMA_MISMATCH": 4
+                        "SCHEMA_MISMATCH": 4,
+                        "IN_TRANSIT_LOCATION_RESTRICTION": 5
                       }
                     }
                   }
@@ -1030,27 +1308,45 @@
                     },
                     "filenamePrefix": {
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "filenameSuffix": {
                       "type": "string",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "textConfig": {
                       "type": "TextConfig",
-                      "id": 4
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "avroConfig": {
                       "type": "AvroConfig",
-                      "id": 5
+                      "id": 5,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "maxDuration": {
                       "type": "google.protobuf.Duration",
-                      "id": 6
+                      "id": 6,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "maxBytes": {
                       "type": "int64",
-                      "id": 7
+                      "id": 7,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "state": {
                       "type": "State",
@@ -1068,7 +1364,10 @@
                       "fields": {
                         "writeMetadata": {
                           "type": "bool",
-                          "id": 1
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -1077,7 +1376,8 @@
                         "STATE_UNSPECIFIED": 0,
                         "ACTIVE": 1,
                         "PERMISSION_DENIED": 2,
-                        "NOT_FOUND": 3
+                        "NOT_FOUND": 3,
+                        "IN_TRANSIT_LOCATION_RESTRICTION": 4
                       }
                     }
                   }
@@ -1086,15 +1386,24 @@
                   "fields": {
                     "ackId": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "message": {
                       "type": "PubsubMessage",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "deliveryAttempt": {
                       "type": "int32",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -1140,11 +1449,17 @@
                     },
                     "pageSize": {
                       "type": "int32",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "pageToken": {
                       "type": "string",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -1153,11 +1468,17 @@
                     "subscriptions": {
                       "rule": "repeated",
                       "type": "Subscription",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "nextPageToken": {
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -1224,7 +1545,10 @@
                     "receivedMessages": {
                       "rule": "repeated",
                       "type": "ReceivedMessage",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -1288,17 +1612,26 @@
                     "ackIds": {
                       "rule": "repeated",
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "modifyDeadlineSeconds": {
                       "rule": "repeated",
                       "type": "int32",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "modifyDeadlineAckIds": {
                       "rule": "repeated",
                       "type": "string",
-                      "id": 4
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "streamAckDeadlineSeconds": {
                       "type": "int32",
@@ -1309,15 +1642,24 @@
                     },
                     "clientId": {
                       "type": "string",
-                      "id": 6
+                      "id": 6,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "maxOutstandingMessages": {
                       "type": "int64",
-                      "id": 7
+                      "id": 7,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "maxOutstandingBytes": {
                       "type": "int64",
-                      "id": 8
+                      "id": 8,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -1326,19 +1668,31 @@
                     "receivedMessages": {
                       "rule": "repeated",
                       "type": "ReceivedMessage",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "acknowledgeConfirmation": {
                       "type": "AcknowledgeConfirmation",
-                      "id": 5
+                      "id": 5,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "modifyAckDeadlineConfirmation": {
                       "type": "ModifyAckDeadlineConfirmation",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "subscriptionProperties": {
                       "type": "SubscriptionProperties",
-                      "id": 4
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   },
                   "nested": {
@@ -1347,22 +1701,34 @@
                         "ackIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 1
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         },
                         "invalidAckIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 2
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         },
                         "unorderedAckIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 3
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         },
                         "temporaryFailedAckIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 4
+                          "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -1371,17 +1737,26 @@
                         "ackIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 1
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         },
                         "invalidAckIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 2
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         },
                         "temporaryFailedAckIds": {
                           "rule": "repeated",
                           "type": "string",
-                          "id": 3
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -1389,11 +1764,17 @@
                       "fields": {
                         "exactlyOnceDeliveryEnabled": {
                           "type": "bool",
-                          "id": 1
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         },
                         "messageOrderingEnabled": {
                           "type": "bool",
-                          "id": 2
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     }
@@ -1420,7 +1801,10 @@
                     "labels": {
                       "keyType": "string",
                       "type": "string",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -1450,23 +1834,33 @@
                   "fields": {
                     "name": {
                       "type": "string",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "topic": {
                       "type": "string",
                       "id": 2,
                       "options": {
+                        "(google.api.field_behavior)": "OPTIONAL",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
                       }
                     },
                     "expireTime": {
                       "type": "google.protobuf.Timestamp",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "labels": {
                       "keyType": "string",
                       "type": "string",
-                      "id": 4
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -1494,11 +1888,17 @@
                     },
                     "pageSize": {
                       "type": "int32",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "pageToken": {
                       "type": "string",
-                      "id": 3
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -1507,11 +1907,17 @@
                     "snapshots": {
                       "rule": "repeated",
                       "type": "Snapshot",
-                      "id": 1
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "nextPageToken": {
                       "type": "string",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -1547,12 +1953,16 @@
                     },
                     "time": {
                       "type": "google.protobuf.Timestamp",
-                      "id": 2
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     },
                     "snapshot": {
                       "type": "string",
                       "id": 3,
                       "options": {
+                        "(google.api.field_behavior)": "OPTIONAL",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
                       }
                     }
@@ -2397,6 +2807,11 @@
                 "longRunning": {
                   "type": "LongRunning",
                   "id": 2
+                },
+                "autoPopulatedFields": {
+                  "rule": "repeated",
+                  "type": "string",
+                  "id": 3
                 }
               },
               "nested": {
@@ -2468,7 +2883,8 @@
                 "INPUT_ONLY": 4,
                 "IMMUTABLE": 5,
                 "UNORDERED_LIST": 6,
-                "NON_EMPTY_DEFAULT": 7
+                "NON_EMPTY_DEFAULT": 7,
+                "IDENTIFIER": 8
               }
             },
             "resourceReference": {
@@ -2570,6 +2986,21 @@
                 }
               }
             },
+            "Edition": {
+              "values": {
+                "EDITION_UNKNOWN": 0,
+                "EDITION_PROTO2": 998,
+                "EDITION_PROTO3": 999,
+                "EDITION_2023": 1000,
+                "EDITION_2024": 1001,
+                "EDITION_1_TEST_ONLY": 1,
+                "EDITION_2_TEST_ONLY": 2,
+                "EDITION_99997_TEST_ONLY": 99997,
+                "EDITION_99998_TEST_ONLY": 99998,
+                "EDITION_99999_TEST_ONLY": 99999,
+                "EDITION_MAX": 2147483647
+              }
+            },
             "FileDescriptorProto": {
               "fields": {
                 "name": {
@@ -2634,8 +3065,8 @@
                   "id": 12
                 },
                 "edition": {
-                  "type": "string",
-                  "id": 13
+                  "type": "Edition",
+                  "id": 14
                 }
               }
             },
@@ -2744,7 +3175,8 @@
                   "type": "VerificationState",
                   "id": 3,
                   "options": {
-                    "default": "UNVERIFIED"
+                    "default": "UNVERIFIED",
+                    "retention": "RETENTION_SOURCE"
                   }
                 }
               },
@@ -2866,8 +3298,8 @@
                 "Label": {
                   "values": {
                     "LABEL_OPTIONAL": 1,
-                    "LABEL_REQUIRED": 2,
-                    "LABEL_REPEATED": 3
+                    "LABEL_REPEATED": 3,
+                    "LABEL_REQUIRED": 2
                   }
                 }
               }
@@ -3055,13 +3487,6 @@
                     "default": false
                   }
                 },
-                "phpGenericServices": {
-                  "type": "bool",
-                  "id": 42,
-                  "options": {
-                    "default": false
-                  }
-                },
                 "deprecated": {
                   "type": "bool",
                   "id": 23,
@@ -3121,6 +3546,10 @@
                 ]
               ],
               "reserved": [
+                [
+                  42,
+                  42
+                ],
                 [
                   38,
                   38
@@ -3346,8 +3775,8 @@
                 "EditionDefault": {
                   "fields": {
                     "edition": {
-                      "type": "string",
-                      "id": 1
+                      "type": "Edition",
+                      "id": 3
                     },
                     "value": {
                       "type": "string",
@@ -3577,7 +4006,7 @@
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
+                    "edition_defaults.edition": "EDITION_2023",
                     "edition_defaults.value": "EXPLICIT"
                   }
                 },
@@ -3587,7 +4016,7 @@
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
+                    "edition_defaults.edition": "EDITION_PROTO3",
                     "edition_defaults.value": "OPEN"
                   }
                 },
@@ -3597,18 +4026,18 @@
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
+                    "edition_defaults.edition": "EDITION_PROTO3",
                     "edition_defaults.value": "PACKED"
                   }
                 },
-                "stringFieldValidation": {
-                  "type": "StringFieldValidation",
+                "utf8Validation": {
+                  "type": "Utf8Validation",
                   "id": 4,
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
-                    "edition_defaults.value": "MANDATORY"
+                    "edition_defaults.edition": "EDITION_PROTO3",
+                    "edition_defaults.value": "VERIFY"
                   }
                 },
                 "messageEncoding": {
@@ -3617,7 +4046,7 @@
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
+                    "edition_defaults.edition": "EDITION_PROTO2",
                     "edition_defaults.value": "LENGTH_PREFIXED"
                   }
                 },
@@ -3627,15 +4056,8 @@
                   "options": {
                     "retention": "RETENTION_RUNTIME",
                     "targets": "TARGET_TYPE_FILE",
-                    "edition_defaults.edition": "2023",
+                    "edition_defaults.edition": "EDITION_PROTO3",
                     "edition_defaults.value": "ALLOW"
-                  }
-                },
-                "rawFeatures": {
-                  "type": "FeatureSet",
-                  "id": 999,
-                  "options": {
-                    "targets": "TARGET_TYPE_UNKNOWN"
                   }
                 }
               },
@@ -3651,6 +4073,12 @@
                 [
                   9995,
                   9999
+                ]
+              ],
+              "reserved": [
+                [
+                  999,
+                  999
                 ]
               ],
               "nested": {
@@ -3676,11 +4104,10 @@
                     "EXPANDED": 2
                   }
                 },
-                "StringFieldValidation": {
+                "Utf8Validation": {
                   "values": {
-                    "STRING_FIELD_VALIDATION_UNKNOWN": 0,
-                    "MANDATORY": 1,
-                    "HINT": 2,
+                    "UTF8_VALIDATION_UNKNOWN": 0,
+                    "VERIFY": 2,
                     "NONE": 3
                   }
                 },
@@ -3696,6 +4123,37 @@
                     "JSON_FORMAT_UNKNOWN": 0,
                     "ALLOW": 1,
                     "LEGACY_BEST_EFFORT": 2
+                  }
+                }
+              }
+            },
+            "FeatureSetDefaults": {
+              "fields": {
+                "defaults": {
+                  "rule": "repeated",
+                  "type": "FeatureSetEditionDefault",
+                  "id": 1
+                },
+                "minimumEdition": {
+                  "type": "Edition",
+                  "id": 4
+                },
+                "maximumEdition": {
+                  "type": "Edition",
+                  "id": 5
+                }
+              },
+              "nested": {
+                "FeatureSetEditionDefault": {
+                  "fields": {
+                    "edition": {
+                      "type": "Edition",
+                      "id": 3
+                    },
+                    "features": {
+                      "type": "FeatureSet",
+                      "id": 2
+                    }
                   }
                 }
               }

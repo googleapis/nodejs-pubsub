@@ -1,4 +1,4 @@
-// Copyright 2019-2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,57 +21,53 @@
  */
 
 // sample-metadata:
-//   title: Create Push Subscription
-//   description: Creates a new push subscription.
-//   usage: node createPushSubscription.js <topic-name-or-id> <subscription-name-or-id>
+//   title: Update Topic Schema
+//   description: Update the schema on a topic.
+//   usage: node updateTopicSchema.js <topic-name-or-id> <first-revision-id> <last-revision-id>
 
-// [START pubsub_create_push_subscription]
+// [START pubsub_update_topic_schema]
 /**
  * TODO(developer): Uncomment these variables before running the sample.
  */
-// const pushEndpoint = 'YOUR_ENDPOINT_URL';
 // const topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID';
-// const subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID';
+// const firstRevisionId = 'YOUR_REVISION_ID';
+// const lastRevisionId = 'YOUR_REVISION_ID';
 
 // Imports the Google Cloud client library
-import {PubSub, CreateSubscriptionOptions} from '@google-cloud/pubsub';
+import {PubSub, TopicMetadata} from '@google-cloud/pubsub';
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function createPushSubscription(
-  pushEndpoint: string,
+async function updateTopicSchema(
   topicNameOrId: string,
-  subscriptionNameOrId: string
+  firstRevisionId: string,
+  lastRevisionId: string
 ) {
-  const options: CreateSubscriptionOptions = {
-    pushConfig: {
-      // Set to an HTTPS endpoint of your choice. If necessary, register
-      // (authorize) the domain on which the server is hosted.
-      pushEndpoint,
+  const metadata: TopicMetadata = {
+    schemaSettings: {
+      firstRevisionId,
+      lastRevisionId,
     },
   };
 
-  await pubSubClient
-    .topic(topicNameOrId)
-    .createSubscription(subscriptionNameOrId, options);
-  console.log(`Subscription ${subscriptionNameOrId} created.`);
+  await pubSubClient.topic(topicNameOrId).setMetadata(metadata);
+
+  console.log('Schema metadata updated successfully.');
 }
-// [END pubsub_create_push_subscription]
+// [END pubsub_update_topic_schema]
 
 function main(
-  pushEndpoint = 'YOUR_ENDPOINT_URL',
   topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
-  subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID'
+  firstRevisionId = 'YOUR_REVISION_ID',
+  lastRevisionId = 'YOUR_REVISION_ID'
 ) {
-  createPushSubscription(
-    pushEndpoint,
-    topicNameOrId,
-    subscriptionNameOrId
-  ).catch(err => {
-    console.error(err.message);
-    process.exitCode = 1;
-  });
+  updateTopicSchema(topicNameOrId, firstRevisionId, lastRevisionId).catch(
+    err => {
+      console.error(err.message);
+      process.exitCode = 1;
+    }
+  );
 }
 
 main(...process.argv.slice(2));

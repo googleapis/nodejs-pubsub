@@ -49,7 +49,7 @@ describe('Schema', () => {
 
     // These depend on the create-on-first-call structure in PubSub.
     // If that changes, this will also need to be updated.
-    schemaClient = await pubsub.getSchemaClient_();
+    schemaClient = await pubsub.getSchemaClient();
     schema = pubsub.schema(schemaName);
   });
 
@@ -175,11 +175,13 @@ describe('Schema', () => {
   it('loads metadata from a received message', () => {
     const testAttrs = {
       googclient_schemaencoding: 'JSON',
+      googclient_schemarevisionid: 'revision',
       googclient_schemaname: 'foobar',
     };
     const metadata = Schema.metadataFromMessage(testAttrs);
     assert.deepStrictEqual(metadata, {
       name: 'foobar',
+      revision: 'revision',
       encoding: 'JSON',
     });
   });
