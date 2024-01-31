@@ -359,19 +359,19 @@ export class Subscription extends WrappingEmitter {
     if (eventName !== 'message') {
       return listener(...args);
     } else {
-      const span = tracing.PubsubSpans.createReceiveProcessSpan(
-        args[0] as Message,
-        this.name
-      );
+      const message = args[0] as Message;
+      message.subSpans.processingStart(this.name);
 
       // If the user returned a Promise, that means they used an async handler.
       // In that case, we need to tag on to their Promise to end the span.
       // Otherwise, the listener chain is sync, and we can close out sync.
       const result = listener(...args) as unknown as Promise<void>;
       if (result && typeof result.then === 'function') {
-        result.then(() => span?.end());
+        result.then(() => {
+          message.subSpans.processingEnd();
+        });
       } else {
-        span?.end();
+        message.subSpans.processingEnd();
       }
     }
   }

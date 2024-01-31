@@ -93,7 +93,9 @@ class FakeLeaseManager extends EventEmitter {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: s.Message): void {}
-  clear(): void {}
+  clear(): s.Message[] {
+    return [];
+  }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   remove(message: s.Message): void {}
 }
@@ -547,12 +549,15 @@ describe('Subscriber', () => {
       assert.strictEqual(stub.callCount, 1);
     });
 
-    it('should clear the inventory', () => {
+    it('should clear the inventory', async () => {
+      const message = new Message(subscriber, RECEIVED_MESSAGE);
+      const shutdownStub = sandbox.stub(tracing.PubsubEvents, 'shutdown');
       const inventory: FakeLeaseManager = stubs.get('inventory');
-      const stub = sandbox.stub(inventory, 'clear');
+      const stub = sandbox.stub(inventory, 'clear').returns([message]);
 
-      subscriber.close();
+      await subscriber.close();
       assert.strictEqual(stub.callCount, 1);
+      assert.strictEqual(shutdownStub.callCount, 1);
     });
 
     it('should emit a close event', done => {
@@ -563,6 +568,7 @@ describe('Subscriber', () => {
     it('should nack any messages that come in after', () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
       const stub = sandbox.stub(subscriber, 'nack');
+      const shutdownStub = sandbox.stub(tracing.PubsubEvents, 'shutdown');
       const pullResponse = {receivedMessages: [RECEIVED_MESSAGE]};
 
       subscriber.close();
@@ -570,6 +576,7 @@ describe('Subscriber', () => {
 
       const [{ackId}] = stub.lastCall.args;
       assert.strictEqual(ackId, RECEIVED_MESSAGE.ackId);
+      assert.strictEqual(shutdownStub.callCount, 1);
     });
 
     describe('flushing the queues', () => {
@@ -927,7 +934,8 @@ describe('Subscriber', () => {
       message.endParentSpan();
 
       const spans = exporter.getFinishedSpans();
-      assert.strictEqual(spans.length, 2);
+      assert.strictEqual(spans.length, 1);
+      assert.strictEqual(spans[0].events.length, 2);
       const firstSpan = spans.pop();
       assert.ok(firstSpan);
       assert.strictEqual(firstSpan.parentSpanId, parentSpanContext.spanId);
@@ -961,7 +969,7 @@ describe('Subscriber', () => {
       stream.emit('data', pullResponse);
 
       message.endParentSpan();
-      assert.strictEqual(exporter.getFinishedSpans().length, 2);
+      assert.strictEqual(exporter.getFinishedSpans().length, 1);
     });
   });
 
@@ -1206,26 +1214,20 @@ describe('Subscriber', () => {
       assert.strictEqual(spy.calledOnce, true);
     });
 
-    it('starts a modAck span', () => {
-      const stub = sandbox
-        .stub(tracing.PubsubSpans, 'createModAckSpan')
-        .returns(fakeSpan);
+    it('fires a modAck start event', () => {
+      const stub = sandbox.stub(tracing.PubsubEvents, 'modAckStart');
       spans.modAckStart(Duration.from({seconds: 10}), true);
       assert.strictEqual(stub.args[0][0], message);
       assert.strictEqual(stub.args[0][1].totalOf('second'), 10);
       assert.strictEqual(stub.args[0][2], true);
-      spans.modAckStart(Duration.from({seconds: 20}), false);
       assert.strictEqual(stub.calledOnce, true);
     });
 
-    it('ends a modAck span', () => {
-      sandbox.stub(tracing.PubsubSpans, 'createModAckSpan').returns(fakeSpan);
-      spans.modAckStart(Duration.from({seconds: 10}), true);
-      const spy = sandbox.spy(fakeSpan, 'end');
-      spans.modAckStop();
-      assert.strictEqual(spy.calledOnce, true);
-      spans.modAckStop();
-      assert.strictEqual(spy.calledOnce, true);
+    it('fires a modAck end event', () => {
+      const stub = sandbox.stub(tracing.PubsubEvents, 'modAckEnd');
+      spans.modAckEnd();
+      assert.strictEqual(stub.args[0][0], message);
+      assert.strictEqual(stub.calledOnce, true);
     });
 
     it('starts a scheduler span', () => {
