@@ -144,7 +144,7 @@ export class Schema {
     view: SchemaView = SchemaViews.Full,
     gaxOpts?: CallOptions
   ): Promise<ISchema> {
-    const client = await this.pubsub.getSchemaClient_();
+    const client = await this.pubsub.getSchemaClient();
     const name = await this.getName();
     const [schema] = await client.getSchema(
       {
@@ -167,7 +167,7 @@ export class Schema {
    * @returns {Promise<void>}
    */
   async delete(gaxOpts?: CallOptions): Promise<void> {
-    const client = await this.pubsub.getSchemaClient_();
+    const client = await this.pubsub.getSchemaClient();
     const name = await this.getName();
     await client.deleteSchema(
       {
@@ -202,7 +202,7 @@ export class Schema {
       | keyof typeof google.pubsub.v1.Encoding,
     gaxOpts?: CallOptions
   ): Promise<void> {
-    const client = await this.pubsub.getSchemaClient_();
+    const client = await this.pubsub.getSchemaClient();
     const name = await this.getName();
 
     await client.validateMessage(
@@ -244,6 +244,7 @@ export class Schema {
   static metadataFromMessage(attributes: Attributes): SchemaMessageMetadata {
     return {
       name: attributes['googclient_schemaname'],
+      revision: attributes['googclient_schemarevisionid'],
       encoding: attributes[
         'googclient_schemaencoding'
       ] as unknown as SchemaEncoding,
@@ -260,6 +261,11 @@ export interface SchemaMessageMetadata {
    * Schema name; may be queried using {@link PubSub#schema}.
    */
   name?: string;
+
+  /**
+   * Schema revision; this goes with {@link name} as needed.
+   */
+  revision?: string;
 
   /**
    * Encoding; this will be Encodings.Json or Encodings.Binary.
