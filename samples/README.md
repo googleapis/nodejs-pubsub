@@ -21,6 +21,7 @@ guides.
 * [Before you begin](#before-you-begin)
 * [Samples](#samples)
   * [Commit an Avro-Based Schema](#commit-an-avro-based-schema)
+  * [Commit an Proto-Based Schema](#commit-an-proto-based-schema)
   * [Create an Avro based Schema](#create-an-avro-based-schema)
   * [Create BigQuery Subscription](#create-bigquery-subscription)
   * [Create a Proto based Schema](#create-a-proto-based-schema)
@@ -41,6 +42,7 @@ guides.
   * [Delete Topic](#delete-topic)
   * [Detach Subscription](#detach-subscription)
   * [Get a previously created schema](#get-a-previously-created-schema)
+  * [Get a previously created schema revision](#get-a-previously-created-schema-revision)
   * [Get Subscription](#get-subscription)
   * [Get Subscription Policy](#get-subscription-policy)
   * [Get Topic Policy](#get-topic-policy)
@@ -50,6 +52,7 @@ guides.
   * [List Subscriptions](#list-subscriptions)
   * [List Subscriptions On a Topic](#list-subscriptions-on-a-topic)
   * [Listen For Avro Records](#listen-for-avro-records)
+  * [Listen For Avro Records With Revisions](#listen-for-avro-records-with-revisions)
   * [Listen For Errors](#listen-for-errors)
   * [Listen For Messages](#listen-for-messages)
   * [Listen with exactly-once delivery](#listen-with-exactly-once-delivery)
@@ -108,6 +111,25 @@ __Usage:__
 
 
 `node commitAvroSchema.js <schema-name> <avsc-filename>`
+
+
+-----
+
+
+
+
+### Commit an Proto-Based Schema
+
+Commits a new schema definition revision on a project, using Protos
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/commitProtoSchema.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/commitProtoSchema.js,samples/README.md)
+
+__Usage:__
+
+
+`node commitProtoSchema.js <schema-name> <proto-filename>`
 
 
 -----
@@ -495,6 +517,25 @@ __Usage:__
 
 
 
+### Get a previously created schema revision
+
+Gets information about a schema revision which was previously created in the project.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/getSchemaRevision.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/getSchemaRevision.js,samples/README.md)
+
+__Usage:__
+
+
+`node getSchemaRevision.js <schema-name>`
+
+
+-----
+
+
+
+
 ### Get Subscription
 
 Gets the metadata for a subscription.
@@ -659,6 +700,25 @@ __Usage:__
 
 
 `node listenForAvroRecords.js <subscription-name-or-id> [timeout-in-seconds]`
+
+
+-----
+
+
+
+
+### Listen For Avro Records With Revisions
+
+Listens for records in Avro encoding from a subscription with schema revisions.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/listenForAvroRecordsWithRevisions.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listenForAvroRecordsWithRevisions.js,samples/README.md)
+
+__Usage:__
+
+
+`node listenForAvroRecordsWithRevisions.js <subscription-name-or-id> [timeout-in-seconds]`
 
 
 -----

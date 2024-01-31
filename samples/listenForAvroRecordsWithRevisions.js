@@ -106,7 +106,6 @@ async function listenForAvroRecordsWithRevisions(
     console.log(
       `\tProvince ${result.name} is abbreviated as ${result.post_abbr}`
     );
-
     messageCount += 1;
 
     // Ack the message.
