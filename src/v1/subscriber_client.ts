@@ -221,7 +221,8 @@ export class SubscriberClient {
     this.descriptors.stream = {
       streamingPull: new this._gaxModule.StreamDescriptor(
         this._gaxModule.StreamType.BIDI_STREAMING,
-        !!opts.fallback
+        !!opts.fallback,
+        /* gaxStreamingRetries: */ true
       ),
     };
 
@@ -418,21 +419,21 @@ export class SubscriberClient {
    *   Required. The name of the topic from which this subscription is receiving
    *   messages. Format is `projects/{project}/topics/{topic}`. The value of this
    *   field will be `_deleted-topic_` if the topic has been deleted.
-   * @param {google.pubsub.v1.PushConfig} request.pushConfig
-   *   If push delivery is used with this subscription, this field is
+   * @param {google.pubsub.v1.PushConfig} [request.pushConfig]
+   *   Optional. If push delivery is used with this subscription, this field is
    *   used to configure it.
-   * @param {google.pubsub.v1.BigQueryConfig} request.bigqueryConfig
-   *   If delivery to BigQuery is used with this subscription, this field is
-   *   used to configure it.
-   * @param {google.pubsub.v1.CloudStorageConfig} request.cloudStorageConfig
-   *   If delivery to Google Cloud Storage is used with this subscription, this
+   * @param {google.pubsub.v1.BigQueryConfig} [request.bigqueryConfig]
+   *   Optional. If delivery to BigQuery is used with this subscription, this
    *   field is used to configure it.
-   * @param {number} request.ackDeadlineSeconds
-   *   The approximate amount of time (on a best-effort basis) Pub/Sub waits for
-   *   the subscriber to acknowledge receipt before resending the message. In the
-   *   interval after the message is delivered and before it is acknowledged, it
-   *   is considered to be _outstanding_. During that time period, the
-   *   message will not be redelivered (on a best-effort basis).
+   * @param {google.pubsub.v1.CloudStorageConfig} [request.cloudStorageConfig]
+   *   Optional. If delivery to Google Cloud Storage is used with this
+   *   subscription, this field is used to configure it.
+   * @param {number} [request.ackDeadlineSeconds]
+   *   Optional. The approximate amount of time (on a best-effort basis) Pub/Sub
+   *   waits for the subscriber to acknowledge receipt before resending the
+   *   message. In the interval after the message is delivered and before it is
+   *   acknowledged, it is considered to be _outstanding_. During that time
+   *   period, the message will not be redelivered (on a best-effort basis).
    *
    *   For pull subscriptions, this value is used as the initial value for the ack
    *   deadline. To override this value for a given message, call
@@ -448,68 +449,68 @@ export class SubscriberClient {
    *
    *   If the subscriber never acknowledges the message, the Pub/Sub
    *   system will eventually redeliver the message.
-   * @param {boolean} request.retainAckedMessages
-   *   Indicates whether to retain acknowledged messages. If true, then
+   * @param {boolean} [request.retainAckedMessages]
+   *   Optional. Indicates whether to retain acknowledged messages. If true, then
    *   messages are not expunged from the subscription's backlog, even if they are
    *   acknowledged, until they fall out of the `message_retention_duration`
    *   window. This must be true if you would like to [`Seek` to a timestamp]
    *   (https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time) in
    *   the past to replay previously-acknowledged messages.
-   * @param {google.protobuf.Duration} request.messageRetentionDuration
-   *   How long to retain unacknowledged messages in the subscription's backlog,
-   *   from the moment a message is published.
-   *   If `retain_acked_messages` is true, then this also configures the retention
-   *   of acknowledged messages, and thus configures how far back in time a `Seek`
-   *   can be done. Defaults to 7 days. Cannot be more than 7 days or less than 10
-   *   minutes.
-   * @param {number[]} request.labels
-   *   See [Creating and managing
+   * @param {google.protobuf.Duration} [request.messageRetentionDuration]
+   *   Optional. How long to retain unacknowledged messages in the subscription's
+   *   backlog, from the moment a message is published. If `retain_acked_messages`
+   *   is true, then this also configures the retention of acknowledged messages,
+   *   and thus configures how far back in time a `Seek` can be done. Defaults to
+   *   7 days. Cannot be more than 7 days or less than 10 minutes.
+   * @param {number[]} [request.labels]
+   *   Optional. See [Creating and managing
    *   labels](https://cloud.google.com/pubsub/docs/labels).
-   * @param {boolean} request.enableMessageOrdering
-   *   If true, messages published with the same `ordering_key` in `PubsubMessage`
-   *   will be delivered to the subscribers in the order in which they
-   *   are received by the Pub/Sub system. Otherwise, they may be delivered in
-   *   any order.
-   * @param {google.pubsub.v1.ExpirationPolicy} request.expirationPolicy
-   *   A policy that specifies the conditions for this subscription's expiration.
-   *   A subscription is considered active as long as any connected subscriber is
-   *   successfully consuming messages from the subscription or is issuing
-   *   operations on the subscription. If `expiration_policy` is not set, a
-   *   *default policy* with `ttl` of 31 days will be used. The minimum allowed
+   * @param {boolean} [request.enableMessageOrdering]
+   *   Optional. If true, messages published with the same `ordering_key` in
+   *   `PubsubMessage` will be delivered to the subscribers in the order in which
+   *   they are received by the Pub/Sub system. Otherwise, they may be delivered
+   *   in any order.
+   * @param {google.pubsub.v1.ExpirationPolicy} [request.expirationPolicy]
+   *   Optional. A policy that specifies the conditions for this subscription's
+   *   expiration. A subscription is considered active as long as any connected
+   *   subscriber is successfully consuming messages from the subscription or is
+   *   issuing operations on the subscription. If `expiration_policy` is not set,
+   *   a *default policy* with `ttl` of 31 days will be used. The minimum allowed
    *   value for `expiration_policy.ttl` is 1 day. If `expiration_policy` is set,
    *   but `expiration_policy.ttl` is not set, the subscription never expires.
-   * @param {string} request.filter
-   *   An expression written in the Pub/Sub [filter
+   * @param {string} [request.filter]
+   *   Optional. An expression written in the Pub/Sub [filter
    *   language](https://cloud.google.com/pubsub/docs/filtering). If non-empty,
    *   then only `PubsubMessage`s whose `attributes` field matches the filter are
    *   delivered on this subscription. If empty, then no messages are filtered
    *   out.
-   * @param {google.pubsub.v1.DeadLetterPolicy} request.deadLetterPolicy
-   *   A policy that specifies the conditions for dead lettering messages in
-   *   this subscription. If dead_letter_policy is not set, dead lettering
-   *   is disabled.
+   * @param {google.pubsub.v1.DeadLetterPolicy} [request.deadLetterPolicy]
+   *   Optional. A policy that specifies the conditions for dead lettering
+   *   messages in this subscription. If dead_letter_policy is not set, dead
+   *   lettering is disabled.
    *
-   *   The Cloud Pub/Sub service account associated with this subscriptions's
+   *   The Pub/Sub service account associated with this subscriptions's
    *   parent project (i.e.,
    *   service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have
    *   permission to Acknowledge() messages on this subscription.
-   * @param {google.pubsub.v1.RetryPolicy} request.retryPolicy
-   *   A policy that specifies how Pub/Sub retries message delivery for this
-   *   subscription.
+   * @param {google.pubsub.v1.RetryPolicy} [request.retryPolicy]
+   *   Optional. A policy that specifies how Pub/Sub retries message delivery for
+   *   this subscription.
    *
    *   If not set, the default retry policy is applied. This generally implies
    *   that messages will be retried as soon as possible for healthy subscribers.
    *   RetryPolicy will be triggered on NACKs or acknowledgement deadline
    *   exceeded events for a given message.
-   * @param {boolean} request.detached
-   *   Indicates whether the subscription is detached from its topic. Detached
-   *   subscriptions don't receive messages from their topic and don't retain any
-   *   backlog. `Pull` and `StreamingPull` requests will return
+   * @param {boolean} [request.detached]
+   *   Optional. Indicates whether the subscription is detached from its topic.
+   *   Detached subscriptions don't receive messages from their topic and don't
+   *   retain any backlog. `Pull` and `StreamingPull` requests will return
    *   FAILED_PRECONDITION. If the subscription is a push subscription, pushes to
    *   the endpoint will not be made.
-   * @param {boolean} request.enableExactlyOnceDelivery
-   *   If true, Pub/Sub provides the following guarantees for the delivery of
-   *   a message with a given value of `message_id` on this subscription:
+   * @param {boolean} [request.enableExactlyOnceDelivery]
+   *   Optional. If true, Pub/Sub provides the following guarantees for the
+   *   delivery of a message with a given value of `message_id` on this
+   *   subscription:
    *
    *   * The message sent to a subscriber is guaranteed not to be resent
    *   before the message's acknowledgement deadline expires.
@@ -684,8 +685,9 @@ export class SubscriberClient {
     return this.innerApiCalls.getSubscription(request, options, callback);
   }
   /**
-   * Updates an existing subscription. Note that certain properties of a
-   * subscription, such as its topic, are not modifiable.
+   * Updates an existing subscription by updating the fields specified in the
+   * update mask. Note that certain properties of a subscription, such as its
+   * topic, are not modifiable.
    *
    * @param {Object} request
    *   The request object that will be sent.
@@ -874,7 +876,8 @@ export class SubscriberClient {
    *   delivery to another subscriber client. This typically results in an
    *   increase in the rate of message redeliveries (that is, duplicates).
    *   The minimum deadline you can specify is 0 seconds.
-   *   The maximum deadline you can specify is 600 seconds (10 minutes).
+   *   The maximum deadline you can specify in a single request is 600 seconds
+   *   (10 minutes).
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -1347,8 +1350,8 @@ export class SubscriberClient {
    *    (b) Any messages published to the subscription's topic following the
    *        successful completion of the CreateSnapshot request.
    *   Format is `projects/{project}/subscriptions/{sub}`.
-   * @param {number[]} request.labels
-   *   See [Creating and managing
+   * @param {number[]} [request.labels]
+   *   Optional. See [Creating and managing
    *   labels](https://cloud.google.com/pubsub/docs/labels).
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
@@ -1424,7 +1427,8 @@ export class SubscriberClient {
     return this.innerApiCalls.createSnapshot(request, options, callback);
   }
   /**
-   * Updates an existing snapshot. Snapshots are used in
+   * Updates an existing snapshot by updating the fields specified in the update
+   * mask. Snapshots are used in
    * [Seek](https://cloud.google.com/pubsub/docs/replay-overview) operations,
    * which allow you to manage message acknowledgments in bulk. That is, you can
    * set the acknowledgment state of messages in an existing subscription to the
@@ -1612,8 +1616,8 @@ export class SubscriberClient {
    *   The request object that will be sent.
    * @param {string} request.subscription
    *   Required. The subscription to affect.
-   * @param {google.protobuf.Timestamp} request.time
-   *   The time to seek to.
+   * @param {google.protobuf.Timestamp} [request.time]
+   *   Optional. The time to seek to.
    *   Messages retained in the subscription that were published before this
    *   time are marked as acknowledged, and messages retained in the
    *   subscription that were published after this time are marked as
@@ -1624,10 +1628,10 @@ export class SubscriberClient {
    *   window (or to a point before the system's notion of the subscription
    *   creation time), only retained messages will be marked as unacknowledged,
    *   and already-expunged messages will not be restored.
-   * @param {string} request.snapshot
-   *   The snapshot to seek to. The snapshot's topic must be the same as that of
-   *   the provided subscription.
-   *   Format is `projects/{project}/snapshots/{snap}`.
+   * @param {string} [request.snapshot]
+   *   Optional. The snapshot to seek to. The snapshot's topic must be the same
+   *   as that of the provided subscription. Format is
+   *   `projects/{project}/snapshots/{snap}`.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -1733,12 +1737,12 @@ export class SubscriberClient {
    * @param {string} request.project
    *   Required. The name of the project in which to list subscriptions.
    *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of subscriptions to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSubscriptionsResponse`; indicates that
-   *   this is a continuation of a prior `ListSubscriptions` call, and that the
-   *   system should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of subscriptions to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListSubscriptionsResponse`;
+   *   indicates that this is a continuation of a prior `ListSubscriptions` call,
+   *   and that the system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -1825,12 +1829,12 @@ export class SubscriberClient {
    * @param {string} request.project
    *   Required. The name of the project in which to list subscriptions.
    *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of subscriptions to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSubscriptionsResponse`; indicates that
-   *   this is a continuation of a prior `ListSubscriptions` call, and that the
-   *   system should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of subscriptions to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListSubscriptionsResponse`;
+   *   indicates that this is a continuation of a prior `ListSubscriptions` call,
+   *   and that the system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
@@ -1873,12 +1877,12 @@ export class SubscriberClient {
    * @param {string} request.project
    *   Required. The name of the project in which to list subscriptions.
    *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of subscriptions to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSubscriptionsResponse`; indicates that
-   *   this is a continuation of a prior `ListSubscriptions` call, and that the
-   *   system should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of subscriptions to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListSubscriptionsResponse`;
+   *   indicates that this is a continuation of a prior `ListSubscriptions` call,
+   *   and that the system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
@@ -1922,12 +1926,12 @@ export class SubscriberClient {
    * @param {string} request.project
    *   Required. The name of the project in which to list snapshots.
    *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshots to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSnapshotsResponse`; indicates that this
-   *   is a continuation of a prior `ListSnapshots` call, and that the system
-   *   should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of snapshots to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListSnapshotsResponse`; indicates
+   *   that this is a continuation of a prior `ListSnapshots` call, and that the
+   *   system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
@@ -2014,12 +2018,12 @@ export class SubscriberClient {
    * @param {string} request.project
    *   Required. The name of the project in which to list snapshots.
    *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshots to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSnapshotsResponse`; indicates that this
-   *   is a continuation of a prior `ListSnapshots` call, and that the system
-   *   should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of snapshots to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListSnapshotsResponse`; indicates
+   *   that this is a continuation of a prior `ListSnapshots` call, and that the
+   *   system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Stream}
@@ -2062,12 +2066,12 @@ export class SubscriberClient {
    * @param {string} request.project
    *   Required. The name of the project in which to list snapshots.
    *   Format is `projects/{project-id}`.
-   * @param {number} request.pageSize
-   *   Maximum number of snapshots to return.
-   * @param {string} request.pageToken
-   *   The value returned by the last `ListSnapshotsResponse`; indicates that this
-   *   is a continuation of a prior `ListSnapshots` call, and that the system
-   *   should return the next page of data.
+   * @param {number} [request.pageSize]
+   *   Optional. Maximum number of snapshots to return.
+   * @param {string} [request.pageToken]
+   *   Optional. The value returned by the last `ListSnapshotsResponse`; indicates
+   *   that this is a continuation of a prior `ListSnapshots` call, and that the
+   *   system should return the next page of data.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Object}
