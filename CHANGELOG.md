@@ -4,6 +4,18 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.3.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.2.0...v4.3.0) (2024-02-05)
+
+
+### Features
+
+* Trusted Private Cloud support, use the universeDomain parameter ([#1878](https://github.com/googleapis/nodejs-pubsub/issues/1878)) ([d89fd1d](https://github.com/googleapis/nodejs-pubsub/commit/d89fd1d90b352f0cc7a50a72c5fec4aab6660f8f))
+
+
+### Bug Fixes
+
+* Updated google-gax required for TPC ([#1882](https://github.com/googleapis/nodejs-pubsub/issues/1882)) ([1445856](https://github.com/googleapis/nodejs-pubsub/commit/144585699595b97f1a4cc28551e45fe23305f480))
+
 ## [4.2.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.1.1...v4.2.0) (2024-02-01)
 
 
