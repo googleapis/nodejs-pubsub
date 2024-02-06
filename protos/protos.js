@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -396,6 +396,7 @@
                      * @memberof google.pubsub.v1
                      * @interface IMessageStoragePolicy
                      * @property {Array.<string>|null} [allowedPersistenceRegions] MessageStoragePolicy allowedPersistenceRegions
+                     * @property {boolean|null} [enforceInTransit] MessageStoragePolicy enforceInTransit
                      */
     
                     /**
@@ -421,6 +422,14 @@
                      * @instance
                      */
                     MessageStoragePolicy.prototype.allowedPersistenceRegions = $util.emptyArray;
+    
+                    /**
+                     * MessageStoragePolicy enforceInTransit.
+                     * @member {boolean} enforceInTransit
+                     * @memberof google.pubsub.v1.MessageStoragePolicy
+                     * @instance
+                     */
+                    MessageStoragePolicy.prototype.enforceInTransit = false;
     
                     /**
                      * Creates a new MessageStoragePolicy instance using the specified properties.
@@ -449,6 +458,8 @@
                         if (message.allowedPersistenceRegions != null && message.allowedPersistenceRegions.length)
                             for (var i = 0; i < message.allowedPersistenceRegions.length; ++i)
                                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.allowedPersistenceRegions[i]);
+                        if (message.enforceInTransit != null && Object.hasOwnProperty.call(message, "enforceInTransit"))
+                            writer.uint32(/* id 2, wireType 0 =*/16).bool(message.enforceInTransit);
                         return writer;
                     };
     
@@ -487,6 +498,10 @@
                                     if (!(message.allowedPersistenceRegions && message.allowedPersistenceRegions.length))
                                         message.allowedPersistenceRegions = [];
                                     message.allowedPersistenceRegions.push(reader.string());
+                                    break;
+                                }
+                            case 2: {
+                                    message.enforceInTransit = reader.bool();
                                     break;
                                 }
                             default:
@@ -531,6 +546,9 @@
                                 if (!$util.isString(message.allowedPersistenceRegions[i]))
                                     return "allowedPersistenceRegions: string[] expected";
                         }
+                        if (message.enforceInTransit != null && message.hasOwnProperty("enforceInTransit"))
+                            if (typeof message.enforceInTransit !== "boolean")
+                                return "enforceInTransit: boolean expected";
                         return null;
                     };
     
@@ -553,6 +571,8 @@
                             for (var i = 0; i < object.allowedPersistenceRegions.length; ++i)
                                 message.allowedPersistenceRegions[i] = String(object.allowedPersistenceRegions[i]);
                         }
+                        if (object.enforceInTransit != null)
+                            message.enforceInTransit = Boolean(object.enforceInTransit);
                         return message;
                     };
     
@@ -571,11 +591,15 @@
                         var object = {};
                         if (options.arrays || options.defaults)
                             object.allowedPersistenceRegions = [];
+                        if (options.defaults)
+                            object.enforceInTransit = false;
                         if (message.allowedPersistenceRegions && message.allowedPersistenceRegions.length) {
                             object.allowedPersistenceRegions = [];
                             for (var j = 0; j < message.allowedPersistenceRegions.length; ++j)
                                 object.allowedPersistenceRegions[j] = message.allowedPersistenceRegions[j];
                         }
+                        if (message.enforceInTransit != null && message.hasOwnProperty("enforceInTransit"))
+                            object.enforceInTransit = message.enforceInTransit;
                         return object;
                     };
     
@@ -905,6 +929,590 @@
                     return SchemaSettings;
                 })();
     
+                v1.IngestionDataSourceSettings = (function() {
+    
+                    /**
+                     * Properties of an IngestionDataSourceSettings.
+                     * @memberof google.pubsub.v1
+                     * @interface IIngestionDataSourceSettings
+                     * @property {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null} [awsKinesis] IngestionDataSourceSettings awsKinesis
+                     */
+    
+                    /**
+                     * Constructs a new IngestionDataSourceSettings.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents an IngestionDataSourceSettings.
+                     * @implements IIngestionDataSourceSettings
+                     * @constructor
+                     * @param {google.pubsub.v1.IIngestionDataSourceSettings=} [properties] Properties to set
+                     */
+                    function IngestionDataSourceSettings(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * IngestionDataSourceSettings awsKinesis.
+                     * @member {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null|undefined} awsKinesis
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     */
+                    IngestionDataSourceSettings.prototype.awsKinesis = null;
+    
+                    // OneOf field names bound to virtual getters and setters
+                    var $oneOfFields;
+    
+                    /**
+                     * IngestionDataSourceSettings source.
+                     * @member {"awsKinesis"|undefined} source
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     */
+                    Object.defineProperty(IngestionDataSourceSettings.prototype, "source", {
+                        get: $util.oneOfGetter($oneOfFields = ["awsKinesis"]),
+                        set: $util.oneOfSetter($oneOfFields)
+                    });
+    
+                    /**
+                     * Creates a new IngestionDataSourceSettings instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionDataSourceSettings=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.IngestionDataSourceSettings} IngestionDataSourceSettings instance
+                     */
+                    IngestionDataSourceSettings.create = function create(properties) {
+                        return new IngestionDataSourceSettings(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified IngestionDataSourceSettings message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionDataSourceSettings} message IngestionDataSourceSettings message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    IngestionDataSourceSettings.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.awsKinesis != null && Object.hasOwnProperty.call(message, "awsKinesis"))
+                            $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.encode(message.awsKinesis, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified IngestionDataSourceSettings message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionDataSourceSettings} message IngestionDataSourceSettings message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    IngestionDataSourceSettings.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes an IngestionDataSourceSettings message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.IngestionDataSourceSettings} IngestionDataSourceSettings
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    IngestionDataSourceSettings.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1: {
+                                    message.awsKinesis = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes an IngestionDataSourceSettings message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.IngestionDataSourceSettings} IngestionDataSourceSettings
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    IngestionDataSourceSettings.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies an IngestionDataSourceSettings message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    IngestionDataSourceSettings.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        var properties = {};
+                        if (message.awsKinesis != null && message.hasOwnProperty("awsKinesis")) {
+                            properties.source = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.verify(message.awsKinesis);
+                                if (error)
+                                    return "awsKinesis." + error;
+                            }
+                        }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates an IngestionDataSourceSettings message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.IngestionDataSourceSettings} IngestionDataSourceSettings
+                     */
+                    IngestionDataSourceSettings.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.IngestionDataSourceSettings)
+                            return object;
+                        var message = new $root.google.pubsub.v1.IngestionDataSourceSettings();
+                        if (object.awsKinesis != null) {
+                            if (typeof object.awsKinesis !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionDataSourceSettings.awsKinesis: object expected");
+                            message.awsKinesis = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.fromObject(object.awsKinesis);
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from an IngestionDataSourceSettings message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {google.pubsub.v1.IngestionDataSourceSettings} message IngestionDataSourceSettings
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    IngestionDataSourceSettings.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (message.awsKinesis != null && message.hasOwnProperty("awsKinesis")) {
+                            object.awsKinesis = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.toObject(message.awsKinesis, options);
+                            if (options.oneofs)
+                                object.source = "awsKinesis";
+                        }
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this IngestionDataSourceSettings to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    IngestionDataSourceSettings.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * Gets the default type url for IngestionDataSourceSettings
+                     * @function getTypeUrl
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    IngestionDataSourceSettings.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/google.pubsub.v1.IngestionDataSourceSettings";
+                    };
+    
+                    IngestionDataSourceSettings.AwsKinesis = (function() {
+    
+                        /**
+                         * Properties of an AwsKinesis.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @interface IAwsKinesis
+                         * @property {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State|null} [state] AwsKinesis state
+                         * @property {string|null} [streamArn] AwsKinesis streamArn
+                         * @property {string|null} [consumerArn] AwsKinesis consumerArn
+                         * @property {string|null} [awsRoleArn] AwsKinesis awsRoleArn
+                         * @property {string|null} [gcpServiceAccount] AwsKinesis gcpServiceAccount
+                         */
+    
+                        /**
+                         * Constructs a new AwsKinesis.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @classdesc Represents an AwsKinesis.
+                         * @implements IAwsKinesis
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis=} [properties] Properties to set
+                         */
+                        function AwsKinesis(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AwsKinesis state.
+                         * @member {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State} state
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         */
+                        AwsKinesis.prototype.state = 0;
+    
+                        /**
+                         * AwsKinesis streamArn.
+                         * @member {string} streamArn
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         */
+                        AwsKinesis.prototype.streamArn = "";
+    
+                        /**
+                         * AwsKinesis consumerArn.
+                         * @member {string} consumerArn
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         */
+                        AwsKinesis.prototype.consumerArn = "";
+    
+                        /**
+                         * AwsKinesis awsRoleArn.
+                         * @member {string} awsRoleArn
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         */
+                        AwsKinesis.prototype.awsRoleArn = "";
+    
+                        /**
+                         * AwsKinesis gcpServiceAccount.
+                         * @member {string} gcpServiceAccount
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         */
+                        AwsKinesis.prototype.gcpServiceAccount = "";
+    
+                        /**
+                         * Creates a new AwsKinesis instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis} AwsKinesis instance
+                         */
+                        AwsKinesis.create = function create(properties) {
+                            return new AwsKinesis(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AwsKinesis message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis} message AwsKinesis message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsKinesis.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.state);
+                            if (message.streamArn != null && Object.hasOwnProperty.call(message, "streamArn"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.streamArn);
+                            if (message.consumerArn != null && Object.hasOwnProperty.call(message, "consumerArn"))
+                                writer.uint32(/* id 3, wireType 2 =*/26).string(message.consumerArn);
+                            if (message.awsRoleArn != null && Object.hasOwnProperty.call(message, "awsRoleArn"))
+                                writer.uint32(/* id 4, wireType 2 =*/34).string(message.awsRoleArn);
+                            if (message.gcpServiceAccount != null && Object.hasOwnProperty.call(message, "gcpServiceAccount"))
+                                writer.uint32(/* id 5, wireType 2 =*/42).string(message.gcpServiceAccount);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AwsKinesis message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis} message AwsKinesis message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsKinesis.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AwsKinesis message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis} AwsKinesis
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsKinesis.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.state = reader.int32();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.streamArn = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.consumerArn = reader.string();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.awsRoleArn = reader.string();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.gcpServiceAccount = reader.string();
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AwsKinesis message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis} AwsKinesis
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsKinesis.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AwsKinesis message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AwsKinesis.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                switch (message.state) {
+                                default:
+                                    return "state: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                case 5:
+                                    break;
+                                }
+                            if (message.streamArn != null && message.hasOwnProperty("streamArn"))
+                                if (!$util.isString(message.streamArn))
+                                    return "streamArn: string expected";
+                            if (message.consumerArn != null && message.hasOwnProperty("consumerArn"))
+                                if (!$util.isString(message.consumerArn))
+                                    return "consumerArn: string expected";
+                            if (message.awsRoleArn != null && message.hasOwnProperty("awsRoleArn"))
+                                if (!$util.isString(message.awsRoleArn))
+                                    return "awsRoleArn: string expected";
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                if (!$util.isString(message.gcpServiceAccount))
+                                    return "gcpServiceAccount: string expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AwsKinesis message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis} AwsKinesis
+                         */
+                        AwsKinesis.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis();
+                            switch (object.state) {
+                            default:
+                                if (typeof object.state === "number") {
+                                    message.state = object.state;
+                                    break;
+                                }
+                                break;
+                            case "STATE_UNSPECIFIED":
+                            case 0:
+                                message.state = 0;
+                                break;
+                            case "ACTIVE":
+                            case 1:
+                                message.state = 1;
+                                break;
+                            case "KINESIS_PERMISSION_DENIED":
+                            case 2:
+                                message.state = 2;
+                                break;
+                            case "PUBLISH_PERMISSION_DENIED":
+                            case 3:
+                                message.state = 3;
+                                break;
+                            case "STREAM_NOT_FOUND":
+                            case 4:
+                                message.state = 4;
+                                break;
+                            case "CONSUMER_NOT_FOUND":
+                            case 5:
+                                message.state = 5;
+                                break;
+                            }
+                            if (object.streamArn != null)
+                                message.streamArn = String(object.streamArn);
+                            if (object.consumerArn != null)
+                                message.consumerArn = String(object.consumerArn);
+                            if (object.awsRoleArn != null)
+                                message.awsRoleArn = String(object.awsRoleArn);
+                            if (object.gcpServiceAccount != null)
+                                message.gcpServiceAccount = String(object.gcpServiceAccount);
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AwsKinesis message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis} message AwsKinesis
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AwsKinesis.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                                object.streamArn = "";
+                                object.consumerArn = "";
+                                object.awsRoleArn = "";
+                                object.gcpServiceAccount = "";
+                            }
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                object.state = options.enums === String ? $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State[message.state] : message.state;
+                            if (message.streamArn != null && message.hasOwnProperty("streamArn"))
+                                object.streamArn = message.streamArn;
+                            if (message.consumerArn != null && message.hasOwnProperty("consumerArn"))
+                                object.consumerArn = message.consumerArn;
+                            if (message.awsRoleArn != null && message.hasOwnProperty("awsRoleArn"))
+                                object.awsRoleArn = message.awsRoleArn;
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                object.gcpServiceAccount = message.gcpServiceAccount;
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AwsKinesis to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AwsKinesis.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AwsKinesis
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AwsKinesis.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis";
+                        };
+    
+                        /**
+                         * State enum.
+                         * @name google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.State
+                         * @enum {number}
+                         * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                         * @property {number} ACTIVE=1 ACTIVE value
+                         * @property {number} KINESIS_PERMISSION_DENIED=2 KINESIS_PERMISSION_DENIED value
+                         * @property {number} PUBLISH_PERMISSION_DENIED=3 PUBLISH_PERMISSION_DENIED value
+                         * @property {number} STREAM_NOT_FOUND=4 STREAM_NOT_FOUND value
+                         * @property {number} CONSUMER_NOT_FOUND=5 CONSUMER_NOT_FOUND value
+                         */
+                        AwsKinesis.State = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                            values[valuesById[1] = "ACTIVE"] = 1;
+                            values[valuesById[2] = "KINESIS_PERMISSION_DENIED"] = 2;
+                            values[valuesById[3] = "PUBLISH_PERMISSION_DENIED"] = 3;
+                            values[valuesById[4] = "STREAM_NOT_FOUND"] = 4;
+                            values[valuesById[5] = "CONSUMER_NOT_FOUND"] = 5;
+                            return values;
+                        })();
+    
+                        return AwsKinesis;
+                    })();
+    
+                    return IngestionDataSourceSettings;
+                })();
+    
                 v1.Topic = (function() {
     
                     /**
@@ -918,6 +1526,8 @@
                      * @property {google.pubsub.v1.ISchemaSettings|null} [schemaSettings] Topic schemaSettings
                      * @property {boolean|null} [satisfiesPzs] Topic satisfiesPzs
                      * @property {google.protobuf.IDuration|null} [messageRetentionDuration] Topic messageRetentionDuration
+                     * @property {google.pubsub.v1.Topic.State|null} [state] Topic state
+                     * @property {google.pubsub.v1.IIngestionDataSourceSettings|null} [ingestionDataSourceSettings] Topic ingestionDataSourceSettings
                      */
     
                     /**
@@ -993,6 +1603,22 @@
                     Topic.prototype.messageRetentionDuration = null;
     
                     /**
+                     * Topic state.
+                     * @member {google.pubsub.v1.Topic.State} state
+                     * @memberof google.pubsub.v1.Topic
+                     * @instance
+                     */
+                    Topic.prototype.state = 0;
+    
+                    /**
+                     * Topic ingestionDataSourceSettings.
+                     * @member {google.pubsub.v1.IIngestionDataSourceSettings|null|undefined} ingestionDataSourceSettings
+                     * @memberof google.pubsub.v1.Topic
+                     * @instance
+                     */
+                    Topic.prototype.ingestionDataSourceSettings = null;
+    
+                    /**
                      * Creates a new Topic instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Topic
@@ -1031,6 +1657,10 @@
                             writer.uint32(/* id 7, wireType 0 =*/56).bool(message.satisfiesPzs);
                         if (message.messageRetentionDuration != null && Object.hasOwnProperty.call(message, "messageRetentionDuration"))
                             $root.google.protobuf.Duration.encode(message.messageRetentionDuration, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
+                        if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                            writer.uint32(/* id 9, wireType 0 =*/72).int32(message.state);
+                        if (message.ingestionDataSourceSettings != null && Object.hasOwnProperty.call(message, "ingestionDataSourceSettings"))
+                            $root.google.pubsub.v1.IngestionDataSourceSettings.encode(message.ingestionDataSourceSettings, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
                         return writer;
                     };
     
@@ -1112,6 +1742,14 @@
                                     message.messageRetentionDuration = $root.google.protobuf.Duration.decode(reader, reader.uint32());
                                     break;
                                 }
+                            case 9: {
+                                    message.state = reader.int32();
+                                    break;
+                                }
+                            case 10: {
+                                    message.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.decode(reader, reader.uint32());
+                                    break;
+                                }
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -1179,6 +1817,20 @@
                             if (error)
                                 return "messageRetentionDuration." + error;
                         }
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            switch (message.state) {
+                            default:
+                                return "state: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                                break;
+                            }
+                        if (message.ingestionDataSourceSettings != null && message.hasOwnProperty("ingestionDataSourceSettings")) {
+                            var error = $root.google.pubsub.v1.IngestionDataSourceSettings.verify(message.ingestionDataSourceSettings);
+                            if (error)
+                                return "ingestionDataSourceSettings." + error;
+                        }
                         return null;
                     };
     
@@ -1222,6 +1874,31 @@
                                 throw TypeError(".google.pubsub.v1.Topic.messageRetentionDuration: object expected");
                             message.messageRetentionDuration = $root.google.protobuf.Duration.fromObject(object.messageRetentionDuration);
                         }
+                        switch (object.state) {
+                        default:
+                            if (typeof object.state === "number") {
+                                message.state = object.state;
+                                break;
+                            }
+                            break;
+                        case "STATE_UNSPECIFIED":
+                        case 0:
+                            message.state = 0;
+                            break;
+                        case "ACTIVE":
+                        case 1:
+                            message.state = 1;
+                            break;
+                        case "INGESTION_RESOURCE_ERROR":
+                        case 2:
+                            message.state = 2;
+                            break;
+                        }
+                        if (object.ingestionDataSourceSettings != null) {
+                            if (typeof object.ingestionDataSourceSettings !== "object")
+                                throw TypeError(".google.pubsub.v1.Topic.ingestionDataSourceSettings: object expected");
+                            message.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.fromObject(object.ingestionDataSourceSettings);
+                        }
                         return message;
                     };
     
@@ -1247,6 +1924,8 @@
                             object.schemaSettings = null;
                             object.satisfiesPzs = false;
                             object.messageRetentionDuration = null;
+                            object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                            object.ingestionDataSourceSettings = null;
                         }
                         if (message.name != null && message.hasOwnProperty("name"))
                             object.name = message.name;
@@ -1266,6 +1945,10 @@
                             object.satisfiesPzs = message.satisfiesPzs;
                         if (message.messageRetentionDuration != null && message.hasOwnProperty("messageRetentionDuration"))
                             object.messageRetentionDuration = $root.google.protobuf.Duration.toObject(message.messageRetentionDuration, options);
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            object.state = options.enums === String ? $root.google.pubsub.v1.Topic.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.Topic.State[message.state] : message.state;
+                        if (message.ingestionDataSourceSettings != null && message.hasOwnProperty("ingestionDataSourceSettings"))
+                            object.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.toObject(message.ingestionDataSourceSettings, options);
                         return object;
                     };
     
@@ -1294,6 +1977,22 @@
                         }
                         return typeUrlPrefix + "/google.pubsub.v1.Topic";
                     };
+    
+                    /**
+                     * State enum.
+                     * @name google.pubsub.v1.Topic.State
+                     * @enum {number}
+                     * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                     * @property {number} ACTIVE=1 ACTIVE value
+                     * @property {number} INGESTION_RESOURCE_ERROR=2 INGESTION_RESOURCE_ERROR value
+                     */
+                    Topic.State = (function() {
+                        var valuesById = {}, values = Object.create(valuesById);
+                        values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                        values[valuesById[1] = "ACTIVE"] = 1;
+                        values[valuesById[2] = "INGESTION_RESOURCE_ERROR"] = 2;
+                        return values;
+                    })();
     
                     return Topic;
                 })();
@@ -7783,6 +8482,7 @@
                             case 2:
                             case 3:
                             case 4:
+                            case 5:
                                 break;
                             }
                         if (message.useTableSchema != null && message.hasOwnProperty("useTableSchema"))
@@ -7837,6 +8537,10 @@
                         case "SCHEMA_MISMATCH":
                         case 4:
                             message.state = 4;
+                            break;
+                        case "IN_TRANSIT_LOCATION_RESTRICTION":
+                        case 5:
+                            message.state = 5;
                             break;
                         }
                         if (object.useTableSchema != null)
@@ -7915,6 +8619,7 @@
                      * @property {number} PERMISSION_DENIED=2 PERMISSION_DENIED value
                      * @property {number} NOT_FOUND=3 NOT_FOUND value
                      * @property {number} SCHEMA_MISMATCH=4 SCHEMA_MISMATCH value
+                     * @property {number} IN_TRANSIT_LOCATION_RESTRICTION=5 IN_TRANSIT_LOCATION_RESTRICTION value
                      */
                     BigQueryConfig.State = (function() {
                         var valuesById = {}, values = Object.create(valuesById);
@@ -7923,6 +8628,7 @@
                         values[valuesById[2] = "PERMISSION_DENIED"] = 2;
                         values[valuesById[3] = "NOT_FOUND"] = 3;
                         values[valuesById[4] = "SCHEMA_MISMATCH"] = 4;
+                        values[valuesById[5] = "IN_TRANSIT_LOCATION_RESTRICTION"] = 5;
                         return values;
                     })();
     
@@ -8223,6 +8929,7 @@
                             case 1:
                             case 2:
                             case 3:
+                            case 4:
                                 break;
                             }
                         return null;
@@ -8292,6 +8999,10 @@
                         case "NOT_FOUND":
                         case 3:
                             message.state = 3;
+                            break;
+                        case "IN_TRANSIT_LOCATION_RESTRICTION":
+                        case 4:
+                            message.state = 4;
                             break;
                         }
                         return message;
@@ -8762,6 +9473,7 @@
                      * @property {number} ACTIVE=1 ACTIVE value
                      * @property {number} PERMISSION_DENIED=2 PERMISSION_DENIED value
                      * @property {number} NOT_FOUND=3 NOT_FOUND value
+                     * @property {number} IN_TRANSIT_LOCATION_RESTRICTION=4 IN_TRANSIT_LOCATION_RESTRICTION value
                      */
                     CloudStorageConfig.State = (function() {
                         var valuesById = {}, values = Object.create(valuesById);
@@ -8769,6 +9481,7 @@
                         values[valuesById[1] = "ACTIVE"] = 1;
                         values[valuesById[2] = "PERMISSION_DENIED"] = 2;
                         values[valuesById[3] = "NOT_FOUND"] = 3;
+                        values[valuesById[4] = "IN_TRANSIT_LOCATION_RESTRICTION"] = 4;
                         return values;
                     })();
     
@@ -23658,6 +24371,7 @@
                  * @interface IMethodSettings
                  * @property {string|null} [selector] MethodSettings selector
                  * @property {google.api.MethodSettings.ILongRunning|null} [longRunning] MethodSettings longRunning
+                 * @property {Array.<string>|null} [autoPopulatedFields] MethodSettings autoPopulatedFields
                  */
     
                 /**
@@ -23669,6 +24383,7 @@
                  * @param {google.api.IMethodSettings=} [properties] Properties to set
                  */
                 function MethodSettings(properties) {
+                    this.autoPopulatedFields = [];
                     if (properties)
                         for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
@@ -23690,6 +24405,14 @@
                  * @instance
                  */
                 MethodSettings.prototype.longRunning = null;
+    
+                /**
+                 * MethodSettings autoPopulatedFields.
+                 * @member {Array.<string>} autoPopulatedFields
+                 * @memberof google.api.MethodSettings
+                 * @instance
+                 */
+                MethodSettings.prototype.autoPopulatedFields = $util.emptyArray;
     
                 /**
                  * Creates a new MethodSettings instance using the specified properties.
@@ -23719,6 +24442,9 @@
                         writer.uint32(/* id 1, wireType 2 =*/10).string(message.selector);
                     if (message.longRunning != null && Object.hasOwnProperty.call(message, "longRunning"))
                         $root.google.api.MethodSettings.LongRunning.encode(message.longRunning, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                    if (message.autoPopulatedFields != null && message.autoPopulatedFields.length)
+                        for (var i = 0; i < message.autoPopulatedFields.length; ++i)
+                            writer.uint32(/* id 3, wireType 2 =*/26).string(message.autoPopulatedFields[i]);
                     return writer;
                 };
     
@@ -23759,6 +24485,12 @@
                             }
                         case 2: {
                                 message.longRunning = $root.google.api.MethodSettings.LongRunning.decode(reader, reader.uint32());
+                                break;
+                            }
+                        case 3: {
+                                if (!(message.autoPopulatedFields && message.autoPopulatedFields.length))
+                                    message.autoPopulatedFields = [];
+                                message.autoPopulatedFields.push(reader.string());
                                 break;
                             }
                         default:
@@ -23804,6 +24536,13 @@
                         if (error)
                             return "longRunning." + error;
                     }
+                    if (message.autoPopulatedFields != null && message.hasOwnProperty("autoPopulatedFields")) {
+                        if (!Array.isArray(message.autoPopulatedFields))
+                            return "autoPopulatedFields: array expected";
+                        for (var i = 0; i < message.autoPopulatedFields.length; ++i)
+                            if (!$util.isString(message.autoPopulatedFields[i]))
+                                return "autoPopulatedFields: string[] expected";
+                    }
                     return null;
                 };
     
@@ -23826,6 +24565,13 @@
                             throw TypeError(".google.api.MethodSettings.longRunning: object expected");
                         message.longRunning = $root.google.api.MethodSettings.LongRunning.fromObject(object.longRunning);
                     }
+                    if (object.autoPopulatedFields) {
+                        if (!Array.isArray(object.autoPopulatedFields))
+                            throw TypeError(".google.api.MethodSettings.autoPopulatedFields: array expected");
+                        message.autoPopulatedFields = [];
+                        for (var i = 0; i < object.autoPopulatedFields.length; ++i)
+                            message.autoPopulatedFields[i] = String(object.autoPopulatedFields[i]);
+                    }
                     return message;
                 };
     
@@ -23842,6 +24588,8 @@
                     if (!options)
                         options = {};
                     var object = {};
+                    if (options.arrays || options.defaults)
+                        object.autoPopulatedFields = [];
                     if (options.defaults) {
                         object.selector = "";
                         object.longRunning = null;
@@ -23850,6 +24598,11 @@
                         object.selector = message.selector;
                     if (message.longRunning != null && message.hasOwnProperty("longRunning"))
                         object.longRunning = $root.google.api.MethodSettings.LongRunning.toObject(message.longRunning, options);
+                    if (message.autoPopulatedFields && message.autoPopulatedFields.length) {
+                        object.autoPopulatedFields = [];
+                        for (var j = 0; j < message.autoPopulatedFields.length; ++j)
+                            object.autoPopulatedFields[j] = message.autoPopulatedFields[j];
+                    }
                     return object;
                 };
     
@@ -24250,6 +25003,7 @@
              * @property {number} IMMUTABLE=5 IMMUTABLE value
              * @property {number} UNORDERED_LIST=6 UNORDERED_LIST value
              * @property {number} NON_EMPTY_DEFAULT=7 NON_EMPTY_DEFAULT value
+             * @property {number} IDENTIFIER=8 IDENTIFIER value
              */
             api.FieldBehavior = (function() {
                 var valuesById = {}, values = Object.create(valuesById);
@@ -24261,6 +25015,7 @@
                 values[valuesById[5] = "IMMUTABLE"] = 5;
                 values[valuesById[6] = "UNORDERED_LIST"] = 6;
                 values[valuesById[7] = "NON_EMPTY_DEFAULT"] = 7;
+                values[valuesById[8] = "IDENTIFIER"] = 8;
                 return values;
             })();
     
@@ -25184,6 +25939,38 @@
                 return FileDescriptorSet;
             })();
     
+            /**
+             * Edition enum.
+             * @name google.protobuf.Edition
+             * @enum {number}
+             * @property {number} EDITION_UNKNOWN=0 EDITION_UNKNOWN value
+             * @property {number} EDITION_PROTO2=998 EDITION_PROTO2 value
+             * @property {number} EDITION_PROTO3=999 EDITION_PROTO3 value
+             * @property {number} EDITION_2023=1000 EDITION_2023 value
+             * @property {number} EDITION_2024=1001 EDITION_2024 value
+             * @property {number} EDITION_1_TEST_ONLY=1 EDITION_1_TEST_ONLY value
+             * @property {number} EDITION_2_TEST_ONLY=2 EDITION_2_TEST_ONLY value
+             * @property {number} EDITION_99997_TEST_ONLY=99997 EDITION_99997_TEST_ONLY value
+             * @property {number} EDITION_99998_TEST_ONLY=99998 EDITION_99998_TEST_ONLY value
+             * @property {number} EDITION_99999_TEST_ONLY=99999 EDITION_99999_TEST_ONLY value
+             * @property {number} EDITION_MAX=2147483647 EDITION_MAX value
+             */
+            protobuf.Edition = (function() {
+                var valuesById = {}, values = Object.create(valuesById);
+                values[valuesById[0] = "EDITION_UNKNOWN"] = 0;
+                values[valuesById[998] = "EDITION_PROTO2"] = 998;
+                values[valuesById[999] = "EDITION_PROTO3"] = 999;
+                values[valuesById[1000] = "EDITION_2023"] = 1000;
+                values[valuesById[1001] = "EDITION_2024"] = 1001;
+                values[valuesById[1] = "EDITION_1_TEST_ONLY"] = 1;
+                values[valuesById[2] = "EDITION_2_TEST_ONLY"] = 2;
+                values[valuesById[99997] = "EDITION_99997_TEST_ONLY"] = 99997;
+                values[valuesById[99998] = "EDITION_99998_TEST_ONLY"] = 99998;
+                values[valuesById[99999] = "EDITION_99999_TEST_ONLY"] = 99999;
+                values[valuesById[2147483647] = "EDITION_MAX"] = 2147483647;
+                return values;
+            })();
+    
             protobuf.FileDescriptorProto = (function() {
     
                 /**
@@ -25202,7 +25989,7 @@
                  * @property {google.protobuf.IFileOptions|null} [options] FileDescriptorProto options
                  * @property {google.protobuf.ISourceCodeInfo|null} [sourceCodeInfo] FileDescriptorProto sourceCodeInfo
                  * @property {string|null} [syntax] FileDescriptorProto syntax
-                 * @property {string|null} [edition] FileDescriptorProto edition
+                 * @property {google.protobuf.Edition|null} [edition] FileDescriptorProto edition
                  */
     
                 /**
@@ -25325,11 +26112,11 @@
     
                 /**
                  * FileDescriptorProto edition.
-                 * @member {string} edition
+                 * @member {google.protobuf.Edition} edition
                  * @memberof google.protobuf.FileDescriptorProto
                  * @instance
                  */
-                FileDescriptorProto.prototype.edition = "";
+                FileDescriptorProto.prototype.edition = 0;
     
                 /**
                  * Creates a new FileDescriptorProto instance using the specified properties.
@@ -25387,7 +26174,7 @@
                     if (message.syntax != null && Object.hasOwnProperty.call(message, "syntax"))
                         writer.uint32(/* id 12, wireType 2 =*/98).string(message.syntax);
                     if (message.edition != null && Object.hasOwnProperty.call(message, "edition"))
-                        writer.uint32(/* id 13, wireType 2 =*/106).string(message.edition);
+                        writer.uint32(/* id 14, wireType 0 =*/112).int32(message.edition);
                     return writer;
                 };
     
@@ -25494,8 +26281,8 @@
                                 message.syntax = reader.string();
                                 break;
                             }
-                        case 13: {
-                                message.edition = reader.string();
+                        case 14: {
+                                message.edition = reader.int32();
                                 break;
                             }
                         default:
@@ -25610,8 +26397,22 @@
                         if (!$util.isString(message.syntax))
                             return "syntax: string expected";
                     if (message.edition != null && message.hasOwnProperty("edition"))
-                        if (!$util.isString(message.edition))
-                            return "edition: string expected";
+                        switch (message.edition) {
+                        default:
+                            return "edition: enum value expected";
+                        case 0:
+                        case 998:
+                        case 999:
+                        case 1000:
+                        case 1001:
+                        case 1:
+                        case 2:
+                        case 99997:
+                        case 99998:
+                        case 99999:
+                        case 2147483647:
+                            break;
+                        }
                     return null;
                 };
     
@@ -25704,8 +26505,58 @@
                     }
                     if (object.syntax != null)
                         message.syntax = String(object.syntax);
-                    if (object.edition != null)
-                        message.edition = String(object.edition);
+                    switch (object.edition) {
+                    default:
+                        if (typeof object.edition === "number") {
+                            message.edition = object.edition;
+                            break;
+                        }
+                        break;
+                    case "EDITION_UNKNOWN":
+                    case 0:
+                        message.edition = 0;
+                        break;
+                    case "EDITION_PROTO2":
+                    case 998:
+                        message.edition = 998;
+                        break;
+                    case "EDITION_PROTO3":
+                    case 999:
+                        message.edition = 999;
+                        break;
+                    case "EDITION_2023":
+                    case 1000:
+                        message.edition = 1000;
+                        break;
+                    case "EDITION_2024":
+                    case 1001:
+                        message.edition = 1001;
+                        break;
+                    case "EDITION_1_TEST_ONLY":
+                    case 1:
+                        message.edition = 1;
+                        break;
+                    case "EDITION_2_TEST_ONLY":
+                    case 2:
+                        message.edition = 2;
+                        break;
+                    case "EDITION_99997_TEST_ONLY":
+                    case 99997:
+                        message.edition = 99997;
+                        break;
+                    case "EDITION_99998_TEST_ONLY":
+                    case 99998:
+                        message.edition = 99998;
+                        break;
+                    case "EDITION_99999_TEST_ONLY":
+                    case 99999:
+                        message.edition = 99999;
+                        break;
+                    case "EDITION_MAX":
+                    case 2147483647:
+                        message.edition = 2147483647;
+                        break;
+                    }
                     return message;
                 };
     
@@ -25737,7 +26588,7 @@
                         object.options = null;
                         object.sourceCodeInfo = null;
                         object.syntax = "";
-                        object.edition = "";
+                        object.edition = options.enums === String ? "EDITION_UNKNOWN" : 0;
                     }
                     if (message.name != null && message.hasOwnProperty("name"))
                         object.name = message.name;
@@ -25785,7 +26636,7 @@
                     if (message.syntax != null && message.hasOwnProperty("syntax"))
                         object.syntax = message.syntax;
                     if (message.edition != null && message.hasOwnProperty("edition"))
-                        object.edition = message.edition;
+                        object.edition = options.enums === String ? $root.google.protobuf.Edition[message.edition] === undefined ? message.edition : $root.google.protobuf.Edition[message.edition] : message.edition;
                     return object;
                 };
     
@@ -27824,8 +28675,8 @@
                         default:
                             return "label: enum value expected";
                         case 1:
-                        case 2:
                         case 3:
+                        case 2:
                             break;
                         }
                     if (message.type != null && message.hasOwnProperty("type"))
@@ -27905,13 +28756,13 @@
                     case 1:
                         message.label = 1;
                         break;
-                    case "LABEL_REQUIRED":
-                    case 2:
-                        message.label = 2;
-                        break;
                     case "LABEL_REPEATED":
                     case 3:
                         message.label = 3;
+                        break;
+                    case "LABEL_REQUIRED":
+                    case 2:
+                        message.label = 2;
                         break;
                     }
                     switch (object.type) {
@@ -28142,14 +28993,14 @@
                  * @name google.protobuf.FieldDescriptorProto.Label
                  * @enum {number}
                  * @property {number} LABEL_OPTIONAL=1 LABEL_OPTIONAL value
-                 * @property {number} LABEL_REQUIRED=2 LABEL_REQUIRED value
                  * @property {number} LABEL_REPEATED=3 LABEL_REPEATED value
+                 * @property {number} LABEL_REQUIRED=2 LABEL_REQUIRED value
                  */
                 FieldDescriptorProto.Label = (function() {
                     var valuesById = {}, values = Object.create(valuesById);
                     values[valuesById[1] = "LABEL_OPTIONAL"] = 1;
-                    values[valuesById[2] = "LABEL_REQUIRED"] = 2;
                     values[valuesById[3] = "LABEL_REPEATED"] = 3;
+                    values[valuesById[2] = "LABEL_REQUIRED"] = 2;
                     return values;
                 })();
     
@@ -29848,7 +30699,6 @@
                  * @property {boolean|null} [ccGenericServices] FileOptions ccGenericServices
                  * @property {boolean|null} [javaGenericServices] FileOptions javaGenericServices
                  * @property {boolean|null} [pyGenericServices] FileOptions pyGenericServices
-                 * @property {boolean|null} [phpGenericServices] FileOptions phpGenericServices
                  * @property {boolean|null} [deprecated] FileOptions deprecated
                  * @property {boolean|null} [ccEnableArenas] FileOptions ccEnableArenas
                  * @property {string|null} [objcClassPrefix] FileOptions objcClassPrefix
@@ -29959,14 +30809,6 @@
                  * @instance
                  */
                 FileOptions.prototype.pyGenericServices = false;
-    
-                /**
-                 * FileOptions phpGenericServices.
-                 * @member {boolean} phpGenericServices
-                 * @memberof google.protobuf.FileOptions
-                 * @instance
-                 */
-                FileOptions.prototype.phpGenericServices = false;
     
                 /**
                  * FileOptions deprecated.
@@ -30122,8 +30964,6 @@
                         writer.uint32(/* id 40, wireType 2 =*/322).string(message.phpClassPrefix);
                     if (message.phpNamespace != null && Object.hasOwnProperty.call(message, "phpNamespace"))
                         writer.uint32(/* id 41, wireType 2 =*/330).string(message.phpNamespace);
-                    if (message.phpGenericServices != null && Object.hasOwnProperty.call(message, "phpGenericServices"))
-                        writer.uint32(/* id 42, wireType 0 =*/336).bool(message.phpGenericServices);
                     if (message.phpMetadataNamespace != null && Object.hasOwnProperty.call(message, "phpMetadataNamespace"))
                         writer.uint32(/* id 44, wireType 2 =*/354).string(message.phpMetadataNamespace);
                     if (message.rubyPackage != null && Object.hasOwnProperty.call(message, "rubyPackage"))
@@ -30208,10 +31048,6 @@
                             }
                         case 18: {
                                 message.pyGenericServices = reader.bool();
-                                break;
-                            }
-                        case 42: {
-                                message.phpGenericServices = reader.bool();
                                 break;
                             }
                         case 23: {
@@ -30337,9 +31173,6 @@
                     if (message.pyGenericServices != null && message.hasOwnProperty("pyGenericServices"))
                         if (typeof message.pyGenericServices !== "boolean")
                             return "pyGenericServices: boolean expected";
-                    if (message.phpGenericServices != null && message.hasOwnProperty("phpGenericServices"))
-                        if (typeof message.phpGenericServices !== "boolean")
-                            return "phpGenericServices: boolean expected";
                     if (message.deprecated != null && message.hasOwnProperty("deprecated"))
                         if (typeof message.deprecated !== "boolean")
                             return "deprecated: boolean expected";
@@ -30443,8 +31276,6 @@
                         message.javaGenericServices = Boolean(object.javaGenericServices);
                     if (object.pyGenericServices != null)
                         message.pyGenericServices = Boolean(object.pyGenericServices);
-                    if (object.phpGenericServices != null)
-                        message.phpGenericServices = Boolean(object.phpGenericServices);
                     if (object.deprecated != null)
                         message.deprecated = Boolean(object.deprecated);
                     if (object.ccEnableArenas != null)
@@ -30526,7 +31357,6 @@
                         object.swiftPrefix = "";
                         object.phpClassPrefix = "";
                         object.phpNamespace = "";
-                        object.phpGenericServices = false;
                         object.phpMetadataNamespace = "";
                         object.rubyPackage = "";
                         object.features = null;
@@ -30565,8 +31395,6 @@
                         object.phpClassPrefix = message.phpClassPrefix;
                     if (message.phpNamespace != null && message.hasOwnProperty("phpNamespace"))
                         object.phpNamespace = message.phpNamespace;
-                    if (message.phpGenericServices != null && message.hasOwnProperty("phpGenericServices"))
-                        object.phpGenericServices = message.phpGenericServices;
                     if (message.phpMetadataNamespace != null && message.hasOwnProperty("phpMetadataNamespace"))
                         object.phpMetadataNamespace = message.phpMetadataNamespace;
                     if (message.rubyPackage != null && message.hasOwnProperty("rubyPackage"))
@@ -31501,6 +32329,7 @@
                             case 5:
                             case 6:
                             case 7:
+                            case 8:
                                 break;
                             }
                     }
@@ -31717,6 +32546,10 @@
                             case 7:
                                 message[".google.api.fieldBehavior"][i] = 7;
                                 break;
+                            case "IDENTIFIER":
+                            case 8:
+                                message[".google.api.fieldBehavior"][i] = 8;
+                                break;
                             }
                     }
                     if (object[".google.api.resourceReference"] != null) {
@@ -31914,7 +32747,7 @@
                      * Properties of an EditionDefault.
                      * @memberof google.protobuf.FieldOptions
                      * @interface IEditionDefault
-                     * @property {string|null} [edition] EditionDefault edition
+                     * @property {google.protobuf.Edition|null} [edition] EditionDefault edition
                      * @property {string|null} [value] EditionDefault value
                      */
     
@@ -31935,11 +32768,11 @@
     
                     /**
                      * EditionDefault edition.
-                     * @member {string} edition
+                     * @member {google.protobuf.Edition} edition
                      * @memberof google.protobuf.FieldOptions.EditionDefault
                      * @instance
                      */
-                    EditionDefault.prototype.edition = "";
+                    EditionDefault.prototype.edition = 0;
     
                     /**
                      * EditionDefault value.
@@ -31973,10 +32806,10 @@
                     EditionDefault.encode = function encode(message, writer) {
                         if (!writer)
                             writer = $Writer.create();
-                        if (message.edition != null && Object.hasOwnProperty.call(message, "edition"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.edition);
                         if (message.value != null && Object.hasOwnProperty.call(message, "value"))
                             writer.uint32(/* id 2, wireType 2 =*/18).string(message.value);
+                        if (message.edition != null && Object.hasOwnProperty.call(message, "edition"))
+                            writer.uint32(/* id 3, wireType 0 =*/24).int32(message.edition);
                         return writer;
                     };
     
@@ -32011,8 +32844,8 @@
                         while (reader.pos < end) {
                             var tag = reader.uint32();
                             switch (tag >>> 3) {
-                            case 1: {
-                                    message.edition = reader.string();
+                            case 3: {
+                                    message.edition = reader.int32();
                                     break;
                                 }
                             case 2: {
@@ -32055,8 +32888,22 @@
                         if (typeof message !== "object" || message === null)
                             return "object expected";
                         if (message.edition != null && message.hasOwnProperty("edition"))
-                            if (!$util.isString(message.edition))
-                                return "edition: string expected";
+                            switch (message.edition) {
+                            default:
+                                return "edition: enum value expected";
+                            case 0:
+                            case 998:
+                            case 999:
+                            case 1000:
+                            case 1001:
+                            case 1:
+                            case 2:
+                            case 99997:
+                            case 99998:
+                            case 99999:
+                            case 2147483647:
+                                break;
+                            }
                         if (message.value != null && message.hasOwnProperty("value"))
                             if (!$util.isString(message.value))
                                 return "value: string expected";
@@ -32075,8 +32922,58 @@
                         if (object instanceof $root.google.protobuf.FieldOptions.EditionDefault)
                             return object;
                         var message = new $root.google.protobuf.FieldOptions.EditionDefault();
-                        if (object.edition != null)
-                            message.edition = String(object.edition);
+                        switch (object.edition) {
+                        default:
+                            if (typeof object.edition === "number") {
+                                message.edition = object.edition;
+                                break;
+                            }
+                            break;
+                        case "EDITION_UNKNOWN":
+                        case 0:
+                            message.edition = 0;
+                            break;
+                        case "EDITION_PROTO2":
+                        case 998:
+                            message.edition = 998;
+                            break;
+                        case "EDITION_PROTO3":
+                        case 999:
+                            message.edition = 999;
+                            break;
+                        case "EDITION_2023":
+                        case 1000:
+                            message.edition = 1000;
+                            break;
+                        case "EDITION_2024":
+                        case 1001:
+                            message.edition = 1001;
+                            break;
+                        case "EDITION_1_TEST_ONLY":
+                        case 1:
+                            message.edition = 1;
+                            break;
+                        case "EDITION_2_TEST_ONLY":
+                        case 2:
+                            message.edition = 2;
+                            break;
+                        case "EDITION_99997_TEST_ONLY":
+                        case 99997:
+                            message.edition = 99997;
+                            break;
+                        case "EDITION_99998_TEST_ONLY":
+                        case 99998:
+                            message.edition = 99998;
+                            break;
+                        case "EDITION_99999_TEST_ONLY":
+                        case 99999:
+                            message.edition = 99999;
+                            break;
+                        case "EDITION_MAX":
+                        case 2147483647:
+                            message.edition = 2147483647;
+                            break;
+                        }
                         if (object.value != null)
                             message.value = String(object.value);
                         return message;
@@ -32096,13 +32993,13 @@
                             options = {};
                         var object = {};
                         if (options.defaults) {
-                            object.edition = "";
                             object.value = "";
+                            object.edition = options.enums === String ? "EDITION_UNKNOWN" : 0;
                         }
-                        if (message.edition != null && message.hasOwnProperty("edition"))
-                            object.edition = message.edition;
                         if (message.value != null && message.hasOwnProperty("value"))
                             object.value = message.value;
+                        if (message.edition != null && message.hasOwnProperty("edition"))
+                            object.edition = options.enums === String ? $root.google.protobuf.Edition[message.edition] === undefined ? message.edition : $root.google.protobuf.Edition[message.edition] : message.edition;
                         return object;
                     };
     
@@ -34382,10 +35279,9 @@
                  * @property {google.protobuf.FeatureSet.FieldPresence|null} [fieldPresence] FeatureSet fieldPresence
                  * @property {google.protobuf.FeatureSet.EnumType|null} [enumType] FeatureSet enumType
                  * @property {google.protobuf.FeatureSet.RepeatedFieldEncoding|null} [repeatedFieldEncoding] FeatureSet repeatedFieldEncoding
-                 * @property {google.protobuf.FeatureSet.StringFieldValidation|null} [stringFieldValidation] FeatureSet stringFieldValidation
+                 * @property {google.protobuf.FeatureSet.Utf8Validation|null} [utf8Validation] FeatureSet utf8Validation
                  * @property {google.protobuf.FeatureSet.MessageEncoding|null} [messageEncoding] FeatureSet messageEncoding
                  * @property {google.protobuf.FeatureSet.JsonFormat|null} [jsonFormat] FeatureSet jsonFormat
-                 * @property {google.protobuf.IFeatureSet|null} [rawFeatures] FeatureSet rawFeatures
                  */
     
                 /**
@@ -34428,12 +35324,12 @@
                 FeatureSet.prototype.repeatedFieldEncoding = 0;
     
                 /**
-                 * FeatureSet stringFieldValidation.
-                 * @member {google.protobuf.FeatureSet.StringFieldValidation} stringFieldValidation
+                 * FeatureSet utf8Validation.
+                 * @member {google.protobuf.FeatureSet.Utf8Validation} utf8Validation
                  * @memberof google.protobuf.FeatureSet
                  * @instance
                  */
-                FeatureSet.prototype.stringFieldValidation = 0;
+                FeatureSet.prototype.utf8Validation = 0;
     
                 /**
                  * FeatureSet messageEncoding.
@@ -34450,14 +35346,6 @@
                  * @instance
                  */
                 FeatureSet.prototype.jsonFormat = 0;
-    
-                /**
-                 * FeatureSet rawFeatures.
-                 * @member {google.protobuf.IFeatureSet|null|undefined} rawFeatures
-                 * @memberof google.protobuf.FeatureSet
-                 * @instance
-                 */
-                FeatureSet.prototype.rawFeatures = null;
     
                 /**
                  * Creates a new FeatureSet instance using the specified properties.
@@ -34489,14 +35377,12 @@
                         writer.uint32(/* id 2, wireType 0 =*/16).int32(message.enumType);
                     if (message.repeatedFieldEncoding != null && Object.hasOwnProperty.call(message, "repeatedFieldEncoding"))
                         writer.uint32(/* id 3, wireType 0 =*/24).int32(message.repeatedFieldEncoding);
-                    if (message.stringFieldValidation != null && Object.hasOwnProperty.call(message, "stringFieldValidation"))
-                        writer.uint32(/* id 4, wireType 0 =*/32).int32(message.stringFieldValidation);
+                    if (message.utf8Validation != null && Object.hasOwnProperty.call(message, "utf8Validation"))
+                        writer.uint32(/* id 4, wireType 0 =*/32).int32(message.utf8Validation);
                     if (message.messageEncoding != null && Object.hasOwnProperty.call(message, "messageEncoding"))
                         writer.uint32(/* id 5, wireType 0 =*/40).int32(message.messageEncoding);
                     if (message.jsonFormat != null && Object.hasOwnProperty.call(message, "jsonFormat"))
                         writer.uint32(/* id 6, wireType 0 =*/48).int32(message.jsonFormat);
-                    if (message.rawFeatures != null && Object.hasOwnProperty.call(message, "rawFeatures"))
-                        $root.google.protobuf.FeatureSet.encode(message.rawFeatures, writer.uint32(/* id 999, wireType 2 =*/7994).fork()).ldelim();
                     return writer;
                 };
     
@@ -34544,7 +35430,7 @@
                                 break;
                             }
                         case 4: {
-                                message.stringFieldValidation = reader.int32();
+                                message.utf8Validation = reader.int32();
                                 break;
                             }
                         case 5: {
@@ -34553,10 +35439,6 @@
                             }
                         case 6: {
                                 message.jsonFormat = reader.int32();
-                                break;
-                            }
-                        case 999: {
-                                message.rawFeatures = $root.google.protobuf.FeatureSet.decode(reader, reader.uint32());
                                 break;
                             }
                         default:
@@ -34622,12 +35504,11 @@
                         case 2:
                             break;
                         }
-                    if (message.stringFieldValidation != null && message.hasOwnProperty("stringFieldValidation"))
-                        switch (message.stringFieldValidation) {
+                    if (message.utf8Validation != null && message.hasOwnProperty("utf8Validation"))
+                        switch (message.utf8Validation) {
                         default:
-                            return "stringFieldValidation: enum value expected";
+                            return "utf8Validation: enum value expected";
                         case 0:
-                        case 1:
                         case 2:
                         case 3:
                             break;
@@ -34650,11 +35531,6 @@
                         case 2:
                             break;
                         }
-                    if (message.rawFeatures != null && message.hasOwnProperty("rawFeatures")) {
-                        var error = $root.google.protobuf.FeatureSet.verify(message.rawFeatures);
-                        if (error)
-                            return "rawFeatures." + error;
-                    }
                     return null;
                 };
     
@@ -34734,28 +35610,24 @@
                         message.repeatedFieldEncoding = 2;
                         break;
                     }
-                    switch (object.stringFieldValidation) {
+                    switch (object.utf8Validation) {
                     default:
-                        if (typeof object.stringFieldValidation === "number") {
-                            message.stringFieldValidation = object.stringFieldValidation;
+                        if (typeof object.utf8Validation === "number") {
+                            message.utf8Validation = object.utf8Validation;
                             break;
                         }
                         break;
-                    case "STRING_FIELD_VALIDATION_UNKNOWN":
+                    case "UTF8_VALIDATION_UNKNOWN":
                     case 0:
-                        message.stringFieldValidation = 0;
+                        message.utf8Validation = 0;
                         break;
-                    case "MANDATORY":
-                    case 1:
-                        message.stringFieldValidation = 1;
-                        break;
-                    case "HINT":
+                    case "VERIFY":
                     case 2:
-                        message.stringFieldValidation = 2;
+                        message.utf8Validation = 2;
                         break;
                     case "NONE":
                     case 3:
-                        message.stringFieldValidation = 3;
+                        message.utf8Validation = 3;
                         break;
                     }
                     switch (object.messageEncoding) {
@@ -34798,11 +35670,6 @@
                         message.jsonFormat = 2;
                         break;
                     }
-                    if (object.rawFeatures != null) {
-                        if (typeof object.rawFeatures !== "object")
-                            throw TypeError(".google.protobuf.FeatureSet.rawFeatures: object expected");
-                        message.rawFeatures = $root.google.protobuf.FeatureSet.fromObject(object.rawFeatures);
-                    }
                     return message;
                 };
     
@@ -34823,10 +35690,9 @@
                         object.fieldPresence = options.enums === String ? "FIELD_PRESENCE_UNKNOWN" : 0;
                         object.enumType = options.enums === String ? "ENUM_TYPE_UNKNOWN" : 0;
                         object.repeatedFieldEncoding = options.enums === String ? "REPEATED_FIELD_ENCODING_UNKNOWN" : 0;
-                        object.stringFieldValidation = options.enums === String ? "STRING_FIELD_VALIDATION_UNKNOWN" : 0;
+                        object.utf8Validation = options.enums === String ? "UTF8_VALIDATION_UNKNOWN" : 0;
                         object.messageEncoding = options.enums === String ? "MESSAGE_ENCODING_UNKNOWN" : 0;
                         object.jsonFormat = options.enums === String ? "JSON_FORMAT_UNKNOWN" : 0;
-                        object.rawFeatures = null;
                     }
                     if (message.fieldPresence != null && message.hasOwnProperty("fieldPresence"))
                         object.fieldPresence = options.enums === String ? $root.google.protobuf.FeatureSet.FieldPresence[message.fieldPresence] === undefined ? message.fieldPresence : $root.google.protobuf.FeatureSet.FieldPresence[message.fieldPresence] : message.fieldPresence;
@@ -34834,14 +35700,12 @@
                         object.enumType = options.enums === String ? $root.google.protobuf.FeatureSet.EnumType[message.enumType] === undefined ? message.enumType : $root.google.protobuf.FeatureSet.EnumType[message.enumType] : message.enumType;
                     if (message.repeatedFieldEncoding != null && message.hasOwnProperty("repeatedFieldEncoding"))
                         object.repeatedFieldEncoding = options.enums === String ? $root.google.protobuf.FeatureSet.RepeatedFieldEncoding[message.repeatedFieldEncoding] === undefined ? message.repeatedFieldEncoding : $root.google.protobuf.FeatureSet.RepeatedFieldEncoding[message.repeatedFieldEncoding] : message.repeatedFieldEncoding;
-                    if (message.stringFieldValidation != null && message.hasOwnProperty("stringFieldValidation"))
-                        object.stringFieldValidation = options.enums === String ? $root.google.protobuf.FeatureSet.StringFieldValidation[message.stringFieldValidation] === undefined ? message.stringFieldValidation : $root.google.protobuf.FeatureSet.StringFieldValidation[message.stringFieldValidation] : message.stringFieldValidation;
+                    if (message.utf8Validation != null && message.hasOwnProperty("utf8Validation"))
+                        object.utf8Validation = options.enums === String ? $root.google.protobuf.FeatureSet.Utf8Validation[message.utf8Validation] === undefined ? message.utf8Validation : $root.google.protobuf.FeatureSet.Utf8Validation[message.utf8Validation] : message.utf8Validation;
                     if (message.messageEncoding != null && message.hasOwnProperty("messageEncoding"))
                         object.messageEncoding = options.enums === String ? $root.google.protobuf.FeatureSet.MessageEncoding[message.messageEncoding] === undefined ? message.messageEncoding : $root.google.protobuf.FeatureSet.MessageEncoding[message.messageEncoding] : message.messageEncoding;
                     if (message.jsonFormat != null && message.hasOwnProperty("jsonFormat"))
                         object.jsonFormat = options.enums === String ? $root.google.protobuf.FeatureSet.JsonFormat[message.jsonFormat] === undefined ? message.jsonFormat : $root.google.protobuf.FeatureSet.JsonFormat[message.jsonFormat] : message.jsonFormat;
-                    if (message.rawFeatures != null && message.hasOwnProperty("rawFeatures"))
-                        object.rawFeatures = $root.google.protobuf.FeatureSet.toObject(message.rawFeatures, options);
                     return object;
                 };
     
@@ -34922,19 +35786,17 @@
                 })();
     
                 /**
-                 * StringFieldValidation enum.
-                 * @name google.protobuf.FeatureSet.StringFieldValidation
+                 * Utf8Validation enum.
+                 * @name google.protobuf.FeatureSet.Utf8Validation
                  * @enum {number}
-                 * @property {number} STRING_FIELD_VALIDATION_UNKNOWN=0 STRING_FIELD_VALIDATION_UNKNOWN value
-                 * @property {number} MANDATORY=1 MANDATORY value
-                 * @property {number} HINT=2 HINT value
+                 * @property {number} UTF8_VALIDATION_UNKNOWN=0 UTF8_VALIDATION_UNKNOWN value
+                 * @property {number} VERIFY=2 VERIFY value
                  * @property {number} NONE=3 NONE value
                  */
-                FeatureSet.StringFieldValidation = (function() {
+                FeatureSet.Utf8Validation = (function() {
                     var valuesById = {}, values = Object.create(valuesById);
-                    values[valuesById[0] = "STRING_FIELD_VALIDATION_UNKNOWN"] = 0;
-                    values[valuesById[1] = "MANDATORY"] = 1;
-                    values[valuesById[2] = "HINT"] = 2;
+                    values[valuesById[0] = "UTF8_VALIDATION_UNKNOWN"] = 0;
+                    values[valuesById[2] = "VERIFY"] = 2;
                     values[valuesById[3] = "NONE"] = 3;
                     return values;
                 })();
@@ -34972,6 +35834,702 @@
                 })();
     
                 return FeatureSet;
+            })();
+    
+            protobuf.FeatureSetDefaults = (function() {
+    
+                /**
+                 * Properties of a FeatureSetDefaults.
+                 * @memberof google.protobuf
+                 * @interface IFeatureSetDefaults
+                 * @property {Array.<google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault>|null} [defaults] FeatureSetDefaults defaults
+                 * @property {google.protobuf.Edition|null} [minimumEdition] FeatureSetDefaults minimumEdition
+                 * @property {google.protobuf.Edition|null} [maximumEdition] FeatureSetDefaults maximumEdition
+                 */
+    
+                /**
+                 * Constructs a new FeatureSetDefaults.
+                 * @memberof google.protobuf
+                 * @classdesc Represents a FeatureSetDefaults.
+                 * @implements IFeatureSetDefaults
+                 * @constructor
+                 * @param {google.protobuf.IFeatureSetDefaults=} [properties] Properties to set
+                 */
+                function FeatureSetDefaults(properties) {
+                    this.defaults = [];
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+    
+                /**
+                 * FeatureSetDefaults defaults.
+                 * @member {Array.<google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault>} defaults
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @instance
+                 */
+                FeatureSetDefaults.prototype.defaults = $util.emptyArray;
+    
+                /**
+                 * FeatureSetDefaults minimumEdition.
+                 * @member {google.protobuf.Edition} minimumEdition
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @instance
+                 */
+                FeatureSetDefaults.prototype.minimumEdition = 0;
+    
+                /**
+                 * FeatureSetDefaults maximumEdition.
+                 * @member {google.protobuf.Edition} maximumEdition
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @instance
+                 */
+                FeatureSetDefaults.prototype.maximumEdition = 0;
+    
+                /**
+                 * Creates a new FeatureSetDefaults instance using the specified properties.
+                 * @function create
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @static
+                 * @param {google.protobuf.IFeatureSetDefaults=} [properties] Properties to set
+                 * @returns {google.protobuf.FeatureSetDefaults} FeatureSetDefaults instance
+                 */
+                FeatureSetDefaults.create = function create(properties) {
+                    return new FeatureSetDefaults(properties);
+                };
+    
+                /**
+                 * Encodes the specified FeatureSetDefaults message. Does not implicitly {@link google.protobuf.FeatureSetDefaults.verify|verify} messages.
+                 * @function encode
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @static
+                 * @param {google.protobuf.IFeatureSetDefaults} message FeatureSetDefaults message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                FeatureSetDefaults.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.defaults != null && message.defaults.length)
+                        for (var i = 0; i < message.defaults.length; ++i)
+                            $root.google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault.encode(message.defaults[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                    if (message.minimumEdition != null && Object.hasOwnProperty.call(message, "minimumEdition"))
+                        writer.uint32(/* id 4, wireType 0 =*/32).int32(message.minimumEdition);
+                    if (message.maximumEdition != null && Object.hasOwnProperty.call(message, "maximumEdition"))
+                        writer.uint32(/* id 5, wireType 0 =*/40).int32(message.maximumEdition);
+                    return writer;
+                };
+    
+                /**
+                 * Encodes the specified FeatureSetDefaults message, length delimited. Does not implicitly {@link google.protobuf.FeatureSetDefaults.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @static
+                 * @param {google.protobuf.IFeatureSetDefaults} message FeatureSetDefaults message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                FeatureSetDefaults.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+    
+                /**
+                 * Decodes a FeatureSetDefaults message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {google.protobuf.FeatureSetDefaults} FeatureSetDefaults
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                FeatureSetDefaults.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FeatureSetDefaults();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1: {
+                                if (!(message.defaults && message.defaults.length))
+                                    message.defaults = [];
+                                message.defaults.push($root.google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault.decode(reader, reader.uint32()));
+                                break;
+                            }
+                        case 4: {
+                                message.minimumEdition = reader.int32();
+                                break;
+                            }
+                        case 5: {
+                                message.maximumEdition = reader.int32();
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+    
+                /**
+                 * Decodes a FeatureSetDefaults message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {google.protobuf.FeatureSetDefaults} FeatureSetDefaults
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                FeatureSetDefaults.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+    
+                /**
+                 * Verifies a FeatureSetDefaults message.
+                 * @function verify
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                FeatureSetDefaults.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.defaults != null && message.hasOwnProperty("defaults")) {
+                        if (!Array.isArray(message.defaults))
+                            return "defaults: array expected";
+                        for (var i = 0; i < message.defaults.length; ++i) {
+                            var error = $root.google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault.verify(message.defaults[i]);
+                            if (error)
+                                return "defaults." + error;
+                        }
+                    }
+                    if (message.minimumEdition != null && message.hasOwnProperty("minimumEdition"))
+                        switch (message.minimumEdition) {
+                        default:
+                            return "minimumEdition: enum value expected";
+                        case 0:
+                        case 998:
+                        case 999:
+                        case 1000:
+                        case 1001:
+                        case 1:
+                        case 2:
+                        case 99997:
+                        case 99998:
+                        case 99999:
+                        case 2147483647:
+                            break;
+                        }
+                    if (message.maximumEdition != null && message.hasOwnProperty("maximumEdition"))
+                        switch (message.maximumEdition) {
+                        default:
+                            return "maximumEdition: enum value expected";
+                        case 0:
+                        case 998:
+                        case 999:
+                        case 1000:
+                        case 1001:
+                        case 1:
+                        case 2:
+                        case 99997:
+                        case 99998:
+                        case 99999:
+                        case 2147483647:
+                            break;
+                        }
+                    return null;
+                };
+    
+                /**
+                 * Creates a FeatureSetDefaults message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {google.protobuf.FeatureSetDefaults} FeatureSetDefaults
+                 */
+                FeatureSetDefaults.fromObject = function fromObject(object) {
+                    if (object instanceof $root.google.protobuf.FeatureSetDefaults)
+                        return object;
+                    var message = new $root.google.protobuf.FeatureSetDefaults();
+                    if (object.defaults) {
+                        if (!Array.isArray(object.defaults))
+                            throw TypeError(".google.protobuf.FeatureSetDefaults.defaults: array expected");
+                        message.defaults = [];
+                        for (var i = 0; i < object.defaults.length; ++i) {
+                            if (typeof object.defaults[i] !== "object")
+                                throw TypeError(".google.protobuf.FeatureSetDefaults.defaults: object expected");
+                            message.defaults[i] = $root.google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault.fromObject(object.defaults[i]);
+                        }
+                    }
+                    switch (object.minimumEdition) {
+                    default:
+                        if (typeof object.minimumEdition === "number") {
+                            message.minimumEdition = object.minimumEdition;
+                            break;
+                        }
+                        break;
+                    case "EDITION_UNKNOWN":
+                    case 0:
+                        message.minimumEdition = 0;
+                        break;
+                    case "EDITION_PROTO2":
+                    case 998:
+                        message.minimumEdition = 998;
+                        break;
+                    case "EDITION_PROTO3":
+                    case 999:
+                        message.minimumEdition = 999;
+                        break;
+                    case "EDITION_2023":
+                    case 1000:
+                        message.minimumEdition = 1000;
+                        break;
+                    case "EDITION_2024":
+                    case 1001:
+                        message.minimumEdition = 1001;
+                        break;
+                    case "EDITION_1_TEST_ONLY":
+                    case 1:
+                        message.minimumEdition = 1;
+                        break;
+                    case "EDITION_2_TEST_ONLY":
+                    case 2:
+                        message.minimumEdition = 2;
+                        break;
+                    case "EDITION_99997_TEST_ONLY":
+                    case 99997:
+                        message.minimumEdition = 99997;
+                        break;
+                    case "EDITION_99998_TEST_ONLY":
+                    case 99998:
+                        message.minimumEdition = 99998;
+                        break;
+                    case "EDITION_99999_TEST_ONLY":
+                    case 99999:
+                        message.minimumEdition = 99999;
+                        break;
+                    case "EDITION_MAX":
+                    case 2147483647:
+                        message.minimumEdition = 2147483647;
+                        break;
+                    }
+                    switch (object.maximumEdition) {
+                    default:
+                        if (typeof object.maximumEdition === "number") {
+                            message.maximumEdition = object.maximumEdition;
+                            break;
+                        }
+                        break;
+                    case "EDITION_UNKNOWN":
+                    case 0:
+                        message.maximumEdition = 0;
+                        break;
+                    case "EDITION_PROTO2":
+                    case 998:
+                        message.maximumEdition = 998;
+                        break;
+                    case "EDITION_PROTO3":
+                    case 999:
+                        message.maximumEdition = 999;
+                        break;
+                    case "EDITION_2023":
+                    case 1000:
+                        message.maximumEdition = 1000;
+                        break;
+                    case "EDITION_2024":
+                    case 1001:
+                        message.maximumEdition = 1001;
+                        break;
+                    case "EDITION_1_TEST_ONLY":
+                    case 1:
+                        message.maximumEdition = 1;
+                        break;
+                    case "EDITION_2_TEST_ONLY":
+                    case 2:
+                        message.maximumEdition = 2;
+                        break;
+                    case "EDITION_99997_TEST_ONLY":
+                    case 99997:
+                        message.maximumEdition = 99997;
+                        break;
+                    case "EDITION_99998_TEST_ONLY":
+                    case 99998:
+                        message.maximumEdition = 99998;
+                        break;
+                    case "EDITION_99999_TEST_ONLY":
+                    case 99999:
+                        message.maximumEdition = 99999;
+                        break;
+                    case "EDITION_MAX":
+                    case 2147483647:
+                        message.maximumEdition = 2147483647;
+                        break;
+                    }
+                    return message;
+                };
+    
+                /**
+                 * Creates a plain object from a FeatureSetDefaults message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @static
+                 * @param {google.protobuf.FeatureSetDefaults} message FeatureSetDefaults
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                FeatureSetDefaults.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    var object = {};
+                    if (options.arrays || options.defaults)
+                        object.defaults = [];
+                    if (options.defaults) {
+                        object.minimumEdition = options.enums === String ? "EDITION_UNKNOWN" : 0;
+                        object.maximumEdition = options.enums === String ? "EDITION_UNKNOWN" : 0;
+                    }
+                    if (message.defaults && message.defaults.length) {
+                        object.defaults = [];
+                        for (var j = 0; j < message.defaults.length; ++j)
+                            object.defaults[j] = $root.google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault.toObject(message.defaults[j], options);
+                    }
+                    if (message.minimumEdition != null && message.hasOwnProperty("minimumEdition"))
+                        object.minimumEdition = options.enums === String ? $root.google.protobuf.Edition[message.minimumEdition] === undefined ? message.minimumEdition : $root.google.protobuf.Edition[message.minimumEdition] : message.minimumEdition;
+                    if (message.maximumEdition != null && message.hasOwnProperty("maximumEdition"))
+                        object.maximumEdition = options.enums === String ? $root.google.protobuf.Edition[message.maximumEdition] === undefined ? message.maximumEdition : $root.google.protobuf.Edition[message.maximumEdition] : message.maximumEdition;
+                    return object;
+                };
+    
+                /**
+                 * Converts this FeatureSetDefaults to JSON.
+                 * @function toJSON
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                FeatureSetDefaults.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+    
+                /**
+                 * Gets the default type url for FeatureSetDefaults
+                 * @function getTypeUrl
+                 * @memberof google.protobuf.FeatureSetDefaults
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                FeatureSetDefaults.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/google.protobuf.FeatureSetDefaults";
+                };
+    
+                FeatureSetDefaults.FeatureSetEditionDefault = (function() {
+    
+                    /**
+                     * Properties of a FeatureSetEditionDefault.
+                     * @memberof google.protobuf.FeatureSetDefaults
+                     * @interface IFeatureSetEditionDefault
+                     * @property {google.protobuf.Edition|null} [edition] FeatureSetEditionDefault edition
+                     * @property {google.protobuf.IFeatureSet|null} [features] FeatureSetEditionDefault features
+                     */
+    
+                    /**
+                     * Constructs a new FeatureSetEditionDefault.
+                     * @memberof google.protobuf.FeatureSetDefaults
+                     * @classdesc Represents a FeatureSetEditionDefault.
+                     * @implements IFeatureSetEditionDefault
+                     * @constructor
+                     * @param {google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault=} [properties] Properties to set
+                     */
+                    function FeatureSetEditionDefault(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * FeatureSetEditionDefault edition.
+                     * @member {google.protobuf.Edition} edition
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @instance
+                     */
+                    FeatureSetEditionDefault.prototype.edition = 0;
+    
+                    /**
+                     * FeatureSetEditionDefault features.
+                     * @member {google.protobuf.IFeatureSet|null|undefined} features
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @instance
+                     */
+                    FeatureSetEditionDefault.prototype.features = null;
+    
+                    /**
+                     * Creates a new FeatureSetEditionDefault instance using the specified properties.
+                     * @function create
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @static
+                     * @param {google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault=} [properties] Properties to set
+                     * @returns {google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault} FeatureSetEditionDefault instance
+                     */
+                    FeatureSetEditionDefault.create = function create(properties) {
+                        return new FeatureSetEditionDefault(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified FeatureSetEditionDefault message. Does not implicitly {@link google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @static
+                     * @param {google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault} message FeatureSetEditionDefault message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    FeatureSetEditionDefault.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.features != null && Object.hasOwnProperty.call(message, "features"))
+                            $root.google.protobuf.FeatureSet.encode(message.features, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        if (message.edition != null && Object.hasOwnProperty.call(message, "edition"))
+                            writer.uint32(/* id 3, wireType 0 =*/24).int32(message.edition);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified FeatureSetEditionDefault message, length delimited. Does not implicitly {@link google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @static
+                     * @param {google.protobuf.FeatureSetDefaults.IFeatureSetEditionDefault} message FeatureSetEditionDefault message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    FeatureSetEditionDefault.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a FeatureSetEditionDefault message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault} FeatureSetEditionDefault
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    FeatureSetEditionDefault.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 3: {
+                                    message.edition = reader.int32();
+                                    break;
+                                }
+                            case 2: {
+                                    message.features = $root.google.protobuf.FeatureSet.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a FeatureSetEditionDefault message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault} FeatureSetEditionDefault
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    FeatureSetEditionDefault.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a FeatureSetEditionDefault message.
+                     * @function verify
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    FeatureSetEditionDefault.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.edition != null && message.hasOwnProperty("edition"))
+                            switch (message.edition) {
+                            default:
+                                return "edition: enum value expected";
+                            case 0:
+                            case 998:
+                            case 999:
+                            case 1000:
+                            case 1001:
+                            case 1:
+                            case 2:
+                            case 99997:
+                            case 99998:
+                            case 99999:
+                            case 2147483647:
+                                break;
+                            }
+                        if (message.features != null && message.hasOwnProperty("features")) {
+                            var error = $root.google.protobuf.FeatureSet.verify(message.features);
+                            if (error)
+                                return "features." + error;
+                        }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a FeatureSetEditionDefault message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault} FeatureSetEditionDefault
+                     */
+                    FeatureSetEditionDefault.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault)
+                            return object;
+                        var message = new $root.google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault();
+                        switch (object.edition) {
+                        default:
+                            if (typeof object.edition === "number") {
+                                message.edition = object.edition;
+                                break;
+                            }
+                            break;
+                        case "EDITION_UNKNOWN":
+                        case 0:
+                            message.edition = 0;
+                            break;
+                        case "EDITION_PROTO2":
+                        case 998:
+                            message.edition = 998;
+                            break;
+                        case "EDITION_PROTO3":
+                        case 999:
+                            message.edition = 999;
+                            break;
+                        case "EDITION_2023":
+                        case 1000:
+                            message.edition = 1000;
+                            break;
+                        case "EDITION_2024":
+                        case 1001:
+                            message.edition = 1001;
+                            break;
+                        case "EDITION_1_TEST_ONLY":
+                        case 1:
+                            message.edition = 1;
+                            break;
+                        case "EDITION_2_TEST_ONLY":
+                        case 2:
+                            message.edition = 2;
+                            break;
+                        case "EDITION_99997_TEST_ONLY":
+                        case 99997:
+                            message.edition = 99997;
+                            break;
+                        case "EDITION_99998_TEST_ONLY":
+                        case 99998:
+                            message.edition = 99998;
+                            break;
+                        case "EDITION_99999_TEST_ONLY":
+                        case 99999:
+                            message.edition = 99999;
+                            break;
+                        case "EDITION_MAX":
+                        case 2147483647:
+                            message.edition = 2147483647;
+                            break;
+                        }
+                        if (object.features != null) {
+                            if (typeof object.features !== "object")
+                                throw TypeError(".google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault.features: object expected");
+                            message.features = $root.google.protobuf.FeatureSet.fromObject(object.features);
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a FeatureSetEditionDefault message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @static
+                     * @param {google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault} message FeatureSetEditionDefault
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    FeatureSetEditionDefault.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.features = null;
+                            object.edition = options.enums === String ? "EDITION_UNKNOWN" : 0;
+                        }
+                        if (message.features != null && message.hasOwnProperty("features"))
+                            object.features = $root.google.protobuf.FeatureSet.toObject(message.features, options);
+                        if (message.edition != null && message.hasOwnProperty("edition"))
+                            object.edition = options.enums === String ? $root.google.protobuf.Edition[message.edition] === undefined ? message.edition : $root.google.protobuf.Edition[message.edition] : message.edition;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this FeatureSetEditionDefault to JSON.
+                     * @function toJSON
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    FeatureSetEditionDefault.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * Gets the default type url for FeatureSetEditionDefault
+                     * @function getTypeUrl
+                     * @memberof google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    FeatureSetEditionDefault.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault";
+                    };
+    
+                    return FeatureSetEditionDefault;
+                })();
+    
+                return FeatureSetDefaults;
             })();
     
             protobuf.SourceCodeInfo = (function() {

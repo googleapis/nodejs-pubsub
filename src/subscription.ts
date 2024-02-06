@@ -161,7 +161,7 @@ export declare interface Subscription {
  * Upon the closing of the subscriber:
  * on(event: 'close', listener: Function): this;
  *
- * By default Subscription objects allow you to process 100 messages at the same
+ * By default Subscription objects allow you to process 1000 messages at the same
  * time. You can fine tune this value by adjusting the
  * `options.flowControl.maxMessages` option.
  *

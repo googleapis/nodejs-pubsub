@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -130,13 +130,65 @@ function stubAsyncIterationCall<ResponseType>(
 describe('v1.PublisherClient', () => {
   describe('Common methods', () => {
     it('has servicePath', () => {
-      const servicePath = publisherModule.v1.PublisherClient.servicePath;
-      assert(servicePath);
+      const client = new publisherModule.v1.PublisherClient();
+      const servicePath = client.servicePath;
+      assert.strictEqual(servicePath, 'pubsub.googleapis.com');
     });
 
     it('has apiEndpoint', () => {
-      const apiEndpoint = publisherModule.v1.PublisherClient.apiEndpoint;
-      assert(apiEndpoint);
+      const client = new publisherModule.v1.PublisherClient();
+      const apiEndpoint = client.apiEndpoint;
+      assert.strictEqual(apiEndpoint, 'pubsub.googleapis.com');
+    });
+
+    it('has universeDomain', () => {
+      const client = new publisherModule.v1.PublisherClient();
+      const universeDomain = client.universeDomain;
+      assert.strictEqual(universeDomain, 'googleapis.com');
+    });
+
+    if (
+      typeof process !== 'undefined' &&
+      typeof process.emitWarning === 'function'
+    ) {
+      it('throws DeprecationWarning if static servicePath is used', () => {
+        const stub = sinon.stub(process, 'emitWarning');
+        const servicePath = publisherModule.v1.PublisherClient.servicePath;
+        assert.strictEqual(servicePath, 'pubsub.googleapis.com');
+        assert(stub.called);
+        stub.restore();
+      });
+
+      it('throws DeprecationWarning if static apiEndpoint is used', () => {
+        const stub = sinon.stub(process, 'emitWarning');
+        const apiEndpoint = publisherModule.v1.PublisherClient.apiEndpoint;
+        assert.strictEqual(apiEndpoint, 'pubsub.googleapis.com');
+        assert(stub.called);
+        stub.restore();
+      });
+    }
+    it('sets servicePath according to universe domain camelCase', () => {
+      const client = new publisherModule.v1.PublisherClient({
+        universeDomain: 'example.com',
+      });
+      const servicePath = client.servicePath;
+      assert.strictEqual(servicePath, 'pubsub.example.com');
+    });
+
+    it('sets servicePath according to universe domain snakeCase', () => {
+      const client = new publisherModule.v1.PublisherClient({
+        universe_domain: 'example.com',
+      });
+      const servicePath = client.servicePath;
+      assert.strictEqual(servicePath, 'pubsub.example.com');
+    });
+    it('does not allow setting both universeDomain and universe_domain', () => {
+      assert.throws(() => {
+        new publisherModule.v1.PublisherClient({
+          universe_domain: 'example.com',
+          universeDomain: 'example.net',
+        });
+      });
     });
 
     it('has port', () => {

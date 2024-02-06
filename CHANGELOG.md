@@ -4,6 +4,40 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.3.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.2.0...v4.3.0) (2024-02-05)
+
+
+### Features
+
+* Trusted Private Cloud support, use the universeDomain parameter ([#1878](https://github.com/googleapis/nodejs-pubsub/issues/1878)) ([d89fd1d](https://github.com/googleapis/nodejs-pubsub/commit/d89fd1d90b352f0cc7a50a72c5fec4aab6660f8f))
+
+
+### Bug Fixes
+
+* Updated google-gax required for TPC ([#1882](https://github.com/googleapis/nodejs-pubsub/issues/1882)) ([1445856](https://github.com/googleapis/nodejs-pubsub/commit/144585699595b97f1a4cc28551e45fe23305f480))
+
+## [4.2.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.1.1...v4.2.0) (2024-02-01)
+
+
+### Features
+
+* Add enforce_in_transit fields and optional annotations ([#1873](https://github.com/googleapis/nodejs-pubsub/issues/1873)) ([09fc424](https://github.com/googleapis/nodejs-pubsub/commit/09fc4241c8782d2f60c1a78dda316628eca5f751))
+* Add schema revision samples ([#1870](https://github.com/googleapis/nodejs-pubsub/issues/1870)) ([044e149](https://github.com/googleapis/nodejs-pubsub/commit/044e1494d82fd64010f7c6f872982d659e753499))
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.20.0 ([#1871](https://github.com/googleapis/nodejs-pubsub/issues/1871)) ([2ee0dba](https://github.com/googleapis/nodejs-pubsub/commit/2ee0dba67e6d66d9a678796de6172bcafd28796b))
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.21.0 ([#1876](https://github.com/googleapis/nodejs-pubsub/issues/1876)) ([0fe61a9](https://github.com/googleapis/nodejs-pubsub/commit/0fe61a95b3bfc21bd1a5176c7fbd7f822ece5a5c))
+
+## [4.1.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.1.0...v4.1.1) (2024-01-05)
+
+
+### Bug Fixes
+
+* Correct long audio synthesis HTTP binding ([#1867](https://github.com/googleapis/nodejs-pubsub/issues/1867)) ([65940a4](https://github.com/googleapis/nodejs-pubsub/commit/65940a40fe8f2301690d26f769571a198f747dd3))
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.19.0 ([#1862](https://github.com/googleapis/nodejs-pubsub/issues/1862)) ([92259f5](https://github.com/googleapis/nodejs-pubsub/commit/92259f5bffee05036f1746990b021299ea3ea4e7))
+
 ## [4.1.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.0.7...v4.1.0) (2023-12-04)
 
 

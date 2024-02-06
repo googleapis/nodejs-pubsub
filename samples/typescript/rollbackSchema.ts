@@ -1,4 +1,4 @@
-// Copyright 2019-2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,24 +13,24 @@
 // limitations under the License.
 
 /**
- * This sample demonstrates how to create subscriptions with the
- * Google Cloud Pub/Sub API.
+ * This application demonstrates how to perform basic operations on
+ * schemas with the Google Cloud Pub/Sub API.
  *
  * For more information, see the README.md under /pubsub and the documentation
  * at https://cloud.google.com/pubsub/docs.
  */
 
 // sample-metadata:
-//   title: Create Subscription
-//   description: Creates a new subscription.
-//   usage: node createSubscription.js <topic-name-or-id> <subscription-name-or-id>
+//   title: Rollback a Schema
+//   description: Rolls back a schema on a project
+//   usage: node rollbackSchema.js <schema-name> <revision-id>
 
-// [START pubsub_create_pull_subscription]
+// [START pubsub_rollback_schema]
 /**
  * TODO(developer): Uncomment these variables before running the sample.
  */
-// const topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID';
-// const subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID';
+// const schemaNameOrId = 'YOUR_SCHEMA_NAME_OR_ID';
+// const revisionId = 'YOUR_REVISION_ID';
 
 // Imports the Google Cloud client library
 import {PubSub} from '@google-cloud/pubsub';
@@ -38,23 +38,27 @@ import {PubSub} from '@google-cloud/pubsub';
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function createSubscription(
-  topicNameOrId: string,
-  subscriptionNameOrId: string
-) {
-  // Creates a new subscription
-  await pubSubClient
-    .topic(topicNameOrId)
-    .createSubscription(subscriptionNameOrId);
-  console.log(`Subscription ${subscriptionNameOrId} created.`);
+async function rollbackSchema(schemaNameOrId: string, revisionId: string) {
+  // Get the fully qualified schema name.
+  const schema = pubSubClient.schema(schemaNameOrId);
+  const name = await schema.getName();
+
+  // Use the gapic client to roll back the schema revision.
+  const schemaClient = await pubSubClient.getSchemaClient();
+  await schemaClient.rollbackSchema({
+    name,
+    revisionId,
+  });
+
+  console.log(`Schema ${name} revision ${revisionId} rolled back.`);
 }
-// [END pubsub_create_pull_subscription]
+// [END pubsub_rollback_schema]
 
 function main(
-  topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
-  subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID'
+  schemaNameOrId = 'YOUR_SCHEMA_NAME_OR_ID',
+  revisionId = 'YOUR_REVISION_ID'
 ) {
-  createSubscription(topicNameOrId, subscriptionNameOrId).catch(err => {
+  rollbackSchema(schemaNameOrId, revisionId).catch(err => {
     console.error(err.message);
     process.exitCode = 1;
   });

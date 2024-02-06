@@ -401,7 +401,7 @@ export class PubSub {
       },
     };
 
-    const client = await this.getSchemaClient_();
+    const client = await this.getSchemaClient();
     await client.createSchema(request, gaxOpts);
     return new Schema(this, schemaName);
   }
@@ -848,7 +848,7 @@ export class PubSub {
     view: SchemaView = SchemaViews.Basic,
     options?: CallOptions
   ): AsyncIterable<google.pubsub.v1.ISchema> {
-    const client = await this.getSchemaClient_();
+    const client = await this.getSchemaClient();
     const query = {
       parent: this.name,
       view,
@@ -1225,10 +1225,12 @@ export class PubSub {
   }
 
   /**
-   * Gets a schema client, creating one if needed.
-   * @private
+   * Gets a schema client, creating one if needed. This is a shortcut for
+   * `new v1.SchemaServiceClient(await pubsub.getClientConfig())`.
+   *
+   * @returns {Promise<SchemaServiceClient>}
    */
-  async getSchemaClient_(): Promise<SchemaServiceClient> {
+  async getSchemaClient(): Promise<SchemaServiceClient> {
     if (!this.schemaClient) {
       const options = await this.getClientConfig();
       this.schemaClient = new v1.SchemaServiceClient(options);
@@ -1457,7 +1459,7 @@ export class PubSub {
    * @returns {Promise<void>}
    */
   async validateSchema(schema: ISchema, gaxOpts?: CallOptions): Promise<void> {
-    const client = await this.getSchemaClient_();
+    const client = await this.getSchemaClient();
     await client.validateSchema(
       {
         parent: this.name,
