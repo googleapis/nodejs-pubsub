@@ -859,7 +859,7 @@ describe('PubSub', () => {
 
     it('should allow overriding fake cred mode (on)', () => {
       pubsub!.options!.apiEndpoint = 'something.googleapis.com';
-      pubsub!.options!.useFakeCredentials = true;
+      pubsub!.options!.emulatorMode = true;
       pubsub.determineBaseUrl_?.();
 
       assert.strictEqual(pubsub.options!.sslCreds, fakeCreds);
@@ -872,7 +872,7 @@ describe('PubSub', () => {
 
       setHost(defaultBaseUrl_);
       pubsub!.options!.apiEndpoint = testingUrl;
-      pubsub!.options!.useFakeCredentials = false;
+      pubsub!.options!.emulatorMode = false;
       pubsub.determineBaseUrl_?.();
 
       assert.strictEqual(pubsub.options?.servicePath, 'localhost');
