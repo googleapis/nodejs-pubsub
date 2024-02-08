@@ -129,12 +129,6 @@ function stubAsyncIterationCall<ResponseType>(
 
 describe('v1.PublisherClient', () => {
   describe('Common methods', () => {
-    it('has servicePath', () => {
-      const client = new publisherModule.v1.PublisherClient();
-      const servicePath = client.servicePath;
-      assert.strictEqual(servicePath, 'pubsub.googleapis.com');
-    });
-
     it('has apiEndpoint', () => {
       const client = new publisherModule.v1.PublisherClient();
       const apiEndpoint = client.apiEndpoint;
@@ -167,19 +161,19 @@ describe('v1.PublisherClient', () => {
         stub.restore();
       });
     }
-    it('sets servicePath according to universe domain camelCase', () => {
+    it('sets apiEndpoint according to universe domain camelCase', () => {
       const client = new publisherModule.v1.PublisherClient({
         universeDomain: 'example.com',
       });
-      const servicePath = client.servicePath;
+      const servicePath = client.apiEndpoint;
       assert.strictEqual(servicePath, 'pubsub.example.com');
     });
 
-    it('sets servicePath according to universe domain snakeCase', () => {
+    it('sets apiEndpoint according to universe domain snakeCase', () => {
       const client = new publisherModule.v1.PublisherClient({
         universe_domain: 'example.com',
       });
-      const servicePath = client.servicePath;
+      const servicePath = client.apiEndpoint;
       assert.strictEqual(servicePath, 'pubsub.example.com');
     });
     it('does not allow setting both universeDomain and universe_domain', () => {
