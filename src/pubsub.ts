@@ -80,7 +80,7 @@ export interface ClientConfig extends gax.GrpcClientOptions {
    * try the library out without needing a cert.
    *
    * Also notably, if a TPC universeDomain is set, then this will be counted
-   * as !isEmulator for the purposes of the heuristics. If you want emulator
+   * as !emulatorMode for the purposes of the heuristics. If you want emulator
    * mode but with a TPC universe domain set, set this to true as well.
    */
   emulatorMode?: boolean;
