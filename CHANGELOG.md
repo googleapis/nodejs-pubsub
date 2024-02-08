@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.3.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.0...v4.3.1) (2024-02-08)
+
+
+### Bug Fixes
+
+* Add option to manually control emulator auth handling, and fix heuristics for TPC ([#1861](https://github.com/googleapis/nodejs-pubsub/issues/1861)) ([761cdc8](https://github.com/googleapis/nodejs-pubsub/commit/761cdc898c69715e6775d2f5913ead1fca2def02))
+
 ## [4.3.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.2.0...v4.3.0) (2024-02-05)
 
 
