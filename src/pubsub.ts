@@ -70,6 +70,21 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 export interface ClientConfig extends gax.GrpcClientOptions {
   apiEndpoint?: string;
+
+  /**
+   * Configures the emulator mode behaviour:
+   * - If false, disable emulator mode always
+   * - If true, enable emulator mode always
+   * - If unset, use heuristics to decide
+   * Emulator mode notably sets insecure SSL authentication so that you can
+   * try the library out without needing a cert.
+   *
+   * Also notably, if a TPC universeDomain is set, then this will be counted
+   * as !emulatorMode for the purposes of the heuristics. If you want emulator
+   * mode but with a TPC universe domain set, set this to true as well.
+   */
+  emulatorMode?: boolean;
+
   servicePath?: string;
   port?: string | number;
   sslCreds?: gax.grpc.ChannelCredentials;
@@ -798,9 +813,16 @@ export class PubSub {
     // If this looks like a GCP URL of some kind, don't go into emulator
     // mode. Otherwise, supply a fake SSL provider so a real cert isn't
     // required for running the emulator.
+    //
+    // Note that users can provide their own URL here, especially with
+    // TPC, so the emulatorMode flag lets them override this behaviour.
     const officialUrlMatch =
-      this.options.servicePath!.endsWith('.googleapis.com');
-    if (!officialUrlMatch) {
+      this.options.servicePath!.endsWith('.googleapis.com') ||
+      this.options.universeDomain;
+    if (
+      (!officialUrlMatch && this.options.emulatorMode !== false) ||
+      this.options.emulatorMode === true
+    ) {
       const grpcInstance = this.options.grpc || gax.grpc;
       this.options.sslCreds = grpcInstance.credentials.createInsecure();
       this.isEmulator = true;
