@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.3.2](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.1...v4.3.2) (2024-02-13)
+
+
+### Bug Fixes
+
+* Update minimum google-gax versions for auth fixes ([#1888](https://github.com/googleapis/nodejs-pubsub/issues/1888)) ([08acade](https://github.com/googleapis/nodejs-pubsub/commit/08acadee042c6a3b85344575d5d0be09ae6e4202))
+
 ## [4.3.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.0...v4.3.1) (2024-02-08)
 
 
