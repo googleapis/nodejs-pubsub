@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.3.3](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.2...v4.3.3) (2024-03-03)
+
+
+### Bug Fixes
+
+* Add client library version to headers ([#1891](https://github.com/googleapis/nodejs-pubsub/issues/1891)) ([6b59195](https://github.com/googleapis/nodejs-pubsub/commit/6b59195aed8b6c6576e50512aeca9123ad0cc016))
+
 ## [4.3.2](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.1...v4.3.2) (2024-02-13)
 
 
