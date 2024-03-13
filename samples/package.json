@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@google-cloud/opentelemetry-cloud-trace-exporter": "^2.0.0",
-    "@google-cloud/pubsub": "^4.3.2",
+    "@google-cloud/pubsub": "^4.3.3",
     "@opentelemetry/api": "^1.6.0",
     "@opentelemetry/resources": "^1.17.0",
     "@opentelemetry/sdk-trace-base": "^1.17.0",
