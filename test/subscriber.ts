@@ -58,9 +58,11 @@ class FakePubSub {
   }
 }
 
+const projectId = uuid.v4();
+const subId = uuid.v4();
+
 class FakeSubscription {
-  name = uuid.v4();
-  projectId = uuid.v4();
+  name = `projects/${projectId}/subscriptions/${subId}`;
   pubsub = new FakePubSub();
 }
 
@@ -195,9 +197,15 @@ describe('Subscriber', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     fakeProjectify = {
-      replaceProjectIdToken: sandbox.stub().callsFake((name, projectId) => {
-        return `projects/${projectId}/name/${name}`;
-      }),
+      replaceProjectIdToken: sandbox
+        .stub()
+        .callsFake((name: string, projectId: string) => {
+          if (name.indexOf('/') >= 0) {
+            return name;
+          } else {
+            return `projects/${projectId}/name/${name}`;
+          }
+        }),
     };
 
     const s = proxyquire('../src/subscriber.js', {
@@ -941,7 +949,7 @@ describe('Subscriber', () => {
       assert.strictEqual(firstSpan.parentSpanId, parentSpanContext.spanId);
       assert.strictEqual(
         firstSpan.name,
-        `${subscriber.name} receive`,
+        `${subId} subscribe`,
         'name of span should match'
       );
       assert.strictEqual(

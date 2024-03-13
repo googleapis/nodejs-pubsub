@@ -54,7 +54,7 @@ class FakeSubscriber extends EventEmitter {
   constructor() {
     super();
 
-    this.name = uuid.v4();
+    this.name = `projects/test/subscriptions/${uuid.v4()}`;
     this.client = new FakeClient();
     this.iEOS = false;
   }

@@ -54,7 +54,10 @@ describe('Flow control publisher', () => {
     const fcp = new fp.FlowControlledPublisher(publisher);
     const message = {
       data: Buffer.from('foo'),
-      parentSpan: tracing.PubsubSpans.createPublisherSpan({}, 'topic'),
+      parentSpan: tracing.PubsubSpans.createPublisherSpan(
+        {},
+        'projects/foo/topics/topic'
+      ),
     };
     fcp.publish(message as unknown as PubsubMessage);
     assert.strictEqual(!!message.parentSpan, true);

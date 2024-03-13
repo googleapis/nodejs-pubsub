@@ -29,11 +29,33 @@ describe('OpenTelemetryTracer', () => {
     exporter.reset();
   });
 
+  describe('project parser', () => {
+    it('parses subscription info', () => {
+      const name = 'projects/project-name/subscriptions/sub-name';
+      const info = otel.getSubscriptionInfo(name);
+      assert.strictEqual(info.subName, name);
+      assert.strictEqual(info.projectId, 'project-name');
+      assert.strictEqual(info.subId, 'sub-name');
+      assert.strictEqual(info.topicId, undefined);
+      assert.strictEqual(info.topicName, undefined);
+    });
+
+    it('parses topic info', () => {
+      const name = 'projects/project-name/topics/topic-name';
+      const info = otel.getTopicInfo(name);
+      assert.strictEqual(info.topicName, name);
+      assert.strictEqual(info.projectId, 'project-name');
+      assert.strictEqual(info.topicId, 'topic-name');
+      assert.strictEqual(info.subId, undefined);
+      assert.strictEqual(info.subName, undefined);
+    });
+  });
+
   it('creates a span', () => {
     const message: PubsubMessage = {};
     const span = otel.PubsubSpans.createPublisherSpan(
       message,
-      'test topic'
+      'projects/test/topics/topicfoo'
     ) as trace.Span;
     span.end();
 
@@ -41,7 +63,7 @@ describe('OpenTelemetryTracer', () => {
     assert.notStrictEqual(spans.length, 0);
     const exportedSpan = spans.concat().pop()!;
 
-    assert.strictEqual(exportedSpan.name, 'test topic send');
+    assert.strictEqual(exportedSpan.name, 'topicfoo create');
     assert.strictEqual(exportedSpan.kind, SpanKind.PRODUCER);
   });
 
@@ -51,7 +73,7 @@ describe('OpenTelemetryTracer', () => {
     };
     const span = otel.PubsubSpans.createPublisherSpan(
       message,
-      'test topic'
+      'projects/test/topics/topicfoo'
     ) as trace.Span;
 
     otel.injectSpan(span, message, otel.OpenTelemetryLevel.Modern);
@@ -68,7 +90,10 @@ describe('OpenTelemetryTracer', () => {
     const message: PubsubMessage = {
       attributes: {},
     };
-    const span = otel.PubsubSpans.createPublisherSpan(message, 'test topic');
+    const span = otel.PubsubSpans.createPublisherSpan(
+      message,
+      'projects/test/topics/topicfoo'
+    );
 
     otel.injectSpan(span, message, otel.OpenTelemetryLevel.Legacy);
 
@@ -93,7 +118,10 @@ describe('OpenTelemetryTracer', () => {
         [otel.modernAttributeName]: 'bazbar',
       },
     };
-    const span = otel.PubsubSpans.createPublisherSpan(message, 'test topic');
+    const span = otel.PubsubSpans.createPublisherSpan(
+      message,
+      'projects/test/topics/topicfoo'
+    );
 
     const warnSpy = sinon.spy(console, 'warn');
     try {
@@ -133,7 +161,7 @@ describe('OpenTelemetryTracer', () => {
 
     const childSpan = otel.extractSpan(
       message,
-      'test sub',
+      'projects/test/subscriptions/subfoo',
       otel.OpenTelemetryLevel.Modern
     );
     assert.strictEqual(

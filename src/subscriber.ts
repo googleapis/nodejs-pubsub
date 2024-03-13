@@ -245,6 +245,16 @@ export class Message implements tracing.MessageWithAttributes {
 
   /**
    * @private
+   * @internal
+   *
+   * We'll save the state of the subscription's exactly once delivery flag at the
+   * time the message was received. This is pretty much only for tracing, as we will
+   * generally use the live state of the subscription to figure out how to respond.
+   */
+  isExactlyOnceDelivery: boolean;
+
+  /**
+   * @private
    *
    * Ends any open subscribe telemetry tracing span.
    */
@@ -343,6 +353,14 @@ export class Message implements tracing.MessageWithAttributes {
      * @private
      */
     this.subSpans = new SubscriberSpans(this);
+
+    /**
+     * Save the state of the subscription into the message for later tracing.
+     *
+     * @private
+     * @internal
+     */
+    this.isExactlyOnceDelivery = sub.isExactlyOnceDelivery;
 
     this._handled = false;
     this._length = this.data.length;

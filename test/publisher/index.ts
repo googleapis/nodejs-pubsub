@@ -100,9 +100,11 @@ class FakeOrderedQueue extends FakeQueue {
 describe('Publisher', () => {
   let sandbox: sinon.SinonSandbox;
   let spy: sinon.SinonSpy;
+  const topicId = 'topic-name';
+  const projectId = 'PROJECT_ID';
   const topic = {
-    name: 'topic-name',
-    pubsub: {projectId: 'PROJECT_ID'},
+    name: `projects/${projectId}/topics/${topicId}`,
+    pubsub: {projectId},
   } as Topic;
 
   // tslint:disable-next-line variable-name
@@ -209,22 +211,14 @@ describe('Publisher', () => {
         opentelemetry.SpanStatusCode.UNSET
       );
       assert.strictEqual(
-        createdSpan.attributes[SemanticAttributes.MESSAGING_OPERATION],
-        'send'
+        createdSpan.attributes['messaging.system'],
+        'gcp_pubsub'
       );
       assert.strictEqual(
-        createdSpan.attributes[SemanticAttributes.MESSAGING_SYSTEM],
-        'pubsub'
+        createdSpan.attributes['messaging.destination.name'],
+        topicId
       );
-      assert.strictEqual(
-        createdSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION],
-        topic.name
-      );
-      assert.strictEqual(
-        createdSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION_KIND],
-        'topic'
-      );
-      assert.strictEqual(createdSpan.name, 'topic-name send');
+      assert.strictEqual(createdSpan.name, `${topicId} create`);
       assert.strictEqual(
         createdSpan.kind,
         SpanKind.PRODUCER,

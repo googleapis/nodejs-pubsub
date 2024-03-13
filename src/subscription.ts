@@ -50,7 +50,6 @@ import {DebugMessage} from './debug';
 export {AckError, AckResponse, AckResponses} from './subscriber';
 
 import {EmitterCallback, WrappingEmitter} from './wrapping-emitter';
-import * as tracing from './telemetry-tracing';
 
 export type PushConfig = google.pubsub.v1.IPushConfig;
 export type OidcToken = google.pubsub.v1.PushConfig.IOidcToken;
@@ -1238,6 +1237,7 @@ export class Subscription extends WrappingEmitter {
 
     return formatted as google.pubsub.v1.ISubscription;
   }
+
   /*!
    * Format the name of a subscription. A subscription's full name is in the
    * format of projects/{projectId}/subscriptions/{subName}.
