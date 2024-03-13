@@ -31,7 +31,6 @@ import {defaultOptions} from '../../src/default-options';
 import * as tracing from '../../src/telemetry-tracing';
 import {exporter} from '../tracing';
 import {SpanKind} from '@opentelemetry/api';
-import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 
 let promisified = false;
 const fakeUtil = Object.assign({}, util, {
