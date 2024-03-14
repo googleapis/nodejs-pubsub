@@ -135,6 +135,9 @@ export class SubscriberSpans {
   }
 
   // Emit an event for calling modAck.
+  // Note that we don't currently support users calling modAck directly, but
+  // this may be used in the future for things like fully managed pull
+  // subscriptions.
   modAckCall(deadline: Duration) {
     if (this.processing) {
       tracing.PubsubEvents.modAckCalled(this.processing, deadline);
@@ -244,12 +247,12 @@ export class Message implements tracing.MessageWithAttributes {
   parentSpan?: tracing.Span;
 
   /**
-   * @private
-   * @internal
-   *
    * We'll save the state of the subscription's exactly once delivery flag at the
    * time the message was received. This is pretty much only for tracing, as we will
    * generally use the live state of the subscription to figure out how to respond.
+   *
+   * @private
+   * @internal
    */
   isExactlyOnceDelivery: boolean;
 
@@ -441,6 +444,7 @@ export class Message implements tracing.MessageWithAttributes {
 
   /**
    * Modifies the ack deadline.
+   * At present time, this should generally not be called by users.
    *
    * @param {number} deadline The number of seconds to extend the deadline.
    * @private
@@ -455,6 +459,7 @@ export class Message implements tracing.MessageWithAttributes {
   /**
    * Modifies the ack deadline, expecting a response (for exactly-once delivery subscriptions).
    * If exactly-once delivery is not enabled, this will immediately resolve successfully.
+   * At present time, this should generally not be called by users.
    *
    * @param {number} deadline The number of seconds to extend the deadline.
    * @private
