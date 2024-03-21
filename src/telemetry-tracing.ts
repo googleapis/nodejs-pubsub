@@ -299,7 +299,6 @@ export class PubsubSpans {
       ['messaging.system']: 'gcp_pubsub',
       ['messaging.destination.name']: destinationId ?? destinationName,
       ['gcp.project_id']: projectId,
-      ['code.function']: '',
     } as SpanAttributes;
 
     if (message) {
@@ -332,14 +331,11 @@ export class PubsubSpans {
     const topicInfo = getTopicInfo(topicName);
     const span: Span = getTracer().startSpan(`${topicName} create`, {
       kind: SpanKind.PRODUCER,
-      attributes: PubsubSpans.createAttributes(
-        getTopicInfo(topicName),
-        message
-      ),
+      attributes: PubsubSpans.createAttributes(topicInfo, message),
     });
     if (topicInfo.topicId) {
       span.updateName(`${topicInfo.topicId} create`);
-      span.setAttribute('messaging.destination_name', topicInfo.topicId);
+      span.setAttribute('messaging.destination.name', topicInfo.topicId);
     }
 
     return span;
@@ -359,8 +355,8 @@ export class PubsubSpans {
   }
 
   static createReceiveSpan(
-    subName: string,
     message: PubsubMessage,
+    subName: string,
     parent: Context | undefined
   ): Span {
     const subInfo = getSubscriptionInfo(subName);
@@ -528,13 +524,12 @@ export class PubsubSpans {
     isInitial?: boolean
   ): Span | undefined {
     const subInfo = getSubscriptionInfo(subName);
-    const attributes = this.createAttributes(subInfo, message);
-    const span = PubsubSpans.createChildSpan(
-      `${subInfo.subId} ${type}`,
+    const span = PubsubSpans.createReceiveSpan(
       message,
-      undefined,
-      attributes
+      `${subInfo.subId} ${type}`,
+      undefined
     );
+
     if (deadline) {
       span?.setAttribute(
         'messaging.gcp_pubsub.message.ack_deadline_seconds',
@@ -749,7 +744,7 @@ export function extractSpan(
     }
   }
 
-  const span = PubsubSpans.createReceiveSpan(subName, message, context);
+  const span = PubsubSpans.createReceiveSpan(message, subName, context);
   message.parentSpan = span;
   return span;
 }
