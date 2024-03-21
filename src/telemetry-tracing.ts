@@ -526,7 +526,7 @@ export class PubsubSpans {
     const subInfo = getSubscriptionInfo(subName);
     const span = PubsubSpans.createReceiveSpan(
       message,
-      `${subInfo.subId} ${type}`,
+      `${subInfo.subId ?? subInfo.subName} ${type}`,
       undefined
     );
 
