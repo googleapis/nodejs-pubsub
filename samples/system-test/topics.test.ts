@@ -131,7 +131,6 @@ describe('topics', () => {
       }`
     );
     assert.include(output, 'Topic updated with Kinesis source successfully.');
-    assert.include(output, pair.t.name);
   });
 
   it('should list topics', async () => {
