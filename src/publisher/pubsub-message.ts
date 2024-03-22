@@ -57,7 +57,8 @@ export interface PubsubMessage
   publishSchedulerSpan?: tracing.Span;
 
   /**
-   * If this is a message being received from a subscription, expose the ackId.
+   * If this is a message being received from a subscription, expose the ackId
+   * internally. Primarily for tracing.
    *
    * @private
    * @internal
@@ -66,7 +67,7 @@ export interface PubsubMessage
 
   /**
    * If this is a message being received from a subscription, expose the exactly
-   * once delivery flag.
+   * once delivery flag internally. Primarily for tracing.
    *
    * @private
    * @internal
