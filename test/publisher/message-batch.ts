@@ -33,7 +33,7 @@ describe('MessageBatch', () => {
   };
 
   beforeEach(() => {
-    batch = new MessageBatch(Object.assign({}, options));
+    batch = new MessageBatch(Object.assign({}, options), 'topicName');
   });
 
   afterEach(() => {
@@ -57,7 +57,7 @@ describe('MessageBatch', () => {
       const now = Date.now();
 
       sandbox.stub(Date, 'now').returns(now);
-      batch = new MessageBatch(options);
+      batch = new MessageBatch(options, 'topicName');
 
       assert.strictEqual(batch.created, now);
     });
@@ -197,5 +197,11 @@ describe('MessageBatch', () => {
       batch.setOptions(newOptions);
       assert.strictEqual(newOptions, batch.options);
     });
+  });
+
+  it('returns data from end()', () => {
+    const output = batch.end();
+    assert.strictEqual(output.messages, batch.messages);
+    assert.strictEqual(output.callbacks, batch.callbacks);
   });
 });

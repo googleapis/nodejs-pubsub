@@ -170,7 +170,7 @@ describe('Subscription', () => {
       assert(subscription.iam instanceof FakeIAM);
       const args = (subscription.iam as {} as FakeIAM).calledWith_;
       assert.strictEqual(args[0], PUBSUB);
-      assert.strictEqual(args[1], subscription.name);
+      assert.strictEqual(args[1], subscription);
     });
 
     it('should create a Subscriber', () => {
@@ -200,7 +200,12 @@ describe('Subscription', () => {
     });
 
     it('should emit messages', done => {
-      const message = {};
+      const message = {
+        subSpans: {
+          processingStart() {},
+          processingEnd() {},
+        },
+      };
 
       subscription.on?.('message', (msg: Message) => {
         assert.strictEqual(msg, message);

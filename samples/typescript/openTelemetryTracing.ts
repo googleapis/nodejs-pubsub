@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This is a generated sample, using the typeless sample bot. Please
-// look for the source TypeScript sample (.ts) for modifications.
-'use strict';
-
 /**
  * This sample demonstrates how to add OpenTelemetry tracing to the
  * Google Cloud Pub/Sub API.
@@ -41,26 +37,22 @@ const SUBSCRIBER_TIMEOUT = 10;
 // const data = 'Hello, world!";
 
 // Imports the Google Cloud client library
-const {PubSub} = require('@google-cloud/pubsub');
+import {Message, PubSub} from '@google-cloud/pubsub';
 
 // Imports the OpenTelemetry API
-const otel = require('@opentelemetry/sdk-trace-node');
-const {diag, DiagConsoleLogger, DiagLogLevel} = require('@opentelemetry/api');
+import * as otel from '@opentelemetry/sdk-trace-node';
+import {diag, DiagConsoleLogger, DiagLogLevel} from '@opentelemetry/api';
 const {NodeTracerProvider} = otel;
-const {SimpleSpanProcessor} = require('@opentelemetry/sdk-trace-base');
+import {SimpleSpanProcessor} from '@opentelemetry/sdk-trace-base';
 
 // To output to the console for testing, use the ConsoleSpanExporter.
 // import {ConsoleSpanExporter} from '@opentelemetry/sdk-trace-base';
 
 // To output to Cloud Trace, import the OpenTelemetry bridge library.
-const {
-  TraceExporter,
-} = require('@google-cloud/opentelemetry-cloud-trace-exporter');
+import {TraceExporter} from '@google-cloud/opentelemetry-cloud-trace-exporter';
 
-const {Resource} = require('@opentelemetry/resources');
-const {
-  SemanticResourceAttributes,
-} = require('@opentelemetry/semantic-conventions');
+import {Resource} from '@opentelemetry/resources';
+import {SemanticResourceAttributes} from '@opentelemetry/semantic-conventions';
 
 // Enable the diagnostic logger for OpenTelemetry
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
@@ -85,7 +77,7 @@ provider.register();
 // Creates a client; cache this for further use.
 const pubSubClient = new PubSub();
 
-async function publishMessage(topicNameOrId, data) {
+async function publishMessage(topicNameOrId: string, data: string) {
   // Publishes the message as a string, e.g. "Hello, world!"
   // or JSON.stringify(someObject)
   const dataBuffer = Buffer.from(data);
@@ -94,11 +86,11 @@ async function publishMessage(topicNameOrId, data) {
   console.log(`Message ${messageId} published.`);
 }
 
-async function subscriptionListen(subscriptionNameOrId) {
+async function subscriptionListen(subscriptionNameOrId: string) {
   const subscriber = pubSubClient.subscription(subscriptionNameOrId);
 
   // Message handler for subscriber
-  const messageHandler = async message => {
+  const messageHandler = async (message: Message) => {
     console.log(`Message ${message.id} received.`);
     message.ack();
 
@@ -108,7 +100,7 @@ async function subscriptionListen(subscriptionNameOrId) {
     await subscriber.close();
   };
 
-  const errorHandler = async error => {
+  const errorHandler = async (error: Error) => {
     console.log('Received error:', error);
 
     console.log('Cleaning up OpenTelemetry exporter...');

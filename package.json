@@ -66,7 +66,8 @@
   },
   "devDependencies": {
     "@grpc/proto-loader": "^0.7.0",
-    "@opentelemetry/tracing": "^0.24.0",
+    "@opentelemetry/core": "^1.17.0",
+    "@opentelemetry/sdk-trace-base": "^1.17.0",
     "@types/execa": "^2.0.0",
     "@types/extend": "^3.0.0",
     "@types/lodash.snakecase": "^4.1.6",

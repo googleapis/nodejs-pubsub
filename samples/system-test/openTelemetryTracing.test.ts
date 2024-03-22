@@ -49,6 +49,8 @@ describe('openTelemetry', () => {
     );
     assert.match(stdout, /Message .* published./);
     assert.match(stdout, /Message .* received/);
+    assert.match(stdout, /send/);
+    assert.match(stdout, /receive/);
     assert.notMatch(stdout, /Received error/);
   });
 });
