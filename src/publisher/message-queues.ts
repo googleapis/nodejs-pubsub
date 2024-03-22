@@ -111,6 +111,7 @@ export abstract class MessageQueue extends EventEmitter {
       }
       spanMessages.forEach(m => {
         tracing.PubsubSpans.updatePublisherTopicName(m.parentSpan!, topic.name);
+        tracing.PubsubEvents.publishStart(m);
       });
     }
 
@@ -143,6 +144,7 @@ export abstract class MessageQueue extends EventEmitter {
         // We're finished with both the RPC and the whole publish operation,
         // so close out all of the related spans.
         rpcSpan?.end();
+        tracing.PubsubEvents.publishEnd(m);
         m.parentSpan?.end();
       });
     }

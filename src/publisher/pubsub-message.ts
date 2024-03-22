@@ -55,6 +55,24 @@ export interface PubsubMessage
    * @private
    */
   publishSchedulerSpan?: tracing.Span;
+
+  /**
+   * If this is a message being received from a subscription, expose the ackId
+   * internally. Primarily for tracing.
+   *
+   * @private
+   * @internal
+   */
+  ackId?: string;
+
+  /**
+   * If this is a message being received from a subscription, expose the exactly
+   * once delivery flag internally. Primarily for tracing.
+   *
+   * @private
+   * @internal
+   */
+  isExactlyOnceDelivery?: boolean;
 }
 
 /**

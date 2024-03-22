@@ -29,7 +29,6 @@ import {
 } from '@opentelemetry/api';
 import {Attributes, PubsubMessage} from './publisher/pubsub-message';
 import {PublishOptions} from './publisher/index';
-import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 import {Duration} from './temporal';
 
 export {Span};
@@ -190,7 +189,7 @@ export const pubsubSetter = new PubsubMessageSet();
  * @private
  */
 export interface SpanAttributes {
-  [x: string]: string | number;
+  [x: string]: string | number | boolean;
 }
 
 /**
@@ -224,8 +223,54 @@ export const modernAttributeName = 'googclient_traceparent';
 export const legacyAttributeName = 'googclient_OpenTelemetrySpanContext';
 
 export interface AttributeParams {
+  // Fully qualified.
   topicName?: string;
   subName?: string;
+
+  // These are generally split from the fully qualified names.
+  projectId?: string;
+  topicId?: string;
+  subId?: string;
+}
+
+/**
+ * Break down the subscription's full name into its project and ID.
+ *
+ * @private
+ */
+export function getSubscriptionInfo(fullName: string): AttributeParams {
+  const results = fullName.match(/projects\/([^/]+)\/subscriptions\/(.+)/);
+  if (!results?.[0]) {
+    return {
+      subName: fullName,
+    };
+  }
+
+  return {
+    subName: fullName,
+    projectId: results[1],
+    subId: results[2],
+  };
+}
+
+/**
+ * Break down the subscription's full name into its project and ID.
+ *
+ * @private
+ */
+export function getTopicInfo(fullName: string): AttributeParams {
+  const results = fullName.match(/projects\/([^/]+)\/topics\/(.+)/);
+  if (!results?.[0]) {
+    return {
+      topicName: fullName,
+    };
+  }
+
+  return {
+    topicName: fullName,
+    projectId: results[1],
+    topicId: results[2],
+  };
 }
 
 export class PubsubSpans {
@@ -234,31 +279,48 @@ export class PubsubSpans {
     message?: PubsubMessage
   ): SpanAttributes {
     const destinationName = params.topicName ?? params.subName;
-    if (!destinationName || (params.topicName && params.subName)) {
-      throw new Error('One of topicName or subName must be specified');
-    }
-    const destinationKind = params.topicName ? 'topic' : 'subscription';
+    const destinationId = params.topicId ?? params.subId;
+    const projectId = params.projectId;
+
+    // Purposefully leaving this debug check here as a comment - this should
+    // always be true, but we don't want to fail in prod if it's not.
+    /*if (
+      (params.topicName && params.subName) ||
+      (!destinationName && !projectId && !destinationId)
+    ) {
+      throw new Error(
+        'One of topicName or subName must be specified, and must be fully qualified'
+      );
+    }*/
 
     const spanAttributes = {
       // Add Opentelemetry semantic convention attributes to the span, based on:
       // https://github.com/open-telemetry/opentelemetry-specification/blob/v1.1.0/specification/trace/semantic_conventions/messaging.md
-      [SemanticAttributes.MESSAGING_TEMP_DESTINATION]: false,
-      [SemanticAttributes.MESSAGING_SYSTEM]: 'pubsub',
-      [SemanticAttributes.MESSAGING_OPERATION]: 'send',
-      [SemanticAttributes.MESSAGING_DESTINATION]: destinationName,
-      [SemanticAttributes.MESSAGING_DESTINATION_KIND]: destinationKind,
-      [SemanticAttributes.MESSAGING_PROTOCOL]: 'pubsub',
+      ['messaging.system']: 'gcp_pubsub',
+      ['messaging.destination.name']: destinationId ?? destinationName,
+      ['gcp.project_id']: projectId,
     } as SpanAttributes;
 
     if (message) {
-      if (message.data?.length) {
-        spanAttributes[
-          SemanticAttributes.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES
-        ] = message.data?.length;
+      if (message.calculatedSize) {
+        spanAttributes['messaging.message.envelope.size'] =
+          message.calculatedSize;
+      } else {
+        if (message.data?.length) {
+          spanAttributes['messaging.message.envelope.size'] =
+            message.data?.length;
+        }
       }
       if (message.orderingKey) {
         spanAttributes['messaging.gcp_pubsub.message.ordering_key'] =
           message.orderingKey;
+      }
+      if (message.isExactlyOnceDelivery) {
+        spanAttributes['messaging.gcp_pubsub.message.exactly_once_delivery'] =
+          message.isExactlyOnceDelivery;
+      }
+      if (message.ackId) {
+        spanAttributes['messaging.gcp_pubsub.message.ack_id'] = message.ackId;
       }
     }
 
@@ -266,44 +328,66 @@ export class PubsubSpans {
   }
 
   static createPublisherSpan(message: PubsubMessage, topicName: string): Span {
-    const span: Span = getTracer().startSpan(`${topicName} send`, {
+    const topicInfo = getTopicInfo(topicName);
+    const span: Span = getTracer().startSpan(`${topicName} create`, {
       kind: SpanKind.PRODUCER,
-      attributes: PubsubSpans.createAttributes({topicName}, message),
+      attributes: PubsubSpans.createAttributes(topicInfo, message),
     });
+    if (topicInfo.topicId) {
+      span.updateName(`${topicInfo.topicId} create`);
+      span.setAttribute('messaging.destination.name', topicInfo.topicId);
+    }
 
     return span;
   }
 
   static updatePublisherTopicName(span: Span, topicName: string) {
-    span.updateName(`${topicName} send`);
-    span.setAttribute(SemanticAttributes.MESSAGING_DESTINATION, topicName);
+    const topicInfo = getTopicInfo(topicName);
+    if (topicInfo.topicId) {
+      span.updateName(`${topicInfo.topicId} create`);
+      span.setAttribute('messaging.destination.name', topicInfo.topicId);
+    } else {
+      span.updateName(`${topicName} create`);
+    }
+    if (topicInfo.projectId) {
+      span.setAttribute('gcp.project_id', topicInfo.projectId);
+    }
   }
 
-  static createReceiveSpan(subName: string, parent: Context | undefined): Span {
-    const name = `${subName} receive`;
+  static createReceiveSpan(
+    message: PubsubMessage,
+    subName: string,
+    parent: Context | undefined
+  ): Span {
+    const subInfo = getSubscriptionInfo(subName);
+    const name = `${subInfo.subId ?? subName} subscribe`;
+    const attributes = this.createAttributes(subInfo, message);
+    if (subInfo.subId) {
+      attributes['messaging.destination.name'] = subInfo.subId;
+    }
 
-    // Mostly we want to keep the context IDs; the attributes and such
-    // are only something we do on the publish side.
     if (context) {
       return getTracer().startSpan(
         name,
         {
           kind: SpanKind.CONSUMER,
-          attributes: {},
+          attributes,
         },
         parent
       );
     } else {
       return getTracer().startSpan(name, {
         kind: SpanKind.CONSUMER,
+        attributes,
       });
     }
   }
 
   static createChildSpan(
     name: string,
-    message?: MessageWithAttributes,
-    parentSpan?: Span
+    message?: PubsubMessage,
+    parentSpan?: Span,
+    attributes?: SpanAttributes
   ): Span | undefined {
     const parent = message?.parentSpan ?? parentSpan;
     if (parent) {
@@ -311,7 +395,7 @@ export class PubsubSpans {
         name,
         {
           kind: SpanKind.INTERNAL,
-          attributes: {},
+          attributes: attributes ?? {},
         },
         spanContextToContext(parent.spanContext())
       );
@@ -325,14 +409,16 @@ export class PubsubSpans {
   }
 
   static createPublishSchedulerSpan(message: PubsubMessage): Span | undefined {
-    return PubsubSpans.createChildSpan('publish scheduler', message);
+    return PubsubSpans.createChildSpan('publisher batching', message);
   }
 
   static createPublishRpcSpan(
     messages: MessageWithAttributes[],
     topicName: string
   ): Span {
-    const spanAttributes = PubsubSpans.createAttributes({topicName});
+    const spanAttributes = PubsubSpans.createAttributes(
+      getTopicInfo(topicName)
+    );
     const links: Link[] = messages
       .map(m => ({context: m.parentSpan?.spanContext()}) as Link)
       .filter(l => l.context);
@@ -367,7 +453,9 @@ export class PubsubSpans {
     messageSpans: (Span | undefined)[],
     subName: string
   ): Span {
-    const spanAttributes = PubsubSpans.createAttributes({subName});
+    const spanAttributes = PubsubSpans.createAttributes(
+      getSubscriptionInfo(subName)
+    );
     const links: Link[] = messageSpans
       .map(m => ({context: m?.spanContext()}) as Link)
       .filter(l => l.context);
@@ -401,20 +489,27 @@ export class PubsubSpans {
   static createReceiveFlowSpan(
     message: MessageWithAttributes
   ): Span | undefined {
-    return PubsubSpans.createChildSpan('subscriber flow control', message);
+    return PubsubSpans.createChildSpan(
+      'subscriber concurrency control',
+      message
+    );
   }
 
   static createReceiveSchedulerSpan(
     message: MessageWithAttributes
   ): Span | undefined {
-    return PubsubSpans.createChildSpan('subscribe scheduler', message);
+    return PubsubSpans.createChildSpan('subscriber scheduler', message);
   }
 
   static createReceiveProcessSpan(
     message: MessageWithAttributes,
     subName: string
   ): Span | undefined {
-    return PubsubSpans.createChildSpan(`${subName} process`, message);
+    const subInfo = getSubscriptionInfo(subName);
+    return PubsubSpans.createChildSpan(
+      `${subInfo.subId ?? subName} process`,
+      message
+    );
   }
 
   static setReceiveProcessResult(span: Span, isAck: boolean) {
@@ -423,15 +518,27 @@ export class PubsubSpans {
 
   static createReceiveLeaseSpan(
     message: MessageWithAttributes,
-    deadline: Duration,
-    isInitial: boolean
+    subName: string,
+    type: 'modack' | 'ack' | 'nack',
+    deadline?: Duration,
+    isInitial?: boolean
   ): Span | undefined {
-    const span = PubsubSpans.createChildSpan('modify ack deadline', message);
-    span?.setAttribute(
-      'messaging.gcp_pubsub.modack_deadline_seconds',
-      deadline.totalOf('second')
+    const subInfo = getSubscriptionInfo(subName);
+    const span = PubsubSpans.createReceiveSpan(
+      message,
+      `${subInfo.subId ?? subInfo.subName} ${type}`,
+      undefined
     );
-    span?.setAttribute('messaging.gcp_pubsub.is_receipt_modack', isInitial);
+
+    if (deadline) {
+      span?.setAttribute(
+        'messaging.gcp_pubsub.message.ack_deadline_seconds',
+        deadline.totalOf('second')
+      );
+    }
+    if (isInitial !== undefined) {
+      span?.setAttribute('messaging.gcp_pubsub.is_receipt_modack', isInitial);
+    }
     return span;
   }
 }
@@ -469,6 +576,14 @@ export class PubsubEvents {
     PubsubEvents.addEvent('ack end', message);
   }
 
+  static modackStart(message: MessageWithAttributes) {
+    PubsubEvents.addEvent('modack start', message);
+  }
+
+  static modackEnd(message: MessageWithAttributes) {
+    PubsubEvents.addEvent('modack end', message);
+  }
+
   static nackStart(message: MessageWithAttributes) {
     PubsubEvents.addEvent('nack start', message);
   }
@@ -500,7 +615,7 @@ export class PubsubEvents {
     deadline: Duration,
     isInitial: boolean
   ) {
-    PubsubEvents.addEvent('modify ack deadline start', message, {
+    PubsubEvents.addEvent('modack start', message, {
       'messaging.gcp_pubsub.modack_deadline_seconds': `${deadline.totalOf(
         'second'
       )}`,
@@ -509,7 +624,7 @@ export class PubsubEvents {
   }
 
   static modAckEnd(message: MessageWithAttributes) {
-    PubsubEvents.addEvent('modify ack deadline end', message);
+    PubsubEvents.addEvent('modack end', message);
   }
 
   // Add this event any time the process is shut down before processing
@@ -629,7 +744,7 @@ export function extractSpan(
     }
   }
 
-  const span = PubsubSpans.createReceiveSpan(subName, context);
+  const span = PubsubSpans.createReceiveSpan(message, subName, context);
   message.parentSpan = span;
   return span;
 }

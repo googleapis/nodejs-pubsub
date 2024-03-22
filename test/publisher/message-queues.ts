@@ -28,7 +28,7 @@ import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
 
 class FakeTopic {
-  name = 'fake-topic';
+  name = 'projects/foo/topics/fake-topic';
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   request<T>(config: RequestConfig, callback: RequestCallback<T>): void {}
 }
