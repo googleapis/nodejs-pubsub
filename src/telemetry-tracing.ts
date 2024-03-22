@@ -312,7 +312,7 @@ export class PubsubSpans {
         }
       }
       if (message.orderingKey) {
-        spanAttributes['messaging.gcp_pubsub.ordering_key'] =
+        spanAttributes['messaging.gcp_pubsub.message.ordering_key'] =
           message.orderingKey;
       }
       if (message.isExactlyOnceDelivery) {
