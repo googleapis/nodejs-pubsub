@@ -47,7 +47,7 @@ const pubSubClient = new PubSub();
 
 async function createTopicWithKinesisIngestion(
   topicNameOrId,
-  roleArn,
+  awsRoleArn,
   gcpServiceAccount,
   streamArn,
   consumerArn
@@ -58,7 +58,7 @@ async function createTopicWithKinesisIngestion(
     name: topicNameOrId,
     ingestionDataSourceSettings: {
       awsKinesis: {
-        awsRoleArn: roleArn,
+        awsRoleArn,
         gcpServiceAccount,
         streamArn,
         consumerArn,
