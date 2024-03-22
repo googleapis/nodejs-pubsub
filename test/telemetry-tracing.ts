@@ -219,7 +219,7 @@ describe('OpenTelemetryTracer', () => {
         'messaging.destination.name': topicInfo.topicId,
         'gcp.project_id': topicInfo.projectId,
         'messaging.message.envelope.size': message.calculatedSize,
-        'messaging.gcp_pubsub.ordering_key': message.orderingKey,
+        'messaging.gcp_pubsub.message.ordering_key': message.orderingKey,
         'messaging.gcp_pubsub.message.exactly_once_delivery':
           message.isExactlyOnceDelivery,
         'messaging.gcp_pubsub.message.ack_id': message.ackId,
