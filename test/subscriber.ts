@@ -90,6 +90,11 @@ class FakeLeaseManager extends EventEmitter {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: s.Message): void {}
   clear(): void {}
+  clearNonDispensedMessages(): void {}
+  async onDrain(): Promise<void> {}
+  get size(): number {
+    return 0;
+  }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   remove(message: s.Message): void {}
 }
@@ -543,9 +548,9 @@ describe('Subscriber', () => {
       assert.strictEqual(stub.callCount, 1);
     });
 
-    it('should clear the inventory', () => {
+    it('should clear the inventory of non-dispensed messages', () => {
       const inventory: FakeLeaseManager = stubs.get('inventory');
-      const stub = sandbox.stub(inventory, 'clear');
+      const stub = sandbox.stub(inventory, 'clearNonDispensedMessages');
 
       subscriber.close();
       assert.strictEqual(stub.callCount, 1);
@@ -620,6 +625,26 @@ describe('Subscriber', () => {
 
         assert.strictEqual(ackOnDrain.callCount, 1);
         assert.strictEqual(modAckOnDrain.callCount, 1);
+      });
+
+      it('should wait for dispensed messages to drain', async () => {
+        const inventory: FakeLeaseManager = stubs.get('inventory');
+        const inventoryOnDrain = sandbox.stub(inventory, 'onDrain');
+
+        const ackQueue: FakeAckQueue = stubs.get('ackQueue');
+        const modAckQueue: FakeModAckQueue = stubs.get('modAckQueue');
+        const ackOnDrain = sandbox.stub(ackQueue, 'onDrain').resolves();
+        const modAckOnDrain = sandbox.stub(modAckQueue, 'onDrain').resolves();
+
+        ackQueue.numInFlightRequests = 1;
+        modAckQueue.numInFlightRequests = 1;
+        sandbox.stub(inventory, 'size').get(() => 1);
+
+        await subscriber.close();
+
+        assert.strictEqual(ackOnDrain.callCount, 1);
+        assert.strictEqual(modAckOnDrain.callCount, 1);
+        assert.strictEqual(inventoryOnDrain.callCount, 1);
       });
     });
   });
