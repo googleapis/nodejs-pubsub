@@ -3733,6 +3733,9 @@ export namespace google {
                 /** CloudStorageConfig filenameSuffix */
                 filenameSuffix?: (string|null);
 
+                /** CloudStorageConfig filenameDatetimeFormat */
+                filenameDatetimeFormat?: (string|null);
+
                 /** CloudStorageConfig textConfig */
                 textConfig?: (google.pubsub.v1.CloudStorageConfig.ITextConfig|null);
 
@@ -3766,6 +3769,9 @@ export namespace google {
 
                 /** CloudStorageConfig filenameSuffix. */
                 public filenameSuffix: string;
+
+                /** CloudStorageConfig filenameDatetimeFormat. */
+                public filenameDatetimeFormat: string;
 
                 /** CloudStorageConfig textConfig. */
                 public textConfig?: (google.pubsub.v1.CloudStorageConfig.ITextConfig|null);
