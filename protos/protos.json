@@ -1320,6 +1320,13 @@
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
                     },
+                    "filenameDatetimeFormat": {
+                      "type": "string",
+                      "id": 10,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
                     "textConfig": {
                       "type": "TextConfig",
                       "id": 4,

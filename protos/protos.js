@@ -8644,6 +8644,7 @@
                      * @property {string|null} [bucket] CloudStorageConfig bucket
                      * @property {string|null} [filenamePrefix] CloudStorageConfig filenamePrefix
                      * @property {string|null} [filenameSuffix] CloudStorageConfig filenameSuffix
+                     * @property {string|null} [filenameDatetimeFormat] CloudStorageConfig filenameDatetimeFormat
                      * @property {google.pubsub.v1.CloudStorageConfig.ITextConfig|null} [textConfig] CloudStorageConfig textConfig
                      * @property {google.pubsub.v1.CloudStorageConfig.IAvroConfig|null} [avroConfig] CloudStorageConfig avroConfig
                      * @property {google.protobuf.IDuration|null} [maxDuration] CloudStorageConfig maxDuration
@@ -8689,6 +8690,14 @@
                      * @instance
                      */
                     CloudStorageConfig.prototype.filenameSuffix = "";
+    
+                    /**
+                     * CloudStorageConfig filenameDatetimeFormat.
+                     * @member {string} filenameDatetimeFormat
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    CloudStorageConfig.prototype.filenameDatetimeFormat = "";
     
                     /**
                      * CloudStorageConfig textConfig.
@@ -8784,6 +8793,8 @@
                             writer.uint32(/* id 7, wireType 0 =*/56).int64(message.maxBytes);
                         if (message.state != null && Object.hasOwnProperty.call(message, "state"))
                             writer.uint32(/* id 9, wireType 0 =*/72).int32(message.state);
+                        if (message.filenameDatetimeFormat != null && Object.hasOwnProperty.call(message, "filenameDatetimeFormat"))
+                            writer.uint32(/* id 10, wireType 2 =*/82).string(message.filenameDatetimeFormat);
                         return writer;
                     };
     
@@ -8828,6 +8839,10 @@
                                 }
                             case 3: {
                                     message.filenameSuffix = reader.string();
+                                    break;
+                                }
+                            case 10: {
+                                    message.filenameDatetimeFormat = reader.string();
                                     break;
                                 }
                             case 4: {
@@ -8895,6 +8910,9 @@
                         if (message.filenameSuffix != null && message.hasOwnProperty("filenameSuffix"))
                             if (!$util.isString(message.filenameSuffix))
                                 return "filenameSuffix: string expected";
+                        if (message.filenameDatetimeFormat != null && message.hasOwnProperty("filenameDatetimeFormat"))
+                            if (!$util.isString(message.filenameDatetimeFormat))
+                                return "filenameDatetimeFormat: string expected";
                         if (message.textConfig != null && message.hasOwnProperty("textConfig")) {
                             properties.outputFormat = 1;
                             {
@@ -8953,6 +8971,8 @@
                             message.filenamePrefix = String(object.filenamePrefix);
                         if (object.filenameSuffix != null)
                             message.filenameSuffix = String(object.filenameSuffix);
+                        if (object.filenameDatetimeFormat != null)
+                            message.filenameDatetimeFormat = String(object.filenameDatetimeFormat);
                         if (object.textConfig != null) {
                             if (typeof object.textConfig !== "object")
                                 throw TypeError(".google.pubsub.v1.CloudStorageConfig.textConfig: object expected");
@@ -9032,6 +9052,7 @@
                             } else
                                 object.maxBytes = options.longs === String ? "0" : 0;
                             object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                            object.filenameDatetimeFormat = "";
                         }
                         if (message.bucket != null && message.hasOwnProperty("bucket"))
                             object.bucket = message.bucket;
@@ -9058,6 +9079,8 @@
                                 object.maxBytes = options.longs === String ? $util.Long.prototype.toString.call(message.maxBytes) : options.longs === Number ? new $util.LongBits(message.maxBytes.low >>> 0, message.maxBytes.high >>> 0).toNumber() : message.maxBytes;
                         if (message.state != null && message.hasOwnProperty("state"))
                             object.state = options.enums === String ? $root.google.pubsub.v1.CloudStorageConfig.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.CloudStorageConfig.State[message.state] : message.state;
+                        if (message.filenameDatetimeFormat != null && message.hasOwnProperty("filenameDatetimeFormat"))
+                            object.filenameDatetimeFormat = message.filenameDatetimeFormat;
                         return object;
                     };
     
