@@ -52,7 +52,7 @@ import {SimpleSpanProcessor} from '@opentelemetry/sdk-trace-base';
 import {TraceExporter} from '@google-cloud/opentelemetry-cloud-trace-exporter';
 
 import {Resource} from '@opentelemetry/resources';
-import {SemanticResourceAttributes} from '@opentelemetry/semantic-conventions';
+import {SEMRESATTRS_SERVICE_NAME} from '@opentelemetry/semantic-conventions';
 
 // Enable the diagnostic logger for OpenTelemetry
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
@@ -67,7 +67,7 @@ const exporter = new TraceExporter();
 // something with the spans we're generating.
 const provider = new NodeTracerProvider({
   resource: new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: 'otel example',
+    [SEMRESATTRS_SERVICE_NAME]: 'otel example',
   }),
 });
 const processor = new SimpleSpanProcessor(exporter);
