@@ -46,10 +46,9 @@ import {Topic} from './topic';
 import {promisifySome} from './util';
 import {StatusError} from './message-stream';
 import {DebugMessage} from './debug';
+import {EventEmitter} from 'stream';
 
 export {AckError, AckResponse, AckResponses} from './subscriber';
-
-import {EmitterCallback, WrappingEmitter} from './wrapping-emitter';
 
 export type PushConfig = google.pubsub.v1.IPushConfig;
 export type OidcToken = google.pubsub.v1.PushConfig.IOidcToken;
@@ -265,7 +264,7 @@ export declare interface Subscription {
  * });
  * ```
  */
-export class Subscription extends WrappingEmitter {
+export class Subscription extends EventEmitter {
   // Note: WrappingEmitter is used here to wrap user processing callbacks.
   // We do this to be able to build telemetry spans around them.
   pubsub: PubSub;
@@ -278,8 +277,6 @@ export class Subscription extends WrappingEmitter {
 
   constructor(pubsub: PubSub, name: string, options?: SubscriptionOptions) {
     super();
-
-    this.setEmitterWrapper(this.listenerWrapper.bind(this));
 
     options = options || {};
 
@@ -341,38 +338,6 @@ export class Subscription extends WrappingEmitter {
   private id_: string;
   get name(): string {
     return Subscription.formatName_(this.pubsub.projectId, this.id_);
-  }
-
-  /**
-   * This wrapper will be called as part of the emit() process. This lets
-   * us capture the full time span of processing even if the user is using
-   * async callbacks.
-   *
-   * @private
-   */
-  private listenerWrapper(
-    eventName: string | symbol,
-    listener: EmitterCallback,
-    args: unknown[]
-  ) {
-    if (eventName !== 'message') {
-      return listener(...args);
-    } else {
-      const message = args[0] as Message;
-      message.subSpans.processingStart(this.name);
-
-      // If the user returned a Promise, that means they used an async handler.
-      // In that case, we need to tag on to their Promise to end the span.
-      // Otherwise, the listener chain is sync, and we can close out sync.
-      const result = listener(...args) as unknown as Promise<void>;
-      if (result && typeof result.then === 'function') {
-        result.then(() => {
-          message.subSpans.processingEnd();
-        });
-      } else {
-        message.subSpans.processingEnd();
-      }
-    }
   }
 
   /**

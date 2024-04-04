@@ -403,6 +403,7 @@ export class Message implements tracing.MessageWithAttributes {
     if (!this._handled) {
       this._handled = true;
       this.subSpans.ackCall();
+      this.subSpans.processingEnd();
       this._subscriber.ack(this);
     }
   }
@@ -431,6 +432,7 @@ export class Message implements tracing.MessageWithAttributes {
     if (!this._handled) {
       this._handled = true;
       this.subSpans.ackCall();
+      this.subSpans.processingEnd();
       try {
         return await this._subscriber.ackWithResponse(this);
       } catch (e) {
@@ -501,6 +503,7 @@ export class Message implements tracing.MessageWithAttributes {
     if (!this._handled) {
       this._handled = true;
       this.subSpans.nackCall();
+      this.subSpans.processingEnd();
       this._subscriber.nack(this);
     }
   }
@@ -530,6 +533,7 @@ export class Message implements tracing.MessageWithAttributes {
     if (!this._handled) {
       this._handled = true;
       this.subSpans.nackCall();
+      this.subSpans.processingEnd();
       try {
         return await this._subscriber.nackWithResponse(this);
       } catch (e) {
