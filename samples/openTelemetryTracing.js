@@ -1,4 +1,4 @@
-// Copyright 2020-2023 Google LLC
+// Copyright 2020-2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ const {
 
 const {Resource} = require('@opentelemetry/resources');
 const {
-  SemanticResourceAttributes,
+  SEMRESATTRS_SERVICE_NAME,
 } = require('@opentelemetry/semantic-conventions');
 
 // Enable the diagnostic logger for OpenTelemetry
@@ -75,7 +75,7 @@ const exporter = new TraceExporter();
 // something with the spans we're generating.
 const provider = new NodeTracerProvider({
   resource: new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: 'otel example',
+    [SEMRESATTRS_SERVICE_NAME]: 'otel example',
   }),
 });
 const processor = new SimpleSpanProcessor(exporter);
