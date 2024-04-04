@@ -49,8 +49,8 @@ describe('openTelemetry', () => {
     );
     assert.match(stdout, /Message .* published./);
     assert.match(stdout, /Message .* received/);
-    assert.match(stdout, /send/);
-    assert.match(stdout, /receive/);
+    assert.match(stdout, /Cloud Trace batch writing traces/);
+    assert.match(stdout, /batchWriteSpans successfully/);
     assert.notMatch(stdout, /Received error/);
   });
 });
