@@ -47,9 +47,22 @@ class FakeSubscriber extends EventEmitter {
   isExactlyOnceDelivery = false;
 }
 
+class FakeSubscriberTelemetry {
+  flowStart() {}
+  flowEnd() {}
+  schedulerStart() {}
+  schedulerEnd() {}
+  modAckStart() {}
+  modAckStop() {}
+  processingStart() {}
+  processingEnd() {}
+}
+
 class FakeMessage {
   length = 20;
   received: number;
+  subSpans: FakeSubscriberTelemetry = new FakeSubscriberTelemetry();
+
   constructor() {
     this.received = Date.now();
   }
@@ -58,6 +71,7 @@ class FakeMessage {
     return AckResponses.Success;
   }
   ackFailed() {}
+  endParentSpan() {}
 }
 
 interface LeaseManagerInternals {
@@ -132,6 +146,15 @@ describe('LeaseManager', () => {
   });
 
   describe('add', () => {
+    it('should start a flow span', () => {
+      const message = new FakeMessage() as {} as Message;
+      const stub = sandbox.spy(message.subSpans, 'flowStart');
+
+      leaseManager.add(message);
+
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
     it('should update the bytes/size values', () => {
       const message = new FakeMessage() as {} as Message;
 

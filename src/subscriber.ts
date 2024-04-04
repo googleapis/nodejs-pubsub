@@ -17,9 +17,6 @@
 import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
-import {EventEmitter} from 'events';
-import {SpanContext, Span, SpanKind} from '@opentelemetry/api';
-import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -29,8 +26,9 @@ import {MessageStream, MessageStreamOptions} from './message-stream';
 import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
-import {createSpan} from './opentelemetry-tracing';
+import * as tracing from './telemetry-tracing';
 import {Duration} from './temporal';
+import {EventEmitter} from 'events';
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 export type SubscriptionProperties =
@@ -65,6 +63,136 @@ export class AckError extends Error {
 }
 
 /**
+ * Tracks the various spans related to subscriber/receive tracing.
+ *
+ * @private
+ */
+export class SubscriberSpans {
+  parent: tracing.MessageWithAttributes;
+
+  // These are always attached to a message.
+  constructor(parent: tracing.MessageWithAttributes) {
+    this.parent = parent;
+  }
+
+  // Start a flow control span if needed.
+  flowStart() {
+    if (!this.flow) {
+      this.flow = tracing.PubsubSpans.createReceiveFlowSpan(this.parent);
+    }
+  }
+
+  // End any flow control span.
+  flowEnd() {
+    if (this.flow) {
+      this.flow.end();
+      this.flow = undefined;
+    }
+  }
+
+  // Emit an event for starting to send an ack.
+  ackStart() {
+    tracing.PubsubEvents.ackStart(this.parent);
+  }
+
+  // Emit an event for the ack having been sent.
+  ackEnd() {
+    tracing.PubsubEvents.ackEnd(this.parent);
+  }
+
+  // Emit an event for calling ack.
+  ackCall() {
+    if (this.processing) {
+      tracing.PubsubEvents.ackCalled(this.processing);
+    }
+  }
+
+  // Emit an event for starting to send a nack.
+  nackStart() {
+    tracing.PubsubEvents.nackStart(this.parent);
+  }
+
+  // Emit an event for the nack having been sent.
+  nackEnd() {
+    tracing.PubsubEvents.nackEnd(this.parent);
+  }
+
+  // Emit an event for calling nack.
+  nackCall() {
+    if (this.processing) {
+      tracing.PubsubEvents.nackCalled(this.processing);
+    }
+  }
+
+  // Emit an event for starting to send a modAck.
+  modAckStart(deadline: Duration, isInitial: boolean) {
+    tracing.PubsubEvents.modAckStart(this.parent, deadline, isInitial);
+  }
+
+  // Emit an event for the modAck having been sent.
+  modAckEnd() {
+    tracing.PubsubEvents.modAckEnd(this.parent);
+  }
+
+  // Emit an event for calling modAck.
+  // Note that we don't currently support users calling modAck directly, but
+  // this may be used in the future for things like fully managed pull
+  // subscriptions.
+  modAckCall(deadline: Duration) {
+    if (this.processing) {
+      tracing.PubsubEvents.modAckCalled(this.processing, deadline);
+    }
+  }
+
+  // Start a scheduler span if needed.
+  // Note: This is not currently used in Node, because there is no
+  // scheduler process, due to the way messages are delivered one at a time.
+  schedulerStart() {
+    if (!this.scheduler) {
+      this.scheduler = tracing.PubsubSpans.createReceiveSchedulerSpan(
+        this.parent
+      );
+    }
+  }
+
+  // End any scheduler span.
+  schedulerEnd() {
+    if (this.scheduler) {
+      this.scheduler.end();
+      this.scheduler = undefined;
+    }
+  }
+
+  // Start a processing span if needed.
+  // This is for user processing, during on('message') delivery.
+  processingStart(subName: string) {
+    if (!this.processing) {
+      this.processing = tracing.PubsubSpans.createReceiveProcessSpan(
+        this.parent,
+        subName
+      );
+    }
+  }
+
+  // End any processing span.
+  processingEnd() {
+    if (this.processing) {
+      this.processing.end();
+      this.processing = undefined;
+    }
+  }
+
+  // If we shut down before processing can finish.
+  shutdown() {
+    tracing.PubsubEvents.shutdown(this.parent);
+  }
+
+  private flow?: tracing.Span;
+  private scheduler?: tracing.Span;
+  private processing?: tracing.Span;
+}
+
+/**
  * Date object with nanosecond precision. Supports all standard Date arguments
  * in addition to several custom types.
  *
@@ -91,7 +219,7 @@ export class AckError extends Error {
  * });
  * ```
  */
-export class Message {
+export class Message implements tracing.MessageWithAttributes {
   ackId: string;
   attributes: {[key: string]: string};
   data: Buffer;
@@ -104,6 +232,46 @@ export class Message {
   private _length: number;
   private _subscriber: Subscriber;
   private _ackFailed?: AckError;
+
+  /**
+   * @private
+   *
+   * Tracks a telemetry tracing parent span through the receive process. This will
+   * be the original publisher-side span if we have one; otherwise we'll create
+   * a "publisher" span to hang new subscriber spans onto.
+   *
+   * This needs to be declared explicitly here, because having a public class
+   * implement a private interface seems to confuse TypeScript. (And it's needed
+   * in unit tests.)
+   */
+  parentSpan?: tracing.Span;
+
+  /**
+   * We'll save the state of the subscription's exactly once delivery flag at the
+   * time the message was received. This is pretty much only for tracing, as we will
+   * generally use the live state of the subscription to figure out how to respond.
+   *
+   * @private
+   * @internal
+   */
+  isExactlyOnceDelivery: boolean;
+
+  /**
+   * @private
+   *
+   * Ends any open subscribe telemetry tracing span.
+   */
+  endParentSpan() {
+    this.parentSpan?.end();
+    delete this.parentSpan;
+  }
+
+  /**
+   * @private
+   *
+   * Tracks subscriber-specific telemetry objects through the library.
+   */
+  subSpans: SubscriberSpans;
 
   /**
    * @hideconstructor
@@ -182,6 +350,21 @@ export class Message {
      */
     this.received = Date.now();
 
+    /**
+     * Telemetry tracing objects.
+     *
+     * @private
+     */
+    this.subSpans = new SubscriberSpans(this);
+
+    /**
+     * Save the state of the subscription into the message for later tracing.
+     *
+     * @private
+     * @internal
+     */
+    this.isExactlyOnceDelivery = sub.isExactlyOnceDelivery;
+
     this._handled = false;
     this._length = this.data.length;
     this._subscriber = sub;
@@ -219,6 +402,8 @@ export class Message {
   ack(): void {
     if (!this._handled) {
       this._handled = true;
+      this.subSpans.ackCall();
+      this.subSpans.processingEnd();
       this._subscriber.ack(this);
     }
   }
@@ -246,6 +431,8 @@ export class Message {
 
     if (!this._handled) {
       this._handled = true;
+      this.subSpans.ackCall();
+      this.subSpans.processingEnd();
       try {
         return await this._subscriber.ackWithResponse(this);
       } catch (e) {
@@ -259,12 +446,14 @@ export class Message {
 
   /**
    * Modifies the ack deadline.
+   * At present time, this should generally not be called by users.
    *
    * @param {number} deadline The number of seconds to extend the deadline.
    * @private
    */
   modAck(deadline: number): void {
     if (!this._handled) {
+      this.subSpans.modAckCall(Duration.from({seconds: deadline}));
       this._subscriber.modAck(this, deadline);
     }
   }
@@ -272,6 +461,7 @@ export class Message {
   /**
    * Modifies the ack deadline, expecting a response (for exactly-once delivery subscriptions).
    * If exactly-once delivery is not enabled, this will immediately resolve successfully.
+   * At present time, this should generally not be called by users.
    *
    * @param {number} deadline The number of seconds to extend the deadline.
    * @private
@@ -287,6 +477,7 @@ export class Message {
     }
 
     if (!this._handled) {
+      this.subSpans.modAckCall(Duration.from({seconds: deadline}));
       try {
         return await this._subscriber.modAckWithResponse(this, deadline);
       } catch (e) {
@@ -311,6 +502,8 @@ export class Message {
   nack(): void {
     if (!this._handled) {
       this._handled = true;
+      this.subSpans.nackCall();
+      this.subSpans.processingEnd();
       this._subscriber.nack(this);
     }
   }
@@ -339,6 +532,8 @@ export class Message {
 
     if (!this._handled) {
       this._handled = true;
+      this.subSpans.nackCall();
+      this.subSpans.processingEnd();
       try {
         return await this._subscriber.nackWithResponse(this);
       } catch (e) {
@@ -380,6 +575,9 @@ export interface SubscriberOptions {
   flowControl?: FlowControlOptions;
   useLegacyFlowControl?: boolean;
   streamingOptions?: MessageStreamOptions;
+
+  /** @deprecated Unset this and instantiate a tracer; support will be
+   *    enabled automatically. */
   enableOpenTelemetryTracing?: boolean;
 }
 
@@ -403,7 +601,7 @@ export class Subscriber extends EventEmitter {
   private _acks!: AckQueue;
   private _histogram: Histogram;
   private _inventory!: LeaseManager;
-  private _useOpentelemetry: boolean;
+  private _useLegacyOpenTelemetry: boolean;
   private _latencies: Histogram;
   private _modAcks!: ModAckQueue;
   private _name!: string;
@@ -421,7 +619,7 @@ export class Subscriber extends EventEmitter {
     this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
     this.useLegacyFlowControl = false;
     this.isOpen = false;
-    this._useOpentelemetry = false;
+    this._useLegacyOpenTelemetry = false;
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
     this._subscription = subscription;
@@ -565,12 +763,18 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
+    tracing.PubsubEvents.ackStart(message);
+
     // Ignore this in this version of the method (but hook catch
     // to avoid unhandled exceptions).
     const resultPromise = this._acks.add(message);
     resultPromise.catch(() => {});
 
     await this._acks.onFlush();
+
+    tracing.PubsubEvents.ackEnd(message);
+    message.endParentSpan();
+
     this._inventory.remove(message);
   }
 
@@ -586,7 +790,13 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
+    tracing.PubsubEvents.ackStart(message);
+
     await this._acks.add(message);
+
+    tracing.PubsubEvents.ackEnd(message);
+    message.endParentSpan();
+
     this._inventory.remove(message);
 
     // No exception means Success.
@@ -607,9 +817,14 @@ export class Subscriber extends EventEmitter {
 
     this.isOpen = false;
     this._stream.destroy();
-    this._inventory.clear();
+    const remaining = this._inventory.clear();
 
     await this._waitForFlush();
+
+    remaining.forEach(m => {
+      m.subSpans.shutdown();
+      m.endParentSpan();
+    });
 
     this.emit('close');
 
@@ -636,7 +851,7 @@ export class Subscriber extends EventEmitter {
    * Modifies the acknowledge deadline for the provided message.
    *
    * @param {Message} message The message to modify.
-   * @param {number} deadline The deadline.
+   * @param {number} deadline The deadline in seconds.
    * @returns {Promise<void>}
    * @private
    */
@@ -685,7 +900,10 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nack(message: Message): Promise<void> {
+    message.subSpans.nackStart();
     await this.modAck(message, 0);
+    message.subSpans.nackEnd();
+    message.endParentSpan();
     this._inventory.remove(message);
   }
 
@@ -699,7 +917,11 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nackWithResponse(message: Message): Promise<AckResponse> {
-    return await this.modAckWithResponse(message, 0);
+    message.subSpans.nackStart();
+    const response = await this.modAckWithResponse(message, 0);
+    message.subSpans.nackEnd();
+    message.endParentSpan();
+    return response;
   }
 
   /**
@@ -741,7 +963,7 @@ export class Subscriber extends EventEmitter {
   setOptions(options: SubscriberOptions): void {
     this._options = options;
 
-    this._useOpentelemetry = options.enableOpenTelemetryTracing || false;
+    this._useLegacyOpenTelemetry = options.enableOpenTelemetryTracing || false;
 
     // The user-set ackDeadline value basically pegs the extension time.
     // We'll emulate it by overwriting min/max.
@@ -779,58 +1001,18 @@ export class Subscriber extends EventEmitter {
   }
 
   /**
-   * Constructs an OpenTelemetry span from the incoming message.
+   * Constructs a telemetry span from the incoming message.
    *
    * @param {Message} message One of the received messages
    * @private
    */
-  private _constructSpan(message: Message): Span | undefined {
-    // Handle cases where OpenTelemetry is disabled or no span context was sent through message
-    if (
-      !this._useOpentelemetry ||
-      !message.attributes ||
-      !message.attributes['googclient_OpenTelemetrySpanContext']
-    ) {
-      return undefined;
+  private createParentSpan(message: Message): void {
+    const enabled = tracing.isEnabled({
+      enableOpenTelemetryTracing: this._useLegacyOpenTelemetry,
+    });
+    if (enabled) {
+      tracing.extractSpan(message, this.name, enabled);
     }
-
-    const spanValue = message.attributes['googclient_OpenTelemetrySpanContext'];
-    const parentSpanContext: SpanContext | undefined = spanValue
-      ? JSON.parse(spanValue)
-      : undefined;
-    const spanAttributes = {
-      // Original span attributes
-      ackId: message.ackId,
-      deliveryAttempt: message.deliveryAttempt,
-      //
-      // based on https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/messaging.md#topic-with-multiple-consumers
-      [SemanticAttributes.MESSAGING_SYSTEM]: 'pubsub',
-      [SemanticAttributes.MESSAGING_OPERATION]: 'process',
-      [SemanticAttributes.MESSAGING_DESTINATION]: this.name,
-      [SemanticAttributes.MESSAGING_DESTINATION_KIND]: 'topic',
-      [SemanticAttributes.MESSAGING_MESSAGE_ID]: message.id,
-      [SemanticAttributes.MESSAGING_PROTOCOL]: 'pubsub',
-      [SemanticAttributes.MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES]: (
-        message.data as Buffer
-      ).length,
-      // Not in Opentelemetry semantic convention but mimics naming
-      'messaging.pubsub.received_at': message.received,
-      'messaging.pubsub.acknowlege_id': message.ackId,
-      'messaging.pubsub.delivery_attempt': message.deliveryAttempt,
-    };
-
-    // Subscriber spans should always have a publisher span as a parent.
-    // Return undefined if no parent is provided
-    const spanName = `${this.name} process`;
-    const span = parentSpanContext
-      ? createSpan(
-          spanName.trim(),
-          SpanKind.CONSUMER,
-          spanAttributes,
-          parentSpanContext
-        )
-      : undefined;
-    return span;
   }
 
   /**
@@ -860,12 +1042,16 @@ export class Subscriber extends EventEmitter {
     for (const data of receivedMessages!) {
       const message = new Message(this, data);
 
-      const span: Span | undefined = this._constructSpan(message);
+      this.createParentSpan(message);
 
       if (this.isOpen) {
         if (this.isExactlyOnceDelivery) {
           // For exactly-once delivery, we must validate that we got a valid
           // lease on the message before actually leasing it.
+          message.subSpans.modAckStart(
+            Duration.from({seconds: this.ackDeadline}),
+            true
+          );
           message
             .modAckWithResponse(this.ackDeadline)
             .then(() => {
@@ -875,16 +1061,22 @@ export class Subscriber extends EventEmitter {
               // Temporary failures will retry, so if an error reaches us
               // here, that means a permanent failure. Silently drop these.
               this._discardMessage(message);
+            })
+            .finally(() => {
+              message.subSpans.modAckEnd();
             });
         } else {
+          message.subSpans.modAckStart(
+            Duration.from({seconds: this.ackDeadline}),
+            true
+          );
           message.modAck(this.ackDeadline);
+          message.subSpans.modAckEnd();
           this._inventory.add(message);
         }
       } else {
+        message.subSpans.shutdown();
         message.nack();
-      }
-      if (span) {
-        span.end();
       }
     }
   }
