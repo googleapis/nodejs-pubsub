@@ -28,7 +28,7 @@
 
 const SUBSCRIBER_TIMEOUT = 10;
 
-// [START opentelemetry_tracing]
+// [START pubsub_publish_otel_tracing]
 /**
  * TODO(developer): Uncomment these variables before running the sample.
  */
@@ -40,9 +40,8 @@ const SUBSCRIBER_TIMEOUT = 10;
 import {Message, PubSub} from '@google-cloud/pubsub';
 
 // Imports the OpenTelemetry API
-import * as otel from '@opentelemetry/sdk-trace-node';
+import {NodeTracerProvider} from '@opentelemetry/sdk-trace-node';
 import {diag, DiagConsoleLogger, DiagLogLevel} from '@opentelemetry/api';
-const {NodeTracerProvider} = otel;
 import {SimpleSpanProcessor} from '@opentelemetry/sdk-trace-base';
 
 // To output to the console for testing, use the ConsoleSpanExporter.
@@ -94,7 +93,9 @@ async function subscriptionListen(subscriptionNameOrId: string) {
     console.log(`Message ${message.id} received.`);
     message.ack();
 
-    // Ensure that all spans got flushed by the exporter
+    // Ensure that all spans got flushed by the exporter. Note that
+    // this isn't required under normal circumstances; we're doing it
+    // here to ensure spans are flushed before closing the subscriber.
     console.log('Cleaning up OpenTelemetry exporter...');
     await processor.forceFlush();
     await subscriber.close();
@@ -118,7 +119,7 @@ async function subscriptionListen(subscriptionNameOrId: string) {
     subscriber.removeAllListeners();
   }, SUBSCRIBER_TIMEOUT * 1000);
 }
-// [END opentelemetry_tracing]
+// [END pubsub_publish_otel_tracing]
 
 function main(
   topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
