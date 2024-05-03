@@ -4,6 +4,18 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.4.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.3...v4.4.0) (2024-05-03)
+
+
+### Features
+
+* Add several fields to manage state of database encryption update ([#1904](https://github.com/googleapis/nodejs-pubsub/issues/1904)) ([aba9aee](https://github.com/googleapis/nodejs-pubsub/commit/aba9aee0c8ecc840c150aa077892b7bb88f18eca))
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @types/long to v5 ([#1901](https://github.com/googleapis/nodejs-pubsub/issues/1901)) ([d13d395](https://github.com/googleapis/nodejs-pubsub/commit/d13d395341efacf926a126bf756873922f6bbab7))
+
 ## [4.3.3](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.2...v4.3.3) (2024-03-03)
 
 
