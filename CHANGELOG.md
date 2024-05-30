@@ -4,6 +4,17 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.4.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.4.0...v4.4.1) (2024-05-30)
+
+
+### Bug Fixes
+
+* An existing message `UpdateVehicleLocationRequest` is removed ([5451d15](https://github.com/googleapis/nodejs-pubsub/commit/5451d150e77d46a475e7a8e150a7f6b5d04d6448))
+* An existing method `SearchFuzzedVehicles` is removed from service `VehicleService` ([5451d15](https://github.com/googleapis/nodejs-pubsub/commit/5451d150e77d46a475e7a8e150a7f6b5d04d6448))
+* An existing method `UpdateVehicleLocation` is removed from service `VehicleService` ([5451d15](https://github.com/googleapis/nodejs-pubsub/commit/5451d150e77d46a475e7a8e150a7f6b5d04d6448))
+* **deps:** Update dependency protobufjs to ~7.3.0 ([#1921](https://github.com/googleapis/nodejs-pubsub/issues/1921)) ([c5afd34](https://github.com/googleapis/nodejs-pubsub/commit/c5afd3400cc8ff9f920b4b232c4e4a5fb41eb07b))
+* Pull in new gax for protobufjs vuln fix ([#1925](https://github.com/googleapis/nodejs-pubsub/issues/1925)) ([8024c6d](https://github.com/googleapis/nodejs-pubsub/commit/8024c6d2e4ce69f97fd8b64bb9f076e33d47c662))
+
 ## [4.4.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.3...v4.4.0) (2024-05-03)
 
 
