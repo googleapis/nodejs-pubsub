@@ -3601,6 +3601,9 @@ export namespace google {
 
                 /** BigQueryConfig useTableSchema */
                 useTableSchema?: (boolean|null);
+
+                /** BigQueryConfig serviceAccountEmail */
+                serviceAccountEmail?: (string|null);
             }
 
             /** Represents a BigQueryConfig. */
@@ -3629,6 +3632,9 @@ export namespace google {
 
                 /** BigQueryConfig useTableSchema. */
                 public useTableSchema: boolean;
+
+                /** BigQueryConfig serviceAccountEmail. */
+                public serviceAccountEmail: string;
 
                 /**
                  * Creates a new BigQueryConfig instance using the specified properties.
@@ -3750,6 +3756,9 @@ export namespace google {
 
                 /** CloudStorageConfig state */
                 state?: (google.pubsub.v1.CloudStorageConfig.State|keyof typeof google.pubsub.v1.CloudStorageConfig.State|null);
+
+                /** CloudStorageConfig serviceAccountEmail */
+                serviceAccountEmail?: (string|null);
             }
 
             /** Represents a CloudStorageConfig. */
@@ -3787,6 +3796,9 @@ export namespace google {
 
                 /** CloudStorageConfig state. */
                 public state: (google.pubsub.v1.CloudStorageConfig.State|keyof typeof google.pubsub.v1.CloudStorageConfig.State);
+
+                /** CloudStorageConfig serviceAccountEmail. */
+                public serviceAccountEmail: string;
 
                 /** CloudStorageConfig outputFormat. */
                 public outputFormat?: ("textConfig"|"avroConfig");
