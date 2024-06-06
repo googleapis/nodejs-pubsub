@@ -307,6 +307,11 @@ export class PubSub {
         allScopes[scope] = true;
       }
     }
+
+    // The old type allows a string port value. If the user provided one, convert it.
+    if (typeof options?.port === 'string') {
+      options.port = Number.parseInt(options.port);
+    }
     this.options = Object.assign(
       {
         libName: 'gccl',
