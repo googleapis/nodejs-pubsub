@@ -57,7 +57,7 @@ import {PublishOptions} from './publisher';
 import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
 import {google} from '../protos/protos';
-import {SchemaServiceClient} from './v1';
+import {PublisherClient, SchemaServiceClient, SubscriberClient} from './v1';
 
 /**
  * Project ID placeholder.
@@ -88,6 +88,33 @@ export interface ClientConfig extends gax.GrpcClientOptions {
   servicePath?: string;
   port?: string | number;
   sslCreds?: gax.grpc.ChannelCredentials;
+}
+
+const topicOmitted = ['publish'];
+export type TopicAdminClient = Omit<PublisherClient, 'publish'>;
+
+const subOmitted = [
+  'pull',
+  'modifyAckDeadline',
+  'acknowledge',
+  'seek',
+  'streamingPull',
+];
+export type SubscriptionAdminClient = Omit<
+  SubscriberClient,
+  'pull' | 'modifyAckDeadline' | 'acknowledge' | 'seek' | 'streamingPull'
+>;
+
+// This is just a temporary fix until we get fully separated gapic admin clients.
+// It doesn't take much to work around these low-key guard-rails, but it's just
+// there as a reminder to try to help avoiding code that won't be valid later.
+//
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function removeMethods<T>(obj: any, methods: string[]): T {
+  for (const m of methods) {
+    delete obj[m];
+  }
+  return obj;
 }
 
 export interface PageOptions {
@@ -285,6 +312,8 @@ export class PubSub {
   isOpen = true;
 
   private schemaClient?: SchemaServiceClient;
+  private topicAdminClient?: TopicAdminClient;
+  private subscriptionAdminClient?: SubscriptionAdminClient;
 
   constructor(options?: ClientConfig) {
     // Needed for potentially large responses that may come from using exactly-once delivery,
@@ -1242,6 +1271,40 @@ export class PubSub {
     }
 
     return this.options;
+  }
+
+  /**
+   * Gets a topic admin client, creating one if needed.
+   *
+   * @returns {Promise<TopicAdminClient>}
+   */
+  async getTopicAdminClient(): Promise<TopicAdminClient> {
+    if (!this.topicAdminClient) {
+      const options = await this.getClientConfig();
+      this.topicAdminClient = removeMethods(
+        new v1.PublisherClient(options),
+        topicOmitted
+      );
+    }
+
+    return this.topicAdminClient;
+  }
+
+  /**
+   * Gets a subscription admin client, creating one if needed.
+   *
+   * @returns {Promise<SubscriptionAdminClient>}
+   */
+  async getSubscriptionAdminClient(): Promise<SubscriptionAdminClient> {
+    if (!this.subscriptionAdminClient) {
+      const options = await this.getClientConfig();
+      this.subscriptionAdminClient = removeMethods(
+        new v1.SubscriberClient(options),
+        subOmitted
+      );
+    }
+
+    return this.subscriptionAdminClient;
   }
 
   /**
