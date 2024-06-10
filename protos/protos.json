@@ -1274,6 +1274,13 @@
                       "options": {
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
+                    },
+                    "serviceAccountEmail": {
+                      "type": "string",
+                      "id": 7,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   },
                   "nested": {
@@ -1360,6 +1367,13 @@
                       "id": 9,
                       "options": {
                         "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
+                    },
+                    "serviceAccountEmail": {
+                      "type": "string",
+                      "id": 11,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
                       }
                     }
                   },
