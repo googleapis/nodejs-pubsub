@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.5.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.4.1...v4.5.0) (2024-06-11)
+
+
+### Features
+
+* Add service_account_email for export subscriptions ([#1927](https://github.com/googleapis/nodejs-pubsub/issues/1927)) ([c532854](https://github.com/googleapis/nodejs-pubsub/commit/c53285473c2c0973baf5932e52d2d135958c6948))
+
 ## [4.4.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.4.0...v4.4.1) (2024-05-30)
 
 
