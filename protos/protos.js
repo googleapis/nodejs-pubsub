@@ -8267,6 +8267,7 @@
                      * @property {boolean|null} [dropUnknownFields] BigQueryConfig dropUnknownFields
                      * @property {google.pubsub.v1.BigQueryConfig.State|null} [state] BigQueryConfig state
                      * @property {boolean|null} [useTableSchema] BigQueryConfig useTableSchema
+                     * @property {string|null} [serviceAccountEmail] BigQueryConfig serviceAccountEmail
                      */
     
                     /**
@@ -8333,6 +8334,14 @@
                     BigQueryConfig.prototype.useTableSchema = false;
     
                     /**
+                     * BigQueryConfig serviceAccountEmail.
+                     * @member {string} serviceAccountEmail
+                     * @memberof google.pubsub.v1.BigQueryConfig
+                     * @instance
+                     */
+                    BigQueryConfig.prototype.serviceAccountEmail = "";
+    
+                    /**
                      * Creates a new BigQueryConfig instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.BigQueryConfig
@@ -8368,6 +8377,8 @@
                             writer.uint32(/* id 5, wireType 0 =*/40).int32(message.state);
                         if (message.useTableSchema != null && Object.hasOwnProperty.call(message, "useTableSchema"))
                             writer.uint32(/* id 6, wireType 0 =*/48).bool(message.useTableSchema);
+                        if (message.serviceAccountEmail != null && Object.hasOwnProperty.call(message, "serviceAccountEmail"))
+                            writer.uint32(/* id 7, wireType 2 =*/58).string(message.serviceAccountEmail);
                         return writer;
                     };
     
@@ -8424,6 +8435,10 @@
                                 }
                             case 6: {
                                     message.useTableSchema = reader.bool();
+                                    break;
+                                }
+                            case 7: {
+                                    message.serviceAccountEmail = reader.string();
                                     break;
                                 }
                             default:
@@ -8488,6 +8503,9 @@
                         if (message.useTableSchema != null && message.hasOwnProperty("useTableSchema"))
                             if (typeof message.useTableSchema !== "boolean")
                                 return "useTableSchema: boolean expected";
+                        if (message.serviceAccountEmail != null && message.hasOwnProperty("serviceAccountEmail"))
+                            if (!$util.isString(message.serviceAccountEmail))
+                                return "serviceAccountEmail: string expected";
                         return null;
                     };
     
@@ -8545,6 +8563,8 @@
                         }
                         if (object.useTableSchema != null)
                             message.useTableSchema = Boolean(object.useTableSchema);
+                        if (object.serviceAccountEmail != null)
+                            message.serviceAccountEmail = String(object.serviceAccountEmail);
                         return message;
                     };
     
@@ -8568,6 +8588,7 @@
                             object.dropUnknownFields = false;
                             object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
                             object.useTableSchema = false;
+                            object.serviceAccountEmail = "";
                         }
                         if (message.table != null && message.hasOwnProperty("table"))
                             object.table = message.table;
@@ -8581,6 +8602,8 @@
                             object.state = options.enums === String ? $root.google.pubsub.v1.BigQueryConfig.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.BigQueryConfig.State[message.state] : message.state;
                         if (message.useTableSchema != null && message.hasOwnProperty("useTableSchema"))
                             object.useTableSchema = message.useTableSchema;
+                        if (message.serviceAccountEmail != null && message.hasOwnProperty("serviceAccountEmail"))
+                            object.serviceAccountEmail = message.serviceAccountEmail;
                         return object;
                     };
     
@@ -8650,6 +8673,7 @@
                      * @property {google.protobuf.IDuration|null} [maxDuration] CloudStorageConfig maxDuration
                      * @property {number|Long|null} [maxBytes] CloudStorageConfig maxBytes
                      * @property {google.pubsub.v1.CloudStorageConfig.State|null} [state] CloudStorageConfig state
+                     * @property {string|null} [serviceAccountEmail] CloudStorageConfig serviceAccountEmail
                      */
     
                     /**
@@ -8739,6 +8763,14 @@
                      */
                     CloudStorageConfig.prototype.state = 0;
     
+                    /**
+                     * CloudStorageConfig serviceAccountEmail.
+                     * @member {string} serviceAccountEmail
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    CloudStorageConfig.prototype.serviceAccountEmail = "";
+    
                     // OneOf field names bound to virtual getters and setters
                     var $oneOfFields;
     
@@ -8795,6 +8827,8 @@
                             writer.uint32(/* id 9, wireType 0 =*/72).int32(message.state);
                         if (message.filenameDatetimeFormat != null && Object.hasOwnProperty.call(message, "filenameDatetimeFormat"))
                             writer.uint32(/* id 10, wireType 2 =*/82).string(message.filenameDatetimeFormat);
+                        if (message.serviceAccountEmail != null && Object.hasOwnProperty.call(message, "serviceAccountEmail"))
+                            writer.uint32(/* id 11, wireType 2 =*/90).string(message.serviceAccountEmail);
                         return writer;
                     };
     
@@ -8863,6 +8897,10 @@
                                 }
                             case 9: {
                                     message.state = reader.int32();
+                                    break;
+                                }
+                            case 11: {
+                                    message.serviceAccountEmail = reader.string();
                                     break;
                                 }
                             default:
@@ -8950,6 +8988,9 @@
                             case 4:
                                 break;
                             }
+                        if (message.serviceAccountEmail != null && message.hasOwnProperty("serviceAccountEmail"))
+                            if (!$util.isString(message.serviceAccountEmail))
+                                return "serviceAccountEmail: string expected";
                         return null;
                     };
     
@@ -9025,6 +9066,8 @@
                             message.state = 4;
                             break;
                         }
+                        if (object.serviceAccountEmail != null)
+                            message.serviceAccountEmail = String(object.serviceAccountEmail);
                         return message;
                     };
     
@@ -9053,6 +9096,7 @@
                                 object.maxBytes = options.longs === String ? "0" : 0;
                             object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
                             object.filenameDatetimeFormat = "";
+                            object.serviceAccountEmail = "";
                         }
                         if (message.bucket != null && message.hasOwnProperty("bucket"))
                             object.bucket = message.bucket;
@@ -9081,6 +9125,8 @@
                             object.state = options.enums === String ? $root.google.pubsub.v1.CloudStorageConfig.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.CloudStorageConfig.State[message.state] : message.state;
                         if (message.filenameDatetimeFormat != null && message.hasOwnProperty("filenameDatetimeFormat"))
                             object.filenameDatetimeFormat = message.filenameDatetimeFormat;
+                        if (message.serviceAccountEmail != null && message.hasOwnProperty("serviceAccountEmail"))
+                            object.serviceAccountEmail = message.serviceAccountEmail;
                         return object;
                     };
     
