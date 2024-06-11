@@ -54,13 +54,7 @@ async function createSubscriptionWithCloudStorage(
   filenameSuffix,
   maxDuration
 ) {
-  // Use a gapic client for admin operations
-  const subscriptionAdmin = await pubSubClient.getSubscriptionAdminClient();
-
-  // Creates a new subscription
-  await subscriptionAdmin.createSubscription({
-    name: subscriptionName,
-    topic: topicName,
+  const options = {
     cloudStorageConfig: {
       bucket,
       filenamePrefix,
@@ -69,10 +63,14 @@ async function createSubscriptionWithCloudStorage(
         seconds: maxDuration,
       },
     },
-  });
+  };
+
+  const [sub] = await pubSubClient
+    .topic(topicName)
+    .createSubscription(subscriptionName, options);
 
   console.log(
-    `Created subscription ${subscriptionName} with a cloud storage configuration.`
+    `Created subscription ${sub.name} with a cloud storage configuration.`
   );
 }
 // [END pubsub_create_cloud_storage_subscription]
