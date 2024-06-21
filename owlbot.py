@@ -41,7 +41,19 @@ node.typeless_samples_hermetic()
 #    ["npm", "run", "fix"],
 #    check=False,
 #)
-node.fix_hermetic()
+logger.debug("Copy eslint config")
+shell.run(
+    ["cp", "-r", f"/synthtool/node_modules", "."],
+    check=True,
+    hide_output=False,
+)
+logger.debug("Running fix...")
+shell.run(
+    [f"/synthtool/node_modules/.bin/gts", "fix"],
+    check=False,
+    hide_output=False,
+)
+#node.fix_hermetic()
 
 node.owlbot_main(templates_excludes=[
     'src/index.ts',
