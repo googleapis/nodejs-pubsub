@@ -31,16 +31,17 @@ node.typeless_samples_hermetic()
 # We need to run this before the main owlbot processing, to make
 # sure quickstart.js gets gts fixed before the README is generated.
 # This needs to be worked out more properly, this is temporary.
-logger.debug("Copy eslint config")
-shell.run(
-    ["cp", "-r", f"/synthtool/node_modules", "."],
-    check=True,
-)
-logger.debug("Running fix...")
-shell.run(
-    ["npm", "run", "fix"],
-    check=False,
-)
+#logger.debug("Copy eslint config")
+#shell.run(
+#    ["cp", "-r", f"/synthtool/node_modules", "."],
+#    check=True,
+#)
+#logger.debug("Running fix...")
+#shell.run(
+#    ["npm", "run", "fix"],
+#    check=False,
+#)
+node.fix_hermetic()
 
 node.owlbot_main(templates_excludes=[
     'src/index.ts',
