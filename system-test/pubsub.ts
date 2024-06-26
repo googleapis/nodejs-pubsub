@@ -19,7 +19,6 @@ import defer = require('p-defer');
 import * as uuid from 'uuid';
 
 // This is only in Node 10.17+, but it's used for system tests, should be okay.
-// eslint-disable-next-line node/no-unsupported-features/node-builtins
 import {promises as fs} from 'fs';
 
 import {
