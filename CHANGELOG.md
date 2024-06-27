@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.5.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.5.0...v4.5.1) (2024-06-27)
+
+
+### Bug Fixes
+
+* **docs samples:** Update missing argv in sample metadata for push subscription ([#1946](https://github.com/googleapis/nodejs-pubsub/issues/1946)) ([34b8c03](https://github.com/googleapis/nodejs-pubsub/commit/34b8c03f90618ba6ae506764b9d97d9db84dcada))
+
 ## [4.5.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.4.1...v4.5.0) (2024-06-11)
 
 
