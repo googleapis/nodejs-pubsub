@@ -89,6 +89,8 @@ class FakeLeaseManager extends EventEmitter {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   add(message: s.Message): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setOptions(options: FlowControlOptions): void {}
   clear(): void {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   remove(message: s.Message): void {}
@@ -107,6 +109,8 @@ class FakeQueue {
   async add(message: s.Message, deadline?: number): Promise<s.AckResponse> {
     return s.AckResponses.Success;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setOptions(options: BatchOptions) {}
   async flush(): Promise<void> {}
   async onFlush(): Promise<void> {}
   async onDrain(): Promise<void> {}
