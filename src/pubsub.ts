@@ -307,6 +307,7 @@ export class PubSub {
         allScopes[scope] = true;
       }
     }
+
     this.options = Object.assign(
       {
         libName: 'gccl',
