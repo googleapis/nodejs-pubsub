@@ -23,7 +23,7 @@
 // sample-metadata:
 //   title: Create a Cloud Storage subscription
 //   description: Demonstrates how to create a subscription with Cloud Storage.
-//   usage: node createSubscriptionWithCloudStorage.js <topic-name> <subscription-name> <bucket> <filenamePrefix> <filenameSuffix> <maxDuration>
+//   usage: node createSubscriptionWithCloudStorage.js <topic-name> <subscription-name> <bucket> <filename-prefix> <filename-suffix> <max-duration>
 
 // [START pubsub_create_cloud_storage_subscription]
 /**
@@ -42,7 +42,7 @@ import {CreateSubscriptionOptions, PubSub} from '@google-cloud/pubsub';
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function createSubscriptionWithCloudStorage(
+async function createCloudStorageSubscription(
   topicName: string,
   subscriptionName: string,
   bucket: string,
@@ -61,12 +61,12 @@ async function createSubscriptionWithCloudStorage(
     },
   };
 
-  const [sub] = await pubSubClient
+  await pubSubClient
     .topic(topicName)
     .createSubscription(subscriptionName, options);
 
   console.log(
-    `Created subscription ${sub.name} with a cloud storage configuration.`
+    `Created subscription ${subscriptionName} with a cloud storage configuration.`
   );
 }
 // [END pubsub_create_cloud_storage_subscription]
@@ -79,7 +79,7 @@ function main(
   filenameSuffix = 'YOUR_FILENAME_SUFFIX',
   maxDuration = 60
 ) {
-  createSubscriptionWithCloudStorage(
+  createCloudStorageSubscription(
     topicName,
     subscriptionName,
     bucket,
