@@ -265,7 +265,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/sam
 __Usage:__
 
 
-`node createSubscriptionWithCloudStorage.js <topic-name> <subscription-name> <bucket> <filenamePrefix> <filenameSuffix> <maxDuration>`
+`node createSubscriptionWithCloudStorage.js <topic-name> <subscription-name> <bucket> <filename-prefix> <filename-suffix> <max-duration>`
 
 
 -----
