@@ -20,6 +20,7 @@ node.typeless_samples_hermetic()
 # We need to run this before the main owlbot processing, to make
 # sure quickstart.js gets gts fixed before the README is generated.
 # This needs to be worked out more properly, this is temporary.
+node.install()
 node.fix()
 
 # Main OwlBot processing.
