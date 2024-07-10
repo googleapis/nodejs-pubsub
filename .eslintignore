@@ -4,6 +4,5 @@ test/fixtures
 build/
 docs/
 protos/
-owl-bot-staging/
 samples/generated/
 system-test/**/fixtures

@@ -1389,6 +1389,13 @@
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
+                        },
+                        "useTopicSchema": {
+                          "type": "bool",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -1398,7 +1405,8 @@
                         "ACTIVE": 1,
                         "PERMISSION_DENIED": 2,
                         "NOT_FOUND": 3,
-                        "IN_TRANSIT_LOCATION_RESTRICTION": 4
+                        "IN_TRANSIT_LOCATION_RESTRICTION": 4,
+                        "SCHEMA_MISMATCH": 5
                       }
                     }
                   }

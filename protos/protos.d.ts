@@ -3979,6 +3979,9 @@ export namespace google {
 
                     /** AvroConfig writeMetadata */
                     writeMetadata?: (boolean|null);
+
+                    /** AvroConfig useTopicSchema */
+                    useTopicSchema?: (boolean|null);
                 }
 
                 /** Represents an AvroConfig. */
@@ -3992,6 +3995,9 @@ export namespace google {
 
                     /** AvroConfig writeMetadata. */
                     public writeMetadata: boolean;
+
+                    /** AvroConfig useTopicSchema. */
+                    public useTopicSchema: boolean;
 
                     /**
                      * Creates a new AvroConfig instance using the specified properties.
@@ -4077,7 +4083,8 @@ export namespace google {
                     ACTIVE = 1,
                     PERMISSION_DENIED = 2,
                     NOT_FOUND = 3,
-                    IN_TRANSIT_LOCATION_RESTRICTION = 4
+                    IN_TRANSIT_LOCATION_RESTRICTION = 4,
+                    SCHEMA_MISMATCH = 5
                 }
             }
 
