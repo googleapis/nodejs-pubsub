@@ -8986,6 +8986,7 @@
                             case 2:
                             case 3:
                             case 4:
+                            case 5:
                                 break;
                             }
                         if (message.serviceAccountEmail != null && message.hasOwnProperty("serviceAccountEmail"))
@@ -9064,6 +9065,10 @@
                         case "IN_TRANSIT_LOCATION_RESTRICTION":
                         case 4:
                             message.state = 4;
+                            break;
+                        case "SCHEMA_MISMATCH":
+                        case 5:
+                            message.state = 5;
                             break;
                         }
                         if (object.serviceAccountEmail != null)
@@ -9338,6 +9343,7 @@
                          * @memberof google.pubsub.v1.CloudStorageConfig
                          * @interface IAvroConfig
                          * @property {boolean|null} [writeMetadata] AvroConfig writeMetadata
+                         * @property {boolean|null} [useTopicSchema] AvroConfig useTopicSchema
                          */
     
                         /**
@@ -9362,6 +9368,14 @@
                          * @instance
                          */
                         AvroConfig.prototype.writeMetadata = false;
+    
+                        /**
+                         * AvroConfig useTopicSchema.
+                         * @member {boolean} useTopicSchema
+                         * @memberof google.pubsub.v1.CloudStorageConfig.AvroConfig
+                         * @instance
+                         */
+                        AvroConfig.prototype.useTopicSchema = false;
     
                         /**
                          * Creates a new AvroConfig instance using the specified properties.
@@ -9389,6 +9403,8 @@
                                 writer = $Writer.create();
                             if (message.writeMetadata != null && Object.hasOwnProperty.call(message, "writeMetadata"))
                                 writer.uint32(/* id 1, wireType 0 =*/8).bool(message.writeMetadata);
+                            if (message.useTopicSchema != null && Object.hasOwnProperty.call(message, "useTopicSchema"))
+                                writer.uint32(/* id 2, wireType 0 =*/16).bool(message.useTopicSchema);
                             return writer;
                         };
     
@@ -9425,6 +9441,10 @@
                                 switch (tag >>> 3) {
                                 case 1: {
                                         message.writeMetadata = reader.bool();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.useTopicSchema = reader.bool();
                                         break;
                                     }
                                 default:
@@ -9465,6 +9485,9 @@
                             if (message.writeMetadata != null && message.hasOwnProperty("writeMetadata"))
                                 if (typeof message.writeMetadata !== "boolean")
                                     return "writeMetadata: boolean expected";
+                            if (message.useTopicSchema != null && message.hasOwnProperty("useTopicSchema"))
+                                if (typeof message.useTopicSchema !== "boolean")
+                                    return "useTopicSchema: boolean expected";
                             return null;
                         };
     
@@ -9482,6 +9505,8 @@
                             var message = new $root.google.pubsub.v1.CloudStorageConfig.AvroConfig();
                             if (object.writeMetadata != null)
                                 message.writeMetadata = Boolean(object.writeMetadata);
+                            if (object.useTopicSchema != null)
+                                message.useTopicSchema = Boolean(object.useTopicSchema);
                             return message;
                         };
     
@@ -9498,10 +9523,14 @@
                             if (!options)
                                 options = {};
                             var object = {};
-                            if (options.defaults)
+                            if (options.defaults) {
                                 object.writeMetadata = false;
+                                object.useTopicSchema = false;
+                            }
                             if (message.writeMetadata != null && message.hasOwnProperty("writeMetadata"))
                                 object.writeMetadata = message.writeMetadata;
+                            if (message.useTopicSchema != null && message.hasOwnProperty("useTopicSchema"))
+                                object.useTopicSchema = message.useTopicSchema;
                             return object;
                         };
     
@@ -9543,6 +9572,7 @@
                      * @property {number} PERMISSION_DENIED=2 PERMISSION_DENIED value
                      * @property {number} NOT_FOUND=3 NOT_FOUND value
                      * @property {number} IN_TRANSIT_LOCATION_RESTRICTION=4 IN_TRANSIT_LOCATION_RESTRICTION value
+                     * @property {number} SCHEMA_MISMATCH=5 SCHEMA_MISMATCH value
                      */
                     CloudStorageConfig.State = (function() {
                         var valuesById = {}, values = Object.create(valuesById);
@@ -9551,6 +9581,7 @@
                         values[valuesById[2] = "PERMISSION_DENIED"] = 2;
                         values[valuesById[3] = "NOT_FOUND"] = 3;
                         values[valuesById[4] = "IN_TRANSIT_LOCATION_RESTRICTION"] = 4;
+                        values[valuesById[5] = "SCHEMA_MISMATCH"] = 5;
                         return values;
                     })();
     
