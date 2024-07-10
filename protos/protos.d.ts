@@ -3601,6 +3601,9 @@ export namespace google {
 
                 /** BigQueryConfig useTableSchema */
                 useTableSchema?: (boolean|null);
+
+                /** BigQueryConfig serviceAccountEmail */
+                serviceAccountEmail?: (string|null);
             }
 
             /** Represents a BigQueryConfig. */
@@ -3629,6 +3632,9 @@ export namespace google {
 
                 /** BigQueryConfig useTableSchema. */
                 public useTableSchema: boolean;
+
+                /** BigQueryConfig serviceAccountEmail. */
+                public serviceAccountEmail: string;
 
                 /**
                  * Creates a new BigQueryConfig instance using the specified properties.
@@ -3733,6 +3739,9 @@ export namespace google {
                 /** CloudStorageConfig filenameSuffix */
                 filenameSuffix?: (string|null);
 
+                /** CloudStorageConfig filenameDatetimeFormat */
+                filenameDatetimeFormat?: (string|null);
+
                 /** CloudStorageConfig textConfig */
                 textConfig?: (google.pubsub.v1.CloudStorageConfig.ITextConfig|null);
 
@@ -3747,6 +3756,9 @@ export namespace google {
 
                 /** CloudStorageConfig state */
                 state?: (google.pubsub.v1.CloudStorageConfig.State|keyof typeof google.pubsub.v1.CloudStorageConfig.State|null);
+
+                /** CloudStorageConfig serviceAccountEmail */
+                serviceAccountEmail?: (string|null);
             }
 
             /** Represents a CloudStorageConfig. */
@@ -3767,6 +3779,9 @@ export namespace google {
                 /** CloudStorageConfig filenameSuffix. */
                 public filenameSuffix: string;
 
+                /** CloudStorageConfig filenameDatetimeFormat. */
+                public filenameDatetimeFormat: string;
+
                 /** CloudStorageConfig textConfig. */
                 public textConfig?: (google.pubsub.v1.CloudStorageConfig.ITextConfig|null);
 
@@ -3781,6 +3796,9 @@ export namespace google {
 
                 /** CloudStorageConfig state. */
                 public state: (google.pubsub.v1.CloudStorageConfig.State|keyof typeof google.pubsub.v1.CloudStorageConfig.State);
+
+                /** CloudStorageConfig serviceAccountEmail. */
+                public serviceAccountEmail: string;
 
                 /** CloudStorageConfig outputFormat. */
                 public outputFormat?: ("textConfig"|"avroConfig");
@@ -9221,6 +9239,9 @@ export namespace google {
 
             /** Publishing protoReferenceDocumentationUri */
             protoReferenceDocumentationUri?: (string|null);
+
+            /** Publishing restReferenceDocumentationUri */
+            restReferenceDocumentationUri?: (string|null);
         }
 
         /** Represents a Publishing. */
@@ -9261,6 +9282,9 @@ export namespace google {
 
             /** Publishing protoReferenceDocumentationUri. */
             public protoReferenceDocumentationUri: string;
+
+            /** Publishing restReferenceDocumentationUri. */
+            public restReferenceDocumentationUri: string;
 
             /**
              * Creates a new Publishing instance using the specified properties.
@@ -13479,6 +13503,9 @@ export namespace google {
 
             /** ServiceOptions .google.api.oauthScopes */
             ".google.api.oauthScopes"?: (string|null);
+
+            /** ServiceOptions .google.api.apiVersion */
+            ".google.api.apiVersion"?: (string|null);
         }
 
         /** Represents a ServiceOptions. */

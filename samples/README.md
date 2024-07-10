@@ -28,12 +28,14 @@ guides.
   * [Create Push Subscription](#create-push-subscription)
   * [Create Push Subscription With No Wrapper](#create-push-subscription-with-no-wrapper)
   * [Create Subscription](#create-subscription)
+  * [Create a Cloud Storage subscription](#create-a-cloud-storage-subscription)
   * [Create Subscription With Dead Letter Policy](#create-subscription-with-dead-letter-policy)
   * [Create an exactly-once delivery subscription](#create-an-exactly-once-delivery-subscription)
   * [Create Subscription With Filtering](#create-subscription-with-filtering)
   * [Create Subscription with ordering enabled](#create-subscription-with-ordering-enabled)
   * [Create Subscription With Retry Policy](#create-subscription-with-retry-policy)
   * [Create Topic](#create-topic)
+  * [Create Topic With Kinesis Ingestion](#create-topic-with-kinesis-ingestion)
   * [Create Topic With Schema](#create-topic-with-schema)
   * [Create Topic With Schema Revisions](#create-topic-with-schema-revisions)
   * [Delete a previously created schema](#delete-a-previously-created-schema)
@@ -81,6 +83,7 @@ guides.
   * [Test Subscription Permissions](#test-subscription-permissions)
   * [Test Topic Permissions](#test-topic-permissions)
   * [Update Dead Letter Policy](#update-dead-letter-policy)
+  * [Update Topic Ingestion Type](#update-topic-ingestion-type)
   * [Update Topic Schema](#update-topic-schema)
   * [Validate a schema definition](#validate-a-schema-definition)
 
@@ -205,7 +208,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/sam
 __Usage:__
 
 
-`node createPushSubscription.js <topic-name-or-id> <subscription-name-or-id>`
+`node createPushSubscription.js <endpoint-url> <topic-name-or-id> <subscription-name-or-id>`
 
 
 -----
@@ -224,7 +227,7 @@ View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/sam
 __Usage:__
 
 
-`node createPushSubscriptionNoWrapper.js <topic-name-or-id> <subscription-name-or-id>`
+`node createPushSubscriptionNoWrapper.js <endpoint-url> <topic-name-or-id> <subscription-name-or-id>`
 
 
 -----
@@ -244,6 +247,25 @@ __Usage:__
 
 
 `node createSubscription.js <topic-name-or-id> <subscription-name-or-id>`
+
+
+-----
+
+
+
+
+### Create a Cloud Storage subscription
+
+Demonstrates how to create a subscription with Cloud Storage.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/createSubscriptionWithCloudStorage.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createSubscriptionWithCloudStorage.js,samples/README.md)
+
+__Usage:__
+
+
+`node createSubscriptionWithCloudStorage.js <topic-name> <subscription-name> <bucket> <filename-prefix> <filename-suffix> <max-duration>`
 
 
 -----
@@ -358,6 +380,25 @@ __Usage:__
 
 
 `node createTopic.js <topic-name-or-id>`
+
+
+-----
+
+
+
+
+### Create Topic With Kinesis Ingestion
+
+Creates a new topic, with Kinesis ingestion enabled.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/createTopicWithKinesisIngestion.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createTopicWithKinesisIngestion.js,samples/README.md)
+
+__Usage:__
+
+
+`node createTopicWithKinesisIngestion.js <topic-name> <role-arn> <gcp-service-account> <stream-arn> <consumer-arn>`
 
 
 -----
@@ -1251,6 +1292,25 @@ __Usage:__
 
 
 `node updateDeadLetterPolicy.js <topic-name-or-id> <subscription-name-or-id>`
+
+
+-----
+
+
+
+
+### Update Topic Ingestion Type
+
+Update the ingestion type on a topic.
+
+View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/updateTopicIngestionType.js).
+
+[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/updateTopicIngestionType.js,samples/README.md)
+
+__Usage:__
+
+
+`node updateTopicIngestionType.js <topic-name-or-id> <stream-arn> <consumer-arn> <aws-role-arn> <gcp-service-account>`
 
 
 -----

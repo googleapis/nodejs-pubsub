@@ -857,6 +857,30 @@ describe('PubSub', () => {
       assert.strictEqual(pubsub.isEmulator, true);
     });
 
+    it('should allow overriding fake cred mode (on)', () => {
+      pubsub!.options!.apiEndpoint = 'something.googleapis.com';
+      pubsub!.options!.emulatorMode = true;
+      pubsub.determineBaseUrl_?.();
+
+      assert.strictEqual(pubsub.options!.sslCreds, fakeCreds);
+      assert.strictEqual(pubsub.isEmulator, true);
+    });
+
+    it('should allow overriding fake cred mode (off)', () => {
+      const defaultBaseUrl_ = 'defaulturl';
+      const testingUrl = 'localhost:8085';
+
+      setHost(defaultBaseUrl_);
+      pubsub!.options!.apiEndpoint = testingUrl;
+      pubsub!.options!.emulatorMode = false;
+      pubsub.determineBaseUrl_?.();
+
+      assert.strictEqual(pubsub.options?.servicePath, 'localhost');
+      assert.strictEqual(pubsub.options.port, 8085);
+      assert.ok(pubsub.options.sslCreds === undefined);
+      assert.strictEqual(pubsub.isEmulator, false);
+    });
+
     it('should remove slashes from the baseUrl', () => {
       setHost('localhost:8080/');
       pubsub.determineBaseUrl_?.();

@@ -1,4 +1,4 @@
-// Copyright 2023 Google LLC
+// Copyright 2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -183,7 +183,7 @@ message SchemaSettings {
 message IngestionDataSourceSettings {
   // Ingestion settings for Amazon Kinesis Data Streams.
   message AwsKinesis {
-    // Possible states for managed ingestion from Amazon Kinesis Data Streams.
+    // Possible states for ingestion from Amazon Kinesis Data Streams.
     enum State {
       // Default value. This value is unused.
       STATE_UNSPECIFIED = 0;
@@ -203,7 +203,7 @@ message IngestionDataSourceSettings {
       KINESIS_PERMISSION_DENIED = 2;
 
       // Permission denied encountered while publishing to the topic. This can
-      // happen due to Pub/Sub SA has not been granted the [appropriate publish
+      // happen if the Pub/Sub SA has not been granted the [appropriate publish
       // permissions](https://cloud.google.com/pubsub/docs/access-control#pubsub.publisher)
       PUBLISH_PERMISSION_DENIED = 3;
 
@@ -312,8 +312,7 @@ message Topic {
   // Output only. An output-only field indicating the state of the topic.
   State state = 9 [(google.api.field_behavior) = OUTPUT_ONLY];
 
-  // Optional. Settings for managed ingestion from a data source into this
-  // topic.
+  // Optional. Settings for ingestion from a data source into this topic.
   IngestionDataSourceSettings ingestion_data_source_settings = 10
       [(google.api.field_behavior) = OPTIONAL];
 }
@@ -1142,6 +1141,14 @@ message BigQueryConfig {
   // write to in BigQuery. `use_table_schema` and `use_topic_schema` cannot be
   // enabled at the same time.
   bool use_table_schema = 6 [(google.api.field_behavior) = OPTIONAL];
+
+  // Optional. The service account to use to write to BigQuery. The subscription
+  // creator or updater that specifies this field must have
+  // `iam.serviceAccounts.actAs` permission on the service account. If not
+  // specified, the Pub/Sub [service
+  // agent](https://cloud.google.com/iam/docs/service-agents),
+  // service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com, is used.
+  string service_account_email = 7 [(google.api.field_behavior) = OPTIONAL];
 }
 
 // Configuration for a Cloud Storage subscription.
@@ -1198,6 +1205,11 @@ message CloudStorageConfig {
   // Must not end in "/".
   string filename_suffix = 3 [(google.api.field_behavior) = OPTIONAL];
 
+  // Optional. User-provided format string specifying how to represent datetimes
+  // in Cloud Storage filenames. See the [datetime format
+  // guidance](https://cloud.google.com/pubsub/docs/create-cloudstorage-subscription#file_names).
+  string filename_datetime_format = 10 [(google.api.field_behavior) = OPTIONAL];
+
   // Defaults to text format.
   oneof output_format {
     // Optional. If set, message data will be written to Cloud Storage in text
@@ -1223,6 +1235,14 @@ message CloudStorageConfig {
   // Output only. An output-only field that indicates whether or not the
   // subscription can receive messages.
   State state = 9 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Optional. The service account to use to write to Cloud Storage. The
+  // subscription creator or updater that specifies this field must have
+  // `iam.serviceAccounts.actAs` permission on the service account. If not
+  // specified, the Pub/Sub
+  // [service agent](https://cloud.google.com/iam/docs/service-agents),
+  // service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com, is used.
+  string service_account_email = 11 [(google.api.field_behavior) = OPTIONAL];
 }
 
 // A message and its corresponding acknowledgment ID.

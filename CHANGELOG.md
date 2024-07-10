@@ -4,6 +4,69 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.5.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.4.1...v4.5.0) (2024-06-11)
+
+
+### Features
+
+* Add service_account_email for export subscriptions ([#1927](https://github.com/googleapis/nodejs-pubsub/issues/1927)) ([c532854](https://github.com/googleapis/nodejs-pubsub/commit/c53285473c2c0973baf5932e52d2d135958c6948))
+
+## [4.4.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.4.0...v4.4.1) (2024-05-30)
+
+
+### Bug Fixes
+
+* An existing message `UpdateVehicleLocationRequest` is removed ([5451d15](https://github.com/googleapis/nodejs-pubsub/commit/5451d150e77d46a475e7a8e150a7f6b5d04d6448))
+* An existing method `SearchFuzzedVehicles` is removed from service `VehicleService` ([5451d15](https://github.com/googleapis/nodejs-pubsub/commit/5451d150e77d46a475e7a8e150a7f6b5d04d6448))
+* An existing method `UpdateVehicleLocation` is removed from service `VehicleService` ([5451d15](https://github.com/googleapis/nodejs-pubsub/commit/5451d150e77d46a475e7a8e150a7f6b5d04d6448))
+* **deps:** Update dependency protobufjs to ~7.3.0 ([#1921](https://github.com/googleapis/nodejs-pubsub/issues/1921)) ([c5afd34](https://github.com/googleapis/nodejs-pubsub/commit/c5afd3400cc8ff9f920b4b232c4e4a5fb41eb07b))
+* Pull in new gax for protobufjs vuln fix ([#1925](https://github.com/googleapis/nodejs-pubsub/issues/1925)) ([8024c6d](https://github.com/googleapis/nodejs-pubsub/commit/8024c6d2e4ce69f97fd8b64bb9f076e33d47c662))
+
+## [4.4.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.3...v4.4.0) (2024-05-03)
+
+
+### Features
+
+* Add several fields to manage state of database encryption update ([#1904](https://github.com/googleapis/nodejs-pubsub/issues/1904)) ([aba9aee](https://github.com/googleapis/nodejs-pubsub/commit/aba9aee0c8ecc840c150aa077892b7bb88f18eca))
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @types/long to v5 ([#1901](https://github.com/googleapis/nodejs-pubsub/issues/1901)) ([d13d395](https://github.com/googleapis/nodejs-pubsub/commit/d13d395341efacf926a126bf756873922f6bbab7))
+
+## [4.3.3](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.2...v4.3.3) (2024-03-03)
+
+
+### Bug Fixes
+
+* Add client library version to headers ([#1891](https://github.com/googleapis/nodejs-pubsub/issues/1891)) ([6b59195](https://github.com/googleapis/nodejs-pubsub/commit/6b59195aed8b6c6576e50512aeca9123ad0cc016))
+
+## [4.3.2](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.1...v4.3.2) (2024-02-13)
+
+
+### Bug Fixes
+
+* Update minimum google-gax versions for auth fixes ([#1888](https://github.com/googleapis/nodejs-pubsub/issues/1888)) ([08acade](https://github.com/googleapis/nodejs-pubsub/commit/08acadee042c6a3b85344575d5d0be09ae6e4202))
+
+## [4.3.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.3.0...v4.3.1) (2024-02-08)
+
+
+### Bug Fixes
+
+* Add option to manually control emulator auth handling, and fix heuristics for TPC ([#1861](https://github.com/googleapis/nodejs-pubsub/issues/1861)) ([761cdc8](https://github.com/googleapis/nodejs-pubsub/commit/761cdc898c69715e6775d2f5913ead1fca2def02))
+
+## [4.3.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.2.0...v4.3.0) (2024-02-05)
+
+
+### Features
+
+* Trusted Private Cloud support, use the universeDomain parameter ([#1878](https://github.com/googleapis/nodejs-pubsub/issues/1878)) ([d89fd1d](https://github.com/googleapis/nodejs-pubsub/commit/d89fd1d90b352f0cc7a50a72c5fec4aab6660f8f))
+
+
+### Bug Fixes
+
+* Updated google-gax required for TPC ([#1882](https://github.com/googleapis/nodejs-pubsub/issues/1882)) ([1445856](https://github.com/googleapis/nodejs-pubsub/commit/144585699595b97f1a4cc28551e45fe23305f480))
+
 ## [4.2.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.1.1...v4.2.0) (2024-02-01)
 
 
