@@ -27,5 +27,7 @@ node.fix()
 node.owlbot_main(templates_excludes=[
     'src/index.ts',
     '.github/PULL_REQUEST_TEMPLATE.md',
-    '.github/release-please.yml'
+    '.github/release-please.yml',
+    '.github/header-checker-lint.yaml',
+    '.eslintignore'
 ])
