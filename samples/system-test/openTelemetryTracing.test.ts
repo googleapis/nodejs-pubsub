@@ -43,14 +43,21 @@ describe('openTelemetry', () => {
     );
   });
 
-  it('should run the openTelemetryTracing sample', async () => {
+  it('should run the WithOpenTelemetryTracing samples', async () => {
     const stdout = execSync(
-      `${commandFor('openTelemetryTracing')} ${topicName} ${subName}`
+      `${commandFor('publishWithOpenTelemetryTracing')} ${topicName}`
     );
     assert.match(stdout, /Message .* published./);
-    assert.match(stdout, /Message .* received/);
     assert.match(stdout, /Cloud Trace batch writing traces/);
     assert.match(stdout, /batchWriteSpans successfully/);
     assert.notMatch(stdout, /Received error/);
+
+    const stdoutSub = execSync(
+      `${commandFor('listenWithOpenTelemetryTracing')} ${subName}`
+    );
+    assert.match(stdoutSub, /Message .* received/);
+    assert.match(stdoutSub, /Cloud Trace batch writing traces/);
+    assert.match(stdoutSub, /batchWriteSpans successfully/);
+    assert.notMatch(stdoutSub, /Received error/);
   });
 });
