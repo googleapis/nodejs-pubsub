@@ -22,7 +22,7 @@ describe('openTelemetry', () => {
   const projectId = process.env.GCLOUD_PROJECT;
   const pubsub = new PubSub({projectId});
 
-  const resources = new TestResources('quickstart');
+  const resources = new TestResources('otel');
   const topicName = resources.generateName('ot');
   const subName = resources.generateName('ot');
 
