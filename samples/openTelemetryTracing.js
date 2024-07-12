@@ -16,6 +16,8 @@
 // look for the source TypeScript sample (.ts) for modifications.
 'use strict';
 
+/* eslint-disable n/no-process-exit */
+
 /**
  * This sample demonstrates how to add OpenTelemetry tracing to the
  * Google Cloud Pub/Sub API.
