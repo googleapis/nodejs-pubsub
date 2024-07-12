@@ -1,9 +1,7 @@
 **/node_modules
-**/coverage
-test/fixtures
+**/.coverage
 build/
 docs/
-owl-bot-staging/
 protos/
+system-test/
 samples/generated/
-system-test/**/fixtures
