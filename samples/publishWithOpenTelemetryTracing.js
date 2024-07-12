@@ -16,8 +16,6 @@
 // look for the source TypeScript sample (.ts) for modifications.
 'use strict';
 
-/* eslint-disable n/no-process-exit */
-
 /**
  * This sample demonstrates how to add OpenTelemetry tracing to the
  * Google Cloud Pub/Sub API.
@@ -27,19 +25,17 @@
  */
 
 // sample-metadata:
-//   title: OpenTelemetry Tracing
-//   description: Demonstrates how to enable OpenTelemetry tracing in
-//     a publisher or subscriber.
-//   usage: node openTelemetryTracing.js <topic-name-or-id> <subscription-name-or-id>
+//   title: Publish with OpenTelemetry Tracing
+//   description: Demonstrates how to enable OpenTelemetry tracing in a publisher.
+//   usage: node openTelemetryTracing.js <topic-name-or-id>
 
-const SUBSCRIBER_TIMEOUT = 10;
+const OTEL_TIMEOUT = 2;
 
 // [START pubsub_publish_otel_tracing]
 /**
  * TODO(developer): Uncomment these variables before running the sample.
  */
 // const topicNameOrId = 'YOUR_TOPIC_OR_ID';
-// const subscriptionNameOrId = 'YOUR_SUBSCRIPTION_OR_ID';
 // const data = 'Hello, world!";
 
 // Imports the Google Cloud client library
@@ -76,7 +72,7 @@ const exporter = new TraceExporter();
 // something with the spans we're generating.
 const provider = new NodeTracerProvider({
   resource: new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: 'otel example',
+    [SEMRESATTRS_SERVICE_NAME]: 'otel publisher example',
   }),
 });
 const processor = new SimpleSpanProcessor(exporter);
@@ -93,55 +89,22 @@ async function publishMessage(topicNameOrId, data) {
   const publisher = pubSubClient.topic(topicNameOrId);
   const messageId = await publisher.publishMessage({data: dataBuffer});
   console.log(`Message ${messageId} published.`);
-}
 
-async function subscriptionListen(subscriptionNameOrId) {
-  const subscriber = pubSubClient.subscription(subscriptionNameOrId);
-
-  // Message handler for subscriber
-  const messageHandler = async message => {
-    console.log(`Message ${message.id} received.`);
-    message.ack();
-
-    // Ensure that all spans got flushed by the exporter. Note that
-    // this isn't required under normal circumstances; we're doing it
-    // here to ensure spans are flushed before closing the subscriber.
-    console.log('Cleaning up OpenTelemetry exporter...');
-    await processor.forceFlush();
-    await subscriber.close();
-  };
-
-  const errorHandler = async error => {
-    console.log('Received error:', error);
-
-    console.log('Cleaning up OpenTelemetry exporter...');
-    await processor.forceFlush();
-    await subscriber.close();
-  };
-
-  // Listens for new messages from the topic
-  subscriber.on('message', messageHandler);
-  subscriber.on('error', errorHandler);
-
-  // Wait a bit for the subscription to receive messages.
-  // For the sample only.
-  setTimeout(() => {
-    subscriber.removeAllListeners();
-  }, SUBSCRIBER_TIMEOUT * 1000);
+  // The rest of the sample is in service to making sure that any
+  // buffered Pub/Sub messages and/or OpenTelemetry spans are properly
+  // flushed to the server side. In normal usage, you'd only need to do
+  // something like this on process shutdown.
+  await publisher.flush();
+  await processor.forceFlush();
+  await new Promise(r => setTimeout(r, OTEL_TIMEOUT * 1000));
 }
 // [END pubsub_publish_otel_tracing]
 
-function main(
-  topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
-  subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID',
-  data = 'Hello, world!'
-) {
-  publishMessage(topicNameOrId, data)
-    .then(() => subscriptionListen(subscriptionNameOrId))
-    .catch(err => {
-      console.error(err.message);
-      process.exitCode = 1;
-    });
+function main(topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID', data = 'Hello, world!') {
+  publishMessage(topicNameOrId, data).catch(err => {
+    console.error(err.message);
+    process.exitCode = 1;
+  });
 }
 
 main(...process.argv.slice(2));
