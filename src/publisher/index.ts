@@ -349,7 +349,7 @@ export class Publisher {
     );
 
     // If the span's context is valid we should inject the propagation trace context.
-    if (isSpanContextValid(span.spanContext())) {
+    if (span && isSpanContextValid(span.spanContext())) {
       tracing.injectSpan(span, message, enabled);
     }
 

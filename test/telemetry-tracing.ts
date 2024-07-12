@@ -27,9 +27,11 @@ import {PubsubMessage} from '../src/publisher';
 describe('OpenTelemetryTracer', () => {
   beforeEach(() => {
     exporter.reset();
+    otel.setGloballyEnabled(true);
   });
   afterEach(() => {
     exporter.reset();
+    otel.setGloballyEnabled(false);
   });
 
   describe('project parser', () => {
@@ -120,6 +122,7 @@ describe('OpenTelemetryTracer', () => {
         message,
         'projects/test/topics/topicfoo'
       );
+      assert.ok(span);
 
       otel.injectSpan(span, message, otel.OpenTelemetryLevel.Legacy);
 
@@ -148,6 +151,7 @@ describe('OpenTelemetryTracer', () => {
         message,
         'projects/test/topics/topicfoo'
       );
+      assert.ok(span);
 
       const warnSpy = sinon.spy(console, 'warn');
       try {
@@ -268,6 +272,7 @@ describe('OpenTelemetryTracer', () => {
         tests.message,
         tests.topicInfo.topicName!
       );
+      assert.ok(span);
       span.end();
 
       const spans = exporter.getFinishedSpans();
@@ -291,6 +296,7 @@ describe('OpenTelemetryTracer', () => {
         tests.message,
         tests.topicInfo.topicName!
       );
+      assert.ok(span);
       otel.PubsubSpans.updatePublisherTopicName(
         span,
         'projects/foo/topics/other'
@@ -315,11 +321,13 @@ describe('OpenTelemetryTracer', () => {
         tests.message,
         tests.topicInfo.topicName!
       );
+      assert.ok(parentSpan);
       const span = otel.PubsubSpans.createReceiveSpan(
         tests.message,
         tests.subInfo.subName!,
         otel.spanContextToContext(parentSpan.spanContext())
       );
+      assert.ok(span);
       span.end();
       parentSpan.end();
 
