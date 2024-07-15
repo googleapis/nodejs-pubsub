@@ -1362,6 +1362,13 @@
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
                     },
+                    "maxMessages": {
+                      "type": "int64",
+                      "id": 8,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
                     "state": {
                       "type": "State",
                       "id": 9,
