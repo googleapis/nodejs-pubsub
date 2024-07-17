@@ -273,6 +273,21 @@ export function getTopicInfo(fullName: string): AttributeParams {
   };
 }
 
+// Determines if a trace is to be sampled. There doesn't appear to be a sanctioned
+// way to do this currently (isRecording does something different).
+//
+// Based on this: https://github.com/open-telemetry/opentelemetry-js/issues/4193
+function isSampled(span: Span) {
+  const FLAG_MASK_SAMPLED = 0x1;
+  const spanContext = span.spanContext();
+  const traceFlags = spanContext?.traceFlags;
+  const sampled = !!(
+    traceFlags && (traceFlags & FLAG_MASK_SAMPLED) === FLAG_MASK_SAMPLED
+  );
+
+  return sampled;
+}
+
 export class PubsubSpans {
   static createAttributes(
     params: AttributeParams,
@@ -420,7 +435,8 @@ export class PubsubSpans {
       getTopicInfo(topicName)
     );
     const links: Link[] = messages
-      .map(m => ({context: m.parentSpan?.spanContext()}) as Link)
+      .filter(m => m.parentSpan && isSampled(m.parentSpan))
+      .map(m => ({context: m.parentSpan!.spanContext()}) as Link)
       .filter(l => l.context);
     const span: Span = getTracer().startSpan(
       `${topicName} send`,
@@ -432,19 +448,14 @@ export class PubsubSpans {
       ROOT_CONTEXT
     );
     span?.setAttribute('messaging.batch.message_count', messages.length);
-    messages.forEach(m => {
-      // Workaround until the JS API properly supports adding links later.
-      if (m.parentSpan) {
-        m.parentSpan.setAttribute(
-          'messaging.gcp_pubsub.publish.trace_id',
-          span.spanContext().traceId
-        );
-        m.parentSpan.setAttribute(
-          'messaging.gcp_pubsub.publish.span_id',
-          span.spanContext().spanId
-        );
-      }
-    });
+    if (span) {
+      // Also attempt to link from message spans back to the publish RPC span.
+      messages.forEach(m => {
+        if (m.parentSpan && isSampled(m.parentSpan)) {
+          m.parentSpan.addLink({context: span.spanContext()});
+        }
+      });
+    }
 
     return span;
   }
@@ -457,7 +468,8 @@ export class PubsubSpans {
       getSubscriptionInfo(subName)
     );
     const links: Link[] = messageSpans
-      .map(m => ({context: m?.spanContext()}) as Link)
+      .filter(m => m && isSampled(m))
+      .map(m => ({context: m!.spanContext()}) as Link)
       .filter(l => l.context);
     const span: Span = getTracer().startSpan(
       `${subName} response batch`,
@@ -469,19 +481,14 @@ export class PubsubSpans {
       ROOT_CONTEXT
     );
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
-    messageSpans.forEach(m => {
-      // Workaround until the JS API properly supports adding links later.
-      if (m) {
-        m.setAttribute(
-          'messaging.gcp_pubsub.receive.trace_id',
-          span.spanContext().traceId
-        );
-        m.setAttribute(
-          'messaging.gcp_pubsub.receive.span_id',
-          span.spanContext().spanId
-        );
-      }
-    });
+    if (span) {
+      // Also attempt to link from message spans back to the publish RPC span.
+      messageSpans.forEach(m => {
+        if (m && isSampled(m)) {
+          m.addLink({context: span.spanContext()});
+        }
+      });
+    }
 
     return span;
   }
