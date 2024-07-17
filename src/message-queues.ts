@@ -479,7 +479,8 @@ export class AckQueue extends MessageQueue {
   protected async _sendBatch(batch: QueuedMessages): Promise<QueuedMessages> {
     const responseSpan = tracing.PubsubSpans.createReceiveResponseRpcSpan(
       batch.map(b => b.message.tracingSpan),
-      this._subscriber.name
+      this._subscriber.name,
+      'AckQueue._sendBatch'
     );
     const client = await this._subscriber.getClient();
     const ackIds = batch.map(({message}) => message.ackId);
@@ -541,7 +542,8 @@ export class ModAckQueue extends MessageQueue {
   protected async _sendBatch(batch: QueuedMessages): Promise<QueuedMessages> {
     const responseSpan = tracing.PubsubSpans.createReceiveResponseRpcSpan(
       batch.map(b => b.message.tracingSpan),
-      this._subscriber.name
+      this._subscriber.name,
+      'ModAckQueue._sendBatch'
     );
     const client = await this._subscriber.getClient();
     const subscription = this._subscriber.name;

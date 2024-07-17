@@ -79,7 +79,8 @@ describe('OpenTelemetryTracer', () => {
       const message: PubsubMessage = {};
       const span = otel.PubsubSpans.createPublisherSpan(
         message,
-        'projects/test/topics/topicfoo'
+        'projects/test/topics/topicfoo',
+        'tests'
       ) as trace.Span;
       span.end();
 
@@ -97,7 +98,8 @@ describe('OpenTelemetryTracer', () => {
       };
       const span = otel.PubsubSpans.createPublisherSpan(
         message,
-        'projects/test/topics/topicfoo'
+        'projects/test/topics/topicfoo',
+        'tests'
       ) as trace.Span;
 
       otel.injectSpan(span, message, otel.OpenTelemetryLevel.Modern);
@@ -118,7 +120,8 @@ describe('OpenTelemetryTracer', () => {
       };
       const span = otel.PubsubSpans.createPublisherSpan(
         message,
-        'projects/test/topics/topicfoo'
+        'projects/test/topics/topicfoo',
+        'tests'
       );
 
       otel.injectSpan(span, message, otel.OpenTelemetryLevel.Legacy);
@@ -146,7 +149,8 @@ describe('OpenTelemetryTracer', () => {
       };
       const span = otel.PubsubSpans.createPublisherSpan(
         message,
-        'projects/test/topics/topicfoo'
+        'projects/test/topics/topicfoo',
+        'tests'
       );
 
       const warnSpy = sinon.spy(console, 'warn');
@@ -213,7 +217,11 @@ describe('OpenTelemetryTracer', () => {
         ackId: 'ackack',
       };
 
-      const topicAttrs = otel.PubsubSpans.createAttributes(topicInfo, message);
+      const topicAttrs = otel.PubsubSpans.createAttributes(
+        topicInfo,
+        message,
+        'tests'
+      );
       assert.deepStrictEqual(topicAttrs, {
         'messaging.system': 'gcp_pubsub',
         'messaging.destination.name': topicInfo.topicId,
@@ -223,6 +231,7 @@ describe('OpenTelemetryTracer', () => {
         'messaging.gcp_pubsub.message.exactly_once_delivery':
           message.isExactlyOnceDelivery,
         'messaging.gcp_pubsub.message.ack_id': message.ackId,
+        'code.function': 'tests',
       });
 
       // Check again with no calculated size and other parameters missing.
@@ -231,12 +240,17 @@ describe('OpenTelemetryTracer', () => {
       delete message.isExactlyOnceDelivery;
       delete message.ackId;
 
-      const topicAttrs2 = otel.PubsubSpans.createAttributes(topicInfo, message);
+      const topicAttrs2 = otel.PubsubSpans.createAttributes(
+        topicInfo,
+        message,
+        'tests'
+      );
       assert.deepStrictEqual(topicAttrs2, {
         'messaging.system': 'gcp_pubsub',
         'messaging.destination.name': topicInfo.topicId,
         'gcp.project_id': topicInfo.projectId,
         'messaging.message.envelope.size': message.data?.length,
+        'code.function': 'tests',
       });
     });
   });
@@ -266,7 +280,8 @@ describe('OpenTelemetryTracer', () => {
     it('creates publisher spans', () => {
       const span = otel.PubsubSpans.createPublisherSpan(
         tests.message,
-        tests.topicInfo.topicName!
+        tests.topicInfo.topicName!,
+        'tests'
       );
       span.end();
 
@@ -289,7 +304,8 @@ describe('OpenTelemetryTracer', () => {
     it('updates publisher topic names', () => {
       const span = otel.PubsubSpans.createPublisherSpan(
         tests.message,
-        tests.topicInfo.topicName!
+        tests.topicInfo.topicName!,
+        'tests'
       );
       otel.PubsubSpans.updatePublisherTopicName(
         span,
@@ -313,12 +329,14 @@ describe('OpenTelemetryTracer', () => {
     it('creates receive spans', () => {
       const parentSpan = otel.PubsubSpans.createPublisherSpan(
         tests.message,
-        tests.topicInfo.topicName!
+        tests.topicInfo.topicName!,
+        'tests'
       );
       const span = otel.PubsubSpans.createReceiveSpan(
         tests.message,
         tests.subInfo.subName!,
-        otel.spanContextToContext(parentSpan.spanContext())
+        otel.spanContextToContext(parentSpan.spanContext()),
+        'tests'
       );
       span.end();
       parentSpan.end();
