@@ -360,7 +360,7 @@ describe('OpenTelemetryTracer', () => {
         topicName
       );
 
-      publishSpan.end();
+      publishSpan?.end();
       const spans = exporter.getFinishedSpans();
       const publishReadSpan = spans.pop();
       const childReadSpan = spans.pop();
