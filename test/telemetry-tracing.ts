@@ -368,14 +368,16 @@ describe('OpenTelemetryTracer', () => {
       const topicName = 'projects/test/topics/topicfoo';
       const span = otel.PubsubSpans.createPublisherSpan(
         message,
-        topicName
+        topicName,
+        'test'
       ) as trace.Span;
       message.parentSpan = span;
       span.end();
 
       const publishSpan = otel.PubsubSpans.createPublishRpcSpan(
         [message],
-        topicName
+        topicName,
+        'test'
       );
 
       publishSpan?.end();
