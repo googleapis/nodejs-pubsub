@@ -117,7 +117,8 @@ export abstract class MessageQueue extends EventEmitter {
 
     const rpcSpan = tracing.PubsubSpans.createPublishRpcSpan(
       spanMessages,
-      topic.name
+      topic.name,
+      'MessageQueue._publish'
     );
 
     const requestCallback = topic.request<google.pubsub.v1.IPublishResponse>;

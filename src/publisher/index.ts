@@ -212,7 +212,7 @@ export class Publisher {
 
     // Ensure that there's a parent span for subsequent publishes
     // to hang off of.
-    this.getParentSpan(message);
+    this.getParentSpan(message, 'Publisher.publishMessage');
 
     if (!message.orderingKey) {
       this.queue.add(message, callback!);
@@ -333,7 +333,7 @@ export class Publisher {
    *
    * @param {PubsubMessage} message The message to create a span for
    */
-  getParentSpan(message: PubsubMessage): Span | undefined {
+  getParentSpan(message: PubsubMessage, caller: string): Span | undefined {
     const enabled = tracing.isEnabled(this.settings);
     if (!enabled) {
       return undefined;
@@ -345,7 +345,8 @@ export class Publisher {
 
     const span = tracing.PubsubSpans.createPublisherSpan(
       message,
-      this.topic.name
+      this.topic.name,
+      caller
     );
 
     // If the span's context is valid we should inject the propagation trace context.
