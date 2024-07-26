@@ -129,6 +129,7 @@ describe('Publisher', () => {
 
   afterEach(() => {
     sandbox.restore();
+    tracing.setGloballyEnabled(false);
   });
 
   describe('initialization', () => {
@@ -193,6 +194,8 @@ describe('Publisher', () => {
     });
 
     it('export created spans', async () => {
+      tracing.setGloballyEnabled(true);
+
       // Setup trace exporting
       tracingPublisher = new Publisher(topic);
       const msg = {data: buffer} as p.PubsubMessage;
@@ -374,6 +377,8 @@ describe('Publisher', () => {
       });
 
       it('should issue a warning if OpenTelemetry span context key is set', () => {
+        tracing.setGloballyEnabled(true);
+
         const warnSpy = sinon.spy(console, 'warn');
         const attributes = {
           [tracing.legacyAttributeName]: 'foobar',
