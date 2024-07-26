@@ -344,5 +344,34 @@ describe('OpenTelemetryTracer', () => {
       assert.strictEqual(childReadSpan.kind, SpanKind.CONSUMER);
       assert.ok(childReadSpan.parentSpanId);
     });
+
+    it('creates publish RPC spans', () => {
+      const message: PubsubMessage = {};
+      const topicName = 'projects/test/topics/topicfoo';
+      const span = otel.PubsubSpans.createPublisherSpan(
+        message,
+        topicName
+      ) as trace.Span;
+      message.parentSpan = span;
+      span.end();
+
+      const publishSpan = otel.PubsubSpans.createPublishRpcSpan(
+        [message],
+        topicName
+      );
+
+      publishSpan?.end();
+      const spans = exporter.getFinishedSpans();
+      const publishReadSpan = spans.pop();
+      const childReadSpan = spans.pop();
+      assert.ok(publishReadSpan && childReadSpan);
+
+      assert.strictEqual(
+        publishReadSpan.attributes['messaging.batch.message_count'],
+        1
+      );
+      assert.strictEqual(publishReadSpan.links.length, 1);
+      assert.strictEqual(childReadSpan.links.length, 1);
+    });
   });
 });
