@@ -27,9 +27,11 @@ import {PubsubMessage} from '../src/publisher';
 describe('OpenTelemetryTracer', () => {
   beforeEach(() => {
     exporter.reset();
+    otel.setGloballyEnabled(true);
   });
   afterEach(() => {
     exporter.reset();
+    otel.setGloballyEnabled(false);
   });
 
   describe('project parser', () => {
@@ -123,6 +125,7 @@ describe('OpenTelemetryTracer', () => {
         'projects/test/topics/topicfoo',
         'tests'
       );
+      assert.ok(span);
 
       otel.injectSpan(span, message, otel.OpenTelemetryLevel.Legacy);
 
@@ -152,6 +155,7 @@ describe('OpenTelemetryTracer', () => {
         'projects/test/topics/topicfoo',
         'tests'
       );
+      assert.ok(span);
 
       const warnSpy = sinon.spy(console, 'warn');
       try {
@@ -283,6 +287,7 @@ describe('OpenTelemetryTracer', () => {
         tests.topicInfo.topicName!,
         'tests'
       );
+      assert.ok(span);
       span.end();
 
       const spans = exporter.getFinishedSpans();
@@ -307,6 +312,7 @@ describe('OpenTelemetryTracer', () => {
         tests.topicInfo.topicName!,
         'tests'
       );
+      assert.ok(span);
       otel.PubsubSpans.updatePublisherTopicName(
         span,
         'projects/foo/topics/other'
@@ -332,12 +338,14 @@ describe('OpenTelemetryTracer', () => {
         tests.topicInfo.topicName!,
         'tests'
       );
+      assert.ok(parentSpan);
       const span = otel.PubsubSpans.createReceiveSpan(
         tests.message,
         tests.subInfo.subName!,
         otel.spanContextToContext(parentSpan.spanContext()),
         'tests'
       );
+      assert.ok(span);
       span.end();
       parentSpan.end();
 
@@ -353,6 +361,35 @@ describe('OpenTelemetryTracer', () => {
       );
       assert.strictEqual(childReadSpan.kind, SpanKind.CONSUMER);
       assert.ok(childReadSpan.parentSpanId);
+    });
+
+    it('creates publish RPC spans', () => {
+      const message: PubsubMessage = {};
+      const topicName = 'projects/test/topics/topicfoo';
+      const span = otel.PubsubSpans.createPublisherSpan(
+        message,
+        topicName
+      ) as trace.Span;
+      message.parentSpan = span;
+      span.end();
+
+      const publishSpan = otel.PubsubSpans.createPublishRpcSpan(
+        [message],
+        topicName
+      );
+
+      publishSpan?.end();
+      const spans = exporter.getFinishedSpans();
+      const publishReadSpan = spans.pop();
+      const childReadSpan = spans.pop();
+      assert.ok(publishReadSpan && childReadSpan);
+
+      assert.strictEqual(
+        publishReadSpan.attributes['messaging.batch.message_count'],
+        1
+      );
+      assert.strictEqual(publishReadSpan.links.length, 1);
+      assert.strictEqual(childReadSpan.links.length, 1);
     });
   });
 });

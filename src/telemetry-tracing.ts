@@ -58,7 +58,8 @@ function getTracer(): Tracer {
  */
 export enum OpenTelemetryLevel {
   /**
-   * None: OTel support is not enabled because we found no trace provider.
+   * None: OTel support is not enabled because we found no trace provider, or
+   * the user has not enabled it.
    */
   None = 0,
 
@@ -75,6 +76,20 @@ export enum OpenTelemetryLevel {
   Modern = 2,
 }
 
+// True if user code elsewhere wants to enable OpenTelemetry support.
+let globallyEnabled = false;
+
+/**
+ * Manually set the OpenTelemetry enabledness.
+ *
+ * @param enabled The enabled flag to use, to override any automated methods.
+ * @private
+ * @internal
+ */
+export function setGloballyEnabled(enabled: boolean) {
+  globallyEnabled = enabled;
+}
+
 /**
  * Tries to divine what sort of OpenTelemetry we're supporting. See the enum
  * for the meaning of the values, and other notes.
@@ -87,9 +102,8 @@ export enum OpenTelemetryLevel {
 export function isEnabled(
   publishSettings?: PublishOptions
 ): OpenTelemetryLevel {
-  // If there's no trace provider attached, do nothing in any case.
-  const traceProvider = trace.getTracerProvider();
-  if (!traceProvider) {
+  // If we're not enabled, skip everything.
+  if (!globallyEnabled) {
     return OpenTelemetryLevel.None;
   }
 
@@ -97,6 +111,7 @@ export function isEnabled(
     return OpenTelemetryLevel.Legacy;
   }
 
+  // Enable modern support.
   return OpenTelemetryLevel.Modern;
 }
 
@@ -273,6 +288,21 @@ export function getTopicInfo(fullName: string): AttributeParams {
   };
 }
 
+// Determines if a trace is to be sampled. There doesn't appear to be a sanctioned
+// way to do this currently (isRecording does something different).
+//
+// Based on this: https://github.com/open-telemetry/opentelemetry-js/issues/4193
+function isSampled(span: Span) {
+  const FLAG_MASK_SAMPLED = 0x1;
+  const spanContext = span.spanContext();
+  const traceFlags = spanContext?.traceFlags;
+  const sampled = !!(
+    traceFlags && (traceFlags & FLAG_MASK_SAMPLED) === FLAG_MASK_SAMPLED
+  );
+
+  return sampled;
+}
+
 export class PubsubSpans {
   static createAttributes(
     params: AttributeParams,
@@ -333,7 +363,11 @@ export class PubsubSpans {
     message: PubsubMessage,
     topicName: string,
     caller: string
-  ): Span {
+  ): Span | undefined {
+    if (!globallyEnabled) {
+      return undefined;
+    }
+
     const topicInfo = getTopicInfo(topicName);
     const span: Span = getTracer().startSpan(`${topicName} create`, {
       kind: SpanKind.PRODUCER,
@@ -365,7 +399,11 @@ export class PubsubSpans {
     subName: string,
     parent: Context | undefined,
     caller: string
-  ): Span {
+  ): Span | undefined {
+    if (!globallyEnabled) {
+      return undefined;
+    }
+
     const subInfo = getSubscriptionInfo(subName);
     const name = `${subInfo.subId ?? subName} subscribe`;
     const attributes = this.createAttributes(subInfo, message, caller);
@@ -396,6 +434,10 @@ export class PubsubSpans {
     parentSpan?: Span,
     attributes?: SpanAttributes
   ): Span | undefined {
+    if (!globallyEnabled) {
+      return undefined;
+    }
+
     const parent = message?.parentSpan ?? parentSpan;
     if (parent) {
       return getTracer().startSpan(
@@ -423,14 +465,19 @@ export class PubsubSpans {
     messages: MessageWithAttributes[],
     topicName: string,
     caller: string
-  ): Span {
+  ): Span | undefined {
+    if (!globallyEnabled) {
+      return undefined;
+    }
+
     const spanAttributes = PubsubSpans.createAttributes(
       getTopicInfo(topicName),
       undefined,
       caller
     );
     const links: Link[] = messages
-      .map(m => ({context: m.parentSpan?.spanContext()}) as Link)
+      .filter(m => m.parentSpan && isSampled(m.parentSpan))
+      .map(m => ({context: m.parentSpan!.spanContext()}) as Link)
       .filter(l => l.context);
     const span: Span = getTracer().startSpan(
       `${topicName} send`,
@@ -442,19 +489,14 @@ export class PubsubSpans {
       ROOT_CONTEXT
     );
     span?.setAttribute('messaging.batch.message_count', messages.length);
-    messages.forEach(m => {
-      // Workaround until the JS API properly supports adding links later.
-      if (m.parentSpan) {
-        m.parentSpan.setAttribute(
-          'messaging.gcp_pubsub.publish.trace_id',
-          span.spanContext().traceId
-        );
-        m.parentSpan.setAttribute(
-          'messaging.gcp_pubsub.publish.span_id',
-          span.spanContext().spanId
-        );
-      }
-    });
+    if (span) {
+      // Also attempt to link from message spans back to the publish RPC span.
+      messages.forEach(m => {
+        if (m.parentSpan && isSampled(m.parentSpan)) {
+          m.parentSpan.addLink({context: span.spanContext()});
+        }
+      });
+    }
 
     return span;
   }
@@ -463,14 +505,19 @@ export class PubsubSpans {
     messageSpans: (Span | undefined)[],
     subName: string,
     caller: string
-  ): Span {
+  ): Span | undefined {
+    if (!globallyEnabled) {
+      return undefined;
+    }
+
     const spanAttributes = PubsubSpans.createAttributes(
       getSubscriptionInfo(subName),
       undefined,
       caller
     );
     const links: Link[] = messageSpans
-      .map(m => ({context: m?.spanContext()}) as Link)
+      .filter(m => m && isSampled(m))
+      .map(m => ({context: m!.spanContext()}) as Link)
       .filter(l => l.context);
     const span: Span = getTracer().startSpan(
       `${subName} response batch`,
@@ -482,19 +529,14 @@ export class PubsubSpans {
       ROOT_CONTEXT
     );
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
-    messageSpans.forEach(m => {
-      // Workaround until the JS API properly supports adding links later.
-      if (m) {
-        m.setAttribute(
-          'messaging.gcp_pubsub.receive.trace_id',
-          span.spanContext().traceId
-        );
-        m.setAttribute(
-          'messaging.gcp_pubsub.receive.span_id',
-          span.spanContext().spanId
-        );
-      }
-    });
+    if (span) {
+      // Also attempt to link from the subscribe span(s) back to the publish RPC span.
+      messageSpans.forEach(m => {
+        if (m && isSampled(m)) {
+          m.addLink({context: span.spanContext()});
+        }
+      });
+    }
 
     return span;
   }
@@ -662,6 +704,10 @@ export function injectSpan(
   message: MessageWithAttributes,
   enabled: OpenTelemetryLevel
 ): void {
+  if (!globallyEnabled) {
+    return;
+  }
+
   if (!message.attributes) {
     message.attributes = {};
   }
@@ -729,6 +775,10 @@ export function extractSpan(
   subName: string,
   enabled: OpenTelemetryLevel
 ): Span | undefined {
+  if (!globallyEnabled) {
+    return undefined;
+  }
+
   if (message.parentSpan) {
     return message.parentSpan;
   }
@@ -783,13 +833,18 @@ export const legacyExports = {
     attributes?: SpanAttributes,
     parent?: SpanContext
   ): Span {
-    return getTracer().startSpan(
-      spanName,
-      {
-        kind,
-        attributes,
-      },
-      parent ? trace.setSpanContext(context.active(), parent) : undefined
-    );
+    if (!globallyEnabled) {
+      // This isn't great, but it's the fact of the situation.
+      return undefined as unknown as Span;
+    } else {
+      return getTracer().startSpan(
+        spanName,
+        {
+          kind,
+          attributes,
+        },
+        parent ? trace.setSpanContext(context.active(), parent) : undefined
+      );
+    }
   },
 };
