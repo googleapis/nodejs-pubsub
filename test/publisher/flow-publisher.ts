@@ -48,9 +48,12 @@ describe('Flow control publisher', () => {
 
   afterEach(() => {
     sandbox.restore();
+    tracing.setGloballyEnabled(false);
   });
 
   it('should create a flow span if a parent exists', async () => {
+    tracing.setGloballyEnabled(true);
+
     const fcp = new fp.FlowControlledPublisher(publisher);
     const message = {
       data: Buffer.from('foo'),

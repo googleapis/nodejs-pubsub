@@ -58,7 +58,8 @@ function getTracer(): Tracer {
  */
 export enum OpenTelemetryLevel {
   /**
-   * None: OTel support is not enabled because we found no trace provider.
+   * None: OTel support is not enabled because we found no trace provider, or
+   * the user has not enabled it.
    */
   None = 0,
 
@@ -75,6 +76,20 @@ export enum OpenTelemetryLevel {
   Modern = 2,
 }
 
+// True if user code elsewhere wants to enable OpenTelemetry support.
+let globallyEnabled = false;
+
+/**
+ * Manually set the OpenTelemetry enabledness.
+ *
+ * @param enabled The enabled flag to use, to override any automated methods.
+ * @private
+ * @internal
+ */
+export function setGloballyEnabled(enabled: boolean) {
+  globallyEnabled = enabled;
+}
+
 /**
  * Tries to divine what sort of OpenTelemetry we're supporting. See the enum
  * for the meaning of the values, and other notes.
@@ -87,9 +102,8 @@ export enum OpenTelemetryLevel {
 export function isEnabled(
   publishSettings?: PublishOptions
 ): OpenTelemetryLevel {
-  // If there's no trace provider attached, do nothing in any case.
-  const traceProvider = trace.getTracerProvider();
-  if (!traceProvider) {
+  // If we're not enabled, skip everything.
+  if (!globallyEnabled) {
     return OpenTelemetryLevel.None;
   }
 
@@ -97,6 +111,7 @@ export function isEnabled(
     return OpenTelemetryLevel.Legacy;
   }
 
+  // Enable modern support.
   return OpenTelemetryLevel.Modern;
 }
 
@@ -342,7 +357,14 @@ export class PubsubSpans {
     return spanAttributes;
   }
 
-  static createPublisherSpan(message: PubsubMessage, topicName: string): Span {
+  static createPublisherSpan(
+    message: PubsubMessage,
+    topicName: string
+  ): Span | undefined {
+    if (!globallyEnabled) {
+      return undefined;
+    }
+
     const topicInfo = getTopicInfo(topicName);
     const span: Span = getTracer().startSpan(`${topicName} create`, {
       kind: SpanKind.PRODUCER,
@@ -373,7 +395,11 @@ export class PubsubSpans {
     message: PubsubMessage,
     subName: string,
     parent: Context | undefined
-  ): Span {
+  ): Span | undefined {
+    if (!globallyEnabled) {
+      return undefined;
+    }
+
     const subInfo = getSubscriptionInfo(subName);
     const name = `${subInfo.subId ?? subName} subscribe`;
     const attributes = this.createAttributes(subInfo, message);
@@ -404,6 +430,10 @@ export class PubsubSpans {
     parentSpan?: Span,
     attributes?: SpanAttributes
   ): Span | undefined {
+    if (!globallyEnabled) {
+      return undefined;
+    }
+
     const parent = message?.parentSpan ?? parentSpan;
     if (parent) {
       return getTracer().startSpan(
@@ -430,7 +460,11 @@ export class PubsubSpans {
   static createPublishRpcSpan(
     messages: MessageWithAttributes[],
     topicName: string
-  ): Span {
+  ): Span | undefined {
+    if (!globallyEnabled) {
+      return undefined;
+    }
+
     const spanAttributes = PubsubSpans.createAttributes(
       getTopicInfo(topicName)
     );
@@ -463,7 +497,11 @@ export class PubsubSpans {
   static createReceiveResponseRpcSpan(
     messageSpans: (Span | undefined)[],
     subName: string
-  ): Span {
+  ): Span | undefined {
+    if (!globallyEnabled) {
+      return undefined;
+    }
+
     const spanAttributes = PubsubSpans.createAttributes(
       getSubscriptionInfo(subName)
     );
@@ -654,6 +692,10 @@ export function injectSpan(
   message: MessageWithAttributes,
   enabled: OpenTelemetryLevel
 ): void {
+  if (!globallyEnabled) {
+    return;
+  }
+
   if (!message.attributes) {
     message.attributes = {};
   }
@@ -721,6 +763,10 @@ export function extractSpan(
   subName: string,
   enabled: OpenTelemetryLevel
 ): Span | undefined {
+  if (!globallyEnabled) {
+    return undefined;
+  }
+
   if (message.parentSpan) {
     return message.parentSpan;
   }
@@ -770,13 +816,18 @@ export const legacyExports = {
     attributes?: SpanAttributes,
     parent?: SpanContext
   ): Span {
-    return getTracer().startSpan(
-      spanName,
-      {
-        kind,
-        attributes,
-      },
-      parent ? trace.setSpanContext(context.active(), parent) : undefined
-    );
+    if (!globallyEnabled) {
+      // This isn't great, but it's the fact of the situation.
+      return undefined as unknown as Span;
+    } else {
+      return getTracer().startSpan(
+        spanName,
+        {
+          kind,
+          attributes,
+        },
+        parent ? trace.setSpanContext(context.active(), parent) : undefined
+      );
+    }
   },
 };

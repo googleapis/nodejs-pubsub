@@ -25,6 +25,7 @@ import {google} from '../protos/protos';
 import * as pubsubTypes from '../src/pubsub';
 import {Snapshot} from '../src/snapshot';
 import * as subby from '../src/subscription';
+import * as tracing from '../src/telemetry-tracing';
 import {Topic} from '../src/topic';
 import * as util from '../src/util';
 import {Schema, SchemaTypes, ISchema, SchemaViews} from '../src/schema';
@@ -301,6 +302,17 @@ describe('PubSub', () => {
 
     it('should default to the opened state', () => {
       assert.strictEqual(pubsub.isOpen, true);
+    });
+
+    it('should enable OpenTelemetry if requested', () => {
+      const options: pubsubTypes.ClientConfig = {
+        enableOpenTelemetryTracing: true,
+      };
+      const pubsub = new PubSub(options);
+      assert.strictEqual(
+        tracing.isEnabled(),
+        tracing.OpenTelemetryLevel.Modern
+      );
     });
 
     it('should not be in the opened state after close()', async () => {

@@ -233,6 +233,7 @@ describe('Subscriber', () => {
   afterEach(() => {
     sandbox.restore();
     subscriber.close();
+    tracing.setGloballyEnabled(false);
   });
 
   describe('initialization', () => {
@@ -901,6 +902,8 @@ describe('Subscriber', () => {
     });
 
     it('exports a span once it is created', () => {
+      tracing.setGloballyEnabled(true);
+
       subscription = new FakeSubscription() as {} as Subscription;
       subscriber = new Subscriber(subscription, enableTracing);
       message = new Message(subscriber, RECEIVED_MESSAGE);
@@ -960,6 +963,8 @@ describe('Subscriber', () => {
     });
 
     it('exports a span even when a span context is not present on message', () => {
+      tracing.setGloballyEnabled(true);
+
       subscriber = new Subscriber(subscription, enableTracing);
       subscriber.open();
 

@@ -58,6 +58,7 @@ import {CallOptions} from 'google-gax';
 import {Transform} from 'stream';
 import {google} from '../protos/protos';
 import {SchemaServiceClient} from './v1';
+import * as tracing from './telemetry-tracing';
 
 /**
  * Project ID placeholder.
@@ -88,6 +89,12 @@ export interface ClientConfig extends gax.GrpcClientOptions {
   servicePath?: string;
   port?: string | number;
   sslCreds?: gax.grpc.ChannelCredentials;
+
+  /**
+   * Enables OpenTelemetry tracing (newer, more full implementation). This
+   * defaults to false/undefined
+   */
+  enableOpenTelemetryTracing?: boolean;
 }
 
 export interface PageOptions {
@@ -316,6 +323,11 @@ export class PubSub {
       },
       options
     );
+
+    if (this.options.enableOpenTelemetryTracing) {
+      tracing.setGloballyEnabled(true);
+    }
+
     /**
      * @name PubSub#isEmulator
      * @type {boolean}
