@@ -482,7 +482,7 @@ export class PubsubSpans {
     );
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
     if (span) {
-      // Also attempt to link from message spans back to the publish RPC span.
+      // Also attempt to link from the subscribe span(s) back to the publish RPC span.
       messageSpans.forEach(m => {
         if (m && isSampled(m)) {
           m.addLink({context: span.spanContext()});
