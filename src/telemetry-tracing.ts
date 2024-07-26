@@ -501,7 +501,7 @@ export class PubsubSpans {
     return span;
   }
 
-  static createReceiveResponseRpcSpan(
+  static createAckRpcSpan(
     messageSpans: (Span | undefined)[],
     subName: string,
     caller: string
@@ -510,8 +510,10 @@ export class PubsubSpans {
       return undefined;
     }
 
+    const subInfo = getSubscriptionInfo(subName);
+
     const spanAttributes = PubsubSpans.createAttributes(
-      getSubscriptionInfo(subName),
+      subInfo,
       undefined,
       caller
     );
@@ -520,7 +522,7 @@ export class PubsubSpans {
       .map(m => ({context: m!.spanContext()}) as Link)
       .filter(l => l.context);
     const span: Span = getTracer().startSpan(
-      `${subName} response batch`,
+      `${subInfo.subId ?? subInfo.subName} ack`,
       {
         kind: SpanKind.CONSUMER,
         attributes: spanAttributes,
@@ -528,7 +530,9 @@ export class PubsubSpans {
       },
       ROOT_CONTEXT
     );
+
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
+
     if (span) {
       // Also attempt to link from the subscribe span(s) back to the publish RPC span.
       messageSpans.forEach(m => {
@@ -536,6 +540,64 @@ export class PubsubSpans {
           m.addLink({context: span.spanContext()});
         }
       });
+    }
+
+    return span;
+  }
+
+  static createModackRpcSpan(
+    messageSpans: (Span | undefined)[],
+    subName: string,
+    type: 'modack' | 'nack',
+    caller: string,
+    deadline?: Duration,
+    isInitial?: boolean
+  ): Span | undefined {
+    if (!globallyEnabled) {
+      return undefined;
+    }
+
+    const subInfo = getSubscriptionInfo(subName);
+
+    const spanAttributes = PubsubSpans.createAttributes(
+      subInfo,
+      undefined,
+      caller
+    );
+    const links: Link[] = messageSpans
+      .filter(m => m && isSampled(m))
+      .map(m => ({context: m!.spanContext()}) as Link)
+      .filter(l => l.context);
+    const span: Span = getTracer().startSpan(
+      `${subInfo.subId ?? subInfo.subName} ${type}`,
+      {
+        kind: SpanKind.CONSUMER,
+        attributes: spanAttributes,
+        links,
+      },
+      ROOT_CONTEXT
+    );
+
+    span?.setAttribute('messaging.batch.message_count', messageSpans.length);
+
+    if (span) {
+      // Also attempt to link from the subscribe span(s) back to the publish RPC span.
+      messageSpans.forEach(m => {
+        if (m && isSampled(m)) {
+          m.addLink({context: span.spanContext()});
+        }
+      });
+    }
+
+    if (deadline) {
+      span?.setAttribute(
+        'messaging.gcp_pubsub.message.ack_deadline_seconds',
+        deadline.totalOf('second')
+      );
+    }
+
+    if (isInitial !== undefined) {
+      span?.setAttribute('messaging.gcp_pubsub.is_receipt_modack', isInitial);
     }
 
     return span;
@@ -569,34 +631,6 @@ export class PubsubSpans {
 
   static setReceiveProcessResult(span: Span, isAck: boolean) {
     span.setAttribute('messaging.gcp_pubsub.result', isAck ? 'ack' : 'nack');
-  }
-
-  static createReceiveLeaseSpan(
-    message: MessageWithAttributes,
-    subName: string,
-    type: 'modack' | 'ack' | 'nack',
-    caller: string,
-    deadline?: Duration,
-    isInitial?: boolean
-  ): Span | undefined {
-    const subInfo = getSubscriptionInfo(subName);
-    const span = PubsubSpans.createReceiveSpan(
-      message,
-      `${subInfo.subId ?? subInfo.subName} ${type}`,
-      undefined,
-      caller
-    );
-
-    if (deadline) {
-      span?.setAttribute(
-        'messaging.gcp_pubsub.message.ack_deadline_seconds',
-        deadline.totalOf('second')
-      );
-    }
-    if (isInitial !== undefined) {
-      span?.setAttribute('messaging.gcp_pubsub.is_receipt_modack', isInitial);
-    }
-    return span;
   }
 }
 

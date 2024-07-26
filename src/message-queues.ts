@@ -477,7 +477,7 @@ export class AckQueue extends MessageQueue {
    * @return {Promise}
    */
   protected async _sendBatch(batch: QueuedMessages): Promise<QueuedMessages> {
-    const responseSpan = tracing.PubsubSpans.createReceiveResponseRpcSpan(
+    const responseSpan = tracing.PubsubSpans.createAckRpcSpan(
       batch.map(b => b.message.tracingSpan),
       this._subscriber.name,
       'AckQueue._sendBatch'
@@ -540,11 +540,6 @@ export class ModAckQueue extends MessageQueue {
    * @return {Promise}
    */
   protected async _sendBatch(batch: QueuedMessages): Promise<QueuedMessages> {
-    const responseSpan = tracing.PubsubSpans.createReceiveResponseRpcSpan(
-      batch.map(b => b.message.tracingSpan),
-      this._subscriber.name,
-      'ModAckQueue._sendBatch'
-    );
     const client = await this._subscriber.getClient();
     const subscription = this._subscriber.name;
     const modAckTable: {[index: string]: QueuedMessages} = batch.reduce(
@@ -566,8 +561,18 @@ export class ModAckQueue extends MessageQueue {
       const ackDeadlineSeconds = Number(deadline);
       const reqOpts = {subscription, ackIds, ackDeadlineSeconds};
 
+      const responseSpan = tracing.PubsubSpans.createModackRpcSpan(
+        messages.map(b => b.message.tracingSpan),
+        this._subscriber.name,
+        ackDeadlineSeconds === 0 ? 'nack' : 'modack',
+        'ModAckQueue._sendBatch',
+        Duration.from({seconds: ackDeadlineSeconds})
+      );
+
       try {
         await client.modifyAckDeadline(reqOpts, callOptions);
+
+        responseSpan?.end();
 
         // It's okay if these pass through since they're successful anyway.
         this.handleAckSuccesses(messages);
@@ -596,7 +601,6 @@ export class ModAckQueue extends MessageQueue {
 
     // This catches the sub-failures and bubbles up anything we need to bubble.
     const allNewBatches: QueuedMessages[] = await Promise.all(modAckRequests);
-    responseSpan?.end();
     return allNewBatches.reduce((p: QueuedMessage[], c: QueuedMessage[]) => [
       ...(p ?? []),
       ...c,
