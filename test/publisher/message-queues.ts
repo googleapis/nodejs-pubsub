@@ -28,7 +28,7 @@ import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
 
 class FakeTopic {
-  name = 'fake-topic';
+  name = 'projects/foo/topics/fake-topic';
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   request<T>(config: RequestConfig, callback: RequestCallback<T>): void {}
 }
@@ -54,11 +54,13 @@ class FakeMessageBatch {
   messages: p.PubsubMessage[];
   options: b.BatchPublishOptions;
   bytes: number;
-  constructor(options = {} as b.BatchPublishOptions) {
+  topicName: string;
+  constructor(options = {} as b.BatchPublishOptions, topicName = 'topicName') {
     this.callbacks = [];
     this.created = Date.now();
     this.messages = [];
     this.options = options;
+    this.topicName = topicName;
     this.bytes = 0;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -75,6 +77,12 @@ class FakeMessageBatch {
   }
   setOptions(options: b.BatchPublishOptions) {
     this.options = options;
+  }
+  end() {
+    return {
+      messages: this.messages,
+      callbacks: this.callbacks,
+    };
   }
 }
 

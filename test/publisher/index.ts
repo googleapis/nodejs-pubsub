@@ -28,9 +28,9 @@ import {PublishError} from '../../src/publisher/publish-error';
 import * as util from '../../src/util';
 
 import {defaultOptions} from '../../src/default-options';
+import * as tracing from '../../src/telemetry-tracing';
 import {exporter} from '../tracing';
 import {SpanKind} from '@opentelemetry/api';
-import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 
 let promisified = false;
 const fakeUtil = Object.assign({}, util, {
@@ -99,9 +99,11 @@ class FakeOrderedQueue extends FakeQueue {
 describe('Publisher', () => {
   let sandbox: sinon.SinonSandbox;
   let spy: sinon.SinonSpy;
+  const topicId = 'topic-name';
+  const projectId = 'PROJECT_ID';
   const topic = {
-    name: 'topic-name',
-    pubsub: {projectId: 'PROJECT_ID'},
+    name: `projects/${projectId}/topics/${topicId}`,
+    pubsub: {projectId},
   } as Topic;
 
   // tslint:disable-next-line variable-name
@@ -127,6 +129,7 @@ describe('Publisher', () => {
 
   afterEach(() => {
     sandbox.restore();
+    tracing.setGloballyEnabled(false);
   });
 
   describe('initialization', () => {
@@ -184,20 +187,24 @@ describe('Publisher', () => {
 
   describe('OpenTelemetry tracing', () => {
     let tracingPublisher: p.Publisher = {} as p.Publisher;
-    const enableTracing: p.PublishOptions = {
-      enableOpenTelemetryTracing: true,
-    };
     const buffer = Buffer.from('Hello, world!');
 
     beforeEach(() => {
       exporter.reset();
     });
 
-    it('export created spans', () => {
-      // Setup trace exporting
-      tracingPublisher = new Publisher(topic, enableTracing);
+    it('export created spans', async () => {
+      tracing.setGloballyEnabled(true);
 
-      tracingPublisher.publish(buffer);
+      // Setup trace exporting
+      tracingPublisher = new Publisher(topic);
+      const msg = {data: buffer} as p.PubsubMessage;
+      tracingPublisher.publishMessage(msg);
+
+      // publishMessage is only the first part of the process now,
+      // so we need to manually end the span.
+      msg.parentSpan?.end();
+
       const spans = exporter.getFinishedSpans();
       assert.notStrictEqual(spans.length, 0, 'has span');
       const createdSpan = spans.concat().pop()!;
@@ -206,22 +213,14 @@ describe('Publisher', () => {
         opentelemetry.SpanStatusCode.UNSET
       );
       assert.strictEqual(
-        createdSpan.attributes[SemanticAttributes.MESSAGING_OPERATION],
-        'send'
+        createdSpan.attributes['messaging.system'],
+        'gcp_pubsub'
       );
       assert.strictEqual(
-        createdSpan.attributes[SemanticAttributes.MESSAGING_SYSTEM],
-        'pubsub'
+        createdSpan.attributes['messaging.destination.name'],
+        topicId
       );
-      assert.strictEqual(
-        createdSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION],
-        topic.name
-      );
-      assert.strictEqual(
-        createdSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION_KIND],
-        'topic'
-      );
-      assert.strictEqual(createdSpan.name, 'topic-name send');
+      assert.strictEqual(createdSpan.name, `${topicId} create`);
       assert.strictEqual(
         createdSpan.kind,
         SpanKind.PRODUCER,
@@ -378,9 +377,11 @@ describe('Publisher', () => {
       });
 
       it('should issue a warning if OpenTelemetry span context key is set', () => {
+        tracing.setGloballyEnabled(true);
+
         const warnSpy = sinon.spy(console, 'warn');
         const attributes = {
-          googclient_OpenTelemetrySpanContext: 'foobar',
+          [tracing.legacyAttributeName]: 'foobar',
         };
         const fakeMessageWithOTKey = {data, attributes};
         const publisherTracing = new Publisher(topic, {
