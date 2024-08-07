@@ -72,7 +72,7 @@ provider.addSpanProcessor(processor);
 provider.register();
 
 // Creates a client; cache this for further use.
-const pubSubClient = new PubSub();
+const pubSubClient = new PubSub({enableOpenTelemetryTracing: true});
 
 async function publishMessage(topicNameOrId: string, data: string) {
   // Publishes the message as a string, e.g. "Hello, world!"
