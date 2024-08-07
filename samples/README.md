@@ -62,7 +62,6 @@ guides.
   * [Listen For Messages With Custom Attributes](#listen-for-messages-with-custom-attributes)
   * [Subscribe with OpenTelemetry Tracing](#subscribe-with-opentelemetry-tracing)
   * [Modify Push Configuration](#modify-push-configuration)
-  * [OpenTelemetry Tracing](#opentelemetry-tracing)
   * [Publish Avro Records to a Topic](#publish-avro-records-to-a-topic)
   * [Publish Batched Messages](#publish-batched-messages)
   * [Publish Message](#publish-message)
@@ -895,25 +894,6 @@ __Usage:__
 
 
 `node modifyPushConfig.js <topic-name-or-id> <subscription-name-or-id>`
-
-
------
-
-
-
-
-### OpenTelemetry Tracing
-
-Demonstrates how to enable OpenTelemetry tracing in a publisher or subscriber.
-
-View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/openTelemetryTracing.js).
-
-[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/openTelemetryTracing.js,samples/README.md)
-
-__Usage:__
-
-
-`node openTelemetryTracing.js <topic-name-or-id> <subscription-name-or-id>`
 
 
 -----
