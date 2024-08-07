@@ -72,7 +72,7 @@ provider.addSpanProcessor(processor);
 provider.register();
 
 // Creates a client; cache this for further use.
-const pubSubClient = new PubSub();
+const pubSubClient = new PubSub({enableOpenTelemetryTracing: true});
 
 async function subscriptionListen(subscriptionNameOrId: string) {
   const subscriber = pubSubClient.subscription(subscriptionNameOrId);
