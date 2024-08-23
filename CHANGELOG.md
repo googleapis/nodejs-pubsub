@@ -4,6 +4,19 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.6.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.5.0...v4.6.0) (2024-07-12)
+
+
+### Features
+
+* Add max messages batching for Cloud Storage subscriptions ([#1956](https://github.com/googleapis/nodejs-pubsub/issues/1956)) ([90546f6](https://github.com/googleapis/nodejs-pubsub/commit/90546f634cc4e510185e20a4d1ba1c74ebc59b85))
+* Add use_topic_schema for Cloud Storage Subscriptions ([#1948](https://github.com/googleapis/nodejs-pubsub/issues/1948)) ([120fa1b](https://github.com/googleapis/nodejs-pubsub/commit/120fa1bca0516185e109260c69ea91eb7ddeecd0))
+
+
+### Bug Fixes
+
+* **docs samples:** Update missing argv in sample metadata for push subscription ([#1946](https://github.com/googleapis/nodejs-pubsub/issues/1946)) ([34b8c03](https://github.com/googleapis/nodejs-pubsub/commit/34b8c03f90618ba6ae506764b9d97d9db84dcada))
+
 ## [4.5.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.4.1...v4.5.0) (2024-06-11)
 
 
