@@ -36,6 +36,7 @@ export interface PubsubMessage
    * may change, and it may disappear later.
    *
    * @private
+   * @internal
    */
   calculatedSize?: number;
 
@@ -46,6 +47,7 @@ export interface PubsubMessage
    * If tracing is enabled, track the message span.
    *
    * @private
+   * @internal
    */
   messageSpan?: tracing.Span;
 
@@ -53,6 +55,7 @@ export interface PubsubMessage
    * If tracing is enabled, track the batching (publish scheduling) period.
    *
    * @private
+   * @internal
    */
   publishSchedulerSpan?: tracing.Span;
 
@@ -79,6 +82,9 @@ export interface PubsubMessage
  * Since we tag a fair number of extra things into messages sent to the Pub/Sub
  * server, this filters everything down to what needs to be sent. This should be
  * used right before gRPC calls.
+ *
+ * @private
+ * @internal
  */
 export function filterMessage(
   message: PubsubMessage
@@ -117,6 +123,7 @@ export function filterMessage(
  * may change.
  *
  * @private
+ * @internal
  */
 export function calculateMessageSize(
   message: PubsubMessage | google.pubsub.v1.IPubsubMessage

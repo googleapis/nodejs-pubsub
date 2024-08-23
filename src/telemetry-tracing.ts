@@ -41,6 +41,7 @@ const packageJson = require('../../package.json');
  * Instantiates a Opentelemetry tracer for the library
  *
  * @private
+ * @internal
  */
 let cachedTracer: Tracer | undefined;
 function getTracer(): Tracer {
@@ -55,6 +56,7 @@ function getTracer(): Tracer {
  * Determination of the level of OTel support we're providing.
  *
  * @private
+ * @internal
  */
 export enum OpenTelemetryLevel {
   /**
@@ -98,6 +100,7 @@ export function setGloballyEnabled(enabled: boolean) {
  * break anyone at a non-major.
  *
  * @private
+ * @internal
  */
 export function isEnabled(
   publishSettings?: PublishOptions
@@ -125,6 +128,7 @@ export function isEnabled(
  * or subscriber span, depending on the context.
  *
  * @private
+ * @internal
  */
 export interface MessageWithAttributes {
   attributes?: Attributes | null | undefined;
@@ -135,6 +139,7 @@ export interface MessageWithAttributes {
  * Implements common members for the TextMap getter and setter interfaces for Pub/Sub messages.
  *
  * @private
+ * @internal
  */
 export class PubsubMessageGetSet {
   static keyPrefix = 'googclient_';
@@ -154,6 +159,7 @@ export class PubsubMessageGetSet {
  * Implements the TextMap getter interface for Pub/Sub messages.
  *
  * @private
+ * @internal
  */
 export class PubsubMessageGet
   extends PubsubMessageGetSet
@@ -171,6 +177,7 @@ export class PubsubMessageGet
  * Implements the TextMap setter interface for Pub/Sub messages.
  *
  * @private
+ * @internal
  */
 export class PubsubMessageSet
   extends PubsubMessageGetSet
@@ -188,6 +195,7 @@ export class PubsubMessageSet
  * The getter to use when calling extract() on a Pub/Sub message.
  *
  * @private
+ * @internal
  */
 export const pubsubGetter = new PubsubMessageGet();
 
@@ -195,6 +203,7 @@ export const pubsubGetter = new PubsubMessageGet();
  * The setter to use when calling inject() on a Pub/Sub message.
  *
  * @private
+ * @internal
  */
 export const pubsubSetter = new PubsubMessageSet();
 
@@ -202,6 +211,7 @@ export const pubsubSetter = new PubsubMessageSet();
  * Description of the data structure passed for span attributes.
  *
  * @private
+ * @internal
  */
 export interface SpanAttributes {
   [x: string]: string | number | boolean;
@@ -211,6 +221,7 @@ export interface SpanAttributes {
  * Converts a SpanContext to a full Context, as needed.
  *
  * @private
+ * @internal
  */
 export function spanContextToContext(
   parent?: SpanContext
@@ -227,6 +238,7 @@ export function spanContextToContext(
  * supplied attributes.
  *
  * @private
+ * @internal
  */
 export const modernAttributeName = 'googclient_traceparent';
 
@@ -234,6 +246,7 @@ export const modernAttributeName = 'googclient_traceparent';
  * The old legacy attribute name.
  *
  * @private
+ * @internal
  */
 export const legacyAttributeName = 'googclient_OpenTelemetrySpanContext';
 
@@ -252,6 +265,7 @@ export interface AttributeParams {
  * Break down the subscription's full name into its project and ID.
  *
  * @private
+ * @internal
  */
 export function getSubscriptionInfo(fullName: string): AttributeParams {
   const results = fullName.match(/projects\/([^/]+)\/subscriptions\/(.+)/);
@@ -272,6 +286,7 @@ export function getSubscriptionInfo(fullName: string): AttributeParams {
  * Break down the subscription's full name into its project and ID.
  *
  * @private
+ * @internal
  */
 export function getTopicInfo(fullName: string): AttributeParams {
   const results = fullName.match(/projects\/([^/]+)\/topics\/(.+)/);
@@ -303,6 +318,12 @@ function isSampled(span: Span) {
   return sampled;
 }
 
+/**
+ * Contains utility methods for creating spans.
+ *
+ * @private
+ * @internal
+ */
 export class PubsubSpans {
   static createAttributes(
     params: AttributeParams,
@@ -636,6 +657,9 @@ export class PubsubSpans {
 
 /**
  * Creates and manipulates Pub/Sub-related events on spans.
+ *
+ * @private
+ * @internal
  */
 export class PubsubEvents {
   static addEvent(
@@ -732,6 +756,7 @@ export class PubsubEvents {
  * This is for the publish side.
  *
  * @private
+ * @internal
  */
 export function injectSpan(
   span: Span,
@@ -779,6 +804,7 @@ export function injectSpan(
  * Returns true if this message potentially contains a span context.
  *
  * @private
+ * @internal
  */
 export function containsSpanContext(message: MessageWithAttributes): boolean {
   if (message.parentSpan) {
@@ -803,6 +829,7 @@ export function containsSpanContext(message: MessageWithAttributes): boolean {
  * This is for the receive side.
  *
  * @private
+ * @internal
  */
 export function extractSpan(
   message: MessageWithAttributes,

@@ -24,6 +24,12 @@ export interface BatchPublishOptions {
   maxMilliseconds?: number;
 }
 
+/**
+ * Encapsulates a completed batch of messages.
+ *
+ * @private
+ * @internal
+ */
 export interface BatchResults {
   messages: PubsubMessage[];
   callbacks: PublishCallback[];
