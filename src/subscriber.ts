@@ -1000,12 +1000,6 @@ export class Subscriber extends EventEmitter {
       );
     }
 
-    if (this._acks) {
-      this._acks.setOptions(this._options.batching!);
-    }
-    if (this._modAcks) {
-      this._modAcks.setOptions(this._options.batching!);
-    }
     if (this._inventory) {
       this._inventory.setOptions(this._options.flowControl!);
     }
