@@ -106,7 +106,6 @@ export type MessageOptions = PubsubMessage & {json?: any};
  * ```
  */
 export class Topic {
-  name: string;
   parent: PubSub;
   pubsub: PubSub;
   request: typeof PubSub.prototype.request;
@@ -119,12 +118,12 @@ export class Topic {
 
   constructor(pubsub: PubSub, name: string, options?: PublishOptions) {
     /**
-     * The fully qualified name of this topic.
+     * The fully qualified name of this topic. May have a placeholder for
+     * the projectId if it's not been resolved.
      * @name Topic#name
      * @type {string}
      */
-    this.name = Topic.formatName_(pubsub.projectId, name);
-    this.publisher = new Publisher(this, options);
+    this.id_ = name;
     /**
      * The parent {@link PubSub} instance of this topic instance.
      * @name Topic#pubsub
@@ -136,6 +135,7 @@ export class Topic {
      * @type {PubSub}
      */
     this.parent = this.pubsub = pubsub;
+    this.publisher = new Publisher(this, options);
     this.request = pubsub.request.bind(pubsub);
     /**
      * [IAM (Identity and Access
@@ -180,7 +180,12 @@ export class Topic {
      * });
      * ```
      */
-    this.iam = new IAM(pubsub, this.name);
+    this.iam = new IAM(pubsub, this);
+  }
+
+  private id_: string;
+  get name(): string {
+    return Topic.formatName_(this.parent.projectId, this.id_);
   }
 
   /**

@@ -17,6 +17,7 @@
 import {Publisher} from '.';
 import {FlowControl} from './flow-control';
 import {PubsubMessage, calculateMessageSize} from './pubsub-message';
+import * as tracing from '../telemetry-tracing';
 
 /**
  * Encapsulates a series of message publishes from a rapid loop (or similar
@@ -76,7 +77,11 @@ export class FlowControlledPublisher {
    * ```
    */
   publish(message: PubsubMessage): Promise<void> | null {
+    const flowSpan = message.parentSpan
+      ? tracing.PubsubSpans.createPublishFlowSpan(message)
+      : undefined;
     const doPublish = () => {
+      flowSpan?.end();
       this.doPublish(message);
     };
 

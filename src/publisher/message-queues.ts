@@ -21,7 +21,8 @@ import {BatchPublishOptions, MessageBatch} from './message-batch';
 import {PublishError} from './publish-error';
 import {Publisher, PubsubMessage, PublishCallback} from './';
 import {google} from '../../protos/protos';
-
+import * as tracing from '../telemetry-tracing';
+import {filterMessage} from './pubsub-message';
 import {promisify} from 'util';
 
 /**
@@ -94,11 +95,31 @@ export abstract class MessageQueue extends EventEmitter {
     const {topic, settings} = this.publisher;
     const reqOpts = {
       topic: topic.name,
-      messages,
+      messages: messages.map(filterMessage),
     };
     if (messages.length === 0) {
       return;
     }
+
+    // Make sure we have a projectId filled in to update telemetry spans.
+    // The overall spans may not have the correct projectId because it wasn't
+    // known at the time publishMessage was called.
+    const spanMessages = messages.filter(m => !!m.parentSpan);
+    if (spanMessages.length) {
+      if (!topic.pubsub.isIdResolved) {
+        await topic.pubsub.getClientConfig();
+      }
+      spanMessages.forEach(m => {
+        tracing.PubsubSpans.updatePublisherTopicName(m.parentSpan!, topic.name);
+        tracing.PubsubEvents.publishStart(m);
+      });
+    }
+
+    const rpcSpan = tracing.PubsubSpans.createPublishRpcSpan(
+      spanMessages,
+      topic.name,
+      'MessageQueue._publish'
+    );
 
     const requestCallback = topic.request<google.pubsub.v1.IPublishResponse>;
     const request = promisify(requestCallback.bind(topic));
@@ -119,6 +140,14 @@ export abstract class MessageQueue extends EventEmitter {
       callbacks.forEach(callback => callback(err));
 
       throw e;
+    } finally {
+      messages.forEach(m => {
+        // We're finished with both the RPC and the whole publish operation,
+        // so close out all of the related spans.
+        rpcSpan?.end();
+        tracing.PubsubEvents.publishEnd(m);
+        m.parentSpan?.end();
+      });
     }
   }
 }
@@ -135,7 +164,7 @@ export class Queue extends MessageQueue {
   batch: MessageBatch;
   constructor(publisher: Publisher) {
     super(publisher);
-    this.batch = new MessageBatch(this.batchOptions);
+    this.batch = new MessageBatch(this.batchOptions, this.publisher.topic.name);
   }
 
   // This needs to update our existing message batch.
@@ -200,9 +229,9 @@ export class Queue extends MessageQueue {
    * @emits Queue#drain when all messages are sent.
    */
   async _publishInternal(fullyDrain: boolean): Promise<void> {
-    const {messages, callbacks} = this.batch;
+    const {messages, callbacks} = this.batch.end();
 
-    this.batch = new MessageBatch(this.batchOptions);
+    this.batch = new MessageBatch(this.batchOptions, this.publisher.topic.name);
 
     if (this.pending) {
       clearTimeout(this.pending);
@@ -326,7 +355,7 @@ export class OrderedQueue extends MessageQueue {
    * @returns {MessageBatch}
    */
   createBatch(): MessageBatch {
-    return new MessageBatch(this.batchOptions);
+    return new MessageBatch(this.batchOptions, this.publisher.topic.name);
   }
   /**
    * In the event of a publish failure, we need to cache the error in question
@@ -369,7 +398,7 @@ export class OrderedQueue extends MessageQueue {
       delete this.pending;
     }
 
-    const {messages, callbacks} = this.batches.pop()!;
+    const {messages, callbacks} = this.batches.pop()!.end();
 
     try {
       await this._publish(messages, callbacks);

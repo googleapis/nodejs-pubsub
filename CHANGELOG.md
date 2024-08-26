@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.7.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.6.0...v4.7.0) (2024-08-24)
+
+
+### Features
+
+* Add support for OTel context propagation and harmonized spans ([#1833](https://github.com/googleapis/nodejs-pubsub/issues/1833)) ([4b5c90d](https://github.com/googleapis/nodejs-pubsub/commit/4b5c90dc334e90cefb4da3c6fe9ce027b50aacb8))
+
 ## [4.6.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.5.0...v4.6.0) (2024-07-12)
 
 

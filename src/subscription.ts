@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {EventEmitter} from 'events';
 import * as extend from 'extend';
 import {CallOptions} from 'google-gax';
 import snakeCase = require('lodash.snakecase');
@@ -47,6 +46,7 @@ import {Topic} from './topic';
 import {promisifySome} from './util';
 import {StatusError} from './message-stream';
 import {DebugMessage} from './debug';
+import {EventEmitter} from 'stream';
 
 export {AckError, AckResponse, AckResponses} from './subscriber';
 
@@ -265,13 +265,16 @@ export declare interface Subscription {
  * ```
  */
 export class Subscription extends EventEmitter {
+  // Note: WrappingEmitter is used here to wrap user processing callbacks.
+  // We do this to be able to build telemetry spans around them.
   pubsub: PubSub;
   iam: IAM;
-  name: string;
   topic?: Topic | string;
   metadata?: google.pubsub.v1.ISubscription;
   request: typeof PubSub.prototype.request;
+
   private _subscriber: Subscriber;
+
   constructor(pubsub: PubSub, name: string, options?: SubscriptionOptions) {
     super();
 
@@ -279,7 +282,7 @@ export class Subscription extends EventEmitter {
 
     this.pubsub = pubsub;
     this.request = pubsub.request.bind(pubsub);
-    this.name = Subscription.formatName_(this.projectId, name);
+    this.id_ = name;
     this.topic = options.topic;
 
     /**
@@ -320,7 +323,7 @@ export class Subscription extends EventEmitter {
      * });
      * ```
      */
-    this.iam = new IAM(pubsub, this.name);
+    this.iam = new IAM(pubsub, this);
 
     this._subscriber = new Subscriber(this, options);
     this._subscriber
@@ -330,6 +333,11 @@ export class Subscription extends EventEmitter {
       .on('close', () => this.emit('close'));
 
     this._listen();
+  }
+
+  private id_: string;
+  get name(): string {
+    return Subscription.formatName_(this.pubsub.projectId, this.id_);
   }
 
   /**
@@ -1194,6 +1202,7 @@ export class Subscription extends EventEmitter {
 
     return formatted as google.pubsub.v1.ISubscription;
   }
+
   /*!
    * Format the name of a subscription. A subscription's full name is in the
    * format of projects/{projectId}/subscriptions/{subName}.

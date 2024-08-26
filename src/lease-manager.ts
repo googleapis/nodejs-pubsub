@@ -17,6 +17,7 @@
 import {EventEmitter} from 'events';
 import {AckError, Message, Subscriber} from './subscriber';
 import {defaultOptions} from './default-options';
+import {Duration} from './temporal';
 
 export interface FlowControlOptions {
   allowExcessMessages?: boolean;
@@ -104,6 +105,8 @@ export class LeaseManager extends EventEmitter {
     this._messages.add(message);
     this.bytes += message.length;
 
+    message.subSpans.flowStart();
+
     if (allowExcessMessages! || !wasFull) {
       this._dispense(message);
     } else {
@@ -120,13 +123,14 @@ export class LeaseManager extends EventEmitter {
     }
   }
   /**
-   * Removes ALL messages from inventory.
+   * Removes ALL messages from inventory, and returns the ones removed.
    * @private
    */
-  clear(): void {
+  clear(): Message[] {
     const wasFull = this.isFull();
 
     this._pending = [];
+    const remaining = Array.from(this._messages);
     this._messages.clear();
     this.bytes = 0;
 
@@ -135,6 +139,8 @@ export class LeaseManager extends EventEmitter {
     }
 
     this._cancelExtension();
+
+    return remaining;
   }
   /**
    * Indicates if we're at or over capacity.
@@ -240,7 +246,11 @@ export class LeaseManager extends EventEmitter {
    */
   private _dispense(message: Message): void {
     if (this._subscriber.isOpen) {
-      process.nextTick(() => this._subscriber.emit('message', message));
+      message.subSpans.flowEnd();
+      process.nextTick(() => {
+        message.subSpans.processingStart(this._subscriber.name);
+        this._subscriber.emit('message', message);
+      });
     }
   }
   /**
@@ -257,15 +267,24 @@ export class LeaseManager extends EventEmitter {
       const lifespan = (Date.now() - message.received) / (60 * 1000);
 
       if (lifespan < this._options.maxExtensionMinutes!) {
+        const deadlineDuration = Duration.from({seconds: deadline});
+        message.subSpans.modAckStart(deadlineDuration, false);
+
         if (this._subscriber.isExactlyOnceDelivery) {
-          message.modAckWithResponse(deadline).catch(e => {
-            // In the case of a permanent failure (temporary failures are retried),
-            // we need to stop trying to lease-manage the message.
-            message.ackFailed(e as AckError);
-            this.remove(message);
-          });
+          message
+            .modAckWithResponse(deadline)
+            .catch(e => {
+              // In the case of a permanent failure (temporary failures are retried),
+              // we need to stop trying to lease-manage the message.
+              message.ackFailed(e as AckError);
+              this.remove(message);
+            })
+            .finally(() => {
+              message.subSpans.modAckEnd();
+            });
         } else {
           message.modAck(deadline);
+          message.subSpans.modAckStart(deadlineDuration, false);
         }
       } else {
         this.remove(message);
