@@ -28,14 +28,14 @@ import {google} from '../protos/protos';
 import * as defer from 'p-defer';
 
 import {HistogramOptions} from '../src/histogram';
-import {FlowControlOptions} from '../src/lease-manager';
+import {FlowControlOptions, LeaseManager} from '../src/lease-manager';
 import {BatchOptions} from '../src/message-queues';
 import {MessageStreamOptions} from '../src/message-stream';
 import * as s from '../src/subscriber';
 import {Subscription} from '../src/subscription';
 import {SpanKind} from '@opentelemetry/api';
-import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
 import {Duration} from '../src';
+import * as tracing from '../src/telemetry-tracing';
 
 type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 
@@ -58,10 +58,16 @@ class FakePubSub {
   }
 }
 
+const projectId = uuid.v4();
+const subId = uuid.v4();
+
 class FakeSubscription {
-  name = uuid.v4();
-  projectId = uuid.v4();
+  name = `projects/${projectId}/subscriptions/${subId}`;
   pubsub = new FakePubSub();
+}
+
+interface PublicInventory {
+  _inventory: LeaseManager;
 }
 
 class FakeHistogram {
@@ -91,7 +97,9 @@ class FakeLeaseManager extends EventEmitter {
   add(message: s.Message): void {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setOptions(options: FlowControlOptions): void {}
-  clear(): void {}
+  clear(): s.Message[] {
+    return [];
+  }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   remove(message: s.Message): void {}
 }
@@ -193,9 +201,15 @@ describe('Subscriber', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     fakeProjectify = {
-      replaceProjectIdToken: sandbox.stub().callsFake((name, projectId) => {
-        return `projects/${projectId}/name/${name}`;
-      }),
+      replaceProjectIdToken: sandbox
+        .stub()
+        .callsFake((name: string, projectId: string) => {
+          if (name.indexOf('/') >= 0) {
+            return name;
+          } else {
+            return `projects/${projectId}/name/${name}`;
+          }
+        }),
     };
 
     const s = proxyquire('../src/subscriber.js', {
@@ -223,6 +237,7 @@ describe('Subscriber', () => {
   afterEach(() => {
     sandbox.restore();
     subscriber.close();
+    tracing.setGloballyEnabled(false);
   });
 
   describe('initialization', () => {
@@ -547,12 +562,15 @@ describe('Subscriber', () => {
       assert.strictEqual(stub.callCount, 1);
     });
 
-    it('should clear the inventory', () => {
+    it('should clear the inventory', async () => {
+      const message = new Message(subscriber, RECEIVED_MESSAGE);
+      const shutdownStub = sandbox.stub(tracing.PubsubEvents, 'shutdown');
       const inventory: FakeLeaseManager = stubs.get('inventory');
-      const stub = sandbox.stub(inventory, 'clear');
+      const stub = sandbox.stub(inventory, 'clear').returns([message]);
 
-      subscriber.close();
+      await subscriber.close();
       assert.strictEqual(stub.callCount, 1);
+      assert.strictEqual(shutdownStub.callCount, 1);
     });
 
     it('should emit a close event', done => {
@@ -563,6 +581,7 @@ describe('Subscriber', () => {
     it('should nack any messages that come in after', () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
       const stub = sandbox.stub(subscriber, 'nack');
+      const shutdownStub = sandbox.stub(tracing.PubsubEvents, 'shutdown');
       const pullResponse = {receivedMessages: [RECEIVED_MESSAGE]};
 
       subscriber.close();
@@ -570,6 +589,7 @@ describe('Subscriber', () => {
 
       const [{ackId}] = stub.lastCall.args;
       assert.strictEqual(ackId, RECEIVED_MESSAGE.ackId);
+      assert.strictEqual(shutdownStub.callCount, 1);
     });
 
     describe('flushing the queues', () => {
@@ -760,6 +780,8 @@ describe('Subscriber', () => {
     });
 
     it('should add messages to the inventory', done => {
+      const message = new Message(subscriber, RECEIVED_MESSAGE);
+
       subscriber.open();
 
       const modAckStub = sandbox.stub(subscriber, 'modAck');
@@ -770,6 +792,15 @@ describe('Subscriber', () => {
       const inventory: FakeLeaseManager = stubs.get('inventory');
       const addStub = sandbox.stub(inventory, 'add').callsFake(() => {
         const [addMsg] = addStub.lastCall.args;
+
+        // OTel is enabled during tests, so we need to delete the baggage.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const [addMsgAny, msgAny] = [addMsg as any, message as any];
+        delete addMsgAny.parentSpan;
+        delete addMsgAny.subSpans;
+        delete msgAny.parentSpan;
+        delete msgAny.subSpans;
+
         assert.deepStrictEqual(addMsg, message);
 
         // test for receipt
@@ -854,31 +885,33 @@ describe('Subscriber', () => {
 
     it('should not instantiate a tracer when tracing is disabled', () => {
       subscriber = new Subscriber(subscription, {});
-      assert.strictEqual(subscriber['_useOpentelemetry'], false);
+      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], false);
     });
 
     it('should instantiate a tracer when tracing is enabled through constructor', () => {
       subscriber = new Subscriber(subscription, enableTracing);
-      assert.ok(subscriber['_useOpentelemetry']);
+      assert.ok(subscriber['_useLegacyOpenTelemetry']);
     });
 
     it('should instantiate a tracer when tracing is enabled through setOptions', () => {
       subscriber = new Subscriber(subscription, {});
       subscriber.setOptions(enableTracing);
-      assert.ok(subscriber['_useOpentelemetry']);
+      assert.ok(subscriber['_useLegacyOpenTelemetry']);
     });
 
     it('should disable tracing when tracing is disabled through setOptions', () => {
       subscriber = new Subscriber(subscription, enableTracing);
       subscriber.setOptions(disableTracing);
-      assert.strictEqual(subscriber['_useOpentelemetry'], false);
+      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], false);
     });
 
     it('exports a span once it is created', () => {
+      tracing.setGloballyEnabled(true);
+
       subscription = new FakeSubscription() as {} as Subscription;
       subscriber = new Subscriber(subscription, enableTracing);
       message = new Message(subscriber, RECEIVED_MESSAGE);
-      assert.strictEqual(subscriber['_useOpentelemetry'], true);
+      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], true);
       subscriber.open();
 
       // Construct mock of received message with span context
@@ -904,18 +937,26 @@ describe('Subscriber', () => {
         receivedMessages: [messageWithSpanContext],
       };
 
+      const openedSub = subscriber as unknown as PublicInventory;
+      sandbox.stub(openedSub._inventory, 'add').callsFake((m: s.Message) => {
+        message = m;
+      });
+
       // Receive message and assert that it was exported
       const msgStream = stubs.get('messageStream');
       msgStream.emit('data', pullResponse);
 
+      message.endParentSpan();
+
       const spans = exporter.getFinishedSpans();
       assert.strictEqual(spans.length, 1);
-      const firstSpan = spans.concat().shift();
+      assert.strictEqual(spans[0].events.length, 2);
+      const firstSpan = spans.pop();
       assert.ok(firstSpan);
       assert.strictEqual(firstSpan.parentSpanId, parentSpanContext.spanId);
       assert.strictEqual(
         firstSpan.name,
-        `${subscriber.name} process`,
+        `${subId} subscribe`,
         'name of span should match'
       );
       assert.strictEqual(
@@ -923,42 +964,29 @@ describe('Subscriber', () => {
         SpanKind.CONSUMER,
         'span kind should be CONSUMER'
       );
-      assert.strictEqual(
-        firstSpan.attributes[SemanticAttributes.MESSAGING_OPERATION],
-        'process',
-        'span messaging operation should match'
-      );
-      assert.strictEqual(
-        firstSpan.attributes[SemanticAttributes.MESSAGING_SYSTEM],
-        'pubsub'
-      );
-      assert.strictEqual(
-        firstSpan.attributes[SemanticAttributes.MESSAGING_MESSAGE_ID],
-        messageWithSpanContext.message.messageId,
-        'span messaging id should match'
-      );
-      assert.strictEqual(
-        firstSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION],
-        subscriber.name,
-        'span messaging destination should match'
-      );
-      assert.strictEqual(
-        firstSpan.attributes[SemanticAttributes.MESSAGING_DESTINATION_KIND],
-        'topic'
-      );
     });
 
-    it('does not export a span when a span context is not present on message', () => {
+    it('exports a span even when a span context is not present on message', () => {
+      tracing.setGloballyEnabled(true);
+
       subscriber = new Subscriber(subscription, enableTracing);
+      subscriber.open();
 
       const pullResponse: s.PullResponse = {
         receivedMessages: [RECEIVED_MESSAGE],
       };
 
+      const openedSub = subscriber as unknown as PublicInventory;
+      sandbox.stub(openedSub._inventory, 'add').callsFake((m: s.Message) => {
+        message = m;
+      });
+
       // Receive message and assert that it was exported
       const stream: FakeMessageStream = stubs.get('messageStream');
       stream.emit('data', pullResponse);
-      assert.strictEqual(exporter.getFinishedSpans().length, 0);
+
+      message.endParentSpan();
+      assert.strictEqual(exporter.getFinishedSpans().length, 1);
     });
   });
 
@@ -1167,6 +1195,104 @@ describe('Subscriber', () => {
 
         assert.strictEqual(stub.callCount, 0);
       });
+    });
+  });
+
+  describe('SubscriberSpans', () => {
+    const message: tracing.MessageWithAttributes = {
+      attributes: {},
+      parentSpan: undefined,
+    };
+    const spans = new s.SubscriberSpans(message);
+    const fakeSpan = {
+      end() {},
+    } as unknown as opentelemetry.Span;
+
+    it('starts a flow span', () => {
+      const stub = sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveFlowSpan')
+        .returns(fakeSpan);
+      spans.flowStart();
+      assert.strictEqual(stub.calledOnce, true);
+      assert.strictEqual(stub.args[0][0], message);
+      spans.flowStart();
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('ends a flow span', () => {
+      sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveFlowSpan')
+        .returns(fakeSpan);
+      spans.flowStart();
+      const spy = sandbox.spy(fakeSpan, 'end');
+      spans.flowEnd();
+      assert.strictEqual(spy.calledOnce, true);
+      spans.flowEnd();
+      assert.strictEqual(spy.calledOnce, true);
+    });
+
+    it('fires a modAck start event', () => {
+      const stub = sandbox.stub(tracing.PubsubEvents, 'modAckStart');
+      spans.modAckStart(Duration.from({seconds: 10}), true);
+      assert.strictEqual(stub.args[0][0], message);
+      assert.strictEqual(stub.args[0][1].totalOf('second'), 10);
+      assert.strictEqual(stub.args[0][2], true);
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('fires a modAck end event', () => {
+      const stub = sandbox.stub(tracing.PubsubEvents, 'modAckEnd');
+      spans.modAckEnd();
+      assert.strictEqual(stub.args[0][0], message);
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('starts a scheduler span', () => {
+      const stub = sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveSchedulerSpan')
+        .returns(fakeSpan);
+      spans.schedulerStart();
+      assert.strictEqual(stub.args[0][0], message);
+      assert.strictEqual(stub.calledOnce, true);
+      spans.schedulerStart();
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('ends a scheduler span', () => {
+      sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveSchedulerSpan')
+        .returns(fakeSpan);
+      spans.schedulerStart();
+      const spy = sandbox.spy(fakeSpan, 'end');
+      spans.schedulerEnd();
+      assert.strictEqual(spy.calledOnce, true);
+      spans.schedulerEnd();
+      assert.strictEqual(spy.calledOnce, true);
+    });
+
+    it('starts a processing span', () => {
+      const stub = sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveProcessSpan')
+        .returns(fakeSpan);
+      const subName = 'foozle';
+      spans.processingStart(subName);
+      assert.strictEqual(stub.args[0][0], message);
+      assert.strictEqual(stub.args[0][1], subName);
+      assert.strictEqual(stub.calledOnce, true);
+      spans.processingStart('boo');
+      assert.strictEqual(stub.calledOnce, true);
+    });
+
+    it('ends a processing span', () => {
+      sandbox
+        .stub(tracing.PubsubSpans, 'createReceiveSchedulerSpan')
+        .returns(fakeSpan);
+      spans.processingStart('foozle');
+      const spy = sandbox.spy(fakeSpan, 'end');
+      spans.processingEnd();
+      assert.strictEqual(spy.calledOnce, true);
+      spans.processingEnd();
+      assert.strictEqual(spy.calledOnce, true);
     });
   });
 });

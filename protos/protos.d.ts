@@ -3754,6 +3754,9 @@ export namespace google {
                 /** CloudStorageConfig maxBytes */
                 maxBytes?: (number|Long|string|null);
 
+                /** CloudStorageConfig maxMessages */
+                maxMessages?: (number|Long|string|null);
+
                 /** CloudStorageConfig state */
                 state?: (google.pubsub.v1.CloudStorageConfig.State|keyof typeof google.pubsub.v1.CloudStorageConfig.State|null);
 
@@ -3793,6 +3796,9 @@ export namespace google {
 
                 /** CloudStorageConfig maxBytes. */
                 public maxBytes: (number|Long|string);
+
+                /** CloudStorageConfig maxMessages. */
+                public maxMessages: (number|Long|string);
 
                 /** CloudStorageConfig state. */
                 public state: (google.pubsub.v1.CloudStorageConfig.State|keyof typeof google.pubsub.v1.CloudStorageConfig.State);

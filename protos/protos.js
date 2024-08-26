@@ -8672,6 +8672,7 @@
                      * @property {google.pubsub.v1.CloudStorageConfig.IAvroConfig|null} [avroConfig] CloudStorageConfig avroConfig
                      * @property {google.protobuf.IDuration|null} [maxDuration] CloudStorageConfig maxDuration
                      * @property {number|Long|null} [maxBytes] CloudStorageConfig maxBytes
+                     * @property {number|Long|null} [maxMessages] CloudStorageConfig maxMessages
                      * @property {google.pubsub.v1.CloudStorageConfig.State|null} [state] CloudStorageConfig state
                      * @property {string|null} [serviceAccountEmail] CloudStorageConfig serviceAccountEmail
                      */
@@ -8756,6 +8757,14 @@
                     CloudStorageConfig.prototype.maxBytes = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
     
                     /**
+                     * CloudStorageConfig maxMessages.
+                     * @member {number|Long} maxMessages
+                     * @memberof google.pubsub.v1.CloudStorageConfig
+                     * @instance
+                     */
+                    CloudStorageConfig.prototype.maxMessages = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                    /**
                      * CloudStorageConfig state.
                      * @member {google.pubsub.v1.CloudStorageConfig.State} state
                      * @memberof google.pubsub.v1.CloudStorageConfig
@@ -8823,6 +8832,8 @@
                             $root.google.protobuf.Duration.encode(message.maxDuration, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
                         if (message.maxBytes != null && Object.hasOwnProperty.call(message, "maxBytes"))
                             writer.uint32(/* id 7, wireType 0 =*/56).int64(message.maxBytes);
+                        if (message.maxMessages != null && Object.hasOwnProperty.call(message, "maxMessages"))
+                            writer.uint32(/* id 8, wireType 0 =*/64).int64(message.maxMessages);
                         if (message.state != null && Object.hasOwnProperty.call(message, "state"))
                             writer.uint32(/* id 9, wireType 0 =*/72).int32(message.state);
                         if (message.filenameDatetimeFormat != null && Object.hasOwnProperty.call(message, "filenameDatetimeFormat"))
@@ -8893,6 +8904,10 @@
                                 }
                             case 7: {
                                     message.maxBytes = reader.int64();
+                                    break;
+                                }
+                            case 8: {
+                                    message.maxMessages = reader.int64();
                                     break;
                                 }
                             case 9: {
@@ -8977,6 +8992,9 @@
                         if (message.maxBytes != null && message.hasOwnProperty("maxBytes"))
                             if (!$util.isInteger(message.maxBytes) && !(message.maxBytes && $util.isInteger(message.maxBytes.low) && $util.isInteger(message.maxBytes.high)))
                                 return "maxBytes: integer|Long expected";
+                        if (message.maxMessages != null && message.hasOwnProperty("maxMessages"))
+                            if (!$util.isInteger(message.maxMessages) && !(message.maxMessages && $util.isInteger(message.maxMessages.low) && $util.isInteger(message.maxMessages.high)))
+                                return "maxMessages: integer|Long expected";
                         if (message.state != null && message.hasOwnProperty("state"))
                             switch (message.state) {
                             default:
@@ -9039,6 +9057,15 @@
                                 message.maxBytes = object.maxBytes;
                             else if (typeof object.maxBytes === "object")
                                 message.maxBytes = new $util.LongBits(object.maxBytes.low >>> 0, object.maxBytes.high >>> 0).toNumber();
+                        if (object.maxMessages != null)
+                            if ($util.Long)
+                                (message.maxMessages = $util.Long.fromValue(object.maxMessages)).unsigned = false;
+                            else if (typeof object.maxMessages === "string")
+                                message.maxMessages = parseInt(object.maxMessages, 10);
+                            else if (typeof object.maxMessages === "number")
+                                message.maxMessages = object.maxMessages;
+                            else if (typeof object.maxMessages === "object")
+                                message.maxMessages = new $util.LongBits(object.maxMessages.low >>> 0, object.maxMessages.high >>> 0).toNumber();
                         switch (object.state) {
                         default:
                             if (typeof object.state === "number") {
@@ -9099,6 +9126,11 @@
                                 object.maxBytes = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                             } else
                                 object.maxBytes = options.longs === String ? "0" : 0;
+                            if ($util.Long) {
+                                var long = new $util.Long(0, 0, false);
+                                object.maxMessages = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                            } else
+                                object.maxMessages = options.longs === String ? "0" : 0;
                             object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
                             object.filenameDatetimeFormat = "";
                             object.serviceAccountEmail = "";
@@ -9126,6 +9158,11 @@
                                 object.maxBytes = options.longs === String ? String(message.maxBytes) : message.maxBytes;
                             else
                                 object.maxBytes = options.longs === String ? $util.Long.prototype.toString.call(message.maxBytes) : options.longs === Number ? new $util.LongBits(message.maxBytes.low >>> 0, message.maxBytes.high >>> 0).toNumber() : message.maxBytes;
+                        if (message.maxMessages != null && message.hasOwnProperty("maxMessages"))
+                            if (typeof message.maxMessages === "number")
+                                object.maxMessages = options.longs === String ? String(message.maxMessages) : message.maxMessages;
+                            else
+                                object.maxMessages = options.longs === String ? $util.Long.prototype.toString.call(message.maxMessages) : options.longs === Number ? new $util.LongBits(message.maxMessages.low >>> 0, message.maxMessages.high >>> 0).toNumber() : message.maxMessages;
                         if (message.state != null && message.hasOwnProperty("state"))
                             object.state = options.enums === String ? $root.google.pubsub.v1.CloudStorageConfig.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.CloudStorageConfig.State[message.state] : message.state;
                         if (message.filenameDatetimeFormat != null && message.hasOwnProperty("filenameDatetimeFormat"))

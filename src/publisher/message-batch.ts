@@ -16,11 +16,23 @@
 
 import {BATCH_LIMITS, PubsubMessage, PublishCallback} from './';
 import {calculateMessageSize} from './pubsub-message';
+import * as tracing from '../telemetry-tracing';
 
 export interface BatchPublishOptions {
   maxBytes?: number;
   maxMessages?: number;
   maxMilliseconds?: number;
+}
+
+/**
+ * Encapsulates a completed batch of messages.
+ *
+ * @private
+ * @internal
+ */
+export interface BatchResults {
+  messages: PubsubMessage[];
+  callbacks: PublishCallback[];
 }
 
 /**
@@ -40,13 +52,15 @@ export interface BatchPublishOptions {
  * @param {BatchPublishOptions} options The batching options.
  */
 export class MessageBatch {
-  options: BatchPublishOptions;
   messages: PubsubMessage[];
   callbacks: PublishCallback[];
   created: number;
   bytes: number;
-  constructor(options: BatchPublishOptions) {
-    this.options = options;
+
+  constructor(
+    public options: BatchPublishOptions,
+    public topicName: string
+  ) {
     this.messages = [];
     this.callbacks = [];
     this.created = Date.now();
@@ -72,7 +86,18 @@ export class MessageBatch {
     this.messages.push(message);
     this.callbacks.push(callback);
     this.bytes += calculateMessageSize(message);
+
+    tracing.PubsubSpans.createPublishSchedulerSpan(message);
   }
+
+  end(): BatchResults {
+    this.messages.forEach(m => m.publishSchedulerSpan?.end());
+    return {
+      messages: this.messages,
+      callbacks: this.callbacks,
+    };
+  }
+
   /**
    * Indicates if a given message can fit in the batch.
    *
@@ -86,6 +111,7 @@ export class MessageBatch {
       this.bytes + calculateMessageSize(message) <= maxBytes!
     );
   }
+
   /**
    * Checks to see if this batch is at the maximum allowed payload size.
    * When publishing ordered messages, it is ok to exceed the user configured
@@ -97,6 +123,7 @@ export class MessageBatch {
     const {maxMessages, maxBytes} = BATCH_LIMITS;
     return this.messages.length >= maxMessages! || this.bytes >= maxBytes!;
   }
+
   /**
    * Indicates if the batch is at capacity.
    *

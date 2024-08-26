@@ -54,7 +54,7 @@ class FakeSubscriber extends EventEmitter {
   constructor() {
     super();
 
-    this.name = uuid.v4();
+    this.name = `projects/test/subscriptions/${uuid.v4()}`;
     this.client = new FakeClient();
     this.iEOS = false;
   }
@@ -252,7 +252,7 @@ describe('MessageQueues', () => {
         messageQueue.flush();
 
         const [batch] = messageQueue.batches;
-        assert.strictEqual(batch[0].ackId, message.ackId);
+        assert.strictEqual(batch[0].message.ackId, message.ackId);
         assert.strictEqual(batch[0].deadline, deadline);
         assert.ok(batch[0].responsePromise?.resolve);
       });
@@ -593,7 +593,7 @@ describe('MessageQueues', () => {
         clock.tick(1000);
 
         assert.strictEqual(ackQueue.requests.length, 1);
-        assert.strictEqual(ackQueue.requests[0].ackId, message.ackId);
+        assert.strictEqual(ackQueue.requests[0].message.ackId, message.ackId);
         assert.strictEqual(ackQueue.numInRetryRequests, 0);
         assert.strictEqual(ackQueue.numPendingRequests, 1);
       });
