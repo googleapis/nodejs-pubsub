@@ -993,10 +993,15 @@ export class Subscriber extends EventEmitter {
 
       const {maxStreams = defaultOptions.subscription.maxStreams} =
         options.streamingOptions;
+
       options.streamingOptions.maxStreams = Math.min(
         maxStreams,
         this.maxMessages
       );
+    }
+
+    if (this._inventory) {
+      this._inventory.setOptions(this._options.flowControl!);
     }
   }
 
