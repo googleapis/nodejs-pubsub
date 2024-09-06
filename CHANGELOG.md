@@ -4,6 +4,15 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.7.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.7.0...v4.7.1) (2024-08-26)
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.26.0 ([#1945](https://github.com/googleapis/nodejs-pubsub/issues/1945)) ([f082869](https://github.com/googleapis/nodejs-pubsub/commit/f082869a185c059463654c76c744e44e7b28415e))
+* **deps:** Update dependency protobufjs to ~7.4.0 ([#1959](https://github.com/googleapis/nodejs-pubsub/issues/1959)) ([25946e0](https://github.com/googleapis/nodejs-pubsub/commit/25946e0d4fe794202984cdad6cf48121f72063cf))
+* Propagate set options to LeaseManager (from https://github.com/googleapis/nodejs-pubsub/pull/1880) ([#1954](https://github.com/googleapis/nodejs-pubsub/issues/1954)) ([cdb0916](https://github.com/googleapis/nodejs-pubsub/commit/cdb0916bd30da67f5153c9aead09e7f505954253))
+
 ## [4.7.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.6.0...v4.7.0) (2024-08-24)
 
 
