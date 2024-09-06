@@ -24,7 +24,7 @@ import defer = require('p-defer');
 
 import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
-import {AckError, Message, Subscriber} from '../src/subscriber';
+import {Message, Subscriber} from '../src/subscriber';
 import {DebugMessage} from '../src/debug';
 
 class FakeClient {
@@ -160,6 +160,15 @@ describe('MessageQueues', () => {
         assert.strictEqual(stub.callCount, 1);
       });
 
+      it('should flush the queue if at byte capacity', () => {
+        const stub = sandbox.stub(messageQueue, 'flush');
+
+        messageQueue.bytes = messageTypes.MAX_BATCH_BYTES - 10;
+        messageQueue.add(new FakeMessage() as Message);
+
+        assert.strictEqual(stub.callCount, 1);
+      });
+
       it('should schedule a flush if needed', () => {
         const clock = sandbox.useFakeTimers();
         const stub = sandbox.stub(messageQueue, 'flush');
@@ -212,6 +221,13 @@ describe('MessageQueues', () => {
         messageQueue.flush();
 
         assert.strictEqual(messageQueue.numPendingRequests, 0);
+      });
+
+      it('should remove the bytes of messages from the queue', () => {
+        messageQueue.add(new FakeMessage() as Message);
+        messageQueue.flush();
+
+        assert.strictEqual(messageQueue.bytes, 0);
       });
 
       it('should send the batch', () => {

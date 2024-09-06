@@ -64,7 +64,7 @@ export interface BatchOptions {
 // This is the maximum number of bytes we will send for a batch of
 // ack/modack messages. The server itself has a maximum of 512KiB, so
 // we just pull back a little from that in case of unknown fenceposts.
-const MAX_BATCH_BYTES = 510 * 1024 * 1024;
+export const MAX_BATCH_BYTES = 510 * 1024 * 1024;
 
 /**
  * Error class used to signal a batch failure.
