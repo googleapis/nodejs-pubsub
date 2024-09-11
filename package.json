@@ -60,6 +60,8 @@
     "heap-js": "^2.2.0",
     "is-stream-ended": "^0.1.4",
     "lodash.snakecase": "^4.1.1",
+    "nise": "6.0.0",
+    "path-to-regexp": "6.2.2",
     "p-defer": "^3.0.0"
   },
   "devDependencies": {
