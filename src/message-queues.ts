@@ -61,6 +61,11 @@ export interface BatchOptions {
   maxMilliseconds?: number;
 }
 
+// This is the maximum number of bytes we will send for a batch of
+// ack/modack messages. The server itself has a maximum of 512KiB, so
+// we just pull back a little from that in case of unknown fenceposts.
+export const MAX_BATCH_BYTES = 510 * 1024 * 1024;
+
 /**
  * Error class used to signal a batch failure.
  *
@@ -113,6 +118,7 @@ export abstract class MessageQueue {
   numPendingRequests: number;
   numInFlightRequests: number;
   numInRetryRequests: number;
+  bytes: number;
   protected _onFlush?: defer.DeferredPromise<void>;
   protected _onDrain?: defer.DeferredPromise<void>;
   protected _options!: BatchOptions;
@@ -127,6 +133,7 @@ export abstract class MessageQueue {
     this.numPendingRequests = 0;
     this.numInFlightRequests = 0;
     this.numInRetryRequests = 0;
+    this.bytes = 0;
     this._requests = [];
     this._subscriber = sub;
     this._retrier = new ExponentialRetry<QueuedMessage>(
@@ -195,7 +202,18 @@ export abstract class MessageQueue {
     }
 
     const {maxMessages, maxMilliseconds} = this._options;
+    const size = Buffer.byteLength(message.ackId, 'utf8');
 
+    // If we will go over maxMessages or MAX_BATCH_BYTES by adding this
+    // message, flush first. (maxMilliseconds is handled by timers.)
+    if (
+      this._requests.length + 1 >= maxMessages! ||
+      this.bytes + size >= MAX_BATCH_BYTES
+    ) {
+      this.flush();
+    }
+
+    // Add the message to the current batch.
     const responsePromise = defer<void>();
     this._requests.push({
       message: {
@@ -208,10 +226,10 @@ export abstract class MessageQueue {
     });
     this.numPendingRequests++;
     this.numInFlightRequests++;
+    this.bytes += size;
 
-    if (this._requests.length >= maxMessages!) {
-      this.flush();
-    } else if (!this._timer) {
+    // Ensure that we are counting toward maxMilliseconds by timer.
+    if (!this._timer) {
       this._timer = setTimeout(() => this.flush(), maxMilliseconds!);
     }
 
@@ -273,6 +291,7 @@ export abstract class MessageQueue {
     const deferred = this._onFlush;
 
     this._requests = [];
+    this.bytes = 0;
     this.numPendingRequests -= batchSize;
     delete this._onFlush;
 
@@ -339,7 +358,10 @@ export abstract class MessageQueue {
    * @private
    */
   setOptions(options: BatchOptions): void {
-    const defaults: BatchOptions = {maxMessages: 3000, maxMilliseconds: 100};
+    const defaults: BatchOptions = {
+      maxMessages: 3000,
+      maxMilliseconds: 100,
+    };
 
     this._options = Object.assign(defaults, options);
   }

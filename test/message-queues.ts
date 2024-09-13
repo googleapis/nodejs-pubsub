@@ -24,7 +24,7 @@ import defer = require('p-defer');
 
 import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
-import {AckError, Message, Subscriber} from '../src/subscriber';
+import {Message, Subscriber} from '../src/subscriber';
 import {DebugMessage} from '../src/debug';
 
 class FakeClient {
@@ -99,36 +99,6 @@ class ModAckQueue extends messageTypes.ModAckQueue {
   }
 }
 
-// This discount polyfill for Promise.allSettled can be removed after we drop Node 12.
-type AllSettledResult<T, U> = {
-  status: 'fulfilled' | 'rejected';
-  value?: T;
-  reason?: U;
-};
-function allSettled<T, U>(
-  proms: Promise<T>[]
-): Promise<AllSettledResult<T, U>[]> {
-  const checkedProms = proms.map((r: Promise<T>) =>
-    r
-      .then(
-        (value: T) =>
-          ({
-            status: 'fulfilled',
-            value,
-          }) as AllSettledResult<T, U>
-      )
-      .catch(
-        (error: U) =>
-          ({
-            status: 'rejected',
-            reason: error,
-          }) as AllSettledResult<T, U>
-      )
-  );
-
-  return Promise.all(checkedProms);
-}
-
 describe('MessageQueues', () => {
   const sandbox = sinon.createSandbox();
 
@@ -190,6 +160,15 @@ describe('MessageQueues', () => {
         assert.strictEqual(stub.callCount, 1);
       });
 
+      it('should flush the queue if at byte capacity', () => {
+        const stub = sandbox.stub(messageQueue, 'flush');
+
+        messageQueue.bytes = messageTypes.MAX_BATCH_BYTES - 10;
+        messageQueue.add(new FakeMessage() as Message);
+
+        assert.strictEqual(stub.callCount, 1);
+      });
+
       it('should schedule a flush if needed', () => {
         const clock = sandbox.useFakeTimers();
         const stub = sandbox.stub(messageQueue, 'flush');
@@ -242,6 +221,13 @@ describe('MessageQueues', () => {
         messageQueue.flush();
 
         assert.strictEqual(messageQueue.numPendingRequests, 0);
+      });
+
+      it('should remove the bytes of messages from the queue', () => {
+        messageQueue.add(new FakeMessage() as Message);
+        messageQueue.flush();
+
+        assert.strictEqual(messageQueue.bytes, 0);
       });
 
       it('should send the batch', () => {
@@ -498,7 +484,7 @@ describe('MessageQueues', () => {
           (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
         );
         await ackQueue.flush();
-        const results = await allSettled(proms);
+        const results = await Promise.allSettled(proms);
         const oneSuccess = {status: 'fulfilled', value: undefined};
         assert.deepStrictEqual(results, [oneSuccess, oneSuccess, oneSuccess]);
       });
@@ -522,7 +508,7 @@ describe('MessageQueues', () => {
         proms.shift();
         await ackQueue.flush();
 
-        const results = await allSettled<void, AckError>(proms);
+        const results = await Promise.allSettled<void>(proms);
         assert.strictEqual(results[0].status, 'rejected');
         assert.strictEqual(results[0].reason?.errorCode, 'OTHER');
         assert.strictEqual(results[1].status, 'rejected');
@@ -552,7 +538,7 @@ describe('MessageQueues', () => {
         ];
         await ackQueue.flush();
 
-        const results = await allSettled<void, AckError>(proms);
+        const results = await Promise.allSettled<void>(proms);
         assert.strictEqual(results[0].status, 'rejected');
         assert.strictEqual(results[0].reason?.errorCode, 'INVALID');
 
@@ -789,7 +775,7 @@ describe('MessageQueues', () => {
           (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
         );
         await modAckQueue.flush();
-        const results = await allSettled(proms);
+        const results = await Promise.allSettled(proms);
         const oneSuccess = {status: 'fulfilled', value: undefined};
         assert.deepStrictEqual(results, [oneSuccess, oneSuccess, oneSuccess]);
       });
@@ -815,7 +801,7 @@ describe('MessageQueues', () => {
         proms.shift();
         await modAckQueue.flush();
 
-        const results = await allSettled<void, AckError>(proms);
+        const results = await Promise.allSettled<void>(proms);
         assert.strictEqual(results[0].status, 'rejected');
         assert.strictEqual(results[0].reason?.errorCode, 'OTHER');
         assert.strictEqual(results[1].status, 'rejected');
@@ -847,7 +833,7 @@ describe('MessageQueues', () => {
         ];
         await modAckQueue.flush();
 
-        const results = await allSettled<void, AckError>(proms);
+        const results = await Promise.allSettled<void>(proms);
         assert.strictEqual(results[0].status, 'rejected');
         assert.strictEqual(results[0].reason?.errorCode, 'INVALID');
 
