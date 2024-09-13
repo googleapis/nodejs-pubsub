@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.7.2](https://github.com/googleapis/nodejs-pubsub/compare/v4.7.1...v4.7.2) (2024-09-13)
+
+
+### Bug Fixes
+
+* Set MaxBytes for AckQueue ([#1963](https://github.com/googleapis/nodejs-pubsub/issues/1963)) ([5945563](https://github.com/googleapis/nodejs-pubsub/commit/594556315f159f4197ffc0e7249ce1b0339c12ec))
+
 ## [4.7.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.7.0...v4.7.1) (2024-08-26)
 
 
