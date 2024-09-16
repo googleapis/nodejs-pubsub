@@ -19,7 +19,7 @@
     "compile": "npm run tsc && npm run sampletsc",
     "clean": "gts clean && rm -rf build/",
     "precompile": "npm run clean",
-    "typeless": "typeless-sample-bot --outputpath . --targets . --recursive",
+    "typeless": "npx typeless-sample-bot --outputpath . --targets . --recursive",
     "posttypeless": "gts fix"
   },
   "dependencies": {
