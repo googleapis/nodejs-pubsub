@@ -308,6 +308,7 @@ describe('PubSub', () => {
       const options: pubsubTypes.ClientConfig = {
         enableOpenTelemetryTracing: true,
       };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const pubsub = new PubSub(options);
       assert.strictEqual(
         tracing.isEnabled(),
