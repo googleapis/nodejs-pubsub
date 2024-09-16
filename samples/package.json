@@ -18,7 +18,9 @@
     "sampletsc": "cd typescript && tsc -p . && cd ..",
     "compile": "npm run tsc && npm run sampletsc",
     "clean": "gts clean && rm -rf build/",
-    "precompile": "npm run clean"
+    "precompile": "npm run clean",
+    "typeless": "typeless-sample-bot --outputpath . --targets . --recursive",
+    "posttypeless": "gts fix"
   },
   "dependencies": {
     "@google-cloud/opentelemetry-cloud-trace-exporter": "^2.0.0",
@@ -35,6 +37,7 @@
   },
   "devDependencies": {
     "@google-cloud/bigquery": "^7.0.0",
+    "@google-cloud/typeless-sample-bot": "^2.1.0",
     "@types/chai": "^4.2.16",
     "chai": "^4.2.0",
     "gts": "^5.0.0",

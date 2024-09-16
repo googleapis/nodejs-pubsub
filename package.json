@@ -44,7 +44,8 @@
     "predocs-test": "npm run docs",
     "benchwrapper": "node bin/benchwrapper.js",
     "prelint": "cd samples; npm link ../; npm install",
-    "precompile": "gts clean"
+    "precompile": "gts clean",
+    "typeless": "cd samples; npm run typeless"
   },
   "dependencies": {
     "@google-cloud/paginator": "^5.0.0",
