@@ -45,8 +45,8 @@
     "benchwrapper": "node bin/benchwrapper.js",
     "prelint": "cd samples; npm link ../; npm install",
     "precompile": "gts clean",
-    "typeless": "pwd && npx typeless-sample-bot --outputpath samples --targets samples --recursive",
-    "posttypeless": "pwd && cd samples && npm i && cd .. && ls -l && ls -l node_modules/gts && cat package.json && npm run fix"
+    "typeless": "npx typeless-sample-bot --outputpath samples --targets samples --recursive",
+    "posttypeless": "cd samples && npm i && cd .. && npm run fix"
   },
   "dependencies": {
     "@google-cloud/paginator": "^5.0.0",
