@@ -388,7 +388,9 @@ export class MessageStream extends PassThrough {
       this.emit(
         'debug',
         new DebugMessage(
-          `Subscriber stream ${index} has ended with status ${status.code}; will be retried.`
+          `Subscriber stream ${index} has ended with status ${status.code}; will be retried.`,
+          undefined,
+          status
         )
       );
       if (PullRetry.resetFailures(status)) {
@@ -401,7 +403,9 @@ export class MessageStream extends PassThrough {
       this.emit(
         'debug',
         new DebugMessage(
-          `Subscriber stream ${index} has ended with status ${status.code}; will not be retried.`
+          `Subscriber stream ${index} has ended with status ${status.code}; will not be retried.`,
+          undefined,
+          status
         )
       );
 

@@ -124,7 +124,7 @@ export {
   SeekResponse,
   Snapshot,
 } from './snapshot';
-export {Message, SubscriberOptions} from './subscriber';
+export {Message, StatusError, SubscriberOptions} from './subscriber';
 export {
   Schema,
   CreateSchemaResponse,
