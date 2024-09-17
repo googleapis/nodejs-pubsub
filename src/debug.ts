@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {grpc} from 'google-gax';
-
 /**
  * Represents a debug message the user might want to print out for logging
  * while debugging or whatnot. These will always come by way of the 'error'
@@ -33,7 +31,6 @@ import {grpc} from 'google-gax';
 export class DebugMessage {
   constructor(
     public message: string,
-    public error?: Error,
-    public status?: grpc.StatusObject
+    public error?: Error
   ) {}
 }
