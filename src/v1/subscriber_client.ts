@@ -514,7 +514,7 @@ export class SubscriberClient {
    *   backlog, from the moment a message is published. If `retain_acked_messages`
    *   is true, then this also configures the retention of acknowledged messages,
    *   and thus configures how far back in time a `Seek` can be done. Defaults to
-   *   7 days. Cannot be more than 7 days or less than 10 minutes.
+   *   7 days. Cannot be more than 31 days or less than 10 minutes.
    * @param {number[]} [request.labels]
    *   Optional. See [Creating and managing
    *   labels](https://cloud.google.com/pubsub/docs/labels).
