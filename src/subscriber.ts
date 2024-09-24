@@ -30,6 +30,8 @@ import * as tracing from './telemetry-tracing';
 import {Duration} from './temporal';
 import {EventEmitter} from 'events';
 
+export {StatusError} from './message-stream';
+
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 export type SubscriptionProperties =
   google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties;
