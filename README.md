@@ -66,15 +66,15 @@ npm install @google-cloud/pubsub
 
 ```javascript
 // Imports the Google Cloud client library
-const {PubSub} = require('@google-cloud/pubsub');
+const { PubSub } = require("@google-cloud/pubsub");
 
 async function quickstart(
-  projectId = 'your-project-id', // Your Google Cloud Platform project ID
-  topicNameOrId = 'my-topic', // Name for the new topic to create
-  subscriptionName = 'my-sub' // Name for the new subscription to create
+projectId = 'your-project-id', // Your Google Cloud Platform project ID
+topicNameOrId = 'my-topic', // Name for the new topic to create
+subscriptionName = 'my-sub' // Name for the new subscription to create
 ) {
   // Instantiates a client
-  const pubsub = new PubSub({projectId});
+  const pubsub = new PubSub({ projectId });
 
   // Creates a new topic
   const [topic] = await pubsub.createTopic(topicNameOrId);
@@ -84,19 +84,19 @@ async function quickstart(
   const [subscription] = await topic.createSubscription(subscriptionName);
 
   // Receive callbacks for new messages on the subscription
-  subscription.on('message', message => {
+  subscription.on('message', (message) => {
     console.log('Received message:', message.data.toString());
     process.exit(0);
   });
 
   // Receive callbacks for errors on the subscription
-  subscription.on('error', error => {
+  subscription.on('error', (error) => {
     console.error('Received error:', error);
     process.exit(1);
   });
 
   // Send a message to the topic
-  topic.publishMessage({data: Buffer.from('Test message!')});
+  topic.publishMessage({ data: Buffer.from('Test message!') });
 }
 
 ```
@@ -165,6 +165,7 @@ Samples are in the [`samples/`](https://github.com/googleapis/nodejs-pubsub/tree
 | Listen For Messages With Custom Attributes | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/listenWithCustomAttributes.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listenWithCustomAttributes.js,samples/README.md) |
 | Subscribe with OpenTelemetry Tracing | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/listenWithOpenTelemetryTracing.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/listenWithOpenTelemetryTracing.js,samples/README.md) |
 | Modify Push Configuration | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/modifyPushConfig.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/modifyPushConfig.js,samples/README.md) |
+| Optimistic Subscribe | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/optimisticSubscribe.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/optimisticSubscribe.js,samples/README.md) |
 | Publish Avro Records to a Topic | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/publishAvroRecords.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/publishAvroRecords.js,samples/README.md) |
 | Publish Batched Messages | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/publishBatchedMessages.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/publishBatchedMessages.js,samples/README.md) |
 | Publish Message | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/publishMessage.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/publishMessage.js,samples/README.md) |

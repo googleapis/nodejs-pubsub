@@ -384,11 +384,14 @@ export class MessageStream extends PassThrough {
   private _onEnd(index: number, status: grpc.StatusObject): void {
     this._removeStream(index);
 
+    const statusError = new StatusError(status);
+
     if (PullRetry.retry(status)) {
       this.emit(
         'debug',
         new DebugMessage(
-          `Subscriber stream ${index} has ended with status ${status.code}; will be retried.`
+          `Subscriber stream ${index} has ended with status ${status.code}; will be retried.`,
+          statusError
         )
       );
       if (PullRetry.resetFailures(status)) {
@@ -401,7 +404,8 @@ export class MessageStream extends PassThrough {
       this.emit(
         'debug',
         new DebugMessage(
-          `Subscriber stream ${index} has ended with status ${status.code}; will not be retried.`
+          `Subscriber stream ${index} has ended with status ${status.code}; will not be retried.`,
+          statusError
         )
       );
 
