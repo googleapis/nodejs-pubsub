@@ -459,6 +459,12 @@ export namespace google {
 
                 /** IngestionDataSourceSettings awsKinesis */
                 awsKinesis?: (google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null);
+
+                /** IngestionDataSourceSettings cloudStorage */
+                cloudStorage?: (google.pubsub.v1.IngestionDataSourceSettings.ICloudStorage|null);
+
+                /** IngestionDataSourceSettings platformLogsSettings */
+                platformLogsSettings?: (google.pubsub.v1.IPlatformLogsSettings|null);
             }
 
             /** Represents an IngestionDataSourceSettings. */
@@ -473,8 +479,14 @@ export namespace google {
                 /** IngestionDataSourceSettings awsKinesis. */
                 public awsKinesis?: (google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null);
 
+                /** IngestionDataSourceSettings cloudStorage. */
+                public cloudStorage?: (google.pubsub.v1.IngestionDataSourceSettings.ICloudStorage|null);
+
+                /** IngestionDataSourceSettings platformLogsSettings. */
+                public platformLogsSettings?: (google.pubsub.v1.IPlatformLogsSettings|null);
+
                 /** IngestionDataSourceSettings source. */
-                public source?: "awsKinesis";
+                public source?: ("awsKinesis"|"cloudStorage");
 
                 /**
                  * Creates a new IngestionDataSourceSettings instance using the specified properties.
@@ -688,6 +700,544 @@ export namespace google {
                         STREAM_NOT_FOUND = 4,
                         CONSUMER_NOT_FOUND = 5
                     }
+                }
+
+                /** Properties of a CloudStorage. */
+                interface ICloudStorage {
+
+                    /** CloudStorage state */
+                    state?: (google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.State|keyof typeof google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.State|null);
+
+                    /** CloudStorage bucket */
+                    bucket?: (string|null);
+
+                    /** CloudStorage textFormat */
+                    textFormat?: (google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.ITextFormat|null);
+
+                    /** CloudStorage avroFormat */
+                    avroFormat?: (google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IAvroFormat|null);
+
+                    /** CloudStorage pubsubAvroFormat */
+                    pubsubAvroFormat?: (google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IPubSubAvroFormat|null);
+
+                    /** CloudStorage minimumObjectCreateTime */
+                    minimumObjectCreateTime?: (google.protobuf.ITimestamp|null);
+
+                    /** CloudStorage matchGlob */
+                    matchGlob?: (string|null);
+                }
+
+                /** Represents a CloudStorage. */
+                class CloudStorage implements ICloudStorage {
+
+                    /**
+                     * Constructs a new CloudStorage.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.IngestionDataSourceSettings.ICloudStorage);
+
+                    /** CloudStorage state. */
+                    public state: (google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.State|keyof typeof google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.State);
+
+                    /** CloudStorage bucket. */
+                    public bucket: string;
+
+                    /** CloudStorage textFormat. */
+                    public textFormat?: (google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.ITextFormat|null);
+
+                    /** CloudStorage avroFormat. */
+                    public avroFormat?: (google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IAvroFormat|null);
+
+                    /** CloudStorage pubsubAvroFormat. */
+                    public pubsubAvroFormat?: (google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IPubSubAvroFormat|null);
+
+                    /** CloudStorage minimumObjectCreateTime. */
+                    public minimumObjectCreateTime?: (google.protobuf.ITimestamp|null);
+
+                    /** CloudStorage matchGlob. */
+                    public matchGlob: string;
+
+                    /** CloudStorage inputFormat. */
+                    public inputFormat?: ("textFormat"|"avroFormat"|"pubsubAvroFormat");
+
+                    /**
+                     * Creates a new CloudStorage instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns CloudStorage instance
+                     */
+                    public static create(properties?: google.pubsub.v1.IngestionDataSourceSettings.ICloudStorage): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage;
+
+                    /**
+                     * Encodes the specified CloudStorage message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.verify|verify} messages.
+                     * @param message CloudStorage message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.IngestionDataSourceSettings.ICloudStorage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified CloudStorage message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.verify|verify} messages.
+                     * @param message CloudStorage message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.IngestionDataSourceSettings.ICloudStorage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes a CloudStorage message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns CloudStorage
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage;
+
+                    /**
+                     * Decodes a CloudStorage message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns CloudStorage
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage;
+
+                    /**
+                     * Verifies a CloudStorage message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates a CloudStorage message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns CloudStorage
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage;
+
+                    /**
+                     * Creates a plain object from a CloudStorage message. Also converts values to other types if specified.
+                     * @param message CloudStorage
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this CloudStorage to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for CloudStorage
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
+                namespace CloudStorage {
+
+                    /** State enum. */
+                    enum State {
+                        STATE_UNSPECIFIED = 0,
+                        ACTIVE = 1,
+                        CLOUD_STORAGE_PERMISSION_DENIED = 2,
+                        PUBLISH_PERMISSION_DENIED = 3,
+                        BUCKET_NOT_FOUND = 4,
+                        TOO_MANY_OBJECTS = 5
+                    }
+
+                    /** Properties of a TextFormat. */
+                    interface ITextFormat {
+
+                        /** TextFormat delimiter */
+                        delimiter?: (string|null);
+                    }
+
+                    /** Represents a TextFormat. */
+                    class TextFormat implements ITextFormat {
+
+                        /**
+                         * Constructs a new TextFormat.
+                         * @param [properties] Properties to set
+                         */
+                        constructor(properties?: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.ITextFormat);
+
+                        /** TextFormat delimiter. */
+                        public delimiter?: (string|null);
+
+                        /**
+                         * Creates a new TextFormat instance using the specified properties.
+                         * @param [properties] Properties to set
+                         * @returns TextFormat instance
+                         */
+                        public static create(properties?: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.ITextFormat): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.TextFormat;
+
+                        /**
+                         * Encodes the specified TextFormat message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.TextFormat.verify|verify} messages.
+                         * @param message TextFormat message or plain object to encode
+                         * @param [writer] Writer to encode to
+                         * @returns Writer
+                         */
+                        public static encode(message: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.ITextFormat, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                        /**
+                         * Encodes the specified TextFormat message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.TextFormat.verify|verify} messages.
+                         * @param message TextFormat message or plain object to encode
+                         * @param [writer] Writer to encode to
+                         * @returns Writer
+                         */
+                        public static encodeDelimited(message: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.ITextFormat, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                        /**
+                         * Decodes a TextFormat message from the specified reader or buffer.
+                         * @param reader Reader or buffer to decode from
+                         * @param [length] Message length if known beforehand
+                         * @returns TextFormat
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.TextFormat;
+
+                        /**
+                         * Decodes a TextFormat message from the specified reader or buffer, length delimited.
+                         * @param reader Reader or buffer to decode from
+                         * @returns TextFormat
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.TextFormat;
+
+                        /**
+                         * Verifies a TextFormat message.
+                         * @param message Plain object to verify
+                         * @returns `null` if valid, otherwise the reason why it is not
+                         */
+                        public static verify(message: { [k: string]: any }): (string|null);
+
+                        /**
+                         * Creates a TextFormat message from a plain object. Also converts values to their respective internal types.
+                         * @param object Plain object
+                         * @returns TextFormat
+                         */
+                        public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.TextFormat;
+
+                        /**
+                         * Creates a plain object from a TextFormat message. Also converts values to other types if specified.
+                         * @param message TextFormat
+                         * @param [options] Conversion options
+                         * @returns Plain object
+                         */
+                        public static toObject(message: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.TextFormat, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                        /**
+                         * Converts this TextFormat to JSON.
+                         * @returns JSON object
+                         */
+                        public toJSON(): { [k: string]: any };
+
+                        /**
+                         * Gets the default type url for TextFormat
+                         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns The default type url
+                         */
+                        public static getTypeUrl(typeUrlPrefix?: string): string;
+                    }
+
+                    /** Properties of an AvroFormat. */
+                    interface IAvroFormat {
+                    }
+
+                    /** Represents an AvroFormat. */
+                    class AvroFormat implements IAvroFormat {
+
+                        /**
+                         * Constructs a new AvroFormat.
+                         * @param [properties] Properties to set
+                         */
+                        constructor(properties?: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IAvroFormat);
+
+                        /**
+                         * Creates a new AvroFormat instance using the specified properties.
+                         * @param [properties] Properties to set
+                         * @returns AvroFormat instance
+                         */
+                        public static create(properties?: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IAvroFormat): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.AvroFormat;
+
+                        /**
+                         * Encodes the specified AvroFormat message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.AvroFormat.verify|verify} messages.
+                         * @param message AvroFormat message or plain object to encode
+                         * @param [writer] Writer to encode to
+                         * @returns Writer
+                         */
+                        public static encode(message: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IAvroFormat, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                        /**
+                         * Encodes the specified AvroFormat message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.AvroFormat.verify|verify} messages.
+                         * @param message AvroFormat message or plain object to encode
+                         * @param [writer] Writer to encode to
+                         * @returns Writer
+                         */
+                        public static encodeDelimited(message: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IAvroFormat, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                        /**
+                         * Decodes an AvroFormat message from the specified reader or buffer.
+                         * @param reader Reader or buffer to decode from
+                         * @param [length] Message length if known beforehand
+                         * @returns AvroFormat
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.AvroFormat;
+
+                        /**
+                         * Decodes an AvroFormat message from the specified reader or buffer, length delimited.
+                         * @param reader Reader or buffer to decode from
+                         * @returns AvroFormat
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.AvroFormat;
+
+                        /**
+                         * Verifies an AvroFormat message.
+                         * @param message Plain object to verify
+                         * @returns `null` if valid, otherwise the reason why it is not
+                         */
+                        public static verify(message: { [k: string]: any }): (string|null);
+
+                        /**
+                         * Creates an AvroFormat message from a plain object. Also converts values to their respective internal types.
+                         * @param object Plain object
+                         * @returns AvroFormat
+                         */
+                        public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.AvroFormat;
+
+                        /**
+                         * Creates a plain object from an AvroFormat message. Also converts values to other types if specified.
+                         * @param message AvroFormat
+                         * @param [options] Conversion options
+                         * @returns Plain object
+                         */
+                        public static toObject(message: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.AvroFormat, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                        /**
+                         * Converts this AvroFormat to JSON.
+                         * @returns JSON object
+                         */
+                        public toJSON(): { [k: string]: any };
+
+                        /**
+                         * Gets the default type url for AvroFormat
+                         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns The default type url
+                         */
+                        public static getTypeUrl(typeUrlPrefix?: string): string;
+                    }
+
+                    /** Properties of a PubSubAvroFormat. */
+                    interface IPubSubAvroFormat {
+                    }
+
+                    /** Represents a PubSubAvroFormat. */
+                    class PubSubAvroFormat implements IPubSubAvroFormat {
+
+                        /**
+                         * Constructs a new PubSubAvroFormat.
+                         * @param [properties] Properties to set
+                         */
+                        constructor(properties?: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IPubSubAvroFormat);
+
+                        /**
+                         * Creates a new PubSubAvroFormat instance using the specified properties.
+                         * @param [properties] Properties to set
+                         * @returns PubSubAvroFormat instance
+                         */
+                        public static create(properties?: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IPubSubAvroFormat): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.PubSubAvroFormat;
+
+                        /**
+                         * Encodes the specified PubSubAvroFormat message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.PubSubAvroFormat.verify|verify} messages.
+                         * @param message PubSubAvroFormat message or plain object to encode
+                         * @param [writer] Writer to encode to
+                         * @returns Writer
+                         */
+                        public static encode(message: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IPubSubAvroFormat, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                        /**
+                         * Encodes the specified PubSubAvroFormat message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.PubSubAvroFormat.verify|verify} messages.
+                         * @param message PubSubAvroFormat message or plain object to encode
+                         * @param [writer] Writer to encode to
+                         * @returns Writer
+                         */
+                        public static encodeDelimited(message: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.IPubSubAvroFormat, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                        /**
+                         * Decodes a PubSubAvroFormat message from the specified reader or buffer.
+                         * @param reader Reader or buffer to decode from
+                         * @param [length] Message length if known beforehand
+                         * @returns PubSubAvroFormat
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.PubSubAvroFormat;
+
+                        /**
+                         * Decodes a PubSubAvroFormat message from the specified reader or buffer, length delimited.
+                         * @param reader Reader or buffer to decode from
+                         * @returns PubSubAvroFormat
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.PubSubAvroFormat;
+
+                        /**
+                         * Verifies a PubSubAvroFormat message.
+                         * @param message Plain object to verify
+                         * @returns `null` if valid, otherwise the reason why it is not
+                         */
+                        public static verify(message: { [k: string]: any }): (string|null);
+
+                        /**
+                         * Creates a PubSubAvroFormat message from a plain object. Also converts values to their respective internal types.
+                         * @param object Plain object
+                         * @returns PubSubAvroFormat
+                         */
+                        public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.PubSubAvroFormat;
+
+                        /**
+                         * Creates a plain object from a PubSubAvroFormat message. Also converts values to other types if specified.
+                         * @param message PubSubAvroFormat
+                         * @param [options] Conversion options
+                         * @returns Plain object
+                         */
+                        public static toObject(message: google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.PubSubAvroFormat, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                        /**
+                         * Converts this PubSubAvroFormat to JSON.
+                         * @returns JSON object
+                         */
+                        public toJSON(): { [k: string]: any };
+
+                        /**
+                         * Gets the default type url for PubSubAvroFormat
+                         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns The default type url
+                         */
+                        public static getTypeUrl(typeUrlPrefix?: string): string;
+                    }
+                }
+            }
+
+            /** Properties of a PlatformLogsSettings. */
+            interface IPlatformLogsSettings {
+
+                /** PlatformLogsSettings severity */
+                severity?: (google.pubsub.v1.PlatformLogsSettings.Severity|keyof typeof google.pubsub.v1.PlatformLogsSettings.Severity|null);
+            }
+
+            /** Represents a PlatformLogsSettings. */
+            class PlatformLogsSettings implements IPlatformLogsSettings {
+
+                /**
+                 * Constructs a new PlatformLogsSettings.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IPlatformLogsSettings);
+
+                /** PlatformLogsSettings severity. */
+                public severity: (google.pubsub.v1.PlatformLogsSettings.Severity|keyof typeof google.pubsub.v1.PlatformLogsSettings.Severity);
+
+                /**
+                 * Creates a new PlatformLogsSettings instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns PlatformLogsSettings instance
+                 */
+                public static create(properties?: google.pubsub.v1.IPlatformLogsSettings): google.pubsub.v1.PlatformLogsSettings;
+
+                /**
+                 * Encodes the specified PlatformLogsSettings message. Does not implicitly {@link google.pubsub.v1.PlatformLogsSettings.verify|verify} messages.
+                 * @param message PlatformLogsSettings message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IPlatformLogsSettings, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified PlatformLogsSettings message, length delimited. Does not implicitly {@link google.pubsub.v1.PlatformLogsSettings.verify|verify} messages.
+                 * @param message PlatformLogsSettings message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IPlatformLogsSettings, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a PlatformLogsSettings message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns PlatformLogsSettings
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.PlatformLogsSettings;
+
+                /**
+                 * Decodes a PlatformLogsSettings message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns PlatformLogsSettings
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.PlatformLogsSettings;
+
+                /**
+                 * Verifies a PlatformLogsSettings message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a PlatformLogsSettings message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns PlatformLogsSettings
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.PlatformLogsSettings;
+
+                /**
+                 * Creates a plain object from a PlatformLogsSettings message. Also converts values to other types if specified.
+                 * @param message PlatformLogsSettings
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.PlatformLogsSettings, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this PlatformLogsSettings to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for PlatformLogsSettings
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            namespace PlatformLogsSettings {
+
+                /** Severity enum. */
+                enum Severity {
+                    SEVERITY_UNSPECIFIED = 0,
+                    DISABLED = 1,
+                    DEBUG = 2,
+                    INFO = 3,
+                    WARNING = 4,
+                    ERROR = 5
                 }
             }
 
@@ -2704,6 +3254,9 @@ export namespace google {
 
                 /** Subscription state */
                 state?: (google.pubsub.v1.Subscription.State|keyof typeof google.pubsub.v1.Subscription.State|null);
+
+                /** Subscription analyticsHubSubscriptionInfo */
+                analyticsHubSubscriptionInfo?: (google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo|null);
             }
 
             /** Represents a Subscription. */
@@ -2768,6 +3321,9 @@ export namespace google {
 
                 /** Subscription state. */
                 public state: (google.pubsub.v1.Subscription.State|keyof typeof google.pubsub.v1.Subscription.State);
+
+                /** Subscription analyticsHubSubscriptionInfo. */
+                public analyticsHubSubscriptionInfo?: (google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo|null);
 
                 /**
                  * Creates a new Subscription instance using the specified properties.
@@ -2854,6 +3410,109 @@ export namespace google {
                     STATE_UNSPECIFIED = 0,
                     ACTIVE = 1,
                     RESOURCE_ERROR = 2
+                }
+
+                /** Properties of an AnalyticsHubSubscriptionInfo. */
+                interface IAnalyticsHubSubscriptionInfo {
+
+                    /** AnalyticsHubSubscriptionInfo listing */
+                    listing?: (string|null);
+
+                    /** AnalyticsHubSubscriptionInfo subscription */
+                    subscription?: (string|null);
+                }
+
+                /** Represents an AnalyticsHubSubscriptionInfo. */
+                class AnalyticsHubSubscriptionInfo implements IAnalyticsHubSubscriptionInfo {
+
+                    /**
+                     * Constructs a new AnalyticsHubSubscriptionInfo.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo);
+
+                    /** AnalyticsHubSubscriptionInfo listing. */
+                    public listing: string;
+
+                    /** AnalyticsHubSubscriptionInfo subscription. */
+                    public subscription: string;
+
+                    /**
+                     * Creates a new AnalyticsHubSubscriptionInfo instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns AnalyticsHubSubscriptionInfo instance
+                     */
+                    public static create(properties?: google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo): google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo;
+
+                    /**
+                     * Encodes the specified AnalyticsHubSubscriptionInfo message. Does not implicitly {@link google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo.verify|verify} messages.
+                     * @param message AnalyticsHubSubscriptionInfo message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified AnalyticsHubSubscriptionInfo message, length delimited. Does not implicitly {@link google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo.verify|verify} messages.
+                     * @param message AnalyticsHubSubscriptionInfo message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes an AnalyticsHubSubscriptionInfo message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns AnalyticsHubSubscriptionInfo
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo;
+
+                    /**
+                     * Decodes an AnalyticsHubSubscriptionInfo message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns AnalyticsHubSubscriptionInfo
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo;
+
+                    /**
+                     * Verifies an AnalyticsHubSubscriptionInfo message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates an AnalyticsHubSubscriptionInfo message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns AnalyticsHubSubscriptionInfo
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo;
+
+                    /**
+                     * Creates a plain object from an AnalyticsHubSubscriptionInfo message. Also converts values to other types if specified.
+                     * @param message AnalyticsHubSubscriptionInfo
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this AnalyticsHubSubscriptionInfo to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for AnalyticsHubSubscriptionInfo
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
                 }
             }
 
