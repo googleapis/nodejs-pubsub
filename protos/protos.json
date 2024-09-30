@@ -247,7 +247,8 @@
                   "oneofs": {
                     "source": {
                       "oneof": [
-                        "awsKinesis"
+                        "awsKinesis",
+                        "cloudStorage"
                       ]
                     }
                   },
@@ -255,6 +256,20 @@
                     "awsKinesis": {
                       "type": "AwsKinesis",
                       "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "cloudStorage": {
+                      "type": "CloudStorage",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "platformLogsSettings": {
+                      "type": "PlatformLogsSettings",
+                      "id": 4,
                       "options": {
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
@@ -310,6 +325,128 @@
                             "CONSUMER_NOT_FOUND": 5
                           }
                         }
+                      }
+                    },
+                    "CloudStorage": {
+                      "oneofs": {
+                        "inputFormat": {
+                          "oneof": [
+                            "textFormat",
+                            "avroFormat",
+                            "pubsubAvroFormat"
+                          ]
+                        }
+                      },
+                      "fields": {
+                        "state": {
+                          "type": "State",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OUTPUT_ONLY"
+                          }
+                        },
+                        "bucket": {
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "textFormat": {
+                          "type": "TextFormat",
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "avroFormat": {
+                          "type": "AvroFormat",
+                          "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "pubsubAvroFormat": {
+                          "type": "PubSubAvroFormat",
+                          "id": 5,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "minimumObjectCreateTime": {
+                          "type": "google.protobuf.Timestamp",
+                          "id": 6,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "matchGlob": {
+                          "type": "string",
+                          "id": 9,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        }
+                      },
+                      "nested": {
+                        "State": {
+                          "values": {
+                            "STATE_UNSPECIFIED": 0,
+                            "ACTIVE": 1,
+                            "CLOUD_STORAGE_PERMISSION_DENIED": 2,
+                            "PUBLISH_PERMISSION_DENIED": 3,
+                            "BUCKET_NOT_FOUND": 4,
+                            "TOO_MANY_OBJECTS": 5
+                          }
+                        },
+                        "TextFormat": {
+                          "oneofs": {
+                            "_delimiter": {
+                              "oneof": [
+                                "delimiter"
+                              ]
+                            }
+                          },
+                          "fields": {
+                            "delimiter": {
+                              "type": "string",
+                              "id": 1,
+                              "options": {
+                                "(google.api.field_behavior)": "OPTIONAL",
+                                "proto3_optional": true
+                              }
+                            }
+                          }
+                        },
+                        "AvroFormat": {
+                          "fields": {}
+                        },
+                        "PubSubAvroFormat": {
+                          "fields": {}
+                        }
+                      }
+                    }
+                  }
+                },
+                "PlatformLogsSettings": {
+                  "fields": {
+                    "severity": {
+                      "type": "Severity",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    }
+                  },
+                  "nested": {
+                    "Severity": {
+                      "values": {
+                        "SEVERITY_UNSPECIFIED": 0,
+                        "DISABLED": 1,
+                        "DEBUG": 2,
+                        "INFO": 3,
+                        "WARNING": 4,
+                        "ERROR": 5
                       }
                     }
                   }
@@ -1088,6 +1225,13 @@
                       "options": {
                         "(google.api.field_behavior)": "OUTPUT_ONLY"
                       }
+                    },
+                    "analyticsHubSubscriptionInfo": {
+                      "type": "AnalyticsHubSubscriptionInfo",
+                      "id": 23,
+                      "options": {
+                        "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
                     }
                   },
                   "nested": {
@@ -1096,6 +1240,24 @@
                         "STATE_UNSPECIFIED": 0,
                         "ACTIVE": 1,
                         "RESOURCE_ERROR": 2
+                      }
+                    },
+                    "AnalyticsHubSubscriptionInfo": {
+                      "fields": {
+                        "listing": {
+                          "type": "string",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "subscription": {
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        }
                       }
                     }
                   }
