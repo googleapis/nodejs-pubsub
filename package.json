@@ -29,7 +29,8 @@
   "scripts": {
     "presystem-test": "npm run compile",
     "system-test": "mocha build/system-test --timeout 600000",
-    "samples-test": "cd samples/ && npm link ../ && npm install && npm test && cd ../",
+    "samples-test": "npm run link-samples && npm test && cd ../",
+    "link-samples": "cd samples/ && npm link ../ && npm install",
     "test": "c8 mocha build/test --recursive",
     "lint": "gts check",
     "predocs": "npm run compile",
@@ -46,7 +47,7 @@
     "prelint": "cd samples; npm link ../; npm install",
     "precompile": "gts clean",
     "typeless": "npx typeless-sample-bot --outputpath samples --targets samples --recursive",
-    "posttypeless": "cd samples && npm i && cd .. && npx eslint --ignore-pattern owl-bot-staging --fix"
+    "posttypeless": "npm run link-samples && npx eslint --ignore-pattern owl-bot-staging --fix samples"
   },
   "dependencies": {
     "@google-cloud/paginator": "^5.0.0",
