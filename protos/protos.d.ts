@@ -1241,6 +1241,427 @@ export namespace google {
                 }
             }
 
+            /** Properties of an IngestionFailureEvent. */
+            interface IIngestionFailureEvent {
+
+                /** IngestionFailureEvent topic */
+                topic?: (string|null);
+
+                /** IngestionFailureEvent errorMessage */
+                errorMessage?: (string|null);
+
+                /** IngestionFailureEvent cloudStorageFailure */
+                cloudStorageFailure?: (google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure|null);
+            }
+
+            /** Represents an IngestionFailureEvent. */
+            class IngestionFailureEvent implements IIngestionFailureEvent {
+
+                /**
+                 * Constructs a new IngestionFailureEvent.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IIngestionFailureEvent);
+
+                /** IngestionFailureEvent topic. */
+                public topic: string;
+
+                /** IngestionFailureEvent errorMessage. */
+                public errorMessage: string;
+
+                /** IngestionFailureEvent cloudStorageFailure. */
+                public cloudStorageFailure?: (google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure|null);
+
+                /** IngestionFailureEvent failure. */
+                public failure?: "cloudStorageFailure";
+
+                /**
+                 * Creates a new IngestionFailureEvent instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns IngestionFailureEvent instance
+                 */
+                public static create(properties?: google.pubsub.v1.IIngestionFailureEvent): google.pubsub.v1.IngestionFailureEvent;
+
+                /**
+                 * Encodes the specified IngestionFailureEvent message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.verify|verify} messages.
+                 * @param message IngestionFailureEvent message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IIngestionFailureEvent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified IngestionFailureEvent message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.verify|verify} messages.
+                 * @param message IngestionFailureEvent message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IIngestionFailureEvent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an IngestionFailureEvent message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns IngestionFailureEvent
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionFailureEvent;
+
+                /**
+                 * Decodes an IngestionFailureEvent message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns IngestionFailureEvent
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionFailureEvent;
+
+                /**
+                 * Verifies an IngestionFailureEvent message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates an IngestionFailureEvent message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns IngestionFailureEvent
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionFailureEvent;
+
+                /**
+                 * Creates a plain object from an IngestionFailureEvent message. Also converts values to other types if specified.
+                 * @param message IngestionFailureEvent
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.IngestionFailureEvent, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this IngestionFailureEvent to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for IngestionFailureEvent
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            namespace IngestionFailureEvent {
+
+                /** Properties of an ApiViolationReason. */
+                interface IApiViolationReason {
+                }
+
+                /** Represents an ApiViolationReason. */
+                class ApiViolationReason implements IApiViolationReason {
+
+                    /**
+                     * Constructs a new ApiViolationReason.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.IngestionFailureEvent.IApiViolationReason);
+
+                    /**
+                     * Creates a new ApiViolationReason instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns ApiViolationReason instance
+                     */
+                    public static create(properties?: google.pubsub.v1.IngestionFailureEvent.IApiViolationReason): google.pubsub.v1.IngestionFailureEvent.ApiViolationReason;
+
+                    /**
+                     * Encodes the specified ApiViolationReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify|verify} messages.
+                     * @param message ApiViolationReason message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.IngestionFailureEvent.IApiViolationReason, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified ApiViolationReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify|verify} messages.
+                     * @param message ApiViolationReason message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.IngestionFailureEvent.IApiViolationReason, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes an ApiViolationReason message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns ApiViolationReason
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionFailureEvent.ApiViolationReason;
+
+                    /**
+                     * Decodes an ApiViolationReason message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns ApiViolationReason
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionFailureEvent.ApiViolationReason;
+
+                    /**
+                     * Verifies an ApiViolationReason message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates an ApiViolationReason message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns ApiViolationReason
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionFailureEvent.ApiViolationReason;
+
+                    /**
+                     * Creates a plain object from an ApiViolationReason message. Also converts values to other types if specified.
+                     * @param message ApiViolationReason
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.IngestionFailureEvent.ApiViolationReason, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this ApiViolationReason to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for ApiViolationReason
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
+                /** Properties of an AvroFailureReason. */
+                interface IAvroFailureReason {
+                }
+
+                /** Represents an AvroFailureReason. */
+                class AvroFailureReason implements IAvroFailureReason {
+
+                    /**
+                     * Constructs a new AvroFailureReason.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason);
+
+                    /**
+                     * Creates a new AvroFailureReason instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns AvroFailureReason instance
+                     */
+                    public static create(properties?: google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason): google.pubsub.v1.IngestionFailureEvent.AvroFailureReason;
+
+                    /**
+                     * Encodes the specified AvroFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.verify|verify} messages.
+                     * @param message AvroFailureReason message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified AvroFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.verify|verify} messages.
+                     * @param message AvroFailureReason message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes an AvroFailureReason message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns AvroFailureReason
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionFailureEvent.AvroFailureReason;
+
+                    /**
+                     * Decodes an AvroFailureReason message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns AvroFailureReason
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionFailureEvent.AvroFailureReason;
+
+                    /**
+                     * Verifies an AvroFailureReason message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates an AvroFailureReason message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns AvroFailureReason
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionFailureEvent.AvroFailureReason;
+
+                    /**
+                     * Creates a plain object from an AvroFailureReason message. Also converts values to other types if specified.
+                     * @param message AvroFailureReason
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.IngestionFailureEvent.AvroFailureReason, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this AvroFailureReason to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for AvroFailureReason
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
+                /** Properties of a CloudStorageFailure. */
+                interface ICloudStorageFailure {
+
+                    /** CloudStorageFailure bucket */
+                    bucket?: (string|null);
+
+                    /** CloudStorageFailure objectName */
+                    objectName?: (string|null);
+
+                    /** CloudStorageFailure objectGeneration */
+                    objectGeneration?: (number|Long|string|null);
+
+                    /** CloudStorageFailure avroFailureReason */
+                    avroFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason|null);
+
+                    /** CloudStorageFailure apiViolationReason */
+                    apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
+                }
+
+                /** Represents a CloudStorageFailure. */
+                class CloudStorageFailure implements ICloudStorageFailure {
+
+                    /**
+                     * Constructs a new CloudStorageFailure.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure);
+
+                    /** CloudStorageFailure bucket. */
+                    public bucket: string;
+
+                    /** CloudStorageFailure objectName. */
+                    public objectName: string;
+
+                    /** CloudStorageFailure objectGeneration. */
+                    public objectGeneration: (number|Long|string);
+
+                    /** CloudStorageFailure avroFailureReason. */
+                    public avroFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason|null);
+
+                    /** CloudStorageFailure apiViolationReason. */
+                    public apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
+
+                    /** CloudStorageFailure reason. */
+                    public reason?: ("avroFailureReason"|"apiViolationReason");
+
+                    /**
+                     * Creates a new CloudStorageFailure instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns CloudStorageFailure instance
+                     */
+                    public static create(properties?: google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure): google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure;
+
+                    /**
+                     * Encodes the specified CloudStorageFailure message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.verify|verify} messages.
+                     * @param message CloudStorageFailure message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified CloudStorageFailure message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.verify|verify} messages.
+                     * @param message CloudStorageFailure message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes a CloudStorageFailure message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns CloudStorageFailure
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure;
+
+                    /**
+                     * Decodes a CloudStorageFailure message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns CloudStorageFailure
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure;
+
+                    /**
+                     * Verifies a CloudStorageFailure message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates a CloudStorageFailure message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns CloudStorageFailure
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure;
+
+                    /**
+                     * Creates a plain object from a CloudStorageFailure message. Also converts values to other types if specified.
+                     * @param message CloudStorageFailure
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this CloudStorageFailure to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for CloudStorageFailure
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+            }
+
             /** Properties of a Topic. */
             interface ITopic {
 
