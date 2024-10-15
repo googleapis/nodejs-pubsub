@@ -46,7 +46,7 @@ const {PubSub} = require('@google-cloud/pubsub');
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
-async function createTopicWithKinesisIngestion(
+async function createTopicWithCloudStorageIngestion(
   topicNameOrId,
   bucket,
   inputFormat,
@@ -102,7 +102,7 @@ function main(
   matchGlob = '**.txt',
   minimumObjectCreateTime = 'YYYY-MM-DDThh:mm:ssZ'
 ) {
-  createTopicWithKinesisIngestion(
+  createTopicWithCloudStorageIngestion(
     topicNameOrId,
     bucket,
     inputFormat,
