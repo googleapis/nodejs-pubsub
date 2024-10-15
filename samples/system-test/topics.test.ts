@@ -143,7 +143,7 @@ describe('topics', () => {
       const output = execSync(
         `${commandFor('createTopicWithCloudStorageIngestion')} ${name} ${
           bucketName
-        } text "\n" "**.txt' 2024-10-10T00:00:00Z`
+        } text '\n' '**.txt' '2024-10-10T00:00:00Z'`
       );
       assert.include(output, `Topic ${name} created with Cloud Storage ingestion.`);
       const [topics] = await pubsub.getTopics();
