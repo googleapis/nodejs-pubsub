@@ -4,6 +4,14 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.8.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.7.2...v4.8.0) (2024-10-15)
+
+
+### Features
+
+* Add ingestion Cloud Storage fields and Platform Logging fields to Topic ([#1974](https://github.com/googleapis/nodejs-pubsub/issues/1974)) ([afec9a1](https://github.com/googleapis/nodejs-pubsub/commit/afec9a1ad3f665a71f08e748623f0fdaa332d17b))
+* Return listing information for subscriptions created via Analytics Hub ([afec9a1](https://github.com/googleapis/nodejs-pubsub/commit/afec9a1ad3f665a71f08e748623f0fdaa332d17b))
+
 ## [4.7.2](https://github.com/googleapis/nodejs-pubsub/compare/v4.7.1...v4.7.2) (2024-09-13)
 
 
