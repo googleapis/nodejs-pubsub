@@ -1,4 +1,4 @@
-// Copyright 2019-2023 Google LLC
+// Copyright 2019-2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,6 +47,12 @@ async function publishWithRetrySettings(topicNameOrId, data) {
   // Retry settings control how the publisher handles retryable failures. Default values are shown.
   // The `retryCodes` array determines which grpc errors will trigger an automatic retry.
   // The `backoffSettings` object lets you specify the behaviour of retries over time.
+  //
+  // Reference this document to see the current defaults for publishing:
+  // https://github.com/googleapis/nodejs-pubsub/blob/6e2c28a9298a49dc1b194ce747ff5258c8df6deb/src/v1/publisher_client_config.json#L59
+  //
+  // Please note that _all_ items must be included when passing these settings to topic().
+  // Otherwise, unpredictable (incorrect) defaults may be assumed.
   const retrySettings = {
     retryCodes: [
       10, // 'ABORTED'
@@ -63,17 +69,17 @@ async function publishWithRetrySettings(topicNameOrId, data) {
       initialRetryDelayMillis: 100,
       // The multiplier by which to increase the delay time between the completion
       // of failed requests, and the initiation of the subsequent retrying request.
-      retryDelayMultiplier: 1.3,
+      retryDelayMultiplier: 4,
       // The maximum delay time, in milliseconds, between requests.
       // When this value is reached, retryDelayMultiplier will no longer be used to increase delay time.
       maxRetryDelayMillis: 60000,
       // The initial timeout parameter to the request.
-      initialRpcTimeoutMillis: 5000,
+      initialRpcTimeoutMillis: 60000,
       // The multiplier by which to increase the timeout parameter between failed requests.
       rpcTimeoutMultiplier: 1.0,
       // The maximum timeout parameter, in milliseconds, for a request. When this value is reached,
       // rpcTimeoutMultiplier will no longer be used to increase the timeout.
-      maxRpcTimeoutMillis: 600000,
+      maxRpcTimeoutMillis: 60000,
       // The total time, in milliseconds, starting from when the initial request is sent,
       // after which an error will be returned, regardless of the retrying attempts made meanwhile.
       totalTimeoutMillis: 600000,
