@@ -39,30 +39,10 @@
 
 // Imports the Google Cloud client library. v1 is for the lower level
 // proto access.
-const {v1} = require('@google-cloud/pubsub');
+const {PubSub} = require('@google-cloud/pubsub');
 
-// Creates a publisher client.
-const publisherClient = new v1.PublisherClient({
-  // optional auth parameters
-});
-async function publishWithRetrySettings(projectId, topicNameOrId, data) {
-  const formattedTopic = publisherClient.projectTopicPath(
-    projectId,
-    topicNameOrId
-  );
-
-  // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
-  const dataBuffer = Buffer.from(data);
-  const messagesElement = {
-    data: dataBuffer,
-  };
-  const messages = [messagesElement];
-
-  // Build the request
-  const request = {
-    topic: formattedTopic,
-    messages: messages,
-  };
+async function publishWithRetrySettings(topicNameOrId, data) {
+  const pubsubClient = new PubSub();
 
   // Retry settings control how the publisher handles retryable failures. Default values are shown.
   // The `retryCodes` array determines which grpc errors will trigger an automatic retry.
@@ -100,19 +80,25 @@ async function publishWithRetrySettings(projectId, topicNameOrId, data) {
     },
   };
 
-  const [response] = await publisherClient.publish(request, {
-    retry: retrySettings,
+  // Cache topic objects (publishers) and reuse them.
+  const topic = pubsubClient.topic(topicNameOrId, {
+    gaxOpts: {
+      retry: retrySettings,
+    },
   });
-  console.log(`Message ${response.messageIds} published.`);
+
+  // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
+  const dataBuffer = Buffer.from(data);
+  const messageId = await topic.publishMessage({data: dataBuffer});
+  console.log(`Message ${messageId} published.`);
 }
 // [END pubsub_publisher_retry_settings]
 
 function main(
-  projectId = 'YOUR_PROJECT_ID',
   topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
   data = JSON.stringify({foo: 'bar'})
 ) {
-  publishWithRetrySettings(projectId, topicNameOrId, data).catch(err => {
+  publishWithRetrySettings(topicNameOrId, data).catch(err => {
     console.error(err.message);
     process.exitCode = 1;
   });
