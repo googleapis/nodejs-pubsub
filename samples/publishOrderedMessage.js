@@ -1,4 +1,4 @@
-// Copyright 2019-2023 Google LLC
+// Copyright 2019-2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -61,14 +61,14 @@ async function publishOrderedMessage(topicNameOrId, data, orderingKey) {
     orderingKey: orderingKey,
   };
 
+  // Cache topic objects (publishers) and reuse them.
   const publishOptions = {
     messageOrdering: true,
   };
+  const topic = pubSubClient.topic(topicNameOrId, publishOptions);
 
   // Publishes the message
-  const messageId = await pubSubClient
-    .topic(topicNameOrId, publishOptions)
-    .publishMessage(message);
+  const messageId = topic.publishMessage(message);
 
   console.log(`Message ${messageId} published.`);
 

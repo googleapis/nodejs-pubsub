@@ -55,6 +55,9 @@ export interface QueuedMessage {
  */
 export type QueuedMessages = Array<QueuedMessage>;
 
+/**
+ * Batching options for sending acks and modacks back to the server.
+ */
 export interface BatchOptions {
   callOptions?: CallOptions;
   maxMessages?: number;
