@@ -95,7 +95,7 @@
     "ncp": "^2.0.0",
     "nise": "6.0.0",
     "null-loader": "^4.0.0",
-    "path-to-regexp": "6.2.2",
+    "path-to-regexp": "6.3.0",
     "protobufjs": "^7.0.0",
     "proxyquire": "^2.0.0",
     "sinon": "^18.0.0",
