@@ -62,6 +62,10 @@ async function publishOrderedMessage(topicNameOrId, data, orderingKey) {
   };
 
   // Cache topic objects (publishers) and reuse them.
+  //
+  // Pub/Sub's ordered delivery guarantee only applies when publishes for an ordering
+  // key are in the same region. For list of locational endpoints for Pub/Sub, see:
+  // https://cloud.google.com/pubsub/docs/reference/service_apis_overview#list_of_locational_endpoints
   const publishOptions = {
     messageOrdering: true,
   };
