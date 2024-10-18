@@ -560,7 +560,8 @@ export class Message implements tracing.MessageWithAttributes {
  *     ever have, while it's under library control.
  * @property {Duration} [maxAckDeadline] The maximum time that ackDeadline should
  *     ever have, while it's under library control.
- * @property {BatchOptions} [batching] Request batching options.
+ * @property {BatchOptions} [batching] Request batching options; this is for
+ *     batching acks and modacks being sent back to the server.
  * @property {FlowControlOptions} [flowControl] Flow control options.
  * @property {boolean} [useLegacyFlowControl] Disables enforcing flow control
  *     settings at the Cloud PubSub server and uses the less accurate method
