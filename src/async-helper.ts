@@ -18,7 +18,7 @@ import {Message} from './subscriber';
  * Represents an async function that can process a message and return
  * a Promise for the function's completion.
  */
-export interface UserHandler {
+export interface AsyncMessageHandler {
   (message: Message): Promise<void>;
 }
 
@@ -26,7 +26,7 @@ export interface UserHandler {
  * A handler for sub.on('message', x) that can be passed to .on() to do
  * the async processing in this class.
  */
-export interface StreamHandler {
+export interface StreamMessageHandler {
   (message: Message): void;
 }
 
@@ -66,19 +66,19 @@ export class AsyncHelper {
   tailPromise: Promise<void> = Promise.resolve();
 
   // The user's handler that will be called to take a message and get back a Promise.
-  userHandler: UserHandler;
+  userHandler: AsyncMessageHandler;
 
   /**
    * @param userHandler The async function we'll call for each message.
    */
-  constructor(userHandler: UserHandler) {
+  constructor(userHandler: AsyncMessageHandler) {
     this.userHandler = userHandler;
   }
 
   /**
    * A handler function that you can pass to .on('message').
    */
-  get handler(): StreamHandler {
+  get handler(): StreamMessageHandler {
     return this.streamHandler.bind(this);
   }
 

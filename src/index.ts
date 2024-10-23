@@ -175,6 +175,11 @@ export {
 } from './topic';
 export {Duration, TotalOfUnit, DurationLike} from './temporal';
 export {DebugMessage} from './debug';
+export {
+  AsyncHelper,
+  AsyncMessageHandler,
+  StreamMessageHandler,
+} from './async-helper';
 
 if (process.env.DEBUG_GRPC) {
   console.info('gRPC logging set to verbose');
