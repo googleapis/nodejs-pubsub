@@ -93,7 +93,7 @@
     "mocha": "^9.2.2",
     "mv": "^2.1.1",
     "ncp": "^2.0.0",
-    "nise": "6.0.0",
+    "nise": "6.1.1",
     "null-loader": "^4.0.0",
     "path-to-regexp": "6.2.2",
     "protobufjs": "^7.0.0",
