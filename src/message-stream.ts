@@ -321,7 +321,7 @@ export class MessageStream extends PassThrough {
         : this._subscriber.maxMessages / this._streams.length,
       maxOutstandingBytes: this._subscriber.useLegacyFlowControl
         ? 0
-        : this._subscriber.maxBytes,
+        : this._subscriber.maxBytes / this._streams.length,
     };
     const otherArgs = {
       headers: {
