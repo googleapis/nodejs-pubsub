@@ -451,6 +451,93 @@
                     }
                   }
                 },
+                "IngestionFailureEvent": {
+                  "oneofs": {
+                    "failure": {
+                      "oneof": [
+                        "cloudStorageFailure"
+                      ]
+                    }
+                  },
+                  "fields": {
+                    "topic": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "errorMessage": {
+                      "type": "string",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "cloudStorageFailure": {
+                      "type": "CloudStorageFailure",
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    }
+                  },
+                  "nested": {
+                    "ApiViolationReason": {
+                      "fields": {}
+                    },
+                    "AvroFailureReason": {
+                      "fields": {}
+                    },
+                    "CloudStorageFailure": {
+                      "oneofs": {
+                        "reason": {
+                          "oneof": [
+                            "avroFailureReason",
+                            "apiViolationReason"
+                          ]
+                        }
+                      },
+                      "fields": {
+                        "bucket": {
+                          "type": "string",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "objectName": {
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "objectGeneration": {
+                          "type": "int64",
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "avroFailureReason": {
+                          "type": "AvroFailureReason",
+                          "id": 5,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "apiViolationReason": {
+                          "type": "ApiViolationReason",
+                          "id": 6,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
                 "Topic": {
                   "options": {
                     "(google.api.resource).type": "pubsub.googleapis.com/Topic",

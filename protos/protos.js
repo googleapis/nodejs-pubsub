@@ -2864,6 +2864,978 @@
                     return PlatformLogsSettings;
                 })();
     
+                v1.IngestionFailureEvent = (function() {
+    
+                    /**
+                     * Properties of an IngestionFailureEvent.
+                     * @memberof google.pubsub.v1
+                     * @interface IIngestionFailureEvent
+                     * @property {string|null} [topic] IngestionFailureEvent topic
+                     * @property {string|null} [errorMessage] IngestionFailureEvent errorMessage
+                     * @property {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure|null} [cloudStorageFailure] IngestionFailureEvent cloudStorageFailure
+                     */
+    
+                    /**
+                     * Constructs a new IngestionFailureEvent.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents an IngestionFailureEvent.
+                     * @implements IIngestionFailureEvent
+                     * @constructor
+                     * @param {google.pubsub.v1.IIngestionFailureEvent=} [properties] Properties to set
+                     */
+                    function IngestionFailureEvent(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * IngestionFailureEvent topic.
+                     * @member {string} topic
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.topic = "";
+    
+                    /**
+                     * IngestionFailureEvent errorMessage.
+                     * @member {string} errorMessage
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.errorMessage = "";
+    
+                    /**
+                     * IngestionFailureEvent cloudStorageFailure.
+                     * @member {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure|null|undefined} cloudStorageFailure
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.cloudStorageFailure = null;
+    
+                    // OneOf field names bound to virtual getters and setters
+                    var $oneOfFields;
+    
+                    /**
+                     * IngestionFailureEvent failure.
+                     * @member {"cloudStorageFailure"|undefined} failure
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    Object.defineProperty(IngestionFailureEvent.prototype, "failure", {
+                        get: $util.oneOfGetter($oneOfFields = ["cloudStorageFailure"]),
+                        set: $util.oneOfSetter($oneOfFields)
+                    });
+    
+                    /**
+                     * Creates a new IngestionFailureEvent instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionFailureEvent=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.IngestionFailureEvent} IngestionFailureEvent instance
+                     */
+                    IngestionFailureEvent.create = function create(properties) {
+                        return new IngestionFailureEvent(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified IngestionFailureEvent message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionFailureEvent} message IngestionFailureEvent message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    IngestionFailureEvent.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.topic != null && Object.hasOwnProperty.call(message, "topic"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.topic);
+                        if (message.errorMessage != null && Object.hasOwnProperty.call(message, "errorMessage"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.errorMessage);
+                        if (message.cloudStorageFailure != null && Object.hasOwnProperty.call(message, "cloudStorageFailure"))
+                            $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.encode(message.cloudStorageFailure, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified IngestionFailureEvent message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionFailureEvent} message IngestionFailureEvent message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    IngestionFailureEvent.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes an IngestionFailureEvent message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.IngestionFailureEvent} IngestionFailureEvent
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    IngestionFailureEvent.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1: {
+                                    message.topic = reader.string();
+                                    break;
+                                }
+                            case 2: {
+                                    message.errorMessage = reader.string();
+                                    break;
+                                }
+                            case 3: {
+                                    message.cloudStorageFailure = $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes an IngestionFailureEvent message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.IngestionFailureEvent} IngestionFailureEvent
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    IngestionFailureEvent.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies an IngestionFailureEvent message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    IngestionFailureEvent.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        var properties = {};
+                        if (message.topic != null && message.hasOwnProperty("topic"))
+                            if (!$util.isString(message.topic))
+                                return "topic: string expected";
+                        if (message.errorMessage != null && message.hasOwnProperty("errorMessage"))
+                            if (!$util.isString(message.errorMessage))
+                                return "errorMessage: string expected";
+                        if (message.cloudStorageFailure != null && message.hasOwnProperty("cloudStorageFailure")) {
+                            properties.failure = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.verify(message.cloudStorageFailure);
+                                if (error)
+                                    return "cloudStorageFailure." + error;
+                            }
+                        }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates an IngestionFailureEvent message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.IngestionFailureEvent} IngestionFailureEvent
+                     */
+                    IngestionFailureEvent.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent)
+                            return object;
+                        var message = new $root.google.pubsub.v1.IngestionFailureEvent();
+                        if (object.topic != null)
+                            message.topic = String(object.topic);
+                        if (object.errorMessage != null)
+                            message.errorMessage = String(object.errorMessage);
+                        if (object.cloudStorageFailure != null) {
+                            if (typeof object.cloudStorageFailure !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionFailureEvent.cloudStorageFailure: object expected");
+                            message.cloudStorageFailure = $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.fromObject(object.cloudStorageFailure);
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from an IngestionFailureEvent message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {google.pubsub.v1.IngestionFailureEvent} message IngestionFailureEvent
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    IngestionFailureEvent.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.topic = "";
+                            object.errorMessage = "";
+                        }
+                        if (message.topic != null && message.hasOwnProperty("topic"))
+                            object.topic = message.topic;
+                        if (message.errorMessage != null && message.hasOwnProperty("errorMessage"))
+                            object.errorMessage = message.errorMessage;
+                        if (message.cloudStorageFailure != null && message.hasOwnProperty("cloudStorageFailure")) {
+                            object.cloudStorageFailure = $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.toObject(message.cloudStorageFailure, options);
+                            if (options.oneofs)
+                                object.failure = "cloudStorageFailure";
+                        }
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this IngestionFailureEvent to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    IngestionFailureEvent.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * Gets the default type url for IngestionFailureEvent
+                     * @function getTypeUrl
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    IngestionFailureEvent.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent";
+                    };
+    
+                    IngestionFailureEvent.ApiViolationReason = (function() {
+    
+                        /**
+                         * Properties of an ApiViolationReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IApiViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new ApiViolationReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents an ApiViolationReason.
+                         * @implements IApiViolationReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason=} [properties] Properties to set
+                         */
+                        function ApiViolationReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * Creates a new ApiViolationReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ApiViolationReason} ApiViolationReason instance
+                         */
+                        ApiViolationReason.create = function create(properties) {
+                            return new ApiViolationReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified ApiViolationReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason} message ApiViolationReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ApiViolationReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified ApiViolationReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason} message ApiViolationReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ApiViolationReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an ApiViolationReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ApiViolationReason} ApiViolationReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ApiViolationReason.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an ApiViolationReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ApiViolationReason} ApiViolationReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ApiViolationReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an ApiViolationReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        ApiViolationReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an ApiViolationReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ApiViolationReason} ApiViolationReason
+                         */
+                        ApiViolationReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason)
+                                return object;
+                            return new $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason();
+                        };
+    
+                        /**
+                         * Creates a plain object from an ApiViolationReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ApiViolationReason} message ApiViolationReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        ApiViolationReason.toObject = function toObject() {
+                            return {};
+                        };
+    
+                        /**
+                         * Converts this ApiViolationReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        ApiViolationReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for ApiViolationReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        ApiViolationReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.ApiViolationReason";
+                        };
+    
+                        return ApiViolationReason;
+                    })();
+    
+                    IngestionFailureEvent.AvroFailureReason = (function() {
+    
+                        /**
+                         * Properties of an AvroFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IAvroFailureReason
+                         */
+    
+                        /**
+                         * Constructs a new AvroFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents an AvroFailureReason.
+                         * @implements IAvroFailureReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason=} [properties] Properties to set
+                         */
+                        function AvroFailureReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * Creates a new AvroFailureReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AvroFailureReason} AvroFailureReason instance
+                         */
+                        AvroFailureReason.create = function create(properties) {
+                            return new AvroFailureReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AvroFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason} message AvroFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AvroFailureReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AvroFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason} message AvroFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AvroFailureReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AvroFailureReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AvroFailureReason} AvroFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AvroFailureReason.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AvroFailureReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AvroFailureReason} AvroFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AvroFailureReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AvroFailureReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AvroFailureReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AvroFailureReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AvroFailureReason} AvroFailureReason
+                         */
+                        AvroFailureReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason)
+                                return object;
+                            return new $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason();
+                        };
+    
+                        /**
+                         * Creates a plain object from an AvroFailureReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.AvroFailureReason} message AvroFailureReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AvroFailureReason.toObject = function toObject() {
+                            return {};
+                        };
+    
+                        /**
+                         * Converts this AvroFailureReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AvroFailureReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AvroFailureReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AvroFailureReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.AvroFailureReason";
+                        };
+    
+                        return AvroFailureReason;
+                    })();
+    
+                    IngestionFailureEvent.CloudStorageFailure = (function() {
+    
+                        /**
+                         * Properties of a CloudStorageFailure.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface ICloudStorageFailure
+                         * @property {string|null} [bucket] CloudStorageFailure bucket
+                         * @property {string|null} [objectName] CloudStorageFailure objectName
+                         * @property {number|Long|null} [objectGeneration] CloudStorageFailure objectGeneration
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason|null} [avroFailureReason] CloudStorageFailure avroFailureReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] CloudStorageFailure apiViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new CloudStorageFailure.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents a CloudStorageFailure.
+                         * @implements ICloudStorageFailure
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure=} [properties] Properties to set
+                         */
+                        function CloudStorageFailure(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * CloudStorageFailure bucket.
+                         * @member {string} bucket
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.bucket = "";
+    
+                        /**
+                         * CloudStorageFailure objectName.
+                         * @member {string} objectName
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.objectName = "";
+    
+                        /**
+                         * CloudStorageFailure objectGeneration.
+                         * @member {number|Long} objectGeneration
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.objectGeneration = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * CloudStorageFailure avroFailureReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason|null|undefined} avroFailureReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.avroFailureReason = null;
+    
+                        /**
+                         * CloudStorageFailure apiViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null|undefined} apiViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.apiViolationReason = null;
+    
+                        // OneOf field names bound to virtual getters and setters
+                        var $oneOfFields;
+    
+                        /**
+                         * CloudStorageFailure reason.
+                         * @member {"avroFailureReason"|"apiViolationReason"|undefined} reason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        Object.defineProperty(CloudStorageFailure.prototype, "reason", {
+                            get: $util.oneOfGetter($oneOfFields = ["avroFailureReason", "apiViolationReason"]),
+                            set: $util.oneOfSetter($oneOfFields)
+                        });
+    
+                        /**
+                         * Creates a new CloudStorageFailure instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure} CloudStorageFailure instance
+                         */
+                        CloudStorageFailure.create = function create(properties) {
+                            return new CloudStorageFailure(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified CloudStorageFailure message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure} message CloudStorageFailure message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        CloudStorageFailure.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.bucket != null && Object.hasOwnProperty.call(message, "bucket"))
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.bucket);
+                            if (message.objectName != null && Object.hasOwnProperty.call(message, "objectName"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.objectName);
+                            if (message.objectGeneration != null && Object.hasOwnProperty.call(message, "objectGeneration"))
+                                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.objectGeneration);
+                            if (message.avroFailureReason != null && Object.hasOwnProperty.call(message, "avroFailureReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.encode(message.avroFailureReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified CloudStorageFailure message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure} message CloudStorageFailure message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        CloudStorageFailure.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a CloudStorageFailure message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure} CloudStorageFailure
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        CloudStorageFailure.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.bucket = reader.string();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.objectName = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.objectGeneration = reader.int64();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.avroFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 6: {
+                                        message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a CloudStorageFailure message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure} CloudStorageFailure
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        CloudStorageFailure.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a CloudStorageFailure message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        CloudStorageFailure.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            var properties = {};
+                            if (message.bucket != null && message.hasOwnProperty("bucket"))
+                                if (!$util.isString(message.bucket))
+                                    return "bucket: string expected";
+                            if (message.objectName != null && message.hasOwnProperty("objectName"))
+                                if (!$util.isString(message.objectName))
+                                    return "objectName: string expected";
+                            if (message.objectGeneration != null && message.hasOwnProperty("objectGeneration"))
+                                if (!$util.isInteger(message.objectGeneration) && !(message.objectGeneration && $util.isInteger(message.objectGeneration.low) && $util.isInteger(message.objectGeneration.high)))
+                                    return "objectGeneration: integer|Long expected";
+                            if (message.avroFailureReason != null && message.hasOwnProperty("avroFailureReason")) {
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.verify(message.avroFailureReason);
+                                    if (error)
+                                        return "avroFailureReason." + error;
+                                }
+                            }
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify(message.apiViolationReason);
+                                    if (error)
+                                        return "apiViolationReason." + error;
+                                }
+                            }
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a CloudStorageFailure message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure} CloudStorageFailure
+                         */
+                        CloudStorageFailure.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure();
+                            if (object.bucket != null)
+                                message.bucket = String(object.bucket);
+                            if (object.objectName != null)
+                                message.objectName = String(object.objectName);
+                            if (object.objectGeneration != null)
+                                if ($util.Long)
+                                    (message.objectGeneration = $util.Long.fromValue(object.objectGeneration)).unsigned = false;
+                                else if (typeof object.objectGeneration === "string")
+                                    message.objectGeneration = parseInt(object.objectGeneration, 10);
+                                else if (typeof object.objectGeneration === "number")
+                                    message.objectGeneration = object.objectGeneration;
+                                else if (typeof object.objectGeneration === "object")
+                                    message.objectGeneration = new $util.LongBits(object.objectGeneration.low >>> 0, object.objectGeneration.high >>> 0).toNumber();
+                            if (object.avroFailureReason != null) {
+                                if (typeof object.avroFailureReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.avroFailureReason: object expected");
+                                message.avroFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.fromObject(object.avroFailureReason);
+                            }
+                            if (object.apiViolationReason != null) {
+                                if (typeof object.apiViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.apiViolationReason: object expected");
+                                message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from a CloudStorageFailure message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure} message CloudStorageFailure
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        CloudStorageFailure.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.bucket = "";
+                                object.objectName = "";
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.objectGeneration = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.objectGeneration = options.longs === String ? "0" : 0;
+                            }
+                            if (message.bucket != null && message.hasOwnProperty("bucket"))
+                                object.bucket = message.bucket;
+                            if (message.objectName != null && message.hasOwnProperty("objectName"))
+                                object.objectName = message.objectName;
+                            if (message.objectGeneration != null && message.hasOwnProperty("objectGeneration"))
+                                if (typeof message.objectGeneration === "number")
+                                    object.objectGeneration = options.longs === String ? String(message.objectGeneration) : message.objectGeneration;
+                                else
+                                    object.objectGeneration = options.longs === String ? $util.Long.prototype.toString.call(message.objectGeneration) : options.longs === Number ? new $util.LongBits(message.objectGeneration.low >>> 0, message.objectGeneration.high >>> 0).toNumber() : message.objectGeneration;
+                            if (message.avroFailureReason != null && message.hasOwnProperty("avroFailureReason")) {
+                                object.avroFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.toObject(message.avroFailureReason, options);
+                                if (options.oneofs)
+                                    object.reason = "avroFailureReason";
+                            }
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                object.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.toObject(message.apiViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "apiViolationReason";
+                            }
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this CloudStorageFailure to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        CloudStorageFailure.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for CloudStorageFailure
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        CloudStorageFailure.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure";
+                        };
+    
+                        return CloudStorageFailure;
+                    })();
+    
+                    return IngestionFailureEvent;
+                })();
+    
                 v1.Topic = (function() {
     
                     /**
