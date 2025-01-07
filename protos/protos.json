@@ -248,7 +248,10 @@
                     "source": {
                       "oneof": [
                         "awsKinesis",
-                        "cloudStorage"
+                        "cloudStorage",
+                        "azureEventHubs",
+                        "awsMsk",
+                        "confluentCloud"
                       ]
                     }
                   },
@@ -263,6 +266,27 @@
                     "cloudStorage": {
                       "type": "CloudStorage",
                       "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "azureEventHubs": {
+                      "type": "AzureEventHubs",
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "awsMsk": {
+                      "type": "AwsMsk",
+                      "id": 5,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "confluentCloud": {
+                      "type": "ConfluentCloud",
+                      "id": 6,
                       "options": {
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
@@ -425,6 +449,190 @@
                           "fields": {}
                         }
                       }
+                    },
+                    "AzureEventHubs": {
+                      "fields": {
+                        "state": {
+                          "type": "State",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OUTPUT_ONLY"
+                          }
+                        },
+                        "resourceGroup": {
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "namespace": {
+                          "type": "string",
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "eventHub": {
+                          "type": "string",
+                          "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "clientId": {
+                          "type": "string",
+                          "id": 5,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "tenantId": {
+                          "type": "string",
+                          "id": 6,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "subscriptionId": {
+                          "type": "string",
+                          "id": 7,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "gcpServiceAccount": {
+                          "type": "string",
+                          "id": 8,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        }
+                      },
+                      "nested": {
+                        "State": {
+                          "values": {
+                            "STATE_UNSPECIFIED": 0,
+                            "ACTIVE": 1,
+                            "EVENT_HUBS_PERMISSION_DENIED": 2,
+                            "PUBLISH_PERMISSION_DENIED": 3,
+                            "NAMESPACE_NOT_FOUND": 4,
+                            "EVENT_HUB_NOT_FOUND": 5,
+                            "SUBSCRIPTION_NOT_FOUND": 6,
+                            "RESOURCE_GROUP_NOT_FOUND": 7
+                          }
+                        }
+                      }
+                    },
+                    "AwsMsk": {
+                      "fields": {
+                        "state": {
+                          "type": "State",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OUTPUT_ONLY"
+                          }
+                        },
+                        "clusterArn": {
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "topic": {
+                          "type": "string",
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "awsRoleArn": {
+                          "type": "string",
+                          "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "gcpServiceAccount": {
+                          "type": "string",
+                          "id": 5,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        }
+                      },
+                      "nested": {
+                        "State": {
+                          "values": {
+                            "STATE_UNSPECIFIED": 0,
+                            "ACTIVE": 1,
+                            "MSK_PERMISSION_DENIED": 2,
+                            "PUBLISH_PERMISSION_DENIED": 3,
+                            "CLUSTER_NOT_FOUND": 4,
+                            "TOPIC_NOT_FOUND": 5
+                          }
+                        }
+                      }
+                    },
+                    "ConfluentCloud": {
+                      "fields": {
+                        "state": {
+                          "type": "State",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OUTPUT_ONLY"
+                          }
+                        },
+                        "bootstrapServer": {
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "clusterId": {
+                          "type": "string",
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "topic": {
+                          "type": "string",
+                          "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "identityPoolId": {
+                          "type": "string",
+                          "id": 5,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        },
+                        "gcpServiceAccount": {
+                          "type": "string",
+                          "id": 6,
+                          "options": {
+                            "(google.api.field_behavior)": "REQUIRED"
+                          }
+                        }
+                      },
+                      "nested": {
+                        "State": {
+                          "values": {
+                            "STATE_UNSPECIFIED": 0,
+                            "ACTIVE": 1,
+                            "CONFLUENT_CLOUD_PERMISSION_DENIED": 2,
+                            "PUBLISH_PERMISSION_DENIED": 3,
+                            "UNREACHABLE_BOOTSTRAP_SERVER": 4,
+                            "CLUSTER_NOT_FOUND": 5,
+                            "TOPIC_NOT_FOUND": 6
+                          }
+                        }
+                      }
                     }
                   }
                 },
@@ -455,7 +663,10 @@
                   "oneofs": {
                     "failure": {
                       "oneof": [
-                        "cloudStorageFailure"
+                        "cloudStorageFailure",
+                        "awsMskFailure",
+                        "azureEventHubsFailure",
+                        "confluentCloudFailure"
                       ]
                     }
                   },
@@ -477,6 +688,27 @@
                     "cloudStorageFailure": {
                       "type": "CloudStorageFailure",
                       "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "awsMskFailure": {
+                      "type": "AwsMskFailureReason",
+                      "id": 4,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "azureEventHubsFailure": {
+                      "type": "AzureEventHubsFailureReason",
+                      "id": 5,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "confluentCloudFailure": {
+                      "type": "ConfluentCloudFailureReason",
+                      "id": 6,
                       "options": {
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
@@ -530,6 +762,144 @@
                         "apiViolationReason": {
                           "type": "ApiViolationReason",
                           "id": 6,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        }
+                      }
+                    },
+                    "AwsMskFailureReason": {
+                      "oneofs": {
+                        "reason": {
+                          "oneof": [
+                            "apiViolationReason"
+                          ]
+                        }
+                      },
+                      "fields": {
+                        "clusterArn": {
+                          "type": "string",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "kafkaTopic": {
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "partitionId": {
+                          "type": "int64",
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "offset": {
+                          "type": "int64",
+                          "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "apiViolationReason": {
+                          "type": "ApiViolationReason",
+                          "id": 5,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        }
+                      }
+                    },
+                    "AzureEventHubsFailureReason": {
+                      "oneofs": {
+                        "reason": {
+                          "oneof": [
+                            "apiViolationReason"
+                          ]
+                        }
+                      },
+                      "fields": {
+                        "namespace": {
+                          "type": "string",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "eventHub": {
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "partitionId": {
+                          "type": "int64",
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "offset": {
+                          "type": "int64",
+                          "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "apiViolationReason": {
+                          "type": "ApiViolationReason",
+                          "id": 5,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        }
+                      }
+                    },
+                    "ConfluentCloudFailureReason": {
+                      "oneofs": {
+                        "reason": {
+                          "oneof": [
+                            "apiViolationReason"
+                          ]
+                        }
+                      },
+                      "fields": {
+                        "clusterId": {
+                          "type": "string",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "kafkaTopic": {
+                          "type": "string",
+                          "id": 2,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "partitionId": {
+                          "type": "int64",
+                          "id": 3,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "offset": {
+                          "type": "int64",
+                          "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "apiViolationReason": {
+                          "type": "ApiViolationReason",
+                          "id": 5,
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
