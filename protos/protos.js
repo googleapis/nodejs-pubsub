@@ -1,4 +1,4 @@
-// Copyright 2024 Google LLC
+// Copyright 2025 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -937,6 +937,9 @@
                      * @interface IIngestionDataSourceSettings
                      * @property {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null} [awsKinesis] IngestionDataSourceSettings awsKinesis
                      * @property {google.pubsub.v1.IngestionDataSourceSettings.ICloudStorage|null} [cloudStorage] IngestionDataSourceSettings cloudStorage
+                     * @property {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs|null} [azureEventHubs] IngestionDataSourceSettings azureEventHubs
+                     * @property {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk|null} [awsMsk] IngestionDataSourceSettings awsMsk
+                     * @property {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud|null} [confluentCloud] IngestionDataSourceSettings confluentCloud
                      * @property {google.pubsub.v1.IPlatformLogsSettings|null} [platformLogsSettings] IngestionDataSourceSettings platformLogsSettings
                      */
     
@@ -972,6 +975,30 @@
                     IngestionDataSourceSettings.prototype.cloudStorage = null;
     
                     /**
+                     * IngestionDataSourceSettings azureEventHubs.
+                     * @member {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs|null|undefined} azureEventHubs
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     */
+                    IngestionDataSourceSettings.prototype.azureEventHubs = null;
+    
+                    /**
+                     * IngestionDataSourceSettings awsMsk.
+                     * @member {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk|null|undefined} awsMsk
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     */
+                    IngestionDataSourceSettings.prototype.awsMsk = null;
+    
+                    /**
+                     * IngestionDataSourceSettings confluentCloud.
+                     * @member {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud|null|undefined} confluentCloud
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     */
+                    IngestionDataSourceSettings.prototype.confluentCloud = null;
+    
+                    /**
                      * IngestionDataSourceSettings platformLogsSettings.
                      * @member {google.pubsub.v1.IPlatformLogsSettings|null|undefined} platformLogsSettings
                      * @memberof google.pubsub.v1.IngestionDataSourceSettings
@@ -984,12 +1011,12 @@
     
                     /**
                      * IngestionDataSourceSettings source.
-                     * @member {"awsKinesis"|"cloudStorage"|undefined} source
+                     * @member {"awsKinesis"|"cloudStorage"|"azureEventHubs"|"awsMsk"|"confluentCloud"|undefined} source
                      * @memberof google.pubsub.v1.IngestionDataSourceSettings
                      * @instance
                      */
                     Object.defineProperty(IngestionDataSourceSettings.prototype, "source", {
-                        get: $util.oneOfGetter($oneOfFields = ["awsKinesis", "cloudStorage"]),
+                        get: $util.oneOfGetter($oneOfFields = ["awsKinesis", "cloudStorage", "azureEventHubs", "awsMsk", "confluentCloud"]),
                         set: $util.oneOfSetter($oneOfFields)
                     });
     
@@ -1021,8 +1048,14 @@
                             $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.encode(message.awsKinesis, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
                         if (message.cloudStorage != null && Object.hasOwnProperty.call(message, "cloudStorage"))
                             $root.google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.encode(message.cloudStorage, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        if (message.azureEventHubs != null && Object.hasOwnProperty.call(message, "azureEventHubs"))
+                            $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.encode(message.azureEventHubs, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                         if (message.platformLogsSettings != null && Object.hasOwnProperty.call(message, "platformLogsSettings"))
                             $root.google.pubsub.v1.PlatformLogsSettings.encode(message.platformLogsSettings, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                        if (message.awsMsk != null && Object.hasOwnProperty.call(message, "awsMsk"))
+                            $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.encode(message.awsMsk, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                        if (message.confluentCloud != null && Object.hasOwnProperty.call(message, "confluentCloud"))
+                            $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.encode(message.confluentCloud, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
                         return writer;
                     };
     
@@ -1063,6 +1096,18 @@
                                 }
                             case 2: {
                                     message.cloudStorage = $root.google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 3: {
+                                    message.azureEventHubs = $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 5: {
+                                    message.awsMsk = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 6: {
+                                    message.confluentCloud = $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.decode(reader, reader.uint32());
                                     break;
                                 }
                             case 4: {
@@ -1123,6 +1168,36 @@
                                     return "cloudStorage." + error;
                             }
                         }
+                        if (message.azureEventHubs != null && message.hasOwnProperty("azureEventHubs")) {
+                            if (properties.source === 1)
+                                return "source: multiple values";
+                            properties.source = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.verify(message.azureEventHubs);
+                                if (error)
+                                    return "azureEventHubs." + error;
+                            }
+                        }
+                        if (message.awsMsk != null && message.hasOwnProperty("awsMsk")) {
+                            if (properties.source === 1)
+                                return "source: multiple values";
+                            properties.source = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.verify(message.awsMsk);
+                                if (error)
+                                    return "awsMsk." + error;
+                            }
+                        }
+                        if (message.confluentCloud != null && message.hasOwnProperty("confluentCloud")) {
+                            if (properties.source === 1)
+                                return "source: multiple values";
+                            properties.source = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.verify(message.confluentCloud);
+                                if (error)
+                                    return "confluentCloud." + error;
+                            }
+                        }
                         if (message.platformLogsSettings != null && message.hasOwnProperty("platformLogsSettings")) {
                             var error = $root.google.pubsub.v1.PlatformLogsSettings.verify(message.platformLogsSettings);
                             if (error)
@@ -1152,6 +1227,21 @@
                             if (typeof object.cloudStorage !== "object")
                                 throw TypeError(".google.pubsub.v1.IngestionDataSourceSettings.cloudStorage: object expected");
                             message.cloudStorage = $root.google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.fromObject(object.cloudStorage);
+                        }
+                        if (object.azureEventHubs != null) {
+                            if (typeof object.azureEventHubs !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionDataSourceSettings.azureEventHubs: object expected");
+                            message.azureEventHubs = $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.fromObject(object.azureEventHubs);
+                        }
+                        if (object.awsMsk != null) {
+                            if (typeof object.awsMsk !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionDataSourceSettings.awsMsk: object expected");
+                            message.awsMsk = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.fromObject(object.awsMsk);
+                        }
+                        if (object.confluentCloud != null) {
+                            if (typeof object.confluentCloud !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionDataSourceSettings.confluentCloud: object expected");
+                            message.confluentCloud = $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.fromObject(object.confluentCloud);
                         }
                         if (object.platformLogsSettings != null) {
                             if (typeof object.platformLogsSettings !== "object")
@@ -1186,8 +1276,23 @@
                             if (options.oneofs)
                                 object.source = "cloudStorage";
                         }
+                        if (message.azureEventHubs != null && message.hasOwnProperty("azureEventHubs")) {
+                            object.azureEventHubs = $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.toObject(message.azureEventHubs, options);
+                            if (options.oneofs)
+                                object.source = "azureEventHubs";
+                        }
                         if (message.platformLogsSettings != null && message.hasOwnProperty("platformLogsSettings"))
                             object.platformLogsSettings = $root.google.pubsub.v1.PlatformLogsSettings.toObject(message.platformLogsSettings, options);
+                        if (message.awsMsk != null && message.hasOwnProperty("awsMsk")) {
+                            object.awsMsk = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.toObject(message.awsMsk, options);
+                            if (options.oneofs)
+                                object.source = "awsMsk";
+                        }
+                        if (message.confluentCloud != null && message.hasOwnProperty("confluentCloud")) {
+                            object.confluentCloud = $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.toObject(message.confluentCloud, options);
+                            if (options.oneofs)
+                                object.source = "confluentCloud";
+                        }
                         return object;
                     };
     
@@ -2597,6 +2702,1190 @@
                         return CloudStorage;
                     })();
     
+                    IngestionDataSourceSettings.AzureEventHubs = (function() {
+    
+                        /**
+                         * Properties of an AzureEventHubs.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @interface IAzureEventHubs
+                         * @property {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.State|null} [state] AzureEventHubs state
+                         * @property {string|null} [resourceGroup] AzureEventHubs resourceGroup
+                         * @property {string|null} [namespace] AzureEventHubs namespace
+                         * @property {string|null} [eventHub] AzureEventHubs eventHub
+                         * @property {string|null} [clientId] AzureEventHubs clientId
+                         * @property {string|null} [tenantId] AzureEventHubs tenantId
+                         * @property {string|null} [subscriptionId] AzureEventHubs subscriptionId
+                         * @property {string|null} [gcpServiceAccount] AzureEventHubs gcpServiceAccount
+                         */
+    
+                        /**
+                         * Constructs a new AzureEventHubs.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @classdesc Represents an AzureEventHubs.
+                         * @implements IAzureEventHubs
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs=} [properties] Properties to set
+                         */
+                        function AzureEventHubs(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AzureEventHubs state.
+                         * @member {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.State} state
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.state = 0;
+    
+                        /**
+                         * AzureEventHubs resourceGroup.
+                         * @member {string} resourceGroup
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.resourceGroup = "";
+    
+                        /**
+                         * AzureEventHubs namespace.
+                         * @member {string} namespace
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.namespace = "";
+    
+                        /**
+                         * AzureEventHubs eventHub.
+                         * @member {string} eventHub
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.eventHub = "";
+    
+                        /**
+                         * AzureEventHubs clientId.
+                         * @member {string} clientId
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.clientId = "";
+    
+                        /**
+                         * AzureEventHubs tenantId.
+                         * @member {string} tenantId
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.tenantId = "";
+    
+                        /**
+                         * AzureEventHubs subscriptionId.
+                         * @member {string} subscriptionId
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.subscriptionId = "";
+    
+                        /**
+                         * AzureEventHubs gcpServiceAccount.
+                         * @member {string} gcpServiceAccount
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.gcpServiceAccount = "";
+    
+                        /**
+                         * Creates a new AzureEventHubs instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs} AzureEventHubs instance
+                         */
+                        AzureEventHubs.create = function create(properties) {
+                            return new AzureEventHubs(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AzureEventHubs message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs} message AzureEventHubs message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AzureEventHubs.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.state);
+                            if (message.resourceGroup != null && Object.hasOwnProperty.call(message, "resourceGroup"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.resourceGroup);
+                            if (message.namespace != null && Object.hasOwnProperty.call(message, "namespace"))
+                                writer.uint32(/* id 3, wireType 2 =*/26).string(message.namespace);
+                            if (message.eventHub != null && Object.hasOwnProperty.call(message, "eventHub"))
+                                writer.uint32(/* id 4, wireType 2 =*/34).string(message.eventHub);
+                            if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
+                                writer.uint32(/* id 5, wireType 2 =*/42).string(message.clientId);
+                            if (message.tenantId != null && Object.hasOwnProperty.call(message, "tenantId"))
+                                writer.uint32(/* id 6, wireType 2 =*/50).string(message.tenantId);
+                            if (message.subscriptionId != null && Object.hasOwnProperty.call(message, "subscriptionId"))
+                                writer.uint32(/* id 7, wireType 2 =*/58).string(message.subscriptionId);
+                            if (message.gcpServiceAccount != null && Object.hasOwnProperty.call(message, "gcpServiceAccount"))
+                                writer.uint32(/* id 8, wireType 2 =*/66).string(message.gcpServiceAccount);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AzureEventHubs message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs} message AzureEventHubs message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AzureEventHubs.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AzureEventHubs message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs} AzureEventHubs
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AzureEventHubs.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.state = reader.int32();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.resourceGroup = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.namespace = reader.string();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.eventHub = reader.string();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.clientId = reader.string();
+                                        break;
+                                    }
+                                case 6: {
+                                        message.tenantId = reader.string();
+                                        break;
+                                    }
+                                case 7: {
+                                        message.subscriptionId = reader.string();
+                                        break;
+                                    }
+                                case 8: {
+                                        message.gcpServiceAccount = reader.string();
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AzureEventHubs message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs} AzureEventHubs
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AzureEventHubs.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AzureEventHubs message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AzureEventHubs.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                switch (message.state) {
+                                default:
+                                    return "state: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                case 5:
+                                case 6:
+                                case 7:
+                                    break;
+                                }
+                            if (message.resourceGroup != null && message.hasOwnProperty("resourceGroup"))
+                                if (!$util.isString(message.resourceGroup))
+                                    return "resourceGroup: string expected";
+                            if (message.namespace != null && message.hasOwnProperty("namespace"))
+                                if (!$util.isString(message.namespace))
+                                    return "namespace: string expected";
+                            if (message.eventHub != null && message.hasOwnProperty("eventHub"))
+                                if (!$util.isString(message.eventHub))
+                                    return "eventHub: string expected";
+                            if (message.clientId != null && message.hasOwnProperty("clientId"))
+                                if (!$util.isString(message.clientId))
+                                    return "clientId: string expected";
+                            if (message.tenantId != null && message.hasOwnProperty("tenantId"))
+                                if (!$util.isString(message.tenantId))
+                                    return "tenantId: string expected";
+                            if (message.subscriptionId != null && message.hasOwnProperty("subscriptionId"))
+                                if (!$util.isString(message.subscriptionId))
+                                    return "subscriptionId: string expected";
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                if (!$util.isString(message.gcpServiceAccount))
+                                    return "gcpServiceAccount: string expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AzureEventHubs message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs} AzureEventHubs
+                         */
+                        AzureEventHubs.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs();
+                            switch (object.state) {
+                            default:
+                                if (typeof object.state === "number") {
+                                    message.state = object.state;
+                                    break;
+                                }
+                                break;
+                            case "STATE_UNSPECIFIED":
+                            case 0:
+                                message.state = 0;
+                                break;
+                            case "ACTIVE":
+                            case 1:
+                                message.state = 1;
+                                break;
+                            case "EVENT_HUBS_PERMISSION_DENIED":
+                            case 2:
+                                message.state = 2;
+                                break;
+                            case "PUBLISH_PERMISSION_DENIED":
+                            case 3:
+                                message.state = 3;
+                                break;
+                            case "NAMESPACE_NOT_FOUND":
+                            case 4:
+                                message.state = 4;
+                                break;
+                            case "EVENT_HUB_NOT_FOUND":
+                            case 5:
+                                message.state = 5;
+                                break;
+                            case "SUBSCRIPTION_NOT_FOUND":
+                            case 6:
+                                message.state = 6;
+                                break;
+                            case "RESOURCE_GROUP_NOT_FOUND":
+                            case 7:
+                                message.state = 7;
+                                break;
+                            }
+                            if (object.resourceGroup != null)
+                                message.resourceGroup = String(object.resourceGroup);
+                            if (object.namespace != null)
+                                message.namespace = String(object.namespace);
+                            if (object.eventHub != null)
+                                message.eventHub = String(object.eventHub);
+                            if (object.clientId != null)
+                                message.clientId = String(object.clientId);
+                            if (object.tenantId != null)
+                                message.tenantId = String(object.tenantId);
+                            if (object.subscriptionId != null)
+                                message.subscriptionId = String(object.subscriptionId);
+                            if (object.gcpServiceAccount != null)
+                                message.gcpServiceAccount = String(object.gcpServiceAccount);
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AzureEventHubs message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs} message AzureEventHubs
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AzureEventHubs.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                                object.resourceGroup = "";
+                                object.namespace = "";
+                                object.eventHub = "";
+                                object.clientId = "";
+                                object.tenantId = "";
+                                object.subscriptionId = "";
+                                object.gcpServiceAccount = "";
+                            }
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                object.state = options.enums === String ? $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.State[message.state] : message.state;
+                            if (message.resourceGroup != null && message.hasOwnProperty("resourceGroup"))
+                                object.resourceGroup = message.resourceGroup;
+                            if (message.namespace != null && message.hasOwnProperty("namespace"))
+                                object.namespace = message.namespace;
+                            if (message.eventHub != null && message.hasOwnProperty("eventHub"))
+                                object.eventHub = message.eventHub;
+                            if (message.clientId != null && message.hasOwnProperty("clientId"))
+                                object.clientId = message.clientId;
+                            if (message.tenantId != null && message.hasOwnProperty("tenantId"))
+                                object.tenantId = message.tenantId;
+                            if (message.subscriptionId != null && message.hasOwnProperty("subscriptionId"))
+                                object.subscriptionId = message.subscriptionId;
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                object.gcpServiceAccount = message.gcpServiceAccount;
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AzureEventHubs to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AzureEventHubs.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AzureEventHubs
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AzureEventHubs.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs";
+                        };
+    
+                        /**
+                         * State enum.
+                         * @name google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.State
+                         * @enum {number}
+                         * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                         * @property {number} ACTIVE=1 ACTIVE value
+                         * @property {number} EVENT_HUBS_PERMISSION_DENIED=2 EVENT_HUBS_PERMISSION_DENIED value
+                         * @property {number} PUBLISH_PERMISSION_DENIED=3 PUBLISH_PERMISSION_DENIED value
+                         * @property {number} NAMESPACE_NOT_FOUND=4 NAMESPACE_NOT_FOUND value
+                         * @property {number} EVENT_HUB_NOT_FOUND=5 EVENT_HUB_NOT_FOUND value
+                         * @property {number} SUBSCRIPTION_NOT_FOUND=6 SUBSCRIPTION_NOT_FOUND value
+                         * @property {number} RESOURCE_GROUP_NOT_FOUND=7 RESOURCE_GROUP_NOT_FOUND value
+                         */
+                        AzureEventHubs.State = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                            values[valuesById[1] = "ACTIVE"] = 1;
+                            values[valuesById[2] = "EVENT_HUBS_PERMISSION_DENIED"] = 2;
+                            values[valuesById[3] = "PUBLISH_PERMISSION_DENIED"] = 3;
+                            values[valuesById[4] = "NAMESPACE_NOT_FOUND"] = 4;
+                            values[valuesById[5] = "EVENT_HUB_NOT_FOUND"] = 5;
+                            values[valuesById[6] = "SUBSCRIPTION_NOT_FOUND"] = 6;
+                            values[valuesById[7] = "RESOURCE_GROUP_NOT_FOUND"] = 7;
+                            return values;
+                        })();
+    
+                        return AzureEventHubs;
+                    })();
+    
+                    IngestionDataSourceSettings.AwsMsk = (function() {
+    
+                        /**
+                         * Properties of an AwsMsk.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @interface IAwsMsk
+                         * @property {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.State|null} [state] AwsMsk state
+                         * @property {string|null} [clusterArn] AwsMsk clusterArn
+                         * @property {string|null} [topic] AwsMsk topic
+                         * @property {string|null} [awsRoleArn] AwsMsk awsRoleArn
+                         * @property {string|null} [gcpServiceAccount] AwsMsk gcpServiceAccount
+                         */
+    
+                        /**
+                         * Constructs a new AwsMsk.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @classdesc Represents an AwsMsk.
+                         * @implements IAwsMsk
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk=} [properties] Properties to set
+                         */
+                        function AwsMsk(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AwsMsk state.
+                         * @member {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.State} state
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         */
+                        AwsMsk.prototype.state = 0;
+    
+                        /**
+                         * AwsMsk clusterArn.
+                         * @member {string} clusterArn
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         */
+                        AwsMsk.prototype.clusterArn = "";
+    
+                        /**
+                         * AwsMsk topic.
+                         * @member {string} topic
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         */
+                        AwsMsk.prototype.topic = "";
+    
+                        /**
+                         * AwsMsk awsRoleArn.
+                         * @member {string} awsRoleArn
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         */
+                        AwsMsk.prototype.awsRoleArn = "";
+    
+                        /**
+                         * AwsMsk gcpServiceAccount.
+                         * @member {string} gcpServiceAccount
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         */
+                        AwsMsk.prototype.gcpServiceAccount = "";
+    
+                        /**
+                         * Creates a new AwsMsk instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk} AwsMsk instance
+                         */
+                        AwsMsk.create = function create(properties) {
+                            return new AwsMsk(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AwsMsk message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk} message AwsMsk message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsMsk.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.state);
+                            if (message.clusterArn != null && Object.hasOwnProperty.call(message, "clusterArn"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.clusterArn);
+                            if (message.topic != null && Object.hasOwnProperty.call(message, "topic"))
+                                writer.uint32(/* id 3, wireType 2 =*/26).string(message.topic);
+                            if (message.awsRoleArn != null && Object.hasOwnProperty.call(message, "awsRoleArn"))
+                                writer.uint32(/* id 4, wireType 2 =*/34).string(message.awsRoleArn);
+                            if (message.gcpServiceAccount != null && Object.hasOwnProperty.call(message, "gcpServiceAccount"))
+                                writer.uint32(/* id 5, wireType 2 =*/42).string(message.gcpServiceAccount);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AwsMsk message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk} message AwsMsk message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsMsk.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AwsMsk message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk} AwsMsk
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsMsk.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.state = reader.int32();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.clusterArn = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.topic = reader.string();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.awsRoleArn = reader.string();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.gcpServiceAccount = reader.string();
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AwsMsk message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk} AwsMsk
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsMsk.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AwsMsk message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AwsMsk.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                switch (message.state) {
+                                default:
+                                    return "state: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                case 5:
+                                    break;
+                                }
+                            if (message.clusterArn != null && message.hasOwnProperty("clusterArn"))
+                                if (!$util.isString(message.clusterArn))
+                                    return "clusterArn: string expected";
+                            if (message.topic != null && message.hasOwnProperty("topic"))
+                                if (!$util.isString(message.topic))
+                                    return "topic: string expected";
+                            if (message.awsRoleArn != null && message.hasOwnProperty("awsRoleArn"))
+                                if (!$util.isString(message.awsRoleArn))
+                                    return "awsRoleArn: string expected";
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                if (!$util.isString(message.gcpServiceAccount))
+                                    return "gcpServiceAccount: string expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AwsMsk message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk} AwsMsk
+                         */
+                        AwsMsk.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk();
+                            switch (object.state) {
+                            default:
+                                if (typeof object.state === "number") {
+                                    message.state = object.state;
+                                    break;
+                                }
+                                break;
+                            case "STATE_UNSPECIFIED":
+                            case 0:
+                                message.state = 0;
+                                break;
+                            case "ACTIVE":
+                            case 1:
+                                message.state = 1;
+                                break;
+                            case "MSK_PERMISSION_DENIED":
+                            case 2:
+                                message.state = 2;
+                                break;
+                            case "PUBLISH_PERMISSION_DENIED":
+                            case 3:
+                                message.state = 3;
+                                break;
+                            case "CLUSTER_NOT_FOUND":
+                            case 4:
+                                message.state = 4;
+                                break;
+                            case "TOPIC_NOT_FOUND":
+                            case 5:
+                                message.state = 5;
+                                break;
+                            }
+                            if (object.clusterArn != null)
+                                message.clusterArn = String(object.clusterArn);
+                            if (object.topic != null)
+                                message.topic = String(object.topic);
+                            if (object.awsRoleArn != null)
+                                message.awsRoleArn = String(object.awsRoleArn);
+                            if (object.gcpServiceAccount != null)
+                                message.gcpServiceAccount = String(object.gcpServiceAccount);
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AwsMsk message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk} message AwsMsk
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AwsMsk.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                                object.clusterArn = "";
+                                object.topic = "";
+                                object.awsRoleArn = "";
+                                object.gcpServiceAccount = "";
+                            }
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                object.state = options.enums === String ? $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.State[message.state] : message.state;
+                            if (message.clusterArn != null && message.hasOwnProperty("clusterArn"))
+                                object.clusterArn = message.clusterArn;
+                            if (message.topic != null && message.hasOwnProperty("topic"))
+                                object.topic = message.topic;
+                            if (message.awsRoleArn != null && message.hasOwnProperty("awsRoleArn"))
+                                object.awsRoleArn = message.awsRoleArn;
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                object.gcpServiceAccount = message.gcpServiceAccount;
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AwsMsk to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AwsMsk.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AwsMsk
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AwsMsk.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionDataSourceSettings.AwsMsk";
+                        };
+    
+                        /**
+                         * State enum.
+                         * @name google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.State
+                         * @enum {number}
+                         * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                         * @property {number} ACTIVE=1 ACTIVE value
+                         * @property {number} MSK_PERMISSION_DENIED=2 MSK_PERMISSION_DENIED value
+                         * @property {number} PUBLISH_PERMISSION_DENIED=3 PUBLISH_PERMISSION_DENIED value
+                         * @property {number} CLUSTER_NOT_FOUND=4 CLUSTER_NOT_FOUND value
+                         * @property {number} TOPIC_NOT_FOUND=5 TOPIC_NOT_FOUND value
+                         */
+                        AwsMsk.State = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                            values[valuesById[1] = "ACTIVE"] = 1;
+                            values[valuesById[2] = "MSK_PERMISSION_DENIED"] = 2;
+                            values[valuesById[3] = "PUBLISH_PERMISSION_DENIED"] = 3;
+                            values[valuesById[4] = "CLUSTER_NOT_FOUND"] = 4;
+                            values[valuesById[5] = "TOPIC_NOT_FOUND"] = 5;
+                            return values;
+                        })();
+    
+                        return AwsMsk;
+                    })();
+    
+                    IngestionDataSourceSettings.ConfluentCloud = (function() {
+    
+                        /**
+                         * Properties of a ConfluentCloud.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @interface IConfluentCloud
+                         * @property {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.State|null} [state] ConfluentCloud state
+                         * @property {string|null} [bootstrapServer] ConfluentCloud bootstrapServer
+                         * @property {string|null} [clusterId] ConfluentCloud clusterId
+                         * @property {string|null} [topic] ConfluentCloud topic
+                         * @property {string|null} [identityPoolId] ConfluentCloud identityPoolId
+                         * @property {string|null} [gcpServiceAccount] ConfluentCloud gcpServiceAccount
+                         */
+    
+                        /**
+                         * Constructs a new ConfluentCloud.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @classdesc Represents a ConfluentCloud.
+                         * @implements IConfluentCloud
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud=} [properties] Properties to set
+                         */
+                        function ConfluentCloud(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * ConfluentCloud state.
+                         * @member {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.State} state
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.state = 0;
+    
+                        /**
+                         * ConfluentCloud bootstrapServer.
+                         * @member {string} bootstrapServer
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.bootstrapServer = "";
+    
+                        /**
+                         * ConfluentCloud clusterId.
+                         * @member {string} clusterId
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.clusterId = "";
+    
+                        /**
+                         * ConfluentCloud topic.
+                         * @member {string} topic
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.topic = "";
+    
+                        /**
+                         * ConfluentCloud identityPoolId.
+                         * @member {string} identityPoolId
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.identityPoolId = "";
+    
+                        /**
+                         * ConfluentCloud gcpServiceAccount.
+                         * @member {string} gcpServiceAccount
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.gcpServiceAccount = "";
+    
+                        /**
+                         * Creates a new ConfluentCloud instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud} ConfluentCloud instance
+                         */
+                        ConfluentCloud.create = function create(properties) {
+                            return new ConfluentCloud(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified ConfluentCloud message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud} message ConfluentCloud message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ConfluentCloud.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.state);
+                            if (message.bootstrapServer != null && Object.hasOwnProperty.call(message, "bootstrapServer"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.bootstrapServer);
+                            if (message.clusterId != null && Object.hasOwnProperty.call(message, "clusterId"))
+                                writer.uint32(/* id 3, wireType 2 =*/26).string(message.clusterId);
+                            if (message.topic != null && Object.hasOwnProperty.call(message, "topic"))
+                                writer.uint32(/* id 4, wireType 2 =*/34).string(message.topic);
+                            if (message.identityPoolId != null && Object.hasOwnProperty.call(message, "identityPoolId"))
+                                writer.uint32(/* id 5, wireType 2 =*/42).string(message.identityPoolId);
+                            if (message.gcpServiceAccount != null && Object.hasOwnProperty.call(message, "gcpServiceAccount"))
+                                writer.uint32(/* id 6, wireType 2 =*/50).string(message.gcpServiceAccount);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified ConfluentCloud message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud} message ConfluentCloud message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ConfluentCloud.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a ConfluentCloud message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud} ConfluentCloud
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ConfluentCloud.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.state = reader.int32();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.bootstrapServer = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.clusterId = reader.string();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.topic = reader.string();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.identityPoolId = reader.string();
+                                        break;
+                                    }
+                                case 6: {
+                                        message.gcpServiceAccount = reader.string();
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a ConfluentCloud message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud} ConfluentCloud
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ConfluentCloud.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a ConfluentCloud message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        ConfluentCloud.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                switch (message.state) {
+                                default:
+                                    return "state: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                case 5:
+                                case 6:
+                                    break;
+                                }
+                            if (message.bootstrapServer != null && message.hasOwnProperty("bootstrapServer"))
+                                if (!$util.isString(message.bootstrapServer))
+                                    return "bootstrapServer: string expected";
+                            if (message.clusterId != null && message.hasOwnProperty("clusterId"))
+                                if (!$util.isString(message.clusterId))
+                                    return "clusterId: string expected";
+                            if (message.topic != null && message.hasOwnProperty("topic"))
+                                if (!$util.isString(message.topic))
+                                    return "topic: string expected";
+                            if (message.identityPoolId != null && message.hasOwnProperty("identityPoolId"))
+                                if (!$util.isString(message.identityPoolId))
+                                    return "identityPoolId: string expected";
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                if (!$util.isString(message.gcpServiceAccount))
+                                    return "gcpServiceAccount: string expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a ConfluentCloud message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud} ConfluentCloud
+                         */
+                        ConfluentCloud.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud();
+                            switch (object.state) {
+                            default:
+                                if (typeof object.state === "number") {
+                                    message.state = object.state;
+                                    break;
+                                }
+                                break;
+                            case "STATE_UNSPECIFIED":
+                            case 0:
+                                message.state = 0;
+                                break;
+                            case "ACTIVE":
+                            case 1:
+                                message.state = 1;
+                                break;
+                            case "CONFLUENT_CLOUD_PERMISSION_DENIED":
+                            case 2:
+                                message.state = 2;
+                                break;
+                            case "PUBLISH_PERMISSION_DENIED":
+                            case 3:
+                                message.state = 3;
+                                break;
+                            case "UNREACHABLE_BOOTSTRAP_SERVER":
+                            case 4:
+                                message.state = 4;
+                                break;
+                            case "CLUSTER_NOT_FOUND":
+                            case 5:
+                                message.state = 5;
+                                break;
+                            case "TOPIC_NOT_FOUND":
+                            case 6:
+                                message.state = 6;
+                                break;
+                            }
+                            if (object.bootstrapServer != null)
+                                message.bootstrapServer = String(object.bootstrapServer);
+                            if (object.clusterId != null)
+                                message.clusterId = String(object.clusterId);
+                            if (object.topic != null)
+                                message.topic = String(object.topic);
+                            if (object.identityPoolId != null)
+                                message.identityPoolId = String(object.identityPoolId);
+                            if (object.gcpServiceAccount != null)
+                                message.gcpServiceAccount = String(object.gcpServiceAccount);
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from a ConfluentCloud message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud} message ConfluentCloud
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        ConfluentCloud.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                                object.bootstrapServer = "";
+                                object.clusterId = "";
+                                object.topic = "";
+                                object.identityPoolId = "";
+                                object.gcpServiceAccount = "";
+                            }
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                object.state = options.enums === String ? $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.State[message.state] : message.state;
+                            if (message.bootstrapServer != null && message.hasOwnProperty("bootstrapServer"))
+                                object.bootstrapServer = message.bootstrapServer;
+                            if (message.clusterId != null && message.hasOwnProperty("clusterId"))
+                                object.clusterId = message.clusterId;
+                            if (message.topic != null && message.hasOwnProperty("topic"))
+                                object.topic = message.topic;
+                            if (message.identityPoolId != null && message.hasOwnProperty("identityPoolId"))
+                                object.identityPoolId = message.identityPoolId;
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                object.gcpServiceAccount = message.gcpServiceAccount;
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this ConfluentCloud to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        ConfluentCloud.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for ConfluentCloud
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        ConfluentCloud.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud";
+                        };
+    
+                        /**
+                         * State enum.
+                         * @name google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.State
+                         * @enum {number}
+                         * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                         * @property {number} ACTIVE=1 ACTIVE value
+                         * @property {number} CONFLUENT_CLOUD_PERMISSION_DENIED=2 CONFLUENT_CLOUD_PERMISSION_DENIED value
+                         * @property {number} PUBLISH_PERMISSION_DENIED=3 PUBLISH_PERMISSION_DENIED value
+                         * @property {number} UNREACHABLE_BOOTSTRAP_SERVER=4 UNREACHABLE_BOOTSTRAP_SERVER value
+                         * @property {number} CLUSTER_NOT_FOUND=5 CLUSTER_NOT_FOUND value
+                         * @property {number} TOPIC_NOT_FOUND=6 TOPIC_NOT_FOUND value
+                         */
+                        ConfluentCloud.State = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                            values[valuesById[1] = "ACTIVE"] = 1;
+                            values[valuesById[2] = "CONFLUENT_CLOUD_PERMISSION_DENIED"] = 2;
+                            values[valuesById[3] = "PUBLISH_PERMISSION_DENIED"] = 3;
+                            values[valuesById[4] = "UNREACHABLE_BOOTSTRAP_SERVER"] = 4;
+                            values[valuesById[5] = "CLUSTER_NOT_FOUND"] = 5;
+                            values[valuesById[6] = "TOPIC_NOT_FOUND"] = 6;
+                            return values;
+                        })();
+    
+                        return ConfluentCloud;
+                    })();
+    
                     return IngestionDataSourceSettings;
                 })();
     
@@ -2873,6 +4162,9 @@
                      * @property {string|null} [topic] IngestionFailureEvent topic
                      * @property {string|null} [errorMessage] IngestionFailureEvent errorMessage
                      * @property {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure|null} [cloudStorageFailure] IngestionFailureEvent cloudStorageFailure
+                     * @property {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason|null} [awsMskFailure] IngestionFailureEvent awsMskFailure
+                     * @property {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason|null} [azureEventHubsFailure] IngestionFailureEvent azureEventHubsFailure
+                     * @property {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason|null} [confluentCloudFailure] IngestionFailureEvent confluentCloudFailure
                      */
     
                     /**
@@ -2914,17 +4206,41 @@
                      */
                     IngestionFailureEvent.prototype.cloudStorageFailure = null;
     
+                    /**
+                     * IngestionFailureEvent awsMskFailure.
+                     * @member {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason|null|undefined} awsMskFailure
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.awsMskFailure = null;
+    
+                    /**
+                     * IngestionFailureEvent azureEventHubsFailure.
+                     * @member {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason|null|undefined} azureEventHubsFailure
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.azureEventHubsFailure = null;
+    
+                    /**
+                     * IngestionFailureEvent confluentCloudFailure.
+                     * @member {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason|null|undefined} confluentCloudFailure
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.confluentCloudFailure = null;
+    
                     // OneOf field names bound to virtual getters and setters
                     var $oneOfFields;
     
                     /**
                      * IngestionFailureEvent failure.
-                     * @member {"cloudStorageFailure"|undefined} failure
+                     * @member {"cloudStorageFailure"|"awsMskFailure"|"azureEventHubsFailure"|"confluentCloudFailure"|undefined} failure
                      * @memberof google.pubsub.v1.IngestionFailureEvent
                      * @instance
                      */
                     Object.defineProperty(IngestionFailureEvent.prototype, "failure", {
-                        get: $util.oneOfGetter($oneOfFields = ["cloudStorageFailure"]),
+                        get: $util.oneOfGetter($oneOfFields = ["cloudStorageFailure", "awsMskFailure", "azureEventHubsFailure", "confluentCloudFailure"]),
                         set: $util.oneOfSetter($oneOfFields)
                     });
     
@@ -2958,6 +4274,12 @@
                             writer.uint32(/* id 2, wireType 2 =*/18).string(message.errorMessage);
                         if (message.cloudStorageFailure != null && Object.hasOwnProperty.call(message, "cloudStorageFailure"))
                             $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.encode(message.cloudStorageFailure, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                        if (message.awsMskFailure != null && Object.hasOwnProperty.call(message, "awsMskFailure"))
+                            $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.encode(message.awsMskFailure, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                        if (message.azureEventHubsFailure != null && Object.hasOwnProperty.call(message, "azureEventHubsFailure"))
+                            $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.encode(message.azureEventHubsFailure, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                        if (message.confluentCloudFailure != null && Object.hasOwnProperty.call(message, "confluentCloudFailure"))
+                            $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.encode(message.confluentCloudFailure, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
                         return writer;
                     };
     
@@ -3002,6 +4324,18 @@
                                 }
                             case 3: {
                                     message.cloudStorageFailure = $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 4: {
+                                    message.awsMskFailure = $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 5: {
+                                    message.azureEventHubsFailure = $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 6: {
+                                    message.confluentCloudFailure = $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.decode(reader, reader.uint32());
                                     break;
                                 }
                             default:
@@ -3054,6 +4388,36 @@
                                     return "cloudStorageFailure." + error;
                             }
                         }
+                        if (message.awsMskFailure != null && message.hasOwnProperty("awsMskFailure")) {
+                            if (properties.failure === 1)
+                                return "failure: multiple values";
+                            properties.failure = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.verify(message.awsMskFailure);
+                                if (error)
+                                    return "awsMskFailure." + error;
+                            }
+                        }
+                        if (message.azureEventHubsFailure != null && message.hasOwnProperty("azureEventHubsFailure")) {
+                            if (properties.failure === 1)
+                                return "failure: multiple values";
+                            properties.failure = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.verify(message.azureEventHubsFailure);
+                                if (error)
+                                    return "azureEventHubsFailure." + error;
+                            }
+                        }
+                        if (message.confluentCloudFailure != null && message.hasOwnProperty("confluentCloudFailure")) {
+                            if (properties.failure === 1)
+                                return "failure: multiple values";
+                            properties.failure = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.verify(message.confluentCloudFailure);
+                                if (error)
+                                    return "confluentCloudFailure." + error;
+                            }
+                        }
                         return null;
                     };
     
@@ -3077,6 +4441,21 @@
                             if (typeof object.cloudStorageFailure !== "object")
                                 throw TypeError(".google.pubsub.v1.IngestionFailureEvent.cloudStorageFailure: object expected");
                             message.cloudStorageFailure = $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.fromObject(object.cloudStorageFailure);
+                        }
+                        if (object.awsMskFailure != null) {
+                            if (typeof object.awsMskFailure !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionFailureEvent.awsMskFailure: object expected");
+                            message.awsMskFailure = $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.fromObject(object.awsMskFailure);
+                        }
+                        if (object.azureEventHubsFailure != null) {
+                            if (typeof object.azureEventHubsFailure !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionFailureEvent.azureEventHubsFailure: object expected");
+                            message.azureEventHubsFailure = $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.fromObject(object.azureEventHubsFailure);
+                        }
+                        if (object.confluentCloudFailure != null) {
+                            if (typeof object.confluentCloudFailure !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionFailureEvent.confluentCloudFailure: object expected");
+                            message.confluentCloudFailure = $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.fromObject(object.confluentCloudFailure);
                         }
                         return message;
                     };
@@ -3106,6 +4485,21 @@
                             object.cloudStorageFailure = $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.toObject(message.cloudStorageFailure, options);
                             if (options.oneofs)
                                 object.failure = "cloudStorageFailure";
+                        }
+                        if (message.awsMskFailure != null && message.hasOwnProperty("awsMskFailure")) {
+                            object.awsMskFailure = $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.toObject(message.awsMskFailure, options);
+                            if (options.oneofs)
+                                object.failure = "awsMskFailure";
+                        }
+                        if (message.azureEventHubsFailure != null && message.hasOwnProperty("azureEventHubsFailure")) {
+                            object.azureEventHubsFailure = $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.toObject(message.azureEventHubsFailure, options);
+                            if (options.oneofs)
+                                object.failure = "azureEventHubsFailure";
+                        }
+                        if (message.confluentCloudFailure != null && message.hasOwnProperty("confluentCloudFailure")) {
+                            object.confluentCloudFailure = $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.toObject(message.confluentCloudFailure, options);
+                            if (options.oneofs)
+                                object.failure = "confluentCloudFailure";
                         }
                         return object;
                     };
@@ -3831,6 +5225,1053 @@
                         };
     
                         return CloudStorageFailure;
+                    })();
+    
+                    IngestionFailureEvent.AwsMskFailureReason = (function() {
+    
+                        /**
+                         * Properties of an AwsMskFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IAwsMskFailureReason
+                         * @property {string|null} [clusterArn] AwsMskFailureReason clusterArn
+                         * @property {string|null} [kafkaTopic] AwsMskFailureReason kafkaTopic
+                         * @property {number|Long|null} [partitionId] AwsMskFailureReason partitionId
+                         * @property {number|Long|null} [offset] AwsMskFailureReason offset
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] AwsMskFailureReason apiViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new AwsMskFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents an AwsMskFailureReason.
+                         * @implements IAwsMskFailureReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason=} [properties] Properties to set
+                         */
+                        function AwsMskFailureReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AwsMskFailureReason clusterArn.
+                         * @member {string} clusterArn
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.clusterArn = "";
+    
+                        /**
+                         * AwsMskFailureReason kafkaTopic.
+                         * @member {string} kafkaTopic
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.kafkaTopic = "";
+    
+                        /**
+                         * AwsMskFailureReason partitionId.
+                         * @member {number|Long} partitionId
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.partitionId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * AwsMskFailureReason offset.
+                         * @member {number|Long} offset
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.offset = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * AwsMskFailureReason apiViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null|undefined} apiViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.apiViolationReason = null;
+    
+                        // OneOf field names bound to virtual getters and setters
+                        var $oneOfFields;
+    
+                        /**
+                         * AwsMskFailureReason reason.
+                         * @member {"apiViolationReason"|undefined} reason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        Object.defineProperty(AwsMskFailureReason.prototype, "reason", {
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason"]),
+                            set: $util.oneOfSetter($oneOfFields)
+                        });
+    
+                        /**
+                         * Creates a new AwsMskFailureReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason} AwsMskFailureReason instance
+                         */
+                        AwsMskFailureReason.create = function create(properties) {
+                            return new AwsMskFailureReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AwsMskFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason} message AwsMskFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsMskFailureReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.clusterArn != null && Object.hasOwnProperty.call(message, "clusterArn"))
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.clusterArn);
+                            if (message.kafkaTopic != null && Object.hasOwnProperty.call(message, "kafkaTopic"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.kafkaTopic);
+                            if (message.partitionId != null && Object.hasOwnProperty.call(message, "partitionId"))
+                                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.partitionId);
+                            if (message.offset != null && Object.hasOwnProperty.call(message, "offset"))
+                                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.offset);
+                            if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AwsMskFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason} message AwsMskFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsMskFailureReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AwsMskFailureReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason} AwsMskFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsMskFailureReason.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.clusterArn = reader.string();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.kafkaTopic = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.partitionId = reader.int64();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.offset = reader.int64();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AwsMskFailureReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason} AwsMskFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsMskFailureReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AwsMskFailureReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AwsMskFailureReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            var properties = {};
+                            if (message.clusterArn != null && message.hasOwnProperty("clusterArn"))
+                                if (!$util.isString(message.clusterArn))
+                                    return "clusterArn: string expected";
+                            if (message.kafkaTopic != null && message.hasOwnProperty("kafkaTopic"))
+                                if (!$util.isString(message.kafkaTopic))
+                                    return "kafkaTopic: string expected";
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (!$util.isInteger(message.partitionId) && !(message.partitionId && $util.isInteger(message.partitionId.low) && $util.isInteger(message.partitionId.high)))
+                                    return "partitionId: integer|Long expected";
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (!$util.isInteger(message.offset) && !(message.offset && $util.isInteger(message.offset.low) && $util.isInteger(message.offset.high)))
+                                    return "offset: integer|Long expected";
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify(message.apiViolationReason);
+                                    if (error)
+                                        return "apiViolationReason." + error;
+                                }
+                            }
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AwsMskFailureReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason} AwsMskFailureReason
+                         */
+                        AwsMskFailureReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason();
+                            if (object.clusterArn != null)
+                                message.clusterArn = String(object.clusterArn);
+                            if (object.kafkaTopic != null)
+                                message.kafkaTopic = String(object.kafkaTopic);
+                            if (object.partitionId != null)
+                                if ($util.Long)
+                                    (message.partitionId = $util.Long.fromValue(object.partitionId)).unsigned = false;
+                                else if (typeof object.partitionId === "string")
+                                    message.partitionId = parseInt(object.partitionId, 10);
+                                else if (typeof object.partitionId === "number")
+                                    message.partitionId = object.partitionId;
+                                else if (typeof object.partitionId === "object")
+                                    message.partitionId = new $util.LongBits(object.partitionId.low >>> 0, object.partitionId.high >>> 0).toNumber();
+                            if (object.offset != null)
+                                if ($util.Long)
+                                    (message.offset = $util.Long.fromValue(object.offset)).unsigned = false;
+                                else if (typeof object.offset === "string")
+                                    message.offset = parseInt(object.offset, 10);
+                                else if (typeof object.offset === "number")
+                                    message.offset = object.offset;
+                                else if (typeof object.offset === "object")
+                                    message.offset = new $util.LongBits(object.offset.low >>> 0, object.offset.high >>> 0).toNumber();
+                            if (object.apiViolationReason != null) {
+                                if (typeof object.apiViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.apiViolationReason: object expected");
+                                message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AwsMskFailureReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason} message AwsMskFailureReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AwsMskFailureReason.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.clusterArn = "";
+                                object.kafkaTopic = "";
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.partitionId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.partitionId = options.longs === String ? "0" : 0;
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.offset = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.offset = options.longs === String ? "0" : 0;
+                            }
+                            if (message.clusterArn != null && message.hasOwnProperty("clusterArn"))
+                                object.clusterArn = message.clusterArn;
+                            if (message.kafkaTopic != null && message.hasOwnProperty("kafkaTopic"))
+                                object.kafkaTopic = message.kafkaTopic;
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (typeof message.partitionId === "number")
+                                    object.partitionId = options.longs === String ? String(message.partitionId) : message.partitionId;
+                                else
+                                    object.partitionId = options.longs === String ? $util.Long.prototype.toString.call(message.partitionId) : options.longs === Number ? new $util.LongBits(message.partitionId.low >>> 0, message.partitionId.high >>> 0).toNumber() : message.partitionId;
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (typeof message.offset === "number")
+                                    object.offset = options.longs === String ? String(message.offset) : message.offset;
+                                else
+                                    object.offset = options.longs === String ? $util.Long.prototype.toString.call(message.offset) : options.longs === Number ? new $util.LongBits(message.offset.low >>> 0, message.offset.high >>> 0).toNumber() : message.offset;
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                object.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.toObject(message.apiViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "apiViolationReason";
+                            }
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AwsMskFailureReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AwsMskFailureReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AwsMskFailureReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AwsMskFailureReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason";
+                        };
+    
+                        return AwsMskFailureReason;
+                    })();
+    
+                    IngestionFailureEvent.AzureEventHubsFailureReason = (function() {
+    
+                        /**
+                         * Properties of an AzureEventHubsFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IAzureEventHubsFailureReason
+                         * @property {string|null} [namespace] AzureEventHubsFailureReason namespace
+                         * @property {string|null} [eventHub] AzureEventHubsFailureReason eventHub
+                         * @property {number|Long|null} [partitionId] AzureEventHubsFailureReason partitionId
+                         * @property {number|Long|null} [offset] AzureEventHubsFailureReason offset
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] AzureEventHubsFailureReason apiViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new AzureEventHubsFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents an AzureEventHubsFailureReason.
+                         * @implements IAzureEventHubsFailureReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason=} [properties] Properties to set
+                         */
+                        function AzureEventHubsFailureReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AzureEventHubsFailureReason namespace.
+                         * @member {string} namespace
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.namespace = "";
+    
+                        /**
+                         * AzureEventHubsFailureReason eventHub.
+                         * @member {string} eventHub
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.eventHub = "";
+    
+                        /**
+                         * AzureEventHubsFailureReason partitionId.
+                         * @member {number|Long} partitionId
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.partitionId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * AzureEventHubsFailureReason offset.
+                         * @member {number|Long} offset
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.offset = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * AzureEventHubsFailureReason apiViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null|undefined} apiViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.apiViolationReason = null;
+    
+                        // OneOf field names bound to virtual getters and setters
+                        var $oneOfFields;
+    
+                        /**
+                         * AzureEventHubsFailureReason reason.
+                         * @member {"apiViolationReason"|undefined} reason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        Object.defineProperty(AzureEventHubsFailureReason.prototype, "reason", {
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason"]),
+                            set: $util.oneOfSetter($oneOfFields)
+                        });
+    
+                        /**
+                         * Creates a new AzureEventHubsFailureReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason} AzureEventHubsFailureReason instance
+                         */
+                        AzureEventHubsFailureReason.create = function create(properties) {
+                            return new AzureEventHubsFailureReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AzureEventHubsFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason} message AzureEventHubsFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AzureEventHubsFailureReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.namespace != null && Object.hasOwnProperty.call(message, "namespace"))
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.namespace);
+                            if (message.eventHub != null && Object.hasOwnProperty.call(message, "eventHub"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.eventHub);
+                            if (message.partitionId != null && Object.hasOwnProperty.call(message, "partitionId"))
+                                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.partitionId);
+                            if (message.offset != null && Object.hasOwnProperty.call(message, "offset"))
+                                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.offset);
+                            if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AzureEventHubsFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason} message AzureEventHubsFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AzureEventHubsFailureReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AzureEventHubsFailureReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason} AzureEventHubsFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AzureEventHubsFailureReason.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.namespace = reader.string();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.eventHub = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.partitionId = reader.int64();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.offset = reader.int64();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AzureEventHubsFailureReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason} AzureEventHubsFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AzureEventHubsFailureReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AzureEventHubsFailureReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AzureEventHubsFailureReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            var properties = {};
+                            if (message.namespace != null && message.hasOwnProperty("namespace"))
+                                if (!$util.isString(message.namespace))
+                                    return "namespace: string expected";
+                            if (message.eventHub != null && message.hasOwnProperty("eventHub"))
+                                if (!$util.isString(message.eventHub))
+                                    return "eventHub: string expected";
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (!$util.isInteger(message.partitionId) && !(message.partitionId && $util.isInteger(message.partitionId.low) && $util.isInteger(message.partitionId.high)))
+                                    return "partitionId: integer|Long expected";
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (!$util.isInteger(message.offset) && !(message.offset && $util.isInteger(message.offset.low) && $util.isInteger(message.offset.high)))
+                                    return "offset: integer|Long expected";
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify(message.apiViolationReason);
+                                    if (error)
+                                        return "apiViolationReason." + error;
+                                }
+                            }
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AzureEventHubsFailureReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason} AzureEventHubsFailureReason
+                         */
+                        AzureEventHubsFailureReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason();
+                            if (object.namespace != null)
+                                message.namespace = String(object.namespace);
+                            if (object.eventHub != null)
+                                message.eventHub = String(object.eventHub);
+                            if (object.partitionId != null)
+                                if ($util.Long)
+                                    (message.partitionId = $util.Long.fromValue(object.partitionId)).unsigned = false;
+                                else if (typeof object.partitionId === "string")
+                                    message.partitionId = parseInt(object.partitionId, 10);
+                                else if (typeof object.partitionId === "number")
+                                    message.partitionId = object.partitionId;
+                                else if (typeof object.partitionId === "object")
+                                    message.partitionId = new $util.LongBits(object.partitionId.low >>> 0, object.partitionId.high >>> 0).toNumber();
+                            if (object.offset != null)
+                                if ($util.Long)
+                                    (message.offset = $util.Long.fromValue(object.offset)).unsigned = false;
+                                else if (typeof object.offset === "string")
+                                    message.offset = parseInt(object.offset, 10);
+                                else if (typeof object.offset === "number")
+                                    message.offset = object.offset;
+                                else if (typeof object.offset === "object")
+                                    message.offset = new $util.LongBits(object.offset.low >>> 0, object.offset.high >>> 0).toNumber();
+                            if (object.apiViolationReason != null) {
+                                if (typeof object.apiViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.apiViolationReason: object expected");
+                                message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AzureEventHubsFailureReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason} message AzureEventHubsFailureReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AzureEventHubsFailureReason.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.namespace = "";
+                                object.eventHub = "";
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.partitionId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.partitionId = options.longs === String ? "0" : 0;
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.offset = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.offset = options.longs === String ? "0" : 0;
+                            }
+                            if (message.namespace != null && message.hasOwnProperty("namespace"))
+                                object.namespace = message.namespace;
+                            if (message.eventHub != null && message.hasOwnProperty("eventHub"))
+                                object.eventHub = message.eventHub;
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (typeof message.partitionId === "number")
+                                    object.partitionId = options.longs === String ? String(message.partitionId) : message.partitionId;
+                                else
+                                    object.partitionId = options.longs === String ? $util.Long.prototype.toString.call(message.partitionId) : options.longs === Number ? new $util.LongBits(message.partitionId.low >>> 0, message.partitionId.high >>> 0).toNumber() : message.partitionId;
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (typeof message.offset === "number")
+                                    object.offset = options.longs === String ? String(message.offset) : message.offset;
+                                else
+                                    object.offset = options.longs === String ? $util.Long.prototype.toString.call(message.offset) : options.longs === Number ? new $util.LongBits(message.offset.low >>> 0, message.offset.high >>> 0).toNumber() : message.offset;
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                object.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.toObject(message.apiViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "apiViolationReason";
+                            }
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AzureEventHubsFailureReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AzureEventHubsFailureReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AzureEventHubsFailureReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AzureEventHubsFailureReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason";
+                        };
+    
+                        return AzureEventHubsFailureReason;
+                    })();
+    
+                    IngestionFailureEvent.ConfluentCloudFailureReason = (function() {
+    
+                        /**
+                         * Properties of a ConfluentCloudFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IConfluentCloudFailureReason
+                         * @property {string|null} [clusterId] ConfluentCloudFailureReason clusterId
+                         * @property {string|null} [kafkaTopic] ConfluentCloudFailureReason kafkaTopic
+                         * @property {number|Long|null} [partitionId] ConfluentCloudFailureReason partitionId
+                         * @property {number|Long|null} [offset] ConfluentCloudFailureReason offset
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] ConfluentCloudFailureReason apiViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new ConfluentCloudFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents a ConfluentCloudFailureReason.
+                         * @implements IConfluentCloudFailureReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason=} [properties] Properties to set
+                         */
+                        function ConfluentCloudFailureReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * ConfluentCloudFailureReason clusterId.
+                         * @member {string} clusterId
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.clusterId = "";
+    
+                        /**
+                         * ConfluentCloudFailureReason kafkaTopic.
+                         * @member {string} kafkaTopic
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.kafkaTopic = "";
+    
+                        /**
+                         * ConfluentCloudFailureReason partitionId.
+                         * @member {number|Long} partitionId
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.partitionId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * ConfluentCloudFailureReason offset.
+                         * @member {number|Long} offset
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.offset = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * ConfluentCloudFailureReason apiViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null|undefined} apiViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.apiViolationReason = null;
+    
+                        // OneOf field names bound to virtual getters and setters
+                        var $oneOfFields;
+    
+                        /**
+                         * ConfluentCloudFailureReason reason.
+                         * @member {"apiViolationReason"|undefined} reason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        Object.defineProperty(ConfluentCloudFailureReason.prototype, "reason", {
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason"]),
+                            set: $util.oneOfSetter($oneOfFields)
+                        });
+    
+                        /**
+                         * Creates a new ConfluentCloudFailureReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason} ConfluentCloudFailureReason instance
+                         */
+                        ConfluentCloudFailureReason.create = function create(properties) {
+                            return new ConfluentCloudFailureReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified ConfluentCloudFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason} message ConfluentCloudFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ConfluentCloudFailureReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.clusterId != null && Object.hasOwnProperty.call(message, "clusterId"))
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.clusterId);
+                            if (message.kafkaTopic != null && Object.hasOwnProperty.call(message, "kafkaTopic"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.kafkaTopic);
+                            if (message.partitionId != null && Object.hasOwnProperty.call(message, "partitionId"))
+                                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.partitionId);
+                            if (message.offset != null && Object.hasOwnProperty.call(message, "offset"))
+                                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.offset);
+                            if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified ConfluentCloudFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason} message ConfluentCloudFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ConfluentCloudFailureReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a ConfluentCloudFailureReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason} ConfluentCloudFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ConfluentCloudFailureReason.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.clusterId = reader.string();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.kafkaTopic = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.partitionId = reader.int64();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.offset = reader.int64();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a ConfluentCloudFailureReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason} ConfluentCloudFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ConfluentCloudFailureReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a ConfluentCloudFailureReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        ConfluentCloudFailureReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            var properties = {};
+                            if (message.clusterId != null && message.hasOwnProperty("clusterId"))
+                                if (!$util.isString(message.clusterId))
+                                    return "clusterId: string expected";
+                            if (message.kafkaTopic != null && message.hasOwnProperty("kafkaTopic"))
+                                if (!$util.isString(message.kafkaTopic))
+                                    return "kafkaTopic: string expected";
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (!$util.isInteger(message.partitionId) && !(message.partitionId && $util.isInteger(message.partitionId.low) && $util.isInteger(message.partitionId.high)))
+                                    return "partitionId: integer|Long expected";
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (!$util.isInteger(message.offset) && !(message.offset && $util.isInteger(message.offset.low) && $util.isInteger(message.offset.high)))
+                                    return "offset: integer|Long expected";
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify(message.apiViolationReason);
+                                    if (error)
+                                        return "apiViolationReason." + error;
+                                }
+                            }
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a ConfluentCloudFailureReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason} ConfluentCloudFailureReason
+                         */
+                        ConfluentCloudFailureReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason();
+                            if (object.clusterId != null)
+                                message.clusterId = String(object.clusterId);
+                            if (object.kafkaTopic != null)
+                                message.kafkaTopic = String(object.kafkaTopic);
+                            if (object.partitionId != null)
+                                if ($util.Long)
+                                    (message.partitionId = $util.Long.fromValue(object.partitionId)).unsigned = false;
+                                else if (typeof object.partitionId === "string")
+                                    message.partitionId = parseInt(object.partitionId, 10);
+                                else if (typeof object.partitionId === "number")
+                                    message.partitionId = object.partitionId;
+                                else if (typeof object.partitionId === "object")
+                                    message.partitionId = new $util.LongBits(object.partitionId.low >>> 0, object.partitionId.high >>> 0).toNumber();
+                            if (object.offset != null)
+                                if ($util.Long)
+                                    (message.offset = $util.Long.fromValue(object.offset)).unsigned = false;
+                                else if (typeof object.offset === "string")
+                                    message.offset = parseInt(object.offset, 10);
+                                else if (typeof object.offset === "number")
+                                    message.offset = object.offset;
+                                else if (typeof object.offset === "object")
+                                    message.offset = new $util.LongBits(object.offset.low >>> 0, object.offset.high >>> 0).toNumber();
+                            if (object.apiViolationReason != null) {
+                                if (typeof object.apiViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.apiViolationReason: object expected");
+                                message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from a ConfluentCloudFailureReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason} message ConfluentCloudFailureReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        ConfluentCloudFailureReason.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.clusterId = "";
+                                object.kafkaTopic = "";
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.partitionId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.partitionId = options.longs === String ? "0" : 0;
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.offset = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.offset = options.longs === String ? "0" : 0;
+                            }
+                            if (message.clusterId != null && message.hasOwnProperty("clusterId"))
+                                object.clusterId = message.clusterId;
+                            if (message.kafkaTopic != null && message.hasOwnProperty("kafkaTopic"))
+                                object.kafkaTopic = message.kafkaTopic;
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (typeof message.partitionId === "number")
+                                    object.partitionId = options.longs === String ? String(message.partitionId) : message.partitionId;
+                                else
+                                    object.partitionId = options.longs === String ? $util.Long.prototype.toString.call(message.partitionId) : options.longs === Number ? new $util.LongBits(message.partitionId.low >>> 0, message.partitionId.high >>> 0).toNumber() : message.partitionId;
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (typeof message.offset === "number")
+                                    object.offset = options.longs === String ? String(message.offset) : message.offset;
+                                else
+                                    object.offset = options.longs === String ? $util.Long.prototype.toString.call(message.offset) : options.longs === Number ? new $util.LongBits(message.offset.low >>> 0, message.offset.high >>> 0).toNumber() : message.offset;
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                object.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.toObject(message.apiViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "apiViolationReason";
+                            }
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this ConfluentCloudFailureReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        ConfluentCloudFailureReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for ConfluentCloudFailureReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        ConfluentCloudFailureReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason";
+                        };
+    
+                        return ConfluentCloudFailureReason;
                     })();
     
                     return IngestionFailureEvent;
