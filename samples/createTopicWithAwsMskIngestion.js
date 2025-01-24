@@ -40,18 +40,18 @@
 // const gcpServiceAccount = 'ingestion-account@...';
 
 // Imports the Google Cloud client library
-const { PubSub } = require("@google-cloud/pubsub");
+const {PubSub} = require('@google-cloud/pubsub');
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
 async function createTopicWithAwsMskIngestion(
-topicNameOrId,
-clusterArn,
-mskTopic,
-awsRoleArn,
-gcpServiceAccount)
-{
+  topicNameOrId,
+  clusterArn,
+  mskTopic,
+  awsRoleArn,
+  gcpServiceAccount
+) {
   // Creates a new topic with AWS MSK ingestion.
   await pubSubClient.createTopic({
     name: topicNameOrId,
@@ -60,28 +60,28 @@ gcpServiceAccount)
         clusterArn,
         topic: mskTopic,
         awsRoleArn,
-        gcpServiceAccount
-      }
-    }
+        gcpServiceAccount,
+      },
+    },
   });
   console.log(`Topic ${topicNameOrId} created with AWS MSK ingestion.`);
 }
 // [END pubsub_create_topic_with_aws_msk_ingestion]
 
 function main(
-topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
-clusterArn = 'arn:aws:kafka:...',
-mskTopic = 'YOUR_MSK_TOPIC',
-roleArn = 'arn:aws:iam:...',
-gcpServiceAccount = 'ingestion-account@...')
-{
+  topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
+  clusterArn = 'arn:aws:kafka:...',
+  mskTopic = 'YOUR_MSK_TOPIC',
+  roleArn = 'arn:aws:iam:...',
+  gcpServiceAccount = 'ingestion-account@...'
+) {
   createTopicWithAwsMskIngestion(
     topicNameOrId,
     clusterArn,
     mskTopic,
     roleArn,
     gcpServiceAccount
-  ).catch((err) => {
+  ).catch(err => {
     console.error(err.message);
     process.exitCode = 1;
   });

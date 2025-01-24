@@ -43,21 +43,21 @@
 // const gcpServiceAccount = 'ingestion-account@...';
 
 // Imports the Google Cloud client library
-const { PubSub } = require("@google-cloud/pubsub");
+const {PubSub} = require('@google-cloud/pubsub');
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
 async function createTopicWithAzureEventHubsIngestion(
-topicNameOrId,
-resourceGroup,
-namespace,
-eventHub,
-clientId,
-tenantId,
-subscriptionId,
-gcpServiceAccount)
-{
+  topicNameOrId,
+  resourceGroup,
+  namespace,
+  eventHub,
+  clientId,
+  tenantId,
+  subscriptionId,
+  gcpServiceAccount
+) {
   // Creates a new topic with Azure Event Hubs ingestion.
   await pubSubClient.createTopic({
     name: topicNameOrId,
@@ -69,24 +69,26 @@ gcpServiceAccount)
         clientId,
         tenantId,
         subscriptionId,
-        gcpServiceAccount
-      }
-    }
+        gcpServiceAccount,
+      },
+    },
   });
-  console.log(`Topic ${topicNameOrId} created with Azure Event Hubs ingestion.`);
+  console.log(
+    `Topic ${topicNameOrId} created with Azure Event Hubs ingestion.`
+  );
 }
 // [END pubsub_create_topic_with_azure_event_hubs_ingestion]
 
 function main(
-topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
-resourceGroup = 'YOUR_RESOURCE_GROUP',
-namespace = 'YOUR_NAMESPACE',
-eventHub = 'YOUR_EVENT_HUB',
-clientId = 'YOUR_CLIENT_ID',
-tenantId = 'YOUR_TENANT_ID',
-subscriptionId = 'YOUR_SUBSCRIPTION_ID',
-gcpServiceAccount = 'ingestion-account@...')
-{
+  topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
+  resourceGroup = 'YOUR_RESOURCE_GROUP',
+  namespace = 'YOUR_NAMESPACE',
+  eventHub = 'YOUR_EVENT_HUB',
+  clientId = 'YOUR_CLIENT_ID',
+  tenantId = 'YOUR_TENANT_ID',
+  subscriptionId = 'YOUR_SUBSCRIPTION_ID',
+  gcpServiceAccount = 'ingestion-account@...'
+) {
   createTopicWithAzureEventHubsIngestion(
     topicNameOrId,
     resourceGroup,
@@ -96,7 +98,7 @@ gcpServiceAccount = 'ingestion-account@...')
     tenantId,
     subscriptionId,
     gcpServiceAccount
-  ).catch((err) => {
+  ).catch(err => {
     console.error(err.message);
     process.exitCode = 1;
   });

@@ -69,7 +69,9 @@ async function createTopicWithAzureEventHubsIngestion(
       },
     },
   });
-  console.log(`Topic ${topicNameOrId} created with Azure Event Hubs ingestion.`);
+  console.log(
+    `Topic ${topicNameOrId} created with Azure Event Hubs ingestion.`
+  );
 }
 // [END pubsub_create_topic_with_azure_event_hubs_ingestion]
 

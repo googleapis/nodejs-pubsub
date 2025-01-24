@@ -41,19 +41,19 @@
 // const gcpServiceAccount = 'ingestion-account@...';
 
 // Imports the Google Cloud client library
-const { PubSub } = require("@google-cloud/pubsub");
+const {PubSub} = require('@google-cloud/pubsub');
 
 // Creates a client; cache this for further use
 const pubSubClient = new PubSub();
 
 async function createTopicWithConfluentCloudIngestion(
-topicNameOrId,
-bootstrapServer,
-clusterId,
-confluentTopic,
-identityPoolId,
-gcpServiceAccount)
-{
+  topicNameOrId,
+  bootstrapServer,
+  clusterId,
+  confluentTopic,
+  identityPoolId,
+  gcpServiceAccount
+) {
   // Creates a new topic with Confluent Cloud ingestion.
   await pubSubClient.createTopic({
     name: topicNameOrId,
@@ -63,22 +63,22 @@ gcpServiceAccount)
         clusterId,
         topic: confluentTopic,
         identityPoolId,
-        gcpServiceAccount
-      }
-    }
+        gcpServiceAccount,
+      },
+    },
   });
   console.log(`Topic ${topicNameOrId} created with Confluent Cloud ingestion.`);
 }
 // [END pubsub_create_topic_with_confluent_cloud_ingestion]
 
 function main(
-topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
-bootstrapServer = 'url:port',
-clusterId = 'YOUR_CLUSTER_ID',
-confluentTopic = 'YOUR_CONFLUENT_TOPIC',
-identityPoolId = 'pool-ID',
-gcpServiceAccount = 'ingestion-account@...')
-{
+  topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
+  bootstrapServer = 'url:port',
+  clusterId = 'YOUR_CLUSTER_ID',
+  confluentTopic = 'YOUR_CONFLUENT_TOPIC',
+  identityPoolId = 'pool-ID',
+  gcpServiceAccount = 'ingestion-account@...'
+) {
   createTopicWithConfluentCloudIngestion(
     topicNameOrId,
     bootstrapServer,
@@ -86,7 +86,7 @@ gcpServiceAccount = 'ingestion-account@...')
     confluentTopic,
     identityPoolId,
     gcpServiceAccount
-  ).catch((err) => {
+  ).catch(err => {
     console.error(err.message);
     process.exitCode = 1;
   });
