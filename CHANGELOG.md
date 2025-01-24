@@ -4,6 +4,18 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.10.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.9.0...v4.10.0) (2025-01-13)
+
+
+### Features
+
+* Add Kafka-based sources to IngestionDataSourceSettings proto and IngestionFailureEvent proto ([#2007](https://github.com/googleapis/nodejs-pubsub/issues/2007)) ([08d00a1](https://github.com/googleapis/nodejs-pubsub/commit/08d00a1e7d30e2ab47f7582ff61b1eb73ad9d25e))
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.28.0 ([#2001](https://github.com/googleapis/nodejs-pubsub/issues/2001)) ([c8e5811](https://github.com/googleapis/nodejs-pubsub/commit/c8e581124523edcac13d6d6c48d67342482959f3))
+
 ## [4.9.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.8.0...v4.9.0) (2024-11-12)
 
 
