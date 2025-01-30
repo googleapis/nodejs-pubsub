@@ -586,6 +586,9 @@ export class SubscriberClient {
    * @param {google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo} request.analyticsHubSubscriptionInfo
    *   Output only. Information about the associated Analytics Hub subscription.
    *   Only set if the subscritpion is created by Analytics Hub.
+   * @param {number[]} [request.messageTransforms]
+   *   Optional. Transforms to be applied to messages before they are delivered to
+   *   subscribers. Transforms are applied in the order specified.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.

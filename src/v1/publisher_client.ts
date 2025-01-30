@@ -481,6 +481,9 @@ export class PublisherClient {
    *   Output only. An output-only field indicating the state of the topic.
    * @param {google.pubsub.v1.IngestionDataSourceSettings} [request.ingestionDataSourceSettings]
    *   Optional. Settings for ingestion from a data source into this topic.
+   * @param {number[]} [request.messageTransforms]
+   *   Optional. Transforms to be applied to messages published to the topic.
+   *   Transforms are applied in the order specified.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
