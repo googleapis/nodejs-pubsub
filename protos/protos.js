@@ -6277,6 +6277,484 @@
                     return IngestionFailureEvent;
                 })();
     
+                v1.JavaScriptUDF = (function() {
+    
+                    /**
+                     * Properties of a JavaScriptUDF.
+                     * @memberof google.pubsub.v1
+                     * @interface IJavaScriptUDF
+                     * @property {string|null} [functionName] JavaScriptUDF functionName
+                     * @property {string|null} [code] JavaScriptUDF code
+                     */
+    
+                    /**
+                     * Constructs a new JavaScriptUDF.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a JavaScriptUDF.
+                     * @implements IJavaScriptUDF
+                     * @constructor
+                     * @param {google.pubsub.v1.IJavaScriptUDF=} [properties] Properties to set
+                     */
+                    function JavaScriptUDF(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * JavaScriptUDF functionName.
+                     * @member {string} functionName
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @instance
+                     */
+                    JavaScriptUDF.prototype.functionName = "";
+    
+                    /**
+                     * JavaScriptUDF code.
+                     * @member {string} code
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @instance
+                     */
+                    JavaScriptUDF.prototype.code = "";
+    
+                    /**
+                     * Creates a new JavaScriptUDF instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {google.pubsub.v1.IJavaScriptUDF=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.JavaScriptUDF} JavaScriptUDF instance
+                     */
+                    JavaScriptUDF.create = function create(properties) {
+                        return new JavaScriptUDF(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified JavaScriptUDF message. Does not implicitly {@link google.pubsub.v1.JavaScriptUDF.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {google.pubsub.v1.IJavaScriptUDF} message JavaScriptUDF message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    JavaScriptUDF.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.functionName != null && Object.hasOwnProperty.call(message, "functionName"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.functionName);
+                        if (message.code != null && Object.hasOwnProperty.call(message, "code"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.code);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified JavaScriptUDF message, length delimited. Does not implicitly {@link google.pubsub.v1.JavaScriptUDF.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {google.pubsub.v1.IJavaScriptUDF} message JavaScriptUDF message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    JavaScriptUDF.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a JavaScriptUDF message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.JavaScriptUDF} JavaScriptUDF
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    JavaScriptUDF.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.JavaScriptUDF();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1: {
+                                    message.functionName = reader.string();
+                                    break;
+                                }
+                            case 2: {
+                                    message.code = reader.string();
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a JavaScriptUDF message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.JavaScriptUDF} JavaScriptUDF
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    JavaScriptUDF.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a JavaScriptUDF message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    JavaScriptUDF.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.functionName != null && message.hasOwnProperty("functionName"))
+                            if (!$util.isString(message.functionName))
+                                return "functionName: string expected";
+                        if (message.code != null && message.hasOwnProperty("code"))
+                            if (!$util.isString(message.code))
+                                return "code: string expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a JavaScriptUDF message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.JavaScriptUDF} JavaScriptUDF
+                     */
+                    JavaScriptUDF.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.JavaScriptUDF)
+                            return object;
+                        var message = new $root.google.pubsub.v1.JavaScriptUDF();
+                        if (object.functionName != null)
+                            message.functionName = String(object.functionName);
+                        if (object.code != null)
+                            message.code = String(object.code);
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a JavaScriptUDF message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {google.pubsub.v1.JavaScriptUDF} message JavaScriptUDF
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    JavaScriptUDF.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.functionName = "";
+                            object.code = "";
+                        }
+                        if (message.functionName != null && message.hasOwnProperty("functionName"))
+                            object.functionName = message.functionName;
+                        if (message.code != null && message.hasOwnProperty("code"))
+                            object.code = message.code;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this JavaScriptUDF to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    JavaScriptUDF.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * Gets the default type url for JavaScriptUDF
+                     * @function getTypeUrl
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    JavaScriptUDF.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/google.pubsub.v1.JavaScriptUDF";
+                    };
+    
+                    return JavaScriptUDF;
+                })();
+    
+                v1.MessageTransform = (function() {
+    
+                    /**
+                     * Properties of a MessageTransform.
+                     * @memberof google.pubsub.v1
+                     * @interface IMessageTransform
+                     * @property {google.pubsub.v1.IJavaScriptUDF|null} [javascriptUdf] MessageTransform javascriptUdf
+                     * @property {boolean|null} [enabled] MessageTransform enabled
+                     */
+    
+                    /**
+                     * Constructs a new MessageTransform.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a MessageTransform.
+                     * @implements IMessageTransform
+                     * @constructor
+                     * @param {google.pubsub.v1.IMessageTransform=} [properties] Properties to set
+                     */
+                    function MessageTransform(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * MessageTransform javascriptUdf.
+                     * @member {google.pubsub.v1.IJavaScriptUDF|null|undefined} javascriptUdf
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @instance
+                     */
+                    MessageTransform.prototype.javascriptUdf = null;
+    
+                    /**
+                     * MessageTransform enabled.
+                     * @member {boolean} enabled
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @instance
+                     */
+                    MessageTransform.prototype.enabled = false;
+    
+                    // OneOf field names bound to virtual getters and setters
+                    var $oneOfFields;
+    
+                    /**
+                     * MessageTransform transform.
+                     * @member {"javascriptUdf"|undefined} transform
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @instance
+                     */
+                    Object.defineProperty(MessageTransform.prototype, "transform", {
+                        get: $util.oneOfGetter($oneOfFields = ["javascriptUdf"]),
+                        set: $util.oneOfSetter($oneOfFields)
+                    });
+    
+                    /**
+                     * Creates a new MessageTransform instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {google.pubsub.v1.IMessageTransform=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.MessageTransform} MessageTransform instance
+                     */
+                    MessageTransform.create = function create(properties) {
+                        return new MessageTransform(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified MessageTransform message. Does not implicitly {@link google.pubsub.v1.MessageTransform.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {google.pubsub.v1.IMessageTransform} message MessageTransform message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    MessageTransform.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.javascriptUdf != null && Object.hasOwnProperty.call(message, "javascriptUdf"))
+                            $root.google.pubsub.v1.JavaScriptUDF.encode(message.javascriptUdf, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        if (message.enabled != null && Object.hasOwnProperty.call(message, "enabled"))
+                            writer.uint32(/* id 3, wireType 0 =*/24).bool(message.enabled);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified MessageTransform message, length delimited. Does not implicitly {@link google.pubsub.v1.MessageTransform.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {google.pubsub.v1.IMessageTransform} message MessageTransform message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    MessageTransform.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a MessageTransform message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.MessageTransform} MessageTransform
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    MessageTransform.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.MessageTransform();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 2: {
+                                    message.javascriptUdf = $root.google.pubsub.v1.JavaScriptUDF.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 3: {
+                                    message.enabled = reader.bool();
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a MessageTransform message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.MessageTransform} MessageTransform
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    MessageTransform.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a MessageTransform message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    MessageTransform.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        var properties = {};
+                        if (message.javascriptUdf != null && message.hasOwnProperty("javascriptUdf")) {
+                            properties.transform = 1;
+                            {
+                                var error = $root.google.pubsub.v1.JavaScriptUDF.verify(message.javascriptUdf);
+                                if (error)
+                                    return "javascriptUdf." + error;
+                            }
+                        }
+                        if (message.enabled != null && message.hasOwnProperty("enabled"))
+                            if (typeof message.enabled !== "boolean")
+                                return "enabled: boolean expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a MessageTransform message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.MessageTransform} MessageTransform
+                     */
+                    MessageTransform.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.MessageTransform)
+                            return object;
+                        var message = new $root.google.pubsub.v1.MessageTransform();
+                        if (object.javascriptUdf != null) {
+                            if (typeof object.javascriptUdf !== "object")
+                                throw TypeError(".google.pubsub.v1.MessageTransform.javascriptUdf: object expected");
+                            message.javascriptUdf = $root.google.pubsub.v1.JavaScriptUDF.fromObject(object.javascriptUdf);
+                        }
+                        if (object.enabled != null)
+                            message.enabled = Boolean(object.enabled);
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a MessageTransform message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {google.pubsub.v1.MessageTransform} message MessageTransform
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    MessageTransform.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults)
+                            object.enabled = false;
+                        if (message.javascriptUdf != null && message.hasOwnProperty("javascriptUdf")) {
+                            object.javascriptUdf = $root.google.pubsub.v1.JavaScriptUDF.toObject(message.javascriptUdf, options);
+                            if (options.oneofs)
+                                object.transform = "javascriptUdf";
+                        }
+                        if (message.enabled != null && message.hasOwnProperty("enabled"))
+                            object.enabled = message.enabled;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this MessageTransform to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    MessageTransform.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * Gets the default type url for MessageTransform
+                     * @function getTypeUrl
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    MessageTransform.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/google.pubsub.v1.MessageTransform";
+                    };
+    
+                    return MessageTransform;
+                })();
+    
                 v1.Topic = (function() {
     
                     /**
@@ -6292,6 +6770,7 @@
                      * @property {google.protobuf.IDuration|null} [messageRetentionDuration] Topic messageRetentionDuration
                      * @property {google.pubsub.v1.Topic.State|null} [state] Topic state
                      * @property {google.pubsub.v1.IIngestionDataSourceSettings|null} [ingestionDataSourceSettings] Topic ingestionDataSourceSettings
+                     * @property {Array.<google.pubsub.v1.IMessageTransform>|null} [messageTransforms] Topic messageTransforms
                      */
     
                     /**
@@ -6304,6 +6783,7 @@
                      */
                     function Topic(properties) {
                         this.labels = {};
+                        this.messageTransforms = [];
                         if (properties)
                             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                 if (properties[keys[i]] != null)
@@ -6383,6 +6863,14 @@
                     Topic.prototype.ingestionDataSourceSettings = null;
     
                     /**
+                     * Topic messageTransforms.
+                     * @member {Array.<google.pubsub.v1.IMessageTransform>} messageTransforms
+                     * @memberof google.pubsub.v1.Topic
+                     * @instance
+                     */
+                    Topic.prototype.messageTransforms = $util.emptyArray;
+    
+                    /**
                      * Creates a new Topic instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Topic
@@ -6425,6 +6913,9 @@
                             writer.uint32(/* id 9, wireType 0 =*/72).int32(message.state);
                         if (message.ingestionDataSourceSettings != null && Object.hasOwnProperty.call(message, "ingestionDataSourceSettings"))
                             $root.google.pubsub.v1.IngestionDataSourceSettings.encode(message.ingestionDataSourceSettings, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
+                        if (message.messageTransforms != null && message.messageTransforms.length)
+                            for (var i = 0; i < message.messageTransforms.length; ++i)
+                                $root.google.pubsub.v1.MessageTransform.encode(message.messageTransforms[i], writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
                         return writer;
                     };
     
@@ -6514,6 +7005,12 @@
                                     message.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.decode(reader, reader.uint32());
                                     break;
                                 }
+                            case 13: {
+                                    if (!(message.messageTransforms && message.messageTransforms.length))
+                                        message.messageTransforms = [];
+                                    message.messageTransforms.push($root.google.pubsub.v1.MessageTransform.decode(reader, reader.uint32()));
+                                    break;
+                                }
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -6595,6 +7092,15 @@
                             if (error)
                                 return "ingestionDataSourceSettings." + error;
                         }
+                        if (message.messageTransforms != null && message.hasOwnProperty("messageTransforms")) {
+                            if (!Array.isArray(message.messageTransforms))
+                                return "messageTransforms: array expected";
+                            for (var i = 0; i < message.messageTransforms.length; ++i) {
+                                var error = $root.google.pubsub.v1.MessageTransform.verify(message.messageTransforms[i]);
+                                if (error)
+                                    return "messageTransforms." + error;
+                            }
+                        }
                         return null;
                     };
     
@@ -6663,6 +7169,16 @@
                                 throw TypeError(".google.pubsub.v1.Topic.ingestionDataSourceSettings: object expected");
                             message.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.fromObject(object.ingestionDataSourceSettings);
                         }
+                        if (object.messageTransforms) {
+                            if (!Array.isArray(object.messageTransforms))
+                                throw TypeError(".google.pubsub.v1.Topic.messageTransforms: array expected");
+                            message.messageTransforms = [];
+                            for (var i = 0; i < object.messageTransforms.length; ++i) {
+                                if (typeof object.messageTransforms[i] !== "object")
+                                    throw TypeError(".google.pubsub.v1.Topic.messageTransforms: object expected");
+                                message.messageTransforms[i] = $root.google.pubsub.v1.MessageTransform.fromObject(object.messageTransforms[i]);
+                            }
+                        }
                         return message;
                     };
     
@@ -6679,6 +7195,8 @@
                         if (!options)
                             options = {};
                         var object = {};
+                        if (options.arrays || options.defaults)
+                            object.messageTransforms = [];
                         if (options.objects || options.defaults)
                             object.labels = {};
                         if (options.defaults) {
@@ -6713,6 +7231,11 @@
                             object.state = options.enums === String ? $root.google.pubsub.v1.Topic.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.Topic.State[message.state] : message.state;
                         if (message.ingestionDataSourceSettings != null && message.hasOwnProperty("ingestionDataSourceSettings"))
                             object.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.toObject(message.ingestionDataSourceSettings, options);
+                        if (message.messageTransforms && message.messageTransforms.length) {
+                            object.messageTransforms = [];
+                            for (var j = 0; j < message.messageTransforms.length; ++j)
+                                object.messageTransforms[j] = $root.google.pubsub.v1.MessageTransform.toObject(message.messageTransforms[j], options);
+                        }
                         return object;
                     };
     
@@ -10667,6 +11190,7 @@
                      * @property {google.protobuf.IDuration|null} [topicMessageRetentionDuration] Subscription topicMessageRetentionDuration
                      * @property {google.pubsub.v1.Subscription.State|null} [state] Subscription state
                      * @property {google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo|null} [analyticsHubSubscriptionInfo] Subscription analyticsHubSubscriptionInfo
+                     * @property {Array.<google.pubsub.v1.IMessageTransform>|null} [messageTransforms] Subscription messageTransforms
                      */
     
                     /**
@@ -10679,6 +11203,7 @@
                      */
                     function Subscription(properties) {
                         this.labels = {};
+                        this.messageTransforms = [];
                         if (properties)
                             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                 if (properties[keys[i]] != null)
@@ -10838,6 +11363,14 @@
                     Subscription.prototype.analyticsHubSubscriptionInfo = null;
     
                     /**
+                     * Subscription messageTransforms.
+                     * @member {Array.<google.pubsub.v1.IMessageTransform>} messageTransforms
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.messageTransforms = $util.emptyArray;
+    
+                    /**
                      * Creates a new Subscription instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Subscription
@@ -10900,6 +11433,9 @@
                             $root.google.pubsub.v1.CloudStorageConfig.encode(message.cloudStorageConfig, writer.uint32(/* id 22, wireType 2 =*/178).fork()).ldelim();
                         if (message.analyticsHubSubscriptionInfo != null && Object.hasOwnProperty.call(message, "analyticsHubSubscriptionInfo"))
                             $root.google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo.encode(message.analyticsHubSubscriptionInfo, writer.uint32(/* id 23, wireType 2 =*/186).fork()).ldelim();
+                        if (message.messageTransforms != null && message.messageTransforms.length)
+                            for (var i = 0; i < message.messageTransforms.length; ++i)
+                                $root.google.pubsub.v1.MessageTransform.encode(message.messageTransforms[i], writer.uint32(/* id 25, wireType 2 =*/202).fork()).ldelim();
                         return writer;
                     };
     
@@ -11029,6 +11565,12 @@
                                     message.analyticsHubSubscriptionInfo = $root.google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo.decode(reader, reader.uint32());
                                     break;
                                 }
+                            case 25: {
+                                    if (!(message.messageTransforms && message.messageTransforms.length))
+                                        message.messageTransforms = [];
+                                    message.messageTransforms.push($root.google.pubsub.v1.MessageTransform.decode(reader, reader.uint32()));
+                                    break;
+                                }
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -11150,6 +11692,15 @@
                             if (error)
                                 return "analyticsHubSubscriptionInfo." + error;
                         }
+                        if (message.messageTransforms != null && message.hasOwnProperty("messageTransforms")) {
+                            if (!Array.isArray(message.messageTransforms))
+                                return "messageTransforms: array expected";
+                            for (var i = 0; i < message.messageTransforms.length; ++i) {
+                                var error = $root.google.pubsub.v1.MessageTransform.verify(message.messageTransforms[i]);
+                                if (error)
+                                    return "messageTransforms." + error;
+                            }
+                        }
                         return null;
                     };
     
@@ -11253,6 +11804,16 @@
                                 throw TypeError(".google.pubsub.v1.Subscription.analyticsHubSubscriptionInfo: object expected");
                             message.analyticsHubSubscriptionInfo = $root.google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo.fromObject(object.analyticsHubSubscriptionInfo);
                         }
+                        if (object.messageTransforms) {
+                            if (!Array.isArray(object.messageTransforms))
+                                throw TypeError(".google.pubsub.v1.Subscription.messageTransforms: array expected");
+                            message.messageTransforms = [];
+                            for (var i = 0; i < object.messageTransforms.length; ++i) {
+                                if (typeof object.messageTransforms[i] !== "object")
+                                    throw TypeError(".google.pubsub.v1.Subscription.messageTransforms: object expected");
+                                message.messageTransforms[i] = $root.google.pubsub.v1.MessageTransform.fromObject(object.messageTransforms[i]);
+                            }
+                        }
                         return message;
                     };
     
@@ -11269,6 +11830,8 @@
                         if (!options)
                             options = {};
                         var object = {};
+                        if (options.arrays || options.defaults)
+                            object.messageTransforms = [];
                         if (options.objects || options.defaults)
                             object.labels = {};
                         if (options.defaults) {
@@ -11333,6 +11896,11 @@
                             object.cloudStorageConfig = $root.google.pubsub.v1.CloudStorageConfig.toObject(message.cloudStorageConfig, options);
                         if (message.analyticsHubSubscriptionInfo != null && message.hasOwnProperty("analyticsHubSubscriptionInfo"))
                             object.analyticsHubSubscriptionInfo = $root.google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo.toObject(message.analyticsHubSubscriptionInfo, options);
+                        if (message.messageTransforms && message.messageTransforms.length) {
+                            object.messageTransforms = [];
+                            for (var j = 0; j < message.messageTransforms.length; ++j)
+                                object.messageTransforms[j] = $root.google.pubsub.v1.MessageTransform.toObject(message.messageTransforms[j], options);
+                        }
                         return object;
                     };
     

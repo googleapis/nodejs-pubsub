@@ -2499,6 +2499,215 @@ export namespace google {
                 }
             }
 
+            /** Properties of a JavaScriptUDF. */
+            interface IJavaScriptUDF {
+
+                /** JavaScriptUDF functionName */
+                functionName?: (string|null);
+
+                /** JavaScriptUDF code */
+                code?: (string|null);
+            }
+
+            /** Represents a JavaScriptUDF. */
+            class JavaScriptUDF implements IJavaScriptUDF {
+
+                /**
+                 * Constructs a new JavaScriptUDF.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IJavaScriptUDF);
+
+                /** JavaScriptUDF functionName. */
+                public functionName: string;
+
+                /** JavaScriptUDF code. */
+                public code: string;
+
+                /**
+                 * Creates a new JavaScriptUDF instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns JavaScriptUDF instance
+                 */
+                public static create(properties?: google.pubsub.v1.IJavaScriptUDF): google.pubsub.v1.JavaScriptUDF;
+
+                /**
+                 * Encodes the specified JavaScriptUDF message. Does not implicitly {@link google.pubsub.v1.JavaScriptUDF.verify|verify} messages.
+                 * @param message JavaScriptUDF message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IJavaScriptUDF, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified JavaScriptUDF message, length delimited. Does not implicitly {@link google.pubsub.v1.JavaScriptUDF.verify|verify} messages.
+                 * @param message JavaScriptUDF message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IJavaScriptUDF, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a JavaScriptUDF message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns JavaScriptUDF
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.JavaScriptUDF;
+
+                /**
+                 * Decodes a JavaScriptUDF message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns JavaScriptUDF
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.JavaScriptUDF;
+
+                /**
+                 * Verifies a JavaScriptUDF message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a JavaScriptUDF message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns JavaScriptUDF
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.JavaScriptUDF;
+
+                /**
+                 * Creates a plain object from a JavaScriptUDF message. Also converts values to other types if specified.
+                 * @param message JavaScriptUDF
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.JavaScriptUDF, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this JavaScriptUDF to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for JavaScriptUDF
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a MessageTransform. */
+            interface IMessageTransform {
+
+                /** MessageTransform javascriptUdf */
+                javascriptUdf?: (google.pubsub.v1.IJavaScriptUDF|null);
+
+                /** MessageTransform enabled */
+                enabled?: (boolean|null);
+            }
+
+            /** Represents a MessageTransform. */
+            class MessageTransform implements IMessageTransform {
+
+                /**
+                 * Constructs a new MessageTransform.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IMessageTransform);
+
+                /** MessageTransform javascriptUdf. */
+                public javascriptUdf?: (google.pubsub.v1.IJavaScriptUDF|null);
+
+                /** MessageTransform enabled. */
+                public enabled: boolean;
+
+                /** MessageTransform transform. */
+                public transform?: "javascriptUdf";
+
+                /**
+                 * Creates a new MessageTransform instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns MessageTransform instance
+                 */
+                public static create(properties?: google.pubsub.v1.IMessageTransform): google.pubsub.v1.MessageTransform;
+
+                /**
+                 * Encodes the specified MessageTransform message. Does not implicitly {@link google.pubsub.v1.MessageTransform.verify|verify} messages.
+                 * @param message MessageTransform message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IMessageTransform, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified MessageTransform message, length delimited. Does not implicitly {@link google.pubsub.v1.MessageTransform.verify|verify} messages.
+                 * @param message MessageTransform message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IMessageTransform, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a MessageTransform message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns MessageTransform
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.MessageTransform;
+
+                /**
+                 * Decodes a MessageTransform message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns MessageTransform
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.MessageTransform;
+
+                /**
+                 * Verifies a MessageTransform message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a MessageTransform message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns MessageTransform
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.MessageTransform;
+
+                /**
+                 * Creates a plain object from a MessageTransform message. Also converts values to other types if specified.
+                 * @param message MessageTransform
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.MessageTransform, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this MessageTransform to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for MessageTransform
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
             /** Properties of a Topic. */
             interface ITopic {
 
@@ -2528,6 +2737,9 @@ export namespace google {
 
                 /** Topic ingestionDataSourceSettings */
                 ingestionDataSourceSettings?: (google.pubsub.v1.IIngestionDataSourceSettings|null);
+
+                /** Topic messageTransforms */
+                messageTransforms?: (google.pubsub.v1.IMessageTransform[]|null);
             }
 
             /** Represents a Topic. */
@@ -2565,6 +2777,9 @@ export namespace google {
 
                 /** Topic ingestionDataSourceSettings. */
                 public ingestionDataSourceSettings?: (google.pubsub.v1.IIngestionDataSourceSettings|null);
+
+                /** Topic messageTransforms. */
+                public messageTransforms: google.pubsub.v1.IMessageTransform[];
 
                 /**
                  * Creates a new Topic instance using the specified properties.
@@ -4515,6 +4730,9 @@ export namespace google {
 
                 /** Subscription analyticsHubSubscriptionInfo */
                 analyticsHubSubscriptionInfo?: (google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo|null);
+
+                /** Subscription messageTransforms */
+                messageTransforms?: (google.pubsub.v1.IMessageTransform[]|null);
             }
 
             /** Represents a Subscription. */
@@ -4582,6 +4800,9 @@ export namespace google {
 
                 /** Subscription analyticsHubSubscriptionInfo. */
                 public analyticsHubSubscriptionInfo?: (google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo|null);
+
+                /** Subscription messageTransforms. */
+                public messageTransforms: google.pubsub.v1.IMessageTransform[];
 
                 /**
                  * Creates a new Subscription instance using the specified properties.
