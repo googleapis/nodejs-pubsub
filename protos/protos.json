@@ -953,7 +953,9 @@
                 "Topic": {
                   "options": {
                     "(google.api.resource).type": "pubsub.googleapis.com/Topic",
-                    "(google.api.resource).pattern": "_deleted-topic_"
+                    "(google.api.resource).pattern": "_deleted-topic_",
+                    "(google.api.resource).plural": "topics",
+                    "(google.api.resource).singular": "topic"
                   },
                   "fields": {
                     "name": {
@@ -1602,7 +1604,9 @@
                 "Subscription": {
                   "options": {
                     "(google.api.resource).type": "pubsub.googleapis.com/Subscription",
-                    "(google.api.resource).pattern": "projects/{project}/subscriptions/{subscription}"
+                    "(google.api.resource).pattern": "projects/{project}/subscriptions/{subscription}",
+                    "(google.api.resource).plural": "subscriptions",
+                    "(google.api.resource).singular": "subscription"
                   },
                   "fields": {
                     "name": {
@@ -2545,7 +2549,9 @@
                 "Snapshot": {
                   "options": {
                     "(google.api.resource).type": "pubsub.googleapis.com/Snapshot",
-                    "(google.api.resource).pattern": "projects/{project}/snapshots/{snapshot}"
+                    "(google.api.resource).pattern": "projects/{project}/snapshots/{snapshot}",
+                    "(google.api.resource).plural": "snapshots",
+                    "(google.api.resource).singular": "snapshot"
                   },
                   "fields": {
                     "name": {
