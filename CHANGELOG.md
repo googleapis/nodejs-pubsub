@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [4.10.1](https://github.com/googleapis/nodejs-pubsub/compare/v4.10.0...v4.10.1) (2025-02-10)
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.29.0 ([#2012](https://github.com/googleapis/nodejs-pubsub/issues/2012)) ([bfe8243](https://github.com/googleapis/nodejs-pubsub/commit/bfe82434492a95fc24ee54ff947d0e52d5e93195))
+
 ## [4.10.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.9.0...v4.10.0) (2025-01-13)
 
 
