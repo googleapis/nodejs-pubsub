@@ -332,7 +332,7 @@ describe('v1.SubscriberClient', () => {
         ['name']
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
@@ -364,7 +364,7 @@ describe('v1.SubscriberClient', () => {
         ['name']
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
@@ -411,7 +411,7 @@ describe('v1.SubscriberClient', () => {
         ['name']
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.createSubscription = stubSimpleCall(
         undefined,
@@ -463,7 +463,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
@@ -494,7 +494,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
@@ -541,7 +541,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.getSubscription = stubSimpleCall(
         undefined,
@@ -594,7 +594,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription', 'name']
       );
       request.subscription.name = defaultValue1;
-      const expectedHeaderRequestParams = `subscription.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription.name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
@@ -627,7 +627,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription', 'name']
       );
       request.subscription.name = defaultValue1;
-      const expectedHeaderRequestParams = `subscription.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription.name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription()
       );
@@ -675,7 +675,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription', 'name']
       );
       request.subscription.name = defaultValue1;
-      const expectedHeaderRequestParams = `subscription.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription.name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.updateSubscription = stubSimpleCall(
         undefined,
@@ -728,7 +728,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -760,7 +760,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -807,7 +807,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.deleteSubscription = stubSimpleCall(
         undefined,
@@ -859,7 +859,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -890,7 +890,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -937,7 +937,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.modifyAckDeadline = stubSimpleCall(
         undefined,
@@ -989,7 +989,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -1020,7 +1020,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -1067,7 +1067,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.acknowledge = stubSimpleCall(
         undefined,
@@ -1119,7 +1119,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.PullResponse()
       );
@@ -1149,7 +1149,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.PullResponse()
       );
@@ -1194,7 +1194,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.pull = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.pull(request), expectedError);
@@ -1242,7 +1242,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -1273,7 +1273,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -1320,7 +1320,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.modifyPushConfig = stubSimpleCall(
         undefined,
@@ -1372,7 +1372,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot']
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
@@ -1403,7 +1403,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot']
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
@@ -1450,7 +1450,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot']
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.getSnapshot = stubSimpleCall(
         undefined,
@@ -1502,7 +1502,7 @@ describe('v1.SubscriberClient', () => {
         ['name']
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
@@ -1533,7 +1533,7 @@ describe('v1.SubscriberClient', () => {
         ['name']
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
@@ -1580,7 +1580,7 @@ describe('v1.SubscriberClient', () => {
         ['name']
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.createSnapshot = stubSimpleCall(
         undefined,
@@ -1633,7 +1633,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot', 'name']
       );
       request.snapshot.name = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
@@ -1665,7 +1665,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot', 'name']
       );
       request.snapshot.name = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot()
       );
@@ -1713,7 +1713,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot', 'name']
       );
       request.snapshot.name = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.updateSnapshot = stubSimpleCall(
         undefined,
@@ -1766,7 +1766,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot']
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -1797,7 +1797,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot']
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -1844,7 +1844,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot']
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.deleteSnapshot = stubSimpleCall(
         undefined,
@@ -1896,7 +1896,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.SeekResponse()
       );
@@ -1926,7 +1926,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.SeekResponse()
       );
@@ -1971,7 +1971,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.seek = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.seek(request), expectedError);
@@ -2105,7 +2105,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -2138,7 +2138,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -2187,7 +2187,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listSubscriptions = stubSimpleCall(
         undefined,
@@ -2218,7 +2218,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -2269,7 +2269,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSubscriptions.createStream =
         stubPageStreamingCall(undefined, expectedError);
@@ -2315,7 +2315,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -2358,7 +2358,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSubscriptions.asyncIterate =
         stubAsyncIterationCall(undefined, expectedError);
@@ -2400,7 +2400,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2433,7 +2433,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2482,7 +2482,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listSnapshots = stubSimpleCall(
         undefined,
@@ -2513,7 +2513,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2564,7 +2564,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSnapshots.createStream =
         stubPageStreamingCall(undefined, expectedError);
@@ -2610,7 +2610,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2653,7 +2653,7 @@ describe('v1.SubscriberClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSnapshots.asyncIterate =
         stubAsyncIterationCall(undefined, expectedError);

@@ -317,7 +317,7 @@ describe('v1.PublisherClient', () => {
         'name',
       ]);
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
@@ -347,7 +347,7 @@ describe('v1.PublisherClient', () => {
         'name',
       ]);
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
@@ -393,7 +393,7 @@ describe('v1.PublisherClient', () => {
         'name',
       ]);
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.createTopic = stubSimpleCall(
         undefined,
@@ -445,7 +445,7 @@ describe('v1.PublisherClient', () => {
         ['topic', 'name']
       );
       request.topic.name = defaultValue1;
-      const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic.name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
@@ -477,7 +477,7 @@ describe('v1.PublisherClient', () => {
         ['topic', 'name']
       );
       request.topic.name = defaultValue1;
-      const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic.name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
@@ -525,7 +525,7 @@ describe('v1.PublisherClient', () => {
         ['topic', 'name']
       );
       request.topic.name = defaultValue1;
-      const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic.name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.updateTopic = stubSimpleCall(
         undefined,
@@ -578,7 +578,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.PublishResponse()
       );
@@ -609,7 +609,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.PublishResponse()
       );
@@ -656,7 +656,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.publish = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.publish(request), expectedError);
@@ -705,7 +705,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
@@ -736,7 +736,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Topic()
       );
@@ -783,7 +783,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.getTopic = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.getTopic(request), expectedError);
@@ -832,7 +832,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -863,7 +863,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty()
       );
@@ -910,7 +910,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.deleteTopic = stubSimpleCall(
         undefined,
@@ -962,7 +962,7 @@ describe('v1.PublisherClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionResponse()
       );
@@ -994,7 +994,7 @@ describe('v1.PublisherClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.DetachSubscriptionResponse()
       );
@@ -1041,7 +1041,7 @@ describe('v1.PublisherClient', () => {
         ['subscription']
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.detachSubscription = stubSimpleCall(
         undefined,
@@ -1093,7 +1093,7 @@ describe('v1.PublisherClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
@@ -1126,7 +1126,7 @@ describe('v1.PublisherClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
@@ -1175,7 +1175,7 @@ describe('v1.PublisherClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listTopics = stubSimpleCall(
         undefined,
@@ -1206,7 +1206,7 @@ describe('v1.PublisherClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
@@ -1257,7 +1257,7 @@ describe('v1.PublisherClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopics.createStream = stubPageStreamingCall(
         undefined,
@@ -1305,7 +1305,7 @@ describe('v1.PublisherClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
         generateSampleMessage(new protos.google.pubsub.v1.Topic()),
@@ -1348,7 +1348,7 @@ describe('v1.PublisherClient', () => {
         ['project']
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopics.asyncIterate = stubAsyncIterationCall(
         undefined,
@@ -1392,7 +1392,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSubscriptions =
         stubSimpleCall(expectedResponse);
@@ -1422,7 +1422,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSubscriptions =
         stubSimpleCallWithCallback(expectedResponse);
@@ -1464,7 +1464,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listTopicSubscriptions = stubSimpleCall(
         undefined,
@@ -1498,7 +1498,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSubscriptions.createStream =
         stubPageStreamingCall(expectedResponse);
@@ -1551,7 +1551,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopicSubscriptions.createStream =
         stubPageStreamingCall(undefined, expectedError);
@@ -1603,7 +1603,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSubscriptions.asyncIterate =
         stubAsyncIterationCall(expectedResponse);
@@ -1646,7 +1646,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopicSubscriptions.asyncIterate =
         stubAsyncIterationCall(undefined, expectedError);
@@ -1692,7 +1692,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSnapshots =
         stubSimpleCall(expectedResponse);
@@ -1722,7 +1722,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.innerApiCalls.listTopicSnapshots =
         stubSimpleCallWithCallback(expectedResponse);
@@ -1764,7 +1764,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listTopicSnapshots = stubSimpleCall(
         undefined,
@@ -1795,7 +1795,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSnapshots.createStream =
         stubPageStreamingCall(expectedResponse);
@@ -1842,7 +1842,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopicSnapshots.createStream =
         stubPageStreamingCall(undefined, expectedError);
@@ -1888,7 +1888,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedResponse = [new String(), new String(), new String()];
       client.descriptors.page.listTopicSnapshots.asyncIterate =
         stubAsyncIterationCall(expectedResponse);
@@ -1927,7 +1927,7 @@ describe('v1.PublisherClient', () => {
         ['topic']
       );
       request.topic = defaultValue1;
-      const expectedHeaderRequestParams = `topic=${defaultValue1}`;
+      const expectedHeaderRequestParams = `topic=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopicSnapshots.asyncIterate =
         stubAsyncIterationCall(undefined, expectedError);

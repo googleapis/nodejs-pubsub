@@ -9,7 +9,6 @@
           "nested": {
             "v1": {
               "options": {
-                "cc_enable_arenas": true,
                 "csharp_namespace": "Google.Cloud.PubSub.V1",
                 "go_package": "cloud.google.com/go/pubsub/apiv1/pubsubpb;pubsubpb",
                 "java_multiple_files": true,
@@ -908,10 +907,55 @@
                     }
                   }
                 },
+                "JavaScriptUDF": {
+                  "fields": {
+                    "functionName": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "code": {
+                      "type": "string",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    }
+                  }
+                },
+                "MessageTransform": {
+                  "oneofs": {
+                    "transform": {
+                      "oneof": [
+                        "javascriptUdf"
+                      ]
+                    }
+                  },
+                  "fields": {
+                    "javascriptUdf": {
+                      "type": "JavaScriptUDF",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "enabled": {
+                      "type": "bool",
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    }
+                  }
+                },
                 "Topic": {
                   "options": {
                     "(google.api.resource).type": "pubsub.googleapis.com/Topic",
-                    "(google.api.resource).pattern": "_deleted-topic_"
+                    "(google.api.resource).pattern": "_deleted-topic_",
+                    "(google.api.resource).plural": "topics",
+                    "(google.api.resource).singular": "topic"
                   },
                   "fields": {
                     "name": {
@@ -974,6 +1018,14 @@
                     "ingestionDataSourceSettings": {
                       "type": "IngestionDataSourceSettings",
                       "id": 10,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "messageTransforms": {
+                      "rule": "repeated",
+                      "type": "MessageTransform",
+                      "id": 13,
                       "options": {
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
@@ -1552,7 +1604,9 @@
                 "Subscription": {
                   "options": {
                     "(google.api.resource).type": "pubsub.googleapis.com/Subscription",
-                    "(google.api.resource).pattern": "projects/{project}/subscriptions/{subscription}"
+                    "(google.api.resource).pattern": "projects/{project}/subscriptions/{subscription}",
+                    "(google.api.resource).plural": "subscriptions",
+                    "(google.api.resource).singular": "subscription"
                   },
                   "fields": {
                     "name": {
@@ -1688,6 +1742,14 @@
                       "id": 23,
                       "options": {
                         "(google.api.field_behavior)": "OUTPUT_ONLY"
+                      }
+                    },
+                    "messageTransforms": {
+                      "rule": "repeated",
+                      "type": "MessageTransform",
+                      "id": 25,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
                       }
                     }
                   },
@@ -2487,7 +2549,9 @@
                 "Snapshot": {
                   "options": {
                     "(google.api.resource).type": "pubsub.googleapis.com/Snapshot",
-                    "(google.api.resource).pattern": "projects/{project}/snapshots/{snapshot}"
+                    "(google.api.resource).pattern": "projects/{project}/snapshots/{snapshot}",
+                    "(google.api.resource).plural": "snapshots",
+                    "(google.api.resource).singular": "snapshot"
                   },
                   "fields": {
                     "name": {
