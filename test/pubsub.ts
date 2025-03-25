@@ -689,7 +689,7 @@ describe('PubSub', () => {
       const apiResponse = {
         name: 'new-topic',
       };
-      let requestStub: sinon.SinonStub<unknown[], unknown>;
+      let requestStub: sinon.SinonStub<any[], any>;
 
       beforeEach(() => {
         requestStub = sandbox
