@@ -347,7 +347,7 @@ export class PubsubSpans {
 
     const spanAttributes = {
       // Add Opentelemetry semantic convention attributes to the span, based on:
-      // https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/#messaging-attributes
+      // https://github.com/open-telemetry/semantic-conventions/blob/v1.24.0/docs/messaging/messaging-spans.md
       ['messaging.system']: 'gcp_pubsub',
       ['messaging.destination.name']: destinationId ?? destinationName,
       ['gcp.project_id']: projectId,
@@ -396,8 +396,7 @@ export class PubsubSpans {
     });
     if (topicInfo.topicId) {
       span.updateName(`${topicInfo.topicId} create`);
-      span.setAttribute('messaging.operation.name', 'send');
-      span.setAttribute('messaging.operation.type', 'create');
+      span.setAttribute('messaging.operation', 'create');
       span.setAttribute('messaging.destination.name', topicInfo.topicId);
     }
 
@@ -432,7 +431,7 @@ export class PubsubSpans {
     const attributes = this.createAttributes(subInfo, message, caller);
     if (subInfo.subId) {
       attributes['messaging.destination.name'] = subInfo.subId;
-      attributes['messaging.operation.type'] = 'receive';
+      attributes['messaging.operation'] = 'receive';
     }
 
     if (context) {
@@ -556,7 +555,7 @@ export class PubsubSpans {
     );
 
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
-    span?.setAttribute('messaging.operation.type', 'receive');
+    span?.setAttribute('messaging.operation', 'receive');
 
     if (span) {
       // Also attempt to link from the subscribe span(s) back to the publish RPC span.
@@ -604,7 +603,7 @@ export class PubsubSpans {
     );
 
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
-    span?.setAttribute('messaging.operation.type', 'receive');
+    span?.setAttribute('messaging.operation', 'receive');
 
     if (span) {
       // Also attempt to link from the subscribe span(s) back to the publish RPC span.
@@ -656,9 +655,7 @@ export class PubsubSpans {
   }
 
   static setReceiveProcessResult(span: Span, isAck: boolean) {
-    const op_name = isAck ? 'ack' : 'nack';
-    span?.setAttribute('messaging.gcp_pubsub.result', op_name);
-    span?.setAttribute('messaging.operation.name', op_name);
+    span?.setAttribute('messaging.gcp_pubsub.result', isAck ? 'ack' : 'nack');
   }
 }
 
