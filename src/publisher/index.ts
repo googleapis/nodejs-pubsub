@@ -191,8 +191,10 @@ export class Publisher {
     // We must have at least one of:
     //   - `data` as a Buffer
     //   - `attributes` that are not empty
-    if (data && !(data instanceof Buffer)) {
-      throw new TypeError('Data must be in the form of a Buffer.');
+    if (data && !(data instanceof Uint8Array)) {
+      throw new TypeError(
+        'Data must be in the form of a Buffer or Uint8Array.'
+      );
     }
 
     const keys = Object.keys(attributes!);
