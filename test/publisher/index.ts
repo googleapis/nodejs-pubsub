@@ -237,7 +237,7 @@ describe('Publisher', () => {
       const badData = {} as Buffer;
       assert.throws(
         () => publisher.publishMessage({data: badData}, spy),
-        /Data must be in the form of a Buffer\./
+        /Data must be in the form of a Buffer or Uint8Array\./
       );
     });
 

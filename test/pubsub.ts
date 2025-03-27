@@ -689,6 +689,9 @@ describe('PubSub', () => {
       const apiResponse = {
         name: 'new-topic',
       };
+
+      // Types changed, so this is needed instead of `unknown`.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let requestStub: sinon.SinonStub<any[], any>;
 
       beforeEach(() => {
