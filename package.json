@@ -1,7 +1,7 @@
 {
   "name": "@google-cloud/pubsub",
   "description": "Cloud Pub/Sub Client Library for Node.js",
-  "version": "4.8.0",
+  "version": "4.10.0",
   "license": "Apache-2.0",
   "author": "Google Inc.",
   "engines": {
@@ -55,7 +55,7 @@
     "@google-cloud/projectify": "^4.0.0",
     "@google-cloud/promisify": "~4.0.0",
     "@opentelemetry/api": "~1.9.0",
-    "@opentelemetry/semantic-conventions": "~1.26.0",
+    "@opentelemetry/semantic-conventions": "~1.29.0",
     "arrify": "^2.0.0",
     "extend": "^3.0.2",
     "google-auth-library": "^9.3.0",
