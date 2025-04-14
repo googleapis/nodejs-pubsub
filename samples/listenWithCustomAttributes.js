@@ -66,7 +66,7 @@ async function listenWithCustomAttributes(subscriptionNameOrId, timeout) {
 }
 // [END pubsub_subscriber_async_pull_custom_attributes]
 
-async function main(
+function main(
   subscriptionNameOrId = 'YOUR_SUBSCRIPTION_NAME_OR_ID',
   timeout = 60,
 ) {

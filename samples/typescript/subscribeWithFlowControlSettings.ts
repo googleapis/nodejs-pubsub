@@ -75,8 +75,8 @@ async function subscribeWithFlowControlSettings(
   subscription.on('message', messageHandler);
 
   // Wait a while for the subscription to run. (Part of the sample only.)
-  setTimeout(() => {
-    subscription.close();
+  setTimeout(async () => {
+    await subscription.close();
   }, timeout * 1000);
 }
 // [END pubsub_subscriber_flow_settings]

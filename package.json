@@ -45,9 +45,7 @@
     "predocs-test": "npm run docs",
     "benchwrapper": "node bin/benchwrapper.js",
     "prelint": "cd samples; npm link ../; npm install",
-    "precompile": "gts clean",
-    "typeless": "npx typeless-sample-bot --outputpath samples --targets samples --recursive",
-    "posttypeless": "npm run link-samples && npx eslint --ignore-pattern owl-bot-staging --fix samples"
+    "precompile": "gts clean"
   },
   "dependencies": {
     "@google-cloud/paginator": "^6.0.0",
@@ -66,7 +64,6 @@
     "p-defer": "^3.0.0"
   },
   "devDependencies": {
-    "@google-cloud/typeless-sample-bot": "^3.0.0",
     "@grpc/proto-loader": "^0.7.13",
     "@opentelemetry/core": "^1.17.0",
     "@opentelemetry/sdk-trace-base": "^1.17.0",
