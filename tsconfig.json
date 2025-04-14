@@ -16,6 +16,7 @@
     "test/*.ts",
     "test/**/*.ts",
     "system-test/*.ts",
-    "protos/**/*.json"
+    "protos/**/*.json",
+    "samples/typescript/*.ts"
   ]
 }

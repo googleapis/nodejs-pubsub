@@ -30,7 +30,7 @@ import {protobuf, IamProtos} from 'google-gax';
 // Dynamically loaded proto JSON is needed to get the type information
 // to fill in default values for request objects
 const root = protobuf.Root.fromJSON(
-  require('../protos/protos.json')
+  require('../protos/protos.json'),
 ).resolveAll();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,7 +47,7 @@ function generateSampleMessage<T extends object>(instance: T) {
     instance.constructor as typeof protobuf.Message
   ).toObject(instance as protobuf.Message<T>, {defaults: true});
   return (instance.constructor as typeof protobuf.Message).fromObject(
-    filledObject
+    filledObject,
   ) as T;
 }
 
@@ -59,7 +59,7 @@ function stubSimpleCall<ResponseType>(response?: ResponseType, error?: Error) {
 
 function stubSimpleCallWithCallback<ResponseType>(
   response?: ResponseType,
-  error?: Error
+  error?: Error,
 ) {
   return error
     ? sinon.stub().callsArgWith(2, error)
@@ -68,7 +68,7 @@ function stubSimpleCallWithCallback<ResponseType>(
 
 function stubPageStreamingCall<ResponseType>(
   responses?: ResponseType[],
-  error?: Error
+  error?: Error,
 ) {
   const pagingStub = sinon.stub();
   if (responses) {
@@ -106,7 +106,7 @@ function stubPageStreamingCall<ResponseType>(
 
 function stubAsyncIterationCall<ResponseType>(
   responses?: ResponseType[],
-  error?: Error
+  error?: Error,
 ) {
   let counter = 0;
   const asyncIterable = {
@@ -311,7 +311,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Topic(),
       );
       const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
         'name',
@@ -319,7 +319,7 @@ describe('v1.PublisherClient', () => {
       request.name = defaultValue1;
       const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Topic(),
       );
       client.innerApiCalls.createTopic = stubSimpleCall(expectedResponse);
       const [response] = await client.createTopic(request);
@@ -341,7 +341,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Topic(),
       );
       const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
         'name',
@@ -349,7 +349,7 @@ describe('v1.PublisherClient', () => {
       request.name = defaultValue1;
       const expectedHeaderRequestParams = `name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Topic(),
       );
       client.innerApiCalls.createTopic =
         stubSimpleCallWithCallback(expectedResponse);
@@ -358,14 +358,14 @@ describe('v1.PublisherClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ITopic | null
+            result?: protos.google.pubsub.v1.ITopic | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -387,7 +387,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Topic(),
       );
       const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
         'name',
@@ -397,7 +397,7 @@ describe('v1.PublisherClient', () => {
       const expectedError = new Error('expected');
       client.innerApiCalls.createTopic = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.createTopic(request), expectedError);
       const actualRequest = (
@@ -417,7 +417,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Topic(),
       );
       const defaultValue1 = getTypeDefaultValue('.google.pubsub.v1.Topic', [
         'name',
@@ -437,17 +437,17 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.UpdateTopicRequest()
+        new protos.google.pubsub.v1.UpdateTopicRequest(),
       );
       request.topic ??= {};
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.UpdateTopicRequest',
-        ['topic', 'name']
+        ['topic', 'name'],
       );
       request.topic.name = defaultValue1;
       const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Topic(),
       );
       client.innerApiCalls.updateTopic = stubSimpleCall(expectedResponse);
       const [response] = await client.updateTopic(request);
@@ -469,17 +469,17 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.UpdateTopicRequest()
+        new protos.google.pubsub.v1.UpdateTopicRequest(),
       );
       request.topic ??= {};
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.UpdateTopicRequest',
-        ['topic', 'name']
+        ['topic', 'name'],
       );
       request.topic.name = defaultValue1;
       const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Topic(),
       );
       client.innerApiCalls.updateTopic =
         stubSimpleCallWithCallback(expectedResponse);
@@ -488,14 +488,14 @@ describe('v1.PublisherClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ITopic | null
+            result?: protos.google.pubsub.v1.ITopic | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -517,19 +517,19 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.UpdateTopicRequest()
+        new protos.google.pubsub.v1.UpdateTopicRequest(),
       );
       request.topic ??= {};
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.UpdateTopicRequest',
-        ['topic', 'name']
+        ['topic', 'name'],
       );
       request.topic.name = defaultValue1;
       const expectedHeaderRequestParams = `topic.name=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.updateTopic = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.updateTopic(request), expectedError);
       const actualRequest = (
@@ -549,12 +549,12 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.UpdateTopicRequest()
+        new protos.google.pubsub.v1.UpdateTopicRequest(),
       );
       request.topic ??= {};
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.UpdateTopicRequest',
-        ['topic', 'name']
+        ['topic', 'name'],
       );
       request.topic.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
@@ -571,22 +571,22 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.PublishRequest()
+        new protos.google.pubsub.v1.PublishRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.PublishRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.PublishResponse()
+        new protos.google.pubsub.v1.PublishResponse(),
       );
       client.innerApiCalls.publish = stubSimpleCall(expectedResponse);
       const [response] = await client.publish(request);
       assert.deepStrictEqual(response, expectedResponse);
       const actualRequest = (client.innerApiCalls.publish as SinonStub).getCall(
-        0
+        0,
       ).args[0];
       assert.deepStrictEqual(actualRequest, request);
       const actualHeaderRequestParams = (
@@ -602,16 +602,16 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.PublishRequest()
+        new protos.google.pubsub.v1.PublishRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.PublishRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.PublishResponse()
+        new protos.google.pubsub.v1.PublishResponse(),
       );
       client.innerApiCalls.publish =
         stubSimpleCallWithCallback(expectedResponse);
@@ -620,20 +620,20 @@ describe('v1.PublisherClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.IPublishResponse | null
+            result?: protos.google.pubsub.v1.IPublishResponse | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
       const actualRequest = (client.innerApiCalls.publish as SinonStub).getCall(
-        0
+        0,
       ).args[0];
       assert.deepStrictEqual(actualRequest, request);
       const actualHeaderRequestParams = (
@@ -649,11 +649,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.PublishRequest()
+        new protos.google.pubsub.v1.PublishRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.PublishRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -661,7 +661,7 @@ describe('v1.PublisherClient', () => {
       client.innerApiCalls.publish = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.publish(request), expectedError);
       const actualRequest = (client.innerApiCalls.publish as SinonStub).getCall(
-        0
+        0,
       ).args[0];
       assert.deepStrictEqual(actualRequest, request);
       const actualHeaderRequestParams = (
@@ -677,11 +677,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.PublishRequest()
+        new protos.google.pubsub.v1.PublishRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.PublishRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
@@ -698,16 +698,16 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.GetTopicRequest()
+        new protos.google.pubsub.v1.GetTopicRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.GetTopicRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Topic(),
       );
       client.innerApiCalls.getTopic = stubSimpleCall(expectedResponse);
       const [response] = await client.getTopic(request);
@@ -729,16 +729,16 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.GetTopicRequest()
+        new protos.google.pubsub.v1.GetTopicRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.GetTopicRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Topic()
+        new protos.google.pubsub.v1.Topic(),
       );
       client.innerApiCalls.getTopic =
         stubSimpleCallWithCallback(expectedResponse);
@@ -747,14 +747,14 @@ describe('v1.PublisherClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ITopic | null
+            result?: protos.google.pubsub.v1.ITopic | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -776,11 +776,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.GetTopicRequest()
+        new protos.google.pubsub.v1.GetTopicRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.GetTopicRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -804,11 +804,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.GetTopicRequest()
+        new protos.google.pubsub.v1.GetTopicRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.GetTopicRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
@@ -825,16 +825,16 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteTopicRequest()
+        new protos.google.pubsub.v1.DeleteTopicRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteTopicRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.protobuf.Empty()
+        new protos.google.protobuf.Empty(),
       );
       client.innerApiCalls.deleteTopic = stubSimpleCall(expectedResponse);
       const [response] = await client.deleteTopic(request);
@@ -856,16 +856,16 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteTopicRequest()
+        new protos.google.pubsub.v1.DeleteTopicRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteTopicRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.protobuf.Empty()
+        new protos.google.protobuf.Empty(),
       );
       client.innerApiCalls.deleteTopic =
         stubSimpleCallWithCallback(expectedResponse);
@@ -874,14 +874,14 @@ describe('v1.PublisherClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.protobuf.IEmpty | null
+            result?: protos.google.protobuf.IEmpty | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -903,18 +903,18 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteTopicRequest()
+        new protos.google.pubsub.v1.DeleteTopicRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteTopicRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.deleteTopic = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.deleteTopic(request), expectedError);
       const actualRequest = (
@@ -934,11 +934,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteTopicRequest()
+        new protos.google.pubsub.v1.DeleteTopicRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteTopicRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
@@ -955,16 +955,16 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+        new protos.google.pubsub.v1.DetachSubscriptionRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DetachSubscriptionRequest',
-        ['subscription']
+        ['subscription'],
       );
       request.subscription = defaultValue1;
       const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.DetachSubscriptionResponse()
+        new protos.google.pubsub.v1.DetachSubscriptionResponse(),
       );
       client.innerApiCalls.detachSubscription =
         stubSimpleCall(expectedResponse);
@@ -987,16 +987,16 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+        new protos.google.pubsub.v1.DetachSubscriptionRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DetachSubscriptionRequest',
-        ['subscription']
+        ['subscription'],
       );
       request.subscription = defaultValue1;
       const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.DetachSubscriptionResponse()
+        new protos.google.pubsub.v1.DetachSubscriptionResponse(),
       );
       client.innerApiCalls.detachSubscription =
         stubSimpleCallWithCallback(expectedResponse);
@@ -1005,14 +1005,14 @@ describe('v1.PublisherClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.IDetachSubscriptionResponse | null
+            result?: protos.google.pubsub.v1.IDetachSubscriptionResponse | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -1034,18 +1034,18 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+        new protos.google.pubsub.v1.DetachSubscriptionRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DetachSubscriptionRequest',
-        ['subscription']
+        ['subscription'],
       );
       request.subscription = defaultValue1;
       const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.detachSubscription = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.detachSubscription(request), expectedError);
       const actualRequest = (
@@ -1065,11 +1065,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DetachSubscriptionRequest()
+        new protos.google.pubsub.v1.DetachSubscriptionRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DetachSubscriptionRequest',
-        ['subscription']
+        ['subscription'],
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
@@ -1086,11 +1086,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
+        new protos.google.pubsub.v1.ListTopicsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicsRequest',
-        ['project']
+        ['project'],
       );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
@@ -1119,11 +1119,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
+        new protos.google.pubsub.v1.ListTopicsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicsRequest',
-        ['project']
+        ['project'],
       );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
@@ -1139,14 +1139,14 @@ describe('v1.PublisherClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ITopic[] | null
+            result?: protos.google.pubsub.v1.ITopic[] | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -1168,18 +1168,18 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
+        new protos.google.pubsub.v1.ListTopicsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicsRequest',
-        ['project']
+        ['project'],
       );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listTopics = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.listTopics(request), expectedError);
       const actualRequest = (
@@ -1199,11 +1199,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
+        new protos.google.pubsub.v1.ListTopicsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicsRequest',
-        ['project']
+        ['project'],
       );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
@@ -1232,14 +1232,14 @@ describe('v1.PublisherClient', () => {
       assert(
         (client.descriptors.page.listTopics.createStream as SinonStub)
           .getCall(0)
-          .calledWith(client.innerApiCalls.listTopics, request)
+          .calledWith(client.innerApiCalls.listTopics, request),
       );
       assert(
         (client.descriptors.page.listTopics.createStream as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1250,18 +1250,18 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
+        new protos.google.pubsub.v1.ListTopicsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicsRequest',
-        ['project']
+        ['project'],
       );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopics.createStream = stubPageStreamingCall(
         undefined,
-        expectedError
+        expectedError,
       );
       const stream = client.listTopicsStream(request);
       const promise = new Promise((resolve, reject) => {
@@ -1280,14 +1280,14 @@ describe('v1.PublisherClient', () => {
       assert(
         (client.descriptors.page.listTopics.createStream as SinonStub)
           .getCall(0)
-          .calledWith(client.innerApiCalls.listTopics, request)
+          .calledWith(client.innerApiCalls.listTopics, request),
       );
       assert(
         (client.descriptors.page.listTopics.createStream as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1298,11 +1298,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
+        new protos.google.pubsub.v1.ListTopicsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicsRequest',
-        ['project']
+        ['project'],
       );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
@@ -1321,16 +1321,16 @@ describe('v1.PublisherClient', () => {
       assert.deepStrictEqual(responses, expectedResponse);
       assert.deepStrictEqual(
         (client.descriptors.page.listTopics.asyncIterate as SinonStub).getCall(
-          0
+          0,
         ).args[1],
-        request
+        request,
       );
       assert(
         (client.descriptors.page.listTopics.asyncIterate as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1341,18 +1341,18 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicsRequest()
+        new protos.google.pubsub.v1.ListTopicsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicsRequest',
-        ['project']
+        ['project'],
       );
       request.project = defaultValue1;
       const expectedHeaderRequestParams = `project=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listTopics.asyncIterate = stubAsyncIterationCall(
         undefined,
-        expectedError
+        expectedError,
       );
       const iterable = client.listTopicsAsync(request);
       await assert.rejects(async () => {
@@ -1363,16 +1363,16 @@ describe('v1.PublisherClient', () => {
       });
       assert.deepStrictEqual(
         (client.descriptors.page.listTopics.asyncIterate as SinonStub).getCall(
-          0
+          0,
         ).args[1],
-        request
+        request,
       );
       assert(
         (client.descriptors.page.listTopics.asyncIterate as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
   });
@@ -1385,11 +1385,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSubscriptionsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1415,11 +1415,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSubscriptionsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1435,7 +1435,7 @@ describe('v1.PublisherClient', () => {
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -1457,22 +1457,22 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSubscriptionsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listTopicSubscriptions = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(
         client.listTopicSubscriptions(request),
-        expectedError
+        expectedError,
       );
       const actualRequest = (
         client.innerApiCalls.listTopicSubscriptions as SinonStub
@@ -1491,11 +1491,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSubscriptionsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1523,7 +1523,7 @@ describe('v1.PublisherClient', () => {
             .createStream as SinonStub
         )
           .getCall(0)
-          .calledWith(client.innerApiCalls.listTopicSubscriptions, request)
+          .calledWith(client.innerApiCalls.listTopicSubscriptions, request),
       );
       assert(
         (
@@ -1532,8 +1532,8 @@ describe('v1.PublisherClient', () => {
         )
           .getCall(0)
           .args[2].otherArgs.headers['x-goog-request-params'].includes(
-            expectedHeaderRequestParams
-          )
+            expectedHeaderRequestParams,
+          ),
       );
     });
 
@@ -1544,11 +1544,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSubscriptionsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1575,7 +1575,7 @@ describe('v1.PublisherClient', () => {
             .createStream as SinonStub
         )
           .getCall(0)
-          .calledWith(client.innerApiCalls.listTopicSubscriptions, request)
+          .calledWith(client.innerApiCalls.listTopicSubscriptions, request),
       );
       assert(
         (
@@ -1584,8 +1584,8 @@ describe('v1.PublisherClient', () => {
         )
           .getCall(0)
           .args[2].otherArgs.headers['x-goog-request-params'].includes(
-            expectedHeaderRequestParams
-          )
+            expectedHeaderRequestParams,
+          ),
       );
     });
 
@@ -1596,11 +1596,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSubscriptionsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1618,7 +1618,7 @@ describe('v1.PublisherClient', () => {
           client.descriptors.page.listTopicSubscriptions
             .asyncIterate as SinonStub
         ).getCall(0).args[1],
-        request
+        request,
       );
       assert(
         (
@@ -1627,8 +1627,8 @@ describe('v1.PublisherClient', () => {
         )
           .getCall(0)
           .args[2].otherArgs.headers['x-goog-request-params'].includes(
-            expectedHeaderRequestParams
-          )
+            expectedHeaderRequestParams,
+          ),
       );
     });
 
@@ -1639,11 +1639,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest()
+        new protos.google.pubsub.v1.ListTopicSubscriptionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSubscriptionsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1662,7 +1662,7 @@ describe('v1.PublisherClient', () => {
           client.descriptors.page.listTopicSubscriptions
             .asyncIterate as SinonStub
         ).getCall(0).args[1],
-        request
+        request,
       );
       assert(
         (
@@ -1671,8 +1671,8 @@ describe('v1.PublisherClient', () => {
         )
           .getCall(0)
           .args[2].otherArgs.headers['x-goog-request-params'].includes(
-            expectedHeaderRequestParams
-          )
+            expectedHeaderRequestParams,
+          ),
       );
     });
   });
@@ -1685,11 +1685,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
+        new protos.google.pubsub.v1.ListTopicSnapshotsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSnapshotsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1715,11 +1715,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
+        new protos.google.pubsub.v1.ListTopicSnapshotsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSnapshotsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1735,7 +1735,7 @@ describe('v1.PublisherClient', () => {
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -1757,18 +1757,18 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
+        new protos.google.pubsub.v1.ListTopicSnapshotsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSnapshotsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listTopicSnapshots = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.listTopicSnapshots(request), expectedError);
       const actualRequest = (
@@ -1788,11 +1788,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
+        new protos.google.pubsub.v1.ListTopicSnapshotsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSnapshotsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1817,14 +1817,14 @@ describe('v1.PublisherClient', () => {
       assert(
         (client.descriptors.page.listTopicSnapshots.createStream as SinonStub)
           .getCall(0)
-          .calledWith(client.innerApiCalls.listTopicSnapshots, request)
+          .calledWith(client.innerApiCalls.listTopicSnapshots, request),
       );
       assert(
         (client.descriptors.page.listTopicSnapshots.createStream as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1835,11 +1835,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
+        new protos.google.pubsub.v1.ListTopicSnapshotsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSnapshotsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1863,14 +1863,14 @@ describe('v1.PublisherClient', () => {
       assert(
         (client.descriptors.page.listTopicSnapshots.createStream as SinonStub)
           .getCall(0)
-          .calledWith(client.innerApiCalls.listTopicSnapshots, request)
+          .calledWith(client.innerApiCalls.listTopicSnapshots, request),
       );
       assert(
         (client.descriptors.page.listTopicSnapshots.createStream as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1881,11 +1881,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
+        new protos.google.pubsub.v1.ListTopicSnapshotsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSnapshotsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1902,14 +1902,14 @@ describe('v1.PublisherClient', () => {
         (
           client.descriptors.page.listTopicSnapshots.asyncIterate as SinonStub
         ).getCall(0).args[1],
-        request
+        request,
       );
       assert(
         (client.descriptors.page.listTopicSnapshots.asyncIterate as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1920,11 +1920,11 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListTopicSnapshotsRequest()
+        new protos.google.pubsub.v1.ListTopicSnapshotsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListTopicSnapshotsRequest',
-        ['topic']
+        ['topic'],
       );
       request.topic = defaultValue1;
       const expectedHeaderRequestParams = `topic=${defaultValue1}`;
@@ -1942,14 +1942,14 @@ describe('v1.PublisherClient', () => {
         (
           client.descriptors.page.listTopicSnapshots.asyncIterate as SinonStub
         ).getCall(0).args[1],
-        request
+        request,
       );
       assert(
         (client.descriptors.page.listTopicSnapshots.asyncIterate as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
   });
@@ -1961,7 +1961,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.GetIamPolicyRequest()
+        new IamProtos.google.iam.v1.GetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -1973,7 +1973,7 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.Policy()
+        new IamProtos.google.iam.v1.Policy(),
       );
       client.iamClient.getIamPolicy = stubSimpleCall(expectedResponse);
       const response = await client.getIamPolicy(request, expectedOptions);
@@ -1981,7 +1981,7 @@ describe('v1.PublisherClient', () => {
       assert(
         (client.iamClient.getIamPolicy as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
     it('invokes getIamPolicy without error using callback', async () => {
@@ -1991,7 +1991,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.GetIamPolicyRequest()
+        new IamProtos.google.iam.v1.GetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2003,7 +2003,7 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.Policy()
+        new IamProtos.google.iam.v1.Policy(),
       );
       client.iamClient.getIamPolicy = sinon
         .stub()
@@ -2014,14 +2014,14 @@ describe('v1.PublisherClient', () => {
           expectedOptions,
           (
             err?: Error | null,
-            result?: IamProtos.google.iam.v1.Policy | null
+            result?: IamProtos.google.iam.v1.Policy | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -2035,7 +2035,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.GetIamPolicyRequest()
+        new IamProtos.google.iam.v1.GetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2050,12 +2050,12 @@ describe('v1.PublisherClient', () => {
       client.iamClient.getIamPolicy = stubSimpleCall(undefined, expectedError);
       await assert.rejects(
         client.getIamPolicy(request, expectedOptions),
-        expectedError
+        expectedError,
       );
       assert(
         (client.iamClient.getIamPolicy as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
   });
@@ -2067,7 +2067,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.SetIamPolicyRequest()
+        new IamProtos.google.iam.v1.SetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2079,7 +2079,7 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.Policy()
+        new IamProtos.google.iam.v1.Policy(),
       );
       client.iamClient.setIamPolicy = stubSimpleCall(expectedResponse);
       const response = await client.setIamPolicy(request, expectedOptions);
@@ -2087,7 +2087,7 @@ describe('v1.PublisherClient', () => {
       assert(
         (client.iamClient.setIamPolicy as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
     it('invokes setIamPolicy without error using callback', async () => {
@@ -2097,7 +2097,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.SetIamPolicyRequest()
+        new IamProtos.google.iam.v1.SetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2109,7 +2109,7 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.Policy()
+        new IamProtos.google.iam.v1.Policy(),
       );
       client.iamClient.setIamPolicy = sinon
         .stub()
@@ -2120,14 +2120,14 @@ describe('v1.PublisherClient', () => {
           expectedOptions,
           (
             err?: Error | null,
-            result?: IamProtos.google.iam.v1.Policy | null
+            result?: IamProtos.google.iam.v1.Policy | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -2141,7 +2141,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.SetIamPolicyRequest()
+        new IamProtos.google.iam.v1.SetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2156,12 +2156,12 @@ describe('v1.PublisherClient', () => {
       client.iamClient.setIamPolicy = stubSimpleCall(undefined, expectedError);
       await assert.rejects(
         client.setIamPolicy(request, expectedOptions),
-        expectedError
+        expectedError,
       );
       assert(
         (client.iamClient.setIamPolicy as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
   });
@@ -2173,7 +2173,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.TestIamPermissionsRequest()
+        new IamProtos.google.iam.v1.TestIamPermissionsRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2185,18 +2185,18 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.TestIamPermissionsResponse()
+        new IamProtos.google.iam.v1.TestIamPermissionsResponse(),
       );
       client.iamClient.testIamPermissions = stubSimpleCall(expectedResponse);
       const response = await client.testIamPermissions(
         request,
-        expectedOptions
+        expectedOptions,
       );
       assert.deepStrictEqual(response, [expectedResponse]);
       assert(
         (client.iamClient.testIamPermissions as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
     it('invokes testIamPermissions without error using callback', async () => {
@@ -2206,7 +2206,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.TestIamPermissionsRequest()
+        new IamProtos.google.iam.v1.TestIamPermissionsRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2218,7 +2218,7 @@ describe('v1.PublisherClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.TestIamPermissionsResponse()
+        new IamProtos.google.iam.v1.TestIamPermissionsResponse(),
       );
       client.iamClient.testIamPermissions = sinon
         .stub()
@@ -2229,14 +2229,14 @@ describe('v1.PublisherClient', () => {
           expectedOptions,
           (
             err?: Error | null,
-            result?: IamProtos.google.iam.v1.TestIamPermissionsResponse | null
+            result?: IamProtos.google.iam.v1.TestIamPermissionsResponse | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -2250,7 +2250,7 @@ describe('v1.PublisherClient', () => {
       });
       client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.TestIamPermissionsRequest()
+        new IamProtos.google.iam.v1.TestIamPermissionsRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2264,16 +2264,16 @@ describe('v1.PublisherClient', () => {
       const expectedError = new Error('expected');
       client.iamClient.testIamPermissions = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(
         client.testIamPermissions(request, expectedOptions),
-        expectedError
+        expectedError,
       );
       assert(
         (client.iamClient.testIamPermissions as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
   });
@@ -2302,7 +2302,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.projectPathTemplate.render as SinonStub)
             .getCall(-1)
-            .calledWith(expectedParameters)
+            .calledWith(expectedParameters),
         );
       });
 
@@ -2312,7 +2312,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.projectPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
     });
@@ -2341,7 +2341,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.projectTopicPathTemplate.render as SinonStub)
             .getCall(-1)
-            .calledWith(expectedParameters)
+            .calledWith(expectedParameters),
         );
       });
 
@@ -2351,7 +2351,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.projectTopicPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
 
@@ -2361,7 +2361,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.projectTopicPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
     });
@@ -2390,7 +2390,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.schemaPathTemplate.render as SinonStub)
             .getCall(-1)
-            .calledWith(expectedParameters)
+            .calledWith(expectedParameters),
         );
       });
 
@@ -2400,7 +2400,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.schemaPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
 
@@ -2410,7 +2410,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.schemaPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
     });
@@ -2439,7 +2439,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.snapshotPathTemplate.render as SinonStub)
             .getCall(-1)
-            .calledWith(expectedParameters)
+            .calledWith(expectedParameters),
         );
       });
 
@@ -2449,7 +2449,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.snapshotPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
 
@@ -2459,7 +2459,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.snapshotPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
     });
@@ -2485,13 +2485,13 @@ describe('v1.PublisherClient', () => {
       it('subscriptionPath', () => {
         const result = client.subscriptionPath(
           'projectValue',
-          'subscriptionValue'
+          'subscriptionValue',
         );
         assert.strictEqual(result, fakePath);
         assert(
           (client.pathTemplates.subscriptionPathTemplate.render as SinonStub)
             .getCall(-1)
-            .calledWith(expectedParameters)
+            .calledWith(expectedParameters),
         );
       });
 
@@ -2501,7 +2501,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.subscriptionPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
 
@@ -2511,7 +2511,7 @@ describe('v1.PublisherClient', () => {
         assert(
           (client.pathTemplates.subscriptionPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
     });

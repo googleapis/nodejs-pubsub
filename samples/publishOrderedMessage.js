@@ -83,7 +83,7 @@ async function publishOrderedMessage(topicNameOrId, data, orderingKey) {
 async function main(
   topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
   data = JSON.stringify({foo: 'bar'}),
-  orderingKey = 'key1'
+  orderingKey = 'key1',
 ) {
   await publishOrderedMessage(topicNameOrId, data, orderingKey).catch(err => {
     console.error(err.message);

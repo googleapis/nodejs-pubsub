@@ -150,7 +150,7 @@ class FakeMessageStream extends PassThrough {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _error: Error | null,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _callback: (error: Error | null) => void
+    _callback: (error: Error | null) => void,
   ): void {}
   async start() {}
 }
@@ -957,12 +957,12 @@ describe('Subscriber', () => {
       assert.strictEqual(
         firstSpan.name,
         `${subId} subscribe`,
-        'name of span should match'
+        'name of span should match',
       );
       assert.strictEqual(
         firstSpan.kind,
         SpanKind.CONSUMER,
-        'span kind should be CONSUMER'
+        'span kind should be CONSUMER',
       );
     });
 
@@ -999,7 +999,7 @@ describe('Subscriber', () => {
       it('should localize attributes', () => {
         assert.strictEqual(
           message.attributes,
-          RECEIVED_MESSAGE.message.attributes
+          RECEIVED_MESSAGE.message.attributes,
         );
       });
 
@@ -1014,7 +1014,7 @@ describe('Subscriber', () => {
       it('should localize orderingKey', () => {
         assert.strictEqual(
           message.orderingKey,
-          RECEIVED_MESSAGE.message.orderingKey
+          RECEIVED_MESSAGE.message.orderingKey,
         );
       });
 
@@ -1025,7 +1025,7 @@ describe('Subscriber', () => {
         assert(timestamp instanceof FakePreciseDate);
         assert.strictEqual(
           timestamp.value,
-          RECEIVED_MESSAGE.message.publishTime
+          RECEIVED_MESSAGE.message.publishTime,
         );
       });
 

@@ -38,7 +38,7 @@ const fakeUtil = Object.assign({}, util, {
     class_: Function,
     classProtos: object,
     methods: string[],
-    options: pfy.PromisifyAllOptions
+    options: pfy.PromisifyAllOptions,
   ): void {
     if (class_.name === 'Publisher') {
       promisified = true;
@@ -70,7 +70,7 @@ class FakeQueue extends EventEmitter {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     messages: p.PubsubMessage[],
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    callbacks: p.PublishCallback[]
+    callbacks: p.PublishCallback[],
   ) {}
 }
 
@@ -92,7 +92,7 @@ class FakeOrderedQueue extends FakeQueue {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     messages: p.PubsubMessage[],
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    callbacks: p.PublishCallback[]
+    callbacks: p.PublishCallback[],
   ) {}
 }
 
@@ -210,21 +210,21 @@ describe('Publisher', () => {
       const createdSpan = spans.concat().pop()!;
       assert.strictEqual(
         createdSpan.status.code,
-        opentelemetry.SpanStatusCode.UNSET
+        opentelemetry.SpanStatusCode.UNSET,
       );
       assert.strictEqual(
         createdSpan.attributes['messaging.system'],
-        'gcp_pubsub'
+        'gcp_pubsub',
       );
       assert.strictEqual(
         createdSpan.attributes['messaging.destination.name'],
-        topicId
+        topicId,
       );
       assert.strictEqual(createdSpan.name, `${topicId} create`);
       assert.strictEqual(
         createdSpan.kind,
         SpanKind.PRODUCER,
-        'span kind should be PRODUCER'
+        'span kind should be PRODUCER',
       );
       assert.ok(spans);
     });
@@ -237,14 +237,14 @@ describe('Publisher', () => {
       const badData = {} as Buffer;
       assert.throws(
         () => publisher.publishMessage({data: badData}, spy),
-        /Data must be in the form of a Buffer or Uint8Array\./
+        /Data must be in the form of a Buffer or Uint8Array\./,
       );
     });
 
     it('should throw an error if data and attributes are both empty', () => {
       assert.throws(
         () => publisher.publishMessage({}, spy),
-        /at least one attribute must be present/
+        /at least one attribute must be present/,
       );
     });
 
@@ -258,7 +258,7 @@ describe('Publisher', () => {
 
       assert.throws(
         () => publisher.publishMessage({data, attributes}, spy),
-        /All attributes must be in the form of a string.\n\nInvalid value of type "object" provided for "foo"\./
+        /All attributes must be in the form of a string.\n\nInvalid value of type "object" provided for "foo"\./,
       );
     });
 
@@ -286,7 +286,7 @@ describe('Publisher', () => {
         queue = new FakeOrderedQueue(publisher, orderingKey);
         publisher.orderedQueues.set(
           orderingKey,
-          queue as unknown as q.OrderedQueue
+          queue as unknown as q.OrderedQueue,
         );
       });
 
@@ -295,7 +295,7 @@ describe('Publisher', () => {
         publisher.publishMessage(fakeMessage, spy);
 
         queue = publisher.orderedQueues.get(
-          orderingKey
+          orderingKey,
         ) as unknown as FakeOrderedQueue;
 
         assert(queue instanceof FakeOrderedQueue);
@@ -335,7 +335,7 @@ describe('Publisher', () => {
         publisher.publishMessage(fakeMessage, spy);
 
         queue = publisher.orderedQueues.get(
-          orderingKey
+          orderingKey,
         ) as unknown as FakeOrderedQueue;
         queue.emit('drain');
 
@@ -356,7 +356,7 @@ describe('Publisher', () => {
           .stub(FakeOrderedQueue.prototype, '_publish')
           .callsFake(async () => {
             const queue = publisher.orderedQueues.get(
-              orderingKey
+              orderingKey,
             ) as unknown as FakeOrderedQueue;
             // Simulate the drain taking longer than the publishes. This can
             // happen on some ordered queue scenarios, especially if we have more
@@ -402,7 +402,7 @@ describe('Publisher', () => {
 
       publisher.orderedQueues.set(
         orderingKey,
-        queue as unknown as q.OrderedQueue
+        queue as unknown as q.OrderedQueue,
       );
       publisher.resumePublishing(orderingKey);
 
@@ -484,8 +484,8 @@ describe('Publisher', () => {
       assert.deepStrictEqual(publisher.orderedQueues.size, 2);
       stubs.push(
         ...Array.from(publisher.orderedQueues.values()).map(q =>
-          sandbox.stub(q, 'updateOptions')
-        )
+          sandbox.stub(q, 'updateOptions'),
+        ),
       );
 
       const newOptions: p.PublishOptions = {
@@ -512,7 +512,7 @@ describe('Publisher', () => {
         assert.strictEqual(err, null);
         assert.strictEqual(
           !publisher.queue.batch || publisher.queue.batch.messages.length === 0,
-          true
+          true,
         );
         done();
       });

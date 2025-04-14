@@ -114,7 +114,7 @@ export class ChannelError extends Error implements grpc.ServiceError {
     super(
       `Failed to connect to channel. Reason: ${
         process.env.DEBUG_GRPC ? err.stack : err.message
-      }`
+      }`,
     );
     this.code = err.message.includes('deadline')
       ? grpc.status.DEADLINE_EXCEEDED
@@ -156,7 +156,7 @@ export class MessageStream extends PassThrough {
     this._options = options;
     this._retrier = new ExponentialRetry<{}>(
       options.retryMinBackoff!, // Filled by DEFAULT_OPTIONS
-      options.retryMaxBackoff!
+      options.retryMaxBackoff!,
     );
 
     this._streams = [];
@@ -178,7 +178,7 @@ export class MessageStream extends PassThrough {
 
     this._keepAliveHandle = setInterval(
       () => this._keepAlive(),
-      KEEP_ALIVE_INTERVAL
+      KEEP_ALIVE_INTERVAL,
     );
     this._keepAliveHandle.unref();
   }
@@ -391,8 +391,8 @@ export class MessageStream extends PassThrough {
         'debug',
         new DebugMessage(
           `Subscriber stream ${index} has ended with status ${status.code}; will be retried.`,
-          statusError
-        )
+          statusError,
+        ),
       );
       if (PullRetry.resetFailures(status)) {
         this._retrier.reset(this._streams[index]);
@@ -405,8 +405,8 @@ export class MessageStream extends PassThrough {
         'debug',
         new DebugMessage(
           `Subscriber stream ${index} has ended with status ${status.code}; will not be retried.`,
-          statusError
-        )
+          statusError,
+        ),
       );
 
       // No streams left, and nothing to retry.

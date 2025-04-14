@@ -43,7 +43,7 @@ describe('exponential retry class', () => {
     // class is storing the durations as numbers internally.
     const er = new ExponentialRetry<string>(
       Duration.from({seconds: 1}),
-      Duration.from({seconds: 2})
+      Duration.from({seconds: 2}),
     );
 
     const eri = introspect(er);
@@ -55,7 +55,7 @@ describe('exponential retry class', () => {
     const clock = sandbox.useFakeTimers();
     const er = new ExponentialRetry<TestItem>(
       Duration.from({millis: 100}),
-      Duration.from({millis: 1000})
+      Duration.from({millis: 1000}),
     );
     sandbox.stub(global.Math, 'random').returns(0.75);
 
@@ -75,7 +75,7 @@ describe('exponential retry class', () => {
     const clock = sandbox.useFakeTimers();
     const er = new ExponentialRetry<TestItem>(
       Duration.from({millis: 100}),
-      Duration.from({millis: 1000})
+      Duration.from({millis: 1000}),
     );
     sandbox.stub(global.Math, 'random').returns(0.75);
 
@@ -105,7 +105,7 @@ describe('exponential retry class', () => {
     const clock = sandbox.useFakeTimers();
     const er = new ExponentialRetry<TestItem>(
       Duration.from({millis: 100}),
-      Duration.from({millis: 1000})
+      Duration.from({millis: 1000}),
     );
     sandbox.stub(global.Math, 'random').returns(0.75);
 
@@ -140,7 +140,7 @@ describe('exponential retry class', () => {
     const item = makeItem();
     const er = new ExponentialRetry<TestItem>(
       Duration.from({millis: 100}),
-      Duration.from({millis: 150})
+      Duration.from({millis: 150}),
     );
     sandbox.stub(global.Math, 'random').returns(0.75);
 
@@ -175,7 +175,7 @@ describe('exponential retry class', () => {
 
     const er = new ExponentialRetry<TestItem>(
       Duration.from({millis: 100}),
-      Duration.from({millis: 1000})
+      Duration.from({millis: 1000}),
     );
 
     // Just disable the fuzz for this test.
@@ -204,7 +204,7 @@ describe('exponential retry class', () => {
     assert.deepStrictEqual(callbackCounts, [2, 0]);
     assert.deepStrictEqual(
       callbackTimes.map(d => d.totalOf('millisecond')),
-      [300, 0]
+      [300, 0],
     );
 
     // Load in the second item and get it retrying.
@@ -217,7 +217,7 @@ describe('exponential retry class', () => {
     assert.deepStrictEqual(callbackCounts, [2, 1]);
     assert.deepStrictEqual(
       callbackTimes.map(d => d.totalOf('millisecond')),
-      [300, 100]
+      [300, 100],
     );
 
     // Make sure that we did in fact set another timer for the next event.

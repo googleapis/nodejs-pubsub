@@ -60,7 +60,7 @@ describe('Flow control publisher', () => {
       parentSpan: tracing.PubsubSpans.createPublisherSpan(
         {},
         'projects/foo/topics/topic',
-        'tests'
+        'tests',
       ),
     };
     fcp.publish(message as unknown as PubsubMessage);

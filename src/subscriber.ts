@@ -152,7 +152,7 @@ export class SubscriberSpans {
   schedulerStart() {
     if (!this.scheduler) {
       this.scheduler = tracing.PubsubSpans.createReceiveSchedulerSpan(
-        this.parent
+        this.parent,
       );
     }
   }
@@ -171,7 +171,7 @@ export class SubscriberSpans {
     if (!this.processing) {
       this.processing = tracing.PubsubSpans.createReceiveProcessSpan(
         this.parent,
-        subName
+        subName,
       );
     }
   }
@@ -283,7 +283,7 @@ export class Message implements tracing.MessageWithAttributes {
    */
   constructor(
     sub: Subscriber,
-    {ackId, message, deliveryAttempt}: google.pubsub.v1.IReceivedMessage
+    {ackId, message, deliveryAttempt}: google.pubsub.v1.IReceivedMessage,
   ) {
     /**
      * This ID is used to acknowledge the message.
@@ -718,7 +718,7 @@ export class Subscriber extends EventEmitter {
         ? 60
         : 10;
       this._stream.setStreamAckDeadline(
-        Duration.from({seconds: subscriptionAckDeadlineSeconds})
+        Duration.from({seconds: subscriptionAckDeadlineSeconds}),
       );
     }
   }
@@ -881,7 +881,7 @@ export class Subscriber extends EventEmitter {
    */
   async modAckWithResponse(
     message: Message,
-    deadline: number
+    deadline: number,
   ): Promise<AckResponse> {
     const startTime = Date.now();
 
@@ -999,7 +999,7 @@ export class Subscriber extends EventEmitter {
 
       options.streamingOptions.maxStreams = Math.min(
         maxStreams,
-        this.maxMessages
+        this.maxMessages,
       );
     }
 
@@ -1058,7 +1058,7 @@ export class Subscriber extends EventEmitter {
           // lease on the message before actually leasing it.
           message.subSpans.modAckStart(
             Duration.from({seconds: this.ackDeadline}),
-            true
+            true,
           );
           message
             .modAckWithResponse(this.ackDeadline)
@@ -1076,7 +1076,7 @@ export class Subscriber extends EventEmitter {
         } else {
           message.subSpans.modAckStart(
             Duration.from({seconds: this.ackDeadline}),
-            true
+            true,
           );
           message.modAck(this.ackDeadline);
           message.subSpans.modAckEnd();

@@ -59,7 +59,7 @@ export class MessageBatch {
 
   constructor(
     public options: BatchPublishOptions,
-    public topicName: string
+    public topicName: string,
   ) {
     this.messages = [];
     this.callbacks = [];

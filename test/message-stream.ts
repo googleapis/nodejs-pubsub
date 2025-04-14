@@ -180,7 +180,7 @@ describe('MessageStream', () => {
       };
       assert.deepStrictEqual(
         (messageStream as {} as FakePassThrough).options,
-        expectedOptions
+        expectedOptions,
       );
     });
 
@@ -195,7 +195,7 @@ describe('MessageStream', () => {
 
       assert.deepStrictEqual(
         (ms as {} as FakePassThrough).options,
-        expectedOptions
+        expectedOptions,
       );
     });
 
@@ -214,7 +214,7 @@ describe('MessageStream', () => {
         it('should default maxStreams', () => {
           assert.strictEqual(
             client.streams.length,
-            defaultOptions.subscription.maxStreams
+            defaultOptions.subscription.maxStreams,
           );
         });
 
@@ -250,12 +250,12 @@ describe('MessageStream', () => {
 
           assert.strictEqual(
             client.streams.length,
-            defaultOptions.subscription.maxStreams
+            defaultOptions.subscription.maxStreams,
           );
           client.streams.forEach(stream => {
             assert.strictEqual(
               stream._readableState.highWaterMark,
-              highWaterMark
+              highWaterMark,
             );
           });
         });

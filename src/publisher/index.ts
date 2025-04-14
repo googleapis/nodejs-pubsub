@@ -87,7 +87,7 @@ export class Publisher {
 
   constructor(topic: Topic, options?: PublishOptions) {
     this.flowControl = new FlowControl(
-      options?.flowControlOptions || flowControlDefaults
+      options?.flowControlOptions || flowControlDefaults,
     );
     this.setOptions(options);
     this.topic = topic;
@@ -124,8 +124,8 @@ export class Publisher {
               q.removeListener('drain', flushResolver);
             };
             q.on('drain', flushResolver);
-          })
-      )
+          }),
+      ),
     );
 
     const allPublishes = Promise.all(toDrain.map(q => q.publishDrain()));
@@ -157,12 +157,12 @@ export class Publisher {
   publish(
     data: Buffer,
     attributes: Attributes,
-    callback: PublishCallback
+    callback: PublishCallback,
   ): void;
   publish(
     data: Buffer,
     attrsOrCb?: Attributes | PublishCallback,
-    callback?: PublishCallback
+    callback?: PublishCallback,
   ): Promise<string> | void {
     const attributes = typeof attrsOrCb === 'object' ? attrsOrCb : {};
     callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
@@ -184,7 +184,7 @@ export class Publisher {
   publishMessage(message: PubsubMessage, callback: PublishCallback): void;
   publishMessage(
     message: PubsubMessage,
-    callback?: PublishCallback
+    callback?: PublishCallback,
   ): Promise<string> | void {
     const {data, attributes = {}} = message;
 
@@ -193,14 +193,14 @@ export class Publisher {
     //   - `attributes` that are not empty
     if (data && !(data instanceof Uint8Array)) {
       throw new TypeError(
-        'Data must be in the form of a Buffer or Uint8Array.'
+        'Data must be in the form of a Buffer or Uint8Array.',
       );
     }
 
     const keys = Object.keys(attributes!);
     if (!data && keys.length === 0) {
       throw new TypeError(
-        'If data is undefined, at least one attribute must be present.'
+        'If data is undefined, at least one attribute must be present.',
       );
     }
 
@@ -273,7 +273,7 @@ export class Publisher {
       enableOpenTelemetryTracing: false,
       flowControlOptions: Object.assign(
         {},
-        flowControlDefaults
+        flowControlDefaults,
       ) as FlowControlOptions,
     };
 
@@ -303,7 +303,7 @@ export class Publisher {
         maxBytes: Math.min(batching!.maxBytes!, BATCH_LIMITS.maxBytes!),
         maxMessages: Math.min(
           batching!.maxMessages!,
-          BATCH_LIMITS.maxMessages!
+          BATCH_LIMITS.maxMessages!,
         ),
         maxMilliseconds: batching!.maxMilliseconds,
       },
@@ -348,7 +348,7 @@ export class Publisher {
     const span = tracing.PubsubSpans.createPublisherSpan(
       message,
       this.topic.name,
-      caller
+      caller,
     );
 
     // If the span's context is valid we should inject the propagation trace context.

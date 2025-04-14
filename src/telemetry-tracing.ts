@@ -103,7 +103,7 @@ export function setGloballyEnabled(enabled: boolean) {
  * @internal
  */
 export function isEnabled(
-  publishSettings?: PublishOptions
+  publishSettings?: PublishOptions,
 ): OpenTelemetryLevel {
   // If we're not enabled, skip everything.
   if (!globallyEnabled) {
@@ -167,7 +167,7 @@ export class PubsubMessageGet
 {
   get(
     carrier: MessageWithAttributes,
-    key: string
+    key: string,
   ): string | string[] | undefined {
     return carrier?.attributes?.[this.attributeName(key)];
   }
@@ -224,7 +224,7 @@ export interface SpanAttributes {
  * @internal
  */
 export function spanContextToContext(
-  parent?: SpanContext
+  parent?: SpanContext,
 ): Context | undefined {
   return parent ? trace.setSpanContext(context.active(), parent) : undefined;
 }
@@ -328,7 +328,7 @@ export class PubsubSpans {
   static createAttributes(
     params: AttributeParams,
     message?: PubsubMessage,
-    caller?: string
+    caller?: string,
   ): SpanAttributes {
     const destinationName = params.topicName ?? params.subName;
     const destinationId = params.topicId ?? params.subId;
@@ -383,7 +383,7 @@ export class PubsubSpans {
   static createPublisherSpan(
     message: PubsubMessage,
     topicName: string,
-    caller: string
+    caller: string,
   ): Span | undefined {
     if (!globallyEnabled) {
       return undefined;
@@ -420,7 +420,7 @@ export class PubsubSpans {
     message: PubsubMessage,
     subName: string,
     parent: Context | undefined,
-    caller: string
+    caller: string,
   ): Span | undefined {
     if (!globallyEnabled) {
       return undefined;
@@ -441,7 +441,7 @@ export class PubsubSpans {
           kind: SpanKind.CONSUMER,
           attributes,
         },
-        parent
+        parent,
       );
     } else {
       return getTracer().startSpan(name, {
@@ -455,7 +455,7 @@ export class PubsubSpans {
     name: string,
     message?: PubsubMessage,
     parentSpan?: Span,
-    attributes?: SpanAttributes
+    attributes?: SpanAttributes,
   ): Span | undefined {
     if (!globallyEnabled) {
       return undefined;
@@ -469,7 +469,7 @@ export class PubsubSpans {
           kind: SpanKind.INTERNAL,
           attributes: attributes ?? {},
         },
-        spanContextToContext(parent.spanContext())
+        spanContextToContext(parent.spanContext()),
       );
     } else {
       return undefined;
@@ -487,7 +487,7 @@ export class PubsubSpans {
   static createPublishRpcSpan(
     messages: MessageWithAttributes[],
     topicName: string,
-    caller: string
+    caller: string,
   ): Span | undefined {
     if (!globallyEnabled) {
       return undefined;
@@ -496,7 +496,7 @@ export class PubsubSpans {
     const spanAttributes = PubsubSpans.createAttributes(
       getTopicInfo(topicName),
       undefined,
-      caller
+      caller,
     );
     const links: Link[] = messages
       .filter(m => m.parentSpan && isSampled(m.parentSpan))
@@ -509,7 +509,7 @@ export class PubsubSpans {
         attributes: spanAttributes,
         links,
       },
-      ROOT_CONTEXT
+      ROOT_CONTEXT,
     );
     span?.setAttribute('messaging.batch.message_count', messages.length);
     if (span) {
@@ -527,7 +527,7 @@ export class PubsubSpans {
   static createAckRpcSpan(
     messageSpans: (Span | undefined)[],
     subName: string,
-    caller: string
+    caller: string,
   ): Span | undefined {
     if (!globallyEnabled) {
       return undefined;
@@ -538,7 +538,7 @@ export class PubsubSpans {
     const spanAttributes = PubsubSpans.createAttributes(
       subInfo,
       undefined,
-      caller
+      caller,
     );
     const links: Link[] = messageSpans
       .filter(m => m && isSampled(m))
@@ -551,7 +551,7 @@ export class PubsubSpans {
         attributes: spanAttributes,
         links,
       },
-      ROOT_CONTEXT
+      ROOT_CONTEXT,
     );
 
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
@@ -575,7 +575,7 @@ export class PubsubSpans {
     type: 'modack' | 'nack',
     caller: string,
     deadline?: Duration,
-    isInitial?: boolean
+    isInitial?: boolean,
   ): Span | undefined {
     if (!globallyEnabled) {
       return undefined;
@@ -586,7 +586,7 @@ export class PubsubSpans {
     const spanAttributes = PubsubSpans.createAttributes(
       subInfo,
       undefined,
-      caller
+      caller,
     );
     const links: Link[] = messageSpans
       .filter(m => m && isSampled(m))
@@ -599,7 +599,7 @@ export class PubsubSpans {
         attributes: spanAttributes,
         links,
       },
-      ROOT_CONTEXT
+      ROOT_CONTEXT,
     );
 
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
@@ -617,7 +617,7 @@ export class PubsubSpans {
     if (deadline) {
       span?.setAttribute(
         'messaging.gcp_pubsub.message.ack_deadline_seconds',
-        deadline.totalOf('second')
+        deadline.totalOf('second'),
       );
     }
 
@@ -629,28 +629,28 @@ export class PubsubSpans {
   }
 
   static createReceiveFlowSpan(
-    message: MessageWithAttributes
+    message: MessageWithAttributes,
   ): Span | undefined {
     return PubsubSpans.createChildSpan(
       'subscriber concurrency control',
-      message
+      message,
     );
   }
 
   static createReceiveSchedulerSpan(
-    message: MessageWithAttributes
+    message: MessageWithAttributes,
   ): Span | undefined {
     return PubsubSpans.createChildSpan('subscriber scheduler', message);
   }
 
   static createReceiveProcessSpan(
     message: MessageWithAttributes,
-    subName: string
+    subName: string,
   ): Span | undefined {
     const subInfo = getSubscriptionInfo(subName);
     return PubsubSpans.createChildSpan(
       `${subInfo.subId ?? subName} process`,
-      message
+      message,
     );
   }
 
@@ -669,7 +669,7 @@ export class PubsubEvents {
   static addEvent(
     text: string,
     message: MessageWithAttributes,
-    attributes?: Attributes
+    attributes?: Attributes,
   ): void {
     const parent = message.parentSpan;
     if (!parent) {
@@ -723,7 +723,7 @@ export class PubsubEvents {
     // User-called modAcks are never initial ones.
     span.addEvent('modack called', {
       'messaging.gcp_pubsub.modack_deadline_seconds': `${deadline.totalOf(
-        'second'
+        'second',
       )}`,
       'messaging.gcp_pubsub.is_receipt_modack': 'false',
     });
@@ -732,11 +732,11 @@ export class PubsubEvents {
   static modAckStart(
     message: MessageWithAttributes,
     deadline: Duration,
-    isInitial: boolean
+    isInitial: boolean,
   ) {
     PubsubEvents.addEvent('modack start', message, {
       'messaging.gcp_pubsub.modack_deadline_seconds': `${deadline.totalOf(
-        'second'
+        'second',
       )}`,
       'messaging.gcp_pubsub.is_receipt_modack': isInitial ? 'true' : 'false',
     });
@@ -765,7 +765,7 @@ export class PubsubEvents {
 export function injectSpan(
   span: Span,
   message: MessageWithAttributes,
-  enabled: OpenTelemetryLevel
+  enabled: OpenTelemetryLevel,
 ): void {
   if (!globallyEnabled) {
     return;
@@ -777,7 +777,7 @@ export function injectSpan(
 
   if (message.attributes[modernAttributeName]) {
     console.warn(
-      `${modernAttributeName} key set as message attribute, but will be overridden.`
+      `${modernAttributeName} key set as message attribute, but will be overridden.`,
     );
 
     delete message.attributes[modernAttributeName];
@@ -787,11 +787,11 @@ export function injectSpan(
   if (enabled === OpenTelemetryLevel.Legacy) {
     if (message.attributes[legacyAttributeName]) {
       console.warn(
-        `${legacyAttributeName} key set as message attribute, but will be overridden.`
+        `${legacyAttributeName} key set as message attribute, but will be overridden.`,
       );
     }
     message.attributes[legacyAttributeName] = JSON.stringify(
-      span.spanContext()
+      span.spanContext(),
     );
   }
 
@@ -821,7 +821,7 @@ export function containsSpanContext(message: MessageWithAttributes): boolean {
 
   const keys = Object.getOwnPropertyNames(message.attributes);
   return !!keys.find(
-    n => n === legacyAttributeName || n === modernAttributeName
+    n => n === legacyAttributeName || n === modernAttributeName,
   );
 }
 
@@ -838,7 +838,7 @@ export function containsSpanContext(message: MessageWithAttributes): boolean {
 export function extractSpan(
   message: MessageWithAttributes,
   subName: string,
-  enabled: OpenTelemetryLevel
+  enabled: OpenTelemetryLevel,
 ): Span | undefined {
   if (!globallyEnabled) {
     return undefined;
@@ -878,7 +878,7 @@ export function extractSpan(
     message,
     subName,
     context,
-    'extractSpan'
+    'extractSpan',
   );
   message.parentSpan = span;
   return span;
@@ -896,7 +896,7 @@ export const legacyExports = {
     spanName: string,
     kind: SpanKind,
     attributes?: SpanAttributes,
-    parent?: SpanContext
+    parent?: SpanContext,
   ): Span {
     if (!globallyEnabled) {
       // This isn't great, but it's the fact of the situation.
@@ -908,7 +908,7 @@ export const legacyExports = {
           kind,
           attributes,
         },
-        parent ? trace.setSpanContext(context.active(), parent) : undefined
+        parent ? trace.setSpanContext(context.active(), parent) : undefined,
       );
     }
   },

@@ -113,7 +113,7 @@ export class Topic {
   metadata?: TopicMetadata;
   publisher: Publisher;
   getSubscriptionsStream = paginator.streamify(
-    'getSubscriptions'
+    'getSubscriptions',
   ) as () => ObjectStream<Subscription>;
 
   constructor(pubsub: PubSub, name: string, options?: PublishOptions) {
@@ -239,7 +239,7 @@ export class Topic {
   create(gaxOpts: CallOptions, callback: CreateTopicCallback): void;
   create(
     optsOrCallback?: CallOptions | CreateTopicCallback,
-    callback?: CreateTopicCallback
+    callback?: CreateTopicCallback,
   ): Promise<CreateTopicResponse> | void {
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -289,17 +289,17 @@ export class Topic {
   createSubscription(name: string, callback: CreateSubscriptionCallback): void;
   createSubscription(
     name: string,
-    options?: CreateSubscriptionOptions
+    options?: CreateSubscriptionOptions,
   ): Promise<CreateSubscriptionResponse>;
   createSubscription(
     name: string,
     options: CreateSubscriptionOptions,
-    callback: CreateSubscriptionCallback
+    callback: CreateSubscriptionCallback,
   ): void;
   createSubscription(
     name: string,
     optsOrCallback?: CreateSubscriptionOptions | CreateSubscriptionCallback,
-    callback?: CreateSubscriptionCallback
+    callback?: CreateSubscriptionCallback,
   ): void | Promise<CreateSubscriptionResponse> {
     const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -308,7 +308,7 @@ export class Topic {
       this,
       name,
       options as CreateSubscriptionOptions,
-      callback!
+      callback!,
     );
   }
 
@@ -346,7 +346,7 @@ export class Topic {
   delete(gaxOpts: CallOptions, callback: EmptyCallback): void;
   delete(
     optsOrCallback?: CallOptions | EmptyCallback,
-    callback?: EmptyCallback
+    callback?: EmptyCallback,
   ): void | Promise<EmptyResponse> {
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -362,7 +362,7 @@ export class Topic {
         reqOpts,
         gaxOpts: gaxOpts as CallOptions,
       },
-      callback!
+      callback!,
     );
   }
 
@@ -460,7 +460,7 @@ export class Topic {
   get(gaxOpts: GetTopicOptions, callback: GetTopicCallback): void;
   get(
     optsOrCallback?: GetTopicOptions | GetTopicCallback,
-    callback?: GetTopicCallback
+    callback?: GetTopicCallback,
   ): void | Promise<GetTopicResponse> {
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -522,7 +522,7 @@ export class Topic {
   getMetadata(gaxOpts?: CallOptions): Promise<GetTopicMetadataResponse>;
   getMetadata(
     optsOrCallback?: CallOptions | GetTopicMetadataCallback,
-    callback?: GetTopicMetadataCallback
+    callback?: GetTopicMetadataCallback,
   ): void | Promise<GetTopicMetadataResponse> {
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -543,7 +543,7 @@ export class Topic {
           this.metadata = apiResponse!;
         }
         callback!(err, apiResponse!);
-      }
+      },
     );
   }
 
@@ -588,14 +588,14 @@ export class Topic {
   getSubscriptions(callback: GetTopicSubscriptionsCallback): void;
   getSubscriptions(
     options: PageOptions,
-    callback: GetTopicSubscriptionsCallback
+    callback: GetTopicSubscriptionsCallback,
   ): void;
   getSubscriptions(
-    options?: PageOptions
+    options?: PageOptions,
   ): Promise<GetTopicSubscriptionsResponse>;
   getSubscriptions(
     optsOrCallback?: PageOptions | GetTopicSubscriptionsCallback,
-    callback?: GetTopicSubscriptionsCallback
+    callback?: GetTopicSubscriptionsCallback,
   ): void | Promise<GetTopicSubscriptionsResponse> {
     const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -605,7 +605,7 @@ export class Topic {
         {
           topic: this.name,
         },
-        options as SubscriptionOptions
+        options as SubscriptionOptions,
       );
 
     delete (reqOpts as PageOptions).gaxOpts;
@@ -615,7 +615,7 @@ export class Topic {
       {
         autoPaginate: options.autoPaginate,
       },
-      options.gaxOpts
+      options.gaxOpts,
     );
 
     this.request<string, google.pubsub.v1.IListTopicSubscriptionsResponse>(
@@ -633,7 +633,7 @@ export class Topic {
         }
 
         callback!(err, subscriptions!, ...args);
-      }
+      },
     );
   }
 
@@ -687,12 +687,12 @@ export class Topic {
   publish(
     data: Buffer,
     attributes: Attributes,
-    callback: PublishCallback
+    callback: PublishCallback,
   ): void;
   publish(
     data: Buffer,
     attrsOrCb?: Attributes | PublishCallback,
-    callback?: PublishCallback
+    callback?: PublishCallback,
   ): Promise<string> | void {
     const attributes = typeof attrsOrCb === 'object' ? attrsOrCb : {};
     callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
@@ -753,12 +753,12 @@ export class Topic {
   publishJSON(
     json: object,
     attributes: Attributes,
-    callback: PublishCallback
+    callback: PublishCallback,
   ): void;
   publishJSON(
     json: object,
     attrsOrCb?: Attributes | PublishCallback,
-    callback?: PublishCallback
+    callback?: PublishCallback,
   ): Promise<string> | void {
     if (!json || typeof json !== 'object') {
       throw new Error('First parameter should be an object.');
@@ -832,7 +832,7 @@ export class Topic {
   publishMessage(message: MessageOptions, callback: PublishCallback): void;
   publishMessage(
     message: MessageOptions,
-    callback?: PublishCallback
+    callback?: PublishCallback,
   ): Promise<string> | void {
     // Make a copy to ensure that any changes we make to it will not
     // propagate up to the user's data.
@@ -940,18 +940,18 @@ export class Topic {
    */
   setMetadata(
     options: TopicMetadata,
-    gaxOpts?: CallOptions
+    gaxOpts?: CallOptions,
   ): Promise<SetTopicMetadataResponse>;
   setMetadata(options: TopicMetadata, callback: SetTopicMetadataCallback): void;
   setMetadata(
     options: TopicMetadata,
     gaxOpts: CallOptions,
-    callback: SetTopicMetadataCallback
+    callback: SetTopicMetadataCallback,
   ): void;
   setMetadata(
     options: TopicMetadata,
     optsOrCallback?: CallOptions | SetTopicMetadataCallback,
-    callback?: SetTopicMetadataCallback
+    callback?: SetTopicMetadataCallback,
   ): void | Promise<SetTopicMetadataResponse> {
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -967,7 +967,7 @@ export class Topic {
         reqOpts,
         gaxOpts,
       },
-      callback!
+      callback!,
     );
   }
 

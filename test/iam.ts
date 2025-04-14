@@ -25,7 +25,7 @@ const fakeUtil = Object.assign({}, util, {
   promisifySome(
     class_: Function,
     classProtos: object,
-    methods: string[]
+    methods: string[],
   ): void {
     if (class_.name === 'IAM') {
       promisified = true;

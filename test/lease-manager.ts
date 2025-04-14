@@ -311,7 +311,7 @@ describe('LeaseManager', () => {
           maxExtensionMinutes: maxExtensionSeconds / 60,
         });
         badMessages.forEach(message =>
-          leaseManager.add(message as {} as Message)
+          leaseManager.add(message as {} as Message),
         );
         clock.tick(halfway);
 

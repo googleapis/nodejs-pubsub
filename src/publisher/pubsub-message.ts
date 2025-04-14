@@ -87,7 +87,7 @@ export interface PubsubMessage
  * @internal
  */
 export function filterMessage(
-  message: PubsubMessage
+  message: PubsubMessage,
 ): google.pubsub.v1.IPubsubMessage {
   const filtered = {} as PubsubMessage;
   if (message.data) {
@@ -126,7 +126,7 @@ export function filterMessage(
  * @internal
  */
 export function calculateMessageSize(
-  message: PubsubMessage | google.pubsub.v1.IPubsubMessage
+  message: PubsubMessage | google.pubsub.v1.IPubsubMessage,
 ) {
   // If it's not a PubsubMessage, we'll augment it into one.
   const msg = message as unknown as PubsubMessage;

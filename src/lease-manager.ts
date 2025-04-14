@@ -201,7 +201,7 @@ export class LeaseManager extends EventEmitter {
       options.maxExtensionMinutes !== undefined
     ) {
       throw new RangeError(
-        'Only one of "maxExtension" or "maxExtensionMinutes" may be set for subscriber lease management options'
+        'Only one of "maxExtension" or "maxExtensionMinutes" may be set for subscriber lease management options',
       );
     }
     if (

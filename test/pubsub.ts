@@ -43,7 +43,7 @@ let subscriptionOverride: any;
 function Subscription(
   pubsub: pubsubTypes.PubSub,
   name: string,
-  options: subby.SubscriptionOptions
+  options: subby.SubscriptionOptions,
 ) {
   const overrideFn = subscriptionOverride || subscriptionCached;
   return new overrideFn(pubsub, name, options);
@@ -59,7 +59,7 @@ const fakeUtil = Object.assign({}, util, {
   promisifySome(
     class_: Function,
     classProtos: object,
-    methods: string[]
+    methods: string[],
   ): void {
     if (class_.name === 'PubSub') {
       promisified = true;
@@ -312,7 +312,7 @@ describe('PubSub', () => {
       const pubsub = new PubSub(options);
       assert.strictEqual(
         tracing.isEnabled(),
-        tracing.OpenTelemetryLevel.Modern
+        tracing.OpenTelemetryLevel.Modern,
       );
     });
 
@@ -474,7 +474,7 @@ describe('PubSub', () => {
 
       const expectedBody = Object.assign(
         {topic: TOPIC.name, name: SUB_NAME},
-        options
+        options,
       );
 
       pubsub.topic = () => {
@@ -549,7 +549,7 @@ describe('PubSub', () => {
         TOPIC,
         SUB_NAME,
         fakeMetadata,
-        assert.ifError
+        assert.ifError,
       );
     });
 
@@ -571,7 +571,7 @@ describe('PubSub', () => {
         function callback(
           err?: Error | null,
           sub?: subby.Subscription | null,
-          resp?: google.pubsub.v1.ISubscription | null
+          resp?: google.pubsub.v1.ISubscription | null,
         ) {
           assert.strictEqual(err, error);
           assert.strictEqual(sub, null);
@@ -607,7 +607,7 @@ describe('PubSub', () => {
         function callback(
           err?: Error | null,
           sub?: subby.Subscription | null,
-          resp?: google.pubsub.v1.ISubscription | null
+          resp?: google.pubsub.v1.ISubscription | null,
         ) {
           assert.ifError(err);
           assert.strictEqual(sub, subscription);
@@ -631,7 +631,7 @@ describe('PubSub', () => {
 
         const [sub, resp] = await pubsub.createSubscription!(
           TOPIC_NAME,
-          SUB_NAME
+          SUB_NAME,
         )!;
         assert.strictEqual(sub.name.includes('{{'), false);
         assert.strictEqual(resp, apiResponse);
@@ -1025,7 +1025,7 @@ describe('PubSub', () => {
         {
           autoPaginate: options.autoPaginate,
         },
-        options.gaxOpts
+        options.gaxOpts,
       );
 
       delete expectedOptions.gaxOpts;
@@ -1057,7 +1057,7 @@ describe('PubSub', () => {
         assert.strictEqual(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (snapshots![0] as any).metadata,
-          apiResponse.snapshots[0]
+          apiResponse.snapshots[0],
         );
         done();
       });
@@ -1111,7 +1111,7 @@ describe('PubSub', () => {
         {
           autoPaginate: options.autoPaginate,
         },
-        options.gaxOpts
+        options.gaxOpts,
       );
 
       const project = 'projects/' + pubsub.projectId;
@@ -1146,12 +1146,12 @@ describe('PubSub', () => {
       pubsub.getSubscriptions?.(
         (
           err: gax.grpc.ServiceError | null,
-          subscriptions?: subby.Subscription[] | null
+          subscriptions?: subby.Subscription[] | null,
         ) => {
           assert.ifError(err);
           assert(subscriptions![0] instanceof subscriptionCached);
           done();
-        }
+        },
       );
     });
 
@@ -1169,13 +1169,13 @@ describe('PubSub', () => {
         (
           err: gax.grpc.ServiceError | null,
           subs?: subby.Subscription[] | null,
-          apiResponse?: google.pubsub.v1.IListSubscriptionsResponse | null
+          apiResponse?: google.pubsub.v1.IListSubscriptionsResponse | null,
         ) => {
           assert.strictEqual(err, err_);
           assert.deepStrictEqual(subs, subs_);
           assert.strictEqual(apiResponse, nextQuery_);
           done();
-        }
+        },
       );
     });
 
@@ -1255,7 +1255,7 @@ describe('PubSub', () => {
         {
           autoPaginate: options.autoPaginate,
         },
-        options.gaxOpts
+        options.gaxOpts,
       );
 
       delete expectedOptions.gaxOpts;
@@ -1339,7 +1339,7 @@ describe('PubSub', () => {
           assert.notStrictEqual(errInner, null);
           assert.strictEqual(
             errInner!.message.indexOf('closed PubSub object') >= 0,
-            true
+            true,
           );
           done();
         });
@@ -1373,7 +1373,7 @@ describe('PubSub', () => {
       (fakeClient as any).fakeMethod = (
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         reqOpts: any,
-        gaxOpts: gax.CallOptions
+        gaxOpts: gax.CallOptions,
       ) => {
         assert.deepStrictEqual(CONFIG.reqOpts, reqOpts);
         assert.deepStrictEqual(CONFIG.gaxOpts, gaxOpts);
@@ -1501,7 +1501,7 @@ describe('PubSub', () => {
     it('should return the correct client', async () => {
       // tslint:disable-next-line only-arrow-functions no-any
       v1ClientOverrides.FakeClient = function (
-        options: pubsubTypes.ClientConfig
+        options: pubsubTypes.ClientConfig,
       ) {
         assert.strictEqual(options, pubsub.options);
         return FAKE_CLIENT_INSTANCE;
@@ -1663,7 +1663,7 @@ describe('PubSub', () => {
       // tslint:disable-next-line only-arrow-functions
       subscriptionOverride = function (
         pubsub: pubsubTypes.PubSub,
-        name: string
+        name: string,
       ) {
         assert.strictEqual(name, SUB_NAME);
         done();
@@ -1676,7 +1676,7 @@ describe('PubSub', () => {
       subscriptionOverride = function (
         pubsub: pubsubTypes.PubSub,
         name: string,
-        options: subby.SubscriptionOptions
+        options: subby.SubscriptionOptions,
       ) {
         assert.strictEqual(options, CONFIG);
         done();

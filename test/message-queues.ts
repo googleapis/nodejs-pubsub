@@ -32,7 +32,7 @@ class FakeClient {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     reqOpts: {subscription: string; ackIds: string[]},
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    callOptions: CallOptions
+    callOptions: CallOptions,
   ): Promise<void> {}
   async modifyAckDeadline(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,7 +42,7 @@ class FakeClient {
       ackDeadlineSeconds: number;
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    callOptions: CallOptions
+    callOptions: CallOptions,
   ): Promise<void> {}
 }
 
@@ -80,7 +80,7 @@ function fakeMessage() {
 class MessageQueue extends messageTypes.MessageQueue {
   batches: messageTypes.QueuedMessages[] = [];
   async _sendBatch(
-    batch: messageTypes.QueuedMessages
+    batch: messageTypes.QueuedMessages,
   ): Promise<messageTypes.QueuedMessages> {
     this.batches.push(batch);
     return [];
@@ -481,7 +481,7 @@ describe('MessageQueues', () => {
 
         sandbox.stub(fakeSubscriber.client, 'acknowledge').resolves();
         const proms = ackQueue.requests.map(
-          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
         await ackQueue.flush();
         const results = await Promise.allSettled(proms);
@@ -503,7 +503,7 @@ describe('MessageQueues', () => {
 
         sandbox.stub(fakeSubscriber.client, 'acknowledge').rejects(fakeError);
         const proms = ackQueue.requests.map(
-          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
         proms.shift();
         await ackQueue.flush();
@@ -636,7 +636,7 @@ describe('MessageQueues', () => {
       };
 
       messages.forEach(message =>
-        modAckQueue.add(message as Message, deadline)
+        modAckQueue.add(message as Message, deadline),
       );
       await modAckQueue.flush();
 
@@ -676,10 +676,10 @@ describe('MessageQueues', () => {
       };
 
       messages1.forEach(message =>
-        modAckQueue.add(message as Message, deadline1)
+        modAckQueue.add(message as Message, deadline1),
       );
       messages2.forEach(message =>
-        modAckQueue.add(message as Message, deadline2)
+        modAckQueue.add(message as Message, deadline2),
       );
       await modAckQueue.flush();
 
@@ -772,7 +772,7 @@ describe('MessageQueues', () => {
 
         sandbox.stub(fakeSubscriber.client, 'modifyAckDeadline').resolves();
         const proms = modAckQueue.requests.map(
-          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
         await modAckQueue.flush();
         const results = await Promise.allSettled(proms);
@@ -796,7 +796,7 @@ describe('MessageQueues', () => {
           .stub(fakeSubscriber.client, 'modifyAckDeadline')
           .rejects(fakeError);
         const proms = modAckQueue.requests.map(
-          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
         proms.shift();
         await modAckQueue.flush();

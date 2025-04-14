@@ -110,7 +110,7 @@ export class PublisherClient {
    */
   constructor(
     opts?: ClientOptions,
-    gaxInstance?: typeof gax | typeof gax.fallback
+    gaxInstance?: typeof gax | typeof gax.fallback,
   ) {
     // Ensure that options include all the required fields.
     const staticMembers = this.constructor as typeof PublisherClient;
@@ -120,7 +120,7 @@ export class PublisherClient {
       opts?.universe_domain !== opts?.universeDomain
     ) {
       throw new Error(
-        'Please set either universe_domain or universeDomain, but not both.'
+        'Please set either universe_domain or universeDomain, but not both.',
       );
     }
     const universeDomainEnvVar =
@@ -205,19 +205,19 @@ export class PublisherClient {
     // Create useful helper objects for these.
     this.pathTemplates = {
       projectPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}'
+        'projects/{project}',
       ),
       projectTopicPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/topics/{topic}'
+        'projects/{project}/topics/{topic}',
       ),
       schemaPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/schemas/{schema}'
+        'projects/{project}/schemas/{schema}',
       ),
       snapshotPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/snapshots/{snapshot}'
+        'projects/{project}/snapshots/{snapshot}',
       ),
       subscriptionPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/subscriptions/{subscription}'
+        'projects/{project}/subscriptions/{subscription}',
       ),
     };
 
@@ -228,17 +228,17 @@ export class PublisherClient {
       listTopics: new this._gaxModule.PageDescriptor(
         'pageToken',
         'nextPageToken',
-        'topics'
+        'topics',
       ),
       listTopicSubscriptions: new this._gaxModule.PageDescriptor(
         'pageToken',
         'nextPageToken',
-        'subscriptions'
+        'subscriptions',
       ),
       listTopicSnapshots: new this._gaxModule.PageDescriptor(
         'pageToken',
         'nextPageToken',
-        'snapshots'
+        'snapshots',
       ),
     };
 
@@ -253,8 +253,8 @@ export class PublisherClient {
         'message_ids',
         this._gaxModule.GrpcClient.createByteLengthFunction(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          protoFilesRoot.lookupType('google.pubsub.v1.PubsubMessage') as any
-        )
+          protoFilesRoot.lookupType('google.pubsub.v1.PubsubMessage') as any,
+        ),
       ),
     };
 
@@ -263,7 +263,7 @@ export class PublisherClient {
       'google.pubsub.v1.Publisher',
       gapicConfig as gax.ClientConfig,
       opts.clientConfig || {},
-      {'x-goog-api-client': clientHeader.join(' ')}
+      {'x-goog-api-client': clientHeader.join(' ')},
     );
 
     // Set up a dictionary of "inner API calls"; the core implementation
@@ -297,12 +297,12 @@ export class PublisherClient {
     this.publisherStub = this._gaxGrpc.createStub(
       this._opts.fallback
         ? (this._protos as protobuf.Root).lookupService(
-            'google.pubsub.v1.Publisher'
+            'google.pubsub.v1.Publisher',
           )
         : // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (this._protos as any).google.pubsub.v1.Publisher,
       this._opts,
-      this._providedCustomServicePath
+      this._providedCustomServicePath,
     ) as Promise<{[method: string]: Function}>;
 
     // Iterate over each of the methods that the service provides
@@ -330,7 +330,7 @@ export class PublisherClient {
           },
         (err: Error | null | undefined) => () => {
           throw err;
-        }
+        },
       );
 
       const descriptor =
@@ -341,7 +341,7 @@ export class PublisherClient {
         callPromise,
         this._defaults[methodName],
         descriptor,
-        this._opts.fallback
+        this._opts.fallback,
       );
 
       this.innerApiCalls[methodName] = apiCall;
@@ -362,7 +362,7 @@ export class PublisherClient {
     ) {
       process.emitWarning(
         'Static servicePath is deprecated, please use the instance method instead.',
-        'DeprecationWarning'
+        'DeprecationWarning',
       );
     }
     return 'pubsub.googleapis.com';
@@ -380,7 +380,7 @@ export class PublisherClient {
     ) {
       process.emitWarning(
         'Static apiEndpoint is deprecated, please use the instance method instead.',
-        'DeprecationWarning'
+        'DeprecationWarning',
       );
     }
     return 'pubsub.googleapis.com';
@@ -425,7 +425,7 @@ export class PublisherClient {
    * @returns {Promise} A promise that resolves to string containing the project ID.
    */
   getProjectId(
-    callback?: Callback<string, undefined, undefined>
+    callback?: Callback<string, undefined, undefined>,
   ): Promise<string> | void {
     if (callback) {
       this.auth.getProjectId(callback);
@@ -490,7 +490,7 @@ export class PublisherClient {
    */
   createTopic(
     request?: protos.google.pubsub.v1.ITopic,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic,
@@ -505,7 +505,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.ITopic | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   createTopic(
     request: protos.google.pubsub.v1.ITopic,
@@ -513,7 +513,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.ITopic | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   createTopic(
     request?: protos.google.pubsub.v1.ITopic,
@@ -528,7 +528,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.ITopic | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic,
@@ -577,7 +577,7 @@ export class PublisherClient {
    */
   updateTopic(
     request?: protos.google.pubsub.v1.IUpdateTopicRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic,
@@ -592,7 +592,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   updateTopic(
     request: protos.google.pubsub.v1.IUpdateTopicRequest,
@@ -600,7 +600,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   updateTopic(
     request?: protos.google.pubsub.v1.IUpdateTopicRequest,
@@ -615,7 +615,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IUpdateTopicRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic,
@@ -661,7 +661,7 @@ export class PublisherClient {
    */
   publish(
     request?: protos.google.pubsub.v1.IPublishRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.IPublishResponse,
@@ -676,7 +676,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IPublishResponse,
       protos.google.pubsub.v1.IPublishRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   publish(
     request: protos.google.pubsub.v1.IPublishRequest,
@@ -684,7 +684,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IPublishResponse,
       protos.google.pubsub.v1.IPublishRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   publish(
     request?: protos.google.pubsub.v1.IPublishRequest,
@@ -699,7 +699,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IPublishResponse,
       protos.google.pubsub.v1.IPublishRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.IPublishResponse,
@@ -742,7 +742,7 @@ export class PublisherClient {
    */
   getTopic(
     request?: protos.google.pubsub.v1.IGetTopicRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic,
@@ -757,7 +757,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   getTopic(
     request: protos.google.pubsub.v1.IGetTopicRequest,
@@ -765,7 +765,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   getTopic(
     request?: protos.google.pubsub.v1.IGetTopicRequest,
@@ -780,7 +780,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.ITopic,
       protos.google.pubsub.v1.IGetTopicRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic,
@@ -827,7 +827,7 @@ export class PublisherClient {
    */
   deleteTopic(
     request?: protos.google.pubsub.v1.IDeleteTopicRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -842,7 +842,7 @@ export class PublisherClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   deleteTopic(
     request: protos.google.pubsub.v1.IDeleteTopicRequest,
@@ -850,7 +850,7 @@ export class PublisherClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   deleteTopic(
     request?: protos.google.pubsub.v1.IDeleteTopicRequest,
@@ -865,7 +865,7 @@ export class PublisherClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteTopicRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -911,7 +911,7 @@ export class PublisherClient {
    */
   detachSubscription(
     request?: protos.google.pubsub.v1.IDetachSubscriptionRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.IDetachSubscriptionResponse,
@@ -926,7 +926,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IDetachSubscriptionResponse,
       protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   detachSubscription(
     request: protos.google.pubsub.v1.IDetachSubscriptionRequest,
@@ -934,7 +934,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IDetachSubscriptionResponse,
       protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   detachSubscription(
     request?: protos.google.pubsub.v1.IDetachSubscriptionRequest,
@@ -949,7 +949,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IDetachSubscriptionResponse,
       protos.google.pubsub.v1.IDetachSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.IDetachSubscriptionResponse,
@@ -1004,7 +1004,7 @@ export class PublisherClient {
    */
   listTopics(
     request?: protos.google.pubsub.v1.IListTopicsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic[],
@@ -1019,7 +1019,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IListTopicsRequest,
       protos.google.pubsub.v1.IListTopicsResponse | null | undefined,
       protos.google.pubsub.v1.ITopic
-    >
+    >,
   ): void;
   listTopics(
     request: protos.google.pubsub.v1.IListTopicsRequest,
@@ -1027,7 +1027,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IListTopicsRequest,
       protos.google.pubsub.v1.IListTopicsResponse | null | undefined,
       protos.google.pubsub.v1.ITopic
-    >
+    >,
   ): void;
   listTopics(
     request?: protos.google.pubsub.v1.IListTopicsRequest,
@@ -1042,7 +1042,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IListTopicsRequest,
       protos.google.pubsub.v1.IListTopicsResponse | null | undefined,
       protos.google.pubsub.v1.ITopic
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ITopic[],
@@ -1095,7 +1095,7 @@ export class PublisherClient {
    */
   listTopicsStream(
     request?: protos.google.pubsub.v1.IListTopicsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Transform {
     request = request || {};
     options = options || {};
@@ -1111,7 +1111,7 @@ export class PublisherClient {
     return this.descriptors.page.listTopics.createStream(
       this.innerApiCalls.listTopics as GaxCall,
       request,
-      callSettings
+      callSettings,
     );
   }
 
@@ -1142,7 +1142,7 @@ export class PublisherClient {
    */
   listTopicsAsync(
     request?: protos.google.pubsub.v1.IListTopicsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): AsyncIterable<protos.google.pubsub.v1.ITopic> {
     request = request || {};
     options = options || {};
@@ -1158,7 +1158,7 @@ export class PublisherClient {
     return this.descriptors.page.listTopics.asyncIterate(
       this.innerApiCalls['listTopics'] as GaxCall,
       request as {},
-      callSettings
+      callSettings,
     ) as AsyncIterable<protos.google.pubsub.v1.ITopic>;
   }
   /**
@@ -1189,7 +1189,7 @@ export class PublisherClient {
    */
   listTopicSubscriptions(
     request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       string[],
@@ -1206,7 +1206,7 @@ export class PublisherClient {
       | null
       | undefined,
       string
-    >
+    >,
   ): void;
   listTopicSubscriptions(
     request: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
@@ -1216,7 +1216,7 @@ export class PublisherClient {
       | null
       | undefined,
       string
-    >
+    >,
   ): void;
   listTopicSubscriptions(
     request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
@@ -1235,7 +1235,7 @@ export class PublisherClient {
       | null
       | undefined,
       string
-    >
+    >,
   ): Promise<
     [
       string[],
@@ -1262,7 +1262,7 @@ export class PublisherClient {
     return this.innerApiCalls.listTopicSubscriptions(
       request,
       options,
-      callback
+      callback,
     );
   }
 
@@ -1292,7 +1292,7 @@ export class PublisherClient {
    */
   listTopicSubscriptionsStream(
     request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Transform {
     request = request || {};
     options = options || {};
@@ -1308,7 +1308,7 @@ export class PublisherClient {
     return this.descriptors.page.listTopicSubscriptions.createStream(
       this.innerApiCalls.listTopicSubscriptions as GaxCall,
       request,
-      callSettings
+      callSettings,
     );
   }
 
@@ -1339,7 +1339,7 @@ export class PublisherClient {
    */
   listTopicSubscriptionsAsync(
     request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): AsyncIterable<string> {
     request = request || {};
     options = options || {};
@@ -1355,7 +1355,7 @@ export class PublisherClient {
     return this.descriptors.page.listTopicSubscriptions.asyncIterate(
       this.innerApiCalls['listTopicSubscriptions'] as GaxCall,
       request as {},
-      callSettings
+      callSettings,
     ) as AsyncIterable<string>;
   }
   /**
@@ -1390,7 +1390,7 @@ export class PublisherClient {
    */
   listTopicSnapshots(
     request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       string[],
@@ -1405,7 +1405,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IListTopicSnapshotsRequest,
       protos.google.pubsub.v1.IListTopicSnapshotsResponse | null | undefined,
       string
-    >
+    >,
   ): void;
   listTopicSnapshots(
     request: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
@@ -1413,7 +1413,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IListTopicSnapshotsRequest,
       protos.google.pubsub.v1.IListTopicSnapshotsResponse | null | undefined,
       string
-    >
+    >,
   ): void;
   listTopicSnapshots(
     request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
@@ -1430,7 +1430,7 @@ export class PublisherClient {
       protos.google.pubsub.v1.IListTopicSnapshotsRequest,
       protos.google.pubsub.v1.IListTopicSnapshotsResponse | null | undefined,
       string
-    >
+    >,
   ): Promise<
     [
       string[],
@@ -1483,7 +1483,7 @@ export class PublisherClient {
    */
   listTopicSnapshotsStream(
     request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Transform {
     request = request || {};
     options = options || {};
@@ -1499,7 +1499,7 @@ export class PublisherClient {
     return this.descriptors.page.listTopicSnapshots.createStream(
       this.innerApiCalls.listTopicSnapshots as GaxCall,
       request,
-      callSettings
+      callSettings,
     );
   }
 
@@ -1530,7 +1530,7 @@ export class PublisherClient {
    */
   listTopicSnapshotsAsync(
     request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): AsyncIterable<string> {
     request = request || {};
     options = options || {};
@@ -1546,7 +1546,7 @@ export class PublisherClient {
     return this.descriptors.page.listTopicSnapshots.asyncIterate(
       this.innerApiCalls['listTopicSnapshots'] as GaxCall,
       request as {},
-      callSettings
+      callSettings,
     ) as AsyncIterable<string>;
   }
   /**
@@ -1587,7 +1587,7 @@ export class PublisherClient {
       IamProtos.google.iam.v1.Policy,
       IamProtos.google.iam.v1.GetIamPolicyRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.getIamPolicy(request, options, callback);
   }
@@ -1634,7 +1634,7 @@ export class PublisherClient {
       IamProtos.google.iam.v1.Policy,
       IamProtos.google.iam.v1.SetIamPolicyRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.setIamPolicy(request, options, callback);
   }
@@ -1682,7 +1682,7 @@ export class PublisherClient {
       IamProtos.google.iam.v1.TestIamPermissionsResponse,
       IamProtos.google.iam.v1.TestIamPermissionsRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<[IamProtos.google.iam.v1.TestIamPermissionsResponse]> {
     return this.iamClient.testIamPermissions(request, options, callback);
   }

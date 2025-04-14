@@ -111,7 +111,7 @@ export class SubscriberClient {
    */
   constructor(
     opts?: ClientOptions,
-    gaxInstance?: typeof gax | typeof gax.fallback
+    gaxInstance?: typeof gax | typeof gax.fallback,
   ) {
     // Ensure that options include all the required fields.
     const staticMembers = this.constructor as typeof SubscriberClient;
@@ -121,7 +121,7 @@ export class SubscriberClient {
       opts?.universe_domain !== opts?.universeDomain
     ) {
       throw new Error(
-        'Please set either universe_domain or universeDomain, but not both.'
+        'Please set either universe_domain or universeDomain, but not both.',
       );
     }
     const universeDomainEnvVar =
@@ -206,19 +206,19 @@ export class SubscriberClient {
     // Create useful helper objects for these.
     this.pathTemplates = {
       projectPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}'
+        'projects/{project}',
       ),
       projectTopicPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/topics/{topic}'
+        'projects/{project}/topics/{topic}',
       ),
       schemaPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/schemas/{schema}'
+        'projects/{project}/schemas/{schema}',
       ),
       snapshotPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/snapshots/{snapshot}'
+        'projects/{project}/snapshots/{snapshot}',
       ),
       subscriptionPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/subscriptions/{subscription}'
+        'projects/{project}/subscriptions/{subscription}',
       ),
     };
 
@@ -229,12 +229,12 @@ export class SubscriberClient {
       listSubscriptions: new this._gaxModule.PageDescriptor(
         'pageToken',
         'nextPageToken',
-        'subscriptions'
+        'subscriptions',
       ),
       listSnapshots: new this._gaxModule.PageDescriptor(
         'pageToken',
         'nextPageToken',
-        'snapshots'
+        'snapshots',
       ),
     };
 
@@ -244,7 +244,7 @@ export class SubscriberClient {
       streamingPull: new this._gaxModule.StreamDescriptor(
         this._gaxModule.StreamType.BIDI_STREAMING,
         !!opts.fallback,
-        !!opts.gaxServerStreamingRetries
+        !!opts.gaxServerStreamingRetries,
       ),
     };
 
@@ -253,7 +253,7 @@ export class SubscriberClient {
       'google.pubsub.v1.Subscriber',
       gapicConfig as gax.ClientConfig,
       opts.clientConfig || {},
-      {'x-goog-api-client': clientHeader.join(' ')}
+      {'x-goog-api-client': clientHeader.join(' ')},
     );
 
     // Set up a dictionary of "inner API calls"; the core implementation
@@ -287,12 +287,12 @@ export class SubscriberClient {
     this.subscriberStub = this._gaxGrpc.createStub(
       this._opts.fallback
         ? (this._protos as protobuf.Root).lookupService(
-            'google.pubsub.v1.Subscriber'
+            'google.pubsub.v1.Subscriber',
           )
         : // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (this._protos as any).google.pubsub.v1.Subscriber,
       this._opts,
-      this._providedCustomServicePath
+      this._providedCustomServicePath,
     ) as Promise<{[method: string]: Function}>;
 
     // Iterate over each of the methods that the service provides
@@ -326,8 +326,8 @@ export class SubscriberClient {
                   stream.emit(
                     'error',
                     new this._gaxModule.GoogleError(
-                      'The client has already been closed.'
-                    )
+                      'The client has already been closed.',
+                    ),
                   );
                 });
                 return stream;
@@ -339,7 +339,7 @@ export class SubscriberClient {
           },
         (err: Error | null | undefined) => () => {
           throw err;
-        }
+        },
       );
 
       const descriptor =
@@ -350,7 +350,7 @@ export class SubscriberClient {
         callPromise,
         this._defaults[methodName],
         descriptor,
-        this._opts.fallback
+        this._opts.fallback,
       );
 
       this.innerApiCalls[methodName] = apiCall;
@@ -371,7 +371,7 @@ export class SubscriberClient {
     ) {
       process.emitWarning(
         'Static servicePath is deprecated, please use the instance method instead.',
-        'DeprecationWarning'
+        'DeprecationWarning',
       );
     }
     return 'pubsub.googleapis.com';
@@ -389,7 +389,7 @@ export class SubscriberClient {
     ) {
       process.emitWarning(
         'Static apiEndpoint is deprecated, please use the instance method instead.',
-        'DeprecationWarning'
+        'DeprecationWarning',
       );
     }
     return 'pubsub.googleapis.com';
@@ -434,7 +434,7 @@ export class SubscriberClient {
    * @returns {Promise} A promise that resolves to string containing the project ID.
    */
   getProjectId(
-    callback?: Callback<string, undefined, undefined>
+    callback?: Callback<string, undefined, undefined>,
   ): Promise<string> | void {
     if (callback) {
       this.auth.getProjectId(callback);
@@ -595,7 +595,7 @@ export class SubscriberClient {
    */
   createSubscription(
     request?: protos.google.pubsub.v1.ISubscription,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -610,7 +610,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.ISubscription | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   createSubscription(
     request: protos.google.pubsub.v1.ISubscription,
@@ -618,7 +618,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.ISubscription | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   createSubscription(
     request?: protos.google.pubsub.v1.ISubscription,
@@ -633,7 +633,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.ISubscription | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -676,7 +676,7 @@ export class SubscriberClient {
    */
   getSubscription(
     request?: protos.google.pubsub.v1.IGetSubscriptionRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -691,7 +691,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   getSubscription(
     request: protos.google.pubsub.v1.IGetSubscriptionRequest,
@@ -699,7 +699,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   getSubscription(
     request?: protos.google.pubsub.v1.IGetSubscriptionRequest,
@@ -714,7 +714,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -761,7 +761,7 @@ export class SubscriberClient {
    */
   updateSubscription(
     request?: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -776,7 +776,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   updateSubscription(
     request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
@@ -784,7 +784,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   updateSubscription(
     request?: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
@@ -799,7 +799,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -846,7 +846,7 @@ export class SubscriberClient {
    */
   deleteSubscription(
     request?: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -861,7 +861,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   deleteSubscription(
     request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
@@ -869,7 +869,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   deleteSubscription(
     request?: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
@@ -884,7 +884,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -943,7 +943,7 @@ export class SubscriberClient {
    */
   modifyAckDeadline(
     request?: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -958,7 +958,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   modifyAckDeadline(
     request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
@@ -966,7 +966,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   modifyAckDeadline(
     request?: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
@@ -981,7 +981,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1034,7 +1034,7 @@ export class SubscriberClient {
    */
   acknowledge(
     request?: protos.google.pubsub.v1.IAcknowledgeRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1049,7 +1049,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   acknowledge(
     request: protos.google.pubsub.v1.IAcknowledgeRequest,
@@ -1057,7 +1057,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   acknowledge(
     request?: protos.google.pubsub.v1.IAcknowledgeRequest,
@@ -1072,7 +1072,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1127,7 +1127,7 @@ export class SubscriberClient {
    */
   pull(
     request?: protos.google.pubsub.v1.IPullRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.IPullResponse,
@@ -1142,7 +1142,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IPullResponse,
       protos.google.pubsub.v1.IPullRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   pull(
     request: protos.google.pubsub.v1.IPullRequest,
@@ -1150,7 +1150,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IPullResponse,
       protos.google.pubsub.v1.IPullRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   pull(
     request?: protos.google.pubsub.v1.IPullRequest,
@@ -1165,7 +1165,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IPullResponse,
       protos.google.pubsub.v1.IPullRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.IPullResponse,
@@ -1220,7 +1220,7 @@ export class SubscriberClient {
    */
   modifyPushConfig(
     request?: protos.google.pubsub.v1.IModifyPushConfigRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1235,7 +1235,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   modifyPushConfig(
     request: protos.google.pubsub.v1.IModifyPushConfigRequest,
@@ -1243,7 +1243,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   modifyPushConfig(
     request?: protos.google.pubsub.v1.IModifyPushConfigRequest,
@@ -1258,7 +1258,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1305,7 +1305,7 @@ export class SubscriberClient {
    */
   getSnapshot(
     request?: protos.google.pubsub.v1.IGetSnapshotRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1320,7 +1320,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   getSnapshot(
     request: protos.google.pubsub.v1.IGetSnapshotRequest,
@@ -1328,7 +1328,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   getSnapshot(
     request?: protos.google.pubsub.v1.IGetSnapshotRequest,
@@ -1343,7 +1343,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1418,7 +1418,7 @@ export class SubscriberClient {
    */
   createSnapshot(
     request?: protos.google.pubsub.v1.ICreateSnapshotRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1433,7 +1433,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   createSnapshot(
     request: protos.google.pubsub.v1.ICreateSnapshotRequest,
@@ -1441,7 +1441,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   createSnapshot(
     request?: protos.google.pubsub.v1.ICreateSnapshotRequest,
@@ -1456,7 +1456,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1506,7 +1506,7 @@ export class SubscriberClient {
    */
   updateSnapshot(
     request?: protos.google.pubsub.v1.IUpdateSnapshotRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1521,7 +1521,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   updateSnapshot(
     request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
@@ -1529,7 +1529,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   updateSnapshot(
     request?: protos.google.pubsub.v1.IUpdateSnapshotRequest,
@@ -1544,7 +1544,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1595,7 +1595,7 @@ export class SubscriberClient {
    */
   deleteSnapshot(
     request?: protos.google.pubsub.v1.IDeleteSnapshotRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1610,7 +1610,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   deleteSnapshot(
     request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
@@ -1618,7 +1618,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   deleteSnapshot(
     request?: protos.google.pubsub.v1.IDeleteSnapshotRequest,
@@ -1633,7 +1633,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1697,7 +1697,7 @@ export class SubscriberClient {
    */
   seek(
     request?: protos.google.pubsub.v1.ISeekRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISeekResponse,
@@ -1712,7 +1712,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISeekResponse,
       protos.google.pubsub.v1.ISeekRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   seek(
     request: protos.google.pubsub.v1.ISeekRequest,
@@ -1720,7 +1720,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISeekResponse,
       protos.google.pubsub.v1.ISeekRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   seek(
     request?: protos.google.pubsub.v1.ISeekRequest,
@@ -1735,7 +1735,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISeekResponse,
       protos.google.pubsub.v1.ISeekRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISeekResponse,
@@ -1813,7 +1813,7 @@ export class SubscriberClient {
    */
   listSubscriptions(
     request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription[],
@@ -1828,7 +1828,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSubscriptionsRequest,
       protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
       protos.google.pubsub.v1.ISubscription
-    >
+    >,
   ): void;
   listSubscriptions(
     request: protos.google.pubsub.v1.IListSubscriptionsRequest,
@@ -1836,7 +1836,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSubscriptionsRequest,
       protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
       protos.google.pubsub.v1.ISubscription
-    >
+    >,
   ): void;
   listSubscriptions(
     request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
@@ -1851,7 +1851,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSubscriptionsRequest,
       protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
       protos.google.pubsub.v1.ISubscription
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription[],
@@ -1904,7 +1904,7 @@ export class SubscriberClient {
    */
   listSubscriptionsStream(
     request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Transform {
     request = request || {};
     options = options || {};
@@ -1920,7 +1920,7 @@ export class SubscriberClient {
     return this.descriptors.page.listSubscriptions.createStream(
       this.innerApiCalls.listSubscriptions as GaxCall,
       request,
-      callSettings
+      callSettings,
     );
   }
 
@@ -1951,7 +1951,7 @@ export class SubscriberClient {
    */
   listSubscriptionsAsync(
     request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): AsyncIterable<protos.google.pubsub.v1.ISubscription> {
     request = request || {};
     options = options || {};
@@ -1967,7 +1967,7 @@ export class SubscriberClient {
     return this.descriptors.page.listSubscriptions.asyncIterate(
       this.innerApiCalls['listSubscriptions'] as GaxCall,
       request as {},
-      callSettings
+      callSettings,
     ) as AsyncIterable<protos.google.pubsub.v1.ISubscription>;
   }
   /**
@@ -2002,7 +2002,7 @@ export class SubscriberClient {
    */
   listSnapshots(
     request?: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot[],
@@ -2017,7 +2017,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSnapshotsRequest,
       protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
       protos.google.pubsub.v1.ISnapshot
-    >
+    >,
   ): void;
   listSnapshots(
     request: protos.google.pubsub.v1.IListSnapshotsRequest,
@@ -2025,7 +2025,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSnapshotsRequest,
       protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
       protos.google.pubsub.v1.ISnapshot
-    >
+    >,
   ): void;
   listSnapshots(
     request?: protos.google.pubsub.v1.IListSnapshotsRequest,
@@ -2040,7 +2040,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSnapshotsRequest,
       protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
       protos.google.pubsub.v1.ISnapshot
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot[],
@@ -2093,7 +2093,7 @@ export class SubscriberClient {
    */
   listSnapshotsStream(
     request?: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Transform {
     request = request || {};
     options = options || {};
@@ -2109,7 +2109,7 @@ export class SubscriberClient {
     return this.descriptors.page.listSnapshots.createStream(
       this.innerApiCalls.listSnapshots as GaxCall,
       request,
-      callSettings
+      callSettings,
     );
   }
 
@@ -2140,7 +2140,7 @@ export class SubscriberClient {
    */
   listSnapshotsAsync(
     request?: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): AsyncIterable<protos.google.pubsub.v1.ISnapshot> {
     request = request || {};
     options = options || {};
@@ -2156,7 +2156,7 @@ export class SubscriberClient {
     return this.descriptors.page.listSnapshots.asyncIterate(
       this.innerApiCalls['listSnapshots'] as GaxCall,
       request as {},
-      callSettings
+      callSettings,
     ) as AsyncIterable<protos.google.pubsub.v1.ISnapshot>;
   }
   /**
@@ -2197,7 +2197,7 @@ export class SubscriberClient {
       IamProtos.google.iam.v1.Policy,
       IamProtos.google.iam.v1.GetIamPolicyRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.getIamPolicy(request, options, callback);
   }
@@ -2244,7 +2244,7 @@ export class SubscriberClient {
       IamProtos.google.iam.v1.Policy,
       IamProtos.google.iam.v1.SetIamPolicyRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.setIamPolicy(request, options, callback);
   }
@@ -2292,7 +2292,7 @@ export class SubscriberClient {
       IamProtos.google.iam.v1.TestIamPermissionsResponse,
       IamProtos.google.iam.v1.TestIamPermissionsRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<[IamProtos.google.iam.v1.TestIamPermissionsResponse]> {
     return this.iamClient.testIamPermissions(request, options, callback);
   }
