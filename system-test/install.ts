@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as execa from 'execa';
+import {execa} from 'execa';
 import * as mv from 'mv';
 import {ncp} from 'ncp';
 import * as tmp from 'tmp';
