@@ -47,6 +47,7 @@ import {promisifySome} from './util';
 import {StatusError} from './message-stream';
 import {DebugMessage} from './debug';
 import {EventEmitter} from 'stream';
+import {promisify} from 'util';
 
 export {AckError, AckResponse, AckResponses} from './subscriber';
 
@@ -588,23 +589,34 @@ export class Subscription extends EventEmitter {
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
+    const prom = this._deleteAsync(gaxOpts);
+    if (callback) {
+      prom.then(r => callback(null, r)).catch(e => callback(e));
+    } else {
+      return prom;
+    }
+  }
+
+  /*!
+   * Async innards of delete() so we can wait for subscription.close() if needed.
+   */
+  async _deleteAsync(gaxOpts: CallOptions): Promise<EmptyResponse> {
     const reqOpts = {
       subscription: this.name,
     };
 
     if (this.isOpen) {
-      this._subscriber.close();
+      await this._subscriber.close();
     }
 
-    this.request<google.protobuf.Empty>(
-      {
-        client: 'SubscriberClient',
-        method: 'deleteSubscription',
-        reqOpts,
-        gaxOpts,
-      },
-      callback!,
-    );
+    await promisify(this.request<google.protobuf.Empty>)({
+      client: 'SubscriberClient',
+      method: 'deleteSubscription',
+      reqOpts,
+      gaxOpts,
+    });
+
+    return [{}];
   }
 
   /**
@@ -1164,7 +1176,7 @@ export class Subscription extends EventEmitter {
 
     this.on('removeListener', () => {
       if (this.isOpen && this.listenerCount('message') === 0) {
-        this._subscriber.close();
+        void this._subscriber.close();
       }
     });
   }

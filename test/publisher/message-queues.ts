@@ -155,10 +155,10 @@ describe('Message Queues', () => {
       const messages = [{}, {}, {}];
       const callbacks = messages.map(() => sandbox.spy());
 
-      it('should make the correct request', () => {
+      it('should make the correct request', async () => {
         const stub = sandbox.stub(topic, 'request');
 
-        queue._publish(messages, callbacks);
+        await queue._publish(messages, callbacks);
 
         const [{client, method, reqOpts}] = stub.lastCall.args;
         assert.strictEqual(client, 'PublisherClient');
@@ -166,12 +166,12 @@ describe('Message Queues', () => {
         assert.deepStrictEqual(reqOpts, {topic: topic.name, messages});
       });
 
-      it('should pass along any gax options', () => {
+      it('should pass along any gax options', async () => {
         const stub = sandbox.stub(topic, 'request');
         const callOptions = {};
 
         publisher.settings.gaxOpts = callOptions;
-        queue._publish(messages, callbacks);
+        await queue._publish(messages, callbacks);
 
         const [{gaxOpts}] = stub.lastCall.args;
         assert.strictEqual(gaxOpts, callOptions);
@@ -308,33 +308,33 @@ describe('Message Queues', () => {
     });
 
     describe('publish', () => {
-      it('should create a new batch', () => {
+      it('should create a new batch', async () => {
         const oldBatch = queue.batch;
 
-        queue.publish();
+        await queue.publish();
 
         assert.notStrictEqual(oldBatch, queue.batch);
         assert.ok(queue.batch instanceof FakeMessageBatch);
         assert.strictEqual(queue.batch.options, queue.batchOptions);
       });
 
-      it('should cancel any pending publish calls', () => {
+      it('should cancel any pending publish calls', async () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const fakeHandle = 1234 as unknown as any;
         const stub = sandbox.stub(global, 'clearTimeout').withArgs(fakeHandle);
 
         queue.pending = fakeHandle;
-        queue.publish();
+        await queue.publish();
 
         assert.strictEqual(stub.callCount, 1);
         assert.strictEqual(queue.pending, undefined);
       });
 
-      it('should publish the messages', () => {
+      it('should publish the messages', async () => {
         const batch = queue.batch;
         const stub = sandbox.stub(queue, '_publish');
 
-        queue.publish();
+        await queue.publish();
 
         const [messages, callbacks] = stub.lastCall.args;
         assert.strictEqual(messages, batch.messages);
@@ -366,7 +366,7 @@ describe('Message Queues', () => {
           queue.batch = new FakeMessageBatch();
           queue.batch.messages = fakeMessages;
           queue.batch.callbacks = spies;
-          queue.publishDrain().then(() => {
+          void queue.publishDrain().then(() => {
             process.nextTick(() => {
               assert.strictEqual(stub.callCount, 2);
               done();
@@ -374,7 +374,7 @@ describe('Message Queues', () => {
           });
         });
 
-        it('should not begin another publish(non-drain) if there are pending batches', () => {
+        it('should not begin another publish(non-drain) if there are pending batches', async () => {
           const stub = sandbox.stub(queue, '_publish');
           let once = false;
           stub.callsFake(async () => {
@@ -391,9 +391,9 @@ describe('Message Queues', () => {
           queue.batch = new FakeMessageBatch();
           queue.batch.messages = fakeMessages;
           queue.batch.callbacks = spies;
-          queue.publish().then(() => {
-            assert.strictEqual(stub.callCount, 1);
-          });
+          await queue.publish();
+
+          assert.strictEqual(stub.callCount, 1);
         });
 
         it('should emit "drain" if there is nothing left to publish', done => {
@@ -401,7 +401,7 @@ describe('Message Queues', () => {
           sandbox.stub(queue, '_publish').callsFake(async () => {});
 
           queue.on('drain', spy);
-          queue.publish().then(() => {
+          void queue.publish().then(() => {
             process.nextTick(() => {
               assert.strictEqual(spy.callCount, 1);
               done();
@@ -659,35 +659,35 @@ describe('Message Queues', () => {
         queue.currentBatch.callbacks = spies;
       });
 
-      it('should set inFlight to true', () => {
-        queue.publish();
+      it('should set inFlight to true', async () => {
+        await queue.publish();
         assert.strictEqual(queue.inFlight, true);
       });
 
-      it('should cancel any pending publishes', () => {
+      it('should cancel any pending publishes', async () => {
         const fakeHandle = 1234 as unknown as NodeJS.Timeout;
         const stub = sandbox.stub(global, 'clearTimeout');
 
         queue.pending = fakeHandle;
-        queue.publish();
+        await queue.publish();
 
         const [handle] = stub.lastCall.args;
         assert.strictEqual(handle, fakeHandle);
         assert.strictEqual(queue.pending, undefined);
       });
 
-      it('should remove the oldest batch from the batch list', () => {
+      it('should remove the oldest batch from the batch list', async () => {
         const oldestBatch = queue.currentBatch;
 
-        queue.publish();
+        await queue.publish();
 
         assert.notStrictEqual(queue.currentBatch, oldestBatch);
       });
 
-      it('should publish the batch', () => {
+      it('should publish the batch', async () => {
         const stub = sandbox.stub(queue, '_publish');
 
-        queue.publish();
+        await queue.publish();
 
         const [messages, callbacks] = stub.lastCall.args;
         assert.strictEqual(messages, fakeMessages);

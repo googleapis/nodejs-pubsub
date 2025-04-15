@@ -264,9 +264,11 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      client.initialize().catch(err => {
+        throw err;
+      });
       assert(client.subscriberStub);
-      client.close().then(() => {
+      void client.close().then(() => {
         done();
       });
     });
@@ -277,7 +279,7 @@ describe('v1.SubscriberClient', () => {
         projectId: 'bogus',
       });
       assert.strictEqual(client.subscriberStub, undefined);
-      client.close().then(() => {
+      void client.close().then(() => {
         done();
       });
     });
@@ -323,7 +325,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription(),
       );
@@ -332,7 +334,7 @@ describe('v1.SubscriberClient', () => {
         ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription(),
       );
@@ -355,7 +357,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription(),
       );
@@ -364,7 +366,7 @@ describe('v1.SubscriberClient', () => {
         ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription(),
       );
@@ -402,7 +404,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription(),
       );
@@ -411,7 +413,7 @@ describe('v1.SubscriberClient', () => {
         ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.createSubscription = stubSimpleCall(
         undefined,
@@ -433,7 +435,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription(),
       );
@@ -443,7 +445,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.createSubscription(request), expectedError);
     });
   });
@@ -454,7 +456,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSubscriptionRequest(),
       );
@@ -463,7 +465,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription(),
       );
@@ -485,7 +487,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSubscriptionRequest(),
       );
@@ -494,7 +496,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription(),
       );
@@ -532,7 +534,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSubscriptionRequest(),
       );
@@ -541,7 +543,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.getSubscription = stubSimpleCall(
         undefined,
@@ -563,7 +565,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSubscriptionRequest(),
       );
@@ -573,7 +575,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.getSubscription(request), expectedError);
     });
   });
@@ -584,7 +586,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSubscriptionRequest(),
       );
@@ -594,7 +596,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription', 'name'],
       );
       request.subscription.name = defaultValue1;
-      const expectedHeaderRequestParams = `subscription.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription.name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription(),
       );
@@ -617,7 +619,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSubscriptionRequest(),
       );
@@ -627,7 +629,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription', 'name'],
       );
       request.subscription.name = defaultValue1;
-      const expectedHeaderRequestParams = `subscription.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription.name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Subscription(),
       );
@@ -665,7 +667,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSubscriptionRequest(),
       );
@@ -675,7 +677,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription', 'name'],
       );
       request.subscription.name = defaultValue1;
-      const expectedHeaderRequestParams = `subscription.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription.name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.updateSubscription = stubSimpleCall(
         undefined,
@@ -697,7 +699,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSubscriptionRequest(),
       );
@@ -708,7 +710,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.updateSubscription(request), expectedError);
     });
   });
@@ -719,7 +721,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSubscriptionRequest(),
       );
@@ -728,7 +730,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty(),
       );
@@ -751,7 +753,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSubscriptionRequest(),
       );
@@ -760,7 +762,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty(),
       );
@@ -798,7 +800,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSubscriptionRequest(),
       );
@@ -807,7 +809,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.deleteSubscription = stubSimpleCall(
         undefined,
@@ -829,7 +831,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSubscriptionRequest(),
       );
@@ -839,7 +841,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.deleteSubscription(request), expectedError);
     });
   });
@@ -850,7 +852,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyAckDeadlineRequest(),
       );
@@ -859,7 +861,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty(),
       );
@@ -881,7 +883,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyAckDeadlineRequest(),
       );
@@ -890,7 +892,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty(),
       );
@@ -928,7 +930,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyAckDeadlineRequest(),
       );
@@ -937,7 +939,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.modifyAckDeadline = stubSimpleCall(
         undefined,
@@ -959,7 +961,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyAckDeadlineRequest(),
       );
@@ -969,7 +971,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.modifyAckDeadline(request), expectedError);
     });
   });
@@ -980,7 +982,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.AcknowledgeRequest(),
       );
@@ -989,7 +991,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty(),
       );
@@ -1011,7 +1013,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.AcknowledgeRequest(),
       );
@@ -1020,7 +1022,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty(),
       );
@@ -1058,7 +1060,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.AcknowledgeRequest(),
       );
@@ -1067,7 +1069,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.acknowledge = stubSimpleCall(
         undefined,
@@ -1089,7 +1091,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.AcknowledgeRequest(),
       );
@@ -1099,7 +1101,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.acknowledge(request), expectedError);
     });
   });
@@ -1110,7 +1112,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PullRequest(),
       );
@@ -1119,7 +1121,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.PullResponse(),
       );
@@ -1140,7 +1142,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PullRequest(),
       );
@@ -1149,7 +1151,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.PullResponse(),
       );
@@ -1185,7 +1187,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PullRequest(),
       );
@@ -1194,7 +1196,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.pull = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.pull(request), expectedError);
@@ -1212,7 +1214,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.PullRequest(),
       );
@@ -1222,7 +1224,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.pull(request), expectedError);
     });
   });
@@ -1233,7 +1235,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyPushConfigRequest(),
       );
@@ -1242,7 +1244,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty(),
       );
@@ -1264,7 +1266,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyPushConfigRequest(),
       );
@@ -1273,7 +1275,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty(),
       );
@@ -1311,7 +1313,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyPushConfigRequest(),
       );
@@ -1320,7 +1322,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.modifyPushConfig = stubSimpleCall(
         undefined,
@@ -1342,7 +1344,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ModifyPushConfigRequest(),
       );
@@ -1352,7 +1354,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.modifyPushConfig(request), expectedError);
     });
   });
@@ -1363,7 +1365,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSnapshotRequest(),
       );
@@ -1372,7 +1374,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot'],
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot(),
       );
@@ -1394,7 +1396,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSnapshotRequest(),
       );
@@ -1403,7 +1405,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot'],
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot(),
       );
@@ -1441,7 +1443,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSnapshotRequest(),
       );
@@ -1450,7 +1452,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot'],
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.getSnapshot = stubSimpleCall(
         undefined,
@@ -1472,7 +1474,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.GetSnapshotRequest(),
       );
@@ -1482,7 +1484,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.snapshot = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.getSnapshot(request), expectedError);
     });
   });
@@ -1493,7 +1495,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSnapshotRequest(),
       );
@@ -1502,7 +1504,7 @@ describe('v1.SubscriberClient', () => {
         ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot(),
       );
@@ -1524,7 +1526,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSnapshotRequest(),
       );
@@ -1533,7 +1535,7 @@ describe('v1.SubscriberClient', () => {
         ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot(),
       );
@@ -1571,7 +1573,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSnapshotRequest(),
       );
@@ -1580,7 +1582,7 @@ describe('v1.SubscriberClient', () => {
         ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.createSnapshot = stubSimpleCall(
         undefined,
@@ -1602,7 +1604,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.CreateSnapshotRequest(),
       );
@@ -1612,7 +1614,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.createSnapshot(request), expectedError);
     });
   });
@@ -1623,7 +1625,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSnapshotRequest(),
       );
@@ -1633,7 +1635,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot', 'name'],
       );
       request.snapshot.name = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot(),
       );
@@ -1655,7 +1657,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSnapshotRequest(),
       );
@@ -1665,7 +1667,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot', 'name'],
       );
       request.snapshot.name = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.Snapshot(),
       );
@@ -1703,7 +1705,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSnapshotRequest(),
       );
@@ -1713,7 +1715,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot', 'name'],
       );
       request.snapshot.name = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot.name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.updateSnapshot = stubSimpleCall(
         undefined,
@@ -1735,7 +1737,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.UpdateSnapshotRequest(),
       );
@@ -1746,7 +1748,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.snapshot.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.updateSnapshot(request), expectedError);
     });
   });
@@ -1757,7 +1759,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSnapshotRequest(),
       );
@@ -1766,7 +1768,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot'],
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty(),
       );
@@ -1788,7 +1790,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSnapshotRequest(),
       );
@@ -1797,7 +1799,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot'],
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.protobuf.Empty(),
       );
@@ -1835,7 +1837,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSnapshotRequest(),
       );
@@ -1844,7 +1846,7 @@ describe('v1.SubscriberClient', () => {
         ['snapshot'],
       );
       request.snapshot = defaultValue1;
-      const expectedHeaderRequestParams = `snapshot=${defaultValue1}`;
+      const expectedHeaderRequestParams = `snapshot=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.deleteSnapshot = stubSimpleCall(
         undefined,
@@ -1866,7 +1868,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.DeleteSnapshotRequest(),
       );
@@ -1876,7 +1878,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.snapshot = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.deleteSnapshot(request), expectedError);
     });
   });
@@ -1887,7 +1889,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.SeekRequest(),
       );
@@ -1896,7 +1898,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.SeekResponse(),
       );
@@ -1917,7 +1919,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.SeekRequest(),
       );
@@ -1926,7 +1928,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
         new protos.google.pubsub.v1.SeekResponse(),
       );
@@ -1962,7 +1964,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.SeekRequest(),
       );
@@ -1971,7 +1973,7 @@ describe('v1.SubscriberClient', () => {
         ['subscription'],
       );
       request.subscription = defaultValue1;
-      const expectedHeaderRequestParams = `subscription=${defaultValue1}`;
+      const expectedHeaderRequestParams = `subscription=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.seek = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.seek(request), expectedError);
@@ -1989,7 +1991,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.SeekRequest(),
       );
@@ -1999,7 +2001,7 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.seek(request), expectedError);
     });
   });
@@ -2010,7 +2012,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.StreamingPullRequest(),
       );
@@ -2053,7 +2055,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.StreamingPullRequest(),
       );
@@ -2096,7 +2098,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest(),
       );
@@ -2105,7 +2107,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -2129,7 +2131,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest(),
       );
@@ -2138,7 +2140,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -2178,7 +2180,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest(),
       );
@@ -2187,7 +2189,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listSubscriptions = stubSimpleCall(
         undefined,
@@ -2209,7 +2211,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest(),
       );
@@ -2218,7 +2220,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -2260,7 +2262,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest(),
       );
@@ -2269,7 +2271,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSubscriptions.createStream =
         stubPageStreamingCall(undefined, expectedError);
@@ -2306,7 +2308,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest(),
       );
@@ -2315,7 +2317,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
         generateSampleMessage(new protos.google.pubsub.v1.Subscription()),
@@ -2349,7 +2351,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSubscriptionsRequest(),
       );
@@ -2358,7 +2360,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSubscriptions.asyncIterate =
         stubAsyncIterationCall(undefined, expectedError);
@@ -2391,7 +2393,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest(),
       );
@@ -2400,7 +2402,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2424,7 +2426,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest(),
       );
@@ -2433,7 +2435,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2473,7 +2475,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest(),
       );
@@ -2482,7 +2484,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listSnapshots = stubSimpleCall(
         undefined,
@@ -2504,7 +2506,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest(),
       );
@@ -2513,7 +2515,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2555,7 +2557,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest(),
       );
@@ -2564,7 +2566,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSnapshots.createStream =
         stubPageStreamingCall(undefined, expectedError);
@@ -2601,7 +2603,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest(),
       );
@@ -2610,7 +2612,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
         generateSampleMessage(new protos.google.pubsub.v1.Snapshot()),
@@ -2644,7 +2646,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new protos.google.pubsub.v1.ListSnapshotsRequest(),
       );
@@ -2653,7 +2655,7 @@ describe('v1.SubscriberClient', () => {
         ['project'],
       );
       request.project = defaultValue1;
-      const expectedHeaderRequestParams = `project=${defaultValue1}`;
+      const expectedHeaderRequestParams = `project=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSnapshots.asyncIterate =
         stubAsyncIterationCall(undefined, expectedError);
@@ -2685,7 +2687,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new IamProtos.google.iam.v1.GetIamPolicyRequest(),
       );
@@ -2715,7 +2717,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new IamProtos.google.iam.v1.GetIamPolicyRequest(),
       );
@@ -2735,7 +2737,7 @@ describe('v1.SubscriberClient', () => {
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        client.getIamPolicy(
+        void client.getIamPolicy(
           request,
           expectedOptions,
           (
@@ -2759,7 +2761,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new IamProtos.google.iam.v1.GetIamPolicyRequest(),
       );
@@ -2791,7 +2793,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new IamProtos.google.iam.v1.SetIamPolicyRequest(),
       );
@@ -2821,7 +2823,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new IamProtos.google.iam.v1.SetIamPolicyRequest(),
       );
@@ -2841,7 +2843,7 @@ describe('v1.SubscriberClient', () => {
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        client.setIamPolicy(
+        void client.setIamPolicy(
           request,
           expectedOptions,
           (
@@ -2865,7 +2867,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new IamProtos.google.iam.v1.SetIamPolicyRequest(),
       );
@@ -2897,7 +2899,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new IamProtos.google.iam.v1.TestIamPermissionsRequest(),
       );
@@ -2930,7 +2932,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new IamProtos.google.iam.v1.TestIamPermissionsRequest(),
       );
@@ -2950,7 +2952,7 @@ describe('v1.SubscriberClient', () => {
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        client.testIamPermissions(
+        void client.testIamPermissions(
           request,
           expectedOptions,
           (
@@ -2974,7 +2976,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
         new IamProtos.google.iam.v1.TestIamPermissionsRequest(),
       );
@@ -3005,7 +3007,7 @@ describe('v1.SubscriberClient', () => {
   });
 
   describe('Path templates', () => {
-    describe('project', () => {
+    describe('project', async () => {
       const fakePath = '/rendered/path/project';
       const expectedParameters = {
         project: 'projectValue',
@@ -3014,7 +3016,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       client.pathTemplates.projectPathTemplate.render = sinon
         .stub()
         .returns(fakePath);
@@ -3043,7 +3045,7 @@ describe('v1.SubscriberClient', () => {
       });
     });
 
-    describe('projectTopic', () => {
+    describe('projectTopic', async () => {
       const fakePath = '/rendered/path/projectTopic';
       const expectedParameters = {
         project: 'projectValue',
@@ -3053,7 +3055,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       client.pathTemplates.projectTopicPathTemplate.render = sinon
         .stub()
         .returns(fakePath);
@@ -3092,7 +3094,7 @@ describe('v1.SubscriberClient', () => {
       });
     });
 
-    describe('schema', () => {
+    describe('schema', async () => {
       const fakePath = '/rendered/path/schema';
       const expectedParameters = {
         project: 'projectValue',
@@ -3102,7 +3104,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       client.pathTemplates.schemaPathTemplate.render = sinon
         .stub()
         .returns(fakePath);
@@ -3141,7 +3143,7 @@ describe('v1.SubscriberClient', () => {
       });
     });
 
-    describe('snapshot', () => {
+    describe('snapshot', async () => {
       const fakePath = '/rendered/path/snapshot';
       const expectedParameters = {
         project: 'projectValue',
@@ -3151,7 +3153,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       client.pathTemplates.snapshotPathTemplate.render = sinon
         .stub()
         .returns(fakePath);
@@ -3190,7 +3192,7 @@ describe('v1.SubscriberClient', () => {
       });
     });
 
-    describe('subscription', () => {
+    describe('subscription', async () => {
       const fakePath = '/rendered/path/subscription';
       const expectedParameters = {
         project: 'projectValue',
@@ -3200,7 +3202,7 @@ describe('v1.SubscriberClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       client.pathTemplates.subscriptionPathTemplate.render = sinon
         .stub()
         .returns(fakePath);

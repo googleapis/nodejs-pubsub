@@ -195,7 +195,7 @@ export abstract class MessageQueue {
    * @param {number} [deadline] The deadline in seconds.
    * @private
    */
-  add(message: Message, deadline?: number): Promise<void> {
+  async add(message: Message, deadline?: number): Promise<void> {
     if (this._closed) {
       if (this._subscriber.isExactlyOnceDelivery) {
         throw new AckError(AckResponses.Invalid, 'Subscriber closed');
@@ -213,7 +213,7 @@ export abstract class MessageQueue {
       this._requests.length + 1 >= maxMessages! ||
       this.bytes + size >= MAX_BATCH_BYTES
     ) {
-      this.flush();
+      await this.flush();
     }
 
     // Add the message to the current batch.

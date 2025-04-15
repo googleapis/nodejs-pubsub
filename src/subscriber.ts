@@ -406,7 +406,7 @@ export class Message implements tracing.MessageWithAttributes {
       this._handled = true;
       this.subSpans.ackCall();
       this.subSpans.processingEnd();
-      this._subscriber.ack(this);
+      void this._subscriber.ack(this);
     }
   }
 
@@ -456,7 +456,7 @@ export class Message implements tracing.MessageWithAttributes {
   modAck(deadline: number): void {
     if (!this._handled) {
       this.subSpans.modAckCall(Duration.from({seconds: deadline}));
-      this._subscriber.modAck(this, deadline);
+      void this._subscriber.modAck(this, deadline);
     }
   }
 
@@ -506,7 +506,7 @@ export class Message implements tracing.MessageWithAttributes {
       this._handled = true;
       this.subSpans.nackCall();
       this.subSpans.processingEnd();
-      this._subscriber.nack(this);
+      void this._subscriber.nack(this);
     }
   }
 
@@ -951,7 +951,7 @@ export class Subscriber extends EventEmitter {
 
     this._stream.start().catch(err => {
       this.emit('error', err);
-      this.close();
+      void this.close();
     });
 
     this.isOpen = true;
@@ -1106,12 +1106,12 @@ export class Subscriber extends EventEmitter {
 
     if (this._acks.numPendingRequests) {
       promises.push(this._acks.onFlush());
-      this._acks.flush();
+      await this._acks.flush();
     }
 
     if (this._modAcks.numPendingRequests) {
       promises.push(this._modAcks.onFlush());
-      this._modAcks.flush();
+      await this._modAcks.flush();
     }
 
     if (this._acks.numInFlightRequests) {

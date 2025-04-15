@@ -234,9 +234,9 @@ describe('Subscriber', () => {
     subscriber.open();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     sandbox.restore();
-    subscriber.close();
+    await subscriber.close();
     tracing.setGloballyEnabled(false);
   });
 
@@ -410,7 +410,7 @@ describe('Subscriber', () => {
   });
 
   describe('ack', () => {
-    it('should update the ack histogram/deadline', () => {
+    it('should update the ack histogram/deadline', async () => {
       const histogram: FakeHistogram = stubs.get('histogram');
       const now = Date.now();
 
@@ -424,13 +424,13 @@ describe('Subscriber', () => {
 
       sandbox.stub(histogram, 'percentile').withArgs(99).returns(fakeDeadline);
 
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(addStub.callCount, 1);
       assert.strictEqual(subscriber.ackDeadline, fakeDeadline);
     });
 
-    it('should bound ack deadlines if min/max are specified', () => {
+    it('should bound ack deadlines if min/max are specified', async () => {
       const histogram: FakeHistogram = stubs.get('histogram');
       const now = Date.now();
 
@@ -449,7 +449,7 @@ describe('Subscriber', () => {
       subscriber.setOptions({
         maxAckDeadline: Duration.from({seconds: 60}),
       });
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(addStub.callCount, 1);
       assert.strictEqual(subscriber.ackDeadline, 60);
@@ -458,12 +458,12 @@ describe('Subscriber', () => {
         minAckDeadline: Duration.from({seconds: 10}),
       });
       fakeDeadline = 1;
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(subscriber.ackDeadline, 10);
     });
 
-    it('should default to 60s min for exactly-once delivery subscriptions', () => {
+    it('should default to 60s min for exactly-once delivery subscriptions', async () => {
       subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
 
       const histogram: FakeHistogram = stubs.get('histogram');
@@ -478,7 +478,7 @@ describe('Subscriber', () => {
       const fakeDeadline = 10;
       sandbox.stub(histogram, 'percentile').withArgs(99).returns(fakeDeadline);
 
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(addStub.callCount, 1);
       assert.strictEqual(subscriber.ackDeadline, 60);
@@ -487,12 +487,12 @@ describe('Subscriber', () => {
       subscriber.setOptions({
         minAckDeadline: Duration.from({seconds: 5}),
       });
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(subscriber.ackDeadline, 10);
     });
 
-    it('should not update the deadline if user specified', () => {
+    it('should not update the deadline if user specified', async () => {
       const histogram: FakeHistogram = stubs.get('histogram');
       const ackDeadline = 543;
       const maxMessages = 20;
@@ -505,16 +505,16 @@ describe('Subscriber', () => {
         ackDeadline,
         flowControl: {maxMessages: maxMessages, maxBytes: maxBytes},
       });
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(subscriber.ackDeadline, ackDeadline);
     });
 
-    it('should add the message to the ack queue', () => {
+    it('should add the message to the ack queue', async () => {
       const ackQueue: FakeAckQueue = stubs.get('ackQueue');
       const stub = sandbox.stub(ackQueue, 'add').withArgs(message);
 
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(stub.callCount, 1);
     });
@@ -533,7 +533,7 @@ describe('Subscriber', () => {
           done();
         });
 
-      subscriber.ack(message);
+      void subscriber.ack(message);
     });
   });
 
@@ -549,16 +549,16 @@ describe('Subscriber', () => {
       return s.close();
     });
 
-    it('should set isOpen to false', () => {
-      subscriber.close();
+    it('should set isOpen to false', async () => {
+      await subscriber.close();
       assert.strictEqual(subscriber.isOpen, false);
     });
 
-    it('should destroy the message stream', () => {
+    it('should destroy the message stream', async () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
       const stub = sandbox.stub(stream, 'destroy');
 
-      subscriber.close();
+      await subscriber.close();
       assert.strictEqual(stub.callCount, 1);
     });
 
@@ -575,16 +575,16 @@ describe('Subscriber', () => {
 
     it('should emit a close event', done => {
       subscriber.on('close', done);
-      subscriber.close();
+      void subscriber.close();
     });
 
-    it('should nack any messages that come in after', () => {
+    it('should nack any messages that come in after', async () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
       const stub = sandbox.stub(subscriber, 'nack');
       const shutdownStub = sandbox.stub(tracing.PubsubEvents, 'shutdown');
       const pullResponse = {receivedMessages: [RECEIVED_MESSAGE]};
 
-      subscriber.close();
+      await subscriber.close();
       stream.emit('data', pullResponse);
 
       const [{ackId}] = stub.lastCall.args;
@@ -662,11 +662,11 @@ describe('Subscriber', () => {
   describe('modAck', () => {
     const deadline = 600;
 
-    it('should add the message/deadline to the modAck queue', () => {
+    it('should add the message/deadline to the modAck queue', async () => {
       const modAckQueue: FakeModAckQueue = stubs.get('modAckQueue');
       const stub = sandbox.stub(modAckQueue, 'add').withArgs(message, deadline);
 
-      subscriber.modAck(message, deadline);
+      await subscriber.modAck(message, deadline);
 
       assert.strictEqual(stub.callCount, 1);
     });
@@ -878,9 +878,9 @@ describe('Subscriber', () => {
       exporter.reset();
     });
 
-    afterEach(() => {
+    afterEach(async () => {
       exporter.reset();
-      subscriber.close();
+      await subscriber.close();
     });
 
     it('should not instantiate a tracer when tracing is disabled', () => {

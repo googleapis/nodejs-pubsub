@@ -346,7 +346,7 @@ export class MessageStream extends PassThrough {
    */
   private async _getClient(): Promise<ClientStub> {
     const client = await this._subscriber.getClient();
-    client.initialize();
+    await client.initialize();
     return client.subscriberStub as Promise<ClientStub>;
   }
 
@@ -397,9 +397,9 @@ export class MessageStream extends PassThrough {
       if (PullRetry.resetFailures(status)) {
         this._retrier.reset(this._streams[index]);
       }
-      this._retrier.retryLater(this._streams[index], () => {
-        this._fillOne(index);
-      });
+      this._retrier.retryLater(this._streams[index], () =>
+        this._fillOne(index),
+      );
     } else if (this._activeStreams() === 0) {
       this.emit(
         'debug',

@@ -199,7 +199,7 @@ describe('Publisher', () => {
       // Setup trace exporting
       tracingPublisher = new Publisher(topic);
       const msg = {data: buffer} as p.PubsubMessage;
-      tracingPublisher.publishMessage(msg);
+      await tracingPublisher.publishMessage(msg);
 
       // publishMessage is only the first part of the process now,
       // so we need to manually end the span.
