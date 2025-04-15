@@ -200,7 +200,7 @@ export abstract class MessageQueue {
       if (this._subscriber.isExactlyOnceDelivery) {
         throw new AckError(AckResponses.Invalid, 'Subscriber closed');
       } else {
-        return Promise.resolve();
+        return;
       }
     }
 

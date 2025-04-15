@@ -155,10 +155,10 @@ describe('Message Queues', () => {
       const messages = [{}, {}, {}];
       const callbacks = messages.map(() => sandbox.spy());
 
-      it('should make the correct request', async () => {
+      it('should make the correct request', () => {
         const stub = sandbox.stub(topic, 'request');
 
-        await queue._publish(messages, callbacks);
+        void queue._publish(messages, callbacks);
 
         const [{client, method, reqOpts}] = stub.lastCall.args;
         assert.strictEqual(client, 'PublisherClient');
@@ -166,12 +166,12 @@ describe('Message Queues', () => {
         assert.deepStrictEqual(reqOpts, {topic: topic.name, messages});
       });
 
-      it('should pass along any gax options', async () => {
+      it('should pass along any gax options', () => {
         const stub = sandbox.stub(topic, 'request');
         const callOptions = {};
 
         publisher.settings.gaxOpts = callOptions;
-        await queue._publish(messages, callbacks);
+        void queue._publish(messages, callbacks);
 
         const [{gaxOpts}] = stub.lastCall.args;
         assert.strictEqual(gaxOpts, callOptions);
@@ -659,27 +659,27 @@ describe('Message Queues', () => {
         queue.currentBatch.callbacks = spies;
       });
 
-      it('should set inFlight to true', async () => {
-        await queue.publish();
+      it('should set inFlight to true', () => {
+        void queue.publish();
         assert.strictEqual(queue.inFlight, true);
       });
 
-      it('should cancel any pending publishes', async () => {
+      it('should cancel any pending publishes', () => {
         const fakeHandle = 1234 as unknown as NodeJS.Timeout;
         const stub = sandbox.stub(global, 'clearTimeout');
 
         queue.pending = fakeHandle;
-        await queue.publish();
+        void queue.publish();
 
         const [handle] = stub.lastCall.args;
         assert.strictEqual(handle, fakeHandle);
         assert.strictEqual(queue.pending, undefined);
       });
 
-      it('should remove the oldest batch from the batch list', async () => {
+      it('should remove the oldest batch from the batch list', () => {
         const oldestBatch = queue.currentBatch;
 
-        await queue.publish();
+        void queue.publish();
 
         assert.notStrictEqual(queue.currentBatch, oldestBatch);
       });

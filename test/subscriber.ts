@@ -492,7 +492,7 @@ describe('Subscriber', () => {
       assert.strictEqual(subscriber.ackDeadline, 10);
     });
 
-    it('should not update the deadline if user specified', async () => {
+    it('should not update the deadline if user specified', () => {
       const histogram: FakeHistogram = stubs.get('histogram');
       const ackDeadline = 543;
       const maxMessages = 20;
@@ -505,16 +505,16 @@ describe('Subscriber', () => {
         ackDeadline,
         flowControl: {maxMessages: maxMessages, maxBytes: maxBytes},
       });
-      await subscriber.ack(message);
+      void subscriber.ack(message);
 
       assert.strictEqual(subscriber.ackDeadline, ackDeadline);
     });
 
-    it('should add the message to the ack queue', async () => {
+    it('should add the message to the ack queue', () => {
       const ackQueue: FakeAckQueue = stubs.get('ackQueue');
       const stub = sandbox.stub(ackQueue, 'add').withArgs(message);
 
-      await subscriber.ack(message);
+      void subscriber.ack(message);
 
       assert.strictEqual(stub.callCount, 1);
     });
@@ -662,11 +662,11 @@ describe('Subscriber', () => {
   describe('modAck', () => {
     const deadline = 600;
 
-    it('should add the message/deadline to the modAck queue', async () => {
+    it('should add the message/deadline to the modAck queue', () => {
       const modAckQueue: FakeModAckQueue = stubs.get('modAckQueue');
       const stub = sandbox.stub(modAckQueue, 'add').withArgs(message, deadline);
 
-      await subscriber.modAck(message, deadline);
+      void subscriber.modAck(message, deadline);
 
       assert.strictEqual(stub.callCount, 1);
     });

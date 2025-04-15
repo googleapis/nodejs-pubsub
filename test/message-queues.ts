@@ -146,36 +146,36 @@ describe('MessageQueues', () => {
     });
 
     describe('add', () => {
-      it('should increase the number of pending requests', async () => {
-        await await messageQueue.add(new FakeMessage() as Message);
+      it('should increase the number of pending requests', () => {
+        void messageQueue.add(new FakeMessage() as Message);
         assert.strictEqual(messageQueue.numPendingRequests, 1);
       });
 
-      it('should flush the queue if at capacity', async () => {
+      it('should flush the queue if at capacity', () => {
         const stub = sandbox.stub(messageQueue, 'flush');
 
         messageQueue.setOptions({maxMessages: 1});
-        await await messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.add(new FakeMessage() as Message);
 
         assert.strictEqual(stub.callCount, 1);
       });
 
-      it('should flush the queue if at byte capacity', async () => {
+      it('should flush the queue if at byte capacity', () => {
         const stub = sandbox.stub(messageQueue, 'flush');
 
         messageQueue.bytes = messageTypes.MAX_BATCH_BYTES - 10;
-        await await messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.add(new FakeMessage() as Message);
 
         assert.strictEqual(stub.callCount, 1);
       });
 
-      it('should schedule a flush if needed', async () => {
+      it('should schedule a flush if needed', () => {
         const clock = sandbox.useFakeTimers();
         const stub = sandbox.stub(messageQueue, 'flush');
         const delay = 1000;
 
         messageQueue.setOptions({maxMilliseconds: delay});
-        await await messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.add(new FakeMessage() as Message);
 
         assert.strictEqual(stub.callCount, 0);
         clock.tick(delay);
@@ -196,46 +196,46 @@ describe('MessageQueues', () => {
             return Promise.resolve([]);
           });
 
-        const completion = await messageQueue.add(new FakeMessage() as Message);
+        const completion = messageQueue.add(new FakeMessage() as Message);
         clock.tick(delay);
         await completion;
       });
     });
 
     describe('flush', () => {
-      it('should cancel scheduled flushes', async () => {
+      it('should cancel scheduled flushes', () => {
         const clock = sandbox.useFakeTimers();
         const spy = sandbox.spy(messageQueue, 'flush');
         const delay = 1000;
 
         messageQueue.setOptions({maxMilliseconds: delay});
-        await await messageQueue.add(new FakeMessage() as Message);
-        await await messageQueue.flush();
+        void messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.flush();
         clock.tick(delay);
 
         assert.strictEqual(spy.callCount, 1);
       });
 
-      it('should remove the messages from the queue', async () => {
-        await await messageQueue.add(new FakeMessage() as Message);
-        await await messageQueue.flush();
+      it('should remove the messages from the queue', () => {
+        void messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.flush();
 
         assert.strictEqual(messageQueue.numPendingRequests, 0);
       });
 
-      it('should remove the bytes of messages from the queue', async () => {
-        await await messageQueue.add(new FakeMessage() as Message);
-        await await messageQueue.flush();
+      it('should remove the bytes of messages from the queue', () => {
+        void messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.flush();
 
         assert.strictEqual(messageQueue.bytes, 0);
       });
 
-      it('should send the batch', async () => {
+      it('should send the batch', () => {
         const message = new FakeMessage();
         const deadline = 10;
 
-        await messageQueue.add(message as Message, deadline);
-        await messageQueue.flush();
+        void messageQueue.add(message as Message, deadline);
+        void messageQueue.flush();
 
         const [batch] = messageQueue.batches;
         assert.strictEqual(batch[0].message.ackId, message.ackId);
@@ -277,8 +277,8 @@ describe('MessageQueues', () => {
         const onDrainBeforeFlush = messageQueue
           .onDrain()
           .then(() => log.push('drain1'));
-        await messageQueue.add(message as Message, deadline);
-        await messageQueue.flush();
+        void messageQueue.add(message as Message, deadline);
+        void messageQueue.flush();
         assert.deepStrictEqual(log, ['send:start']);
         sendDone.resolve();
         await messageQueue.onDrain().then(() => log.push('drain2'));
@@ -324,18 +324,18 @@ describe('MessageQueues', () => {
     });
 
     describe('setOptions', () => {
-      it('should default maxMessages to 3000', async () => {
+      it('should default maxMessages to 3000', () => {
         const stub = sandbox.stub(messageQueue, 'flush');
 
         for (let i = 0; i < 3000; i++) {
           assert.strictEqual(stub.callCount, 0);
-          await messageQueue.add(fakeMessage());
+          void messageQueue.add(fakeMessage());
         }
 
         assert.strictEqual(stub.callCount, 1);
       });
 
-      it('should respect user supplied maxMessages', async () => {
+      it('should respect user supplied maxMessages', () => {
         const stub = sandbox.stub(messageQueue, 'flush');
         const maxMessages = 100;
 
@@ -343,29 +343,29 @@ describe('MessageQueues', () => {
 
         for (let i = 0; i < maxMessages; i++) {
           assert.strictEqual(stub.callCount, 0);
-          await messageQueue.add(fakeMessage());
+          void messageQueue.add(fakeMessage());
         }
 
         assert.strictEqual(stub.callCount, 1);
       });
 
-      it('should default maxMilliseconds to 100', async () => {
+      it('should default maxMilliseconds to 100', () => {
         const clock = sandbox.useFakeTimers();
         const stub = sandbox.stub(messageQueue, 'flush');
 
-        await messageQueue.add(fakeMessage());
+        void messageQueue.add(fakeMessage());
         clock.tick(100);
 
         assert.strictEqual(stub.callCount, 1);
       });
 
-      it('should respect user supplied maxMilliseconds', async () => {
+      it('should respect user supplied maxMilliseconds', () => {
         const clock = sandbox.useFakeTimers();
         const stub = sandbox.stub(messageQueue, 'flush');
         const maxMilliseconds = 10000;
 
         messageQueue.setOptions({maxMilliseconds});
-        await messageQueue.add(fakeMessage());
+        void messageQueue.add(fakeMessage());
         clock.tick(maxMilliseconds);
 
         assert.strictEqual(stub.callCount, 1);
@@ -569,7 +569,7 @@ describe('MessageQueues', () => {
         };
 
         sandbox.stub(fakeSubscriber.client, 'acknowledge').rejects(fakeError);
-        await ackQueue.add(message);
+        void ackQueue.add(message);
         await ackQueue.flush();
 
         // Make sure the one handled by errorInfo was retried.

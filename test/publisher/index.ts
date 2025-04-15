@@ -193,13 +193,13 @@ describe('Publisher', () => {
       exporter.reset();
     });
 
-    it('export created spans', async () => {
+    it('export created spans', () => {
       tracing.setGloballyEnabled(true);
 
       // Setup trace exporting
       tracingPublisher = new Publisher(topic);
       const msg = {data: buffer} as p.PubsubMessage;
-      await tracingPublisher.publishMessage(msg);
+      void tracingPublisher.publishMessage(msg);
 
       // publishMessage is only the first part of the process now,
       // so we need to manually end the span.

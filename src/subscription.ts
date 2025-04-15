@@ -589,34 +589,23 @@ export class Subscription extends EventEmitter {
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
 
-    const prom = this._deleteAsync(gaxOpts);
-    if (callback) {
-      prom.then(r => callback(null, r)).catch(e => callback(e));
-    } else {
-      return prom;
-    }
-  }
-
-  /*!
-   * Async innards of delete() so we can wait for subscription.close() if needed.
-   */
-  async _deleteAsync(gaxOpts: CallOptions): Promise<EmptyResponse> {
     const reqOpts = {
       subscription: this.name,
     };
 
     if (this.isOpen) {
-      await this._subscriber.close();
+      void this._subscriber.close();
     }
 
-    await promisify(this.request<google.protobuf.Empty>)({
-      client: 'SubscriberClient',
-      method: 'deleteSubscription',
-      reqOpts,
-      gaxOpts,
-    });
-
-    return [{}];
+    this.request<google.protobuf.Empty>(
+      {
+        client: 'SubscriberClient',
+        method: 'deleteSubscription',
+        reqOpts,
+        gaxOpts,
+      },
+      callback!,
+    );
   }
 
   /**
