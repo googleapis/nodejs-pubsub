@@ -26,6 +26,7 @@ import * as p from '../../src/publisher';
 import * as b from '../../src/publisher/message-batch';
 import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
+import {TestUtils} from '../test-utils';
 
 class FakeTopic {
   name = 'projects/foo/topics/fake-topic';
@@ -279,7 +280,7 @@ describe('Message Queues', () => {
       });
 
       it('should set a timeout to publish if need be', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const stub = sandbox.stub(queue, 'publish').resolves();
         const maxMilliseconds = 1234;
 
@@ -293,7 +294,7 @@ describe('Message Queues', () => {
       });
 
       it('should noop if a timeout is already set', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const stub = sandbox.stub(queue, 'publish').resolves();
         const maxMilliseconds = 1234;
 
@@ -582,7 +583,7 @@ describe('Message Queues', () => {
 
       beforeEach(() => {
         queue.batchOptions = {maxMilliseconds};
-        clock = sinon.useFakeTimers();
+        clock = TestUtils.useFakeTimers(sandbox);
       });
 
       afterEach(() => {

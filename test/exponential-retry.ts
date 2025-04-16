@@ -18,6 +18,7 @@ import * as sinon from 'sinon';
 
 import {ExponentialRetry} from '../src/exponential-retry';
 import {Duration} from '../src/temporal';
+import {TestUtils} from './test-utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function introspect(obj: unknown): any {
@@ -52,7 +53,7 @@ describe('exponential retry class', () => {
   });
 
   it('makes the first callback', () => {
-    const clock = sandbox.useFakeTimers();
+    const clock = TestUtils.useFakeTimers(sandbox);
     const er = new ExponentialRetry<TestItem>(
       Duration.from({millis: 100}),
       Duration.from({millis: 1000}),
@@ -60,19 +61,22 @@ describe('exponential retry class', () => {
     sandbox.stub(global.Math, 'random').returns(0.75);
 
     const item = makeItem();
+    let retried = false;
     er.retryLater(item, (s: typeof item, t: Duration) => {
       assert.strictEqual(s, item);
       assert.strictEqual(t.totalOf('millisecond'), 125);
+      retried = true;
     });
 
     clock.tick(125);
 
     const leftovers = er.close();
+    assert.strictEqual(retried, true);
     assert.strictEqual(leftovers.length, 0);
   });
 
   it('closes gracefully', () => {
-    const clock = sandbox.useFakeTimers();
+    const clock = TestUtils.useFakeTimers(sandbox);
     const er = new ExponentialRetry<TestItem>(
       Duration.from({millis: 100}),
       Duration.from({millis: 1000}),
@@ -102,7 +106,7 @@ describe('exponential retry class', () => {
   });
 
   it('backs off exponentially', () => {
-    const clock = sandbox.useFakeTimers();
+    const clock = TestUtils.useFakeTimers(sandbox);
     const er = new ExponentialRetry<TestItem>(
       Duration.from({millis: 100}),
       Duration.from({millis: 1000}),
@@ -136,7 +140,7 @@ describe('exponential retry class', () => {
   });
 
   it('backs off exponentially until the max backoff', () => {
-    const clock = sandbox.useFakeTimers();
+    const clock = TestUtils.useFakeTimers(sandbox);
     const item = makeItem();
     const er = new ExponentialRetry<TestItem>(
       Duration.from({millis: 100}),
@@ -170,7 +174,7 @@ describe('exponential retry class', () => {
   });
 
   it('calls retries in the right order', () => {
-    const clock = sandbox.useFakeTimers();
+    const clock = TestUtils.useFakeTimers(sandbox);
     const items = [makeItem(), makeItem()];
 
     const er = new ExponentialRetry<TestItem>(

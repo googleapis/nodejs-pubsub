@@ -26,6 +26,7 @@ import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
 import {Message, Subscriber} from '../src/subscriber';
 import {DebugMessage} from '../src/debug';
+import {TestUtils} from './test-utils';
 
 class FakeClient {
   async acknowledge(
@@ -170,7 +171,7 @@ describe('MessageQueues', () => {
       });
 
       it('should schedule a flush if needed', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const stub = sandbox.stub(messageQueue, 'flush');
         const delay = 1000;
 
@@ -183,7 +184,7 @@ describe('MessageQueues', () => {
       });
 
       it('should return a Promise that resolves when the ack is sent', async () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const delay = 1000;
         messageQueue.setOptions({maxMilliseconds: delay});
 
@@ -204,7 +205,7 @@ describe('MessageQueues', () => {
 
     describe('flush', () => {
       it('should cancel scheduled flushes', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const spy = sandbox.spy(messageQueue, 'flush');
         const delay = 1000;
 
@@ -350,7 +351,7 @@ describe('MessageQueues', () => {
       });
 
       it('should default maxMilliseconds to 100', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const stub = sandbox.stub(messageQueue, 'flush');
 
         void messageQueue.add(fakeMessage());
@@ -360,7 +361,7 @@ describe('MessageQueues', () => {
       });
 
       it('should respect user supplied maxMilliseconds', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const stub = sandbox.stub(messageQueue, 'flush');
         const maxMilliseconds = 10000;
 
@@ -557,7 +558,7 @@ describe('MessageQueues', () => {
       // This doesn't need to be duplicated down to modAck because it's just
       // testing common code.
       it('should retry transient failures', async () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         sandbox.stub(global.Math, 'random').returns(0.5);
 
         const message = fakeMessage();

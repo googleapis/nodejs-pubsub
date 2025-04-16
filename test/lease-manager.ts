@@ -30,6 +30,7 @@ import {
   Subscriber,
 } from '../src/subscriber';
 import {defaultOptions} from '../src/default-options';
+import {TestUtils} from './test-utils';
 
 const FREE_MEM = 9376387072;
 const fakeos = {
@@ -237,7 +238,7 @@ describe('LeaseManager', () => {
         // This random number was generated once to keep the test results stable.
         random = 0.5756015072052962;
         sandbox.stub(global.Math, 'random').returns(random);
-        clock = sandbox.useFakeTimers();
+        clock = TestUtils.useFakeTimers(sandbox);
         expectedTimeout =
           (subscriber.ackDeadline * 1000 * 0.9 - subscriber.modAckLatency) *
           random;
@@ -397,7 +398,7 @@ describe('LeaseManager', () => {
     });
 
     it('should cancel any lease extensions', () => {
-      const clock = sandbox.useFakeTimers();
+      const clock = TestUtils.useFakeTimers(sandbox);
       const stub = sandbox.stub(subscriber, 'modAck').resolves();
 
       leaseManager.add(new FakeMessage() as {} as Message);
@@ -518,7 +519,7 @@ describe('LeaseManager', () => {
     });
 
     it('should cancel any extensions if no messages are left', () => {
-      const clock = sandbox.useFakeTimers();
+      const clock = TestUtils.useFakeTimers(sandbox);
       const message = new FakeMessage() as {} as Message;
       const stub = sandbox.stub(subscriber, 'modAck').resolves();
 
@@ -563,7 +564,7 @@ describe('LeaseManager', () => {
 
   describe('deadline extension', () => {
     beforeEach(() => {
-      sandbox.useFakeTimers();
+      TestUtils.useFakeTimers(sandbox);
     });
     afterEach(() => {
       sandbox.clock.restore();
