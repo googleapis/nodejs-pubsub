@@ -16,7 +16,7 @@ import {SinonSandbox, SinonFakeTimers} from 'sinon';
 
 type FakeTimersParam = Parameters<SinonSandbox['useFakeTimers']>[0];
 interface FakeTimerConfig {
-  now?: number,
+  now?: number;
   toFake?: string[];
 }
 
@@ -35,7 +35,13 @@ export class TestUtils {
    */
   static useFakeTimers(sandbox: SinonSandbox, now?: number): SinonFakeTimers {
     const config: FakeTimerConfig = {
-      toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'],
+      toFake: [
+        'setTimeout',
+        'clearTimeout',
+        'setInterval',
+        'clearInterval',
+        'Date',
+      ],
     };
     if (now) {
       config.now = now;

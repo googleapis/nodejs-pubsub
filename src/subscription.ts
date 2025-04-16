@@ -47,7 +47,6 @@ import {promisifySome} from './util';
 import {StatusError} from './message-stream';
 import {DebugMessage} from './debug';
 import {EventEmitter} from 'stream';
-import {promisify} from 'util';
 
 export {AckError, AckResponse, AckResponses} from './subscriber';
 
