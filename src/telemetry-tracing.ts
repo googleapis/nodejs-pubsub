@@ -547,7 +547,7 @@ export class PubsubSpans {
     const span: Span = getTracer().startSpan(
       `${subInfo.subId ?? subInfo.subName} ack`,
       {
-        kind: SpanKind.CONSUMER,
+        kind: SpanKind.CLIENT,
         attributes: spanAttributes,
         links,
       },
@@ -595,7 +595,7 @@ export class PubsubSpans {
     const span: Span = getTracer().startSpan(
       `${subInfo.subId ?? subInfo.subName} ${type}`,
       {
-        kind: SpanKind.CONSUMER,
+        kind: SpanKind.CLIENT,
         attributes: spanAttributes,
         links,
       },
