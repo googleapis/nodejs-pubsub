@@ -578,10 +578,6 @@ export interface SubscriberOptions {
   flowControl?: FlowControlOptions;
   useLegacyFlowControl?: boolean;
   streamingOptions?: MessageStreamOptions;
-
-  /** @deprecated Unset this and instantiate a tracer; support will be
-   *    enabled automatically. */
-  enableOpenTelemetryTracing?: boolean;
 }
 
 const minAckDeadlineForExactlyOnceDelivery = Duration.from({seconds: 60});
@@ -604,7 +600,6 @@ export class Subscriber extends EventEmitter {
   private _acks!: AckQueue;
   private _histogram: Histogram;
   private _inventory!: LeaseManager;
-  private _useLegacyOpenTelemetry: boolean;
   private _latencies: Histogram;
   private _modAcks!: ModAckQueue;
   private _name!: string;
@@ -622,7 +617,6 @@ export class Subscriber extends EventEmitter {
     this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
     this.useLegacyFlowControl = false;
     this.isOpen = false;
-    this._useLegacyOpenTelemetry = false;
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
     this._subscription = subscription;
@@ -966,8 +960,6 @@ export class Subscriber extends EventEmitter {
   setOptions(options: SubscriberOptions): void {
     this._options = options;
 
-    this._useLegacyOpenTelemetry = options.enableOpenTelemetryTracing || false;
-
     // The user-set ackDeadline value basically pegs the extension time.
     // We'll emulate it by overwriting min/max.
     const passedAckDeadline = options.ackDeadline;
@@ -1015,11 +1007,9 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   private createParentSpan(message: Message): void {
-    const enabled = tracing.isEnabled({
-      enableOpenTelemetryTracing: this._useLegacyOpenTelemetry,
-    });
+    const enabled = tracing.isEnabled();
     if (enabled) {
-      tracing.extractSpan(message, this.name, enabled);
+      tracing.extractSpan(message, this.name);
     }
   }
 

@@ -104,7 +104,7 @@ describe('OpenTelemetryTracer', () => {
         'tests',
       ) as trace.Span;
 
-      otel.injectSpan(span, message, otel.OpenTelemetryLevel.Modern);
+      otel.injectSpan(span, message);
 
       assert.strictEqual(
         Object.getOwnPropertyNames(message.attributes).includes(
@@ -116,7 +116,7 @@ describe('OpenTelemetryTracer', () => {
   });
 
   describe('context propagation', () => {
-    it('injects a trace context and legacy baggage', () => {
+    it('injects a trace context', () => {
       const message: PubsubMessage = {
         attributes: {},
       };
@@ -127,17 +127,11 @@ describe('OpenTelemetryTracer', () => {
       );
       assert.ok(span);
 
-      otel.injectSpan(span, message, otel.OpenTelemetryLevel.Legacy);
+      otel.injectSpan(span, message);
 
       assert.strictEqual(
         Object.getOwnPropertyNames(message.attributes).includes(
           otel.modernAttributeName,
-        ),
-        true,
-      );
-      assert.strictEqual(
-        Object.getOwnPropertyNames(message.attributes).includes(
-          otel.legacyAttributeName,
         ),
         true,
       );
@@ -146,7 +140,6 @@ describe('OpenTelemetryTracer', () => {
     it('should issue a warning if OpenTelemetry span context key is set', () => {
       const message: PubsubMessage = {
         attributes: {
-          [otel.legacyAttributeName]: 'foobar',
           [otel.modernAttributeName]: 'bazbar',
         },
       };
@@ -159,20 +152,15 @@ describe('OpenTelemetryTracer', () => {
 
       const warnSpy = sinon.spy(console, 'warn');
       try {
-        otel.injectSpan(span, message, otel.OpenTelemetryLevel.Legacy);
-        assert.strictEqual(warnSpy.callCount, 2);
+        otel.injectSpan(span, message);
+        assert.strictEqual(warnSpy.callCount, 1);
       } finally {
         warnSpy.restore();
       }
     });
 
     it('should be able to determine if attributes are present', () => {
-      let message: otel.MessageWithAttributes = {
-        attributes: {
-          [otel.legacyAttributeName]: 'foobar',
-        },
-      };
-      assert.strictEqual(otel.containsSpanContext(message), true);
+      let message: otel.MessageWithAttributes;
 
       message = {
         attributes: {
@@ -196,7 +184,6 @@ describe('OpenTelemetryTracer', () => {
       const childSpan = otel.extractSpan(
         message,
         'projects/test/subscriptions/subfoo',
-        otel.OpenTelemetryLevel.Modern,
       );
       assert.strictEqual(
         childSpan!.spanContext().traceId,

@@ -867,51 +867,22 @@ describe('Subscriber', () => {
   });
 
   describe('OpenTelemetry tracing', () => {
-    const enableTracing: s.SubscriberOptions = {
-      enableOpenTelemetryTracing: true,
-    };
-    const disableTracing: s.SubscriberOptions = {
-      enableOpenTelemetryTracing: false,
-    };
-
     beforeEach(() => {
       exporter.reset();
     });
 
     afterEach(async () => {
+      tracing.setGloballyEnabled(false);
       exporter.reset();
       await subscriber.close();
-    });
-
-    it('should not instantiate a tracer when tracing is disabled', () => {
-      subscriber = new Subscriber(subscription, {});
-      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], false);
-    });
-
-    it('should instantiate a tracer when tracing is enabled through constructor', () => {
-      subscriber = new Subscriber(subscription, enableTracing);
-      assert.ok(subscriber['_useLegacyOpenTelemetry']);
-    });
-
-    it('should instantiate a tracer when tracing is enabled through setOptions', () => {
-      subscriber = new Subscriber(subscription, {});
-      subscriber.setOptions(enableTracing);
-      assert.ok(subscriber['_useLegacyOpenTelemetry']);
-    });
-
-    it('should disable tracing when tracing is disabled through setOptions', () => {
-      subscriber = new Subscriber(subscription, enableTracing);
-      subscriber.setOptions(disableTracing);
-      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], false);
     });
 
     it('exports a span once it is created', () => {
       tracing.setGloballyEnabled(true);
 
       subscription = new FakeSubscription() as {} as Subscription;
-      subscriber = new Subscriber(subscription, enableTracing);
+      subscriber = new Subscriber(subscription, {});
       message = new Message(subscriber, RECEIVED_MESSAGE);
-      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], true);
       subscriber.open();
 
       // Construct mock of received message with span context
@@ -920,12 +891,14 @@ describe('Subscriber', () => {
         spanId: '6e0c63257de34c92',
         traceFlags: opentelemetry.TraceFlags.SAMPLED,
       };
+      const parentSpan = opentelemetry.trace.getSpan(
+        tracing.spanContextToContext(parentSpanContext)!,
+      );
       const messageWithSpanContext = {
         ackId: uuid.v4(),
         message: {
           attributes: {
-            googclient_OpenTelemetrySpanContext:
-              JSON.stringify(parentSpanContext),
+            [tracing.modernAttributeName]: JSON.stringify(parentSpanContext),
           },
           data: Buffer.from('Hello, world!'),
           messageId: uuid.v4(),
@@ -933,6 +906,7 @@ describe('Subscriber', () => {
           publishTime: {seconds: 12, nanos: 32},
         },
       };
+      tracing.injectSpan(parentSpan!, messageWithSpanContext.message);
       const pullResponse: s.PullResponse = {
         receivedMessages: [messageWithSpanContext],
       };
@@ -969,7 +943,7 @@ describe('Subscriber', () => {
     it('exports a span even when a span context is not present on message', () => {
       tracing.setGloballyEnabled(true);
 
-      subscriber = new Subscriber(subscription, enableTracing);
+      subscriber = new Subscriber(subscription, {});
       subscriber.open();
 
       const pullResponse: s.PullResponse = {

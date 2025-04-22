@@ -356,6 +356,34 @@ describe('PubSub', () => {
     it('should set isEmulator to false by default', () => {
       assert.strictEqual(pubsub.isEmulator, false);
     });
+
+    describe('tracing', () => {
+      beforeEach(() => {
+        tracing.setGloballyEnabled(false);
+      });
+      afterEach(() => {
+        tracing.setGloballyEnabled(false);
+      });
+      it('should not enable OTel when tracing is disabled', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const _pubsub = new PubSub({});
+        assert.strictEqual(
+          tracing.isEnabled(),
+          tracing.OpenTelemetryLevel.None,
+        );
+      });
+
+      it('should enable OTel when tracing is enabled through constructor', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const _pubsub = new PubSub({
+          enableOpenTelemetryTracing: true,
+        });
+        assert.strictEqual(
+          tracing.isEnabled(),
+          tracing.OpenTelemetryLevel.Modern,
+        );
+      });
+    });
   });
 
   describe('createSubscription', () => {

@@ -28,7 +28,6 @@ import {
   Link,
 } from '@opentelemetry/api';
 import {Attributes, PubsubMessage} from './publisher/pubsub-message';
-import {PublishOptions} from './publisher/index';
 import {Duration} from './temporal';
 
 export {Span};
@@ -66,13 +65,6 @@ export enum OpenTelemetryLevel {
   None = 0,
 
   /**
-   * Legacy: We found a trace provider, but the user also specified the old
-   * manual enable flag; this will trigger the legacy attribute being included.
-   * The modern propagation attribute will _also_ be included.
-   */
-  Legacy = 1,
-
-  /**
    * Modern: We will only inject/extract the modern propagation attribute.
    */
   Modern = 2,
@@ -96,26 +88,11 @@ export function setGloballyEnabled(enabled: boolean) {
  * Tries to divine what sort of OpenTelemetry we're supporting. See the enum
  * for the meaning of the values, and other notes.
  *
- * Legacy OTel is no longer officially supported, but we don't want to
- * break anyone at a non-major.
- *
  * @private
  * @internal
  */
-export function isEnabled(
-  publishSettings?: PublishOptions,
-): OpenTelemetryLevel {
-  // If we're not enabled, skip everything.
-  if (!globallyEnabled) {
-    return OpenTelemetryLevel.None;
-  }
-
-  if (publishSettings?.enableOpenTelemetryTracing) {
-    return OpenTelemetryLevel.Legacy;
-  }
-
-  // Enable modern support.
-  return OpenTelemetryLevel.Modern;
+export function isEnabled(): OpenTelemetryLevel {
+  return globallyEnabled ? OpenTelemetryLevel.Modern : OpenTelemetryLevel.None;
 }
 
 /**
@@ -241,14 +218,6 @@ export function spanContextToContext(
  * @internal
  */
 export const modernAttributeName = 'googclient_traceparent';
-
-/**
- * The old legacy attribute name.
- *
- * @private
- * @internal
- */
-export const legacyAttributeName = 'googclient_OpenTelemetrySpanContext';
 
 export interface AttributeParams {
   // Fully qualified.
@@ -762,11 +731,7 @@ export class PubsubEvents {
  * @private
  * @internal
  */
-export function injectSpan(
-  span: Span,
-  message: MessageWithAttributes,
-  enabled: OpenTelemetryLevel,
-): void {
+export function injectSpan(span: Span, message: MessageWithAttributes): void {
   if (!globallyEnabled) {
     return;
   }
@@ -781,18 +746,6 @@ export function injectSpan(
     );
 
     delete message.attributes[modernAttributeName];
-  }
-
-  // If we're in legacy mode, add that header as well.
-  if (enabled === OpenTelemetryLevel.Legacy) {
-    if (message.attributes[legacyAttributeName]) {
-      console.warn(
-        `${legacyAttributeName} key set as message attribute, but will be overridden.`,
-      );
-    }
-    message.attributes[legacyAttributeName] = JSON.stringify(
-      span.spanContext(),
-    );
   }
 
   // Always do propagation injection with the trace context.
@@ -820,9 +773,7 @@ export function containsSpanContext(message: MessageWithAttributes): boolean {
   }
 
   const keys = Object.getOwnPropertyNames(message.attributes);
-  return !!keys.find(
-    n => n === legacyAttributeName || n === modernAttributeName,
-  );
+  return !!keys.find(n => n === modernAttributeName);
 }
 
 /**
@@ -838,7 +789,6 @@ export function containsSpanContext(message: MessageWithAttributes): boolean {
 export function extractSpan(
   message: MessageWithAttributes,
   subName: string,
-  enabled: OpenTelemetryLevel,
 ): Span | undefined {
   if (!globallyEnabled) {
     return undefined;
@@ -852,26 +802,8 @@ export function extractSpan(
 
   let context: Context | undefined;
 
-  if (enabled === OpenTelemetryLevel.Legacy) {
-    // Only prefer the legacy attributes to no trace context attribute.
-    if (
-      keys.includes(legacyAttributeName) &&
-      !keys.includes(modernAttributeName)
-    ) {
-      const legacyValue = message.attributes?.[legacyAttributeName];
-      if (legacyValue) {
-        const parentSpanContext: SpanContext | undefined = legacyValue
-          ? JSON.parse(legacyValue)
-          : undefined;
-        if (parentSpanContext) {
-          context = spanContextToContext(parentSpanContext);
-        }
-      }
-    }
-  } else {
-    if (keys.includes(modernAttributeName)) {
-      context = propagation.extract(ROOT_CONTEXT, message, pubsubGetter);
-    }
+  if (keys.includes(modernAttributeName)) {
+    context = propagation.extract(ROOT_CONTEXT, message, pubsubGetter);
   }
 
   const span = PubsubSpans.createReceiveSpan(
@@ -883,33 +815,3 @@ export function extractSpan(
   message.parentSpan = span;
   return span;
 }
-
-// Since these were exported on the main Pub/Sub index in the previous
-// version, we have to export them until the next major.
-export const legacyExports = {
-  /**
-   * @deprecated
-   * Use the new telemetry functionality instead; see the updated OpenTelemetry
-   * sample for an example.
-   */
-  createSpan: function (
-    spanName: string,
-    kind: SpanKind,
-    attributes?: SpanAttributes,
-    parent?: SpanContext,
-  ): Span {
-    if (!globallyEnabled) {
-      // This isn't great, but it's the fact of the situation.
-      return undefined as unknown as Span;
-    } else {
-      return getTracer().startSpan(
-        spanName,
-        {
-          kind,
-          attributes,
-        },
-        parent ? trace.setSpanContext(context.active(), parent) : undefined,
-      );
-    }
-  },
-};

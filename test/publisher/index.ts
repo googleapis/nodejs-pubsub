@@ -375,22 +375,6 @@ describe('Publisher', () => {
           done();
         });
       });
-
-      it('should issue a warning if OpenTelemetry span context key is set', () => {
-        tracing.setGloballyEnabled(true);
-
-        const warnSpy = sinon.spy(console, 'warn');
-        const attributes = {
-          [tracing.legacyAttributeName]: 'foobar',
-        };
-        const fakeMessageWithOTKey = {data, attributes};
-        const publisherTracing = new Publisher(topic, {
-          enableOpenTelemetryTracing: true,
-        });
-        publisherTracing.publishMessage(fakeMessageWithOTKey, warnSpy);
-        assert.ok(warnSpy.called);
-        warnSpy.restore();
-      });
     });
   });
 

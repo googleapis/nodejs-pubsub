@@ -336,7 +336,7 @@ export class Publisher {
    * @param {PubsubMessage} message The message to create a span for
    */
   getParentSpan(message: PubsubMessage, caller: string): Span | undefined {
-    const enabled = tracing.isEnabled(this.settings);
+    const enabled = tracing.isEnabled();
     if (!enabled) {
       return undefined;
     }
@@ -353,7 +353,7 @@ export class Publisher {
 
     // If the span's context is valid we should inject the propagation trace context.
     if (span && isSpanContextValid(span.spanContext())) {
-      tracing.injectSpan(span, message, enabled);
+      tracing.injectSpan(span, message);
     }
 
     return span;
