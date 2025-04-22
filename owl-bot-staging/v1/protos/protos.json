@@ -10,7 +10,7 @@
             "v1": {
               "options": {
                 "csharp_namespace": "Google.Cloud.PubSub.V1",
-                "go_package": "cloud.google.com/go/pubsub/apiv1/pubsubpb;pubsubpb",
+                "go_package": "cloud.google.com/go/pubsub/v2/apiv1/pubsubpb;pubsubpb",
                 "java_multiple_files": true,
                 "java_outer_classname": "SchemaProto",
                 "java_package": "com.google.pubsub.v1",
