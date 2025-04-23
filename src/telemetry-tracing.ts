@@ -376,7 +376,7 @@ export class PubsubSpans {
       if (message.ackId) {
         spanAttributes['messaging.gcp_pubsub.message.ack_id'] = message.ackId;
       }
-      if (operation){
+      if (operation) {
         spanAttributes['messaging.operation'] = operation;
       }
     }
@@ -396,7 +396,12 @@ export class PubsubSpans {
     const topicInfo = getTopicInfo(topicName);
     const span: Span = getTracer().startSpan(`${topicName} create`, {
       kind: SpanKind.PRODUCER,
-      attributes: PubsubSpans.createAttributes(topicInfo, message, caller, 'create'),
+      attributes: PubsubSpans.createAttributes(
+        topicInfo,
+        message,
+        caller,
+        'create'
+      ),
     });
     if (topicInfo.topicId) {
       span.updateName(`${topicInfo.topicId} create`);
@@ -431,7 +436,12 @@ export class PubsubSpans {
 
     const subInfo = getSubscriptionInfo(subName);
     const name = `${subInfo.subId ?? subName} subscribe`;
-    const attributes = this.createAttributes(subInfo, message, caller, 'receive');
+    const attributes = this.createAttributes(
+      subInfo,
+      message,
+      caller,
+      'receive'
+    );
     if (subInfo.subId) {
       attributes['messaging.destination.name'] = subInfo.subId;
     }
@@ -590,7 +600,7 @@ export class PubsubSpans {
       subInfo,
       undefined,
       caller,
-      'receive' 
+      'receive'
     );
     const links: Link[] = messageSpans
       .filter(m => m && isSampled(m))

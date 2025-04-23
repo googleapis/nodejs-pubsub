@@ -363,7 +363,10 @@ describe('OpenTelemetryTracer', () => {
         childReadSpan.attributes['messaging.destination.name'],
         'sub'
       );
-      assert.strictEqual(childReadSpan.attributes['messaging.operation'], 'receive');
+      assert.strictEqual(
+        childReadSpan.attributes['messaging.operation'],
+        'receive'
+      );
       assert.strictEqual(childReadSpan.kind, SpanKind.CONSUMER);
       assert.ok(childReadSpan.parentSpanId);
     });
