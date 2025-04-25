@@ -105,7 +105,6 @@ export function isEnabled(): OpenTelemetryLevel {
  * or subscriber span, depending on the context.
  *
  * @private
- * @internal
  */
 export interface MessageWithAttributes {
   attributes?: Attributes | null | undefined;

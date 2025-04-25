@@ -90,6 +90,12 @@ export class MessageBatch {
     tracing.PubsubSpans.createPublishSchedulerSpan(message);
   }
 
+  /**
+   * Ends the current batch, and returns the messages and callbacks we've queued up.
+   *
+   * @private
+   * @internal
+   */
   end(): BatchResults {
     this.messages.forEach(m => m.publishSchedulerSpan?.end());
     return {
