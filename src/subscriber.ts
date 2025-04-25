@@ -560,6 +560,8 @@ export class Message implements tracing.MessageWithAttributes {
  *     ever have, while it's under library control.
  * @property {Duration} [maxAckDeadline] The maximum time that ackDeadline should
  *     ever have, while it's under library control.
+ * @property {Duration} [maxExtensionTime] The maximum time that ackDeadline should
+ *     ever have, while it's under library control.
  * @property {BatchOptions} [batching] Request batching options; this is for
  *     batching acks and modacks being sent back to the server.
  * @property {FlowControlOptions} [flowControl] Flow control options.
@@ -569,11 +571,9 @@ export class Message implements tracing.MessageWithAttributes {
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
  */
 export interface SubscriberOptions {
-  /** @deprecated Use minAckDeadline and maxAckDeadline. */
-  ackDeadline?: number;
-
   minAckDeadline?: Duration;
   maxAckDeadline?: Duration;
+  maxExtensionTime?: Duration;
   batching?: BatchOptions;
   flowControl?: FlowControlOptions;
   useLegacyFlowControl?: boolean;
@@ -597,6 +597,7 @@ export class Subscriber extends EventEmitter {
   maxBytes: number;
   useLegacyFlowControl: boolean;
   isOpen: boolean;
+  maxExtensionTime: Duration;
   private _acks!: AckQueue;
   private _histogram: Histogram;
   private _inventory!: LeaseManager;
@@ -612,9 +613,11 @@ export class Subscriber extends EventEmitter {
   constructor(subscription: Subscription, options = {}) {
     super();
 
-    this.ackDeadline = defaultOptions.subscription.ackDeadline;
+    this.ackDeadline =
+      defaultOptions.subscription.startingAckDeadline.totalOf('second');
     this.maxMessages = defaultOptions.subscription.maxOutstandingMessages;
     this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
+    this.maxExtensionTime = defaultOptions.subscription.maxExtensionTime;
     this.useLegacyFlowControl = false;
     this.isOpen = false;
     this._histogram = new Histogram({min: 10, max: 600});
@@ -960,15 +963,6 @@ export class Subscriber extends EventEmitter {
   setOptions(options: SubscriberOptions): void {
     this._options = options;
 
-    // The user-set ackDeadline value basically pegs the extension time.
-    // We'll emulate it by overwriting min/max.
-    const passedAckDeadline = options.ackDeadline;
-    if (passedAckDeadline !== undefined) {
-      this.ackDeadline = passedAckDeadline;
-      options.minAckDeadline = Duration.from({seconds: passedAckDeadline});
-      options.maxAckDeadline = Duration.from({seconds: passedAckDeadline});
-    }
-
     this.useLegacyFlowControl = options.useLegacyFlowControl || false;
     if (options.flowControl) {
       this.maxMessages =
@@ -998,6 +992,18 @@ export class Subscriber extends EventEmitter {
     if (this._inventory) {
       this._inventory.setOptions(this._options.flowControl!);
     }
+
+    this.updateAckDeadline();
+  }
+
+  /**
+   * Retrieves our effective options. This is mostly for unit test use.
+   *
+   * @private
+   * @returns {SubscriberOptions} The options.
+   */
+  getOptions(): SubscriberOptions {
+    return this._options;
   }
 
   /**

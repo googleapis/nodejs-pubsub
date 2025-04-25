@@ -259,12 +259,14 @@ describe('Subscriber', () => {
     });
 
     it('should set any options passed in', () => {
-      const stub = sandbox.stub(Subscriber.prototype, 'setOptions');
-      const fakeOptions = {};
-      new Subscriber(subscription, fakeOptions);
-
-      const [options] = stub.lastCall.args;
-      assert.strictEqual(options, fakeOptions);
+      const options = {
+        streamingOptions: {},
+      };
+      const subscriber = new Subscriber(subscription, options);
+      assert.strictEqual(
+        subscriber.getOptions().streamingOptions,
+        options.streamingOptions,
+      );
     });
   });
 
@@ -464,7 +466,7 @@ describe('Subscriber', () => {
     });
 
     it('should default to 60s min for exactly-once delivery subscriptions', async () => {
-      subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+      subscriber.setSubscriptionProperties({exactlyOnceDeliveryEnabled: true});
 
       const histogram: FakeHistogram = stubs.get('histogram');
       const now = Date.now();
@@ -501,8 +503,10 @@ describe('Subscriber', () => {
       sandbox.stub(histogram, 'add').throws();
       sandbox.stub(histogram, 'percentile').throws();
 
+      const deadlineTime = Duration.from({seconds: ackDeadline});
       subscriber.setOptions({
-        ackDeadline,
+        minAckDeadline: deadlineTime,
+        maxAckDeadline: deadlineTime,
         flowControl: {maxMessages: maxMessages, maxBytes: maxBytes},
       });
       void subscriber.ack(message);
@@ -847,10 +851,13 @@ describe('Subscriber', () => {
     beforeEach(() => subscriber.close());
 
     it('should capture the ackDeadline', () => {
-      const ackDeadline = 1232;
+      const ackDeadline = Duration.from({seconds: 1232});
 
-      subscriber.setOptions({ackDeadline});
-      assert.strictEqual(subscriber.ackDeadline, ackDeadline);
+      subscriber.setOptions({
+        minAckDeadline: ackDeadline,
+        maxAckDeadline: ackDeadline,
+      });
+      assert.strictEqual(subscriber.ackDeadline, ackDeadline.totalOf('second'));
     });
 
     it('should not set maxStreams higher than maxMessages', () => {
