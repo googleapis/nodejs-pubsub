@@ -408,7 +408,6 @@ describe('Publisher', () => {
         gaxOpts: {
           isBundling: false,
         },
-        enableOpenTelemetryTracing: false,
         flowControlOptions: {
           maxOutstandingBytes: undefined,
           maxOutstandingMessages: undefined,
@@ -427,7 +426,6 @@ describe('Publisher', () => {
         gaxOpts: {
           isBundling: true,
         },
-        enableOpenTelemetryTracing: true,
         flowControlOptions: {
           maxOutstandingBytes: 500,
           maxOutstandingMessages: 50,

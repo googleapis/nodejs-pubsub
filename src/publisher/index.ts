@@ -38,9 +38,6 @@ export interface PublishOptions {
   flowControlOptions?: FlowControlOptions;
   gaxOpts?: CallOptions;
   messageOrdering?: boolean;
-
-  /** @deprecated Unset and use context propagation. */
-  enableOpenTelemetryTracing?: boolean;
 }
 
 /**
@@ -270,7 +267,6 @@ export class Publisher {
       gaxOpts: {
         isBundling: false,
       },
-      enableOpenTelemetryTracing: false,
       flowControlOptions: Object.assign(
         {},
         flowControlDefaults,
@@ -290,13 +286,11 @@ export class Publisher {
   setOptions(options = {} as PublishOptions): void {
     const defaults = this.getOptionDefaults();
 
-    const {
-      batching,
-      gaxOpts,
-      messageOrdering,
-      enableOpenTelemetryTracing,
-      flowControlOptions,
-    } = extend(true, defaults, options);
+    const {batching, gaxOpts, messageOrdering, flowControlOptions} = extend(
+      true,
+      defaults,
+      options,
+    );
 
     this.settings = {
       batching: {
@@ -309,7 +303,6 @@ export class Publisher {
       },
       gaxOpts,
       messageOrdering,
-      enableOpenTelemetryTracing,
       flowControlOptions,
     };
 
