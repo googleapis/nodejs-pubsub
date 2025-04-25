@@ -887,6 +887,9 @@ export namespace google {
                         /** TextFormat delimiter. */
                         public delimiter?: (string|null);
 
+                        /** TextFormat _delimiter. */
+                        public _delimiter?: "delimiter";
+
                         /**
                          * Creates a new TextFormat instance using the specified properties.
                          * @param [properties] Properties to set
@@ -2879,7 +2882,7 @@ export namespace google {
             interface IPubsubMessage {
 
                 /** PubsubMessage data */
-                data?: (Uint8Array|string|null);
+                data?: (Uint8Array|Buffer|string|null);
 
                 /** PubsubMessage attributes */
                 attributes?: ({ [k: string]: string }|null);
@@ -2904,7 +2907,7 @@ export namespace google {
                 constructor(properties?: google.pubsub.v1.IPubsubMessage);
 
                 /** PubsubMessage data. */
-                public data: (Uint8Array|string);
+                public data: (Uint8Array|Buffer|string);
 
                 /** PubsubMessage attributes. */
                 public attributes: { [k: string]: string };
@@ -10530,7 +10533,7 @@ export namespace google {
                 schema?: (google.pubsub.v1.ISchema|null);
 
                 /** ValidateMessageRequest message */
-                message?: (Uint8Array|string|null);
+                message?: (Uint8Array|Buffer|string|null);
 
                 /** ValidateMessageRequest encoding */
                 encoding?: (google.pubsub.v1.Encoding|keyof typeof google.pubsub.v1.Encoding|null);
@@ -10555,7 +10558,7 @@ export namespace google {
                 public schema?: (google.pubsub.v1.ISchema|null);
 
                 /** ValidateMessageRequest message. */
-                public message: (Uint8Array|string);
+                public message: (Uint8Array|Buffer|string);
 
                 /** ValidateMessageRequest encoding. */
                 public encoding: (google.pubsub.v1.Encoding|keyof typeof google.pubsub.v1.Encoding);
@@ -15911,7 +15914,7 @@ export namespace google {
             doubleValue?: (number|null);
 
             /** UninterpretedOption stringValue */
-            stringValue?: (Uint8Array|string|null);
+            stringValue?: (Uint8Array|Buffer|string|null);
 
             /** UninterpretedOption aggregateValue */
             aggregateValue?: (string|null);
@@ -15942,7 +15945,7 @@ export namespace google {
             public doubleValue: number;
 
             /** UninterpretedOption stringValue. */
-            public stringValue: (Uint8Array|string);
+            public stringValue: (Uint8Array|Buffer|string);
 
             /** UninterpretedOption aggregateValue. */
             public aggregateValue: string;

@@ -221,7 +221,7 @@ describe('v1.SubscriberClient', () => {
             assert(client.subscriberStub);
             client.close().then(() => {
                 done();
-            });
+            }).catch(err => {throw err});
         });
 
         it('has close method for the non-initialized client', done => {
@@ -232,7 +232,7 @@ describe('v1.SubscriberClient', () => {
             assert.strictEqual(client.subscriberStub, undefined);
             client.close().then(() => {
                 done();
-            });
+            }).catch(err => {throw err});
         });
 
         it('has getProjectId method', async () => {
@@ -371,7 +371,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.Subscription', ['name']);
             request.name = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.createSubscription(request), expectedError);
         });
     });
@@ -479,7 +479,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.GetSubscriptionRequest', ['subscription']);
             request.subscription = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.getSubscription(request), expectedError);
         });
     });
@@ -591,7 +591,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.UpdateSubscriptionRequest', ['subscription', 'name']);
             request.subscription.name = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.updateSubscription(request), expectedError);
         });
     });
@@ -699,7 +699,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.DeleteSubscriptionRequest', ['subscription']);
             request.subscription = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.deleteSubscription(request), expectedError);
         });
     });
@@ -807,7 +807,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.ModifyAckDeadlineRequest', ['subscription']);
             request.subscription = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.modifyAckDeadline(request), expectedError);
         });
     });
@@ -915,7 +915,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.AcknowledgeRequest', ['subscription']);
             request.subscription = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.acknowledge(request), expectedError);
         });
     });
@@ -1023,7 +1023,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.PullRequest', ['subscription']);
             request.subscription = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.pull(request), expectedError);
         });
     });
@@ -1131,7 +1131,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.ModifyPushConfigRequest', ['subscription']);
             request.subscription = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.modifyPushConfig(request), expectedError);
         });
     });
@@ -1239,7 +1239,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.GetSnapshotRequest', ['snapshot']);
             request.snapshot = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.getSnapshot(request), expectedError);
         });
     });
@@ -1347,7 +1347,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.CreateSnapshotRequest', ['name']);
             request.name = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.createSnapshot(request), expectedError);
         });
     });
@@ -1459,7 +1459,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.UpdateSnapshotRequest', ['snapshot', 'name']);
             request.snapshot.name = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.updateSnapshot(request), expectedError);
         });
     });
@@ -1567,7 +1567,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.DeleteSnapshotRequest', ['snapshot']);
             request.snapshot = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.deleteSnapshot(request), expectedError);
         });
     });
@@ -1675,7 +1675,7 @@ describe('v1.SubscriberClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.SeekRequest', ['subscription']);
             request.subscription = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.seek(request), expectedError);
         });
     });
@@ -2293,7 +2293,7 @@ describe('v1.SubscriberClient', () => {
                         } else {
                             resolve(result);
                         }
-                    });
+                    }).catch(err => {throw err});
             });
             const response = await promise;
             assert.deepStrictEqual(response, expectedResponse);
@@ -2385,7 +2385,7 @@ describe('v1.SubscriberClient', () => {
                         } else {
                             resolve(result);
                         }
-                    });
+                    }).catch(err => {throw err});
             });
             const response = await promise;
             assert.deepStrictEqual(response, expectedResponse);
@@ -2477,7 +2477,7 @@ describe('v1.SubscriberClient', () => {
                         } else {
                             resolve(result);
                         }
-                    });
+                    }).catch(err => {throw err});
             });
             const response = await promise;
             assert.deepStrictEqual(response, expectedResponse);

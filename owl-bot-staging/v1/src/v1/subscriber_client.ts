@@ -2514,7 +2514,7 @@ export class SubscriberClient {
         this._log.info('ending gRPC channel');
         this._terminated = true;
         stub.close();
-        this.iamClient.close();
+        this.iamClient.close().catch(err => {throw err});
       });
     }
     return Promise.resolve();

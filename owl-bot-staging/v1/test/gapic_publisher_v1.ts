@@ -212,7 +212,7 @@ describe('v1.PublisherClient', () => {
             assert(client.publisherStub);
             client.close().then(() => {
                 done();
-            });
+            }).catch(err => {throw err});
         });
 
         it('has close method for the non-initialized client', done => {
@@ -223,7 +223,7 @@ describe('v1.PublisherClient', () => {
             assert.strictEqual(client.publisherStub, undefined);
             client.close().then(() => {
                 done();
-            });
+            }).catch(err => {throw err});
         });
 
         it('has getProjectId method', async () => {
@@ -362,7 +362,7 @@ describe('v1.PublisherClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.Topic', ['name']);
             request.name = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.createTopic(request), expectedError);
         });
     });
@@ -474,7 +474,7 @@ describe('v1.PublisherClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.UpdateTopicRequest', ['topic', 'name']);
             request.topic.name = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.updateTopic(request), expectedError);
         });
     });
@@ -582,7 +582,7 @@ describe('v1.PublisherClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.PublishRequest', ['topic']);
             request.topic = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.publish(request), expectedError);
         });
     });
@@ -690,7 +690,7 @@ describe('v1.PublisherClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.GetTopicRequest', ['topic']);
             request.topic = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.getTopic(request), expectedError);
         });
     });
@@ -798,7 +798,7 @@ describe('v1.PublisherClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.DeleteTopicRequest', ['topic']);
             request.topic = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.deleteTopic(request), expectedError);
         });
     });
@@ -906,7 +906,7 @@ describe('v1.PublisherClient', () => {
               getTypeDefaultValue('.google.pubsub.v1.DetachSubscriptionRequest', ['subscription']);
             request.subscription = defaultValue1;
             const expectedError = new Error('The client has already been closed.');
-            client.close();
+            client.close().catch(err => {throw err});
             await assert.rejects(client.detachSubscription(request), expectedError);
         });
     });
@@ -1673,7 +1673,7 @@ describe('v1.PublisherClient', () => {
                         } else {
                             resolve(result);
                         }
-                    });
+                    }).catch(err => {throw err});
             });
             const response = await promise;
             assert.deepStrictEqual(response, expectedResponse);
@@ -1765,7 +1765,7 @@ describe('v1.PublisherClient', () => {
                         } else {
                             resolve(result);
                         }
-                    });
+                    }).catch(err => {throw err});
             });
             const response = await promise;
             assert.deepStrictEqual(response, expectedResponse);
@@ -1857,7 +1857,7 @@ describe('v1.PublisherClient', () => {
                         } else {
                             resolve(result);
                         }
-                    });
+                    }).catch(err => {throw err});
             });
             const response = await promise;
             assert.deepStrictEqual(response, expectedResponse);
