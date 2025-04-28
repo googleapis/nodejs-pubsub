@@ -31,6 +31,6 @@
 export class DebugMessage {
   constructor(
     public message: string,
-    public error?: Error
+    public error?: Error,
   ) {}
 }

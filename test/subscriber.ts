@@ -150,7 +150,7 @@ class FakeMessageStream extends PassThrough {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _error: Error | null,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _callback: (error: Error | null) => void
+    _callback: (error: Error | null) => void,
   ): void {}
   async start() {}
 }
@@ -234,9 +234,9 @@ describe('Subscriber', () => {
     subscriber.open();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     sandbox.restore();
-    subscriber.close();
+    await subscriber.close();
     tracing.setGloballyEnabled(false);
   });
 
@@ -259,12 +259,14 @@ describe('Subscriber', () => {
     });
 
     it('should set any options passed in', () => {
-      const stub = sandbox.stub(Subscriber.prototype, 'setOptions');
-      const fakeOptions = {};
-      new Subscriber(subscription, fakeOptions);
-
-      const [options] = stub.lastCall.args;
-      assert.strictEqual(options, fakeOptions);
+      const options = {
+        streamingOptions: {},
+      };
+      const subscriber = new Subscriber(subscription, options);
+      assert.strictEqual(
+        subscriber.getOptions().streamingOptions,
+        options.streamingOptions,
+      );
     });
   });
 
@@ -410,7 +412,7 @@ describe('Subscriber', () => {
   });
 
   describe('ack', () => {
-    it('should update the ack histogram/deadline', () => {
+    it('should update the ack histogram/deadline', async () => {
       const histogram: FakeHistogram = stubs.get('histogram');
       const now = Date.now();
 
@@ -424,13 +426,13 @@ describe('Subscriber', () => {
 
       sandbox.stub(histogram, 'percentile').withArgs(99).returns(fakeDeadline);
 
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(addStub.callCount, 1);
       assert.strictEqual(subscriber.ackDeadline, fakeDeadline);
     });
 
-    it('should bound ack deadlines if min/max are specified', () => {
+    it('should bound ack deadlines if min/max are specified', async () => {
       const histogram: FakeHistogram = stubs.get('histogram');
       const now = Date.now();
 
@@ -449,7 +451,7 @@ describe('Subscriber', () => {
       subscriber.setOptions({
         maxAckDeadline: Duration.from({seconds: 60}),
       });
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(addStub.callCount, 1);
       assert.strictEqual(subscriber.ackDeadline, 60);
@@ -458,13 +460,13 @@ describe('Subscriber', () => {
         minAckDeadline: Duration.from({seconds: 10}),
       });
       fakeDeadline = 1;
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(subscriber.ackDeadline, 10);
     });
 
-    it('should default to 60s min for exactly-once delivery subscriptions', () => {
-      subscriber.subscriptionProperties = {exactlyOnceDeliveryEnabled: true};
+    it('should default to 60s min for exactly-once delivery subscriptions', async () => {
+      subscriber.setSubscriptionProperties({exactlyOnceDeliveryEnabled: true});
 
       const histogram: FakeHistogram = stubs.get('histogram');
       const now = Date.now();
@@ -478,7 +480,7 @@ describe('Subscriber', () => {
       const fakeDeadline = 10;
       sandbox.stub(histogram, 'percentile').withArgs(99).returns(fakeDeadline);
 
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(addStub.callCount, 1);
       assert.strictEqual(subscriber.ackDeadline, 60);
@@ -487,7 +489,7 @@ describe('Subscriber', () => {
       subscriber.setOptions({
         minAckDeadline: Duration.from({seconds: 5}),
       });
-      subscriber.ack(message);
+      await subscriber.ack(message);
 
       assert.strictEqual(subscriber.ackDeadline, 10);
     });
@@ -501,11 +503,13 @@ describe('Subscriber', () => {
       sandbox.stub(histogram, 'add').throws();
       sandbox.stub(histogram, 'percentile').throws();
 
+      const deadlineTime = Duration.from({seconds: ackDeadline});
       subscriber.setOptions({
-        ackDeadline,
+        minAckDeadline: deadlineTime,
+        maxAckDeadline: deadlineTime,
         flowControl: {maxMessages: maxMessages, maxBytes: maxBytes},
       });
-      subscriber.ack(message);
+      void subscriber.ack(message);
 
       assert.strictEqual(subscriber.ackDeadline, ackDeadline);
     });
@@ -514,7 +518,7 @@ describe('Subscriber', () => {
       const ackQueue: FakeAckQueue = stubs.get('ackQueue');
       const stub = sandbox.stub(ackQueue, 'add').withArgs(message);
 
-      subscriber.ack(message);
+      void subscriber.ack(message);
 
       assert.strictEqual(stub.callCount, 1);
     });
@@ -533,7 +537,7 @@ describe('Subscriber', () => {
           done();
         });
 
-      subscriber.ack(message);
+      void subscriber.ack(message);
     });
   });
 
@@ -549,16 +553,16 @@ describe('Subscriber', () => {
       return s.close();
     });
 
-    it('should set isOpen to false', () => {
-      subscriber.close();
+    it('should set isOpen to false', async () => {
+      await subscriber.close();
       assert.strictEqual(subscriber.isOpen, false);
     });
 
-    it('should destroy the message stream', () => {
+    it('should destroy the message stream', async () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
       const stub = sandbox.stub(stream, 'destroy');
 
-      subscriber.close();
+      await subscriber.close();
       assert.strictEqual(stub.callCount, 1);
     });
 
@@ -575,16 +579,16 @@ describe('Subscriber', () => {
 
     it('should emit a close event', done => {
       subscriber.on('close', done);
-      subscriber.close();
+      void subscriber.close();
     });
 
-    it('should nack any messages that come in after', () => {
+    it('should nack any messages that come in after', async () => {
       const stream: FakeMessageStream = stubs.get('messageStream');
       const stub = sandbox.stub(subscriber, 'nack');
       const shutdownStub = sandbox.stub(tracing.PubsubEvents, 'shutdown');
       const pullResponse = {receivedMessages: [RECEIVED_MESSAGE]};
 
-      subscriber.close();
+      await subscriber.close();
       stream.emit('data', pullResponse);
 
       const [{ackId}] = stub.lastCall.args;
@@ -666,7 +670,7 @@ describe('Subscriber', () => {
       const modAckQueue: FakeModAckQueue = stubs.get('modAckQueue');
       const stub = sandbox.stub(modAckQueue, 'add').withArgs(message, deadline);
 
-      subscriber.modAck(message, deadline);
+      void subscriber.modAck(message, deadline);
 
       assert.strictEqual(stub.callCount, 1);
     });
@@ -847,10 +851,13 @@ describe('Subscriber', () => {
     beforeEach(() => subscriber.close());
 
     it('should capture the ackDeadline', () => {
-      const ackDeadline = 1232;
+      const ackDeadline = Duration.from({seconds: 1232});
 
-      subscriber.setOptions({ackDeadline});
-      assert.strictEqual(subscriber.ackDeadline, ackDeadline);
+      subscriber.setOptions({
+        minAckDeadline: ackDeadline,
+        maxAckDeadline: ackDeadline,
+      });
+      assert.strictEqual(subscriber.ackDeadline, ackDeadline.totalOf('second'));
     });
 
     it('should not set maxStreams higher than maxMessages', () => {
@@ -867,51 +874,22 @@ describe('Subscriber', () => {
   });
 
   describe('OpenTelemetry tracing', () => {
-    const enableTracing: s.SubscriberOptions = {
-      enableOpenTelemetryTracing: true,
-    };
-    const disableTracing: s.SubscriberOptions = {
-      enableOpenTelemetryTracing: false,
-    };
-
     beforeEach(() => {
       exporter.reset();
     });
 
-    afterEach(() => {
+    afterEach(async () => {
+      tracing.setGloballyEnabled(false);
       exporter.reset();
-      subscriber.close();
-    });
-
-    it('should not instantiate a tracer when tracing is disabled', () => {
-      subscriber = new Subscriber(subscription, {});
-      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], false);
-    });
-
-    it('should instantiate a tracer when tracing is enabled through constructor', () => {
-      subscriber = new Subscriber(subscription, enableTracing);
-      assert.ok(subscriber['_useLegacyOpenTelemetry']);
-    });
-
-    it('should instantiate a tracer when tracing is enabled through setOptions', () => {
-      subscriber = new Subscriber(subscription, {});
-      subscriber.setOptions(enableTracing);
-      assert.ok(subscriber['_useLegacyOpenTelemetry']);
-    });
-
-    it('should disable tracing when tracing is disabled through setOptions', () => {
-      subscriber = new Subscriber(subscription, enableTracing);
-      subscriber.setOptions(disableTracing);
-      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], false);
+      await subscriber.close();
     });
 
     it('exports a span once it is created', () => {
       tracing.setGloballyEnabled(true);
 
       subscription = new FakeSubscription() as {} as Subscription;
-      subscriber = new Subscriber(subscription, enableTracing);
+      subscriber = new Subscriber(subscription, {});
       message = new Message(subscriber, RECEIVED_MESSAGE);
-      assert.strictEqual(subscriber['_useLegacyOpenTelemetry'], true);
       subscriber.open();
 
       // Construct mock of received message with span context
@@ -920,12 +898,14 @@ describe('Subscriber', () => {
         spanId: '6e0c63257de34c92',
         traceFlags: opentelemetry.TraceFlags.SAMPLED,
       };
+      const parentSpan = opentelemetry.trace.getSpan(
+        tracing.spanContextToContext(parentSpanContext)!,
+      );
       const messageWithSpanContext = {
         ackId: uuid.v4(),
         message: {
           attributes: {
-            googclient_OpenTelemetrySpanContext:
-              JSON.stringify(parentSpanContext),
+            [tracing.modernAttributeName]: JSON.stringify(parentSpanContext),
           },
           data: Buffer.from('Hello, world!'),
           messageId: uuid.v4(),
@@ -933,6 +913,7 @@ describe('Subscriber', () => {
           publishTime: {seconds: 12, nanos: 32},
         },
       };
+      tracing.injectSpan(parentSpan!, messageWithSpanContext.message);
       const pullResponse: s.PullResponse = {
         receivedMessages: [messageWithSpanContext],
       };
@@ -957,19 +938,19 @@ describe('Subscriber', () => {
       assert.strictEqual(
         firstSpan.name,
         `${subId} subscribe`,
-        'name of span should match'
+        'name of span should match',
       );
       assert.strictEqual(
         firstSpan.kind,
         SpanKind.CONSUMER,
-        'span kind should be CONSUMER'
+        'span kind should be CONSUMER',
       );
     });
 
     it('exports a span even when a span context is not present on message', () => {
       tracing.setGloballyEnabled(true);
 
-      subscriber = new Subscriber(subscription, enableTracing);
+      subscriber = new Subscriber(subscription, {});
       subscriber.open();
 
       const pullResponse: s.PullResponse = {
@@ -999,7 +980,7 @@ describe('Subscriber', () => {
       it('should localize attributes', () => {
         assert.strictEqual(
           message.attributes,
-          RECEIVED_MESSAGE.message.attributes
+          RECEIVED_MESSAGE.message.attributes,
         );
       });
 
@@ -1014,7 +995,7 @@ describe('Subscriber', () => {
       it('should localize orderingKey', () => {
         assert.strictEqual(
           message.orderingKey,
-          RECEIVED_MESSAGE.message.orderingKey
+          RECEIVED_MESSAGE.message.orderingKey,
         );
       });
 
@@ -1025,7 +1006,7 @@ describe('Subscriber', () => {
         assert(timestamp instanceof FakePreciseDate);
         assert.strictEqual(
           timestamp.value,
-          RECEIVED_MESSAGE.message.publishTime
+          RECEIVED_MESSAGE.message.publishTime,
         );
       });
 

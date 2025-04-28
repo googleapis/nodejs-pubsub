@@ -167,7 +167,7 @@ export interface ResourceCallback<Resource, Response> {
   (
     err: gax.grpc.ServiceError | null,
     resource?: Resource | null,
-    response?: Response | null
+    response?: Response | null,
   ): void;
 }
 
@@ -184,7 +184,7 @@ export interface PagedCallback<Item, Response> {
     err: gax.grpc.ServiceError | null,
     results?: Item[] | null,
     nextQuery?: {} | null,
-    response?: Response | null
+    response?: Response | null,
   ): void;
 }
 
@@ -200,7 +200,7 @@ export type ObjectStream<O> = {
   prependListener(event: 'data', listener: (data: O) => void): ObjectStream<O>;
   prependOnceListener(
     event: 'data',
-    listener: (data: O) => void
+    listener: (data: O) => void,
   ): ObjectStream<O>;
 } & Transform;
 
@@ -281,13 +281,13 @@ export class PubSub {
   // tslint:disable-next-line variable-name
   Promise?: PromiseConstructor;
   getSubscriptionsStream = paginator.streamify(
-    'getSubscriptions'
+    'getSubscriptions',
   ) as () => ObjectStream<Subscription>;
   getSnapshotsStream = paginator.streamify(
-    'getSnapshots'
+    'getSnapshots',
   ) as () => ObjectStream<Snapshot>;
   getTopicsStream = paginator.streamify(
-    'getTopics'
+    'getTopics',
   ) as () => ObjectStream<Topic>;
   isOpen = true;
 
@@ -321,7 +321,7 @@ export class PubSub {
         libVersion: PKG.version,
         scopes: Object.keys(allScopes),
       },
-      options
+      options,
     );
 
     if (this.options.enableOpenTelemetryTracing) {
@@ -412,7 +412,7 @@ export class PubSub {
     schemaId: string,
     type: SchemaType,
     definition: string,
-    gaxOpts?: CallOptions
+    gaxOpts?: CallOptions,
   ): Promise<Schema> {
     // This populates projectId for us.
     await this.getClientConfig();
@@ -520,24 +520,24 @@ export class PubSub {
   createSubscription(
     topic: Topic | string,
     name: string,
-    options?: CreateSubscriptionOptions
+    options?: CreateSubscriptionOptions,
   ): Promise<CreateSubscriptionResponse>;
   createSubscription(
     topic: Topic | string,
     name: string,
-    callback: CreateSubscriptionCallback
+    callback: CreateSubscriptionCallback,
   ): void;
   createSubscription(
     topic: Topic | string,
     name: string,
     options: CreateSubscriptionOptions,
-    callback: CreateSubscriptionCallback
+    callback: CreateSubscriptionCallback,
   ): void;
   createSubscription(
     topic: Topic | string,
     name: string,
     optionsOrCallback?: CreateSubscriptionOptions | CreateSubscriptionCallback,
-    callback?: CreateSubscriptionCallback
+    callback?: CreateSubscriptionCallback,
   ): Promise<CreateSubscriptionResponse> | void {
     if (typeof topic !== 'string' && !(topic instanceof Topic)) {
       throw new Error('A Topic is required for a new subscription.');
@@ -564,7 +564,7 @@ export class PubSub {
     delete options.flowControl;
 
     const metadata = Subscription.formatMetadata_(
-      options as SubscriptionMetadata
+      options as SubscriptionMetadata,
     );
 
     let subscriptionCtorOptions = flowControl ? {flowControl} : {};
@@ -591,7 +591,7 @@ export class PubSub {
         subscription.metadata = resp!;
 
         callback!(null, subscription, resp!);
-      }
+      },
     );
   }
 
@@ -639,21 +639,21 @@ export class PubSub {
    */
   createTopic(
     name: string | TopicMetadata,
-    gaxOpts?: CallOptions
+    gaxOpts?: CallOptions,
   ): Promise<CreateTopicResponse>;
   createTopic(
     name: string | TopicMetadata,
-    callback: CreateTopicCallback
+    callback: CreateTopicCallback,
   ): void;
   createTopic(
     name: string | TopicMetadata,
     gaxOpts: CallOptions,
-    callback: CreateTopicCallback
+    callback: CreateTopicCallback,
   ): void;
   createTopic(
     name: string | TopicMetadata,
     optsOrCallback?: CallOptions | CreateTopicCallback,
-    callback?: CreateTopicCallback
+    callback?: CreateTopicCallback,
   ): Promise<CreateTopicResponse> | void {
     const reqOpts: TopicMetadata =
       typeof name === 'string'
@@ -686,7 +686,7 @@ export class PubSub {
         topic.metadata = resp!;
 
         callback!(null, topic, resp!);
-      }
+      },
     );
   }
 
@@ -722,18 +722,18 @@ export class PubSub {
    */
   detachSubscription(
     name: string,
-    gaxOpts?: CallOptions
+    gaxOpts?: CallOptions,
   ): Promise<DetachSubscriptionResponse>;
   detachSubscription(name: string, callback: DetachSubscriptionCallback): void;
   detachSubscription(
     name: string,
     gaxOpts: CallOptions,
-    callback: DetachSubscriptionCallback
+    callback: DetachSubscriptionCallback,
   ): void;
   detachSubscription(
     name: string,
     optsOrCallback?: CallOptions | DetachSubscriptionCallback,
-    callback?: DetachSubscriptionCallback
+    callback?: DetachSubscriptionCallback,
   ): Promise<DetachSubscriptionResponse> | void {
     if (typeof name !== 'string') {
       throw new Error('A subscription name is required.');
@@ -754,7 +754,7 @@ export class PubSub {
         reqOpts,
         gaxOpts: gaxOpts as CallOptions,
       },
-      callback!
+      callback!,
     );
   }
 
@@ -857,7 +857,7 @@ export class PubSub {
    */
   async *listSchemas(
     view: SchemaView = SchemaViews.Basic,
-    options?: CallOptions
+    options?: CallOptions,
   ): AsyncIterable<google.pubsub.v1.ISchema> {
     const client = await this.getSchemaClient();
     const query = {
@@ -923,7 +923,7 @@ export class PubSub {
   getSnapshots(options: PageOptions, callback: GetSnapshotsCallback): void;
   getSnapshots(
     optsOrCallback?: PageOptions | GetSnapshotsCallback,
-    callback?: GetSnapshotsCallback
+    callback?: GetSnapshotsCallback,
   ): void | Promise<GetSnapshotsResponse> {
     const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -932,7 +932,7 @@ export class PubSub {
       {
         project: PubSub.formatName_(this.projectId),
       },
-      options
+      options,
     );
 
     delete reqOpts.gaxOpts;
@@ -942,7 +942,7 @@ export class PubSub {
       {
         autoPaginate: options.autoPaginate,
       },
-      options.gaxOpts
+      options.gaxOpts,
     );
 
     this.request<
@@ -964,12 +964,12 @@ export class PubSub {
               const snapshotInstance = this.snapshot(snapshot.name!);
               snapshotInstance.metadata = snapshot;
               return snapshotInstance;
-            }
+            },
           );
         }
 
         callback!(err, snapshots!, ...args);
-      }
+      },
     );
   }
 
@@ -1033,16 +1033,16 @@ export class PubSub {
    * ```
    */
   getSubscriptions(
-    options?: GetSubscriptionsOptions
+    options?: GetSubscriptionsOptions,
   ): Promise<GetSubscriptionsResponse>;
   getSubscriptions(callback: GetSubscriptionsCallback): void;
   getSubscriptions(
     options: GetSubscriptionsOptions,
-    callback: GetSubscriptionsCallback
+    callback: GetSubscriptionsCallback,
   ): void;
   getSubscriptions(
     optsOrCallback?: GetSubscriptionsOptions | GetSubscriptionsCallback,
-    callback?: GetSubscriptionsCallback
+    callback?: GetSubscriptionsCallback,
   ): void | Promise<GetSubscriptionsResponse> {
     const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -1054,12 +1054,12 @@ export class PubSub {
       }
       return topic.getSubscriptions(
         options,
-        callback as GetTopicSubscriptionsCallback
+        callback as GetTopicSubscriptionsCallback,
       );
     }
     const reqOpts = Object.assign(
       {},
-      options
+      options,
     ) as google.pubsub.v1.IListSubscriptionsRequest;
     reqOpts.project = 'projects/' + this.projectId;
 
@@ -1070,7 +1070,7 @@ export class PubSub {
       {
         autoPaginate: options.autoPaginate,
       },
-      options.gaxOpts
+      options.gaxOpts,
     );
 
     this.request<
@@ -1095,7 +1095,7 @@ export class PubSub {
         }
 
         (callback as GetAllSubscriptionsCallback)(err, subscriptions!, ...args);
-      }
+      },
     );
   }
 
@@ -1162,7 +1162,7 @@ export class PubSub {
   getTopics(options: PageOptions, callback: GetTopicsCallback): void;
   getTopics(
     optsOrCallback?: PageOptions | GetTopicsCallback,
-    callback?: GetTopicsCallback
+    callback?: GetTopicsCallback,
   ): void | Promise<GetTopicsResponse> {
     const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -1171,7 +1171,7 @@ export class PubSub {
       {
         project: 'projects/' + this.projectId,
       },
-      options
+      options,
     );
 
     delete reqOpts.gaxOpts;
@@ -1181,7 +1181,7 @@ export class PubSub {
       {
         autoPaginate: options.autoPaginate,
       },
-      options.gaxOpts
+      options.gaxOpts,
     );
 
     this.request<google.pubsub.v1.Topic, google.pubsub.v1.IListTopicsResponse>(
@@ -1203,7 +1203,7 @@ export class PubSub {
         }
 
         callback!(err, topics!, ...args);
-      }
+      },
     );
   }
 
@@ -1272,7 +1272,7 @@ export class PubSub {
   getClient_(config: GetClientConfig, callback: GetClientCallback) {
     this.getClientAsync_(config).then(
       client => callback(null, client),
-      callback
+      callback,
     );
   }
   /**
@@ -1476,7 +1476,7 @@ export class PubSub {
         parent: this.name,
         schema,
       },
-      gaxOpts
+      gaxOpts,
     );
   }
 

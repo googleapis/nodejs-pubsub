@@ -22,12 +22,13 @@ import * as sinon from 'sinon';
 import {Duplex, PassThrough} from 'stream';
 import * as uuid from 'uuid';
 import * as defer from 'p-defer';
+import {promisify} from 'util';
 
 import * as messageTypes from '../src/message-stream';
 import {Subscriber} from '../src/subscriber';
 import {defaultOptions} from '../src/default-options';
 import {Duration} from '../src/temporal';
-import {promisify} from 'util';
+import {TestUtils} from './test-utils';
 
 const FAKE_STREAMING_PULL_TIMEOUT = 123456789;
 const FAKE_CLIENT_CONFIG = {
@@ -63,13 +64,21 @@ class FakePassThrough extends PassThrough {
   }
 }
 
+interface AccessReadableState {
+  _readableState: StreamState;
+}
+
 class FakeGrpcStream extends Duplex {
   options: StreamingPullOptions;
-  _readableState!: StreamState;
   constructor(options: StreamingPullOptions) {
     super({objectMode: true});
     this.options = options;
   }
+
+  get readableState(): StreamState {
+    return (this as unknown as AccessReadableState)._readableState;
+  }
+
   cancel(): void {
     const status = {
       code: 1,
@@ -156,8 +165,8 @@ describe('MessageStream', () => {
   });
 
   beforeEach(async () => {
-    sandbox.useFakeTimers();
     now = Date.now();
+    TestUtils.useFakeTimers(sandbox, now);
 
     const gaxClient = new FakeGaxClient();
     client = gaxClient.client; // we hit the grpc client directly
@@ -180,7 +189,7 @@ describe('MessageStream', () => {
       };
       assert.deepStrictEqual(
         (messageStream as {} as FakePassThrough).options,
-        expectedOptions
+        expectedOptions,
       );
     });
 
@@ -195,7 +204,7 @@ describe('MessageStream', () => {
 
       assert.deepStrictEqual(
         (ms as {} as FakePassThrough).options,
-        expectedOptions
+        expectedOptions,
       );
     });
 
@@ -207,14 +216,14 @@ describe('MessageStream', () => {
       describe('defaults', () => {
         it('should default highWaterMark to 0', () => {
           client.streams.forEach(stream => {
-            assert.strictEqual(stream._readableState.highWaterMark, 0);
+            assert.strictEqual(stream.readableState.highWaterMark, 0);
           });
         });
 
         it('should default maxStreams', () => {
           assert.strictEqual(
             client.streams.length,
-            defaultOptions.subscription.maxStreams
+            defaultOptions.subscription.maxStreams,
           );
         });
 
@@ -229,7 +238,10 @@ describe('MessageStream', () => {
 
         it('should default timeout to 5 minutes', () => {
           const expectedTimeout = now + 60000 * 5;
-          assert.strictEqual(client.deadline, expectedTimeout);
+
+          // Floating point calcuations in Duration might make this a few
+          // microseconds off.
+          assert.ok(Math.abs(client.deadline! - expectedTimeout) < 10);
         });
       });
 
@@ -250,12 +262,13 @@ describe('MessageStream', () => {
 
           assert.strictEqual(
             client.streams.length,
-            defaultOptions.subscription.maxStreams
+            defaultOptions.subscription.maxStreams,
           );
+
           client.streams.forEach(stream => {
             assert.strictEqual(
-              stream._readableState.highWaterMark,
-              highWaterMark
+              stream.readableState.highWaterMark,
+              highWaterMark,
             );
           });
         });
