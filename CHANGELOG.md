@@ -10,6 +10,9 @@
 ### ⚠ BREAKING CHANGES
 
 * migrate to Node 18 ([#2024](https://github.com/googleapis/nodejs-pubsub/issues/2024))
+* remove (broken) legacy OTel support
+* remove legacy ack deadline options
+* move maxExtension into subscriber options
 
 ### Miscellaneous Chores
 
