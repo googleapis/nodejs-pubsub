@@ -887,9 +887,6 @@ export namespace google {
                         /** TextFormat delimiter. */
                         public delimiter?: (string|null);
 
-                        /** TextFormat _delimiter. */
-                        public _delimiter?: "delimiter";
-
                         /**
                          * Creates a new TextFormat instance using the specified properties.
                          * @param [properties] Properties to set

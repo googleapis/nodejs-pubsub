@@ -2178,12 +2178,7 @@
                             // OneOf field names bound to virtual getters and setters
                             var $oneOfFields;
     
-                            /**
-                             * TextFormat _delimiter.
-                             * @member {"delimiter"|undefined} _delimiter
-                             * @memberof google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.TextFormat
-                             * @instance
-                             */
+                            // Virtual OneOf for proto3 optional field
                             Object.defineProperty(TextFormat.prototype, "_delimiter", {
                                 get: $util.oneOfGetter($oneOfFields = ["delimiter"]),
                                 set: $util.oneOfSetter($oneOfFields)
