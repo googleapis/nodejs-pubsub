@@ -65,7 +65,7 @@ describe('PullRetry', () => {
       assert.ok(
         PullRetry.resetFailures({
           code: grpc.status.OK,
-        } as grpc.StatusObject)
+        } as grpc.StatusObject),
       );
     });
 
@@ -73,7 +73,7 @@ describe('PullRetry', () => {
       assert.ok(
         PullRetry.resetFailures({
           code: grpc.status.DEADLINE_EXCEEDED,
-        } as grpc.StatusObject)
+        } as grpc.StatusObject),
       );
     });
   });

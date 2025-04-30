@@ -26,6 +26,7 @@ import * as p from '../../src/publisher';
 import * as b from '../../src/publisher/message-batch';
 import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
+import {TestUtils} from '../test-utils';
 
 class FakeTopic {
   name = 'projects/foo/topics/fake-topic';
@@ -158,7 +159,7 @@ describe('Message Queues', () => {
       it('should make the correct request', () => {
         const stub = sandbox.stub(topic, 'request');
 
-        queue._publish(messages, callbacks);
+        void queue._publish(messages, callbacks);
 
         const [{client, method, reqOpts}] = stub.lastCall.args;
         assert.strictEqual(client, 'PublisherClient');
@@ -171,7 +172,7 @@ describe('Message Queues', () => {
         const callOptions = {};
 
         publisher.settings.gaxOpts = callOptions;
-        queue._publish(messages, callbacks);
+        void queue._publish(messages, callbacks);
 
         const [{gaxOpts}] = stub.lastCall.args;
         assert.strictEqual(gaxOpts, callOptions);
@@ -279,7 +280,7 @@ describe('Message Queues', () => {
       });
 
       it('should set a timeout to publish if need be', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const stub = sandbox.stub(queue, 'publish').resolves();
         const maxMilliseconds = 1234;
 
@@ -293,7 +294,7 @@ describe('Message Queues', () => {
       });
 
       it('should noop if a timeout is already set', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const stub = sandbox.stub(queue, 'publish').resolves();
         const maxMilliseconds = 1234;
 
@@ -308,33 +309,33 @@ describe('Message Queues', () => {
     });
 
     describe('publish', () => {
-      it('should create a new batch', () => {
+      it('should create a new batch', async () => {
         const oldBatch = queue.batch;
 
-        queue.publish();
+        await queue.publish();
 
         assert.notStrictEqual(oldBatch, queue.batch);
         assert.ok(queue.batch instanceof FakeMessageBatch);
         assert.strictEqual(queue.batch.options, queue.batchOptions);
       });
 
-      it('should cancel any pending publish calls', () => {
+      it('should cancel any pending publish calls', async () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const fakeHandle = 1234 as unknown as any;
         const stub = sandbox.stub(global, 'clearTimeout').withArgs(fakeHandle);
 
         queue.pending = fakeHandle;
-        queue.publish();
+        await queue.publish();
 
         assert.strictEqual(stub.callCount, 1);
         assert.strictEqual(queue.pending, undefined);
       });
 
-      it('should publish the messages', () => {
+      it('should publish the messages', async () => {
         const batch = queue.batch;
         const stub = sandbox.stub(queue, '_publish');
 
-        queue.publish();
+        await queue.publish();
 
         const [messages, callbacks] = stub.lastCall.args;
         assert.strictEqual(messages, batch.messages);
@@ -366,7 +367,7 @@ describe('Message Queues', () => {
           queue.batch = new FakeMessageBatch();
           queue.batch.messages = fakeMessages;
           queue.batch.callbacks = spies;
-          queue.publishDrain().then(() => {
+          void queue.publishDrain().then(() => {
             process.nextTick(() => {
               assert.strictEqual(stub.callCount, 2);
               done();
@@ -374,7 +375,7 @@ describe('Message Queues', () => {
           });
         });
 
-        it('should not begin another publish(non-drain) if there are pending batches', () => {
+        it('should not begin another publish(non-drain) if there are pending batches', async () => {
           const stub = sandbox.stub(queue, '_publish');
           let once = false;
           stub.callsFake(async () => {
@@ -391,9 +392,9 @@ describe('Message Queues', () => {
           queue.batch = new FakeMessageBatch();
           queue.batch.messages = fakeMessages;
           queue.batch.callbacks = spies;
-          queue.publish().then(() => {
-            assert.strictEqual(stub.callCount, 1);
-          });
+          await queue.publish();
+
+          assert.strictEqual(stub.callCount, 1);
         });
 
         it('should emit "drain" if there is nothing left to publish', done => {
@@ -401,7 +402,7 @@ describe('Message Queues', () => {
           sandbox.stub(queue, '_publish').callsFake(async () => {});
 
           queue.on('drain', spy);
-          queue.publish().then(() => {
+          void queue.publish().then(() => {
             process.nextTick(() => {
               assert.strictEqual(spy.callCount, 1);
               done();
@@ -582,7 +583,7 @@ describe('Message Queues', () => {
 
       beforeEach(() => {
         queue.batchOptions = {maxMilliseconds};
-        clock = sinon.useFakeTimers();
+        clock = TestUtils.useFakeTimers(sandbox);
       });
 
       afterEach(() => {
@@ -660,7 +661,7 @@ describe('Message Queues', () => {
       });
 
       it('should set inFlight to true', () => {
-        queue.publish();
+        void queue.publish();
         assert.strictEqual(queue.inFlight, true);
       });
 
@@ -669,7 +670,7 @@ describe('Message Queues', () => {
         const stub = sandbox.stub(global, 'clearTimeout');
 
         queue.pending = fakeHandle;
-        queue.publish();
+        void queue.publish();
 
         const [handle] = stub.lastCall.args;
         assert.strictEqual(handle, fakeHandle);
@@ -679,15 +680,15 @@ describe('Message Queues', () => {
       it('should remove the oldest batch from the batch list', () => {
         const oldestBatch = queue.currentBatch;
 
-        queue.publish();
+        void queue.publish();
 
         assert.notStrictEqual(queue.currentBatch, oldestBatch);
       });
 
-      it('should publish the batch', () => {
+      it('should publish the batch', async () => {
         const stub = sandbox.stub(queue, '_publish');
 
-        queue.publish();
+        await queue.publish();
 
         const [messages, callbacks] = stub.lastCall.args;
         assert.strictEqual(messages, fakeMessages);

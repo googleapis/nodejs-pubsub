@@ -23,10 +23,6 @@ export interface FlowControlOptions {
   allowExcessMessages?: boolean;
   maxBytes?: number;
   maxMessages?: number;
-  maxExtensionMinutes?: number;
-
-  /** @deprecated Use maxExtensionMinutes. */
-  maxExtension?: number;
 }
 
 /**
@@ -194,28 +190,9 @@ export class LeaseManager extends EventEmitter {
    * @private
    */
   setOptions(options: FlowControlOptions): void {
-    // Convert the old deprecated maxExtension to avoid breaking clients,
-    // but allow only one.
-    if (
-      options.maxExtension !== undefined &&
-      options.maxExtensionMinutes !== undefined
-    ) {
-      throw new RangeError(
-        'Only one of "maxExtension" or "maxExtensionMinutes" may be set for subscriber lease management options'
-      );
-    }
-    if (
-      options.maxExtension !== undefined &&
-      options.maxExtensionMinutes === undefined
-    ) {
-      options.maxExtensionMinutes = options.maxExtension / 60;
-      delete options.maxExtension;
-    }
-
     const defaults: FlowControlOptions = {
       allowExcessMessages: true,
       maxBytes: defaultOptions.subscription.maxOutstandingBytes,
-      maxExtensionMinutes: defaultOptions.subscription.maxExtensionMinutes,
       maxMessages: defaultOptions.subscription.maxOutstandingMessages,
     };
 
@@ -260,19 +237,20 @@ export class LeaseManager extends EventEmitter {
    * @private
    */
   private _extendDeadlines(): void {
-    const deadline = this._subscriber.ackDeadline;
+    const deadline = Duration.from({seconds: this._subscriber.ackDeadline});
+    const maxExtensionMinutes =
+      this._subscriber.maxExtensionTime.totalOf('minute');
 
     for (const message of this._messages) {
       // Lifespan here is in minutes.
       const lifespan = (Date.now() - message.received) / (60 * 1000);
 
-      if (lifespan < this._options.maxExtensionMinutes!) {
-        const deadlineDuration = Duration.from({seconds: deadline});
-        message.subSpans.modAckStart(deadlineDuration, false);
+      if (lifespan < maxExtensionMinutes) {
+        message.subSpans.modAckStart(deadline, false);
 
         if (this._subscriber.isExactlyOnceDelivery) {
           message
-            .modAckWithResponse(deadline)
+            .modAckWithResponse(deadline.totalOf('second'))
             .catch(e => {
               // In the case of a permanent failure (temporary failures are retried),
               // we need to stop trying to lease-manage the message.
@@ -283,8 +261,8 @@ export class LeaseManager extends EventEmitter {
               message.subSpans.modAckEnd();
             });
         } else {
-          message.modAck(deadline);
-          message.subSpans.modAckStart(deadlineDuration, false);
+          message.modAck(deadline.totalOf('second'));
+          message.subSpans.modAckStart(deadline, false);
         }
       } else {
         this.remove(message);

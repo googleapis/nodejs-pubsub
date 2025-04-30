@@ -90,7 +90,7 @@ export abstract class MessageQueue extends EventEmitter {
    */
   async _publish(
     messages: PubsubMessage[],
-    callbacks: PublishCallback[]
+    callbacks: PublishCallback[],
   ): Promise<void> {
     const {topic, settings} = this.publisher;
     const reqOpts = {
@@ -118,7 +118,7 @@ export abstract class MessageQueue extends EventEmitter {
     const rpcSpan = tracing.PubsubSpans.createPublishRpcSpan(
       spanMessages,
       topic.name,
-      'MessageQueue._publish'
+      'MessageQueue._publish',
     );
 
     const requestCallback = topic.request<google.pubsub.v1.IPublishResponse>;

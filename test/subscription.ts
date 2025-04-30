@@ -31,7 +31,7 @@ const fakeUtil = Object.assign({}, util, {
   promisifySome(
     class_: Function,
     classProtos: object,
-    methods: string[]
+    methods: string[],
   ): void {
     if (class_.name === 'Subscription') {
       promisified = true;
@@ -254,7 +254,7 @@ describe('Subscription', () => {
 
       assert.strictEqual(
         formatted.messageRetentionDuration!.seconds,
-        threeDaysInSeconds
+        threeDaysInSeconds,
       );
     });
 
@@ -270,7 +270,7 @@ describe('Subscription', () => {
       assert.strictEqual(formatted.pushConfig!.pushEndpoint, pushEndpoint);
       assert.strictEqual(
         (formatted as subby.SubscriptionMetadata).pushEndpoint,
-        undefined
+        undefined,
       );
     });
 
@@ -289,7 +289,7 @@ describe('Subscription', () => {
       assert.strictEqual(formatted.pushConfig!.oidcToken, oidcToken);
       assert.strictEqual(
         (formatted as subby.SubscriptionMetadata).oidcToken,
-        undefined
+        undefined,
       );
     });
 
@@ -311,13 +311,13 @@ describe('Subscription', () => {
       assert.strictEqual(formatted.pushConfig!.pushEndpoint, pushEndpoint);
       assert.strictEqual(
         (formatted as subby.SubscriptionMetadata).pushEndpoint,
-        undefined
+        undefined,
       );
 
       assert.strictEqual(formatted.pushConfig!.oidcToken, oidcToken);
       assert.strictEqual(
         (formatted as subby.SubscriptionMetadata).oidcToken,
-        undefined
+        undefined,
       );
     });
   });
@@ -981,7 +981,7 @@ describe('Subscription', () => {
         {
           name: SUB_FULL_NAME,
         },
-        formattedMetadata
+        formattedMetadata,
       );
 
       Subscription.formatMetadata_ = metadata => {

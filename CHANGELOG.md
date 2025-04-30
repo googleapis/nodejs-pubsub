@@ -4,6 +4,20 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [5.0.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.11.0...v5.0.0) (2025-04-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate to Node 18 ([#2024](https://github.com/googleapis/nodejs-pubsub/issues/2024))
+* remove (broken) legacy OTel support
+* remove legacy ack deadline options
+* move maxExtension into subscriber options
+
+### Miscellaneous Chores
+
+* Migrate to Node 18 ([#2024](https://github.com/googleapis/nodejs-pubsub/issues/2024)) ([9ad808a](https://github.com/googleapis/nodejs-pubsub/commit/9ad808adb99b6e64c2c4431991721deae14b6400))
+
 ## [4.11.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.10.0...v4.11.0) (2025-03-27)
 
 
