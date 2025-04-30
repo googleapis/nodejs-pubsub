@@ -30,6 +30,8 @@ import {
   Subscriber,
 } from '../src/subscriber';
 import {defaultOptions} from '../src/default-options';
+import {TestUtils} from './test-utils';
+import {Duration} from '../src';
 
 const FREE_MEM = 9376387072;
 const fakeos = {
@@ -40,6 +42,7 @@ class FakeSubscriber extends EventEmitter {
   ackDeadline = 10;
   isOpen = true;
   modAckLatency = 2000;
+  maxExtensionTime = Duration.from({minutes: 60});
   async modAck(): Promise<void> {}
   async modAckWithResponse(): Promise<AckResponse> {
     return AckResponses.Success;
@@ -237,7 +240,7 @@ describe('LeaseManager', () => {
         // This random number was generated once to keep the test results stable.
         random = 0.5756015072052962;
         sandbox.stub(global.Math, 'random').returns(random);
-        clock = sandbox.useFakeTimers();
+        clock = TestUtils.useFakeTimers(sandbox);
         expectedTimeout =
           (subscriber.ackDeadline * 1000 * 0.9 - subscriber.modAckLatency) *
           random;
@@ -285,33 +288,15 @@ describe('LeaseManager', () => {
         });
       });
 
-      it('should properly convert any legacy maxExtension values', () => {
-        const maxExtension = 60 * 1000;
-        leaseManager.setOptions({maxExtension});
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const options = (leaseManager as any)._options;
-        assert.strictEqual(options.maxExtensionMinutes, maxExtension / 60);
-        assert.strictEqual(options.maxExtension, undefined);
-      });
-
-      it('should not allow both maxExtension and maxExtensionMinutes', () => {
-        assert.throws(() => {
-          leaseManager.setOptions({
-            maxExtension: 10,
-            maxExtensionMinutes: 10,
-          });
-        });
-      });
-
       it('should remove any messages that pass the maxExtensionMinutes value', () => {
         const maxExtensionSeconds = (expectedTimeout - 100) / 1000;
         const badMessages = [new FakeMessage(), new FakeMessage()];
 
-        leaseManager.setOptions({
-          maxExtensionMinutes: maxExtensionSeconds / 60,
+        subscriber.maxExtensionTime = Duration.from({
+          seconds: maxExtensionSeconds,
         });
         badMessages.forEach(message =>
-          leaseManager.add(message as {} as Message)
+          leaseManager.add(message as {} as Message),
         );
         clock.tick(halfway);
 
@@ -338,9 +323,7 @@ describe('LeaseManager', () => {
       it('should remove and ackFailed any messages that fail to ack', done => {
         (subscriber as unknown as FakeSubscriber).isExactlyOnceDelivery = true;
 
-        leaseManager.setOptions({
-          maxExtensionMinutes: 600,
-        });
+        subscriber.maxExtensionTime = Duration.from({minutes: 600});
 
         const goodMessage = new FakeMessage();
 
@@ -397,7 +380,7 @@ describe('LeaseManager', () => {
     });
 
     it('should cancel any lease extensions', () => {
-      const clock = sandbox.useFakeTimers();
+      const clock = TestUtils.useFakeTimers(sandbox);
       const stub = sandbox.stub(subscriber, 'modAck').resolves();
 
       leaseManager.add(new FakeMessage() as {} as Message);
@@ -518,7 +501,7 @@ describe('LeaseManager', () => {
     });
 
     it('should cancel any extensions if no messages are left', () => {
-      const clock = sandbox.useFakeTimers();
+      const clock = TestUtils.useFakeTimers(sandbox);
       const message = new FakeMessage() as {} as Message;
       const stub = sandbox.stub(subscriber, 'modAck').resolves();
 
@@ -563,7 +546,7 @@ describe('LeaseManager', () => {
 
   describe('deadline extension', () => {
     beforeEach(() => {
-      sandbox.useFakeTimers();
+      TestUtils.useFakeTimers(sandbox);
     });
     afterEach(() => {
       sandbox.clock.restore();

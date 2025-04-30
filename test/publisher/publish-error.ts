@@ -36,7 +36,7 @@ describe('PublishError', () => {
   it('should give a helpful message', () => {
     assert.strictEqual(
       error.message,
-      `Unable to publish for key "${orderingKey}". Reason: ${fakeError.message}`
+      `Unable to publish for key "${orderingKey}". Reason: ${fakeError.message}`,
     );
   });
 

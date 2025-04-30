@@ -31,6 +31,7 @@ import type {
 import {Transform, PassThrough} from 'stream';
 import * as protos from '../../protos/protos';
 import jsonProtos = require('../../protos/protos.json');
+import {loggingUtils as logging} from 'google-gax';
 
 /**
  * Client JSON configuration object, loaded from
@@ -57,6 +58,8 @@ export class SubscriberClient {
   private _defaults: {[method: string]: gax.CallSettings};
   private _universeDomain: string;
   private _servicePath: string;
+  private _log = logging.log('pubsub');
+
   auth: gax.GoogleAuth;
   descriptors: Descriptors = {
     page: {},
@@ -92,7 +95,7 @@ export class SubscriberClient {
    *     Developer's Console, e.g. 'grape-spaceship-123'. We will also check
    *     the environment variable GCLOUD_PROJECT for your project ID. If your
    *     app is running in an environment which supports
-   *     {@link https://developers.google.com/identity/protocols/application-default-credentials Application Default Credentials},
+   *     {@link https://cloud.google.com/docs/authentication/application-default-credentials Application Default Credentials},
    *     your project ID will be detected automatically.
    * @param {string} [options.apiEndpoint] - The domain name of the
    *     API remote host.
@@ -111,7 +114,7 @@ export class SubscriberClient {
    */
   constructor(
     opts?: ClientOptions,
-    gaxInstance?: typeof gax | typeof gax.fallback
+    gaxInstance?: typeof gax | typeof gax.fallback,
   ) {
     // Ensure that options include all the required fields.
     const staticMembers = this.constructor as typeof SubscriberClient;
@@ -121,7 +124,7 @@ export class SubscriberClient {
       opts?.universe_domain !== opts?.universeDomain
     ) {
       throw new Error(
-        'Please set either universe_domain or universeDomain, but not both.'
+        'Please set either universe_domain or universeDomain, but not both.',
       );
     }
     const universeDomainEnvVar =
@@ -145,9 +148,6 @@ export class SubscriberClient {
       opts?.fallback ??
       (typeof window !== 'undefined' && typeof window?.fetch === 'function');
     opts = Object.assign({servicePath, port, clientConfig, fallback}, opts);
-
-    // Request numeric enum values if REST transport is used.
-    opts.numericEnums = true;
 
     // If scopes are unset in options and we're connecting to a non-default endpoint, set scopes just in case.
     if (servicePath !== this._servicePath && !('scopes' in opts)) {
@@ -206,19 +206,19 @@ export class SubscriberClient {
     // Create useful helper objects for these.
     this.pathTemplates = {
       projectPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}'
+        'projects/{project}',
       ),
       projectTopicPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/topics/{topic}'
+        'projects/{project}/topics/{topic}',
       ),
       schemaPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/schemas/{schema}'
+        'projects/{project}/schemas/{schema}',
       ),
       snapshotPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/snapshots/{snapshot}'
+        'projects/{project}/snapshots/{snapshot}',
       ),
       subscriptionPathTemplate: new this._gaxModule.PathTemplate(
-        'projects/{project}/subscriptions/{subscription}'
+        'projects/{project}/subscriptions/{subscription}',
       ),
     };
 
@@ -229,12 +229,12 @@ export class SubscriberClient {
       listSubscriptions: new this._gaxModule.PageDescriptor(
         'pageToken',
         'nextPageToken',
-        'subscriptions'
+        'subscriptions',
       ),
       listSnapshots: new this._gaxModule.PageDescriptor(
         'pageToken',
         'nextPageToken',
-        'snapshots'
+        'snapshots',
       ),
     };
 
@@ -244,7 +244,7 @@ export class SubscriberClient {
       streamingPull: new this._gaxModule.StreamDescriptor(
         this._gaxModule.StreamType.BIDI_STREAMING,
         !!opts.fallback,
-        !!opts.gaxServerStreamingRetries
+        !!opts.gaxServerStreamingRetries,
       ),
     };
 
@@ -253,7 +253,7 @@ export class SubscriberClient {
       'google.pubsub.v1.Subscriber',
       gapicConfig as gax.ClientConfig,
       opts.clientConfig || {},
-      {'x-goog-api-client': clientHeader.join(' ')}
+      {'x-goog-api-client': clientHeader.join(' ')},
     );
 
     // Set up a dictionary of "inner API calls"; the core implementation
@@ -287,12 +287,12 @@ export class SubscriberClient {
     this.subscriberStub = this._gaxGrpc.createStub(
       this._opts.fallback
         ? (this._protos as protobuf.Root).lookupService(
-            'google.pubsub.v1.Subscriber'
+            'google.pubsub.v1.Subscriber',
           )
         : // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (this._protos as any).google.pubsub.v1.Subscriber,
       this._opts,
-      this._providedCustomServicePath
+      this._providedCustomServicePath,
     ) as Promise<{[method: string]: Function}>;
 
     // Iterate over each of the methods that the service provides
@@ -321,13 +321,13 @@ export class SubscriberClient {
           (...args: Array<{}>) => {
             if (this._terminated) {
               if (methodName in this.descriptors.stream) {
-                const stream = new PassThrough();
+                const stream = new PassThrough({objectMode: true});
                 setImmediate(() => {
                   stream.emit(
                     'error',
                     new this._gaxModule.GoogleError(
-                      'The client has already been closed.'
-                    )
+                      'The client has already been closed.',
+                    ),
                   );
                 });
                 return stream;
@@ -339,7 +339,7 @@ export class SubscriberClient {
           },
         (err: Error | null | undefined) => () => {
           throw err;
-        }
+        },
       );
 
       const descriptor =
@@ -350,7 +350,7 @@ export class SubscriberClient {
         callPromise,
         this._defaults[methodName],
         descriptor,
-        this._opts.fallback
+        this._opts.fallback,
       );
 
       this.innerApiCalls[methodName] = apiCall;
@@ -371,7 +371,7 @@ export class SubscriberClient {
     ) {
       process.emitWarning(
         'Static servicePath is deprecated, please use the instance method instead.',
-        'DeprecationWarning'
+        'DeprecationWarning',
       );
     }
     return 'pubsub.googleapis.com';
@@ -389,7 +389,7 @@ export class SubscriberClient {
     ) {
       process.emitWarning(
         'Static apiEndpoint is deprecated, please use the instance method instead.',
-        'DeprecationWarning'
+        'DeprecationWarning',
       );
     }
     return 'pubsub.googleapis.com';
@@ -434,7 +434,7 @@ export class SubscriberClient {
    * @returns {Promise} A promise that resolves to string containing the project ID.
    */
   getProjectId(
-    callback?: Callback<string, undefined, undefined>
+    callback?: Callback<string, undefined, undefined>,
   ): Promise<string> | void {
     if (callback) {
       this.auth.getProjectId(callback);
@@ -586,16 +586,21 @@ export class SubscriberClient {
    * @param {google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo} request.analyticsHubSubscriptionInfo
    *   Output only. Information about the associated Analytics Hub subscription.
    *   Only set if the subscritpion is created by Analytics Hub.
+   * @param {number[]} [request.messageTransforms]
+   *   Optional. Transforms to be applied to messages before they are delivered to
+   *   subscribers. Transforms are applied in the order specified.
    * @param {object} [options]
    *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
    * @returns {Promise} - The promise which resolves to an array.
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Subscription|Subscription}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.create_subscription.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_CreateSubscription_async
    */
   createSubscription(
     request?: protos.google.pubsub.v1.ISubscription,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -610,7 +615,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.ISubscription | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   createSubscription(
     request: protos.google.pubsub.v1.ISubscription,
@@ -618,7 +623,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.ISubscription | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   createSubscription(
     request?: protos.google.pubsub.v1.ISubscription,
@@ -633,7 +638,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.ISubscription | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -656,8 +661,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         name: request.name ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.createSubscription(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('createSubscription request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.ISubscription | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('createSubscription response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .createSubscription(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.ISubscription | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('createSubscription response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Gets the configuration details of a subscription.
@@ -673,10 +704,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Subscription|Subscription}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.get_subscription.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_GetSubscription_async
    */
   getSubscription(
     request?: protos.google.pubsub.v1.IGetSubscriptionRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -691,7 +724,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   getSubscription(
     request: protos.google.pubsub.v1.IGetSubscriptionRequest,
@@ -699,7 +732,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   getSubscription(
     request?: protos.google.pubsub.v1.IGetSubscriptionRequest,
@@ -714,7 +747,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -737,8 +770,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         subscription: request.subscription ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.getSubscription(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('getSubscription request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IGetSubscriptionRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('getSubscription response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .getSubscription(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IGetSubscriptionRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('getSubscription response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Updates an existing subscription by updating the fields specified in the
@@ -758,10 +817,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Subscription|Subscription}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.update_subscription.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_UpdateSubscription_async
    */
   updateSubscription(
     request?: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -776,7 +837,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   updateSubscription(
     request: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
@@ -784,7 +845,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   updateSubscription(
     request?: protos.google.pubsub.v1.IUpdateSubscriptionRequest,
@@ -799,7 +860,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISubscription,
       protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription,
@@ -822,8 +883,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         'subscription.name': request.subscription!.name ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.updateSubscription(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('updateSubscription request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IUpdateSubscriptionRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('updateSubscription response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .updateSubscription(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.pubsub.v1.ISubscription,
+          protos.google.pubsub.v1.IUpdateSubscriptionRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('updateSubscription response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Deletes an existing subscription. All messages retained in the subscription
@@ -843,10 +930,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.delete_subscription.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_DeleteSubscription_async
    */
   deleteSubscription(
     request?: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -861,7 +950,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   deleteSubscription(
     request: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
@@ -869,7 +958,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   deleteSubscription(
     request?: protos.google.pubsub.v1.IDeleteSubscriptionRequest,
@@ -884,7 +973,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -907,8 +996,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         subscription: request.subscription ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.deleteSubscription(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('deleteSubscription request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSubscriptionRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('deleteSubscription response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .deleteSubscription(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSubscriptionRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('deleteSubscription response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Modifies the ack deadline for a specific message. This method is useful
@@ -940,10 +1055,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.modify_ack_deadline.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_ModifyAckDeadline_async
    */
   modifyAckDeadline(
     request?: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -958,7 +1075,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   modifyAckDeadline(
     request: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
@@ -966,7 +1083,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   modifyAckDeadline(
     request?: protos.google.pubsub.v1.IModifyAckDeadlineRequest,
@@ -981,7 +1098,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1004,8 +1121,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         subscription: request.subscription ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.modifyAckDeadline(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('modifyAckDeadline request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyAckDeadlineRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('modifyAckDeadline response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .modifyAckDeadline(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyAckDeadlineRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('modifyAckDeadline response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Acknowledges the messages associated with the `ack_ids` in the
@@ -1031,10 +1174,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.acknowledge.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_Acknowledge_async
    */
   acknowledge(
     request?: protos.google.pubsub.v1.IAcknowledgeRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1049,7 +1194,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   acknowledge(
     request: protos.google.pubsub.v1.IAcknowledgeRequest,
@@ -1057,7 +1202,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   acknowledge(
     request?: protos.google.pubsub.v1.IAcknowledgeRequest,
@@ -1072,7 +1217,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1095,8 +1240,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         subscription: request.subscription ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.acknowledge(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('acknowledge request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IAcknowledgeRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('acknowledge response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .acknowledge(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IAcknowledgeRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('acknowledge response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Pulls messages from the server.
@@ -1124,10 +1295,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.PullResponse|PullResponse}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.pull.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_Pull_async
    */
   pull(
     request?: protos.google.pubsub.v1.IPullRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.IPullResponse,
@@ -1142,7 +1315,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IPullResponse,
       protos.google.pubsub.v1.IPullRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   pull(
     request: protos.google.pubsub.v1.IPullRequest,
@@ -1150,7 +1323,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IPullResponse,
       protos.google.pubsub.v1.IPullRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   pull(
     request?: protos.google.pubsub.v1.IPullRequest,
@@ -1165,7 +1338,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IPullResponse,
       protos.google.pubsub.v1.IPullRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.IPullResponse,
@@ -1188,8 +1361,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         subscription: request.subscription ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.pull(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('pull request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.pubsub.v1.IPullResponse,
+          protos.google.pubsub.v1.IPullRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('pull response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .pull(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.pubsub.v1.IPullResponse,
+          protos.google.pubsub.v1.IPullRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('pull response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Modifies the `PushConfig` for a specified subscription.
@@ -1217,10 +1416,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.modify_push_config.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_ModifyPushConfig_async
    */
   modifyPushConfig(
     request?: protos.google.pubsub.v1.IModifyPushConfigRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1235,7 +1436,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   modifyPushConfig(
     request: protos.google.pubsub.v1.IModifyPushConfigRequest,
@@ -1243,7 +1444,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   modifyPushConfig(
     request?: protos.google.pubsub.v1.IModifyPushConfigRequest,
@@ -1258,7 +1459,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1281,8 +1482,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         subscription: request.subscription ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.modifyPushConfig(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('modifyPushConfig request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyPushConfigRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('modifyPushConfig response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .modifyPushConfig(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IModifyPushConfigRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('modifyPushConfig response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Gets the configuration details of a snapshot. Snapshots are used in
@@ -1302,10 +1529,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Snapshot|Snapshot}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.get_snapshot.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_GetSnapshot_async
    */
   getSnapshot(
     request?: protos.google.pubsub.v1.IGetSnapshotRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1320,7 +1549,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   getSnapshot(
     request: protos.google.pubsub.v1.IGetSnapshotRequest,
@@ -1328,7 +1557,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   getSnapshot(
     request?: protos.google.pubsub.v1.IGetSnapshotRequest,
@@ -1343,7 +1572,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1366,8 +1595,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         snapshot: request.snapshot ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.getSnapshot(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('getSnapshot request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IGetSnapshotRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('getSnapshot response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .getSnapshot(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IGetSnapshotRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('getSnapshot response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Creates a snapshot from the requested subscription. Snapshots are used in
@@ -1415,10 +1670,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Snapshot|Snapshot}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.create_snapshot.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_CreateSnapshot_async
    */
   createSnapshot(
     request?: protos.google.pubsub.v1.ICreateSnapshotRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1433,7 +1690,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   createSnapshot(
     request: protos.google.pubsub.v1.ICreateSnapshotRequest,
@@ -1441,7 +1698,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   createSnapshot(
     request?: protos.google.pubsub.v1.ICreateSnapshotRequest,
@@ -1456,7 +1713,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1479,8 +1736,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         name: request.name ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.createSnapshot(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('createSnapshot request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.ICreateSnapshotRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('createSnapshot response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .createSnapshot(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.ICreateSnapshotRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('createSnapshot response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Updates an existing snapshot by updating the fields specified in the update
@@ -1503,10 +1786,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Snapshot|Snapshot}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.update_snapshot.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_UpdateSnapshot_async
    */
   updateSnapshot(
     request?: protos.google.pubsub.v1.IUpdateSnapshotRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1521,7 +1806,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   updateSnapshot(
     request: protos.google.pubsub.v1.IUpdateSnapshotRequest,
@@ -1529,7 +1814,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   updateSnapshot(
     request?: protos.google.pubsub.v1.IUpdateSnapshotRequest,
@@ -1544,7 +1829,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISnapshot,
       protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot,
@@ -1567,8 +1852,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         'snapshot.name': request.snapshot!.name ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.updateSnapshot(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('updateSnapshot request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IUpdateSnapshotRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('updateSnapshot response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .updateSnapshot(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.pubsub.v1.ISnapshot,
+          protos.google.pubsub.v1.IUpdateSnapshotRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('updateSnapshot response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Removes an existing snapshot. Snapshots are used in [Seek]
@@ -1592,10 +1903,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.delete_snapshot.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_DeleteSnapshot_async
    */
   deleteSnapshot(
     request?: protos.google.pubsub.v1.IDeleteSnapshotRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1610,7 +1923,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   deleteSnapshot(
     request: protos.google.pubsub.v1.IDeleteSnapshotRequest,
@@ -1618,7 +1931,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   deleteSnapshot(
     request?: protos.google.pubsub.v1.IDeleteSnapshotRequest,
@@ -1633,7 +1946,7 @@ export class SubscriberClient {
       protos.google.protobuf.IEmpty,
       protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.protobuf.IEmpty,
@@ -1656,8 +1969,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         snapshot: request.snapshot ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.deleteSnapshot(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('deleteSnapshot request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSnapshotRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('deleteSnapshot response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .deleteSnapshot(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.protobuf.IEmpty,
+          protos.google.pubsub.v1.IDeleteSnapshotRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('deleteSnapshot response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
   /**
    * Seeks an existing subscription to a point in time or to a given snapshot,
@@ -1694,10 +2033,12 @@ export class SubscriberClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.SeekResponse|SeekResponse}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.seek.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_Seek_async
    */
   seek(
     request?: protos.google.pubsub.v1.ISeekRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISeekResponse,
@@ -1712,7 +2053,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISeekResponse,
       protos.google.pubsub.v1.ISeekRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   seek(
     request: protos.google.pubsub.v1.ISeekRequest,
@@ -1720,7 +2061,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISeekResponse,
       protos.google.pubsub.v1.ISeekRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): void;
   seek(
     request?: protos.google.pubsub.v1.ISeekRequest,
@@ -1735,7 +2076,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.ISeekResponse,
       protos.google.pubsub.v1.ISeekRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISeekResponse,
@@ -1758,8 +2099,34 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         subscription: request.subscription ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.seek(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('seek request %j', request);
+    const wrappedCallback:
+      | Callback<
+          protos.google.pubsub.v1.ISeekResponse,
+          protos.google.pubsub.v1.ISeekRequest | null | undefined,
+          {} | null | undefined
+        >
+      | undefined = callback
+      ? (error, response, options, rawResponse) => {
+          this._log.info('seek response %j', response);
+          callback!(error, response, options, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    return this.innerApiCalls
+      .seek(request, options, wrappedCallback)
+      ?.then(
+        ([response, options, rawResponse]: [
+          protos.google.pubsub.v1.ISeekResponse,
+          protos.google.pubsub.v1.ISeekRequest | undefined,
+          {} | undefined,
+        ]) => {
+          this._log.info('seek response %j', response);
+          return [response, options, rawResponse];
+        },
+      );
   }
 
   /**
@@ -1779,9 +2146,14 @@ export class SubscriberClient {
    *   will emit objects representing {@link protos.google.pubsub.v1.StreamingPullResponse|StreamingPullResponse} on 'data' event asynchronously.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#bi-directional-streaming | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.streaming_pull.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_StreamingPull_async
    */
   streamingPull(options?: CallOptions): gax.CancellableStream {
-    this.initialize();
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('streamingPull stream %j', options);
     return this.innerApiCalls.streamingPull(null, options);
   }
 
@@ -1813,7 +2185,7 @@ export class SubscriberClient {
    */
   listSubscriptions(
     request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription[],
@@ -1828,7 +2200,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSubscriptionsRequest,
       protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
       protos.google.pubsub.v1.ISubscription
-    >
+    >,
   ): void;
   listSubscriptions(
     request: protos.google.pubsub.v1.IListSubscriptionsRequest,
@@ -1836,7 +2208,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSubscriptionsRequest,
       protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
       protos.google.pubsub.v1.ISubscription
-    >
+    >,
   ): void;
   listSubscriptions(
     request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
@@ -1851,7 +2223,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSubscriptionsRequest,
       protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
       protos.google.pubsub.v1.ISubscription
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISubscription[],
@@ -1874,12 +2246,38 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         project: request.project ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.listSubscriptions(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    const wrappedCallback:
+      | PaginationCallback<
+          protos.google.pubsub.v1.IListSubscriptionsRequest,
+          protos.google.pubsub.v1.IListSubscriptionsResponse | null | undefined,
+          protos.google.pubsub.v1.ISubscription
+        >
+      | undefined = callback
+      ? (error, values, nextPageRequest, rawResponse) => {
+          this._log.info('listSubscriptions values %j', values);
+          callback!(error, values, nextPageRequest, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    this._log.info('listSubscriptions request %j', request);
+    return this.innerApiCalls
+      .listSubscriptions(request, options, wrappedCallback)
+      ?.then(
+        ([response, input, output]: [
+          protos.google.pubsub.v1.ISubscription[],
+          protos.google.pubsub.v1.IListSubscriptionsRequest | null,
+          protos.google.pubsub.v1.IListSubscriptionsResponse,
+        ]) => {
+          this._log.info('listSubscriptions values %j', response);
+          return [response, input, output];
+        },
+      );
   }
 
   /**
-   * Equivalent to `method.name.toCamelCase()`, but returns a NodeJS Stream object.
+   * Equivalent to `listSubscriptions`, but returns a NodeJS Stream object.
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
@@ -1904,7 +2302,7 @@ export class SubscriberClient {
    */
   listSubscriptionsStream(
     request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Transform {
     request = request || {};
     options = options || {};
@@ -1916,11 +2314,14 @@ export class SubscriberClient {
       });
     const defaultCallSettings = this._defaults['listSubscriptions'];
     const callSettings = defaultCallSettings.merge(options);
-    this.initialize();
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('listSubscriptions stream %j', request);
     return this.descriptors.page.listSubscriptions.createStream(
       this.innerApiCalls.listSubscriptions as GaxCall,
       request,
-      callSettings
+      callSettings,
     );
   }
 
@@ -1948,10 +2349,12 @@ export class SubscriberClient {
    *   so you can stop the iteration when you don't need more results.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.list_subscriptions.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_ListSubscriptions_async
    */
   listSubscriptionsAsync(
     request?: protos.google.pubsub.v1.IListSubscriptionsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): AsyncIterable<protos.google.pubsub.v1.ISubscription> {
     request = request || {};
     options = options || {};
@@ -1963,11 +2366,14 @@ export class SubscriberClient {
       });
     const defaultCallSettings = this._defaults['listSubscriptions'];
     const callSettings = defaultCallSettings.merge(options);
-    this.initialize();
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('listSubscriptions iterate %j', request);
     return this.descriptors.page.listSubscriptions.asyncIterate(
       this.innerApiCalls['listSubscriptions'] as GaxCall,
       request as {},
-      callSettings
+      callSettings,
     ) as AsyncIterable<protos.google.pubsub.v1.ISubscription>;
   }
   /**
@@ -2002,7 +2408,7 @@ export class SubscriberClient {
    */
   listSnapshots(
     request?: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot[],
@@ -2017,7 +2423,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSnapshotsRequest,
       protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
       protos.google.pubsub.v1.ISnapshot
-    >
+    >,
   ): void;
   listSnapshots(
     request: protos.google.pubsub.v1.IListSnapshotsRequest,
@@ -2025,7 +2431,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSnapshotsRequest,
       protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
       protos.google.pubsub.v1.ISnapshot
-    >
+    >,
   ): void;
   listSnapshots(
     request?: protos.google.pubsub.v1.IListSnapshotsRequest,
@@ -2040,7 +2446,7 @@ export class SubscriberClient {
       protos.google.pubsub.v1.IListSnapshotsRequest,
       protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
       protos.google.pubsub.v1.ISnapshot
-    >
+    >,
   ): Promise<
     [
       protos.google.pubsub.v1.ISnapshot[],
@@ -2063,12 +2469,38 @@ export class SubscriberClient {
       this._gaxModule.routingHeader.fromParams({
         project: request.project ?? '',
       });
-    this.initialize();
-    return this.innerApiCalls.listSnapshots(request, options, callback);
+    this.initialize().catch(err => {
+      throw err;
+    });
+    const wrappedCallback:
+      | PaginationCallback<
+          protos.google.pubsub.v1.IListSnapshotsRequest,
+          protos.google.pubsub.v1.IListSnapshotsResponse | null | undefined,
+          protos.google.pubsub.v1.ISnapshot
+        >
+      | undefined = callback
+      ? (error, values, nextPageRequest, rawResponse) => {
+          this._log.info('listSnapshots values %j', values);
+          callback!(error, values, nextPageRequest, rawResponse); // We verified callback above.
+        }
+      : undefined;
+    this._log.info('listSnapshots request %j', request);
+    return this.innerApiCalls
+      .listSnapshots(request, options, wrappedCallback)
+      ?.then(
+        ([response, input, output]: [
+          protos.google.pubsub.v1.ISnapshot[],
+          protos.google.pubsub.v1.IListSnapshotsRequest | null,
+          protos.google.pubsub.v1.IListSnapshotsResponse,
+        ]) => {
+          this._log.info('listSnapshots values %j', response);
+          return [response, input, output];
+        },
+      );
   }
 
   /**
-   * Equivalent to `method.name.toCamelCase()`, but returns a NodeJS Stream object.
+   * Equivalent to `listSnapshots`, but returns a NodeJS Stream object.
    * @param {Object} request
    *   The request object that will be sent.
    * @param {string} request.project
@@ -2093,7 +2525,7 @@ export class SubscriberClient {
    */
   listSnapshotsStream(
     request?: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): Transform {
     request = request || {};
     options = options || {};
@@ -2105,11 +2537,14 @@ export class SubscriberClient {
       });
     const defaultCallSettings = this._defaults['listSnapshots'];
     const callSettings = defaultCallSettings.merge(options);
-    this.initialize();
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('listSnapshots stream %j', request);
     return this.descriptors.page.listSnapshots.createStream(
       this.innerApiCalls.listSnapshots as GaxCall,
       request,
-      callSettings
+      callSettings,
     );
   }
 
@@ -2137,10 +2572,12 @@ export class SubscriberClient {
    *   so you can stop the iteration when you don't need more results.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
+   * @example <caption>include:samples/generated/v1/subscriber.list_snapshots.js</caption>
+   * region_tag:pubsub_v1_generated_Subscriber_ListSnapshots_async
    */
   listSnapshotsAsync(
     request?: protos.google.pubsub.v1.IListSnapshotsRequest,
-    options?: CallOptions
+    options?: CallOptions,
   ): AsyncIterable<protos.google.pubsub.v1.ISnapshot> {
     request = request || {};
     options = options || {};
@@ -2152,11 +2589,14 @@ export class SubscriberClient {
       });
     const defaultCallSettings = this._defaults['listSnapshots'];
     const callSettings = defaultCallSettings.merge(options);
-    this.initialize();
+    this.initialize().catch(err => {
+      throw err;
+    });
+    this._log.info('listSnapshots iterate %j', request);
     return this.descriptors.page.listSnapshots.asyncIterate(
       this.innerApiCalls['listSnapshots'] as GaxCall,
       request as {},
-      callSettings
+      callSettings,
     ) as AsyncIterable<protos.google.pubsub.v1.ISnapshot>;
   }
   /**
@@ -2197,7 +2637,7 @@ export class SubscriberClient {
       IamProtos.google.iam.v1.Policy,
       IamProtos.google.iam.v1.GetIamPolicyRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.getIamPolicy(request, options, callback);
   }
@@ -2244,7 +2684,7 @@ export class SubscriberClient {
       IamProtos.google.iam.v1.Policy,
       IamProtos.google.iam.v1.SetIamPolicyRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<[IamProtos.google.iam.v1.Policy]> {
     return this.iamClient.setIamPolicy(request, options, callback);
   }
@@ -2292,7 +2732,7 @@ export class SubscriberClient {
       IamProtos.google.iam.v1.TestIamPermissionsResponse,
       IamProtos.google.iam.v1.TestIamPermissionsRequest | null | undefined,
       {} | null | undefined
-    >
+    >,
   ): Promise<[IamProtos.google.iam.v1.TestIamPermissionsResponse]> {
     return this.iamClient.testIamPermissions(request, options, callback);
   }
@@ -2481,9 +2921,10 @@ export class SubscriberClient {
   close(): Promise<void> {
     if (this.subscriberStub && !this._terminated) {
       return this.subscriberStub.then(stub => {
+        this._log.info('ending gRPC channel');
         this._terminated = true;
         stub.close();
-        this.iamClient.close();
+        void this.iamClient.close();
       });
     }
     return Promise.resolve();

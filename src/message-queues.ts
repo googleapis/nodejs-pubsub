@@ -89,7 +89,7 @@ export class BatchError extends DebugMessage {
       `Failed to "${rpc}" for ${ackIds.length} message(s). Reason: ${
         process.env.DEBUG_GRPC ? err.stack : err.message
       }`,
-      err
+      err,
     );
 
     this.ackIds = ackIds;
@@ -141,7 +141,7 @@ export abstract class MessageQueue {
     this._subscriber = sub;
     this._retrier = new ExponentialRetry<QueuedMessage>(
       Duration.from({seconds: 1}),
-      Duration.from({seconds: 64})
+      Duration.from({seconds: 64}),
     );
 
     this.setOptions(options);
@@ -167,7 +167,7 @@ export abstract class MessageQueue {
       if (r.responsePromise) {
         if (isExactlyOnceDelivery) {
           r.responsePromise.reject(
-            new AckError(AckResponses.Invalid, 'Subscriber closed')
+            new AckError(AckResponses.Invalid, 'Subscriber closed'),
           );
         } else {
           r.responsePromise.resolve();
@@ -195,12 +195,12 @@ export abstract class MessageQueue {
    * @param {number} [deadline] The deadline in seconds.
    * @private
    */
-  add(message: Message, deadline?: number): Promise<void> {
+  async add(message: Message, deadline?: number): Promise<void> {
     if (this._closed) {
       if (this._subscriber.isExactlyOnceDelivery) {
         throw new AckError(AckResponses.Invalid, 'Subscriber closed');
       } else {
-        return Promise.resolve();
+        return;
       }
     }
 
@@ -213,7 +213,7 @@ export abstract class MessageQueue {
       this._requests.length + 1 >= maxMessages! ||
       this.bytes + size >= MAX_BATCH_BYTES
     ) {
-      this.flush();
+      await this.flush();
     }
 
     // Add the message to the current batch.
@@ -249,7 +249,7 @@ export abstract class MessageQueue {
     // Has it been too long?
     if (totalTime.totalOf('minute') >= 10 || this.shouldFailEarly(message)) {
       message.responsePromise?.reject(
-        new AckError(AckResponses.Invalid, 'Retried for too long')
+        new AckError(AckResponses.Invalid, 'Retried for too long'),
       );
       return;
     }
@@ -275,7 +275,7 @@ export abstract class MessageQueue {
     if (!this._timer) {
       this._timer = setTimeout(
         () => this.flush(),
-        this._options.maxMilliseconds!
+        this._options.maxMilliseconds!,
       );
     }
   }
@@ -407,7 +407,7 @@ export abstract class MessageQueue {
   handleAckFailures(
     operation: string,
     batch: QueuedMessages,
-    rpcError: GoogleError
+    rpcError: GoogleError,
   ) {
     const toSucceed: QueuedMessages = [];
     const toRetry: QueuedMessages = [];
@@ -516,7 +516,7 @@ export class AckQueue extends MessageQueue {
     const responseSpan = tracing.PubsubSpans.createAckRpcSpan(
       batch.map(b => b.message.tracingSpan),
       this._subscriber.name,
-      'AckQueue._sendBatch'
+      'AckQueue._sendBatch',
     );
     const client = await this._subscriber.getClient();
     const ackIds = batch.map(({message}) => message.ackId);
@@ -587,7 +587,7 @@ export class ModAckQueue extends MessageQueue {
         table[message.deadline!].push(message);
         return table;
       },
-      {}
+      {},
     );
 
     const callOptions = this.getCallOptions();
@@ -602,7 +602,7 @@ export class ModAckQueue extends MessageQueue {
         this._subscriber.name,
         ackDeadlineSeconds === 0 ? 'nack' : 'modack',
         'ModAckQueue._sendBatch',
-        Duration.from({seconds: ackDeadlineSeconds})
+        Duration.from({seconds: ackDeadlineSeconds}),
       );
 
       try {
@@ -628,7 +628,7 @@ export class ModAckQueue extends MessageQueue {
           const newBatch = this.handleAckFailures(
             'modAck',
             messages,
-            grpcError
+            grpcError,
           );
           return newBatch.toRetry;
         }

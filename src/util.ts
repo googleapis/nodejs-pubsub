@@ -30,7 +30,7 @@ export function promisifySome<T>(
   class_: Function,
   classProto: T,
   methods: (keyof T)[],
-  options?: PromisifyOptions
+  options?: PromisifyOptions,
 ): void {
   methods.forEach(methodName => {
     // Do the same stream checks as promisifyAll().
