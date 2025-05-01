@@ -29,6 +29,7 @@ import {SubscriberClient} from './v1';
 import * as tracing from './telemetry-tracing';
 import {Duration} from './temporal';
 import {EventEmitter} from 'events';
+import { AsyncHelper } from './async-helper';
 
 export {StatusError} from './message-stream';
 
@@ -569,6 +570,11 @@ export class Message implements tracing.MessageWithAttributes {
  *     settings at the Cloud PubSub server and uses the less accurate method
  *     of only enforcing flow control at the client side.
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
+ * @property {boolean} [asyncMessageDelivery] If true, we will assume that the
+ *     callback attached to `.on('message')` is an async handler that returns a Promise.
+ *     This allows user code to guarantee that messages are received in order, one at
+ *     a time, as with a non-async handler. This can only be set at Subscriber
+ *     creation time. (`PubSub.subscription()`)
  */
 export interface SubscriberOptions {
   minAckDeadline?: Duration;
@@ -578,9 +584,13 @@ export interface SubscriberOptions {
   flowControl?: FlowControlOptions;
   useLegacyFlowControl?: boolean;
   streamingOptions?: MessageStreamOptions;
+  asyncMessageDelivery?: boolean;
 }
 
 const minAckDeadlineForExactlyOnceDelivery = Duration.from({seconds: 60});
+interface SubscriberCallback {
+  (message: Message): void;
+}
 
 /**
  * Subscriber class is used to manage all message related functionality.
@@ -607,6 +617,8 @@ export class Subscriber extends EventEmitter {
   private _options!: SubscriberOptions;
   private _stream!: MessageStream;
   private _subscription: Subscription;
+  private _asyncHelper?: AsyncHelper;
+  private _userMessageHandler?: 
 
   subscriptionProperties?: SubscriptionProperties;
 
@@ -625,6 +637,29 @@ export class Subscriber extends EventEmitter {
     this._subscription = subscription;
 
     this.setOptions(options);
+    if (this._options.asyncMessageDelivery) {
+      this.setupAsyncDelivery();
+    }
+  }
+
+  private setupAsyncDelivery() {
+    this._asyncHelper = new AsyncHelper(async message => {
+
+    });
+  }
+
+  // This is hooking a base class method, so we kind of have to match
+  // its signature.
+  //
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  on(eventName: string, listener: (...args: any[]) => any): this {
+    if (this._options.asyncMessageDelivery && eventName === 'message') {
+      return super.on(eventName, (message: Message) => {
+
+      });
+    } else {
+      return super.on(eventName, listener);
+    }
   }
 
   /**

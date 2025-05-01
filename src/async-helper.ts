@@ -17,6 +17,9 @@ import {Message} from './subscriber';
 /**
  * Represents an async function that can process a message and return
  * a Promise for the function's completion.
+ *
+ * @private
+ * @internal
  */
 export interface AsyncMessageHandler {
   (message: Message): Promise<void>;
@@ -25,6 +28,9 @@ export interface AsyncMessageHandler {
 /**
  * A handler for sub.on('message', x) that can be passed to .on() to do
  * the async processing in this class.
+ *
+ * @private
+ * @internal
  */
 export interface StreamMessageHandler {
   (message: Message): void;
@@ -48,6 +54,8 @@ export interface StreamMessageHandler {
  * (Also, event handlers for on() are not something we have direct access
  * to, so guessing whether it's a Promise and waiting on it would be difficult.)
  *
+ * @private
+ * @internal
  * @example
  * ```
  * const {PubSub, AsyncHelper} = require('@google-cloud/pubsub');
@@ -89,7 +97,7 @@ export class AsyncHelper {
 
     // This should be either Promise.resolve() (instant callback)
     // or the previous work item the user's function returned.
-    this.tailPromise.then(() => {
+    const tailHandler = () => {
       const message = this.queue.shift();
       if (!message) {
         // No message -> go back to resolve() to signal ready.
@@ -98,6 +106,9 @@ export class AsyncHelper {
         // Message -> chain to the previous tail and replace it.
         this.tailPromise = this.userHandler(message);
       }
-    });
+    };
+
+    // Even if the callback fails, proceed to the next message.
+    this.tailPromise.then(tailHandler).catch(tailHandler);
   }
 }
